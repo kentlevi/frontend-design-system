@@ -1,0 +1,24 @@
+@use '../foundation/typography/semantic' as type;
+
+h1 {
+    font-size: type.$heading-1;
+}
+h2 {
+    font-size: type.$heading-2;
+}
+h3 {
+    font-size: type.$heading-3;
+}
+h4 {
+    font-size: type.$heading-4;
+}
+h5 {
+    font-size: type.$heading-5;
+}
+h6 {
+    font-size: type.$heading-6;
+}
+
+p {
+    font-size: type.$body-base;
+}

@@ -1,0 +1,84 @@
+@use '../../foundation/colors/semantic' as c;
+@use '../../foundation/typography/semantic' as t;
+
+@use '../../brand/spacing' as sp;
+@use '../../brand/radius' as r;
+@use '../../brand/shadows' as sh;
+
+.ui-input {
+    display: flex;
+    align-items: center;
+
+    gap: sp.$space-2;
+    padding-inline: sp.$space-3;
+
+    height: sp.$space-10;
+
+    border-radius: r.$radius-md;
+    border: 1px solid c.$border-default;
+
+    background: c.$bg-page;
+    box-shadow: sh.$shadow-md;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+
+.ui-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: t.$font-base;
+    font-size: t.$body-base;
+    color: c.$text-primary;
+
+    &::placeholder {
+        color: c.$text-muted;
+    }
+}
+
+.ui-input-icon {
+    width: sp.$space-4;
+    height: sp.$space-4;
+
+    display: grid;
+    place-items: center;
+
+    color: c.$text-muted;
+}
+
+.ui-input:focus-within {
+    border-color: c.$brand-primary;
+    box-shadow: 0 0 0 2px c.$brand-primary;
+}
+
+.ui-input:hover:not([data-disabled='true']) {
+    border-color: c.$border-strong;
+}
+
+.ui-input[data-disabled='true'] {
+    background: c.$bg-muted;
+    border-color: c.$bg-muted;
+    box-shadow: none;
+
+    cursor: not-allowed;
+
+    .ui-input-field {
+        color: c.$text-muted;
+        cursor: not-allowed;
+    }
+}
+
+.ui-input[data-size='lg'] {
+    height: sp.$space-12;
+}
+.ui-input[data-size='md'] {
+    height: sp.$space-10;
+}
+.ui-input[data-size='sm'] {
+    height: sp.$space-8;
+}

@@ -1,0 +1,8 @@
+@use '../foundation/colors/semantic' as c;
+@use '../foundation/typography/semantic' as t;
+
+body {
+    font-family: t.$font-base;
+    background: var(--bg-page);
+    color: var(--text-primary);
+}

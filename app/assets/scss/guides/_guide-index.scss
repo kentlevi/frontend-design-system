@@ -1,0 +1,124 @@
+@use '../foundation' as f;
+
+.guide-index {
+    .guide-header {
+        margin-bottom: 30px;
+    }
+
+    .guide-index-group {
+        margin-top: 18px;
+
+        &:not(:first-of-type) {
+            margin-top: 28px;
+        }
+    }
+
+    .guide-subtitle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .guide-subtitle::after {
+        content: '';
+        width: 28px;
+        height: 1px;
+        background: var(--border-strong);
+    }
+
+    .guide-grid {
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(var(--guide-grid-min, 260px), 1fr)
+        );
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    .guide-grid-compact {
+        justify-items: start;
+    }
+
+    .guide-grid-compact .guide-card {
+        width: min(100%, 420px);
+    }
+
+    .guide-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        min-height: 140px;
+        padding: 20px 22px;
+        border-radius: 16px;
+
+        background: linear-gradient(
+            180deg,
+            var(--contrast-light) 0%,
+            #f8fafc 100%
+        );
+        border: 1px solid var(--border-default);
+
+        text-decoration: none;
+        color: inherit;
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+
+        &:hover {
+            transform: translateY(-3px);
+            border-color: f.$border-strong;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+        }
+    }
+
+    .guide-card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .guide-card-description {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.4;
+        max-width: 320px;
+    }
+
+    .guide-card-arrow {
+        align-self: flex-end;
+        margin-top: 12px;
+        font-size: 20px;
+        color: var(--text-secondary);
+        transition:
+            transform 0.18s ease,
+            color 0.18s ease;
+    }
+
+    .guide-card:hover .guide-card-arrow {
+        transform: translateX(6px);
+        color: var(--text-primary);
+    }
+
+    @media (max-width: 860px) {
+        .guide-grid-compact .guide-card {
+            width: 100%;
+        }
+
+        .guide-card {
+            min-height: 128px;
+            padding: 16px 18px;
+        }
+
+        .guide-card-title {
+            font-size: 17px;
+        }
+    }
+}

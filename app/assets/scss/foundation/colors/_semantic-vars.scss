@@ -1,0 +1,77 @@
+@use './semantic' as s;
+
+:root {
+    color-scheme: light;
+
+    --bg-page: #{s.$bg-page};
+    --bg-surface: #{s.$bg-surface};
+    --bg-muted: #{s.$bg-muted};
+    --bg-inverse: #{s.$bg-inverse};
+
+    --text-primary: #{s.$text-primary};
+    --text-secondary: #{s.$text-secondary};
+    --text-muted: #{s.$text-muted};
+    --text-inverse: #{s.$text-inverse};
+
+    --border-default: #{s.$border-default};
+    --border-strong: #{s.$border-strong};
+    --border-inverse: #{s.$border-inverse};
+
+    --brand-primary: #{s.$brand-primary};
+    --brand-primary-hover: #{s.$brand-primary-hover};
+    --brand-primary-active: #{s.$brand-primary-active};
+    --brand-secondary: #{s.$brand-secondary};
+    --brand-accent: #{s.$brand-accent};
+
+    --success: #{s.$success};
+    --success-bg: #{s.$success-bg};
+
+    --warning: #{s.$warning};
+    --warning-bg: #{s.$warning-bg};
+
+    --error: #{s.$error};
+    --error-bg: #{s.$error-bg};
+
+    --link-color: #{s.$link-color};
+    --link-hover: #{s.$link-hover};
+    --focus-ring: #{s.$focus-ring};
+
+    --surface-default: #{s.$surface-default};
+    --surface-subtle: #{s.$surface-subtle};
+    --surface-raised: #{s.$surface-raised};
+    --surface-inverse: #{s.$surface-inverse};
+
+    --contrast-light: #{s.$contrast-light};
+    --contrast-dark: #{s.$contrast-dark};
+
+    --text-disabled: #{s.$text-disabled};
+    --bg-disabled: #{s.$bg-disabled};
+    --border-disabled: #{s.$border-disabled};
+
+    --overlay-backdrop: #{s.$overlay-backdrop};
+    --overlay-soft: #{s.$overlay-soft};
+}
+
+[data-theme='dark'] {
+    color-scheme: dark;
+
+    --bg-page: #{s.$surface-inverse};
+    --bg-surface: #{s.$surface-default};
+    --bg-muted: #{s.$surface-subtle};
+    --bg-inverse: #{s.$bg-surface};
+
+    --text-primary: #{s.$contrast-light};
+    --text-secondary: #{s.$text-secondary};
+    --text-muted: #{s.$text-muted};
+    --text-inverse: #{s.$contrast-dark};
+
+    --border-default: #{s.$border-inverse};
+    --border-strong: #{s.$border-default};
+
+    --text-disabled: #{s.$text-muted};
+    --bg-disabled: #{s.$surface-subtle};
+    --border-disabled: #{s.$border-inverse};
+
+    --overlay-backdrop: rgba(0, 0, 0, 0.7);
+    --overlay-soft: rgba(0, 0, 0, 0.4);
+}

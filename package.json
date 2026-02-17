@@ -1,22 +1,29 @@
 {
-  "name": "frontend",
+  "name": "WorkStamp_SF",
   "type": "module",
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev -p 4000",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "build:icons": "node app/icons/build-icons.js"
   },
   "dependencies": {
-    "@nuxt/eslint": "1.13.0",
-    "@nuxt/image": "2.0.0",
-    "@nuxt/scripts": "0.13.2",
-    "@unhead/vue": "^2.1.3",
-    "eslint": "^9.39.2",
+    "@nuxtjs/i18n": "^10.2.3",
+    "axios": "^1.13.4",
     "nuxt": "^4.3.0",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.13.0",
+    "@pinia/nuxt": "^0.11.3",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1",
+    "sass": "^1.97.3"
   }
 }

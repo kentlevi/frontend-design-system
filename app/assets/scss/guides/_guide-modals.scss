@@ -1,0 +1,76 @@
+.guide-modals {
+    .guide-modal-demo {
+        border: 1px solid var(--border-default);
+        border-radius: 16px;
+        background: var(--contrast-light);
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .guide-modal-current {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.guide-locale-list {
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.guide-locale-item {
+    width: 100%;
+    min-height: 62px;
+    border: 0;
+    border-top: 1px solid var(--border-default);
+    background: var(--contrast-light);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s ease;
+
+    &:first-child {
+        border-top: 0;
+    }
+
+    &:hover {
+        background: var(--bg-muted);
+    }
+
+    &.is-active {
+        background: #e9f0ff;
+    }
+}
+
+.guide-locale-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.guide-locale-item-label {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.guide-locale-item-note {
+    font-size: 13px;
+    line-height: 1.2;
+    color: var(--text-secondary);
+}

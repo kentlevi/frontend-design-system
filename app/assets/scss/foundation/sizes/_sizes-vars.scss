@@ -1,0 +1,31 @@
+@use './index' as s;
+
+:root {
+    --space-xxs: #{s.$space-xxs};
+    --space-xs: #{s.$space-xs};
+    --space-sm: #{s.$space-sm};
+    --space-md: #{s.$space-md};
+    --space-lg: #{s.$space-lg};
+    --space-xl: #{s.$space-xl};
+    --space-2xl: #{s.$space-2xl};
+    --space-3xl: #{s.$space-3xl};
+    --space-4xl: #{s.$space-4xl};
+    --space-5xl: #{s.$space-5xl};
+    --space-6xl: #{s.$space-6xl};
+
+    --radius-none: #{s.$radius-none};
+    --radius-xs: #{s.$radius-xs};
+    --radius-sm: #{s.$radius-sm};
+    --radius-md: #{s.$radius-md};
+    --radius-lg: #{s.$radius-lg};
+    --radius-xl: #{s.$radius-xl};
+    --radius-2xl: #{s.$radius-2xl};
+    --radius-full: #{s.$radius-pill};
+
+    --size-icon-xs: #{s.$size-icon-xs};
+    --size-icon-sm: #{s.$size-icon-sm};
+    --size-icon-md: #{s.$size-icon-md};
+    --size-icon-lg: #{s.$size-icon-lg};
+    --size-icon-xl: #{s.$size-icon-xl};
+    --size-icon-2xl: #{s.$size-icon-2xl};
+}

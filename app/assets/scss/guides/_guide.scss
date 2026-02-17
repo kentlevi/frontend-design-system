@@ -1,0 +1,185 @@
+@use '../foundation' as f;
+
+@mixin guide-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+}
+
+@mixin guide-section {
+    margin-top: 48px;
+}
+
+@mixin guide-grid-auto($min: 140px) {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(var(--guide-grid-min, #{$min}), 1fr)
+    );
+}
+
+@mixin guide-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 10px;
+    border-radius: 12px;
+    background: var(--contrast-light);
+    border: 1px solid f.$border-default;
+}
+
+@mixin guide-item-hoverable {
+    cursor: pointer;
+
+    img,
+    svg {
+        transition: transform 0.2s;
+    }
+
+    &:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+
+        img,
+        svg {
+            transform: scale(1.5);
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+}
+
+@mixin guide-item-dark {
+    background: f.$bg-inverse;
+
+    .guide-label {
+        color: f.$text-inverse;
+    }
+}
+
+.guide {
+    &-wrapper {
+        @include guide-wrapper;
+    }
+
+    &-header {
+        margin-bottom: 40px;
+        max-width: 640px;
+    }
+
+    &-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+    }
+
+    &-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    &-description {
+        font-size: 16px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    &-section {
+        @include guide-section;
+    }
+
+    &-section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+    }
+
+    &-section-description {
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+    }
+
+    &-subsection {
+        margin-top: 24px;
+    }
+
+    &-subtitle {
+        font-size: 14px;
+        font-weight: 600;
+        color: f.$text-secondary;
+        margin-bottom: 12px;
+        text-transform: capitalize;
+    }
+
+    &-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    &-grid-auto {
+        @include guide-grid-auto();
+    }
+    &-grid-min-72 {
+        --guide-grid-min: 72px;
+    }
+    &-grid-min-120 {
+        --guide-grid-min: 120px;
+    }
+    &-grid-min-160 {
+        --guide-grid-min: 160px;
+    }
+    &-grid-min-240 {
+        --guide-grid-min: 240px;
+    }
+
+    &-section-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 64px 48px;
+
+        @media (max-width: 900px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+
+    &-item {
+        @include guide-item;
+    }
+
+    &-label {
+        font-size: 11px;
+        color: var(--text-secondary);
+        text-align: center;
+        word-break: break-word;
+    }
+
+    &-divider {
+        height: 1px;
+        background: f.$border-default;
+        margin: 64px 0;
+    }
+
+    &-item-hoverable {
+        @include guide-item-hoverable;
+    }
+    &-item-dark {
+        @include guide-item-dark;
+    }
+}

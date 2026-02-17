@@ -1,0 +1,8 @@
+@use '../../brand/breakpoints' as brand;
+
+$screen-xs: brand.$bp-xs;
+$screen-sm: brand.$bp-sm;
+$screen-md: brand.$bp-md;
+$screen-lg: brand.$bp-lg;
+$screen-xl: brand.$bp-xl;
+$screen-2xl: brand.$bp-2xl;

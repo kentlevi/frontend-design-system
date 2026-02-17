@@ -1,0 +1,85 @@
+@use '../../foundation' as f;
+
+.ui-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border-radius: 999px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+
+    &[data-size='sm'] {
+        font-size: 11px;
+        padding: 2px 8px;
+    }
+
+    &[data-size='md'] {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
+    &[data-tone='default'][data-variant='filled'] {
+        background: f.$surface-raised;
+        color: f.$text-primary;
+    }
+
+    &[data-tone='default'][data-variant='tonal'] {
+        background: f.$bg-muted;
+        color: f.$text-primary;
+    }
+
+    &[data-tone='default'][data-variant='outline'] {
+        border-color: f.$border-default;
+        color: f.$text-primary;
+    }
+
+    &[data-tone='default'][data-variant='subtle'] {
+        color: f.$text-secondary;
+    }
+
+    &[data-tone='success'][data-variant='filled'] {
+        background: f.$success;
+        color: f.$text-inverse;
+    }
+
+    &[data-tone='success'][data-variant='tonal'] {
+        background: f.$success-bg;
+        color: f.$success;
+    }
+
+    &[data-tone='success'][data-variant='outline'] {
+        border-color: f.$success;
+        color: f.$success;
+    }
+
+    &[data-tone='danger'][data-variant='filled'] {
+        background: f.$error;
+        color: f.$text-inverse;
+    }
+
+    &[data-tone='danger'][data-variant='tonal'] {
+        background: f.$error-bg;
+        color: f.$error;
+    }
+
+    &[data-tone='danger'][data-variant='outline'] {
+        border-color: f.$error;
+        color: f.$error;
+    }
+
+    &[data-tone='warning'][data-variant='filled'] {
+        background: f.$warning;
+        color: f.$text-inverse;
+    }
+
+    &[data-tone='warning'][data-variant='tonal'] {
+        background: f.$warning-bg;
+        color: f.$warning;
+    }
+
+    &[data-tone='warning'][data-variant='outline'] {
+        border-color: f.$warning;
+        color: f.$warning;
+    }
+}

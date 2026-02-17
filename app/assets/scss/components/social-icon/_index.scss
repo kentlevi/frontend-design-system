@@ -1,0 +1,46 @@
+@use '../../foundation/colors/semantic' as c;
+@use '../../brand/radius' as r;
+
+.ui-social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    user-select: none;
+
+    padding: 6px;
+    border-radius: r.$radius-md;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.ui-social-icon:active {
+    transform: scale(0.96);
+}
+
+.ui-social-icon:focus-visible {
+    outline: 2px solid c.$brand-primary;
+    outline-offset: 2px;
+}
+
+.ui-social-icon[data-size='sm'] {
+    padding: 4px;
+    border-radius: r.$radius-sm;
+}
+
+.ui-social-icon[data-size='md'] {
+    padding: 6px;
+}
+
+.ui-social-icon[data-size='lg'] {
+    padding: 8px;
+    border-radius: r.$radius-lg;
+}
+
+.ui-social-icon img {
+    display: block;
+    pointer-events: none;
+}

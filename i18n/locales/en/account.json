@@ -1,0 +1,159 @@
+{
+    "account": {
+        "shell": {
+            "level": "Bumper Boss (Level 3)",
+            "stats": {
+                "order": "Order",
+                "points": "Points",
+                "coupons": "Coupons",
+                "totalSpent": "Total Spent"
+            }
+        },
+        "addressBook": {
+            "title": "Address Book",
+            "addNew": "Add New Address",
+            "shippingTitle": "Shipping Address",
+            "shippingDescription": "Designated location where your order will be delivered.",
+            "default": "Default",
+            "tags": {
+                "Home": "Home",
+                "Office": "Office",
+                "Client": "Client"
+            }
+        },
+        "coupons": {
+            "title": "Coupons",
+            "codePlaceholder": "Please enter coupon code here...",
+            "addCoupon": "Add Coupon",
+            "items": {
+                "laborMonthDiscount": {
+                    "title": "Labor Month Discount",
+                    "note": "Enjoy 10% off on all products for the whole month of May."
+                },
+                "birthdayMonthDiscount": {
+                    "title": "Birthday Month Discount",
+                    "note": "Enjoy 20% off on all products during your birth month!"
+                },
+                "paperStickerDiscount": {
+                    "title": "Paper Sticker Discount",
+                    "note": "Enjoy 15% off all paper products."
+                }
+            },
+            "tags": {
+                "Unlimited Use": "Unlimited Use",
+                "Multiple-Use": "Multiple-Use",
+                "Single Use": "Single Use"
+            }
+        },
+        "gallery": {
+            "title": "Gallery",
+            "filters": "Filters",
+            "searchPlaceholder": "Search",
+            "sizeLabel": "Size:",
+            "sizeUnit": "pixels",
+            "tags": {
+                "Branding": "Branding",
+                "Outdoor": "Outdoor",
+                "Skating": "Skating"
+            }
+        },
+        "profile": {
+            "title": "Profile",
+            "personalDetails": "Personal Details",
+            "personalDetailsDesc": "Manage your personal information & contact details.",
+            "profilePhoto": "Profile Photo",
+            "photoHint1": "At least 800x800px recommended file size.",
+            "photoHint2": "Accepted filetypes: .jpg and .png",
+            "uploadNewPhoto": "Upload New Photo",
+            "delete": "Delete",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "optional": "Optional",
+            "emailAddress": "Email Address",
+            "saveChanges": "Save Changes",
+            "password": "Password",
+            "passwordDesc": "Strengthen your account by ensuring your password is strong.",
+            "currentPassword": "Current Password",
+            "currentPasswordPlaceholder": "Enter Current Password",
+            "passwordHint": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
+            "newPassword": "New Password",
+            "newPasswordPlaceholder": "Enter New Password",
+            "confirmNewPassword": "Confirm New Password",
+            "confirmNewPasswordPlaceholder": "Confirm New Password",
+            "changePassword": "Change Password",
+            "forgotPassword": "Forgot Password?",
+            "settings": "Settings",
+            "settingsDesc": "Manage your account preferences, including promotion and discount alerts, as well as your review settings.",
+            "promotions": "Promotions & Discounts",
+            "promotionsDesc": "Receive emails about savings, new items, promotions & more.",
+            "reviews": "Reviews",
+            "reviewsDesc": "Receive emails everytime your order gets completed, as well as published reviews.",
+            "confirmations": "Confirmations",
+            "confirmationsDesc": "Receive emails regarding final proof, design changes and payment proof.",
+            "unit": "Unit of Measurement",
+            "unitDesc": "Choose your preferred/default unit of measurement.",
+            "millimeter": "millimeter",
+            "inch": "inch",
+            "signOut": "Sign Out"
+        },
+        "orders": {
+            "title": "My Orders",
+            "selectDate": "Select Date",
+            "filters": "Filters",
+            "orderLabel": "Order",
+            "meta": "{count} item(s) | Order Date: {date}",
+            "status": {
+                "beforeProduction": "Before Production",
+                "processing": "Processing",
+                "actionRequired": "Action Required"
+            },
+            "orderSummary": "Order Summary",
+            "summaryText": "Upload artwork and review invoice/payment items from this panel.",
+            "actions": "Actions",
+            "uploadArtwork": "Upload Artwork",
+            "cancelOrder": "Cancel Order"
+        },
+        "points": {
+            "title": "Points",
+            "tierName": "Bumper Boss",
+            "lastTierUpgrade": "Last Tier Upgrade",
+            "pointsUnit": "points",
+            "logs": {
+                "earned": "Points Earned (Order # 12405077220)",
+                "used": "Points Used (Order # 12405077220)",
+                "quest": "Sticker Quest (Sticker Explorer)"
+            }
+        },
+        "reviews": {
+            "title": "Reviews",
+            "reviewedOn": "Reviewed on",
+            "rating": "Rating",
+            "items": {
+                "firstImpression": {
+                    "title": "First Impression is the best!",
+                    "text": "The print quality is excellent with vibrant colors and crisp details."
+                },
+                "greatQuality": {
+                    "title": "Great quality and fast delivery",
+                    "text": "The sticker quality exceeded expectations and arrived in good condition."
+                }
+            }
+        },
+        "quoteRequests": {
+            "title": "Quote Requests",
+            "selectDate": "Select Date",
+            "filters": "Filters",
+            "orderLabel": "Order",
+            "quoteDate": "Quote Date",
+            "status": {
+                "inReview": "In Review",
+                "pending": "Pending"
+            },
+            "sampleMessage": "Hi Good Day! I am trying out this sticker to print on a white base.",
+            "requestLabel": "Request",
+            "sampleRequestPrefix": "Transparent Sticker",
+            "messagePlaceholder": "Enter message here...",
+            "send": "Send"
+        }
+    }
+}

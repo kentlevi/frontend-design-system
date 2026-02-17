@@ -1,0 +1,230 @@
+<script setup lang="ts">
+const { t } = useI18n();
+
+const props = withDefaults(
+    defineProps<{
+        modelValue: boolean;
+        email?: string;
+    }>(),
+    {
+        email: 'joy_love1990@gmail.com',
+    }
+);
+
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: boolean): void;
+}>();
+
+const codeInputs = ['0', '0', '0', '0'];
+
+function closeModal() {
+    emit('update:modelValue', false);
+}
+</script>
+
+<template>
+    <UiModal
+        :model-value="modelValue"
+        width="760px"
+        @update:model-value="emit('update:modelValue', $event)"
+    >
+        <template #header>
+            <span class="auth-verify-hidden-title">
+                {{ t('auth.login.verification.title') }}
+            </span>
+        </template>
+
+        <div class="auth-verify-modal">
+            <div class="auth-verify-head">
+                <UiIcon
+                    name="strong-shield"
+                    :size="46"
+                    color="var(--brand-primary)"
+                    class="auth-verify-icon"
+                />
+
+                <div class="auth-verify-copy">
+                    <h3 class="auth-verify-title">
+                        {{ t('auth.login.verification.title') }}
+                    </h3>
+                    <p class="auth-verify-text">
+                        {{ t('auth.login.verification.messagePrefix') }}
+                        <strong>{{ props.email }}</strong
+                        >{{ t('auth.login.verification.messageSuffix') }}
+                    </p>
+                </div>
+            </div>
+
+            <p class="auth-verify-label">
+                {{ t('auth.login.verification.enterCode') }}
+            </p>
+
+            <div class="auth-verify-grid">
+                <div
+                    v-for="(value, index) in codeInputs"
+                    :key="`verification-code-${index}`"
+                    class="auth-verify-box"
+                >
+                    {{ value }}
+                </div>
+            </div>
+
+            <UiButton
+                variant="filled"
+                tone="neutral"
+                size="lg"
+                class="auth-verify-submit"
+                @click="closeModal"
+            >
+                {{ t('auth.login.verification.verify') }}
+            </UiButton>
+
+            <p class="auth-verify-resend">
+                {{ t('auth.login.verification.resendPrefix') }}
+                <button type="button" class="auth-verify-resend-btn">
+                    {{ t('auth.login.verification.resendCta') }}
+                </button>
+                {{ t('auth.login.verification.resendSuffix') }}
+            </p>
+        </div>
+    </UiModal>
+</template>
+
+<style scoped lang="scss">
+.auth-verify-hidden-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+.auth-verify-modal {
+    padding: 4px 22px 14px;
+}
+
+.auth-verify-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 14px;
+}
+
+.auth-verify-icon {
+    margin-top: 2px;
+}
+
+.auth-verify-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.auth-verify-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+}
+
+.auth-verify-text {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.9;
+
+    strong {
+        color: #c3a700;
+        font-weight: 700;
+    }
+}
+
+.auth-verify-label {
+    margin: 26px 0 14px;
+    color: var(--text-primary);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.auth-verify-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.auth-verify-box {
+    height: 82px;
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    background: var(--contrast-light);
+    color: #a6a6a6;
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+}
+
+.auth-verify-submit {
+    width: 100%;
+    margin-top: 18px;
+    border-radius: 22px;
+    font-size: 38px;
+    box-shadow: none;
+}
+
+.auth-verify-resend {
+    margin: 14px 0 0;
+    color: var(--text-secondary);
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+.auth-verify-resend-btn {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--text-primary);
+    text-decoration: underline;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .auth-verify-modal {
+        padding: 0 4px 8px;
+    }
+
+    .auth-verify-title {
+        font-size: 32px;
+    }
+
+    .auth-verify-label {
+        margin-top: 18px;
+        font-size: 20px;
+    }
+
+    .auth-verify-grid {
+        gap: 10px;
+    }
+
+    .auth-verify-box {
+        height: 56px;
+        font-size: 32px;
+    }
+
+    .auth-verify-submit {
+        font-size: 20px;
+    }
+
+    .auth-verify-resend {
+        font-size: 16px;
+    }
+}
+</style>

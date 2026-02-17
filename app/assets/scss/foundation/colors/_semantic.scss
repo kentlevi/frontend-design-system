@@ -1,0 +1,50 @@
+@use '../../brand/colors' as brand;
+
+$bg-page: brand.$white;
+$bg-surface: brand.$white;
+$bg-muted: brand.$gray-30;
+$bg-inverse: brand.$abyss-100;
+
+$text-primary: brand.$gray-100;
+$text-secondary: brand.$gray-80;
+$text-muted: brand.$gray-60;
+$text-inverse: brand.$white;
+
+$border-default: brand.$gray-40;
+$border-strong: brand.$gray-60;
+$border-inverse: brand.$abyss-70;
+
+$brand-primary: brand.$gold-base;
+$brand-primary-hover: brand.$gold-60;
+$brand-primary-active: brand.$gold-70;
+
+$brand-secondary: brand.$abyss-base;
+$brand-accent: brand.$azure-base;
+
+$success: brand.$success-60;
+$success-bg: brand.$success-10;
+
+$warning: brand.$warning-50;
+$warning-bg: brand.$warning-10;
+
+$error: brand.$error-60;
+$error-bg: brand.$error-10;
+
+$link-color: $brand-primary;
+$link-hover: $brand-primary-hover;
+$focus-ring: brand.$azure-50;
+
+$surface-default: $bg-surface;
+$surface-subtle: $bg-muted;
+$surface-raised: brand.$gray-40;
+$surface-inverse: $bg-inverse;
+
+$contrast-light: brand.$white;
+$contrast-dark: brand.$gray-100;
+
+$text-disabled: brand.$gray-50;
+$bg-disabled: brand.$gray-30;
+$border-disabled: brand.$gray-40;
+
+$overlay-backdrop: rgba(0, 0, 0, 0.5);
+$overlay-soft: rgba(0, 0, 0, 0.2);

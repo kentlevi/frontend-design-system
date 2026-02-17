@@ -1,0 +1,138 @@
+.guide-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(228, 187, 54, 0.14) 0%,
+            rgba(228, 187, 54, 0) 28%
+        ),
+        linear-gradient(180deg, #f8fafc 0%, #f3f6fb 100%);
+}
+
+.guide-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+
+    background: linear-gradient(180deg, var(--contrast-light) 0%, #f8fafc 100%);
+    border-right: 1px solid var(--border-default);
+    padding: 28px 18px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    overflow-y: auto;
+}
+
+.guide-brand {
+    line-height: 1.2;
+}
+
+.guide-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.guide-heading {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.guide-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.guide-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.guide-nav-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 10px 6px;
+}
+
+.guide-link {
+    position: relative;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition:
+        transform 0.15s ease,
+        color 0.15s ease,
+        background-color 0.15s ease,
+        box-shadow 0.15s ease;
+
+    &:hover {
+        background: rgba(17, 24, 39, 0.04);
+        color: var(--text-primary);
+        transform: translateX(2px);
+    }
+
+    &.is-active {
+        background: var(--brand-secondary);
+        color: var(--contrast-light);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+    }
+
+    &.is-active::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 18px;
+        border-radius: 99px;
+        background: var(--brand-primary);
+    }
+}
+
+.guide-content {
+    padding: 40px 48px 56px;
+}
+
+@media (max-width: 1100px) {
+    .guide-layout {
+        grid-template-columns: 248px 1fr;
+    }
+
+    .guide-content {
+        padding: 32px;
+    }
+}
+
+@media (max-width: 860px) {
+    .guide-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .guide-sidebar {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border-default);
+    }
+
+    .guide-nav {
+        gap: 14px;
+    }
+
+    .guide-content {
+        padding: 24px 18px 40px;
+    }
+}

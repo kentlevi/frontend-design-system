@@ -1,0 +1,27 @@
+@use '../../brand/typography' as brand;
+
+$font-base: brand.$font-primary;
+
+$font-size-xs: brand.$body-xs;
+$font-size-sm: brand.$body-sm;
+$font-size-base: brand.$body-md;
+$font-size-lg: brand.$body-lg;
+$font-size-xl: brand.$body-xl;
+
+$font-size-2xl: brand.$h6-w;
+$font-size-3xl: brand.$h5-w;
+$font-size-4xl: brand.$h4-w;
+$font-size-5xl: brand.$h3-w;
+$font-size-6xl: brand.$h2-w;
+
+$heading-1: brand.$h1-w;
+$heading-2: brand.$h2-w;
+$heading-3: brand.$h3-w;
+$heading-4: brand.$h4-w;
+$heading-5: brand.$h5-w;
+$heading-6: brand.$h6-w;
+
+$body-base: brand.$body-md;
+$body-large: brand.$body-lg;
+$body-small: brand.$body-sm;
+$body-xs: brand.$body-xs;

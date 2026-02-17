@@ -1,0 +1,111 @@
+{
+    "home": {
+        "seo": {
+            "title": "Musticker - Custom Stickers",
+            "description": "Fast, high-quality custom stickers with reliable turnaround."
+        },
+        "header": {
+            "primaryNav": "Primary",
+            "search": "Search",
+            "cart": "Cart",
+            "account": "Account",
+            "accountMenu": "Account Menu",
+            "login": "Login",
+            "register": "Register",
+            "accountLinks": {
+                "profile": "Profile",
+                "addressBook": "Address Book",
+                "orders": "My Orders",
+                "gallery": "Gallery",
+                "points": "Points",
+                "coupons": "Coupons",
+                "reviews": "My Reviews",
+                "quoteRequests": "Quote Requests",
+                "gettingStarted": "Getting Started",
+                "signOut": "Sign Out"
+            },
+            "nav": {
+                "stickers": "Stickers",
+                "rollStickers": "Roll Stickers",
+                "sheetStickers": "Sheet Stickers"
+            },
+            "locale": {
+                "aria": "Local preferences",
+                "title": "Local preferences",
+                "close": "Close local preferences",
+                "en": "English (USD)",
+                "kr": "Korean (KRW)"
+            }
+        },
+        "hero": {
+            "title": "The sticker that makes it click, every time.",
+            "subtitle": "Blazing fast. Insane quality.",
+            "cta": "Order Now"
+        },
+        "productTypes": {
+            "dieCut": "Die Cut Stickers",
+            "dieCutRoll": "Die Cut Roll Stickers",
+            "sheet": "Sticker Sheet",
+            "hologram": "Hologram Stickers",
+            "vinyl": "Vinyl Lettering"
+        },
+        "feature": {
+            "titleLine1": "Fast turnaround.",
+            "titleLine2": "Memorable quality.",
+            "text": "Upload your file, get a design proposal instantly, and we start production the moment you approve. Urgent project? No problem. Every sticker gets meticulous attention to color, lines, and finish so good you will say, \"I will definitely use them again.\" Fast. Flawless. Finished."
+        },
+        "reviews": {
+            "titleLine1": "499 Client Reviews",
+            "titleLine2": "Satisfaction Guaranteed.",
+            "badge": "1 Month Use",
+            "items": {
+                "excellent": {
+                    "title": "Excellent Service",
+                    "text": "From design to printing, it was fast, and the sticker quality is excellent. I will definitely order more in the small size."
+                },
+                "football": {
+                    "title": "Football Stickers",
+                    "text": "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they buy more or recommend them to fellow football fans."
+                },
+                "print": {
+                    "title": "Great Print Quality",
+                    "text": "Colors were sharp and the material feels durable. Turnaround was exactly as promised."
+                },
+                "delivery": {
+                    "title": "Fast Delivery",
+                    "text": "Production moved quickly after approval and shipping was on time. The final stickers looked exactly like the mockup."
+                }
+            }
+        },
+        "guarantees": {
+            "quality": {
+                "title": "100% Quality Guaranteed",
+                "text": "When problems arise, we take full responsibility, including reprints or refunds. No excuses, just solutions."
+            },
+            "shipping": {
+                "title": "Made today · Shipped tomorrow",
+                "text": "Production starts as soon as your design is approved. The faster you approve, the sooner it ships, often the next day."
+            },
+            "freeDelivery": {
+                "title": "Free shipping over 50,000 won",
+                "text": "Our standard shipping fee is 3,000 won. To make your shopping better, orders over 50,000 won qualify for free shipping."
+            }
+        },
+        "cta": {
+            "titleLine1": "First time ordering? No worries,",
+            "titleLine2": "we've got you covered.",
+            "primary": "Order Now!",
+            "secondary": "Production Inquiry"
+        },
+        "footer": {
+            "terms": "Terms of Use",
+            "privacy": "Privacy Policy",
+            "inquiry": "1:1 Inquiry",
+            "faq": "Frequently Asked Questions",
+            "meta1": "Business Registration Number: 877-88-03313 Mall-Order Business Registration Number: 2025-Busan Haeundae-000",
+            "meta2": "CEO: Yeo Il-seok Address: Unit 1014, Ocean Tower, 203 Haeundae Beach Road, Haeundae-gu, Busan Metropolitan City",
+            "hours": "9:00 AM to 6:00 PM",
+            "closed": "(Closed on Saturdays and public holidays)"
+        }
+    }
+}

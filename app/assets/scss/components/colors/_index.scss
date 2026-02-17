@@ -1,0 +1,42 @@
+@use '../../foundation' as f;
+
+.ui-color {
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-color-swatch {
+    width: 100%;
+    height: 64px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        outline-color 0.15s ease;
+    will-change: transform;
+}
+
+.ui-color:focus-visible .ui-color-swatch {
+    outline: 2px solid f.$focus-ring;
+    outline-offset: 2px;
+}
+
+.ui-color-label {
+    font-size: 11px;
+    font-family: monospace;
+    text-align: center;
+    opacity: 0.7;
+}
+
+.ui-color-var,
+.ui-color-hex {
+    font-size: 11px;
+    font-family: monospace;
+    text-align: center;
+}
+
+.ui-color-var,
+.ui-color-hex {
+    font-weight: 600;
+}
