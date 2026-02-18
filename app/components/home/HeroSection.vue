@@ -6,14 +6,12 @@ const { t } = useI18n();
     <section class="home-hero">
         <div class="home-hero-container">
             <div class="home-hero-art">
-                <div class="home-hero-art-sheet">
-                    <UiLogo
-                        name="musticker"
-                        variant="mark"
-                        color="colored"
-                        :size="72"
-                    />
-                </div>
+                <img
+                    class="home-hero-art-image"
+                    src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
+                    :alt="t('home.hero.title')"
+                    loading="lazy"
+                />
             </div>
 
             <div class="home-hero-content">
@@ -50,52 +48,20 @@ const { t } = useI18n();
     }
 
     .home-hero-art {
-        width: 300px;
-        height: 210px;
-        border-radius: 24px;
-        background: linear-gradient(155deg, #f3f3f3 0%, #e8e8e8 100%);
-        border: 2px solid #303548;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        justify-self: end;
-        position: relative;
-
-        &::before,
-        &::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            background: #252b3f;
-        }
-
-        &::before {
-            width: 70px;
-            height: 70px;
-            top: -18px;
-            left: 36px;
-        }
-
-        &::after {
-            width: 22px;
-            height: 22px;
-            right: 26px;
-            bottom: 20px;
-            background: #f2dc5c;
-            border: 2px solid #252b3f;
-        }
-    }
-
-    .home-hero-art-sheet {
-        width: 130px;
-        height: 130px;
-        border-radius: 18px;
-        background: #ffffff;
-        border: 2px solid #2c3247;
+        width: 280px;
+        height: 320px;
         display: grid;
         place-items: center;
-        transform: rotate(-18deg);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        justify-self: end;
+    }
+
+    .home-hero-art-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        position: relative;
+        z-index: 1;
     }
 
     .home-hero-content {

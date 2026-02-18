@@ -16,13 +16,26 @@ const mockUser = useCookie<{
 });
 
 const navLinks = computed(() => [
-    { key: 'stickers', label: t('home.header.nav.stickers'), href: '#' },
-    { key: 'roll', label: t('home.header.nav.rollStickers'), href: '#' },
-    { key: 'sheet', label: t('home.header.nav.sheetStickers'), href: '#' },
+    {
+        key: 'stickers',
+        label: t('home.header.nav.stickers'),
+        to: localePath('/stickers'),
+    },
+    {
+        key: 'roll',
+        label: t('home.header.nav.rollStickers'),
+        to: localePath('/roll-stickers'),
+    },
+    {
+        key: 'sheet',
+        label: t('home.header.nav.sheetStickers'),
+        to: localePath('/sheet-stickers'),
+    },
 ]);
 
 const route = useRoute();
 const accountOpen = ref(false);
+const accountPinnedOpen = ref(false);
 const accountMenuRef = ref<HTMLElement | null>(null);
 const localeModalOpen = ref(false);
 const selectedLocale = computed<FlagCode>(() =>
@@ -98,14 +111,26 @@ const accountTransitionName = computed(() =>
 );
 
 function toggleAccountMenu() {
-    accountOpen.value = !accountOpen.value;
-}
+    if (accountOpen.value && accountPinnedOpen.value) {
+        closeAccountMenu();
+        return;
+    }
 
-function openAccountMenu() {
+    accountPinnedOpen.value = true;
     accountOpen.value = true;
 }
 
 function closeAccountMenu() {
+    accountPinnedOpen.value = false;
+    accountOpen.value = false;
+}
+
+function onAccountMouseEnter() {
+    accountOpen.value = true;
+}
+
+function onAccountMouseLeave() {
+    if (accountPinnedOpen.value) return;
     accountOpen.value = false;
 }
 
@@ -170,14 +195,16 @@ onBeforeUnmount(() => {
                 class="home-header-nav"
                 :aria-label="t('home.header.primaryNav')"
             >
-                <a
+                <NuxtLink
                     v-for="link in navLinks"
                     :key="link.key"
-                    :href="link.href"
+                    :to="link.to"
                     class="home-header-link"
+                    active-class="is-active"
+                    exact-active-class="is-active"
                 >
                     {{ link.label }}
-                </a>
+                </NuxtLink>
             </nav>
 
             <div class="home-header-tools">
@@ -219,8 +246,8 @@ onBeforeUnmount(() => {
                 <div
                     ref="accountMenuRef"
                     class="home-header-account-wrap"
-                    @mouseenter="openAccountMenu"
-                    @mouseleave="closeAccountMenu"
+                    @mouseenter="onAccountMouseEnter"
+                    @mouseleave="onAccountMouseLeave"
                 >
                     <button
                         type="button"
@@ -350,7 +377,7 @@ onBeforeUnmount(() => {
                         :aria-label="t('home.header.locale.close')"
                         @click="closeLocaleModal"
                     >
-                        x
+                        <UiIcon name="strong-times" :size="24" color="#000000" />
                     </button>
 
                     <h3 class="home-locale-title">
@@ -383,7 +410,7 @@ onBeforeUnmount(() => {
     .home-header-container {
         max-width: 1280px;
         margin: 0 auto;
-        height: 74px;
+        height: 96px;
         padding: 0 24px;
         display: grid;
         grid-template-columns: 200px 1fr 260px;
@@ -393,22 +420,49 @@ onBeforeUnmount(() => {
     .home-header-logo {
         display: inline-flex;
         align-items: center;
+        justify-self: start;
+        width: fit-content;
     }
 
     .home-header-nav {
         display: flex;
         justify-content: center;
-        gap: 62px;
+        gap: 40px;
     }
 
     .home-header-link {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 600;
+        line-height: 28px;
         text-decoration: none;
         color: #1f2433;
+        position: relative;
+        padding: 10px 24px;
+        border-radius: 14px;
+        transition:
+            background-color 220ms ease,
+            color 220ms ease;
 
         &:hover {
-            opacity: 0.72;
+            background: var(--gold-10);
+            opacity: 1;
+        }
+
+        &.is-active {
+            background: var(--gold-10);
+            opacity: 1;
+        }
+
+        &.is-active::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            transform: translateX(-50%) rotate(45deg);
+            width: 13px;
+            height: 13px;
+            background: var(--gold-10);
+            border-radius: 2px;
         }
     }
 
@@ -682,9 +736,8 @@ onBeforeUnmount(() => {
         height: 24px;
         border: 0;
         background: transparent;
-        color: #9a9ea8;
-        font-size: 22px;
-        line-height: 1;
+        display: grid;
+        place-items: center;
         cursor: pointer;
     }
 

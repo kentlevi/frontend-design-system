@@ -76,26 +76,20 @@ async function submitRegister() {
     <section class="auth-register">
         <div class="auth-register-top">
             <div
-                class="auth-register-illustration auth-register-illustration-left"
-            >
-                <UiLogo
-                    name="musticker"
-                    variant="mark"
-                    color="colored"
-                    :size="86"
+                class="auth-register-illustration auth-register-illustration-left auth-illustration-enter auth-illustration-enter-left">
+                <img
+                    class="auth-register-kid-falling"
+                    src="/illustrations/products/sticker-kids/kid-falling-sticker.svg"
+                    :alt="t('auth.register.title')"
+                    loading="lazy"
                 />
             </div>
 
-            <div class="auth-register-shell">
+            <div class="auth-register-shell auth-shell-enter">
                 <div class="auth-register-card">
                     <div class="auth-register-head">
-                        <UiLogo
-                            name="musticker"
-                            variant="mark"
-                            color="colored"
-                            :size="40"
-                            class="auth-register-head-logo"
-                        />
+                        <UiLogo name="musticker" variant="mark" color="colored" :size="40"
+                            class="auth-register-head-logo" />
                         <h1 class="auth-register-title">
                             {{ t('auth.register.title') }}
                         </h1>
@@ -109,19 +103,10 @@ async function submitRegister() {
                             <label class="auth-register-label">
                                 {{ t('auth.register.firstName') }}
                             </label>
-                            <input
-                                v-model="firstName"
-                                type="text"
-                                class="auth-register-input"
-                                :class="{
-                                    'has-error': Boolean(firstNameError),
-                                }"
-                                :placeholder="t('auth.register.enterFirstName')"
-                            />
-                            <p
-                                v-if="firstNameError"
-                                class="auth-register-error"
-                            >
+                            <input v-model="firstName" type="text" class="auth-register-input" :class="{
+                                'has-error': Boolean(firstNameError),
+                            }" :placeholder="t('auth.register.enterFirstName')" />
+                            <p v-if="firstNameError" class="auth-register-error">
                                 {{ firstNameError }}
                             </p>
                         </div>
@@ -133,12 +118,8 @@ async function submitRegister() {
                                     ({{ t('auth.register.optional') }})
                                 </span>
                             </label>
-                            <input
-                                v-model="lastName"
-                                type="text"
-                                class="auth-register-input"
-                                :placeholder="t('auth.register.enterLastName')"
-                            />
+                            <input v-model="lastName" type="text" class="auth-register-input"
+                                :placeholder="t('auth.register.enterLastName')" />
                         </div>
                     </div>
 
@@ -146,13 +127,9 @@ async function submitRegister() {
                         <label class="auth-register-label">
                             {{ t('auth.register.email') }}
                         </label>
-                        <input
-                            v-model="email"
-                            type="email"
-                            class="auth-register-input"
+                        <input v-model="email" type="email" class="auth-register-input"
                             :class="{ 'has-error': Boolean(emailError) }"
-                            :placeholder="t('auth.register.enterEmail')"
-                        />
+                            :placeholder="t('auth.register.enterEmail')" />
                         <p v-if="emailError" class="auth-register-error">
                             {{ emailError }}
                         </p>
@@ -163,28 +140,15 @@ async function submitRegister() {
                             {{ t('auth.register.password') }}
                         </label>
                         <div class="auth-register-password-wrap">
-                            <input
-                                v-model="password"
-                                :type="showPassword ? 'text' : 'password'"
-                                class="auth-register-input"
-                                :class="{ 'has-error': Boolean(passwordError) }"
-                                :placeholder="t('auth.register.enterPassword')"
-                            />
-                            <button
-                                type="button"
-                                class="auth-register-password-toggle"
-                                :aria-label="t('auth.login.togglePassword')"
-                                @click="showPassword = !showPassword"
-                            >
-                                <UiIcon
-                                    :name="
-                                        showPassword
-                                            ? 'regular-eye'
-                                            : 'regular-eye-slash'
-                                    "
-                                    :size="18"
-                                    color="var(--text-muted)"
-                                />
+                            <input v-model="password" :type="showPassword ? 'text' : 'password'"
+                                class="auth-register-input" :class="{ 'has-error': Boolean(passwordError) }"
+                                :placeholder="t('auth.register.enterPassword')" />
+                            <button type="button" class="auth-register-password-toggle"
+                                :aria-label="t('auth.login.togglePassword')" @click="showPassword = !showPassword">
+                                <UiIcon :name="showPassword
+                                        ? 'regular-eye'
+                                        : 'regular-eye-slash'
+                                    " :size="18" color="var(--text-muted)" />
                             </button>
                         </div>
                         <p v-if="passwordError" class="auth-register-error">
@@ -214,13 +178,8 @@ async function submitRegister() {
                         <span>{{ t('auth.register.promoOptIn') }}</span>
                     </label>
 
-                    <UiButton
-                        variant="filled"
-                        tone="neutral"
-                        size="lg"
-                        class="auth-register-submit"
-                        @click="submitRegister"
-                    >
+                    <UiButton variant="filled" tone="neutral" size="lg" class="auth-register-submit"
+                        @click="submitRegister">
                         {{ t('auth.register.createAccount') }}
                     </UiButton>
 
@@ -234,13 +193,12 @@ async function submitRegister() {
             </div>
 
             <div
-                class="auth-register-illustration auth-register-illustration-right"
-            >
-                <UiLogo
-                    name="musticker"
-                    variant="mark"
-                    color="colored"
-                    :size="86"
+                class="auth-register-illustration auth-register-illustration-right auth-illustration-enter auth-illustration-enter-right">
+                <img
+                    class="auth-register-kid-standing"
+                    src="/illustrations/products/sticker-kids/kid-standing-sticker.svg"
+                    :alt="t('auth.register.title')"
+                    loading="lazy"
                 />
             </div>
         </div>
@@ -259,7 +217,7 @@ async function submitRegister() {
         top: 0;
         left: 0;
         right: 0;
-        height: 540px;
+        height: 380px;
         background: var(--brand-primary);
         z-index: 0;
     }
@@ -270,8 +228,7 @@ async function submitRegister() {
         padding: 42px 24px 100px;
         display: grid;
         grid-template-columns:
-            minmax(150px, 240px) min(760px, calc(100vw - 180px))
-            minmax(150px, 240px);
+            minmax(150px, 240px) min(760px, calc(100vw - 180px)) minmax(150px, 240px);
         align-items: start;
         justify-content: center;
         gap: 34px;
@@ -280,13 +237,29 @@ async function submitRegister() {
     }
 
     .auth-register-illustration {
-        width: 190px;
-        height: 260px;
-        border-radius: 24px;
-        border: 2px solid var(--text-primary);
-        background: var(--contrast-light);
-        display: grid;
-        place-items: center;
+        width: 100%;
+        height: 400px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+
+        img {
+            width: auto;
+            height: 100%;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+        }
+    }
+
+    .auth-register-kid-falling {
+        height: 296px !important;
+        width: auto;
+    }
+
+    .auth-register-kid-standing {
+        height: 400px !important;
+        width: auto;
     }
 
     .auth-register-illustration-left {
@@ -295,19 +268,21 @@ async function submitRegister() {
 
     .auth-register-shell {
         width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     .auth-register-card {
         width: 100%;
-        max-width: 760px;
+        max-width: 588px;
         border: 1px solid var(--border-default);
         background: var(--contrast-light);
         border-radius: 22px;
         box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
-        padding: 40px 36px;
+        padding: 42px 54px 40px;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 24px;
     }
 
     .auth-register-head {
@@ -322,8 +297,8 @@ async function submitRegister() {
 
     .auth-register-title {
         margin: 0;
-        font-size: 52px;
-        line-height: 1.08;
+        font-size: 28px;
+        line-height: 40px;
         color: var(--text-primary);
     }
 
@@ -331,7 +306,7 @@ async function submitRegister() {
         margin: 0;
         color: var(--text-secondary);
         font-size: 14px;
-        line-height: 1.55;
+        line-height: 24px;
     }
 
     .auth-register-grid {
@@ -460,7 +435,8 @@ async function submitRegister() {
         }
 
         .auth-register-title {
-            font-size: 38px;
+            font-size: 28px;
+            line-height: 40px;
         }
 
         .auth-register-grid {
@@ -469,3 +445,4 @@ async function submitRegister() {
     }
 }
 </style>
+

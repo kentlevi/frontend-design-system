@@ -103,6 +103,9 @@ function closeModal() {
 
 .auth-verify-modal {
     padding: 4px 22px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .auth-verify-head {
@@ -113,7 +116,7 @@ function closeModal() {
 }
 
 .auth-verify-icon {
-    margin-top: 2px;
+    margin-top: 0;
 }
 
 .auth-verify-copy {
@@ -144,7 +147,7 @@ function closeModal() {
 }
 
 .auth-verify-label {
-    margin: 26px 0 14px;
+    margin: 0;
     color: var(--text-primary);
     font-size: 34px;
     font-weight: 600;
@@ -172,14 +175,14 @@ function closeModal() {
 
 .auth-verify-submit {
     width: 100%;
-    margin-top: 18px;
+    margin-top: 0;
     border-radius: 22px;
     font-size: 38px;
     box-shadow: none;
 }
 
 .auth-verify-resend {
-    margin: 14px 0 0;
+    margin: 0;
     color: var(--text-secondary);
     font-size: 30px;
     line-height: 1.2;
@@ -199,6 +202,7 @@ function closeModal() {
 @media (max-width: 900px) {
     .auth-verify-modal {
         padding: 0 4px 8px;
+        gap: 12px;
     }
 
     .auth-verify-title {
@@ -206,7 +210,7 @@ function closeModal() {
     }
 
     .auth-verify-label {
-        margin-top: 18px;
+        margin-top: 0;
         font-size: 20px;
     }
 

@@ -151,23 +151,26 @@ function openForgotPasswordModal() {
 <template>
     <section class="auth-login">
         <div class="auth-login-top">
-            <div class="auth-login-illustration auth-login-illustration-left">
-                <UiLogo
-                    name="musticker"
-                    variant="mark"
-                    color="colored"
-                    :size="86"
+            <div
+                class="auth-login-illustration auth-login-illustration-left auth-illustration-enter auth-illustration-enter-left"
+            >
+                <img
+                    src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
+                    :alt="t('auth.login.title')"
+                    loading="lazy"
                 />
             </div>
 
-            <div class="auth-login-shell">
+            <div class="auth-login-shell auth-shell-enter">
                 <div class="auth-login-card">
-                    <LoginHeader />
+                    <div class="auth-login-intro">
+                        <LoginHeader />
 
-                    <LoginModeSwitch
-                        :member-type="memberType"
-                        @update:member-type="setMemberType"
-                    />
+                        <LoginModeSwitch
+                            :member-type="memberType"
+                            @update:member-type="setMemberType"
+                        />
+                    </div>
 
                     <LoginMemberForm
                         v-if="!isNonMember"
@@ -208,12 +211,13 @@ function openForgotPasswordModal() {
                 </div>
             </div>
 
-            <div class="auth-login-illustration auth-login-illustration-right">
-                <UiLogo
-                    name="musticker"
-                    variant="mark"
-                    color="colored"
-                    :size="86"
+            <div
+                class="auth-login-illustration auth-login-illustration-right auth-illustration-enter auth-illustration-enter-right"
+            >
+                <img
+                    src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
+                    :alt="t('auth.login.title')"
+                    loading="lazy"
                 />
             </div>
         </div>
@@ -238,7 +242,7 @@ function openForgotPasswordModal() {
         top: 0;
         left: 0;
         right: 0;
-        height: 540px;
+        height: 380px;
         background: var(--brand-primary);
         z-index: 0;
     }
@@ -259,13 +263,19 @@ function openForgotPasswordModal() {
     }
 
     .auth-login-illustration {
-        width: 190px;
-        height: 260px;
-        border-radius: 24px;
-        border: 2px solid var(--text-primary);
-        background: var(--contrast-light);
-        display: grid;
-        place-items: center;
+        width: 100%;
+        height: 320px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+
+        img {
+            width: auto;
+            height: 100%;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+        }
     }
 
     .auth-login-illustration-left {
@@ -277,6 +287,7 @@ function openForgotPasswordModal() {
         width: 100%;
         display: flex;
         align-items: flex-start;
+        justify-content: center;
     }
 
     .auth-login-card {
@@ -286,27 +297,74 @@ function openForgotPasswordModal() {
         box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
         padding: 42px 54px 40px;
         width: 100%;
-        max-width: 760px;
+        max-width: 588px;
         justify-self: center;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .auth-login-intro {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .auth-login-header {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .auth-login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .auth-login-inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .auth-login-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .auth-login-social-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .auth-login-social-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
     .auth-login-title {
         margin: 0;
         text-align: center;
         color: var(--text-primary);
-        font-size: 52px;
-        line-height: 1.1;
+        font-size: 28px;
+        line-height: 40px;
     }
 
     .auth-login-subtitle {
-        margin: 12px 0 28px;
+        margin: 0;
         text-align: center;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         font-size: 14px;
+        line-height: 24px;
 
         a {
             color: var(--text-primary);
             font-weight: 600;
+            text-decoration: underline;
         }
     }
 
@@ -316,7 +374,6 @@ function openForgotPasswordModal() {
         border: 1px solid var(--brand-primary);
         border-radius: 999px;
         overflow: hidden;
-        margin-bottom: 20px;
 
         button {
             height: 50px;
@@ -335,14 +392,13 @@ function openForgotPasswordModal() {
 
     .auth-login-label {
         display: block;
-        margin: 14px 0 8px;
+        margin: 0;
         font-size: 14px;
         font-weight: 600;
         color: var(--text-primary);
     }
 
     .auth-login-label-row {
-        margin-top: 14px;
         display: flex;
         align-items: baseline;
         justify-content: space-between;
@@ -393,18 +449,17 @@ function openForgotPasswordModal() {
     }
 
     .auth-login-inline {
-        margin-top: 12px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 13px;
+    }
 
-        a,
-        .auth-login-link-button {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
+    .auth-login-inline a,
+    .auth-login-inline .auth-login-link-button {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 600;
     }
 
     .auth-login-link-button {
@@ -424,45 +479,46 @@ function openForgotPasswordModal() {
 
     .auth-login-submit {
         width: 100%;
-        margin-top: 18px;
         border-radius: 16px;
         box-shadow: none;
         font-size: 18px;
     }
 
     .auth-login-divider {
-        margin: 20px 0 16px;
+        margin: 0;
         display: flex;
         align-items: center;
         gap: 12px;
         color: var(--text-muted);
         font-size: 13px;
 
-        &::before,
-        &::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border-default);
+        span {
+            padding: 0 40px;
         }
+    }
+
+    .auth-login-divider::before,
+    .auth-login-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-default);
     }
 
     .auth-login-social {
         width: 100%;
         height: 44px;
         border: 1px solid var(--border-default);
-        border-radius: 14px;
+        border-radius: 16px;
         background: var(--contrast-light);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         color: var(--text-primary);
         font-size: 14px;
-
-        & + .auth-login-social {
-            margin-top: 10px;
-        }
+        font-weight: 600;
+        line-height: 24px;
     }
 
     @media (max-width: 1100px) {
@@ -479,5 +535,7 @@ function openForgotPasswordModal() {
             font-size: 13px;
         }
     }
+
 }
 </style>
+

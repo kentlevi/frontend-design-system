@@ -1,0 +1,206 @@
+﻿{
+    "products":  {
+                     "selectedBanner":  "{name} selected",
+                     "changeProduct":  "Change product",
+                     "options":  {
+                                     "selectSize":  "Select your preferred size",
+                                     "unitMm":  "(unit: mm)",
+                                     "customSize":  "Custom Size",
+                                     "selectQuantity":  "Select your preferred quantity",
+                                     "customQuantity":  "Custom Quantity"
+                                 },
+                     "sizes":  {
+                                   "small30":  {
+                                                   "label":  "Small 30x30"
+                                               },
+                                   "medium75":  {
+                                                    "label":  "Medium 75x75"
+                                                },
+                                   "large100":  {
+                                                    "label":  "Large 100x100"
+                                                },
+                                   "extraLarge125":  {
+                                                         "label":  "Extra Large 125x125"
+                                                     }
+                               },
+                     "featureCards":  {
+                                          "small":  {
+                                                        "description":  "Great for small stickers on phones and helmets."
+                                                    },
+                                          "medium":  {
+                                                         "description":  "Perfect for tumblers, notebooks, and diaries."
+                                                     },
+                                          "large":  {
+                                                        "description":  "Ideal for prominent surfaces and product labels."
+                                                    },
+                                          "extraLarge":  {
+                                                             "description":  "Perfect size for cars, boxes, and tool cases."
+                                                         }
+                                      },
+                     "price":  {
+                                   "subtotal":  "Subtotal",
+                                   "discount":  "Discount",
+                                   "total":  "Total",
+                                   "benefitShipping":  "Free shipping over $50.00",
+                                   "benefitShipsTomorrow":  "Ships tomorrow after design approval",
+                                   "nextStep":  "Next Step"
+                               },
+                     "guarantees":  {
+                                        "madeToday":  {
+                                                          "title":  "Made today, shipped tomorrow",
+                                                          "text":  "Fast production after proof approval with predictable delivery."
+                                                      },
+                                        "proofReview":  {
+                                                            "title":  "Online Proof Review",
+                                                            "text":  "Approve your digital proof before we run the job."
+                                                        },
+                                        "durability":  {
+                                                           "title":  "Outstanding durability",
+                                                           "text":  "Water-resistant, long-lasting finish for daily use."
+                                                       }
+                                    },
+                     "story":  {
+                                   "timeless":  {
+                                                    "title":  "Timeless Perfection",
+                                                    "text":  "Vibrant colors from premium printing and thick material built to resist fading from sun and heat. Enjoy long-lasting quality from the moment you apply it."
+                                                },
+                                   "quickStick":  {
+                                                      "title":  "Quick to stick, easy to peel!",
+                                                      "text":  "Applies smoothly and peels cleanly without residue. Strong adhesive protects surfaces and removes with minimal effort."
+                                                  },
+                                   "preciseCut":  {
+                                                      "title":  "Precisely cut to match the design",
+                                                      "text":  "Upload your logo or artwork and we cut with precision around every shape, preserving small details and clean edges."
+                                                  }
+                               },
+                     "reviews":  {
+                                     "badge":  "Love it!",
+                                     "headline":  "499 Client Reviews, Satisfaction Guaranteed.",
+                                     "description":  "Real reviews, real photos, real satisfaction. See how our customers love their products.",
+                                     "cards":  {
+                                                   "glass":  {
+                                                                 "title":  "Perfect for Our Glass Door!",
+                                                                 "text":  "We put our logo sticker on our glass door and it looks amazing. Vibrant colors, precise cut, smooth adhesion."
+                                                             },
+                                                   "bike":  {
+                                                                "title":  "Vibrant and Durable on My Bike",
+                                                                "text":  "Got a custom sticker for my motorcycle and it fits perfectly. Colors are vibrant and the cut is precise."
+                                                            },
+                                                   "quality":  {
+                                                                   "title":  "Top-Quality Stickers Every Time!",
+                                                                   "text":  "I\u0027m impressed with this sticker brand. Designs are vibrant, cuts are precise, and they stick cleanly."
+                                                               },
+                                                   "holo":  {
+                                                                "title":  "Eye-Catching Hologram Effect",
+                                                                "text":  "Hologram colors shift beautifully under light. Thick, durable, and no residue after peeling."
+                                                            }
+                                               }
+                                 },
+                     "items":  {
+                                   "die-cut-sticker":  {
+                                                           "name":  "Die Cut Sticker",
+                                                           "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                       },
+                                   "circle-sticker":  {
+                                                          "name":  "Circle Sticker",
+                                                          "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                      },
+                                   "rectangle-sticker":  {
+                                                             "name":  "Rectangle Sticker",
+                                                             "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                         },
+                                   "square-sticker":  {
+                                                          "name":  "Square Sticker",
+                                                          "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                      },
+                                   "oval-sticker":  {
+                                                        "name":  "Oval Sticker",
+                                                        "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                    },
+                                   "rounded-sticker":  {
+                                                           "name":  "Rounded Sticker",
+                                                           "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                       },
+                                   "kiss-cut-sticker":  {
+                                                            "name":  "Kiss Cut Sticker",
+                                                            "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                        },
+                                   "sticker-sheet":  {
+                                                         "name":  "Sticker Sheet",
+                                                         "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                     },
+                                   "clear-sticker":  {
+                                                         "name":  "Clear Sticker",
+                                                         "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                     },
+                                   "hologram-sticker":  {
+                                                            "name":  "Hologram Sticker",
+                                                            "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                        },
+                                   "transfer-sticker":  {
+                                                            "name":  "Transfer Sticker",
+                                                            "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                        },
+                                   "vinyl-lettering":  {
+                                                           "name":  "Vinyl Lettering",
+                                                           "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                       },
+                                   "die-cut-roll":  {
+                                                        "name":  "Die-Cut Roll",
+                                                        "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                    },
+                                   "clear-roll":  {
+                                                      "name":  "Clear Roll",
+                                                      "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                  },
+                                   "circle-roll":  {
+                                                       "name":  "Circle Roll",
+                                                       "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                   },
+                                   "square-roll":  {
+                                                       "name":  "Square Roll",
+                                                       "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                   },
+                                   "rectangle-roll":  {
+                                                          "name":  "Rectangle Roll",
+                                                          "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                      },
+                                   "rounded-roll":  {
+                                                        "name":  "Rounded Roll",
+                                                        "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                    },
+                                   "oval-roll":  {
+                                                     "name":  "Oval Roll",
+                                                     "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                 },
+                                   "paper-roll":  {
+                                                      "name":  "Paper Roll",
+                                                      "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                  },
+                                   "die-cut-sheet":  {
+                                                         "name":  "Die-Cut Sheet",
+                                                         "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                     },
+                                   "circle-sheet":  {
+                                                        "name":  "Circle Sheet",
+                                                        "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                    },
+                                   "oval-sheet":  {
+                                                      "name":  "Oval Sheet",
+                                                      "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                  },
+                                   "square-sheet":  {
+                                                        "name":  "Square Sheet",
+                                                        "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                    },
+                                   "rectangle-sheet":  {
+                                                           "name":  "Rectangle Sheet",
+                                                           "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                       },
+                                   "rounded-sheet":  {
+                                                         "name":  "Rounded Sheet",
+                                                         "blurb":  "Premium print quality with clean edges and durable adhesive for daily use."
+                                                     }
+                               }
+                 }
+}

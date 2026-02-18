@@ -14,12 +14,22 @@ export default defineNuxtConfig({
             {
                 code: 'en',
                 name: 'English',
-                files: ['en/home.json', 'en/auth.json', 'en/account.json'],
+                files: [
+                    'en/home.json',
+                    'en/auth.json',
+                    'en/account.json',
+                    'en/products.json',
+                ],
             },
             {
                 code: 'kr',
                 name: 'Korean',
-                files: ['kr/home.json', 'kr/auth.json', 'kr/account.json'],
+                files: [
+                    'kr/home.json',
+                    'kr/auth.json',
+                    'kr/account.json',
+                    'kr/products.json',
+                ],
             },
         ],
 

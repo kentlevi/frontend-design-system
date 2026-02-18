@@ -107,7 +107,7 @@ onBeforeUnmount(() => {
                                 @click="closeModal"
                             >
                                 <UiIcon
-                                    name="regular-times"
+                                    name="strong-times"
                                     :size="24"
                                     color="#000000"
                                 />

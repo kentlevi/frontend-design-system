@@ -2,11 +2,17 @@
 const { t } = useI18n();
 
 const types = [
-    { key: 'dieCut', icon: 'strong-star' as const },
-    { key: 'dieCutRoll', icon: 'strong-ship' as const },
-    { key: 'sheet', icon: 'strong-shield' as const },
-    { key: 'hologram', icon: 'strong-stars' as const },
-    { key: 'vinyl', icon: 'strong-truck' as const },
+    { key: 'dieCut', image: '/illustrations/products/stickers/die-cut.svg' },
+    {
+        key: 'dieCutRoll',
+        image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
+    },
+    { key: 'sheet', image: '/illustrations/products/stickers/sheet.svg' },
+    { key: 'hologram', image: '/illustrations/products/stickers/hologram.svg' },
+    {
+        key: 'vinyl',
+        image: '/illustrations/products/stickers/vinyl-lettering.svg',
+    },
 ];
 </script>
 
@@ -19,7 +25,11 @@ const types = [
                 class="home-types-item"
             >
                 <div class="home-types-icon">
-                    <UiIcon :name="item.icon" :size="34" color="#25293a" />
+                    <img
+                        :src="item.image"
+                        :alt="t(`home.productTypes.${item.key}`)"
+                        loading="lazy"
+                    />
                 </div>
                 <p class="home-types-label">
                     {{ t(`home.productTypes.${item.key}`) }}
@@ -49,13 +59,19 @@ const types = [
     }
 
     .home-types-icon {
-        width: 72px;
-        height: 72px;
-        border-radius: 20px;
-        border: 1px solid #d8d8d8;
-        background: #f3f3f3;
+        width: 104px;
+        height: 86px;
         display: grid;
         place-items: center;
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
     }
 
     .home-types-label {

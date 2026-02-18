@@ -124,7 +124,12 @@ function submitReset() {
 .auth-forgot-header {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 24px;
+}
+
+.auth-forgot-logo {
+    flex: 0 0 auto;
 }
 
 .auth-forgot-title {
@@ -133,11 +138,6 @@ function submitReset() {
     line-height: 48px;
     letter-spacing: -0.02em;
     color: var(--text-primary);
-}
-
-.auth-forgot-logo {
-    width: 40px;
-    height: 40px;
 }
 
 .auth-forgot-body {

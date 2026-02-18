@@ -6,10 +6,16 @@ const { t } = useI18n();
 const year = new Date().getFullYear();
 const route = useRoute();
 const isAuthRoute = computed(() => route.path.startsWith('/auth'));
+const isProductRoute = computed(() =>
+    /\/(stickers|roll-stickers|sheet-stickers)(\/|$)/.test(route.path)
+);
 </script>
 
 <template>
-    <footer class="home-footer" :class="{ 'is-auth': isAuthRoute }">
+    <footer
+        class="home-footer"
+        :class="{ 'is-auth': isAuthRoute, 'is-product': isProductRoute }"
+    >
         <div v-if="isAuthRoute" class="home-footer-compact">
             <div class="home-footer-compact-left">
                 <span>&copy; GLOPHICS Corp. {{ year }}</span>
@@ -55,6 +61,16 @@ const isAuthRoute = computed(() => route.path.startsWith('/auth'));
 .home-footer {
     background: var(--bg-page);
     padding: 0 24px 0;
+
+    &.is-product {
+        padding: 0;
+
+        .home-footer-inner {
+            max-width: none;
+            border-radius: 0;
+            padding: 56px max(24px, calc((100vw - 1200px) / 2 + 58px)) 42px;
+        }
+    }
 
     &.is-auth {
         .home-footer-compact {
