@@ -41,7 +41,6 @@ const src = computed(() => `/social/${props.variant}/${props.name}.svg`);
             :height="resolvedSize"
             :alt="`${name} icon`"
             loading="lazy"
-            decoding="async"
-        />
+            decoding="async" class="c-om-po-ne-nt-s-u-i-s-oc-ia-li-co-n-img" />
     </component>
 </template>

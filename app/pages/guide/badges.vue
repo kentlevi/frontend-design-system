@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GuideCopy from '@/components/guide/GuideCopy.vue';
+import GuideBadgeBuilder from '@/components/guide/GuideBadgeBuilder.vue';
 import UiBadge from '@/components/ui/Badge.vue';
 
 import { useGuideBadges } from '@/composables/guide/useGuideBadges';
@@ -19,42 +20,26 @@ const { badgeVariants, badgeTones, badgeSizes, labelize } = useGuideBadges();
         </header>
 
         <section class="guide-block">
-            <section class="guide-section">
-                <h2 class="guide-section-title">Tones</h2>
+            <div class="guide-badges-layout">
+                <section class="guide-section">
+                    <h2 class="guide-section-title">Custom Builder</h2>
+                    <GuideBadgeBuilder />
+                </section>
 
-                <div class="guide-row">
-                    <GuideCopy
-                        v-for="tone in badgeTones"
-                        :key="tone"
-                        component="UiBadge"
-                        :props="{ tone }"
-                    >
-                        <UiBadge
-                            :tone="tone"
-                            class="guide-item-hoverable no-border"
-                        >
-                            {{ labelize(tone) }}
-                        </UiBadge>
-                    </GuideCopy>
-                </div>
-            </section>
-
-            <section class="guide-section">
-                <h2 class="guide-section-title">Variants</h2>
-
-                <div class="guide-grid guide-grid-auto guide-grid-min-120">
-                    <div v-for="variant in badgeVariants" :key="variant">
-                        <p class="guide-subtitle">{{ labelize(variant) }}</p>
+                <section class="guide-section">
+                    <h2 class="guide-section-title">Samples</h2>
+                <div class="guide-badges-samples">
+                    <section class="guide-section">
+                        <h2 class="guide-section-title">Tones</h2>
 
                         <div class="guide-row">
                             <GuideCopy
                                 v-for="tone in badgeTones"
-                                :key="variant + tone"
+                                :key="tone"
                                 component="UiBadge"
-                                :props="{ variant, tone }"
+                                :props="{ tone }"
                             >
                                 <UiBadge
-                                    :variant="variant"
                                     :tone="tone"
                                     class="guide-item-hoverable no-border"
                                 >
@@ -62,29 +47,84 @@ const { badgeVariants, badgeTones, badgeSizes, labelize } = useGuideBadges();
                                 </UiBadge>
                             </GuideCopy>
                         </div>
-                    </div>
-                </div>
-            </section>
+                    </section>
 
-            <section class="guide-section">
-                <h2 class="guide-section-title">Sizes</h2>
+                    <section class="guide-section">
+                        <h2 class="guide-section-title">Variants</h2>
 
-                <div class="guide-row">
-                    <GuideCopy
-                        v-for="size in badgeSizes"
-                        :key="size"
-                        component="UiBadge"
-                        :props="{ size }"
-                    >
-                        <UiBadge
-                            :size="size"
-                            class="guide-item-hoverable no-border"
-                        >
-                            {{ labelize(size) }}
-                        </UiBadge>
-                    </GuideCopy>
+                        <div class="guide-grid">
+                            <div v-for="variant in badgeVariants" :key="variant">
+                                <p class="guide-subtitle">{{ labelize(variant) }}</p>
+
+                                <div class="guide-row">
+                                    <GuideCopy
+                                        v-for="tone in badgeTones"
+                                        :key="variant + tone"
+                                        component="UiBadge"
+                                        :props="{ variant, tone }"
+                                    >
+                                        <UiBadge
+                                            :variant="variant"
+                                            :tone="tone"
+                                            class="guide-item-hoverable no-border"
+                                        >
+                                            {{ labelize(tone) }}
+                                        </UiBadge>
+                                    </GuideCopy>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="guide-section">
+                        <h2 class="guide-section-title">Sizes</h2>
+
+                        <div class="guide-row">
+                            <GuideCopy
+                                v-for="size in badgeSizes"
+                                :key="size"
+                                component="UiBadge"
+                                :props="{ size }"
+                            >
+                                <UiBadge
+                                    :size="size"
+                                    class="guide-item-hoverable no-border"
+                                >
+                                    {{ labelize(size) }}
+                                </UiBadge>
+                            </GuideCopy>
+                        </div>
+                    </section>
                 </div>
-            </section>
+                </section>
+            </div>
         </section>
     </section>
 </template>
+
+<style scoped lang="scss">
+.guide-badges-layout {
+    display: grid;
+    grid-template-columns: minmax(0, .65fr) minmax(0, .35fr);
+    gap: 24px;
+    align-items: start;
+    .guide-section {
+        margin-top: 0;
+    }
+}
+
+.guide-badges-samples {
+    display: grid;
+    gap: 24px;
+    padding: 24px 28px;
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    background: var(--contrast-light);
+}
+
+@media (max-width: 1200px) {
+    .guide-badges-layout {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

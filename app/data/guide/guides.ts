@@ -33,6 +33,13 @@ export const guides: GuideItem[] = [
         category: 'base',
     },
     {
+        title: 'Form Controls',
+        description:
+            'Reusable inputs, textareas, and checkboxes for auth, profile, and checkout forms.',
+        path: '/guide/form-controls',
+        category: 'base',
+    },
+    {
         title: 'Modals',
         description:
             'Overlay dialogs for focused actions and contextual workflows.',

@@ -4,5 +4,5 @@ await navigateTo(localePath('/account/profile'), { redirectCode: 302 });
 </script>
 
 <template>
-    <div />
+    <div data-testid="account-index-redirect" />
 </template>

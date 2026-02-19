@@ -7,6 +7,8 @@ const props = defineProps<{
     props?: Record<string, unknown>;
     as?: string;
     text?: string;
+    copyEnabled?: boolean;
+    ignoreInteractiveClick?: boolean;
 
     mode?: 'code' | 'name';
     name?: string;
@@ -57,7 +59,39 @@ const code = computed(() => {
     return buildTag();
 });
 
+const isInteractiveTarget = (target: EventTarget | null) => {
+    if (!(target instanceof HTMLElement)) return false;
+
+    return Boolean(
+        target.closest(
+            [
+                'input',
+                'textarea',
+                'select',
+                'option',
+                'button',
+                'a[href]',
+                'label',
+                '[contenteditable="true"]',
+            ].join(',')
+        )
+    );
+};
+
 async function handleClick(e: MouseEvent) {
+    const target = e.target instanceof HTMLElement ? e.target : null;
+    const insideFormControls = Boolean(
+        target?.closest('.guide-form-controls')
+    );
+    if (insideFormControls && props.copyEnabled === false) return;
+
+    const shouldIgnoreInteractive =
+        props.ignoreInteractiveClick === true || insideFormControls;
+
+    if (shouldIgnoreInteractive && isInteractiveTarget(e.target)) {
+        return;
+    }
+
     try {
         await copyTextToClipboard(code.value);
 
@@ -69,6 +103,12 @@ async function handleClick(e: MouseEvent) {
 }
 
 function handleKey(e: KeyboardEvent) {
+    const target = e.target instanceof HTMLElement ? e.target : null;
+    const insideFormControls = Boolean(
+        target?.closest('.guide-form-controls')
+    );
+    if (insideFormControls && props.copyEnabled === false) return;
+
     if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         handleClick(e as unknown as MouseEvent);
@@ -98,7 +138,7 @@ function handleKey(e: KeyboardEvent) {
             role="status"
             aria-live="polite"
         >
-            <strong>{{ code }}</strong>
+            <strong class="guide-copy-toast-text">{{ code }}</strong>
         </div>
     </transition>
 </template>

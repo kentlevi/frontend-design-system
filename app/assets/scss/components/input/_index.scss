@@ -51,13 +51,18 @@
     color: c.$text-muted;
 }
 
-.ui-input:focus-within {
-    border-color: c.$brand-primary;
-    box-shadow: 0 0 0 2px c.$brand-primary;
+.ui-input:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
+    border-color: c.$border-strong;
 }
 
-.ui-input:hover:not([data-disabled='true']) {
-    border-color: c.$border-strong;
+.ui-input[data-state='error'],
+.ui-input[data-state='error']:hover:not([data-disabled='true']) {
+    border-color: c.$error;
+}
+
+.ui-input[data-state='success'],
+.ui-input[data-state='success']:hover:not([data-disabled='true']) {
+    border-color: c.$success;
 }
 
 .ui-input[data-disabled='true'] {
@@ -71,6 +76,10 @@
         color: c.$text-muted;
         cursor: not-allowed;
     }
+}
+
+.ui-input[data-readonly='true']:not([data-disabled='true']) {
+    background: c.$surface-subtle;
 }
 
 .ui-input[data-size='lg'] {

@@ -1,19 +1,35 @@
 export async function copyTextToClipboard(text: string) {
+    const fallbackCopy = () => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.opacity = '0';
+        textarea.setAttribute('readonly', 'true');
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+
+        try {
+            return document.execCommand('copy');
+        } catch {
+            return false;
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    };
+
     if (navigator?.clipboard?.writeText) {
-        return navigator.clipboard.writeText(text);
+        try {
+            await navigator.clipboard.writeText(text);
+            return;
+        } catch {}
     }
 
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    try {
-        document.execCommand('copy');
-    } finally {
-        document.body.removeChild(textarea);
+    if (fallbackCopy()) {
+        return;
     }
+
+    throw new Error('Copy failed');
 }

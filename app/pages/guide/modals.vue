@@ -185,7 +185,7 @@ function selectLocale(code: FlagCode) {
             <div class="guide-modal-demo">
                 <div class="guide-modal-current">
                     <UiFlag :code="selectedLocale" :size="24" />
-                    <span>
+                    <span class="p-ag-es-g-ui-de-m-od-al-s-span">
                         Current: {{ selectedLocale.toUpperCase() }} -
                         {{ selectedLocaleMeta?.currency }}
                     </span>

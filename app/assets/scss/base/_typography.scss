@@ -1,24 +1,33 @@
 @use '../foundation/typography/semantic' as type;
 
-h1 {
+h1,
+
+.b-as-e-_t-yp-og-ra-ph-y-h1 {
     font-size: type.$heading-1;
 }
-h2 {
+h2,
+.b-as-e-_t-yp-og-ra-ph-y-h2 {
     font-size: type.$heading-2;
 }
-h3 {
+h3,
+.b-as-e-_t-yp-og-ra-ph-y-h3 {
     font-size: type.$heading-3;
 }
-h4 {
+h4,
+.b-as-e-_t-yp-og-ra-ph-y-h4 {
     font-size: type.$heading-4;
 }
-h5 {
+h5,
+.b-as-e-_t-yp-og-ra-ph-y-h5 {
     font-size: type.$heading-5;
 }
-h6 {
+h6,
+.b-as-e-_t-yp-og-ra-ph-y-h6 {
     font-size: type.$heading-6;
 }
 
-p {
+p,
+
+.b-as-e-_t-yp-og-ra-ph-y-p {
     font-size: type.$body-base;
 }

@@ -16,9 +16,13 @@ export default defineNuxtConfig({
                 name: 'English',
                 files: [
                     'en/home.json',
+                    'en/search.json',
                     'en/auth.json',
                     'en/account.json',
                     'en/products.json',
+                    'en/product-story.json',
+                    'en/product-reviews.json',
+                    'en/checkout.json',
                 ],
             },
             {
@@ -26,9 +30,13 @@ export default defineNuxtConfig({
                 name: 'Korean',
                 files: [
                     'kr/home.json',
+                    'kr/search.json',
                     'kr/auth.json',
                     'kr/account.json',
                     'kr/products.json',
+                    'kr/product-story.json',
+                    'kr/product-reviews.json',
+                    'kr/checkout.json',
                 ],
             },
         ],

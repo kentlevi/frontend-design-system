@@ -43,7 +43,7 @@ export const productCatalog: Record<ProductCategoryKey, ProductCategory> = {
         title: 'Roll Stickers',
         defaultProductId: 'die-cut-roll',
         products: [
-            { id: 'die-cut-roll', name: 'Die-Cut Roll', icon: 'strong-ship', image: '/illustrations/products/roll-stickers/die-cut-labels.svg', blurb: commonBlurb },
+            { id: 'die-cut-roll', name: 'Die Cut Roll', icon: 'strong-ship', image: '/illustrations/products/roll-stickers/die-cut-labels.svg', blurb: commonBlurb },
             { id: 'clear-roll', name: 'Clear Roll', icon: 'strong-ship', image: '/illustrations/products/roll-stickers/clear-labels.svg', blurb: commonBlurb },
             { id: 'circle-roll', name: 'Circle Roll', icon: 'strong-stars', image: '/illustrations/products/roll-stickers/circle-labels.svg', blurb: commonBlurb },
             { id: 'square-roll', name: 'Square Roll', icon: 'strong-shield', image: '/illustrations/products/roll-stickers/square-labels.svg', blurb: commonBlurb },
@@ -58,7 +58,7 @@ export const productCatalog: Record<ProductCategoryKey, ProductCategory> = {
         title: 'Sheet Stickers',
         defaultProductId: 'die-cut-sheet',
         products: [
-            { id: 'die-cut-sheet', name: 'Die-Cut Sheet', icon: 'strong-shield', image: '/illustrations/products/sheet-stickers/die-cut-sheet.svg', blurb: commonBlurb },
+            { id: 'die-cut-sheet', name: 'Die Cut Sheet', icon: 'strong-shield', image: '/illustrations/products/sheet-stickers/die-cut-sheet.svg', blurb: commonBlurb },
             { id: 'circle-sheet', name: 'Circle Sheet', icon: 'strong-stars', image: '/illustrations/products/sheet-stickers/circle-sheet.svg', blurb: commonBlurb },
             { id: 'oval-sheet', name: 'Oval Sheet', icon: 'strong-stars', image: '/illustrations/products/sheet-stickers/oval-sheet.svg', blurb: commonBlurb },
             { id: 'square-sheet', name: 'Square Sheet', icon: 'strong-shield', image: '/illustrations/products/sheet-stickers/square-sheet.svg', blurb: commonBlurb },

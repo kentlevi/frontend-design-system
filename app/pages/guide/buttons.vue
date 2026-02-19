@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ButtonBuilder from '@/components/guide/ButtonBuilder.vue';
+import GuideButtonBuilder from '@/components/guide/GuideButtonBuilder.vue';
 import GuideCopy from '@/components/guide/GuideCopy.vue';
 import UiButton from '@/components/ui/Button.vue';
 import { useGuideButtons } from '@/composables/guide/useGuideButtons';
@@ -20,7 +20,7 @@ const { exampleSections } = useGuideButtons();
 
         <div class="guide-two-col">
             <div class="guide-col">
-                <ButtonBuilder />
+                <GuideButtonBuilder />
             </div>
 
             <div class="guide-col">

@@ -25,117 +25,64 @@ const fullName = computed(() => {
     return `${first} ${last}`.trim();
 });
 
-const userEmail = computed(
-    () => mockUser.value?.email || 'joylove1990@gmail.com'
-);
-const initials = computed(() =>
-    (mockUser.value?.firstName?.charAt(0) || 'J').toUpperCase()
-);
+const userEmail = computed(() => mockUser.value?.email || 'joylove1990@gmail.com');
+const initials = computed(() => (mockUser.value?.firstName?.charAt(0) || 'J').toUpperCase());
 
 const tabs = [
-    {
-        key: 'profile',
-        label: t('home.header.accountLinks.profile'),
-        to: '/account/profile',
-        icon: 'light-user',
-    },
-    {
-        key: 'address-book',
-        label: t('home.header.accountLinks.addressBook'),
-        to: '/account/address-book',
-        icon: 'light-home',
-    },
-    {
-        key: 'orders',
-        label: t('home.header.accountLinks.orders'),
-        to: '/account/orders',
-        icon: 'light-box-full',
-    },
-    {
-        key: 'gallery',
-        label: t('home.header.accountLinks.gallery'),
-        to: '/account/gallery',
-        icon: 'light-image',
-    },
-    {
-        key: 'points',
-        label: t('home.header.accountLinks.points'),
-        to: '/account/points',
-        icon: 'light-star',
-    },
-    {
-        key: 'coupons',
-        label: t('home.header.accountLinks.coupons'),
-        to: '/account/coupons',
-        icon: 'light-ticket',
-    },
-    {
-        key: 'reviews',
-        label: t('home.header.accountLinks.reviews'),
-        to: '/account/reviews',
-        icon: 'light-comments',
-    },
-    {
-        key: 'quote-requests',
-        label: t('home.header.accountLinks.quoteRequests'),
-        to: '/account/quote-requests',
-        icon: 'light-file-details',
-    },
+    { key: 'profile', label: t('home.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
+    { key: 'address-book', label: t('home.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'light-home' },
+    { key: 'orders', label: t('home.header.accountLinks.orders'), to: '/account/orders', icon: 'light-box-full' },
+    { key: 'gallery', label: t('home.header.accountLinks.gallery'), to: '/account/gallery', icon: 'light-image' },
+    { key: 'points', label: t('home.header.accountLinks.points'), to: '/account/points', icon: 'light-star' },
+    { key: 'coupons', label: t('home.header.accountLinks.coupons'), to: '/account/coupons', icon: 'light-ticket' },
+    { key: 'reviews', label: t('home.header.accountLinks.reviews'), to: '/account/reviews', icon: 'light-comments' },
+    { key: 'quote-requests', label: t('home.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'light-file-details' },
 ] as const;
 </script>
 
 <template>
-    <section class="account-shell">
-        <div class="account-top">
-            <div class="account-user">
-                <div class="account-avatar">{{ initials }}</div>
+    <section class="account-shell" data-testid="account-shell">
+        <div class="account-shell-top" data-testid="account-shell-top">
+            <div class="account-shell-user" data-testid="account-shell-user">
+                <div class="account-shell-avatar">{{ initials }}</div>
                 <div>
-                    <p class="account-name">{{ fullName }}</p>
-                    <p class="account-level">
-                        {{ t('account.shell.level') }}
-                    </p>
-                    <p class="account-email">{{ userEmail }}</p>
+                    <p class="account-shell-name">{{ fullName }}</p>
+                    <p class="account-shell-level">{{ t('account.shell.level') }}</p>
+                    <p class="account-shell-email">{{ userEmail }}</p>
                 </div>
             </div>
 
-            <div class="account-stats">
-                <div class="account-stat">
-                    <span class="account-stat-label">{{
-                        t('account.shell.stats.order')
-                    }}</span>
-                    <strong>6</strong>
+            <div class="account-shell-stats" data-testid="account-shell-stats">
+                <div class="account-shell-stat">
+                    <span class="account-shell-stat-label">{{ t('account.shell.stats.order') }}</span>
+                    <strong class="account-shell-stat-value">6</strong>
                 </div>
-                <div class="account-stat">
-                    <span class="account-stat-label">{{
-                        t('account.shell.stats.points')
-                    }}</span>
-                    <strong>13.90</strong>
+                <div class="account-shell-stat">
+                    <span class="account-shell-stat-label">{{ t('account.shell.stats.points') }}</span>
+                    <strong class="account-shell-stat-value">13.90</strong>
                 </div>
-                <div class="account-stat">
-                    <span class="account-stat-label">{{
-                        t('account.shell.stats.coupons')
-                    }}</span>
-                    <strong>3</strong>
+                <div class="account-shell-stat">
+                    <span class="account-shell-stat-label">{{ t('account.shell.stats.coupons') }}</span>
+                    <strong class="account-shell-stat-value">3</strong>
                 </div>
-                <div class="account-stat">
-                    <span class="account-stat-label">{{
-                        t('account.shell.stats.totalSpent')
-                    }}</span>
-                    <strong>KRW 35,494,187.80</strong>
+                <div class="account-shell-stat">
+                    <span class="account-shell-stat-label">{{ t('account.shell.stats.totalSpent') }}</span>
+                    <strong class="account-shell-stat-value">KRW 35,494,187.80</strong>
                 </div>
             </div>
         </div>
 
-        <nav class="account-tabs">
+        <nav class="account-shell-tabs" data-testid="account-shell-tabs">
             <NuxtLink
                 v-for="tab in tabs"
                 :key="tab.key"
                 :to="localePath(tab.to)"
-                class="account-tab"
+                class="account-shell-tab"
                 :class="{ 'is-active': props.activeTab === tab.key }"
+                :data-testid="`account-shell-tab-${tab.key}`"
             >
                 <UiIcon :name="tab.icon" :size="14" />
-                <span>{{ tab.label }}</span>
+                <span class="account-shell-tab-label">{{ tab.label }}</span>
             </NuxtLink>
         </nav>
 
@@ -149,20 +96,20 @@ const tabs = [
     margin: 0 auto;
     padding: 22px 24px 72px;
 
-    .account-top {
+    .account-shell-top {
         display: flex;
         justify-content: space-between;
         gap: 24px;
         align-items: center;
     }
 
-    .account-user {
+    .account-shell-user {
         display: flex;
         align-items: center;
         gap: 12px;
     }
 
-    .account-avatar {
+    .account-shell-avatar {
         width: 56px;
         height: 56px;
         border-radius: 50%;
@@ -174,7 +121,7 @@ const tabs = [
         font-size: 22px;
     }
 
-    .account-name {
+    .account-shell-name {
         margin: 0;
         font-size: 38px;
         line-height: 1.05;
@@ -182,40 +129,40 @@ const tabs = [
         color: var(--text-primary);
     }
 
-    .account-level {
+    .account-shell-level {
         margin: 4px 0 0;
         font-size: 14px;
         color: var(--text-secondary);
     }
 
-    .account-email {
+    .account-shell-email {
         margin: 2px 0 0;
         font-size: 12px;
         color: var(--text-muted);
     }
 
-    .account-stats {
+    .account-shell-stats {
         display: flex;
         align-items: center;
         gap: 28px;
     }
 
-    .account-stat {
+    .account-shell-stat {
         display: grid;
         gap: 2px;
-
-        .account-stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        strong {
-            font-size: 20px;
-            line-height: 1.2;
-        }
     }
 
-    .account-tabs {
+    .account-shell-stat-label {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .account-shell-stat-value {
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .account-shell-tabs {
         margin-top: 20px;
         border-top: 1px solid var(--border-default);
         border-bottom: 1px solid var(--border-default);
@@ -225,7 +172,7 @@ const tabs = [
         gap: 12px;
     }
 
-    .account-tab {
+    .account-shell-tab {
         height: 38px;
         border-radius: 8px;
         padding: 0 14px;
@@ -239,31 +186,23 @@ const tabs = [
         border: 1px solid transparent;
 
         &.is-active {
-            background: color-mix(
-                in srgb,
-                var(--brand-primary) 22%,
-                var(--contrast-light)
-            );
-            border-color: color-mix(
-                in srgb,
-                var(--brand-primary) 52%,
-                var(--border-default)
-            );
+            background: color-mix(in srgb, var(--brand-primary) 22%, var(--contrast-light));
+            border-color: color-mix(in srgb, var(--brand-primary) 52%, var(--border-default));
         }
     }
 
     @media (max-width: 900px) {
-        .account-top {
+        .account-shell-top {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .account-stats {
+        .account-shell-stats {
             flex-wrap: wrap;
             gap: 14px 22px;
         }
 
-        .account-name {
+        .account-shell-name {
             font-size: 30px;
         }
     }

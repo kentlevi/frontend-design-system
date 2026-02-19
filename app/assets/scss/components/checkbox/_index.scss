@@ -1,0 +1,105 @@
+@use '../../foundation/colors/semantic' as c;
+@use '../../foundation/typography/semantic' as t;
+
+@use '../../brand/spacing' as sp;
+@use '../../brand/radius' as r;
+
+.ui-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: sp.$space-2;
+    color: c.$text-secondary;
+    font-family: t.$font-base;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ui-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+.ui-checkbox-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid c.$border-default;
+    border-radius: r.$radius-sm;
+    background: c.$contrast-light;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease,
+        box-shadow 0.15s ease;
+
+    &::after {
+        content: '';
+        width: 10px;
+        height: 6px;
+        border-left: 2px solid c.$text-inverse;
+        border-bottom: 2px solid c.$text-inverse;
+        transform: rotate(-45deg) scale(0);
+        transform-origin: center;
+        transition: transform 0.12s ease;
+    }
+}
+
+.ui-checkbox-label {
+    font-size: t.$body-base;
+    line-height: 1.5;
+}
+
+.ui-checkbox-input:focus-visible + .ui-checkbox-box {
+    border-color: c.$brand-primary;
+    box-shadow: 0 0 0 2px c.$brand-primary;
+}
+
+.ui-checkbox-input:checked + .ui-checkbox-box {
+    border-color: c.$text-primary;
+    background: c.$text-primary;
+}
+
+.ui-checkbox-input:checked + .ui-checkbox-box::after {
+    transform: rotate(-45deg) scale(1);
+}
+
+.ui-checkbox[data-size='sm'] {
+    .ui-checkbox-box {
+        width: 18px;
+        height: 18px;
+    }
+
+    .ui-checkbox-label {
+        font-size: t.$body-small;
+    }
+}
+
+.ui-checkbox[data-state='error'] {
+    .ui-checkbox-box {
+        border-color: c.$error;
+    }
+}
+
+.ui-checkbox[data-state='success'] {
+    .ui-checkbox-box {
+        border-color: c.$success;
+    }
+}
+
+.ui-checkbox[data-disabled='true'] {
+    cursor: not-allowed;
+    color: c.$text-muted;
+
+    .ui-checkbox-box {
+        background: c.$bg-muted;
+        border-color: c.$border-default;
+    }
+
+    .ui-checkbox-label {
+        color: c.$text-muted;
+    }
+}

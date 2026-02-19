@@ -1,0 +1,29 @@
+{
+  "checkout": {
+    "upload": {
+      "title": "Upload your Artwork",
+      "dragDropTitle": "Drag and drop files to upload",
+      "acceptedTypes": "Accepted filetypes: .eps, .ai, .psd, .pdf, .tif, .png and .jpg",
+      "selectFiles": "Select Files",
+      "replaceImage": "Replace Image",
+      "specialInstructions": "Special Instructions",
+      "specialInstructionsPlaceholder": "Enter special instruction here...",
+      "note": "If you skip artwork uploading, you can upload your artwork anytime in your cart page, or in your Dashboard after successful checkout.",
+      "skipUploadLater": "Skip & Upload artwork later",
+      "addToCart": "Add to Cart"
+    },
+    "cart": {
+      "previewTitle": "Cart Preview ({count})",
+      "continueShopping": "Continue Shopping",
+      "size": "Size",
+      "quantity": "Quantity",
+      "featuredItems": "Featured Items:",
+      "startsAt": "Starts at:",
+      "customize": "Customize",
+      "total": "Total:",
+      "note": "Shipping fees and discounts are calculated at checkout.",
+      "viewCart": "View Cart",
+      "proceedToCheckout": "Proceed to Checkout"
+    }
+  }
+}
