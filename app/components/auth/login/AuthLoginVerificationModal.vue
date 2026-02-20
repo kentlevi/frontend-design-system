@@ -76,7 +76,7 @@ function closeModal() {
                 tone="neutral"
                 size="lg"
                 class="auth-verify-submit"
-                data-testid="auth-login-verification-submit"
+                data-testid="auth-login-verification-submit-button"
                 @click="closeModal"
             >
                 {{ t('auth.login.verification.verify') }}
@@ -89,7 +89,7 @@ function closeModal() {
                     tone="default"
                     size="sm"
                     class="auth-verify-resend-btn"
-                    data-testid="auth-login-verification-resend"
+                    data-testid="auth-login-verification-resend-button"
                 >
                     {{ t('auth.login.verification.resendCta') }}
                 </UiButton>

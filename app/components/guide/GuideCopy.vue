@@ -17,7 +17,6 @@ const props = defineProps<{
 const attrs = useAttrs();
 
 const copied = ref(false);
-const cursor = ref({ x: 0, y: 0 });
 
 function formatProp(key: string, value: unknown) {
     if (value === true) return key;
@@ -94,8 +93,6 @@ async function handleClick(e: MouseEvent) {
 
     try {
         await copyTextToClipboard(code.value);
-
-        cursor.value = { x: e.clientX, y: e.clientY };
         copied.value = true;
 
         setTimeout(() => (copied.value = false), 900);
@@ -130,15 +127,16 @@ function handleKey(e: KeyboardEvent) {
         <slot />
     </component>
 
-    <transition name="guide-copy-toast">
-        <div
-            v-if="copied && code"
-            class="guide-copy-toast"
-            :style="{ left: cursor.x + 'px', top: cursor.y + 'px' }"
-            role="status"
-            aria-live="polite"
-        >
-            <strong class="guide-copy-toast-text">{{ code }}</strong>
-        </div>
-    </transition>
+    <Teleport to="body">
+        <transition name="guide-copy-toast">
+            <div
+                v-if="copied && code"
+                class="guide-copy-toast"
+                role="status"
+                aria-live="polite"
+            >
+                <strong class="guide-copy-toast-text">{{ code }}</strong>
+            </div>
+        </transition>
+    </Teleport>
 </template>

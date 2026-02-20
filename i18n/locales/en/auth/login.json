@@ -1,0 +1,41 @@
+{
+    "auth": {
+        "login": {
+            "title": "Log in to your account",
+            "subtitle": "Get exclusive benefits on your first order after signing up!",
+            "createAccount": "Create an account",
+            "member": "Member",
+            "nonMember": "Non-member",
+            "email": "Email Address",
+            "enterEmail": "Enter Email Address",
+            "password": "Password",
+            "enterPassword": "Enter Password",
+            "togglePassword": "Toggle password visibility",
+            "keepSignedIn": "Keep me signed in",
+            "forgotPassword": "Forgot Password?",
+            "orderNumber": "Order Number",
+            "enterOrderNumber": "Enter Order Number",
+            "signIn": "Sign In",
+            "checkOrder": "Check Your Order",
+            "socialLabel": "Sign in with your social accounts",
+            "signInFacebook": "Sign in with Facebook",
+            "signInGoogle": "Sign in with Google",
+            "verification": {
+                "title": "Verification Required",
+                "messagePrefix": "To ensure your security, we'll send a verification code to your email ",
+                "messageSuffix": ". The code will expire in 5 minutes.",
+                "enterCode": "Please enter the code:",
+                "verify": "Verify",
+                "resendPrefix": "Didn't receive any? Please check your spam or ",
+                "resendCta": "Resend Code",
+                "resendSuffix": "."
+            },
+            "validation": {
+                "fieldBlank": "Field cannot be blank.",
+                "emailInvalid": "Email format is invalid.",
+                "credentialsMismatch": "Email address & password does not match.",
+                "orderNotFound": "Order does not exist."
+            }
+        }
+    }
+}

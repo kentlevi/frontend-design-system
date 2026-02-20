@@ -43,11 +43,11 @@ const emit = defineEmits<{
                 'is-open': accountOpen,
                 'is-open-guest': accountOpen && !isMockLoggedIn,
             }"
-            :aria-label="t('home.header.account')"
+            :aria-label="t('layout.header.account')"
             aria-haspopup="menu"
             :aria-expanded="accountOpen"
             @click.stop="emit('toggle')"
-            data-testid="app-header-account-toggle"
+            data-testid="app-header-account-toggle-button"
         >
             <span v-if="isMockLoggedIn" class="home-header-avatar">
                 {{ userInitial }}
@@ -71,7 +71,7 @@ const emit = defineEmits<{
                 v-if="accountOpen && isMockLoggedIn"
                 class="home-account-dropdown home-account-dropdown--member"
                 role="menu"
-                :aria-label="t('home.header.accountMenu')"
+                :aria-label="t('layout.header.accountMenu')"
                 data-testid="app-header-account-dropdown-member"
             >
                 <div class="home-account-summary" data-testid="app-header-account-summary">
@@ -110,21 +110,21 @@ const emit = defineEmits<{
                     class="home-account-link home-account-link-button"
                     role="menuitem"
                     @click="emit('logout')"
-                    data-testid="app-header-account-logout"
+                    data-testid="app-header-account-logout-button"
                 >
                     <UiIcon
                         name="light-sign-out"
                         :size="16"
                         color="var(--text-secondary)"
                     />
-                    <span class="home-account-link-label">{{ t('home.header.accountLinks.signOut') }}</span>
+                    <span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
                 </UiButton>
             </div>
             <div
                 v-else-if="accountOpen"
                 class="home-account-dropdown home-account-dropdown--guest"
                 role="menu"
-                :aria-label="t('home.header.accountMenu')"
+                :aria-label="t('layout.header.accountMenu')"
                 data-testid="app-header-account-dropdown-guest"
             >
                 <NuxtLink
@@ -134,7 +134,7 @@ const emit = defineEmits<{
                     @click="emit('close')"
                     data-testid="app-header-account-login"
                 >
-                    {{ t('home.header.login') }}
+                    {{ t('layout.header.login') }}
                 </NuxtLink>
                 <NuxtLink
                     :to="localePath('/auth/register')"
@@ -143,7 +143,7 @@ const emit = defineEmits<{
                     @click="emit('close')"
                     data-testid="app-header-account-register"
                 >
-                    {{ t('home.header.register') }}
+                    {{ t('layout.header.register') }}
                 </NuxtLink>
             </div>
         </Transition>

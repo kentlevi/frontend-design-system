@@ -1,0 +1,13 @@
+{
+    "account": {
+        "shell": {
+            "level": "범퍼 보스 (레벨 3)",
+            "stats": {
+                "order": "주문",
+                "points": "포인트",
+                "coupons": "쿠폰",
+                "totalSpent": "총 사용금액"
+            }
+        }
+    }
+}

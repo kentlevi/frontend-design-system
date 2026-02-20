@@ -18,7 +18,11 @@ const emit = defineEmits<{
             type="button"
             class="auth-login-segment-button"
             :class="{ 'auth-login-segment-button-active': memberType === 'member' }"
-            data-testid="auth-login-mode-member"
+            :data-testid="
+                memberType === 'member'
+                    ? 'auth-login-mode-member-active-button'
+                    : 'auth-login-mode-member-inactive-button'
+            "
             @click="emit('update:memberType', 'member')"
         >
             {{ t('auth.login.member') }}
@@ -29,7 +33,11 @@ const emit = defineEmits<{
             :class="{
                 'auth-login-segment-button-active': memberType === 'non-member',
             }"
-            data-testid="auth-login-mode-non-member"
+            :data-testid="
+                memberType === 'non-member'
+                    ? 'auth-login-mode-non-member-active-button'
+                    : 'auth-login-mode-non-member-inactive-button'
+            "
             @click="emit('update:memberType', 'non-member')"
         >
             {{ t('auth.login.nonMember') }}

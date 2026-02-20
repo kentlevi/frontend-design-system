@@ -43,7 +43,9 @@ const currentSlide = ref(0);
 const cardWidth = ref(0);
 const viewportRef = ref<HTMLElement | null>(null);
 const cardRef = ref<HTMLElement | null>(null);
+const sectionRef = ref<HTMLElement | null>(null);
 const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
+const viewportObserver = ref<IntersectionObserver | null>(null);
 
 const trackStyle = computed(() => ({
     transform: `translateX(-${currentSlide.value * (cardWidth.value + reviewGap)}px)`,
@@ -61,6 +63,7 @@ const maxSlide = computed(() =>
 );
 const canGoPrev = computed(() => currentSlide.value > 0);
 const canGoNext = computed(() => currentSlide.value < maxSlide.value);
+const carouselLabel = 'Client reviews carousel';
 
 function syncCardWidth() {
     if (!cardRef.value) return;
@@ -98,18 +101,44 @@ function stopAuto() {
 onMounted(() => {
     syncCardWidth();
     currentSlide.value = 0;
-    startAuto();
+
+    if ('IntersectionObserver' in window && sectionRef.value) {
+        viewportObserver.value = new IntersectionObserver(
+            (entries) => {
+                const [entry] = entries;
+                if (entry?.isIntersecting) {
+                    syncCardWidth();
+                    startAuto();
+                    return;
+                }
+
+                stopAuto();
+            },
+            { threshold: 0.2 }
+        );
+
+        viewportObserver.value.observe(sectionRef.value);
+    } else {
+        startAuto();
+    }
+
     window.addEventListener('resize', syncCardWidth);
 });
 
 onBeforeUnmount(() => {
     stopAuto();
+    viewportObserver.value?.disconnect();
     window.removeEventListener('resize', syncCardWidth);
 });
 </script>
 
 <template>
-    <section class="home-reviews" data-testid="home-reviews-section">
+    <section
+        ref="sectionRef"
+        class="home-reviews"
+        data-testid="home-reviews-section"
+        aria-label="Client reviews"
+    >
         <div class="home-reviews-card">
             <div class="home-reviews-head">
                 <h2 class="home-reviews-title">
@@ -125,8 +154,10 @@ onBeforeUnmount(() => {
                         :icon-only="true"
                         icon="strong-long-arrow-left"
                         icon-size="md"
+                        sr-label="Go to previous review"
+                        aria-label="Go to previous review"
                         class="home-reviews-arrow"
-                        data-testid="home-reviews-prev"
+                        data-testid="home-reviews-prev-button"
                         :disabled="!canGoPrev"
                         @click="prevReview"
                     />
@@ -137,8 +168,10 @@ onBeforeUnmount(() => {
                         :icon-only="true"
                         icon="strong-long-arrow-right"
                         icon-size="md"
+                        sr-label="Go to next review"
+                        aria-label="Go to next review"
                         class="home-reviews-arrow"
-                        data-testid="home-reviews-next"
+                        data-testid="home-reviews-next-button"
                         :disabled="!canGoNext"
                         @click="nextReview"
                     />
@@ -149,6 +182,9 @@ onBeforeUnmount(() => {
                 ref="viewportRef"
                 class="home-reviews-viewport"
                 data-testid="home-reviews-viewport"
+                role="region"
+                aria-roledescription="carousel"
+                :aria-label="carouselLabel"
                 @mouseenter="stopAuto"
                 @mouseleave="startAuto"
             >
@@ -158,6 +194,8 @@ onBeforeUnmount(() => {
                         :key="`${review.title}-${review.author}-${idx}`"
                         class="home-reviews-item"
                         :data-testid="`home-review-card-${idx + 1}`"
+                        role="group"
+                        :aria-label="`Review ${idx + 1} of ${reviews.length}`"
                         :ref="
                             (el) => {
                                 if (idx === 0)

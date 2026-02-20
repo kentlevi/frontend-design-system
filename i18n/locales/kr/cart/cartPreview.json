@@ -1,0 +1,20 @@
+{
+    "cart": {
+        "cartPreview": {
+            "previewTitle": "장바구니 미리보기 ({count})",
+            "continueShopping": "계속 쇼핑하기",
+            "emptyIconAlt": "빈 장바구니",
+            "emptyTitle": "장바구니가 비어 있습니다.",
+            "emptyDescription": "메뉴에서 상품을 추가하거나, 아래 추천 상품을 확인해 보세요.",
+            "size": "사이즈",
+            "quantity": "수량",
+            "featuredItems": "추천 상품:",
+            "startsAt": "시작가:",
+            "customize": "커스터마이즈",
+            "total": "합계:",
+            "note": "배송비와 할인은 결제 단계에서 계산됩니다.",
+            "viewCart": "장바구니 보기",
+            "proceedToCheckout": "결제 진행"
+        }
+    }
+}

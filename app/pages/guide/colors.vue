@@ -21,7 +21,7 @@ const toggleFrom = (from: 'palette' | 'semantic') => {
             <p class="guide-eyebrow">Foundation</p>
             <h1 class="guide-title">Colors</h1>
             <p class="guide-description">
-                Semantic tokens and raw palette scales used across the WorkStamp
+                Semantic tokens and raw palette scales used across the Musticker
                 design system.
             </p>
         </header>
@@ -62,7 +62,7 @@ const toggleFrom = (from: 'palette' | 'semantic') => {
             <input
                 v-model="search"
                 type="text"
-                placeholder="Search token, group, or #hex…"
+                placeholder="Search token, group, or #hex..."
                 class="guide-search"
             />
         </div>

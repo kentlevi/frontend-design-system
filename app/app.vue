@@ -1,7 +1,11 @@
 <script setup lang="ts">
 const { t } = useI18n();
+const { locale } = useI18n();
 
 useHead(() => ({
+    htmlAttrs: {
+        lang: locale.value === 'kr' ? 'ko' : 'en',
+    },
     title: t('home.seo.title'),
     meta: [
         {

@@ -12,10 +12,10 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                 <header class="account-quote-header" data-testid="account-quote-requests-header">
                     <h1 class="account-quote-title" data-testid="account-quote-requests-title">{{ t('account.quoteRequests.title') }}</h1>
                     <div class="account-quote-tools" data-testid="account-quote-requests-tools">
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-select-date">
+                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-select-date-button">
                             {{ t('account.quoteRequests.selectDate') }}
                         </UiButton>
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-filters">
+                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-filters-button">
                             {{ t('account.quoteRequests.filters') }}
                         </UiButton>
                     </div>
@@ -62,7 +62,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                                 :placeholder="t('account.quoteRequests.messagePlaceholder')"
                                 data-testid="account-quote-requests-input"
                             />
-                            <button type="button" data-testid="account-quote-requests-send">
+                            <button type="button" data-testid="account-quote-requests-send-button">
                                 {{ t('account.quoteRequests.send') }}
                             </button>
                         </footer>

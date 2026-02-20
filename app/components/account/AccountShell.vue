@@ -29,14 +29,14 @@ const userEmail = computed(() => mockUser.value?.email || 'joylove1990@gmail.com
 const initials = computed(() => (mockUser.value?.firstName?.charAt(0) || 'J').toUpperCase());
 
 const tabs = [
-    { key: 'profile', label: t('home.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
-    { key: 'address-book', label: t('home.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'light-home' },
-    { key: 'orders', label: t('home.header.accountLinks.orders'), to: '/account/orders', icon: 'light-box-full' },
-    { key: 'gallery', label: t('home.header.accountLinks.gallery'), to: '/account/gallery', icon: 'light-image' },
-    { key: 'points', label: t('home.header.accountLinks.points'), to: '/account/points', icon: 'light-star' },
-    { key: 'coupons', label: t('home.header.accountLinks.coupons'), to: '/account/coupons', icon: 'light-ticket' },
-    { key: 'reviews', label: t('home.header.accountLinks.reviews'), to: '/account/reviews', icon: 'light-comments' },
-    { key: 'quote-requests', label: t('home.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'light-file-details' },
+    { key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
+    { key: 'address-book', label: t('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'light-home' },
+    { key: 'orders', label: t('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'light-box-full' },
+    { key: 'gallery', label: t('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'light-image' },
+    { key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'light-star' },
+    { key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'light-ticket' },
+    { key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'light-comments' },
+    { key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'light-file-details' },
 ] as const;
 </script>
 

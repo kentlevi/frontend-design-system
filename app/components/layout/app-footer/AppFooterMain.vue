@@ -12,25 +12,25 @@ defineProps<{
         <div class="home-footer-left" data-testid="app-footer-main-left">
             <h2 class="home-footer-brand">MUSTICKER</h2>
             <p class="home-footer-meta">
-                {{ t('home.footer.meta1') }}
+                {{ t('layout.footer.meta1') }}
             </p>
             <p class="home-footer-meta">
-                {{ t('home.footer.meta2') }}
+                {{ t('layout.footer.meta2') }}
             </p>
             <p class="home-footer-copy">
                 &copy; GLOPHICS Corp. {{ year }}
-                <a href="#" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('home.footer.terms') }}</a>
-                <a href="#" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('home.footer.privacy') }}</a>
+                <a href="#" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</a>
+                <a href="#" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</a>
             </p>
         </div>
 
         <div class="home-footer-right" data-testid="app-footer-main-right">
             <p class="home-footer-phone">1588-5218</p>
-            <p class="home-footer-hours">{{ t('home.footer.hours') }}</p>
-            <p class="home-footer-note">{{ t('home.footer.closed') }}</p>
+            <p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
+            <p class="home-footer-note">{{ t('layout.footer.closed') }}</p>
             <div class="home-footer-links">
-                <a href="#" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ t('home.footer.inquiry') }}</a>
-                <a href="#" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ t('home.footer.faq') }}</a>
+                <a href="#" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ t('layout.footer.inquiry') }}</a>
+                <a href="#" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ t('layout.footer.faq') }}</a>
             </div>
         </div>
     </div>

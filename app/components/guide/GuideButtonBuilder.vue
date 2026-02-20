@@ -237,14 +237,16 @@ onBeforeUnmount(() =>
                 </div>
             </div>
 
-            <label class="guide-checkbox">
+            <label
+                v-if="
+                    iconSearch.selectedLeft.value ||
+                    iconSearch.selectedRight.value
+                "
+                class="guide-checkbox"
+            >
                 <input
                     type="checkbox"
                     v-model="builder.iconOnly.value"
-                    :disabled="
-                        !iconSearch.selectedLeft.value &&
-                        !iconSearch.selectedRight.value
-                    "
                 />
                 Icon only
             </label>

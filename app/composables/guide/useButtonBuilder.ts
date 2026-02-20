@@ -12,11 +12,13 @@ export function useButtonBuilder(customIconLeft: any, customIconRight: any) {
 
     const customVariant = ref(variants[0]);
     const customSize = ref(sizes[1] ?? sizes[0]);
-    const customTone = ref(tones[0].value);
+    const defaultNeutralTone =
+        tones.find((tone) => tone.value === 'neutral')?.value ?? tones[0].value;
+    const customTone = ref(defaultNeutralTone);
 
     /* ================= CUSTOM COLORS ================= */
-    const customColor = ref('var(--brand-primary)');
-    const customTextColor = ref('var(--brand-secondary)');
+    const customColor = ref('var(--brand-secondary)');
+    const customTextColor = ref('var(--text-inverse)');
 
     /* 🔥 AUTO-SWITCH TO CUSTOM MODE WHEN COLORS CHANGE */
     watch(customColor, () => {

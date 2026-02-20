@@ -60,7 +60,7 @@ const emit = defineEmits<{
                                 type="button"
                                 class="auth-login-password-toggle"
                                 :aria-label="t('auth.login.togglePassword')"
-                                data-testid="auth-login-member-password-toggle"
+                                data-testid="auth-login-member-password-toggle-button"
                                 @click="emit('togglePassword')"
                             >
                                 <UiIcon
@@ -90,7 +90,7 @@ const emit = defineEmits<{
                 tone="neutral"
                 size="sm"
                 class="auth-login-link-button"
-                data-testid="auth-login-member-forgot-password"
+                data-testid="auth-login-member-forgot-password-button"
                 @click="emit('openForgotPassword')"
             >
                 {{ t('auth.login.forgotPassword') }}

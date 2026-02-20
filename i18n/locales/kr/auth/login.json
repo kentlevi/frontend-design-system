@@ -1,0 +1,41 @@
+{
+    "auth": {
+        "login": {
+            "title": "계정에 로그인하세요",
+            "subtitle": "가입 후 첫 주문에서 특별한 혜택을 받아보세요!",
+            "createAccount": "계정 만들기",
+            "member": "회원",
+            "nonMember": "비회원",
+            "email": "이메일 주소",
+            "enterEmail": "이메일 주소를 입력하세요",
+            "password": "비밀번호",
+            "enterPassword": "비밀번호를 입력하세요",
+            "togglePassword": "비밀번호 표시 전환",
+            "keepSignedIn": "로그인 상태 유지",
+            "forgotPassword": "비밀번호를 잊으셨나요?",
+            "orderNumber": "주문번호",
+            "enterOrderNumber": "주문번호를 입력하세요",
+            "signIn": "로그인",
+            "checkOrder": "주문 조회",
+            "socialLabel": "소셜 계정으로 로그인",
+            "signInFacebook": "Facebook으로 로그인",
+            "signInGoogle": "Google로 로그인",
+            "verification": {
+                "title": "인증이 필요합니다",
+                "messagePrefix": "보안을 위해 인증 코드를 다음 이메일로 보내드립니다 ",
+                "messageSuffix": ". 코드는 5분 후 만료됩니다.",
+                "enterCode": "인증 코드를 입력하세요:",
+                "verify": "인증하기",
+                "resendPrefix": "문자를 받지 못하셨나요? 스팸함을 확인하거나 ",
+                "resendCta": "코드 다시 보내기",
+                "resendSuffix": "."
+            },
+            "validation": {
+                "fieldBlank": "필드를 입력해 주세요.",
+                "emailInvalid": "이메일 형식이 올바르지 않습니다.",
+                "credentialsMismatch": "이메일 주소와 비밀번호가 일치하지 않습니다.",
+                "orderNotFound": "주문번호가 존재하지 않습니다."
+            }
+        }
+    }
+}

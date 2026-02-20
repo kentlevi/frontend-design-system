@@ -1,0 +1,28 @@
+{
+    "account": {
+        "coupons": {
+            "title": "Coupons",
+            "codePlaceholder": "Please enter coupon code here...",
+            "addCoupon": "Add Coupon",
+            "items": {
+                "laborMonthDiscount": {
+                    "title": "Labor Month Discount",
+                    "note": "Enjoy 10% off on all products for the whole month of May."
+                },
+                "birthdayMonthDiscount": {
+                    "title": "Birthday Month Discount",
+                    "note": "Enjoy 20% off on all products during your birth month!"
+                },
+                "paperStickerDiscount": {
+                    "title": "Paper Sticker Discount",
+                    "note": "Enjoy 15% off all paper products."
+                }
+            },
+            "tags": {
+                "Unlimited Use": "Unlimited Use",
+                "Multiple-Use": "Multiple-Use",
+                "Single Use": "Single Use"
+            }
+        }
+    }
+}

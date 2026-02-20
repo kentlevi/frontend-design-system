@@ -4,6 +4,13 @@ import { flagNames, flags, type FlagCode } from '@/data/ui/flags';
 
 const isLocaleModalOpen = ref(false);
 const selectedLocale = ref<FlagCode>('us');
+const isArchiveModalOpen = ref(false);
+const isSupportModalOpen = ref(false);
+const lastModalAction = ref('No modal action yet.');
+
+const supportName = ref('');
+const supportEmail = ref('');
+const supportMessage = ref('');
 
 const currencyByCode: Partial<Record<FlagCode, string>> = {
     us: 'USD',
@@ -163,6 +170,36 @@ function selectLocale(code: FlagCode) {
     selectedLocale.value = code;
     isLocaleModalOpen.value = false;
 }
+
+function confirmArchive() {
+    lastModalAction.value = 'Archive confirmed from confirmation modal.';
+    isArchiveModalOpen.value = false;
+}
+
+function cancelArchive() {
+    lastModalAction.value = 'Archive cancelled.';
+    isArchiveModalOpen.value = false;
+}
+
+function closeSupportModal() {
+    isSupportModalOpen.value = false;
+}
+
+function submitSupportRequest() {
+    const payload = {
+        name: supportName.value.trim(),
+        email: supportEmail.value.trim(),
+        message: supportMessage.value.trim(),
+    };
+
+    if (!payload.name || !payload.email || !payload.message) {
+        lastModalAction.value = 'Support request needs all fields before sending.';
+        return;
+    }
+
+    lastModalAction.value = `Support request submitted for ${payload.name}.`;
+    isSupportModalOpen.value = false;
+}
 </script>
 
 <template>
@@ -177,6 +214,37 @@ function selectLocale(code: FlagCode) {
         </header>
 
         <section class="guide-section">
+            <h2 class="guide-section-title">Confirmation Modal</h2>
+            <p class="guide-section-description">
+                Use this pattern for destructive or irreversible actions.
+            </p>
+
+            <div class="guide-modal-demo">
+                <p class="guide-modal-status">{{ lastModalAction }}</p>
+                <UiButton tone="neutral" @click="isArchiveModalOpen = true">
+                    Open Confirmation
+                </UiButton>
+            </div>
+        </section>
+
+        <section class="guide-section">
+            <h2 class="guide-section-title">Form Modal</h2>
+            <p class="guide-section-description">
+                Use this pattern for short, focused form tasks.
+            </p>
+
+            <div class="guide-modal-demo">
+                <UiButton
+                    tone="default"
+                    :style="{ '--btn-bg': 'var(--brand-secondary)' }"
+                    @click="isSupportModalOpen = true"
+                >
+                    Open Form Modal
+                </UiButton>
+            </div>
+        </section>
+
+        <section class="guide-section">
             <h2 class="guide-section-title">Locale Preferences Modal</h2>
             <p class="guide-section-description">
                 Demo using all available flags with currency labels.
@@ -185,17 +253,86 @@ function selectLocale(code: FlagCode) {
             <div class="guide-modal-demo">
                 <div class="guide-modal-current">
                     <UiFlag :code="selectedLocale" :size="24" />
-                    <span class="p-ag-es-g-ui-de-m-od-al-s-span">
+                    <span class="guide-modal-current-text">
                         Current: {{ selectedLocale.toUpperCase() }} -
                         {{ selectedLocaleMeta?.currency }}
                     </span>
                 </div>
 
-                <UiButton tone="primary" @click="isLocaleModalOpen = true">
+                <UiButton
+                    tone="default"
+                    :style="{ '--btn-bg': 'var(--brand-secondary)' }"
+                    @click="isLocaleModalOpen = true"
+                >
                     Open Modal
                 </UiButton>
             </div>
         </section>
+
+        <UiModal v-model="isArchiveModalOpen" title="Archive project?" width="480px">
+            <p class="guide-modal-copy">
+                This action moves the project to archive and hides it from your active workspace.
+            </p>
+
+            <template #footer>
+                <div class="guide-modal-footer-actions">
+                    <UiButton
+                        tone="neutral"
+                        variant="outline"
+                        @click="cancelArchive"
+                    >
+                        Cancel
+                    </UiButton>
+                    <UiButton
+                        tone="neutral"
+                        variant="filled"
+                        @click="confirmArchive"
+                    >
+                        Confirm Archive
+                    </UiButton>
+                </div>
+            </template>
+        </UiModal>
+
+        <UiModal v-model="isSupportModalOpen" title="Request support callback" width="520px">
+            <div class="guide-modal-form">
+                <UiInput
+                    v-model="supportName"
+                    placeholder="Full name"
+                    autocomplete="name"
+                />
+                <UiInput
+                    v-model="supportEmail"
+                    placeholder="Work email"
+                    type="email"
+                    autocomplete="email"
+                />
+                <UiTextarea
+                    v-model="supportMessage"
+                    placeholder="Tell us what you need help with"
+                    :rows="4"
+                />
+            </div>
+
+            <template #footer>
+                <div class="guide-modal-footer-actions">
+                    <UiButton
+                        tone="neutral"
+                        variant="outline"
+                        @click="closeSupportModal"
+                    >
+                        Close
+                    </UiButton>
+                    <UiButton
+                        tone="neutral"
+                        variant="filled"
+                        @click="submitSupportRequest"
+                    >
+                        Send Request
+                    </UiButton>
+                </div>
+            </template>
+        </UiModal>
 
         <UiModal
             v-model="isLocaleModalOpen"
@@ -225,3 +362,30 @@ function selectLocale(code: FlagCode) {
         </UiModal>
     </section>
 </template>
+
+<style scoped lang="scss">
+.guide-modal-status {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.guide-modal-copy {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.guide-modal-form {
+    display: grid;
+    gap: 10px;
+}
+
+.guide-modal-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+</style>

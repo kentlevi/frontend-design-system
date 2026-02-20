@@ -12,10 +12,10 @@ const { orders, activeOrder } = useAccountOrders();
                 <header class="account-orders-header" data-testid="account-orders-header">
                     <h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
                     <div class="account-orders-actions" data-testid="account-orders-actions">
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-select-date">
+                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-select-date-button">
                             {{ t('account.orders.selectDate') }}
                         </UiButton>
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-filters">
+                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-filters-button">
                             {{ t('account.orders.filters') }}
                         </UiButton>
                     </div>
@@ -53,10 +53,10 @@ const { orders, activeOrder } = useAccountOrders();
                         <div class="account-orders-block" data-testid="account-orders-actions-block">
                             <h3 class="account-orders-block-title">{{ t('account.orders.actions') }}</h3>
                             <div class="account-orders-button-row" data-testid="account-orders-action-buttons">
-                                <UiButton variant="filled" tone="neutral" size="md" data-testid="account-orders-upload-artwork">
+                                <UiButton variant="filled" tone="neutral" size="md" data-testid="account-orders-upload-artwork-button">
                                     {{ t('account.orders.uploadArtwork') }}
                                 </UiButton>
-                                <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-cancel">
+                                <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-cancel-button">
                                     {{ t('account.orders.cancelOrder') }}
                                 </UiButton>
                             </div>

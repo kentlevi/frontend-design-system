@@ -1,10 +1,15 @@
+<script setup lang="ts">
+import AppHeaderRoot from '~/components/layout/app-header/AppHeader.vue';
+import AppFooterRoot from '~/components/layout/app-footer/AppFooter.vue';
+</script>
+
 <template>
     <div class="home-layout">
-        <LayoutAppHeader />
+        <AppHeaderRoot />
         <main class="home-layout-main">
             <slot />
         </main>
-        <LayoutAppFooter />
+        <AppFooterRoot />
     </div>
 </template>
 

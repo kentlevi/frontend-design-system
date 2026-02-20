@@ -1,0 +1,27 @@
+{
+    "home": {
+        "reviews": {
+            "titleLine1": "499 Client Reviews",
+            "titleLine2": "Satisfaction Guaranteed.",
+            "badge": "1 Month Use",
+            "items": {
+                "excellent": {
+                    "title": "Excellent Service",
+                    "text": "From design to printing, it was fast, and the sticker quality is excellent. I will definitely order more in the small size."
+                },
+                "football": {
+                    "title": "Football Stickers",
+                    "text": "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they buy more or recommend them to fellow football fans."
+                },
+                "print": {
+                    "title": "Great Print Quality",
+                    "text": "Colors were sharp and the material feels durable. Turnaround was exactly as promised."
+                },
+                "delivery": {
+                    "title": "Fast Delivery",
+                    "text": "Production moved quickly after approval and shipping was on time. The final stickers looked exactly like the mockup."
+                }
+            }
+        }
+    }
+}

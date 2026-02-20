@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import AppHeaderLocaleModal from '~/components/layout/app-header/AppHeaderLocaleModal.vue';
 import AppHeaderMainBar from '~/components/layout/app-header/AppHeaderMainBar.vue';
-import AppHeaderSearchModal from '~/components/layout/app-header/AppHeaderSearchModal.vue';
 import { useAppHeaderAccount } from '~/composables/layout/useAppHeaderAccount';
 import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/useAppHeaderKeyboardShortcuts';
 import { useAppHeaderSearch } from '~/composables/layout/useAppHeaderSearch';
+import type { ProductItem } from '~/data/products/catalog';
+import { productCatalog } from '~/data/products/catalog';
+import { defineAsyncComponent, onBeforeUnmount, onMounted } from 'vue';
 
+const AppHeaderLocaleModal = defineAsyncComponent(
+    () => import('~/components/layout/app-header/AppHeaderLocaleModal.vue')
+);
+const AppHeaderSearchModal = defineAsyncComponent(
+    () => import('~/components/layout/app-header/AppHeaderSearchModal.vue')
+);
+const CartPreview = defineAsyncComponent(
+    () => import('~/components/cart/CartPreview.vue')
+);
 const { locale } = useI18n();
+const { t } = useI18n();
 
 const {
     accountOpen,
@@ -59,19 +70,82 @@ const {
     handleSearchKeydown,
 } = useAppHeaderSearch();
 
+const cartPreviewOpen = ref(false);
+const cartFeaturedOpen = ref(true);
+const cartFeaturedItems = computed(() => productCatalog.stickers.products.slice(0, 3));
+
+const cartSelectedProduct = computed<ProductItem | null>(() => null);
+const cartArtworkPreviewUrl = computed(() => '');
+const cartArtworkName = computed(() => '');
+const cartSelectedSizeLabel = computed(() => '-');
+const cartSelectedQty = computed(() => 0);
+const cartTotal = computed(() => 0);
+const cartItemCount = computed(() => 0);
+let idlePrefetchTimer: ReturnType<typeof setTimeout> | null = null;
+let idlePrefetchHandle: number | null = null;
+const prefetchedHeaderOverlays = ref(false);
+
+function getCartProductName(product: ProductItem) {
+    return t(`product.items.${product.id}.name`);
+}
+
+function formatCartPrice(value: number) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+    }).format(value);
+}
+
+function cartFeaturedStartPrice() {
+    return formatCartPrice(29.74);
+}
+
+async function prefetchHeaderOverlayModules() {
+    if (prefetchedHeaderOverlays.value) return;
+
+    prefetchedHeaderOverlays.value = true;
+    await Promise.allSettled([
+        import('~/components/layout/app-header/AppHeaderLocaleModal.vue'),
+        import('~/components/layout/app-header/AppHeaderSearchModal.vue'),
+        import('~/components/cart/CartPreview.vue'),
+    ]);
+}
+
 function setAccountMenuRef(el: HTMLElement | null) {
     accountMenuRef.value = el;
 }
 
 function openLocaleModal() {
+    void prefetchHeaderOverlayModules();
     closeSearchModal();
+    closeCartPreview();
     openLocaleModalBase();
 }
 
 function openSearchModal() {
+    void prefetchHeaderOverlayModules();
     closeAccountMenu();
     closeLocaleModal();
+    closeCartPreview();
     openSearchModalBase();
+}
+
+function openCartPreview() {
+    void prefetchHeaderOverlayModules();
+    closeAccountMenu();
+    closeLocaleModal();
+    closeSearchModal();
+    cartFeaturedOpen.value = true;
+    cartPreviewOpen.value = true;
+}
+
+function closeCartPreview() {
+    cartPreviewOpen.value = false;
+}
+
+function closeCartFeatured() {
+    cartFeaturedOpen.value = false;
 }
 
 useAppHeaderKeyboardShortcuts({
@@ -82,6 +156,33 @@ useAppHeaderKeyboardShortcuts({
     closeLocaleModal,
     closeAccountMenu,
     openSearchModal,
+});
+
+onMounted(() => {
+    if (typeof window === 'undefined') return;
+
+    if ('requestIdleCallback' in window) {
+        idlePrefetchHandle = window.requestIdleCallback(() => {
+            void prefetchHeaderOverlayModules();
+        });
+        return;
+    }
+
+    idlePrefetchTimer = setTimeout(() => {
+        void prefetchHeaderOverlayModules();
+    }, 1200);
+});
+
+onBeforeUnmount(() => {
+    if (typeof window === 'undefined') return;
+
+    if (idlePrefetchHandle !== null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idlePrefetchHandle);
+    }
+
+    if (idlePrefetchTimer) {
+        clearTimeout(idlePrefetchTimer);
+    }
 });
 </script>
 
@@ -101,6 +202,10 @@ useAppHeaderKeyboardShortcuts({
             :set-account-menu-ref="setAccountMenuRef"
             @open-locale="openLocaleModal"
             @open-search="openSearchModal"
+            @open-cart="openCartPreview"
+            @prefetch-locale="prefetchHeaderOverlayModules"
+            @prefetch-search="prefetchHeaderOverlayModules"
+            @prefetch-cart="prefetchHeaderOverlayModules"
             @toggle-account="toggleAccountMenu"
             @close-account="closeAccountMenu"
             @account-mouse-enter="onAccountMouseEnter"
@@ -110,6 +215,7 @@ useAppHeaderKeyboardShortcuts({
         />
 
         <AppHeaderLocaleModal
+            v-if="localeModalOpen"
             :open="localeModalOpen"
             :locale-value="locale"
             :locale-options="localeOptions"
@@ -119,6 +225,7 @@ useAppHeaderKeyboardShortcuts({
         />
 
         <AppHeaderSearchModal
+            v-if="searchModalOpen"
             :open="searchModalOpen"
             :search-query="searchQuery"
             :search-loading="searchLoading"
@@ -143,6 +250,24 @@ useAppHeaderKeyboardShortcuts({
             @apply-suggested="applySuggestedSearch"
             @select-result="selectSearchResult"
             data-testid="app-header-search-modal"
+        />
+
+        <CartPreview
+            :open="cartPreviewOpen"
+            :cart-item-count="cartItemCount"
+            :selected-product="cartSelectedProduct"
+            :artwork-preview-url="cartArtworkPreviewUrl"
+            :cart-artwork-name="cartArtworkName"
+            :selected-size-label="cartSelectedSizeLabel"
+            :selected-qty="cartSelectedQty"
+            :total="cartTotal"
+            :featured-open="cartFeaturedOpen"
+            :featured-items="cartFeaturedItems"
+            :get-product-name="getCartProductName"
+            :format-price="formatCartPrice"
+            :featured-start-price="cartFeaturedStartPrice"
+            @close="closeCartPreview"
+            @close-featured="closeCartFeatured"
         />
     </header>
 </template>

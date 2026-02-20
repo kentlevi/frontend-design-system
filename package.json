@@ -7,6 +7,15 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "test:e2e": "playwright test",
+    "test:e2e:a11y": "playwright test tests/e2e/a11y.spec.ts",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "guide:validate-used-in": "node scripts/validate-guide-used-in.mjs",
+    "perf:lhci": "lhci autorun --config=./lighthouserc.json",
+    "perf:lhci:collect": "lhci collect --config=./lighthouserc.json",
+    "perf:ci": "npm run build && npm run perf:lhci",
+    "quality:ci": "npm run test:e2e && npm run test:e2e:a11y && npm run perf:ci",
     "postinstall": "nuxt prepare",
     "build:icons": "node app/icons/build-icons.js"
   },
@@ -18,7 +27,10 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@lhci/cli": "^0.14.0",
     "@nuxt/eslint": "^1.13.0",
+    "@playwright/test": "^1.53.2",
     "@pinia/nuxt": "^0.11.3",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",

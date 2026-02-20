@@ -34,6 +34,10 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'open-locale'): void;
     (e: 'open-search'): void;
+    (e: 'open-cart'): void;
+    (e: 'prefetch-locale'): void;
+    (e: 'prefetch-search'): void;
+    (e: 'prefetch-cart'): void;
     (e: 'toggle-account'): void;
     (e: 'close-account'): void;
     (e: 'account-mouse-enter'): void;
@@ -45,10 +49,18 @@ const emit = defineEmits<{
 <template>
     <div class="home-header-container" data-testid="app-header-main-bar-container">
         <NuxtLink :to="localePath('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
-            <UiLogo name="musticker" variant="full" color="colored" :size="54" />
+            <UiLogo
+                name="musticker"
+                variant="full"
+                color="colored"
+                :size="54"
+                :width="112"
+                loading="eager"
+                fetchpriority="high"
+            />
         </NuxtLink>
 
-        <nav class="home-header-nav" :aria-label="t('home.header.primaryNav')" data-testid="app-header-nav">
+        <nav class="home-header-nav" :aria-label="t('layout.header.primaryNav')" data-testid="app-header-nav">
             <NuxtLink
                 v-for="link in props.navLinks"
                 :key="link.key"
@@ -65,8 +77,10 @@ const emit = defineEmits<{
             <button
                 type="button"
                 class="home-header-icon home-header-locale"
-                :aria-label="t('home.header.locale.aria')"
+                :aria-label="t('layout.header.locale.aria')"
                 @click="emit('open-locale')"
+                @mouseenter="emit('prefetch-locale')"
+                @focus="emit('prefetch-locale')"
                 data-testid="app-header-locale-button"
             >
                 <UiFlag :code="props.selectedLocale" :size="24" />
@@ -79,8 +93,10 @@ const emit = defineEmits<{
                 icon="strong-search"
                 icon-size="md"
                 class="home-header-icon"
-                :aria-label="t('home.header.search')"
+                :aria-label="t('layout.header.search')"
                 @click="emit('open-search')"
+                @mouseenter="emit('prefetch-search')"
+                @focus="emit('prefetch-search')"
                 data-testid="app-header-search-button"
             />
             <UiButton
@@ -91,7 +107,10 @@ const emit = defineEmits<{
                 icon="strong-shop-cart"
                 icon-size="md"
                 class="home-header-icon"
-                :aria-label="t('home.header.cart')"
+                :aria-label="t('layout.header.cart')"
+                @click="emit('open-cart')"
+                @mouseenter="emit('prefetch-cart')"
+                @focus="emit('prefetch-cart')"
                 data-testid="app-header-cart-button"
             />
             <button

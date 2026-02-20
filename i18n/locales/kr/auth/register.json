@@ -1,0 +1,29 @@
+{
+    "auth": {
+        "register": {
+            "title": "회원가입",
+            "subtitle": "계정 등록 시 2포인트를 적립하고 여정을 시작하세요.",
+            "firstName": "이름",
+            "lastName": "성",
+            "optional": "선택",
+            "enterFirstName": "이름을 입력하세요",
+            "enterLastName": "성을 입력하세요",
+            "email": "이메일 주소",
+            "enterEmail": "이메일 주소를 입력하세요",
+            "password": "비밀번호",
+            "enterPassword": "비밀번호를 입력하세요",
+            "passwordHint": "비밀번호는 6자 이상이며 대문자, 숫자 또는 특수문자를 포함해야 합니다.",
+            "agreePrefix": "Musticker의",
+            "terms": "서비스 이용약관",
+            "and": "및",
+            "privacy": "개인정보처리방침",
+            "promoOptIn": "프로모션, 독점 혜택 및 마케팅 소식을 이메일로 받겠습니다.",
+            "createAccount": "계정 만들기",
+            "alreadyMember": "이미 회원이신가요?",
+            "signInHere": "로그인하기",
+            "validation": {
+                "mustAgree": "서비스 이용약관 및 개인정보처리방침에 동의해 주세요."
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "account": {
+        "gallery": {
+            "title": "갤러리",
+            "filters": "필터",
+            "searchPlaceholder": "검색",
+            "sizeLabel": "크기:",
+            "sizeUnit": "픽셀",
+            "tags": {
+                "Branding": "브랜딩",
+                "Outdoor": "아웃도어",
+                "Skating": "스케이팅"
+            }
+        }
+    }
+}

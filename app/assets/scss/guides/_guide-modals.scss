@@ -52,7 +52,7 @@
     }
 
     &.is-active {
-        background: #e9f0ff;
+        background: var(--bg-muted);
     }
 }
 

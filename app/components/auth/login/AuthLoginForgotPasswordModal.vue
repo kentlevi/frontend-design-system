@@ -107,7 +107,7 @@ function submitReset() {
                     tone="neutral"
                     size="lg"
                     class="auth-forgot-submit"
-                    data-testid="auth-login-forgot-password-submit"
+                    data-testid="auth-login-forgot-password-submit-button"
                     @click="submitReset"
                 >
                     Send Password Reset Email
@@ -118,7 +118,7 @@ function submitReset() {
                     tone="neutral"
                     size="sm"
                     class="auth-forgot-return"
-                    data-testid="auth-login-forgot-password-return"
+                    data-testid="auth-login-forgot-password-return-button"
                     @click="closeModal"
                 >
                     Return to Login

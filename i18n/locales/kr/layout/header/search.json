@@ -1,0 +1,32 @@
+{
+    "layout": {
+        "header": {
+            "search": {
+                "modal": {
+                    "title": "상품 검색",
+                    "placeholder": "스티커를 찾아보세요...",
+                    "clear": "검색어 지우기",
+                    "suggestedTerm": "다이컷 스티커",
+                    "noRecent": {
+                        "title": "최근 검색어가 없습니다",
+                        "textPrefix": "스티커 상품을 둘러보세요 - 예를 들어"
+                    },
+                    "noResult": {
+                        "title": "검색 결과가 없습니다",
+                        "textPrefix": "검색어를 바꾸거나 인기 옵션을 확인해보세요 -"
+                    },
+                    "recent": {
+                        "title": "최근 검색어",
+                        "clearAll": "모두 지우기",
+                        "remove": "최근 검색어 삭제"
+                    },
+                    "footer": {
+                        "navigate": "이동",
+                        "select": "선택",
+                        "close": "닫기"
+                    }
+                }
+            }
+        }
+    }
+}

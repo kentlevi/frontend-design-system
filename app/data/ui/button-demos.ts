@@ -38,15 +38,20 @@ export const buttonDemoSections: ButtonDemoSection[] = [
         type: 'examples',
         title: 'Icon Positions',
         items: [
-            { label: 'Left icon', props: { icon: 'light-plus' } },
+            { label: 'Left icon', props: { icon: 'light-plus', tone: 'neutral' } },
             {
                 label: 'Right icon',
-                props: { icon: 'light-plus', iconPosition: 'right' },
+                props: {
+                    icon: 'light-plus',
+                    iconPosition: 'right',
+                    tone: 'neutral',
+                },
             },
             {
                 props: {
                     icon: 'light-plus',
                     iconOnly: true,
+                    tone: 'neutral',
                     'aria-label': 'Add' as any,
                 },
             },
@@ -59,15 +64,15 @@ export const buttonDemoSections: ButtonDemoSection[] = [
         items: [
             {
                 label: 'Selected',
-                props: { selected: true, icon: 'light-check' },
+                props: { selected: true, icon: 'light-check', tone: 'neutral' },
             },
             {
                 label: 'Disabled',
-                props: { disabled: true, icon: 'light-plus' },
+                props: { disabled: true, icon: 'light-plus', tone: 'neutral' },
             },
             {
                 label: 'Disabled outline',
-                props: { variant: 'outline', disabled: true },
+                props: { variant: 'outline', disabled: true, tone: 'neutral' },
             },
         ],
     },
@@ -76,7 +81,10 @@ export const buttonDemoSections: ButtonDemoSection[] = [
         type: 'examples',
         title: 'Long Label',
         items: [
-            { label: 'Long Button Text', props: { icon: 'light-arrow-right' } },
+            {
+                label: 'Long Button Text',
+                props: { icon: 'light-arrow-right', tone: 'neutral' },
+            },
         ],
     },
 ];

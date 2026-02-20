@@ -106,7 +106,7 @@ const { badgeVariants, badgeTones, badgeSizes, labelize } = useGuideBadges();
 .guide-badges-layout {
     display: grid;
     grid-template-columns: minmax(0, .65fr) minmax(0, .35fr);
-    gap: 24px;
+    gap: 40px;
     align-items: start;
     .guide-section {
         margin-top: 0;
@@ -116,15 +116,28 @@ const { badgeVariants, badgeTones, badgeSizes, labelize } = useGuideBadges();
 .guide-badges-samples {
     display: grid;
     gap: 24px;
-    padding: 24px 28px;
-    border: 1px solid var(--border-default);
-    border-radius: 16px;
-    background: var(--contrast-light);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.guide-badges-layout > .guide-section + .guide-section {
+    border-left: 1px solid var(--border-default);
+    padding-left: 36px;
 }
 
 @media (max-width: 1200px) {
     .guide-badges-layout {
         grid-template-columns: 1fr;
+    }
+
+    .guide-badges-layout > .guide-section + .guide-section {
+        border-left: 0;
+        border-top: 1px solid var(--border-default);
+        padding-left: 0;
+        padding-top: 32px;
     }
 }
 </style>

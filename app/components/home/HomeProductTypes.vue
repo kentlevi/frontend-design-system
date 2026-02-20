@@ -44,7 +44,8 @@ const types = [
                 <div class="home-types-icon">
                     <img
                         :src="item.image"
-                        :alt="t(`home.productTypes.${item.key}`)"
+                        alt=""
+                        aria-hidden="true"
                         loading="lazy"
                         class="home-types-image"
                     />

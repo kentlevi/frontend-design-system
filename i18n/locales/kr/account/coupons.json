@@ -1,0 +1,28 @@
+{
+    "account": {
+        "coupons": {
+            "title": "쿠폰",
+            "codePlaceholder": "쿠폰 코드를 입력해 주세요...",
+            "addCoupon": "쿠폰 등록",
+            "items": {
+                "laborMonthDiscount": {
+                    "title": "근로자의 달 할인",
+                    "note": "5월 한 달 동안 모든 상품 10% 할인을 제공합니다."
+                },
+                "birthdayMonthDiscount": {
+                    "title": "생일 월 할인",
+                    "note": "생일이 있는 달에는 모든 상품 20% 할인을 제공합니다!"
+                },
+                "paperStickerDiscount": {
+                    "title": "종이 스티커 할인",
+                    "note": "모든 종이 상품에 15% 할인을 제공합니다."
+                }
+            },
+            "tags": {
+                "Unlimited Use": "무제한 사용",
+                "Multiple-Use": "다회 사용",
+                "Single Use": "1회 사용"
+            }
+        }
+    }
+}

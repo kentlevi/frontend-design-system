@@ -12,7 +12,7 @@ const { items } = useAccountGallery();
                 <header class="account-gallery-header" data-testid="account-gallery-header">
                     <h1 class="account-gallery-title" data-testid="account-gallery-title">{{ t('account.gallery.title') }}</h1>
                     <div class="account-gallery-actions" data-testid="account-gallery-actions">
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters">
+                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters-button">
                             {{ t('account.gallery.filters') }}
                         </UiButton>
                         <input

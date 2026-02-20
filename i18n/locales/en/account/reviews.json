@@ -1,0 +1,19 @@
+{
+    "account": {
+        "reviews": {
+            "title": "Reviews",
+            "reviewedOn": "Reviewed on",
+            "rating": "Rating",
+            "items": {
+                "firstImpression": {
+                    "title": "First Impression is the best!",
+                    "text": "The print quality is excellent with vibrant colors and crisp details."
+                },
+                "greatQuality": {
+                    "title": "Great quality and fast delivery",
+                    "text": "The sticker quality exceeded expectations and arrived in good condition."
+                }
+            }
+        }
+    }
+}

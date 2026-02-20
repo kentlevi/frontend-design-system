@@ -1,0 +1,16 @@
+{
+    "account": {
+        "addressBook": {
+            "title": "주소록",
+            "addNew": "새 주소 추가",
+            "shippingTitle": "배송지 주소",
+            "shippingDescription": "주문 상품이 배송될 기본 위치를 관리하세요.",
+            "default": "기본",
+            "tags": {
+                "Home": "집",
+                "Office": "사무실",
+                "Client": "고객사"
+            }
+        }
+    }
+}

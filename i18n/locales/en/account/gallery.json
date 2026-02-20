@@ -1,0 +1,16 @@
+{
+    "account": {
+        "gallery": {
+            "title": "Gallery",
+            "filters": "Filters",
+            "searchPlaceholder": "Search",
+            "sizeLabel": "Size:",
+            "sizeUnit": "pixels",
+            "tags": {
+                "Branding": "Branding",
+                "Outdoor": "Outdoor",
+                "Skating": "Skating"
+            }
+        }
+    }
+}

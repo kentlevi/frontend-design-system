@@ -93,7 +93,11 @@ const {
                         tone="neutral"
                         size="lg"
                         class="auth-login-submit"
-                        data-testid="auth-login-submit"
+                        :data-testid="
+                            isNonMember
+                                ? 'auth-login-submit-non-member-button'
+                                : 'auth-login-submit-member-button'
+                        "
                         @click="onSubmitClick"
                     >
                         {{ submitLabel }}

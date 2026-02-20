@@ -57,7 +57,6 @@ export function useRegisterForm() {
         ) {
             return;
         }
-
         const params = new URLSearchParams({
             firstName: firstName.value.trim(),
             lastName: lastName.value.trim(),

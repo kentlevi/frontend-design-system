@@ -5,6 +5,7 @@ import type { LogoName } from '~/data/ui/logos';
 type Variant = 'full' | 'mark';
 type Color = 'colored' | 'white';
 type Size = 'sm' | 'md' | 'lg' | number;
+type Loading = 'eager' | 'lazy';
 
 const props = withDefaults(
     defineProps<{
@@ -12,11 +13,17 @@ const props = withDefaults(
         variant?: Variant;
         color?: Color;
         size?: Size;
+        width?: number;
+        loading?: Loading;
+        fetchpriority?: 'high' | 'low' | 'auto';
     }>(),
     {
         variant: 'full',
         color: 'colored',
         size: 'lg',
+        width: undefined,
+        loading: 'lazy',
+        fetchpriority: 'auto',
     }
 );
 
@@ -31,6 +38,8 @@ const logoHeight = computed(() => {
     return sizeMap[props.size];
 });
 
+const logoWidth = computed<number | undefined>(() => props.width);
+
 const src = computed(
     () => `/logos/${props.variant}/${props.color}/${props.name}.svg`
 );
@@ -41,11 +50,14 @@ const src = computed(
         :src="src"
         :style="{
             height: `${logoHeight}px`,
-            width: 'auto',
+            width: logoWidth ? `${logoWidth}px` : 'auto',
         }"
+        :width="logoWidth"
+        :height="logoHeight"
         :alt="`${props.name} logo`"
         class="ui-logo"
-        loading="lazy"
+        :loading="loading"
+        :fetchpriority="fetchpriority"
         decoding="async"
     />
 </template>

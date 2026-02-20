@@ -14,8 +14,8 @@ defineProps<{
             <div class="product-reviews-media" :class="card.mediaClass" :data-testid="`product-reviews-card-media-${card.id}`"></div>
 
             <div class="product-reviews-content" data-testid="product-reviews-card-content">
-                <h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${card.id}`">{{ t(`products.reviews.cards.${card.id}.title`) }}</h3>
-                <p class="product-reviews-card-text" :data-testid="`product-reviews-card-text-${card.id}`">{{ t(`products.reviews.cards.${card.id}.text`) }}</p>
+                <h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${card.id}`">{{ t(`product.reviews.cards.${card.id}.title`) }}</h3>
+                <p class="product-reviews-card-text" :data-testid="`product-reviews-card-text-${card.id}`">{{ t(`product.reviews.cards.${card.id}.text`) }}</p>
             </div>
         </div>
 
@@ -134,7 +134,7 @@ defineProps<{
                     display: block;
                     font-size: 12px;
                     line-height: 20px;
-                    color: var(--text-muted);
+                    color: var(--text-secondary);
                 }
             }
         }

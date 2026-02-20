@@ -62,7 +62,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
     const total = computed(() => subtotal.value * (1 - discountRate.value));
     const hasUploadedArtwork = computed(() => Boolean(artworkFile.value));
     const selectedSizeLabel = computed(() =>
-        t(`products.sizes.${selectedSize.value}.label`)
+        t(`product.sizes.${selectedSize.value}.label`)
     );
     const featuredItems = computed(() => {
         const activeId = selectedId.value;
@@ -271,15 +271,15 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
     }
 
     function getProductName(product: ProductItem) {
-        return t(`products.items.${product.id}.name`);
+        return t(`product.items.${product.id}.name`);
     }
 
     function getProductBlurb(product: ProductItem) {
-        return t(`products.items.${product.id}.blurb`);
+        return t(`product.items.${product.id}.blurb`);
     }
 
     function sizeLabelParts(sizeKey: string) {
-        const label = t(`products.sizes.${sizeKey}.label`);
+        const label = t(`product.sizes.${sizeKey}.label`);
         const [name, ...rest] = label.split(' ');
         return {
             name,

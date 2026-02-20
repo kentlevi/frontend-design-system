@@ -1,0 +1,29 @@
+{
+    "auth": {
+        "register": {
+            "title": "Become a Member",
+            "subtitle": "Kickstart your journey by earning 2 points upon registering an account.",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "optional": "Optional",
+            "enterFirstName": "Enter First Name",
+            "enterLastName": "Enter Last Name",
+            "email": "Email Address",
+            "enterEmail": "Enter Email Address",
+            "password": "Password",
+            "enterPassword": "Enter Password",
+            "passwordHint": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
+            "agreePrefix": "I agree with Musticker's",
+            "terms": "Terms of Service",
+            "and": "and",
+            "privacy": "Privacy Policy",
+            "promoOptIn": "Sign me up for email to receive promos, exclusive offers and marketing materials.",
+            "createAccount": "Create Account",
+            "alreadyMember": "Already a Member?",
+            "signInHere": "Sign In Here",
+            "validation": {
+                "mustAgree": "You must agree to the Terms of Service and Privacy Policy."
+            }
+        }
+    }
+}

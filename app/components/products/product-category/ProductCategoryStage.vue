@@ -46,7 +46,7 @@ const { t } = useI18n();
     <section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
         <section class="product-picker product-picker-layer" data-testid="product-category-picker">
             <button
-                v-for="product in props.categoryProducts"
+                v-for="(product, index) in props.categoryProducts"
                 :key="product.id"
                 type="button"
                 class="product-picker-item"
@@ -55,7 +55,16 @@ const { t } = useI18n();
                 :data-testid="`product-category-picker-item-${product.id}`"
             >
                 <div class="product-picker-icon" :class="`is-${product.id}`">
-                    <img :src="product.image" :alt="props.getProductName(product)" loading="lazy" class="product-picker-image" />
+                    <img
+                        :src="product.image"
+                        :alt="`${props.getProductName(product)} preview`"
+                        :loading="index === 0 ? 'eager' : 'lazy'"
+                        :fetchpriority="index === 0 ? 'high' : undefined"
+                        :decoding="index === 0 ? 'sync' : 'async'"
+                        width="156"
+                        height="120"
+                        class="product-picker-image"
+                    />
                 </div>
                 <p class="product-picker-name">
                     {{ props.getProductName(product) }}
@@ -85,14 +94,14 @@ const { t } = useI18n();
                                 @click="emit('update:selectedSize', feature.key)"
                                 :data-testid="`product-category-feature-card-${feature.key}`"
                             >
-                                <h4 class="mini-feature-title">{{ t(`products.sizes.${feature.key}.label`) }}</h4>
+                                <h4 class="mini-feature-title">{{ t(`product.sizes.${feature.key}.label`) }}</h4>
                                 <img
                                     :src="feature.image"
-                                    :alt="t(`products.sizes.${feature.key}.label`)"
+                                    :alt="t(`product.sizes.${feature.key}.label`)"
                                     loading="lazy" class="mini-feature-image" />
 
                                 <p class="mini-feature-description">
-                                    {{ t(`products.featureCards.${feature.descriptionKey}.description`) }}
+                                    {{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
                                 </p>
                             </button>
                         </div>
@@ -101,8 +110,8 @@ const { t } = useI18n();
                     <aside class="product-options" data-testid="product-category-options">
                         <section>
                             <div class="option-head" data-testid="product-category-size-head">
-                                <h3 class="option-title" data-testid="product-category-size-title">{{ t('products.options.selectSize') }}</h3>
-                                <small class="option-head-unit">{{ t('products.options.unitMm') }}</small>
+                                <h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
+                                <small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
                             </div>
                             <div class="option-grid option-grid-size" data-testid="product-category-size-options">
                                 <button
@@ -117,14 +126,14 @@ const { t } = useI18n();
                                     <span class="size-pill-name">{{ size.name }}</span>
                                     <span class="size-pill-dim">{{ size.dim }}</span>
                                 </button>
-                                <button type="button" class="option-pill option-pill-wide" data-testid="product-category-size-option-custom">
-                                    {{ t('products.options.customSize') }}
+                                <button type="button" class="option-pill option-pill-wide" data-testid="product-category-size-option-custom-button">
+                                    {{ t('product.options.customSize') }}
                                 </button>
                             </div>
                         </section>
 
                         <section>
-                            <h3 class="option-title" data-testid="product-category-quantity-title">{{ t('products.options.selectQuantity') }}</h3>
+                            <h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
                             <div class="option-grid" data-testid="product-category-quantity-options">
                                 <button
                                     v-for="qty in props.quantityOptions"
@@ -138,30 +147,30 @@ const { t } = useI18n();
                                     <span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
                                     <strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
                                 </button>
-                                <button type="button" class="option-pill option-pill-wide" data-testid="product-category-quantity-option-custom">
-                                    {{ t('products.options.customQuantity') }}
+                                <button type="button" class="option-pill option-pill-wide" data-testid="product-category-quantity-option-custom-button">
+                                    {{ t('product.options.customQuantity') }}
                                 </button>
                             </div>
                         </section>
 
                         <section class="price-summary" data-testid="product-category-price-summary">
                             <p class="price-summary-row" data-testid="product-category-price-subtotal-row">
-                                <span class="price-summary-label">{{ t('products.price.subtotal') }}</span>
+                                <span class="price-summary-label">{{ t('product.price.subtotal') }}</span>
                                 <strong class="price-summary-value">{{ props.formatPrice(props.subtotal) }}</strong>
                             </p>
                             <p class="price-summary-row discount" data-testid="product-category-price-discount-row">
                                 <span class="price-summary-label">
-                                    {{ t('products.price.discount') }} ({{ Math.round(props.discountRate * 100) }}%)
+                                    {{ t('product.price.discount') }} ({{ Math.round(props.discountRate * 100) }}%)
                                 </span>
                                 <strong class="price-summary-value">-{{ props.formatPrice(props.subtotal - props.total) }}</strong>
                             </p>
                             <p class="price-summary-row total" data-testid="product-category-price-total-row">
-                                <span class="price-summary-label">{{ t('products.price.total') }}</span>
+                                <span class="price-summary-label">{{ t('product.price.total') }}</span>
                                 <strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
                             </p>
                             <ul class="price-benefits" data-testid="product-category-price-benefits">
-                                <li data-testid="product-category-price-benefit-shipping">{{ t('products.price.benefitShipping') }}</li>
-                                <li data-testid="product-category-price-benefit-ships-tomorrow">{{ t('products.price.benefitShipsTomorrow') }}</li>
+                                <li data-testid="product-category-price-benefit-shipping">{{ t('product.price.benefitShipping') }}</li>
+                                <li data-testid="product-category-price-benefit-ships-tomorrow">{{ t('product.price.benefitShipsTomorrow') }}</li>
                             </ul>
                             <UiButton
                                 type="button"
@@ -173,7 +182,7 @@ const { t } = useI18n();
                                 @click="emit('open-upload')"
                                 data-testid="product-category-next-step-button"
                             >
-                                {{ t('products.price.nextStep') }}
+                                {{ t('product.price.nextStep') }}
                             </UiButton>
                         </section>
                     </aside>

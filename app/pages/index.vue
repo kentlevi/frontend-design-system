@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import HomeCtaSection from '~/components/home/HomeCtaSection.vue';
-import HomeFeatureHighlight from '~/components/home/HomeFeatureHighlight.vue';
-import HomeGuarantees from '~/components/home/HomeGuarantees.vue';
 import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
-import HomeReviewsSection from '~/components/home/HomeReviewsSection.vue';
+import { defineAsyncComponent } from 'vue';
+
+const HomeFeatureHighlight = defineAsyncComponent(
+    () => import('~/components/home/HomeFeatureHighlight.vue')
+);
+const HomeReviewsSection = defineAsyncComponent(
+    () => import('~/components/home/HomeReviewsSection.vue')
+);
+const HomeGuarantees = defineAsyncComponent(
+    () => import('~/components/home/HomeGuarantees.vue')
+);
+const HomeCtaSection = defineAsyncComponent(
+    () => import('~/components/home/HomeCtaSection.vue')
+);
 
 definePageMeta({
     layout: 'home',
@@ -15,6 +25,17 @@ const { t } = useI18n();
 useSeoMeta({
     title: () => t('home.seo.title'),
     description: () => t('home.seo.description'),
+});
+
+useHead({
+    link: [
+        {
+            rel: 'preload',
+            as: 'image',
+            href: '/illustrations/products/sticker-kids/kid-decorating-sheet.svg',
+            fetchpriority: 'high',
+        },
+    ],
 });
 </script>
 

@@ -1,0 +1,43 @@
+{
+    "account": {
+        "profile": {
+            "title": "Profile",
+            "personalDetails": "Personal Details",
+            "personalDetailsDesc": "Manage your personal information & contact details.",
+            "profilePhoto": "Profile Photo",
+            "photoHint1": "At least 800x800px recommended file size.",
+            "photoHint2": "Accepted filetypes: .jpg and .png",
+            "uploadNewPhoto": "Upload New Photo",
+            "delete": "Delete",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "optional": "Optional",
+            "emailAddress": "Email Address",
+            "saveChanges": "Save Changes",
+            "password": "Password",
+            "passwordDesc": "Strengthen your account by ensuring your password is strong.",
+            "currentPassword": "Current Password",
+            "currentPasswordPlaceholder": "Enter Current Password",
+            "passwordHint": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
+            "newPassword": "New Password",
+            "newPasswordPlaceholder": "Enter New Password",
+            "confirmNewPassword": "Confirm New Password",
+            "confirmNewPasswordPlaceholder": "Confirm New Password",
+            "changePassword": "Change Password",
+            "forgotPassword": "Forgot Password?",
+            "settings": "Settings",
+            "settingsDesc": "Manage your account preferences, including promotion and discount alerts, as well as your review settings.",
+            "promotions": "Promotions & Discounts",
+            "promotionsDesc": "Receive emails about savings, new items, promotions & more.",
+            "reviews": "Reviews",
+            "reviewsDesc": "Receive emails everytime your order gets completed, as well as published reviews.",
+            "confirmations": "Confirmations",
+            "confirmationsDesc": "Receive emails regarding final proof, design changes and payment proof.",
+            "unit": "Unit of Measurement",
+            "unitDesc": "Choose your preferred/default unit of measurement.",
+            "millimeter": "millimeter",
+            "inch": "inch",
+            "signOut": "Sign Out"
+        }
+    }
+}

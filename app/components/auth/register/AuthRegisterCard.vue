@@ -112,7 +112,7 @@ const {
                             type="button"
                             class="auth-register-password-toggle"
                             :aria-label="t('auth.login.togglePassword')"
-                            data-testid="auth-register-password-toggle"
+                            data-testid="auth-register-password-toggle-button"
                             @click="showPassword = !showPassword"
                         >
                             <UiIcon
@@ -159,7 +159,7 @@ const {
             tone="neutral"
             size="lg"
             class="auth-register-submit"
-            data-testid="auth-register-submit"
+            data-testid="auth-register-submit-button"
             @click="submitRegister"
         >
             {{ t('auth.register.createAccount') }}

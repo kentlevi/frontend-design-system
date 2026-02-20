@@ -1,0 +1,18 @@
+{
+    "layout": {
+        "header": {
+            "accountLinks": {
+                "profile": "Profile",
+                "addressBook": "Address Book",
+                "orders": "My Orders",
+                "gallery": "Gallery",
+                "points": "Points",
+                "coupons": "Coupons",
+                "reviews": "My Reviews",
+                "quoteRequests": "Quote Requests",
+                "gettingStarted": "Getting Started",
+                "signOut": "Sign Out"
+            }
+        }
+    }
+}

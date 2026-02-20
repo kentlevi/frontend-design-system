@@ -1,0 +1,13 @@
+{
+    "layout": {
+        "header": {
+            "primaryNav": "주요 메뉴",
+            "search": "검색",
+            "cart": "장바구니",
+            "account": "계정",
+            "accountMenu": "계정 메뉴",
+            "login": "로그인",
+            "register": "회원가입"
+        }
+    }
+}

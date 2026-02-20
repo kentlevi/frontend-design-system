@@ -7,7 +7,7 @@ const props = defineProps<{
     size?: number;
 }>();
 
-const src = computed(() => `/flags/${props.code}.svg`);
+const src = computed(() => `/flags/${props.code.toUpperCase()}.svg`);
 const alt = computed(() => props.alt ?? `Flag of ${props.code.toUpperCase()}`);
 </script>
 

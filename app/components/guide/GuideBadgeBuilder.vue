@@ -183,11 +183,11 @@ const previewCopyText = computed(() => {
 
 <style scoped lang="scss">
 .guide-badge-builder {
-    border: 1px solid var(--border-default);
-    border-radius: 16px;
-    background: var(--contrast-light);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-    padding: 20px 24px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
 }
 
 .guide-badge-builder-controls {

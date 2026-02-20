@@ -66,7 +66,7 @@ const {
                                         type="button"
                                         class="account-profile-outline-button"
                                         @click="openFilePicker"
-                                        data-testid="account-profile-photo-upload"
+                                        data-testid="account-profile-photo-upload-button"
                                     >
                                         {{ t('account.profile.uploadNewPhoto') }}
                                     </button>
@@ -75,7 +75,7 @@ const {
                                         type="button"
                                         class="account-profile-delete-button"
                                         @click="removePhoto"
-                                        data-testid="account-profile-photo-delete"
+                                        data-testid="account-profile-photo-delete-button"
                                     >
                                         {{ t('account.profile.delete') }}
                                     </button>
@@ -100,7 +100,7 @@ const {
                             </div>
                         </div>
                         <div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-                            <UiButton variant="filled" tone="neutral" size="md" @click="saveProfile" data-testid="account-profile-save">
+                            <UiButton variant="filled" tone="neutral" size="md" @click="saveProfile" data-testid="account-profile-save-button">
                                 {{ t('account.profile.saveChanges') }}
                             </UiButton>
                         </div>
@@ -142,7 +142,7 @@ const {
                             />
                         </div>
                         <div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
-                            <UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password">
+                            <UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
                                 {{ t('account.profile.changePassword') }}
                             </UiButton>
                             <NuxtLink :to="localePath('/auth/login')" data-testid="account-profile-forgot-password">
@@ -198,7 +198,7 @@ const {
                                     type="button"
                                     :class="{ active: unit === 'millimeter' }"
                                     @click="unit = 'millimeter'"
-                                    data-testid="account-profile-unit-millimeter"
+                                    data-testid="account-profile-unit-millimeter-button"
                                 >
                                     {{ t('account.profile.millimeter') }}
                                 </button>
@@ -206,14 +206,14 @@ const {
                                     type="button"
                                     :class="{ active: unit === 'inch' }"
                                     @click="unit = 'inch'"
-                                    data-testid="account-profile-unit-inch"
+                                    data-testid="account-profile-unit-inch-button"
                                 >
                                     {{ t('account.profile.inch') }}
                                 </button>
                             </div>
                         </div>
                         <div class="account-profile-actions-right" data-testid="account-profile-signout-wrap">
-                            <UiButton variant="outline" tone="neutral" size="md" @click="signOut" data-testid="account-profile-signout">
+                            <UiButton variant="outline" tone="neutral" size="md" @click="signOut" data-testid="account-profile-signout-button">
                                 {{ t('account.profile.signOut') }}
                             </UiButton>
                         </div>

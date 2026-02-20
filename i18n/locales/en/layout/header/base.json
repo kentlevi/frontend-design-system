@@ -1,0 +1,13 @@
+{
+    "layout": {
+        "header": {
+            "primaryNav": "Primary",
+            "search": "Search",
+            "cart": "Cart",
+            "account": "Account",
+            "accountMenu": "Account Menu",
+            "login": "Login",
+            "register": "Register"
+        }
+    }
+}

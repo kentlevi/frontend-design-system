@@ -27,7 +27,7 @@ const { t } = useI18n();
                 class="home-locale-modal"
                 role="dialog"
                 aria-modal="true"
-                :aria-label="t('home.header.locale.title')"
+                :aria-label="t('layout.header.locale.title')"
                 data-testid="app-header-locale-dialog"
             >
                 <UiButton
@@ -38,13 +38,13 @@ const { t } = useI18n();
                     icon="strong-times"
                     icon-size="md"
                     class="home-locale-close"
-                    :aria-label="t('home.header.locale.close')"
+                    :aria-label="t('layout.header.locale.close')"
                     @click="emit('close')"
-                    data-testid="app-header-locale-close"
+                    data-testid="app-header-locale-close-button"
                 />
 
                 <h3 class="home-locale-title" data-testid="app-header-locale-title">
-                    {{ t('home.header.locale.title') }}
+                    {{ t('layout.header.locale.title') }}
                 </h3>
 
                 <div class="home-locale-list" data-testid="app-header-locale-list">
@@ -55,7 +55,7 @@ const { t } = useI18n();
                         class="home-locale-item"
                         :class="{ 'is-active': props.localeValue === option.code }"
                         @click="emit('select', option.code)"
-                        :data-testid="`app-header-locale-option-${option.code}`"
+                        :data-testid="`app-header-locale-option-${option.code}-button`"
                     >
                         <UiFlag :code="option.flagCode" :size="20" />
                         <span class="home-locale-item-label">{{ option.label }}</span>

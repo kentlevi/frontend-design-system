@@ -50,7 +50,7 @@
 
     &[data-tone='success'][data-variant='outline'] {
         border-color: f.$success;
-        color: f.$success;
+        color: var(--success-80);
     }
 
     &[data-tone='danger'][data-variant='filled'] {

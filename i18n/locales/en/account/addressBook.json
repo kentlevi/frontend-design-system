@@ -1,0 +1,16 @@
+{
+    "account": {
+        "addressBook": {
+            "title": "Address Book",
+            "addNew": "Add New Address",
+            "shippingTitle": "Shipping Address",
+            "shippingDescription": "Designated location where your order will be delivered.",
+            "default": "Default",
+            "tags": {
+                "Home": "Home",
+                "Office": "Office",
+                "Client": "Client"
+            }
+        }
+    }
+}

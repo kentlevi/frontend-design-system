@@ -10,7 +10,11 @@ const { t } = useI18n();
                     class="home-hero-art-image"
                     src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
                     :alt="t('home.hero.title')"
-                    loading="lazy"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="sync"
+                    width="280"
+                    height="274"
                 />
             </div>
 
@@ -24,7 +28,7 @@ const { t } = useI18n();
                     tone="neutral"
                     size="md"
                     class="home-hero-cta"
-                    data-testid="home-hero-cta"
+                    data-testid="home-hero-cta-button"
                 >
                     {{ t('home.hero.cta') }}
                 </UiButton>

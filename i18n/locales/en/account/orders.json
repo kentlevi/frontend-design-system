@@ -1,0 +1,21 @@
+{
+    "account": {
+        "orders": {
+            "title": "My Orders",
+            "selectDate": "Select Date",
+            "filters": "Filters",
+            "orderLabel": "Order",
+            "meta": "{count} item(s) | Order Date: {date}",
+            "status": {
+                "beforeProduction": "Before Production",
+                "processing": "Processing",
+                "actionRequired": "Action Required"
+            },
+            "orderSummary": "Order Summary",
+            "summaryText": "Upload artwork and review invoice/payment items from this panel.",
+            "actions": "Actions",
+            "uploadArtwork": "Upload Artwork",
+            "cancelOrder": "Cancel Order"
+        }
+    }
+}

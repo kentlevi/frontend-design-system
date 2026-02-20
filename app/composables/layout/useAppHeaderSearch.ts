@@ -48,7 +48,7 @@ export function useAppHeaderSearch() {
     const searchModalRef = ref<HTMLElement | null>(null);
     const activeSearchNavIndex = ref(-1);
 
-    const searchEmptySuggestedTerm = computed(() => t('search.modal.suggestedTerm'));
+    const searchEmptySuggestedTerm = computed(() => t('layout.header.search.modal.suggestedTerm'));
     const trimmedSearchQuery = computed(() => searchQuery.value.trim());
     const trimmedDebouncedSearchQuery = computed(() =>
         debouncedSearchQuery.value.trim()
@@ -82,12 +82,12 @@ export function useAppHeaderSearch() {
                     categoryKey,
                     categoryLabel:
                         categoryKey === 'stickers'
-                            ? t('home.header.nav.stickers')
+                            ? t('layout.header.nav.stickers')
                             : categoryKey === 'roll-stickers'
-                              ? t('home.header.nav.rollStickers')
-                              : t('home.header.nav.sheetStickers'),
-                    name: toSearchDisplayName(t(`products.items.${product.id}.name`)),
-                    blurb: t(`products.items.${product.id}.blurb`),
+                              ? t('layout.header.nav.rollStickers')
+                              : t('layout.header.nav.sheetStickers'),
+                    name: toSearchDisplayName(t(`product.items.${product.id}.name`)),
+                    blurb: t(`product.items.${product.id}.blurb`),
                     image: product.image,
                     to: localePath(`/${categoryKey}/${productSlug}`),
                 };

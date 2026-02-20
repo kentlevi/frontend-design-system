@@ -17,7 +17,7 @@ const { t } = useI18n();
                         tone="default"
                         size="md"
                         class="home-cta-btn"
-                        data-testid="home-cta-primary"
+                        data-testid="home-cta-primary-button"
                     >
                         {{ t('home.cta.primary') }}
                     </UiButton>
@@ -26,7 +26,7 @@ const { t } = useI18n();
                         tone="default"
                         size="md"
                         class="home-cta-btn-alt"
-                        data-testid="home-cta-secondary"
+                        data-testid="home-cta-secondary-button"
                     >
                         {{ t('home.cta.secondary') }}
                     </UiButton>

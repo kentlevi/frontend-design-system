@@ -1,0 +1,32 @@
+{
+    "layout": {
+        "header": {
+            "search": {
+                "modal": {
+                    "title": "Search products",
+                    "placeholder": "Find your stickers...",
+                    "clear": "Clear search",
+                    "suggestedTerm": "Die Cut Stickers",
+                    "noRecent": {
+                        "title": "No recent searches",
+                        "textPrefix": "Start exploring our sticker products - try searching for"
+                    },
+                    "noResult": {
+                        "title": "No results found",
+                        "textPrefix": "Try refining your search or explore popular options like"
+                    },
+                    "recent": {
+                        "title": "Recent searches",
+                        "clearAll": "Clear all",
+                        "remove": "Remove recent search"
+                    },
+                    "footer": {
+                        "navigate": "Navigate",
+                        "select": "Select",
+                        "close": "Close"
+                    }
+                }
+            }
+        }
+    }
+}

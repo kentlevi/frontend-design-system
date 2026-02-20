@@ -14,7 +14,7 @@ const { t } = useI18n();
                 tone="neutral"
                 size="lg"
                 class="auth-login-social"
-                data-testid="auth-login-social-facebook"
+                data-testid="auth-login-social-facebook-button"
             >
                 <span class="auth-login-social-content">
                     <UiSocialIcon name="facebook" :size="24" variant="colored" />
@@ -27,7 +27,7 @@ const { t } = useI18n();
                 tone="neutral"
                 size="lg"
                 class="auth-login-social"
-                data-testid="auth-login-social-google"
+                data-testid="auth-login-social-google-button"
             >
                 <span class="auth-login-social-content">
                     <UiSocialIcon name="google" :size="24" variant="colored" />

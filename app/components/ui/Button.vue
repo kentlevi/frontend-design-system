@@ -17,6 +17,7 @@ const props = withDefaults(
         iconPosition?: IconPosition;
         iconSize?: ButtonSize;
         iconOnly?: boolean;
+        srLabel?: string;
 
         selected?: boolean;
         disabled?: boolean;
@@ -35,6 +36,7 @@ const props = withDefaults(
         iconPosition: 'left',
         iconSize: 'sm',
         iconOnly: false,
+        srLabel: '',
 
         selected: false,
         disabled: false,
@@ -56,6 +58,7 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
 <template>
     <button
         class="ui-button"
+        type="button"
         :data-variant="variant"
         :data-size="size"
         :data-tone="tone ?? 'primary'"
@@ -85,6 +88,10 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
             class="ui-button-icon"
         />
 
+        <span v-if="iconOnly && srLabel" class="ui-button-sr-only">
+            {{ srLabel }}
+        </span>
+
         <span
             v-if="!iconOnly && !loading && $slots.default"
             class="ui-button-label"
@@ -101,3 +108,17 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
         />
     </button>
 </template>
+
+<style scoped lang="scss">
+.ui-button-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+</style>

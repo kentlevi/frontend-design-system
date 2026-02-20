@@ -1,0 +1,18 @@
+{
+    "home": {
+        "guarantees": {
+            "quality": {
+                "title": "100% Quality Guaranteed",
+                "text": "When problems arise, we take full responsibility, including reprints or refunds. No excuses, just solutions."
+            },
+            "shipping": {
+                "title": "Made today Â· Shipped tomorrow",
+                "text": "Production starts as soon as your design is approved. The faster you approve, the sooner it ships, often the next day."
+            },
+            "freeDelivery": {
+                "title": "Free shipping over 50,000 won",
+                "text": "Our standard shipping fee is 3,000 won. To make your shopping better, orders over 50,000 won qualify for free shipping."
+            }
+        }
+    }
+}

@@ -44,11 +44,11 @@
         flex-direction: column;
         width: 100%;
         max-width: none;
-        padding: 20px 24px;
-        border: 1px solid var(--border-default);
-        border-radius: 16px;
-        background: var(--contrast-light);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
     }
 
     .guide-header-content {
@@ -271,7 +271,7 @@
         top: 50%;
         transform: translateY(-50%);
         font-size: 14px;
-        color: #6b7280;
+        color: var(--text-muted);
         pointer-events: none;
         line-height: 1;
     }

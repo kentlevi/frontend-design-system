@@ -1,0 +1,20 @@
+{
+    "account": {
+        "quoteRequests": {
+            "title": "Quote Requests",
+            "selectDate": "Select Date",
+            "filters": "Filters",
+            "orderLabel": "Order",
+            "quoteDate": "Quote Date",
+            "status": {
+                "inReview": "In Review",
+                "pending": "Pending"
+            },
+            "sampleMessage": "Hi Good Day! I am trying out this sticker to print on a white base.",
+            "requestLabel": "Request",
+            "sampleRequestPrefix": "Transparent Sticker",
+            "messagePlaceholder": "Enter message here...",
+            "send": "Send"
+        }
+    }
+}

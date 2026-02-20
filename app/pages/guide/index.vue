@@ -2,6 +2,7 @@
 import { useGuideIndex } from '@/composables/guide/useGuideIndex';
 
 const { baseGuides, coreGuides } = useGuideIndex();
+const localePath = useLocalePath();
 </script>
 
 <template>
@@ -21,11 +22,16 @@ const { baseGuides, coreGuides } = useGuideIndex();
                 <NuxtLink
                     v-for="guide in baseGuides"
                     :key="guide.path"
-                    :to="guide.path"
+                    :to="localePath(guide.path)"
                     class="guide-card"
                 >
                     <div class="guide-card-content">
-                        <h3 class="guide-card-title">{{ guide.title }}</h3>
+                        <h3 class="guide-card-title">
+                            {{ guide.title }}
+                            <span class="guide-index-status" :class="`is-${guide.status ?? 'stable'}`">
+                                {{ guide.status ?? 'stable' }}
+                            </span>
+                        </h3>
                         <p class="guide-card-description">
                             {{ guide.description }}
                         </p>
@@ -50,11 +56,16 @@ const { baseGuides, coreGuides } = useGuideIndex();
                 <NuxtLink
                     v-for="guide in coreGuides"
                     :key="guide.path"
-                    :to="guide.path"
+                    :to="localePath(guide.path)"
                     class="guide-card"
                 >
                     <div class="guide-card-content">
-                        <h3 class="guide-card-title">{{ guide.title }}</h3>
+                        <h3 class="guide-card-title">
+                            {{ guide.title }}
+                            <span class="guide-index-status" :class="`is-${guide.status ?? 'stable'}`">
+                                {{ guide.status ?? 'stable' }}
+                            </span>
+                        </h3>
                         <p class="guide-card-description">
                             {{ guide.description }}
                         </p>
@@ -72,3 +83,27 @@ const { baseGuides, coreGuides } = useGuideIndex();
         </section>
     </section>
 </template>
+
+<style scoped lang="scss">
+.guide-index-status {
+    margin-left: 8px;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+    line-height: 16px;
+    text-transform: capitalize;
+    background: color-mix(in srgb, var(--gray-20) 70%, var(--contrast-light));
+
+    &.is-stable {
+        background: color-mix(in srgb, #16a34a 18%, var(--contrast-light));
+    }
+
+    &.is-draft {
+        background: color-mix(in srgb, #f59e0b 24%, var(--contrast-light));
+    }
+
+    &.is-deprecated {
+        background: color-mix(in srgb, #dc2626 18%, var(--contrast-light));
+    }
+}
+</style>

@@ -1,0 +1,13 @@
+{
+    "account": {
+        "shell": {
+            "level": "Bumper Boss (Level 3)",
+            "stats": {
+                "order": "Order",
+                "points": "Points",
+                "coupons": "Coupons",
+                "totalSpent": "Total Spent"
+            }
+        }
+    }
+}

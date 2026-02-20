@@ -61,7 +61,7 @@ const { t } = useI18n();
                 class="home-search-modal"
                 role="dialog"
                 aria-modal="true"
-                :aria-label="t('search.modal.title')"
+                :aria-label="t('layout.header.search.modal.title')"
                 data-testid="app-header-search-dialog"
             >
                 <div class="home-search-head" data-testid="app-header-search-head">
@@ -69,7 +69,7 @@ const { t } = useI18n();
                         <button
                             type="button"
                             class="home-search-head-action"
-                            :aria-label="t('home.header.search')"
+                            :aria-label="t('layout.header.search')"
                             @click="emit('focus-input')"
                             data-testid="app-header-search-focus-button"
                         >
@@ -84,7 +84,7 @@ const { t } = useI18n();
                             :ref="props.setInputRef"
                             :value="props.searchQuery"
                             type="search"
-                            :placeholder="t('search.modal.placeholder')"
+                            :placeholder="t('layout.header.search.modal.placeholder')"
                             class="home-search-input"
                             autocomplete="off"
                             @input="
@@ -116,16 +116,16 @@ const { t } = useI18n();
 
                     <div v-else-if="props.showSearchRecent" class="home-search-recent" data-testid="app-header-search-recent">
                         <div class="home-search-recent-head" data-testid="app-header-search-recent-head">
-                            <h4 class="home-search-heading">{{ t('search.modal.recent.title') }}</h4>
+                            <h4 class="home-search-heading">{{ t('layout.header.search.modal.recent.title') }}</h4>
                             <UiButton
                                 variant="ghost"
                                 tone="default"
                                 size="sm"
                                 class="home-search-recent-clear"
                                 @click="emit('clear-recent')"
-                                data-testid="app-header-search-recent-clear"
+                                data-testid="app-header-search-recent-clear-button"
                             >
-                                {{ t('search.modal.recent.clearAll') }}
+                                {{ t('layout.header.search.modal.recent.clearAll') }}
                             </UiButton>
                         </div>
                         <ul class="home-search-recent-list" data-testid="app-header-search-recent-list">
@@ -141,7 +141,7 @@ const { t } = useI18n();
                                     class="home-search-recent-term"
                                     :data-search-nav-index="index"
                                     @click="emit('apply-recent', entry.term)"
-                                    :data-testid="`app-header-search-recent-apply-${index}`"
+                                    :data-testid="`app-header-search-recent-apply-${index}-button`"
                                 >
                                     <div class="home-search-recent-icon">
                                         <img
@@ -171,9 +171,9 @@ const { t } = useI18n();
                                 <button
                                     type="button"
                                     class="home-search-recent-remove"
-                                    :aria-label="t('search.modal.recent.remove')"
+                                    :aria-label="t('layout.header.search.modal.recent.remove')"
                                     @click="emit('remove-recent', entry.term)"
-                                    :data-testid="`app-header-search-recent-remove-${index}`"
+                                    :data-testid="`app-header-search-recent-remove-${index}-button`"
                                 >
                                     <UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
                                 </button>
@@ -185,21 +185,21 @@ const { t } = useI18n();
                         <div class="home-search-empty-icon home-search-empty-icon--no-recent">
                             <img
                                 src="/icons/custom/search/no-recent-searches.svg"
-                                :alt="t('search.modal.noRecent.title')"
+                                :alt="t('layout.header.search.modal.noRecent.title')"
                                 width="48"
                                 height="48" class="home-search-image" />
                         </div>
                         <div class="home-search-empty-copy">
-                            <h4 class="home-search-heading">{{ t('search.modal.noRecent.title') }}</h4>
+                            <h4 class="home-search-heading">{{ t('layout.header.search.modal.noRecent.title') }}</h4>
                             <p class="home-search-empty-text">
-                                {{ t('search.modal.noRecent.textPrefix') }}
+                                {{ t('layout.header.search.modal.noRecent.textPrefix') }}
                                 <UiButton
                                     variant="ghost"
                                     tone="default"
                                     size="sm"
                                     class="home-search-suggest"
                                     @click="emit('apply-suggested')"
-                                    data-testid="app-header-search-suggest-empty-recent"
+                                    data-testid="app-header-search-suggest-empty-recent-button"
                                 >
                                     "{{ props.searchEmptySuggestedTerm }}"
                                 </UiButton>
@@ -211,21 +211,21 @@ const { t } = useI18n();
                         <div class="home-search-empty-icon home-search-empty-icon--no-recent">
                             <img
                                 src="/icons/custom/search/no-recent-searches.svg"
-                                :alt="t('search.modal.noResult.title')"
+                                :alt="t('layout.header.search.modal.noResult.title')"
                                 width="48"
                                 height="48" class="home-search-image" />
                         </div>
                         <div class="home-search-empty-copy">
-                            <h4 class="home-search-heading">{{ t('search.modal.noResult.title') }}</h4>
+                            <h4 class="home-search-heading">{{ t('layout.header.search.modal.noResult.title') }}</h4>
                             <p class="home-search-empty-text">
-                                {{ t('search.modal.noResult.textPrefix') }}
+                                {{ t('layout.header.search.modal.noResult.textPrefix') }}
                                 <UiButton
                                     variant="ghost"
                                     tone="default"
                                     size="sm"
                                     class="home-search-suggest"
                                     @click="emit('apply-suggested')"
-                                    data-testid="app-header-search-suggest-empty-result"
+                                    data-testid="app-header-search-suggest-empty-result-button"
                                 >
                                     "{{ props.searchEmptySuggestedTerm }}"
                                 </UiButton>
@@ -253,7 +253,7 @@ const { t } = useI18n();
                                 }"
                                 :data-search-nav-index="props.searchNavIndexByResultId[item.id]"
                                 @click="emit('select-result', item)"
-                                :data-testid="`app-header-search-result-${item.id}`"
+                                :data-testid="`app-header-search-result-${item.id}-button`"
                             >
                                 <div class="home-search-result-icon">
                                     <img :src="item.image" :alt="item.name" loading="lazy" class="home-search-image" />
@@ -290,7 +290,7 @@ const { t } = useI18n();
                                     color="var(--text-muted)"
                                 />
                             </span>
-                            <span class="home-search-foot-label">{{ t('search.modal.footer.navigate') }}</span>
+                            <span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.navigate') }}</span>
                         </div>
                         <div class="home-search-foot-hint" data-testid="app-header-search-footer-select">
                             <span class="home-search-key">
@@ -300,7 +300,7 @@ const { t } = useI18n();
                                     color="var(--text-muted)"
                                 />
                             </span>
-                            <span class="home-search-foot-label">{{ t('search.modal.footer.select') }}</span>
+                            <span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.select') }}</span>
                         </div>
                     </div>
                     <div class="home-search-foot-hint" data-testid="app-header-search-footer-close-wrap">
@@ -311,9 +311,9 @@ const { t } = useI18n();
                             size="sm"
                             class="home-search-close-text"
                             @click="emit('close')"
-                            data-testid="app-header-search-close"
+                            data-testid="app-header-search-close-button"
                         >
-                            {{ t('search.modal.footer.close') }}
+                            {{ t('layout.header.search.modal.footer.close') }}
                         </UiButton>
                     </div>
                 </footer>

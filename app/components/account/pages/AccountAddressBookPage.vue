@@ -13,7 +13,7 @@ const { items } = useAccountAddressBook();
                     <h1 class="account-address-book-title" data-testid="account-address-book-title">
                         {{ t('account.addressBook.title') }}
                     </h1>
-                    <UiButton variant="filled" tone="neutral" size="md" data-testid="account-address-book-add">
+                    <UiButton variant="filled" tone="neutral" size="md" data-testid="account-address-book-add-button">
                         {{ t('account.addressBook.addNew') }}
                     </UiButton>
                 </header>
@@ -46,7 +46,7 @@ const { items } = useAccountAddressBook();
                                 <button
                                     type="button"
                                     class="account-address-book-menu-button"
-                                    :data-testid="`account-address-book-item-menu-${index}`"
+                                    :data-testid="`account-address-book-item-menu-${index}-button`"
                                 >
                                     ...
                                 </button>

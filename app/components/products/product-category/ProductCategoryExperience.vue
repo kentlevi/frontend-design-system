@@ -1,12 +1,22 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
-import ProductCategoryCartPreview from '~/components/products/product-category/ProductCategoryCartPreview.vue';
-import ProductCategoryDetails from '~/components/products/product-category/ProductCategoryDetails.vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
-import ProductCategoryUploadModal from '~/components/products/product-category/ProductCategoryUploadModal.vue';
-import ProductReviewsSection from '~/components/products/product-reviews/ProductReviewsSection.vue';
 import { useProductCategoryExperience } from '~/composables/products/useProductCategoryExperience';
 import { type ProductCategoryKey } from '~/data/products/catalog';
+import { defineAsyncComponent } from 'vue';
+
+const ProductReviewsSection = defineAsyncComponent(
+    () => import('~/components/products/product-reviews/ProductReviewsSection.vue')
+);
+const ProductCategoryDetails = defineAsyncComponent(
+    () => import('~/components/products/product-category/ProductCategoryDetails.vue')
+);
+const CartUploadModal = defineAsyncComponent(
+    () => import('~/components/cart/CartUploadModal.vue')
+);
+const CartPreview = defineAsyncComponent(
+    () => import('~/components/cart/CartPreview.vue')
+);
 
 const props = defineProps<{
     category: ProductCategoryKey;
@@ -85,13 +95,17 @@ const {
             />
         </div>
 
-        <ProductCategoryDetails :has-picked-product="hasPickedProduct" data-testid="product-category-details" />
+        <ProductCategoryDetails
+            :has-picked-product="hasPickedProduct"
+            data-testid="product-category-details"
+        />
 
         <input ref="artworkInputRef" type="file" class="artwork-file-input"
             accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" @change="onArtworkSelected"
             data-testid="product-category-artwork-input" />
 
-        <ProductCategoryUploadModal
+        <CartUploadModal
+            v-if="uploadModalOpen"
             :open="uploadModalOpen"
             :has-uploaded-artwork="hasUploadedArtwork"
             :artwork-preview-url="artworkPreviewUrl"
@@ -108,7 +122,7 @@ const {
             data-testid="product-category-upload-modal"
         />
 
-        <ProductCategoryCartPreview
+        <CartPreview
             :open="cartPreviewOpen"
             :cart-item-count="cartItemCount"
             :selected-product="selectedProduct"
@@ -127,7 +141,10 @@ const {
             data-testid="product-category-cart-preview"
         />
 
-        <ProductReviewsSection class="product-experience-reviews" data-testid="product-category-reviews-section" />
+        <ProductReviewsSection
+            class="product-experience-reviews"
+            data-testid="product-category-reviews-section"
+        />
     </section>
 </template>
 
@@ -146,4 +163,5 @@ const {
     }
 }
 </style>
+
 

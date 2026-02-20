@@ -1,0 +1,15 @@
+{
+    "account": {
+        "points": {
+            "title": "Points",
+            "tierName": "Bumper Boss",
+            "lastTierUpgrade": "Last Tier Upgrade",
+            "pointsUnit": "points",
+            "logs": {
+                "earned": "Points Earned (Order # 12405077220)",
+                "used": "Points Used (Order # 12405077220)",
+                "quest": "Sticker Quest (Sticker Explorer)"
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "layout": {
+        "header": {
+            "locale": {
+                "aria": "Local preferences",
+                "title": "Local preferences",
+                "close": "Close local preferences",
+                "en": "English (USD)",
+                "kr": "Korean (KRW)"
+            }
+        }
+    }
+}

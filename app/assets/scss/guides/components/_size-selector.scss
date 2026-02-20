@@ -8,7 +8,7 @@
 .size-label {
     font-size: 12px;
     letter-spacing: 0.08em;
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 600;
 }
 
@@ -22,17 +22,17 @@
 .size-pill {
     padding: 6px 14px;
     border-radius: 8px;
-    border: 1.5px solid #d1d5db;
+    border: 1.5px solid var(--border-default);
     background: transparent;
     font-size: 14px;
     font-weight: 500;
-    color: #6b7280;
+    color: var(--text-muted);
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
         border-color: var(--brand-secondary);
-        color: #111827;
+        color: var(--text-primary);
     }
 
     &.is-active {
@@ -47,5 +47,5 @@
     width: 72px;
     padding: 6px 8px;
     border-radius: 8px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-default);
 }

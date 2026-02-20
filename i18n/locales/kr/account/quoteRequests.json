@@ -1,0 +1,20 @@
+{
+    "account": {
+        "quoteRequests": {
+            "title": "견적 요청",
+            "selectDate": "날짜 선택",
+            "filters": "필터",
+            "orderLabel": "주문",
+            "quoteDate": "견적일",
+            "status": {
+                "inReview": "검토 중",
+                "pending": "대기 중"
+            },
+            "sampleMessage": "안녕하세요! 흰색 베이스에 이 스티커를 인쇄해보려고 합니다.",
+            "requestLabel": "요청",
+            "sampleRequestPrefix": "투명 스티커",
+            "messagePlaceholder": "메시지를 입력하세요...",
+            "send": "전송"
+        }
+    }
+}
