@@ -6,6 +6,8 @@ type CarouselItem = {
     title: string;
     text: string;
     author: string;
+    image?: string;
+    imageAlt?: string;
 };
 
 const reviewItems: CarouselItem[] = [
@@ -13,26 +15,43 @@ const reviewItems: CarouselItem[] = [
         title: 'Excellent Service',
         text: 'From design to printing, turnaround was fast and the final quality was excellent.',
         author: 'James',
+        image: '/illustrations/products/stickers/die-cut.svg',
+        imageAlt: 'Die-cut sticker sample',
     },
     {
         title: 'Football Stickers',
         text: 'Great finish and consistency. Several teammates asked where I ordered them.',
         author: 'Hans',
+        image: '/illustrations/products/stickers/rectangle.svg',
+        imageAlt: 'Rectangle sticker sample',
     },
     {
         title: 'Great Print Quality',
         text: 'Color reproduction was sharp and the material felt durable after weeks of use.',
         author: 'Ari',
+        image: '/illustrations/products/stickers/rounded.svg',
+        imageAlt: 'Rounded sticker sample',
     },
     {
         title: 'Fast Delivery',
         text: 'Production moved quickly after approval and shipping arrived exactly on schedule.',
         author: 'Mina',
+        image: '/illustrations/products/stickers/circle.svg',
+        imageAlt: 'Circle sticker sample',
     },
     {
         title: 'Reliable Quality',
         text: 'Print quality stayed consistent across repeat orders, which helped our fulfillment team.',
         author: 'Dani',
+        image: '/illustrations/products/stickers/square.svg',
+        imageAlt: 'Square sticker sample',
+    },
+    {
+        title: 'Visual Product Preview',
+        text: 'Use visuals in carousel cards when you want to showcase a product or feature snapshot.',
+        author: 'Guide Team',
+        image: '/illustrations/products/stickers/hologram.svg',
+        imageAlt: 'Hologram sticker visual preview',
     },
 ];
 
@@ -184,6 +203,14 @@ onBeforeUnmount(() => {
                                     }
                                 "
                             >
+                                <img
+                                    v-if="item.image"
+                                    :src="item.image"
+                                    :alt="item.imageAlt || item.title"
+                                    class="guide-carousel-card-image"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                                 <h3 class="guide-carousel-card-title">{{ item.title }}</h3>
                                 <p class="guide-carousel-card-text">{{ item.text }}</p>
                                 <p class="guide-carousel-card-meta">
@@ -239,6 +266,17 @@ onBeforeUnmount(() => {
     border-radius: 14px;
     background: var(--contrast-light);
     padding: 16px;
+}
+
+.guide-carousel-card-image {
+    width: 100%;
+    max-height: 140px;
+    object-fit: contain;
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+    padding: 8px;
+    background: var(--bg-surface);
+    margin-bottom: 10px;
 }
 
 .guide-carousel-card-title {
