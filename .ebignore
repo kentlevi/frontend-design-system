@@ -1,0 +1,33 @@
+# ignore everything recursively
+*
+# allow build output
+!.nuxt/**
+!.output/**
+!middleware/**
+!server-middleware/**
+!static/**
+!utils/**
+
+# allow env files
+!.env
+!.development.env
+!.production.env
+
+# allow config files
+!nuxt.config.js
+!config.js
+
+# allow core app files
+!package.json
+!package-lock.json
+!Procfile
+
+# allow EB dirs
+!.platform/**
+!.ebextensions/**
+
+# allow custom tgz
+!*.tgz
+
+node_modules/
+.git/
