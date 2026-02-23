@@ -14,7 +14,8 @@
     "guide:validate-used-in": "node scripts/validate-guide-used-in.mjs",
     "perf:lhci": "lhci autorun --config=./lighthouserc.json",
     "perf:lhci:collect": "lhci collect --config=./lighthouserc.json",
-    "perf:ci": "npm run build && npm run perf:lhci",
+    "perf:check-budgets": "node scripts/check-perf-budgets.mjs",
+    "perf:ci": "npm run build && npm run perf:lhci && npm run perf:check-budgets",
     "quality:ci": "npm run test:e2e && npm run test:e2e:a11y && npm run perf:ci",
     "postinstall": "nuxt prepare",
     "build:icons": "node app/icons/build-icons.js"

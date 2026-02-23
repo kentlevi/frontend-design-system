@@ -40,6 +40,9 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const unitPrice = computed(() =>
+    props.selectedQty > 0 ? props.total / props.selectedQty : 0
+);
 </script>
 
 <template>
@@ -154,24 +157,31 @@ const { t } = useI18n();
                         </section>
 
                         <section class="price-summary" data-testid="product-category-price-summary">
-                            <p class="price-summary-row" data-testid="product-category-price-subtotal-row">
+                            <p class="price-summary-row price-summary-row-hidden" data-testid="product-category-price-subtotal-row">
                                 <span class="price-summary-label">{{ t('product.price.subtotal') }}</span>
                                 <strong class="price-summary-value">{{ props.formatPrice(props.subtotal) }}</strong>
                             </p>
-                            <p class="price-summary-row discount" data-testid="product-category-price-discount-row">
-                                <span class="price-summary-label">
-                                    {{ t('product.price.discount') }} ({{ Math.round(props.discountRate * 100) }}%)
-                                </span>
-                                <strong class="price-summary-value">-{{ props.formatPrice(props.subtotal - props.total) }}</strong>
-                            </p>
-                            <p class="price-summary-row total" data-testid="product-category-price-total-row">
-                                <span class="price-summary-label">{{ t('product.price.total') }}</span>
-                                <strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
-                            </p>
-                            <ul class="price-benefits" data-testid="product-category-price-benefits">
-                                <li data-testid="product-category-price-benefit-shipping">{{ t('product.price.benefitShipping') }}</li>
-                                <li data-testid="product-category-price-benefit-ships-tomorrow">{{ t('product.price.benefitShipsTomorrow') }}</li>
-                            </ul>
+
+                            <div class="price-summary-top">
+                                <ul class="price-benefits" data-testid="product-category-price-benefits">
+                                    <li data-testid="product-category-price-benefit-shipping">{{ t('product.price.benefitShipping') }}</li>
+                                    <li data-testid="product-category-price-benefit-ships-tomorrow">{{ t('product.price.benefitShipsTomorrow') }}</li>
+                                </ul>
+
+                                <div class="price-summary-stack">
+                                    <p class="price-summary-row discount" data-testid="product-category-price-discount-row">
+                                        <strong class="price-discount-rate">-{{ Math.round(props.discountRate * 100) }}%</strong>
+                                        <span class="price-summary-strike">{{ props.formatPrice(props.subtotal) }}</span>
+                                    </p>
+                                    <p class="price-summary-row total" data-testid="product-category-price-total-row">
+                                        <strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
+                                    </p>
+                                    <p class="price-summary-unit">
+                                        ({{ props.formatPrice(unitPrice) }} per piece)
+                                    </p>
+                                </div>
+                            </div>
+
                             <UiButton
                                 type="button"
                                 variant="filled"
@@ -509,45 +519,81 @@ const { t } = useI18n();
         .price-summary-row {
             margin: 0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            align-items: baseline;
             font-size: 13px;
             color: var(--text-secondary);
         }
 
-        .price-summary-row + .price-summary-row {
-            margin-top: 8px;
+        .price-summary-row-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            clip-path: inset(50%);
         }
 
-        .discount .price-summary-value {
+        .price-summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .price-summary-stack {
+            text-align: right;
+        }
+
+        .discount {
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .price-discount-rate {
             color: var(--error);
+            font-size: 14px;
+            line-height: 24px;
+        }
+
+        .price-summary-strike {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-size: 14px;
+            line-height: 24px;
         }
 
         .total {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 0;
-            font-size: 15px;
+            justify-content: flex-end;
             color: var(--text-primary);
-
-            .price-summary-value {
-                font-size: clamp(30px, 2vw, 42px);
-                line-height: 1;
-            }
         }
+
+        .total .price-summary-value {
+            font-size: 28px;
+            line-height: 40px;
+        }
+
+        .price-summary-unit {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 24px;
+        }
+
     }
 
     .price-benefits {
-        margin: 12px 0 0;
         padding-left: 16px;
         color: var(--text-secondary);
         display: grid;
-        gap: 3px;
+        gap: 4px;
         font-size: 12px;
+        line-height: 20px;
+        list-style: disc;
+        max-width: 174.5px;
     }
 
     .next-step-btn {
-        margin-top: 18px;
+        margin-top: 16px;
         width: 100%;
         border-radius: 999px;
         background: var(--gold-base);
@@ -577,6 +623,15 @@ const { t } = useI18n();
         .product-preview-features {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
+        .price-summary .price-discount-rate {
+            font-size: 28px;
+            line-height: 36px;
+        }
+
+        .price-summary .total .price-summary-value {
+            font-size: clamp(34px, 7vw, 44px);
+        }
     }
 }
 
@@ -596,6 +651,30 @@ const { t } = useI18n();
             min-height: 40px;
             padding: 6px 10px;
             font-size: 13px;
+        }
+
+        .price-summary .price-summary-top {
+            flex-direction: column;
+        }
+
+        .price-summary .price-summary-stack {
+            width: 100%;
+            text-align: left;
+        }
+
+        .price-summary .discount,
+        .price-summary .total {
+            justify-content: flex-start;
+        }
+
+        .price-benefits {
+            font-size: 12px;
+            line-height: 20px;
+        }
+
+        .next-step-btn {
+            font-size: 28px;
+            line-height: 36px;
         }
     }
 }
