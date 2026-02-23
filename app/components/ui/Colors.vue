@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from 'vue';
-import GuideCopy from '@/components/guide/GuideCopy.vue';
+import CopyText from '@/components/ui/CopyText.vue';
 
 const props = defineProps<{
     token: string;
@@ -39,23 +39,23 @@ watch(() => props.token, resolveHex);
 
 <template>
     <div class="ui-color">
-        <GuideCopy :text="varText">
+        <CopyText :text="varText">
             <div
-                class="ui-color-swatch guide-item-hoverable"
+                class="ui-color-swatch"
                 :style="{ background: varText }"
             />
-        </GuideCopy>
+        </CopyText>
 
-        <GuideCopy :text="varText">
+        <CopyText :text="varText">
             <code class="ui-color-var">
                 {{ varText }}
             </code>
-        </GuideCopy>
+        </CopyText>
 
-        <GuideCopy :text="hex">
+        <CopyText :text="hex">
             <code class="ui-color-hex">
                 {{ hex }}
             </code>
-        </GuideCopy>
+        </CopyText>
     </div>
 </template>
