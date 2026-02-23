@@ -3,10 +3,8 @@
 # allow build output
 !.nuxt/**
 !.output/**
-!middleware/**
-!server-middleware/**
-!static/**
-!utils/**
+!app/**
+!environments/**
 
 # allow env files
 !.env
@@ -21,6 +19,7 @@
 !package.json
 !package-lock.json
 !Procfile
+!.npmrc
 
 # allow EB dirs
 !.platform/**
