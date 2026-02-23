@@ -1220,8 +1220,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
 </template>
 
 <style lang="scss">
-@use '~/assets/scss/layouts/guide';
-@use '~/assets/scss/guides';
+@use '~/assets/scss/guide';
 </style>
 
 <style scoped lang="scss">

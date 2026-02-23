@@ -26,3 +26,7 @@ import AppFooterRoot from '~/components/layout/app-footer/AppFooter.vue';
     }
 }
 </style>
+
+<style lang="scss">
+@use '~/assets/scss/site';
+</style>

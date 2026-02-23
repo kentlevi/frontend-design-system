@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-    css: ['~/assets/scss/main.scss'],
+    css: [],
     compatibilityDate: '2025-07-15',
     devtools: { enabled: true },
     runtimeConfig: {
