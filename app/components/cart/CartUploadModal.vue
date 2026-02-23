@@ -180,7 +180,7 @@ const { t } = useI18n();
     z-index: 220;
 
     .upload-modal {
-        width: min(920px, 100%);
+        width: min(708px, 100%);
         background: #ffffff;
         border: 1px solid var(--gray-40);
         border-radius: 12px;

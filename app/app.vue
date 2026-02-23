@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const { t } = useI18n();
 const { locale } = useI18n();
+const isDev = import.meta.dev;
+const route = useRoute();
+const isGuideRoute = computed(() => /\/guide(\/|$)/i.test(route.path));
 
 useHead(() => ({
     htmlAttrs: {
@@ -29,6 +32,7 @@ useHead(() => ({
 
 <template>
     <NuxtLayout>
+        <DevOnboarding v-if="isDev && !isGuideRoute" />
         <NuxtPage />
     </NuxtLayout>
 </template>

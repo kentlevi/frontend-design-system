@@ -4,7 +4,10 @@
       "numberOfRuns": 2,
       "url": [
         "http://127.0.0.1:4173/",
-        "http://127.0.0.1:4173/stickers"
+        "http://127.0.0.1:4173/stickers",
+        "http://127.0.0.1:4173/stickers/die-cut-sticker",
+        "http://127.0.0.1:4173/auth/login",
+        "http://127.0.0.1:4173/account"
       ],
       "startServerCommand": "npm run preview -- --host 127.0.0.1 --port 4173",
       "startServerReadyPattern": "Listening",
@@ -27,6 +30,12 @@
           "error",
           {
             "maxNumericValue": 2500
+          }
+        ],
+        "interaction-to-next-paint": [
+          "error",
+          {
+            "maxNumericValue": 200
           }
         ],
         "cumulative-layout-shift": [
