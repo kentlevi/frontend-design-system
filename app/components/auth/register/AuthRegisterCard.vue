@@ -16,7 +16,13 @@ const {
     emailError,
     passwordError,
     termsError,
+    verificationEmail,
+    verificationCode,
+    verificationError,
+    isVerifying,
+    isVerificationModalOpen,
     submitRegister,
+    submitVerification,
 } = useRegisterForm();
 </script>
 
@@ -112,13 +118,13 @@ const {
                             type="button"
                             class="auth-register-password-toggle"
                             :aria-label="t('auth.login.togglePassword')"
-                            data-testid="auth-register-password-toggle-button"
+                            data-testid="auth-register-password-toggle"
                             @click="showPassword = !showPassword"
                         >
                             <UiIcon
-                                :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
-                                :size="18"
-                                color="var(--text-muted)"
+                                :name="showPassword ? 'regular-eye-slash' : 'regular-eye'"
+                                :size="24"
+                                color="var(--gray-90)"
                             />
                         </button>
                     </template>
@@ -159,7 +165,7 @@ const {
             tone="neutral"
             size="lg"
             class="auth-register-submit"
-            data-testid="auth-register-submit-button"
+            data-testid="auth-register-submit"
             @click="submitRegister"
         >
             {{ t('auth.register.createAccount') }}
@@ -175,6 +181,17 @@ const {
                 {{ t('auth.register.signInHere') }}
             </NuxtLink>
         </p>
+        
+        <AuthRegisterVerificationModal
+            v-model="isVerificationModalOpen"
+            :email="verificationEmail"
+            :code="verificationCode"
+            :error="verificationError"
+            :verifying="isVerifying"
+            data-testid="auth-register-verification-modal"
+            @update:code="verificationCode = $event"
+            @verify="submitVerification"
+        />
     </div>
 </template>
 

@@ -130,7 +130,6 @@ const emit = defineEmits<{
                 data-testid="app-header-notification-button"
             >
                 <UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
-                <span class="home-header-dot">1</span>
             </button>
 
             <AppHeaderAccountMenu
@@ -243,40 +242,29 @@ const emit = defineEmits<{
             height: 40px;
 
             .home-header-cart-dot {
-                position: absolute;
-                top: -6px;
-                right: -6px;
-                min-width: 20px;
-                height: 20px;
-                border-radius: 999px;
-                padding: 0 7px;
-                background: var(--blood-base);
-                color: #fff;
-                font-size: 12px;
-                font-weight: 700;
-                line-height: 20px;
-                text-align: center;
-                pointer-events: none;
+                @extend .home-header-badge-dot;
             }
         }
 
         .home-header-bell {
             position: relative;
+        }
 
-            .home-header-dot {
-                position: absolute;
-                top: 4px;
-                right: 4px;
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background: var(--error);
-                color: var(--text-inverse);
-                font-size: 10px;
-                font-weight: 700;
-                display: grid;
-                place-items: center;
-            }
+        .home-header-badge-dot {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            padding: 0 7px;
+            background: var(--blood-base);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 20px;
+            text-align: center;
+            pointer-events: none;
         }
     }
 }

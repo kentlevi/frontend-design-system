@@ -64,7 +64,7 @@ function onInput(event: Event) {
         :data-readonly="readonly || null"
         :data-disabled="disabled || null"
     >
-        <span v-if="leftIcon" class="ui-input-icon">
+        <span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
             <slot name="icon-left">
                 <UiIcon :name="leftIcon" :size="16" decorative />
             </slot>
@@ -80,7 +80,7 @@ function onInput(event: Event) {
             @input="onInput"
         />
 
-        <span v-if="rightIcon" class="ui-input-icon">
+        <span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
             <slot name="icon-right">
                 <UiIcon :name="rightIcon" :size="16" decorative />
             </slot>

@@ -43,6 +43,7 @@ const emit = defineEmits<{
                     <label class="auth-login-label">
                         {{ t('auth.login.password') }}
                     </label>
+                    <p v-if="passwordError" class="auth-login-error">{{ passwordError }}</p>
                 </div>
                 <div class="auth-login-password-wrap">
                     <UiInput
@@ -64,9 +65,9 @@ const emit = defineEmits<{
                                 @click="emit('togglePassword')"
                             >
                                 <UiIcon
-                                    :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
-                                    :size="18"
-                                    color="var(--text-muted)"
+                                    :name="showPassword ? 'regular-eye-slash' : 'regular-eye'"
+                                    :size="24"
+                                    color="var(--gray-90)"
                                 />
                             </button>
                         </template>

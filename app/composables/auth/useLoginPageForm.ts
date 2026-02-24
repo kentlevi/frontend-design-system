@@ -1,8 +1,12 @@
 import { computed, ref, watch } from 'vue';
 import { useLoginForm } from '@/composables/auth/useLoginForm';
+import { useRouter } from 'vue-router';
 
 export function useLoginPageForm() {
+    const api = useApi();
     const { t } = useI18n();
+
+    const router = useRouter();
 
     const {
         memberType,
@@ -30,10 +34,6 @@ export function useLoginPageForm() {
     const memberPasswordError = ref('');
     const nonMemberEmailError = ref('');
     const nonMemberOrderError = ref('');
-
-    const demoMemberEmail = 'joy_love1990@gmail.com';
-    const demoMemberPassword = 'joylove1990';
-    const demoOrderNumber = '2502160001';
 
     watch(memberType, () => {
         memberEmailError.value = '';
@@ -64,19 +64,6 @@ export function useLoginPageForm() {
             return false;
         }
 
-        if (
-            memberEmail.value.trim().toLowerCase() !== demoMemberEmail ||
-            memberPassword.value !== demoMemberPassword
-        ) {
-            memberEmailError.value = t(
-                'auth.login.validation.credentialsMismatch'
-            );
-            memberPasswordError.value = t(
-                'auth.login.validation.credentialsMismatch'
-            );
-            return false;
-        }
-
         return true;
     }
 
@@ -95,11 +82,6 @@ export function useLoginPageForm() {
         }
 
         if (nonMemberEmailError.value || nonMemberOrderError.value) {
-            return false;
-        }
-
-        if (nonMemberOrderNumber.value.trim() !== demoOrderNumber) {
-            nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
             return false;
         }
 
@@ -126,13 +108,126 @@ export function useLoginPageForm() {
         nonMemberOrderError.value = '';
     }
 
-    function onSubmitClick() {
-        if (!isNonMember.value) {
-            validateMember();
+    interface LoginResponse {
+        success: boolean
+        message: string
+        data: {
+                    user?: {
+                        id: number;
+                        code: string;
+                        email: string;
+                        profile: {
+                    id: number;
+                    user_id: number;
+                    file_path_id: number;
+                    file_name: string;
+                            user_field_values: [{
+                                id: number;
+                                user_profile_id: number;
+                                country_field_ids?: number;
+                                country_fields_id?: number;
+                                value: string;
+                            }]
+                        }
+                    }
+            auth_token?: string
+        }
+    }
+
+    async function onSubmitClick() {
+        if (isNonMember.value === false) {
+            const response = await memberLoginHandler();
+            if (response?.success === true) router.push('/')
+        } else {
+            await nonMemberLoginHandler();
+        }
+    }
+
+    async function memberLoginHandler() {
+        if (!validateMember()) return
+
+        try {
+            const response = await api<LoginResponse>('/kr/auth/login', {
+                method: 'POST',
+                body: {
+                    email: memberEmail.value.trim(),
+                    password: memberPassword.value.trim(),
+                    remember_me: keepSignedIn.value
+                }
+            })
+
+            if (response.success === false) {
+                memberPasswordError.value =
+                    response.message || t('auth.login.validation.credentialsMismatch');
+                return response
+            }
+
+            let tokenDuration = keepSignedIn.value === true ? 60*60*24*90 : 60*60*24*3;
+            // store auth_token in cookie
+            const authToken = useCookie('auth_token', {
+                maxAge: tokenDuration,
+                sameSite: 'lax',
+                path: '/'
+            })
+
+            authToken.value = response.data.auth_token ?? ''
+
+            // store user in Pinia
+            const userStore = useUserStore()
+            if (response.data.user) {
+                userStore.setUser(response.data.user)
+
+                const mockUser = useCookie<{
+                    firstName: string;
+                    lastName: string;
+                    email: string;
+                } | null>('mock_user', {
+                    sameSite: 'lax',
+                    path: '/',
+                });
+
+                const fields = response.data.user.profile?.user_field_values ?? [];
+                const firstName =
+                    fields.find((field) =>
+                        (field.country_field_ids ?? field.country_fields_id) === 1
+                    )?.value?.trim() || '';
+                const lastName =
+                    fields.find((field) =>
+                        (field.country_field_ids ?? field.country_fields_id) === 2
+                    )?.value?.trim() || '';
+
+                mockUser.value = {
+                    firstName,
+                    lastName,
+                    email: response.data.user.email || memberEmail.value.trim(),
+                };
+            } else {
+                console.warn('No user returned from login API')
+            }
+
+            return response
+        } catch (error: any) {
+            memberPasswordError.value =
+                error?.data?.message ||
+                error?.message ||
+                t('auth.login.validation.credentialsMismatch');
+            console.error(error)
+        }
+    }
+
+    async function nonMemberLoginHandler() {
+        if (!validateNonMember()) {
             return;
         }
 
-        if (!validateNonMember()) return;
+        const verificationResponse = await api('/kr/auth/login/guest/verification', {
+            method: 'POST',
+            body: {
+                email: nonMemberEmail.value.trim(),
+                order_number: nonMemberOrderNumber.value.trim()
+            }
+        })
+
         isVerificationModalOpen.value = true;
     }
 

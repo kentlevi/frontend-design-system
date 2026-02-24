@@ -10,6 +10,8 @@ const props = withDefaults(
         width?: string;
         padding?: string;
         gap?: string;
+        align?: 'top' | 'center';
+        modalClass?: string;
     }>(),
     {
         modelValue: false,
@@ -17,8 +19,10 @@ const props = withDefaults(
         closeOnBackdrop: true,
         closeOnEsc: true,
         width: '560px',
-        padding: '18px',
+        padding: '40px',
         gap: '18px',
+        align: 'top',
+        modalClass: '',
     }
 );
 
@@ -76,11 +80,12 @@ onBeforeUnmount(() => {
             <div
                 v-if="modelValue"
                 class="ui-modal-overlay"
+                :class="{ 'ui-modal-overlay--center': align === 'center' }"
                 role="presentation"
                 @click="onBackdropClick"
             >
                 <div
-                    class="ui-modal"
+                    :class="['ui-modal', modalClass]"
                     role="dialog"
                     aria-modal="true"
                     :aria-label="title || 'Modal'"
@@ -107,7 +112,7 @@ onBeforeUnmount(() => {
                                 @click="closeModal"
                             >
                                 <UiIcon
-                                    name="strong-times"
+                                    name="regular-times"
                                     :size="24"
                                     color="#000000"
                                 />

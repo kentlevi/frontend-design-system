@@ -7,6 +7,7 @@ export default defineNuxtConfig({
             webVitalsEnabled: true,
             webVitalsDebug: false,
             webVitalsEndpoint: '/api/web-vitals',
+            apiBase: '',
         },
     },
     vite: {
@@ -23,7 +24,7 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ['@nuxtjs/i18n'],
+    modules: ['@pinia/nuxt', '@nuxtjs/i18n'],
 
     i18n: {
         defaultLocale: 'en',

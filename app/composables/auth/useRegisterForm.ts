@@ -1,7 +1,12 @@
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 export function useRegisterForm() {
-    const localePath = useLocalePath();
+    const router = useRouter();
+    const userStore = useUserStore();
+    const isVerificationModalOpen = ref(false);
+    const api = useApi();
     const { t } = useI18n();
 
     const firstName = ref('');
@@ -17,6 +22,12 @@ export function useRegisterForm() {
     const passwordError = ref('');
     const termsError = ref('');
 
+    const verificationEmail = ref();
+    const verificationToken = ref();
+    const verificationCode = ref('');
+    const verificationError = ref('');
+    const isVerifying = ref(false);
+
     function isValidEmail(value: string) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     }
@@ -26,6 +37,25 @@ export function useRegisterForm() {
         emailError.value = '';
         passwordError.value = '';
         termsError.value = '';
+    }
+
+    interface RegisterVerificationResponse {
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            token: string;
+        };
+        meta: {};
+        error: {};
+    }
+
+    interface RegisterResponse {
+        success: boolean;
+        message: string;
+        data: {};
+        meta: {};
+        error: {};
     }
 
     async function submitRegister() {
@@ -57,13 +87,78 @@ export function useRegisterForm() {
         ) {
             return;
         }
-        const params = new URLSearchParams({
-            firstName: firstName.value.trim(),
-            lastName: lastName.value.trim(),
-            email: email.value.trim(),
-            onboarding: '1',
-        });
-        await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
+
+        // const params = new URLSearchParams({
+        //     firstName: firstName.value.trim(),
+        //     lastName: lastName.value.trim(),
+        //     email: email.value.trim(),
+        //     onboarding: '1',
+        // });
+        // await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
+
+        const response = await api<RegisterVerificationResponse>('/kr/auth/register/verification', {
+            method: 'POST',
+            body: {
+                given_name: firstName.value.trim(),
+                family_name: lastName.value.trim(),
+                email: email.value.trim(),
+                password: password.value.trim(),
+                terms_of_service: agreeTerms.value,
+                newsletter: optInPromos.value
+            }
+        })
+
+        if (response.success === false) {
+            return response
+        }
+
+        verificationEmail.value = response.data.email;
+        verificationToken.value = response.data.token;
+        verificationCode.value = '';
+        verificationError.value = '';
+        isVerificationModalOpen.value = true;
+        return response
+    }
+
+    async function submitVerification() {
+        if (!verificationCode.value.trim()) {
+            verificationError.value = t('auth.login.verification.codeRequired');
+            return;
+        }
+
+        isVerifying.value = true;
+        verificationError.value = '';
+
+        try {
+            const response = await api<RegisterResponse>('/kr/auth/register', {
+                method: 'POST',
+                body: {
+                    email: verificationEmail.value,
+                    registration_token: verificationToken.value,
+                    otp: verificationCode.value.trim(),
+                }
+            });
+
+            if (response.success === false) {
+                verificationError.value = response.message || 'Invalid verification code.';
+                return response;
+            }
+
+            userStore.setOnboardingProfile({
+                firstName: firstName.value.trim(),
+                lastName: lastName.value.trim(),
+                email: email.value.trim(),
+                onboarding: true,
+            });
+
+            isVerificationModalOpen.value = false;
+            await router.push('/auth/profile');
+            return response;
+        } catch (error) {
+            verificationError.value = 'Invalid verification code.';
+        } finally {
+            isVerifying.value = false;
+        }
     }
 
     return {
@@ -78,6 +173,13 @@ export function useRegisterForm() {
         emailError,
         passwordError,
         termsError,
+        isVerificationModalOpen,
+        verificationEmail,
+        verificationToken,
+        verificationCode,
+        verificationError,
+        isVerifying,
         submitRegister,
+        submitVerification,
     };
 }

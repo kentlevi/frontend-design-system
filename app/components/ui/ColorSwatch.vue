@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GuideCopy from '@/components/guide/GuideCopy.vue';
+import CopyText from '@/components/ui/CopyText.vue';
 
 const props = defineProps<{
     token: string;
@@ -11,14 +11,14 @@ const copyText = `var(${cssVar})`;
 </script>
 
 <template>
-    <GuideCopy :text="copyText" class="ui-color">
+    <CopyText :text="copyText" class="ui-color">
         <div
-            class="ui-color-swatch guide-item-hoverable"
+            class="ui-color-swatch"
             :style="{ background: `var(${cssVar})` }"
         />
 
         <code class="ui-color-label">
             {{ props.label ?? cssVar }}
         </code>
-    </GuideCopy>
+    </CopyText>
 </template>
