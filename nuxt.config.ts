@@ -16,8 +16,8 @@ export default defineNuxtConfig({
     imports: {
         dirs: [
             'composables',
-            'composables/core',
-            'composables/ui'
+            'composables/app',
+            'composables/api'
         ]
     },
 
