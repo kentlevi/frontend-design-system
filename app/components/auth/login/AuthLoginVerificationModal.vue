@@ -1,24 +1,105 @@
 <script setup lang="ts">
-const { t } = useI18n();
+import { useRouter } from 'vue-router';
+import { ref } from 'vue'
 
-const props = withDefaults(
+const { t } = useI18n();
+const api = useApi();
+const router = useRouter();
+
+const props = (
     defineProps<{
         modelValue: boolean;
         email?: string;
-    }>(),
-    {
-        email: 'joy_love1990@gmail.com',
-    }
+        token?: string;
+    }>()
 );
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void;
 }>();
 
-const codeInputs = ['0', '0', '0', '0'];
+const codeInputs = ref<Array<number | ''>>(['', '', '', '']);
+const inputRefs = ref<HTMLInputElement[]>([]);
+
+interface RegisterResponse {
+    success: boolean;
+    message: string;
+    data: {}
+}
+
+async function handleSubmit() {
+    const response = await api<RegisterResponse>('/kr/auth/register', {
+        method: 'POST',
+        body: {
+            email: props.email,
+            registration_token: props.token,
+            otp: codeInputs.value.join('')
+        }
+    })
+    
+    if (response.success === false) {
+        return
+    }
+
+    router.push('/account/profile')
+    closeModal()
+}
 
 function closeModal() {
     emit('update:modelValue', false);
+}
+
+function handleInput(index: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Only allow digits
+    value = value.replace(/[^0-9]/g, '');
+
+    // Keep only the last digit if multiple are entered
+    if (value.length > 1) {
+        value = value.slice(-1);
+    }
+
+    codeInputs.value[index] = value ? parseInt(value, 10) : '';
+
+    // Move to next input if a digit was entered
+    if (value && index < 3) {
+        inputRefs.value[index + 1]?.focus();
+    }
+}
+
+function handleKeyDown(index: number, event: KeyboardEvent) {
+    // Handle backspace to move to previous input
+    if (event.key === 'Backspace' && !codeInputs.value[index]) {
+        if (index > 0) {
+            inputRefs.value[index - 1]?.focus();
+        }
+    }
+    // Handle arrow keys for navigation
+    else if (event.key === 'ArrowLeft' && index > 0) {
+        event.preventDefault();
+        inputRefs.value[index - 1]?.focus();
+    } else if (event.key === 'ArrowRight' && index < 3) {
+        event.preventDefault();
+        inputRefs.value[index + 1]?.focus();
+    }
+}
+
+function handlePaste(event: ClipboardEvent) {
+    const pastedText = event.clipboardData?.getData('text') || '';
+    const digits = pastedText.replace(/[^0-9]/g, '').split('').slice(0, 4);
+
+    if (digits.length > 0) {
+        event.preventDefault();
+        digits.forEach((digit, index) => {
+            codeInputs.value[index] = parseInt(digit, 10);
+        });
+
+        // Focus the last filled input or the next empty one
+        const focusIndex = Math.min(digits.length, 3);
+        inputRefs.value[focusIndex]?.focus();
+    }
 }
 </script>
 
@@ -61,14 +142,20 @@ function closeModal() {
             </p>
 
             <div class="auth-verify-grid">
-                <div
+                <input
                     v-for="(value, index) in codeInputs"
                     :key="`verification-code-${index}`"
+                    :ref="el => { if (el) inputRefs[index] = el as HTMLInputElement }"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="1"
                     class="auth-verify-box"
                     :data-testid="`auth-login-verification-code-${index + 1}`"
-                >
-                    {{ value }}
-                </div>
+                    :value="value"
+                    @input="handleInput(index, $event)"
+                    @keydown="handleKeyDown(index, $event)"
+                    @paste="handlePaste"
+                />
             </div>
 
             <UiButton
@@ -76,8 +163,8 @@ function closeModal() {
                 tone="neutral"
                 size="lg"
                 class="auth-verify-submit"
-                data-testid="auth-login-verification-submit-button"
-                @click="closeModal"
+                data-testid="auth-login-verification-submit"
+                @click="handleSubmit"
             >
                 {{ t('auth.login.verification.verify') }}
             </UiButton>
@@ -89,7 +176,7 @@ function closeModal() {
                     tone="default"
                     size="sm"
                     class="auth-verify-resend-btn"
-                    data-testid="auth-login-verification-resend-button"
+                    data-testid="auth-login-verification-resend"
                 >
                     {{ t('auth.login.verification.resendCta') }}
                 </UiButton>
@@ -171,12 +258,26 @@ function closeModal() {
             border: 1px solid var(--border-default);
             border-radius: 12px;
             background: var(--contrast-light);
-            color: #a6a6a6;
+            color: var(--text-primary);
             font-size: 46px;
             font-weight: 700;
             line-height: 1;
             display: grid;
             place-items: center;
+            text-align: center;
+            padding: 0;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            outline: none;
+
+            &:focus {
+                border-color: var(--brand-primary);
+                box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb), 0.1);
+            }
+
+            &::placeholder {
+                color: #a6a6a6;
+            }
         }
     }
 

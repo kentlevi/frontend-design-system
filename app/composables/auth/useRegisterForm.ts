@@ -1,7 +1,11 @@
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export function useRegisterForm() {
     const localePath = useLocalePath();
+    const router = useRouter();
+    const isVerificationModalOpen = ref(false);
+    const api = useApi();
     const { t } = useI18n();
 
     const firstName = ref('');
@@ -17,6 +21,9 @@ export function useRegisterForm() {
     const passwordError = ref('');
     const termsError = ref('');
 
+    const verificationEmail = ref();
+    const verificationToken = ref();
+
     function isValidEmail(value: string) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     }
@@ -26,6 +33,17 @@ export function useRegisterForm() {
         emailError.value = '';
         passwordError.value = '';
         termsError.value = '';
+    }
+
+    interface RegisterVerificationResponse {
+        success: boolean;
+        message: string;
+        data: {
+            email: string;
+            token: string;
+        };
+        meta: {};
+        error: {};
     }
 
     async function submitRegister() {
@@ -57,13 +75,35 @@ export function useRegisterForm() {
         ) {
             return;
         }
-        const params = new URLSearchParams({
-            firstName: firstName.value.trim(),
-            lastName: lastName.value.trim(),
-            email: email.value.trim(),
-            onboarding: '1',
-        });
-        await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
+
+        // const params = new URLSearchParams({
+        //     firstName: firstName.value.trim(),
+        //     lastName: lastName.value.trim(),
+        //     email: email.value.trim(),
+        //     onboarding: '1',
+        // });
+        // await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
+
+        const response = await api<RegisterVerificationResponse>('/kr/auth/register/verification', {
+            method: 'POST',
+            body: {
+                given_name: firstName.value.trim(),
+                family_name: lastName.value.trim(),
+                email: email.value.trim(),
+                password: password.value.trim(),
+                terms_of_service: agreeTerms.value,
+                newsletter: optInPromos.value
+            }
+        })
+
+        if (response.success === false) {
+            return response
+        }
+
+        verificationEmail.value = response.data.email;
+        verificationToken.value = response.data.token;
+        isVerificationModalOpen.value = true;
+        return response
     }
 
     return {
@@ -78,6 +118,9 @@ export function useRegisterForm() {
         emailError,
         passwordError,
         termsError,
+        isVerificationModalOpen,
+        verificationEmail,
+        verificationToken,
         submitRegister,
     };
 }

@@ -16,6 +16,9 @@ const {
     emailError,
     passwordError,
     termsError,
+    verificationEmail,
+    verificationToken,
+    isVerificationModalOpen,
     submitRegister,
 } = useRegisterForm();
 </script>
@@ -112,7 +115,7 @@ const {
                             type="button"
                             class="auth-register-password-toggle"
                             :aria-label="t('auth.login.togglePassword')"
-                            data-testid="auth-register-password-toggle-button"
+                            data-testid="auth-register-password-toggle"
                             @click="showPassword = !showPassword"
                         >
                             <UiIcon
@@ -159,7 +162,7 @@ const {
             tone="neutral"
             size="lg"
             class="auth-register-submit"
-            data-testid="auth-register-submit-button"
+            data-testid="auth-register-submit"
             @click="submitRegister"
         >
             {{ t('auth.register.createAccount') }}
@@ -175,6 +178,13 @@ const {
                 {{ t('auth.register.signInHere') }}
             </NuxtLink>
         </p>
+        
+        <AuthLoginVerificationModal
+            v-model="isVerificationModalOpen"
+            :email="verificationEmail"
+            :token="verificationToken"
+            data-testid="auth-login-verification-modal"
+        />
     </div>
 </template>
 
