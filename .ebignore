@@ -1,7 +1,6 @@
 # ignore everything recursively
 *
 # allow build output
-!.nuxt/**
 !.output/**
 !app/**
 !environments/**
@@ -18,8 +17,10 @@
 # allow core app files
 !package.json
 !package-lock.json
+!pnpm-lock.yaml
 !Procfile
 !.npmrc
+
 
 # allow EB dirs
 !.platform/**
