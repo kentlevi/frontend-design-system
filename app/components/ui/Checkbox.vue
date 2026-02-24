@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import UiIcon from '~/components/ui/Icon.vue';
+
 type Size = 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
 
@@ -42,7 +44,15 @@ function onChange(event: Event) {
             :disabled="props.disabled"
             @change="onChange"
         />
-        <span class="ui-checkbox-box" aria-hidden="true" />
+        <span class="ui-checkbox-box" aria-hidden="true">
+            <UiIcon
+                name="strong-check"
+                :size="16"
+                color="var(--text-inverse)"
+                decorative
+                class="ui-checkbox-icon"
+            />
+        </span>
         <span v-if="$slots.default || props.label" class="ui-checkbox-label">
             <slot>{{ props.label }}</slot>
         </span>

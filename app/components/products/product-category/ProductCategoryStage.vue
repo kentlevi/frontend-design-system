@@ -23,6 +23,7 @@ const props = defineProps<{
     sizeOptionModels: SizeOptionModel[];
     quantityOptions: readonly number[];
     selectedQty: number;
+    navigationInFlight: boolean;
     subtotal: number;
     discountRate: number;
     total: number;
@@ -189,6 +190,7 @@ const unitPrice = computed(() =>
                                 size="md"
                                 height="48px"
                                 class="next-step-btn"
+                                :disabled="props.navigationInFlight"
                                 @click="emit('open-upload')"
                                 data-testid="product-category-next-step-button"
                             >

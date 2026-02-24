@@ -7,6 +7,7 @@ const props = defineProps<{
     cartArtworkExtension: string;
     cartArtworkSize: string;
     specialInstructions: string;
+    addToCartLoading: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -34,12 +35,13 @@ const { t } = useI18n();
                             tone="neutral"
                             size="sm"
                             icon-only
+                            icon="strong-times"
+                            icon-size="lg"
+                            sr-label="Close upload modal"
                             class="upload-modal-close-btn"
                             @click="emit('close')"
                             data-testid="product-category-upload-close-button"
-                        >
-                            <UiIcon name="strong-times" :size="22" color="#2a2f3d" />
-                        </UiButton>
+                        />
                     </header>
 
                     <div class="upload-modal-body" data-testid="product-category-upload-body">
@@ -106,14 +108,15 @@ const { t } = useI18n();
                                         tone="neutral"
                                         size="md"
                                         icon-only
+                                        icon="strong-trash"
+                                        icon-size="md"
+                                        sr-label="Remove uploaded artwork"
                                         width="44px"
                                         height="44px"
                                         class="upload-icon-btn"
                                         @click="emit('remove-artwork')"
                                         data-testid="product-category-upload-remove-image-button"
-                                    >
-                                        <UiIcon name="strong-trash" :size="18" color="#2a2f3d" />
-                                    </UiButton>
+                                    />
                                 </div>
                             </template>
                         </div>
@@ -155,12 +158,21 @@ const { t } = useI18n();
                             size="md"
                             height="44px"
                             class="upload-primary-btn"
-                            :disabled="!props.hasUploadedArtwork"
+                            :disabled="!props.hasUploadedArtwork || props.addToCartLoading"
                             @click="emit('proceed-to-cart')"
                             data-testid="product-category-upload-proceed-button"
                         >
-                            <UiIcon name="strong-shop-cart" :size="18" color="#ffffff" />
-                            {{ t('cart.uploadArtwork.addToCart') }}
+                            <UiIcon
+                                v-if="!props.addToCartLoading"
+                                name="strong-shop-cart"
+                                :size="18"
+                                color="#ffffff"
+                            />
+                            {{
+                                props.addToCartLoading
+                                    ? `${t('cart.uploadArtwork.addToCart')}...`
+                                    : t('cart.uploadArtwork.addToCart')
+                            }}
                         </UiButton>
                     </footer>
                 </section>

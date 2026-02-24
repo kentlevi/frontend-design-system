@@ -6,6 +6,7 @@ import type { ButtonVariant, ButtonSize, ButtonTone } from '~/data/ui/buttons';
 
 type IconPosition = 'left' | 'right';
 type IconName = keyof typeof icons;
+type IconSizeValue = ButtonSize | number | `${number}`;
 
 const props = withDefaults(
     defineProps<{
@@ -15,7 +16,7 @@ const props = withDefaults(
 
         icon?: IconName | null;
         iconPosition?: IconPosition;
-        iconSize?: ButtonSize;
+        iconSize?: IconSizeValue;
         iconOnly?: boolean;
         srLabel?: string;
 
@@ -53,6 +54,15 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
 
     return Object.keys(style).length ? style : undefined;
 });
+
+const normalizedIconSize = computed<ButtonSize | number>(() => {
+    if (typeof props.iconSize === 'number') return props.iconSize;
+    if (typeof props.iconSize === 'string') {
+        const parsed = Number(props.iconSize);
+        if (Number.isFinite(parsed)) return parsed;
+    }
+    return props.iconSize;
+});
 </script>
 
 <template>
@@ -75,7 +85,7 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
         <UiIcon
             v-if="!loading && icon && iconPosition === 'left' && !iconOnly"
             :name="icon"
-            :size="iconSize"
+            :size="normalizedIconSize"
             decorative
             class="ui-button-icon"
         />
@@ -83,7 +93,7 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
         <UiIcon
             v-if="!loading && iconOnly && icon"
             :name="icon"
-            :size="iconSize"
+            :size="normalizedIconSize"
             decorative
             class="ui-button-icon"
         />
@@ -102,7 +112,7 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
         <UiIcon
             v-if="!loading && icon && iconPosition === 'right' && !iconOnly"
             :name="icon"
-            :size="iconSize"
+            :size="normalizedIconSize"
             decorative
             class="ui-button-icon"
         />

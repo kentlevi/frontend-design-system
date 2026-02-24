@@ -29,8 +29,10 @@ const {
     selectedId,
     selectedSize,
     selectedQty,
+    selectionNavigationInFlight,
     hasPickedProduct,
     uploadModalOpen,
+    addToCartLoading,
     cartPreviewOpen,
     featuredOpen,
     specialInstructions,
@@ -39,14 +41,15 @@ const {
     artworkInputRef,
     sizeOptionModels,
     selectedProduct,
+    cartItems,
+    cartGrandTotal,
     subtotal,
     discountRate,
     total,
     hasUploadedArtwork,
-    selectedSizeLabel,
+    cartArtworkName,
     featuredItems,
     cartItemCount,
-    cartArtworkName,
     cartArtworkSize,
     cartArtworkExtension,
     selectProduct,
@@ -57,6 +60,8 @@ const {
     removeArtwork,
     onArtworkSelected,
     proceedToCart,
+    removeCartItem,
+    updateCartItem,
     skipAndUploadLater,
     closeFeaturedItems,
     featuredStartPrice,
@@ -80,6 +85,7 @@ const {
                 :size-option-models="sizeOptionModels"
                 :quantity-options="quantityOptions"
                 :selected-qty="selectedQty"
+                :navigation-in-flight="selectionNavigationInFlight"
                 :subtotal="subtotal"
                 :discount-rate="discountRate"
                 :total="total"
@@ -113,6 +119,7 @@ const {
             :cart-artwork-extension="cartArtworkExtension"
             :cart-artwork-size="cartArtworkSize"
             :special-instructions="specialInstructions"
+            :add-to-cart-loading="addToCartLoading"
             @close="closeUploadModal"
             @open-file-picker="openFilePicker"
             @remove-artwork="removeArtwork"
@@ -125,18 +132,18 @@ const {
         <CartPreview
             :open="cartPreviewOpen"
             :cart-item-count="cartItemCount"
-            :selected-product="selectedProduct"
-            :artwork-preview-url="artworkPreviewUrl"
-            :cart-artwork-name="cartArtworkName"
-            :selected-size-label="selectedSizeLabel"
-            :selected-qty="selectedQty"
-            :total="total"
+            :cart-items="cartItems"
+            :grand-total="cartGrandTotal"
             :featured-open="featuredOpen"
             :featured-items="featuredItems"
+            :size-option-models="sizeOptionModels"
+            :quantity-options="quantityOptions"
             :get-product-name="getProductName"
             :format-price="formatPrice"
             :featured-start-price="featuredStartPrice"
             @close="closeCartPreview"
+            @update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty)"
+            @remove-item="removeCartItem($event)"
             @close-featured="closeFeaturedItems"
             data-testid="product-category-cart-preview"
         />
