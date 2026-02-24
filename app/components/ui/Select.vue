@@ -17,6 +17,8 @@ const props = withDefaults(
         searchable?: boolean;
         disabled?: boolean;
         emptyText?: string;
+        iconSize?: number;
+        iconFamily?: 'strong' | 'regular';
     }>(),
     {
         modelValue: null,
@@ -25,6 +27,8 @@ const props = withDefaults(
         searchable: false,
         disabled: false,
         emptyText: 'No results found.',
+        iconSize: 14,
+        iconFamily: 'strong',
     }
 );
 
@@ -55,6 +59,14 @@ const filteredOptions = computed(() => {
 
         return labelMatched || descMatched;
     });
+});
+
+const triggerIconName = computed(() => {
+    const family = props.iconFamily;
+    if (isOpen.value) {
+        return family === 'regular' ? 'regular-angle-up' : 'strong-angle-up';
+    }
+    return family === 'regular' ? 'regular-angle-down' : 'strong-angle-down';
 });
 
 function closeMenu() {
@@ -130,8 +142,8 @@ onBeforeUnmount(() => {
             <span v-else class="ui-select-placeholder">{{ props.placeholder }}</span>
 
             <UiIcon
-                :name="isOpen ? 'strong-angle-up' : 'strong-angle-down'"
-                :size="14"
+                :name="triggerIconName"
+                :size="props.iconSize"
                 color="var(--text-secondary)"
             />
         </button>
