@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user';
 
 const { t } = useI18n();
 const api = useApi();
@@ -11,6 +12,9 @@ const props = (
         modelValue: boolean;
         email?: string;
         token?: string;
+        firstName?: string;
+        lastName?: string;
+        onboarding?: boolean;
     }>()
 );
 
@@ -41,7 +45,17 @@ async function handleSubmit() {
         return
     }
 
-    router.push('/account/profile')
+    if (props.email) {
+        const userStore = useUserStore();
+        userStore.setOnboardingProfile({
+            firstName: props.firstName?.trim() || '',
+            lastName: props.lastName?.trim() || '',
+            email: props.email.trim(),
+            onboarding: props.onboarding ?? false,
+        });
+    }
+
+    router.push(props.onboarding ? '/auth/profile' : '/account/profile')
     closeModal()
 }
 
@@ -106,7 +120,7 @@ function handlePaste(event: ClipboardEvent) {
 <template>
     <UiModal
         :model-value="modelValue"
-        width="760px"
+        width="504px"
         data-testid="auth-login-verification-modal"
         @update:model-value="emit('update:modelValue', $event)"
     >

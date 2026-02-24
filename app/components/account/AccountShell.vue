@@ -13,20 +13,41 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+const userStore = useUserStore();
 const mockUser = useCookie<{
     firstName: string;
     lastName: string;
     email: string;
 } | null>('mock_user');
 
-const fullName = computed(() => {
-    const first = mockUser.value?.firstName || 'Joy';
-    const last = mockUser.value?.lastName || 'Love';
-    return `${first} ${last}`.trim();
+const profileFieldValues = computed(
+    () => userStore.profile?.user_field_values ?? []
+);
+function getCountryFieldId(field: { country_field_ids?: number; country_fields_id?: number }) {
+    return field.country_field_ids ?? field.country_fields_id;
+}
+const storeFirstName = computed(
+    () => profileFieldValues.value.find((field) => getCountryFieldId(field) === 1)?.value?.trim() || ''
+);
+const storeLastName = computed(
+    () => profileFieldValues.value.find((field) => getCountryFieldId(field) === 2)?.value?.trim() || ''
+);
+const emailLocalPart = computed(() => {
+    const source = (userStore.email || mockUser.value?.email || '').trim();
+    if (!source.includes('@')) return '';
+    return source.split('@')[0] || '';
 });
 
-const userEmail = computed(() => mockUser.value?.email || 'joylove1990@gmail.com');
-const initials = computed(() => (mockUser.value?.firstName?.charAt(0) || 'J').toUpperCase());
+const fullName = computed(() => {
+    const first = storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User';
+    const last = storeLastName.value || mockUser.value?.lastName || '';
+    return [first, last].filter(Boolean).join(' ').trim();
+});
+
+const userEmail = computed(() => userStore.email || mockUser.value?.email || '');
+const initials = computed(() =>
+    ((storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'U').charAt(0) || 'U').toUpperCase()
+);
 
 const tabs = [
     { key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
@@ -55,19 +76,19 @@ const tabs = [
             <div class="account-shell-stats" data-testid="account-shell-stats">
                 <div class="account-shell-stat">
                     <span class="account-shell-stat-label">{{ t('account.shell.stats.order') }}</span>
-                    <strong class="account-shell-stat-value">6</strong>
+                    <strong class="account-shell-stat-value">0</strong>
                 </div>
                 <div class="account-shell-stat">
                     <span class="account-shell-stat-label">{{ t('account.shell.stats.points') }}</span>
-                    <strong class="account-shell-stat-value">13.90</strong>
+                    <strong class="account-shell-stat-value">0.00</strong>
                 </div>
                 <div class="account-shell-stat">
                     <span class="account-shell-stat-label">{{ t('account.shell.stats.coupons') }}</span>
-                    <strong class="account-shell-stat-value">3</strong>
+                    <strong class="account-shell-stat-value">0</strong>
                 </div>
                 <div class="account-shell-stat">
                     <span class="account-shell-stat-label">{{ t('account.shell.stats.totalSpent') }}</span>
-                    <strong class="account-shell-stat-value">KRW 35,494,187.80</strong>
+                    <strong class="account-shell-stat-value">KRW 0.00</strong>
                 </div>
             </div>
         </div>

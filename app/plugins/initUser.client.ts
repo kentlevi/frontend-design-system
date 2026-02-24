@@ -1,7 +1,7 @@
 import { defineNuxtPlugin } from '#app'
 import { useUserStore } from '@/stores/user'
 
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(async (nuxtApp) => {
     interface MeResponse {
         success: boolean;
         message: string;
@@ -18,7 +18,7 @@ export default defineNuxtPlugin(async () => {
     }
 
     const api = useApi()
-    const userStore = useUserStore()
+    const userStore = useUserStore(nuxtApp.$pinia)
 
     const token = useCookie<string | null>('auth_token')
 

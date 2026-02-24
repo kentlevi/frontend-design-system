@@ -97,8 +97,8 @@ const emit = defineEmits<{
                 >
                     <UiIcon
                         :name="link.icon"
-                        :size="16"
-                        color="var(--text-secondary)"
+                        :size="24"
+                        color="var(--text-primary)"
                     />
                     <span class="home-account-link-label">{{ link.label }}</span>
                 </NuxtLink>
@@ -113,9 +113,9 @@ const emit = defineEmits<{
                     data-testid="app-header-account-logout-button"
                 >
                     <UiIcon
-                        name="light-sign-out"
-                        :size="16"
-                        color="var(--text-secondary)"
+                        name="strong-sign-out"
+                        :size="24"
+                        color="var(--text-primary)"
                     />
                     <span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
                 </UiButton>
@@ -245,6 +245,9 @@ const emit = defineEmits<{
 
         &.home-account-dropdown--member {
             width: 320px;
+            right: auto;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         &.home-account-dropdown--guest {
@@ -294,12 +297,16 @@ const emit = defineEmits<{
                 align-items: center;
                 gap: 10px;
                 height: 42px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.2;
-            color: var(--text-primary);
-            padding: 0 12px;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.2;
+                color: var(--text-primary);
+                padding: 0 12px;
+
+                :deep(.ui-icon) {
+                    flex-shrink: 0;
+                }
 
             &:hover {
                 background: var(--gold-20);
@@ -335,13 +342,13 @@ const emit = defineEmits<{
 .account-dropdown-enter-from,
 .account-dropdown-leave-to {
     opacity: 0;
-    transform: translateY(-6px) scale(0.96);
+    transform: translateX(-50%) translateY(-6px) scale(0.96);
 }
 
 .account-dropdown-enter-to,
 .account-dropdown-leave-from {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
 }
 
 .account-dropdown-guest-enter-active,

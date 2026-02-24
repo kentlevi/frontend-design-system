@@ -42,46 +42,46 @@ export const headerAccountLinkConfig = [
     {
         labelKey: 'layout.header.accountLinks.profile',
         to: '/account/profile',
-        icon: 'light-user',
+        icon: 'strong-user',
     },
     {
         labelKey: 'layout.header.accountLinks.addressBook',
         to: '/account/address-book',
-        icon: 'light-home',
+        icon: 'strong-home',
     },
     {
         labelKey: 'layout.header.accountLinks.orders',
         to: '/account/orders',
-        icon: 'light-box-full',
+        icon: 'strong-boxes-full',
     },
     {
         labelKey: 'layout.header.accountLinks.gallery',
         to: '/account/gallery',
-        icon: 'light-image',
+        icon: 'strong-image',
     },
     {
         labelKey: 'layout.header.accountLinks.points',
         to: '/account/points',
-        icon: 'light-star',
+        icon: 'strong-star',
     },
     {
         labelKey: 'layout.header.accountLinks.coupons',
         to: '/account/coupons',
-        icon: 'light-ticket',
+        icon: 'strong-ticket',
     },
     {
         labelKey: 'layout.header.accountLinks.reviews',
         to: '/account/reviews',
-        icon: 'light-comments',
+        icon: 'strong-comments',
     },
     {
         labelKey: 'layout.header.accountLinks.quoteRequests',
         to: '/account/quote-requests',
-        icon: 'light-file-details',
+        icon: 'strong-file-details',
     },
     {
         labelKey: 'layout.header.accountLinks.gettingStarted',
         to: '/auth/profile',
-        icon: 'light-arrow-right',
+        icon: 'strong-site-redirect',
     },
 ] as const;

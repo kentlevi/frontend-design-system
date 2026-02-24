@@ -35,7 +35,7 @@ const { t } = useI18n();
                             tone="neutral"
                             size="sm"
                             icon-only
-                            icon="strong-times"
+                            icon="regular-times"
                             icon-size="lg"
                             sr-label="Close upload modal"
                             class="upload-modal-close-btn"

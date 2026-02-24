@@ -35,10 +35,6 @@ export function useLoginPageForm() {
     const nonMemberEmailError = ref('');
     const nonMemberOrderError = ref('');
 
-    const demoMemberEmail = 'joy_love1990@gmail.com';
-    const demoMemberPassword = 'joylove1990';
-    const demoOrderNumber = '2502160001';
-
     watch(memberType, () => {
         memberEmailError.value = '';
         memberPasswordError.value = '';
@@ -116,23 +112,24 @@ export function useLoginPageForm() {
         success: boolean
         message: string
         data: {
-            user?: {
-                id: number;
-                code: string;
-                email: string;
-                profile: {
+                    user?: {
+                        id: number;
+                        code: string;
+                        email: string;
+                        profile: {
                     id: number;
                     user_id: number;
                     file_path_id: number;
                     file_name: string;
-                    user_field_values: [{
-                        id: number;
-                        user_profile_id: number;
-                        country_field_ids: number;
-                        value: string;
-                    }]
-                }
-            }
+                            user_field_values: [{
+                                id: number;
+                                user_profile_id: number;
+                                country_field_ids?: number;
+                                country_fields_id?: number;
+                                value: string;
+                            }]
+                        }
+                    }
             auth_token?: string
         }
     }
@@ -140,7 +137,7 @@ export function useLoginPageForm() {
     async function onSubmitClick() {
         if (isNonMember.value === false) {
             const response = await memberLoginHandler();
-            if (response?.success === true) router.push('/account/profile')
+            if (response?.success === true) router.push('/')
         } else {
             await nonMemberLoginHandler();
         }
@@ -160,6 +157,8 @@ export function useLoginPageForm() {
             })
 
             if (response.success === false) {
+                memberPasswordError.value =
+                    response.message || t('auth.login.validation.credentialsMismatch');
                 return response
             }
 
@@ -177,12 +176,41 @@ export function useLoginPageForm() {
             const userStore = useUserStore()
             if (response.data.user) {
                 userStore.setUser(response.data.user)
+
+                const mockUser = useCookie<{
+                    firstName: string;
+                    lastName: string;
+                    email: string;
+                } | null>('mock_user', {
+                    sameSite: 'lax',
+                    path: '/',
+                });
+
+                const fields = response.data.user.profile?.user_field_values ?? [];
+                const firstName =
+                    fields.find((field) =>
+                        (field.country_field_ids ?? field.country_fields_id) === 1
+                    )?.value?.trim() || '';
+                const lastName =
+                    fields.find((field) =>
+                        (field.country_field_ids ?? field.country_fields_id) === 2
+                    )?.value?.trim() || '';
+
+                mockUser.value = {
+                    firstName,
+                    lastName,
+                    email: response.data.user.email || memberEmail.value.trim(),
+                };
             } else {
                 console.warn('No user returned from login API')
             }
 
             return response
-        } catch (error) {
+        } catch (error: any) {
+            memberPasswordError.value =
+                error?.data?.message ||
+                error?.message ||
+                t('auth.login.validation.credentialsMismatch');
             console.error(error)
         }
     }

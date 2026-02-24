@@ -17,9 +17,12 @@ const {
     passwordError,
     termsError,
     verificationEmail,
-    verificationToken,
+    verificationCode,
+    verificationError,
+    isVerifying,
     isVerificationModalOpen,
     submitRegister,
+    submitVerification,
 } = useRegisterForm();
 </script>
 
@@ -119,9 +122,9 @@ const {
                             @click="showPassword = !showPassword"
                         >
                             <UiIcon
-                                :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
-                                :size="18"
-                                color="var(--text-muted)"
+                                :name="showPassword ? 'regular-eye-slash' : 'regular-eye'"
+                                :size="24"
+                                color="var(--gray-90)"
                             />
                         </button>
                     </template>
@@ -179,11 +182,15 @@ const {
             </NuxtLink>
         </p>
         
-        <AuthLoginVerificationModal
+        <AuthRegisterVerificationModal
             v-model="isVerificationModalOpen"
             :email="verificationEmail"
-            :token="verificationToken"
-            data-testid="auth-login-verification-modal"
+            :code="verificationCode"
+            :error="verificationError"
+            :verifying="isVerifying"
+            data-testid="auth-register-verification-modal"
+            @update:code="verificationCode = $event"
+            @verify="submitVerification"
         />
     </div>
 </template>

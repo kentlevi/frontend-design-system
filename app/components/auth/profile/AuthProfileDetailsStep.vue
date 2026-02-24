@@ -61,7 +61,7 @@ function updateEmail(value: string) {
             <h1 class="auth-profile-head-title">
                 {{
                     $t('auth.profile.details.title', {
-                        name: firstName || 'Joy',
+                        name: firstName || 'User',
                     })
                 }}
             </h1>

@@ -1,5 +1,6 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { accountProfileDefaults, type AccountMockUser } from '@/data/account/profile';
+import { useUserStore } from '@/stores/user';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -7,8 +8,8 @@ type ProfileUnit = 'millimeter' | 'inch';
 const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 export function useAuthProfileSetup() {
-    const route = useRoute();
     const localePath = useLocalePath();
+    const userStore = useUserStore();
     const mockUser = useCookie<AccountMockUser | null>('mock_user', {
         default: () => null,
         sameSite: 'lax',
@@ -16,12 +17,16 @@ export function useAuthProfileSetup() {
     });
 
     const step = ref<ProfileStep>(1);
-    const showWelcomeToast = ref(route.query.onboarding === '1');
+    const showWelcomeToast = ref(Boolean(userStore.onboardingProfile?.onboarding));
     let toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    const firstName = ref(String(route.query.firstName || accountProfileDefaults.firstName));
-    const lastName = ref(String(route.query.lastName || accountProfileDefaults.lastName));
-    const email = ref(String(route.query.email || accountProfileDefaults.email));
+    const firstName = ref(
+        userStore.onboardingProfile?.firstName || accountProfileDefaults.firstName
+    );
+    const lastName = ref(
+        userStore.onboardingProfile?.lastName || accountProfileDefaults.lastName
+    );
+    const email = ref(userStore.onboardingProfile?.email || accountProfileDefaults.email);
 
     const photoUrl = ref<string | null>(null);
 
@@ -34,7 +39,7 @@ export function useAuthProfileSetup() {
     const initials = computed(() => {
         const first = firstName.value.trim().charAt(0).toUpperCase();
         const last = lastName.value.trim().charAt(0).toUpperCase();
-        return `${first || 'J'}${last || 'L'}`;
+        return `${first || 'U'}${last || ''}`;
     });
 
     function dismissToast() {
@@ -105,6 +110,8 @@ export function useAuthProfileSetup() {
         clearToastTimeout();
         revokePhotoUrl();
     });
+
+    userStore.clearOnboardingProfile();
 
     return {
         step,

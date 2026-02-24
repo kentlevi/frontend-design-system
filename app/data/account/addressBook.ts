@@ -11,7 +11,7 @@ export interface AccountAddressBookItem {
 
 export const accountAddressBookItems: AccountAddressBookItem[] = [
     {
-        name: 'Joy Love',
+        name: 'Primary Contact',
         phone: '+1 (551) 236-4533',
         address:
             '176-6, Yusan-ri, Gusan-myeon, Gaseong-si, Incheon 01000, Republic of Korea',
@@ -20,14 +20,14 @@ export const accountAddressBookItems: AccountAddressBookItem[] = [
         isDefault: true,
     },
     {
-        name: 'Joy Love',
+        name: 'Primary Contact',
         phone: '+1 (818) 922-5542',
         address: '9F, 310 Teheran-ro, Gangnam-gu, Seoul 06241, Republic of Korea',
         company: 'Lock&Lock Inc.',
         tag: 'Office',
     },
     {
-        name: 'Joy Love',
+        name: 'Primary Contact',
         phone: '+1 (963) 524-8858',
         address:
             '18F, 45 Gwanggyo Jungang-ro, Yeongtong-gu, Suwon-si, Gyeonggi-do 41577, Republic of Korea',

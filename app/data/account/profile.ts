@@ -7,7 +7,7 @@ export interface AccountMockUser {
 }
 
 export const accountProfileDefaults: AccountMockUser = {
-    firstName: 'Joy',
-    lastName: 'Love',
-    email: 'joylove1990@gmail.com',
+    firstName: '',
+    lastName: '',
+    email: '',
 };

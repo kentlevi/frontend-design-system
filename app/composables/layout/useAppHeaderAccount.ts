@@ -5,11 +5,14 @@ import {
     headerLocaleOptionConfig,
     headerNavLinkConfig,
 } from '~/data/layout/header';
+import { useUserStore } from '@/stores/user';
 
 export function useAppHeaderAccount() {
     const { t, locale, setLocale } = useI18n();
     const route = useRoute();
     const localePath = useLocalePath();
+    const userStore = useUserStore();
+    const authToken = useCookie<string | null>('auth_token');
     const mockUser = useCookie<{
         firstName: string;
         lastName: string;
@@ -50,16 +53,40 @@ export function useAppHeaderAccount() {
             label: t(link.labelKey),
         }))
     );
-    const isMockLoggedIn = computed(() => Boolean(mockUser.value?.email));
+    const storeFieldValues = computed(
+        () => userStore.profile?.user_field_values ?? []
+    );
+    function getCountryFieldId(field: { country_field_ids?: number; country_fields_id?: number }) {
+        return field.country_field_ids ?? field.country_fields_id;
+    }
+    const storeFirstName = computed(() =>
+        storeFieldValues.value.find((field) => getCountryFieldId(field) === 1)?.value?.trim() || ''
+    );
+    const storeLastName = computed(() =>
+        storeFieldValues.value.find((field) => getCountryFieldId(field) === 2)?.value?.trim() || ''
+    );
+    const emailLocalPart = computed(() => {
+        const source = (userStore.email || mockUser.value?.email || '').trim();
+        if (!source.includes('@')) return '';
+        return source.split('@')[0] || '';
+    });
+    const resolvedFirstName = computed(
+        () => storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User'
+    );
+    const resolvedLastName = computed(
+        () => storeLastName.value || mockUser.value?.lastName || ''
+    );
+    const resolvedEmail = computed(
+        () => userStore.email || mockUser.value?.email || ''
+    );
+    const isMockLoggedIn = computed(() => Boolean(userStore.email || mockUser.value?.email));
     const userInitial = computed(() =>
-        (mockUser.value?.firstName?.trim()?.charAt(0) || 'U').toUpperCase()
+        (resolvedFirstName.value.trim().charAt(0) || 'U').toUpperCase()
     );
     const displayName = computed(() =>
-        `${mockUser.value?.firstName || 'Joy'} ${mockUser.value?.lastName || 'Love'}`.trim()
+        [resolvedFirstName.value, resolvedLastName.value].filter(Boolean).join(' ').trim() || 'User'
     );
-    const displayEmail = computed(
-        () => mockUser.value?.email || 'joylove1990@gmail.com'
-    );
+    const displayEmail = computed(() => resolvedEmail.value);
     const accountTransitionName = computed(() =>
         isMockLoggedIn.value ? 'account-dropdown' : 'account-dropdown-guest'
     );
@@ -112,8 +139,13 @@ export function useAppHeaderAccount() {
     }
 
     function logoutMock() {
-        mockUser.value = null;
         closeAccountMenu();
+        requestAnimationFrame(() => {
+            mockUser.value = null;
+            authToken.value = null;
+            userStore.clearUser();
+            userStore.clearOnboardingProfile();
+        });
     }
 
     function onDocClick(event: MouseEvent) {

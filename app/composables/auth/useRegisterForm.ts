@@ -1,9 +1,10 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 export function useRegisterForm() {
-    const localePath = useLocalePath();
     const router = useRouter();
+    const userStore = useUserStore();
     const isVerificationModalOpen = ref(false);
     const api = useApi();
     const { t } = useI18n();
@@ -23,6 +24,9 @@ export function useRegisterForm() {
 
     const verificationEmail = ref();
     const verificationToken = ref();
+    const verificationCode = ref('');
+    const verificationError = ref('');
+    const isVerifying = ref(false);
 
     function isValidEmail(value: string) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -42,6 +46,14 @@ export function useRegisterForm() {
             email: string;
             token: string;
         };
+        meta: {};
+        error: {};
+    }
+
+    interface RegisterResponse {
+        success: boolean;
+        message: string;
+        data: {};
         meta: {};
         error: {};
     }
@@ -102,8 +114,51 @@ export function useRegisterForm() {
 
         verificationEmail.value = response.data.email;
         verificationToken.value = response.data.token;
+        verificationCode.value = '';
+        verificationError.value = '';
         isVerificationModalOpen.value = true;
         return response
+    }
+
+    async function submitVerification() {
+        if (!verificationCode.value.trim()) {
+            verificationError.value = t('auth.login.verification.codeRequired');
+            return;
+        }
+
+        isVerifying.value = true;
+        verificationError.value = '';
+
+        try {
+            const response = await api<RegisterResponse>('/kr/auth/register', {
+                method: 'POST',
+                body: {
+                    email: verificationEmail.value,
+                    registration_token: verificationToken.value,
+                    otp: verificationCode.value.trim(),
+                }
+            });
+
+            if (response.success === false) {
+                verificationError.value = response.message || 'Invalid verification code.';
+                return response;
+            }
+
+            userStore.setOnboardingProfile({
+                firstName: firstName.value.trim(),
+                lastName: lastName.value.trim(),
+                email: email.value.trim(),
+                onboarding: true,
+            });
+
+            isVerificationModalOpen.value = false;
+            await router.push('/auth/profile');
+            return response;
+        } catch (error) {
+            verificationError.value = 'Invalid verification code.';
+        } finally {
+            isVerifying.value = false;
+        }
     }
 
     return {
@@ -121,6 +176,10 @@ export function useRegisterForm() {
         isVerificationModalOpen,
         verificationEmail,
         verificationToken,
+        verificationCode,
+        verificationError,
+        isVerifying,
         submitRegister,
+        submitVerification,
     };
 }
