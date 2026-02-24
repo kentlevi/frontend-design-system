@@ -28,6 +28,7 @@ const props = defineProps<{
     displayEmail: string;
     accountTransitionName: string;
     accountLinks: AccountLink[];
+    cartItemCount: number;
     setAccountMenuRef: (el: HTMLElement | null) => void;
 }>();
 
@@ -99,20 +100,29 @@ const emit = defineEmits<{
                 @focus="emit('prefetch-search')"
                 data-testid="app-header-search-button"
             />
-            <UiButton
-                variant="ghost"
-                tone="default"
-                size="md"
-                :icon-only="true"
-                icon="strong-shop-cart"
-                icon-size="md"
-                class="home-header-icon"
-                :aria-label="t('layout.header.cart')"
-                @click="emit('open-cart')"
-                @mouseenter="emit('prefetch-cart')"
-                @focus="emit('prefetch-cart')"
-                data-testid="app-header-cart-button"
-            />
+            <div class="home-header-cart-wrap">
+                <UiButton
+                    variant="ghost"
+                    tone="default"
+                    size="md"
+                    :icon-only="true"
+                    icon="strong-shop-cart"
+                    icon-size="md"
+                    class="home-header-icon"
+                    :aria-label="t('layout.header.cart')"
+                    @click="emit('open-cart')"
+                    @mouseenter="emit('prefetch-cart')"
+                    @focus="emit('prefetch-cart')"
+                    data-testid="app-header-cart-button"
+                />
+                <span
+                    v-if="props.cartItemCount > 0"
+                    class="home-header-cart-dot"
+                    data-testid="app-header-cart-count"
+                >
+                    {{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
+                </span>
+            </div>
             <button
                 v-if="props.isMockLoggedIn"
                 type="button"
@@ -225,6 +235,29 @@ const emit = defineEmits<{
 
         .home-header-locale {
             overflow: hidden;
+        }
+
+        .home-header-cart-wrap {
+            position: relative;
+            width: 40px;
+            height: 40px;
+
+            .home-header-cart-dot {
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                min-width: 20px;
+                height: 20px;
+                border-radius: 999px;
+                padding: 0 7px;
+                background: var(--blood-base);
+                color: #fff;
+                font-size: 12px;
+                font-weight: 700;
+                line-height: 20px;
+                text-align: center;
+                pointer-events: none;
+            }
         }
 
         .home-header-bell {

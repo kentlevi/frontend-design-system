@@ -1,34 +1,162 @@
 <script setup lang="ts">
+import { nextTick, onBeforeUnmount, ref } from 'vue';
+import lottie from 'lottie-web';
 import type { ProductItem } from '~/data/products/catalog';
 
-const props = defineProps<{
-    open: boolean;
-    cartItemCount: number;
-    selectedProduct: ProductItem | null;
-    artworkPreviewUrl: string;
-    cartArtworkName: string;
-    selectedSizeLabel: string;
-    selectedQty: number;
-    total: number;
-    featuredOpen: boolean;
-    featuredItems: ProductItem[];
-    getProductName: (product: ProductItem) => string;
-    formatPrice: (value: number) => string;
-    featuredStartPrice: () => string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        open: boolean;
+        cartItemCount: number;
+        cartItems: Array<{
+            id: string;
+            product: ProductItem;
+            sizeKey: string;
+            sizeLabel: string;
+            qty: number;
+            total: number;
+            artworkName: string;
+            artworkPreviewUrl?: string;
+        }>;
+        sizeOptionModels?: Array<{
+            key: string;
+            name: string;
+            dim: string;
+        }>;
+        quantityOptions?: number[];
+        grandTotal: number;
+        featuredOpen: boolean;
+        featuredItems: ProductItem[];
+        getProductName: (product: ProductItem) => string;
+        formatPrice: (value: number) => string;
+        featuredStartPrice: () => string;
+    }>(),
+    {
+        sizeOptionModels: () => [],
+        quantityOptions: () => [],
+    }
+);
 
 const emit = defineEmits<{
     close: [];
     'close-featured': [];
+    'update-item': [payload: { itemId: string; sizeKey: string; qty: number }];
+    'remove-item': [itemId: string];
 }>();
 
 const { t } = useI18n();
+const router = useRouter();
+const localePath = useLocalePath();
+
+const editingItemId = ref<string | null>(null);
+const draftSizeKey = ref<string>('');
+const draftQty = ref<number>(0);
+const redirectingToCart = ref(false);
+const redirectLoaderRef = ref<HTMLElement | null>(null);
+const CART_REDIRECT_DELAY_MS = 1000;
+let redirectLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
+
+function openInlineEdit(item: (typeof props.cartItems)[number]) {
+    editingItemId.value = item.id;
+    draftSizeKey.value = item.sizeKey;
+    draftQty.value = item.qty;
+}
+
+function cancelInlineEdit() {
+    editingItemId.value = null;
+    draftSizeKey.value = '';
+    draftQty.value = 0;
+}
+
+function saveInlineEdit(itemId: string) {
+    if (!draftSizeKey.value || draftQty.value <= 0) return;
+    emit('update-item', {
+        itemId,
+        sizeKey: draftSizeKey.value,
+        qty: draftQty.value,
+    });
+    cancelInlineEdit();
+}
+
+function sizeDimOnly(label: string) {
+    const matched = label.match(/(\d+\s*(?:x|\u00d7)\s*\d+)/i);
+    if (matched?.[1]) {
+        return matched[1].replace(/\s+/g, '');
+    }
+    return label;
+}
+
+function editedItemTotal(item: (typeof props.cartItems)[number]) {
+    if (editingItemId.value !== item.id) return item.total;
+    if (!Number.isFinite(draftQty.value) || draftQty.value <= 0 || item.qty <= 0) {
+        return item.total;
+    }
+    const unitPrice = item.total / item.qty;
+    return unitPrice * draftQty.value;
+}
+
+function editedGrandTotal() {
+    if (!editingItemId.value) return props.grandTotal;
+    const editingItem = props.cartItems.find((item) => item.id === editingItemId.value);
+    if (!editingItem) return props.grandTotal;
+    return props.grandTotal - editingItem.total + editedItemTotal(editingItem);
+}
+
+function destroyRedirectAnimation() {
+    if (!redirectLoaderAnimation) return;
+    redirectLoaderAnimation.destroy();
+    redirectLoaderAnimation = null;
+}
+
+async function mountRedirectAnimation() {
+    if (typeof window === 'undefined' || !redirectLoaderRef.value) return;
+    destroyRedirectAnimation();
+    const response = await fetch('/animations/musticker-loader.json');
+    if (!response.ok) return;
+    const animationData = await response.json();
+    redirectLoaderAnimation = lottie.loadAnimation({
+        container: redirectLoaderRef.value,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        animationData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid meet',
+        },
+    });
+}
+
+async function goToCart() {
+    if (redirectingToCart.value) return;
+    redirectingToCart.value = true;
+    await nextTick();
+    await mountRedirectAnimation();
+    await new Promise((resolve) => setTimeout(resolve, CART_REDIRECT_DELAY_MS));
+    await router.push(localePath('/cart'));
+    emit('close');
+    destroyRedirectAnimation();
+    redirectingToCart.value = false;
+}
+
+onBeforeUnmount(() => {
+    destroyRedirectAnimation();
+});
 </script>
 
 <template>
     <Teleport to="body">
         <Transition name="cart-preview-slide">
             <div v-if="props.open" class="cart-preview-shell" @click.self="emit('close')" data-testid="product-category-cart-overlay">
+                <Transition name="cart-redirect-fade">
+                    <div
+                        v-if="redirectingToCart"
+                        class="cart-redirect-overlay"
+                        data-testid="product-category-cart-redirect-loading"
+                    >
+                        <div class="cart-redirect-loader" role="status" aria-live="polite" aria-label="Redirecting to cart">
+                            <div ref="redirectLoaderRef" class="cart-redirect-lottie" aria-hidden="true" />
+                        </div>
+                    </div>
+                </Transition>
                 <aside class="cart-preview-panel" role="dialog" aria-modal="true" data-testid="product-category-cart-dialog">
                     <header class="cart-preview-header" data-testid="product-category-cart-header">
                         <h3 class="cart-preview-title" data-testid="product-category-cart-title">{{ t('cart.cartPreview.previewTitle', { count: props.cartItemCount }) }}</h3>
@@ -62,47 +190,145 @@ const { t } = useI18n();
                             <p class="cart-preview-empty-description">{{ t('cart.cartPreview.emptyDescription') }}</p>
                         </section>
 
-                        <article v-if="props.selectedProduct" class="cart-preview-item" data-testid="product-category-cart-item">
-                            <div class="cart-preview-item-main" data-testid="product-category-cart-item-main">
-                                <div class="cart-preview-item-thumb">
-                                    <img
-                                        v-if="props.artworkPreviewUrl"
-                                        :src="props.artworkPreviewUrl"
-                                        :alt="
-                                            props.cartArtworkName ||
-                                            props.getProductName(props.selectedProduct)
-                                        " class="cart-preview-image" />
-                                    <img
-                                        v-else
-                                        :src="props.selectedProduct.image"
-                                        :alt="props.getProductName(props.selectedProduct)" class="cart-preview-image" />
-                                </div>
-                                <div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
-                                    <h4 class="cart-preview-section-title" data-testid="product-category-cart-item-name">
-                                        {{ props.getProductName(props.selectedProduct) }}
-                                        <UiIcon name="light-info-circle" :size="14" color="#6d7180" />
-                                    </h4>
-                                    <p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ props.selectedSizeLabel }}</p>
-                                    <p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
-                                        {{ t('cart.cartPreview.quantity') }}:
-                                        {{ props.selectedQty.toLocaleString() }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
-                                <strong class="cart-preview-item-price" data-testid="product-category-cart-item-price">
-                                    {{ props.formatPrice(props.total) }}
-                                </strong>
-                                <div class="cart-preview-item-actions" data-testid="product-category-cart-item-actions">
-                                    <UiButton type="button" variant="ghost" tone="neutral" size="sm" icon-only class="cart-item-icon-btn" data-testid="product-category-cart-item-edit-button">
-                                        <UiIcon name="strong-edit" :size="16" color="#2a2f3d" />
-                                    </UiButton>
-                                    <UiButton type="button" variant="ghost" tone="neutral" size="sm" icon-only class="cart-item-icon-btn" data-testid="product-category-cart-item-delete-button">
-                                        <UiIcon name="strong-trash" :size="16" color="#2a2f3d" />
-                                    </UiButton>
-                                </div>
-                            </div>
-                        </article>
+                        <section
+                            v-if="props.cartItemCount > 0"
+                            class="cart-preview-items-scroll"
+                            data-testid="product-category-cart-items-scroll"
+                        >
+                            <section
+                                class="cart-preview-items"
+                                data-testid="product-category-cart-items"
+                            >
+                                <article
+                                    v-for="item in props.cartItems"
+                                    :key="item.id"
+                                    class="cart-preview-item"
+                                    data-testid="product-category-cart-item"
+                                >
+                                    <div class="cart-preview-item-main" data-testid="product-category-cart-item-main">
+                                        <div class="cart-preview-item-thumb">
+                                            <img
+                                                :src="item.artworkPreviewUrl || item.product.image"
+                                                :alt="props.getProductName(item.product)" class="cart-preview-image" />
+                                        </div>
+                                        <div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
+                                            <h4 class="cart-preview-section-title" data-testid="product-category-cart-item-name">
+                                                {{ props.getProductName(item.product) }}
+                                                <UiIcon name="regular-info-circle" :size="20" color="#6d7180" />
+                                            </h4>
+                                            <template v-if="editingItemId === item.id">
+                                                <div class="cart-preview-inline-edit" data-testid="product-category-cart-item-inline-edit">
+                                                    <p class="cart-preview-meta" data-testid="product-category-cart-item-size">
+                                                        {{ t('cart.cartPreview.size') }}:
+                                                        <select
+                                                            v-model="draftSizeKey"
+                                                            class="cart-inline-select"
+                                                            data-testid="product-category-cart-item-size-select"
+                                                        >
+                                                            <option
+                                                                v-if="props.sizeOptionModels.length === 0"
+                                                                :value="item.sizeKey"
+                                                            >
+                                                                {{ sizeDimOnly(item.sizeLabel) }}
+                                                            </option>
+                                                            <option
+                                                                v-for="size in props.sizeOptionModels"
+                                                                :key="size.key"
+                                                                :value="size.key"
+                                                            >
+                                                                {{ sizeDimOnly(`${size.name} ${size.dim}`) }}
+                                                            </option>
+                                                        </select>
+                                                    </p>
+                                                    <p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
+                                                        {{ t('cart.cartPreview.quantity') }}:
+                                                        <select
+                                                            v-model.number="draftQty"
+                                                            class="cart-inline-select"
+                                                            data-testid="product-category-cart-item-qty-select"
+                                                        >
+                                                            <option
+                                                                v-if="props.quantityOptions.length === 0"
+                                                                :value="item.qty"
+                                                            >
+                                                                {{ item.qty.toLocaleString() }}
+                                                            </option>
+                                                            <option
+                                                                v-for="qty in props.quantityOptions"
+                                                                :key="qty"
+                                                                :value="qty"
+                                                            >
+                                                                {{ qty.toLocaleString() }}
+                                                            </option>
+                                                        </select>
+                                                    </p>
+                                                </div>
+                                            </template>
+                                            <template v-else>
+                                                <p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ sizeDimOnly(item.sizeLabel) }}</p>
+                                                <p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
+                                                    {{ t('cart.cartPreview.quantity') }}:
+                                                    {{ item.qty.toLocaleString() }}
+                                                </p>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
+                                        <strong class="cart-preview-item-price" data-testid="product-category-cart-item-price">
+                                            {{ props.formatPrice(editedItemTotal(item)) }}
+                                        </strong>
+                                        <div
+                                            v-if="editingItemId === item.id"
+                                            class="cart-preview-item-actions"
+                                            data-testid="product-category-cart-item-actions"
+                                        >
+                                            <button
+                                                type="button"
+                                                class="cart-item-icon-btn"
+                                                @click="saveInlineEdit(item.id)"
+                                                data-testid="product-category-cart-item-save-button"
+                                                aria-label="Save item changes"
+                                            >
+                                                <UiIcon name="strong-save" :size="24" color="#2a2f3d" />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="cart-item-icon-btn"
+                                                @click="cancelInlineEdit"
+                                                data-testid="product-category-cart-item-cancel-button"
+                                                aria-label="Cancel item changes"
+                                            >
+                                                <UiIcon name="strong-times" :size="24" color="#2a2f3d" />
+                                            </button>
+                                        </div>
+                                        <div
+                                            v-else
+                                            class="cart-preview-item-actions"
+                                            data-testid="product-category-cart-item-actions"
+                                        >
+                                            <button
+                                                type="button"
+                                                class="cart-item-icon-btn"
+                                                @click="openInlineEdit(item)"
+                                                data-testid="product-category-cart-item-edit-button"
+                                                aria-label="Edit item"
+                                            >
+                                                <UiIcon name="strong-edit" :size="24" color="#2a2f3d" />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="cart-item-icon-btn"
+                                                @click="emit('remove-item', item.id)"
+                                                data-testid="product-category-cart-item-delete-button"
+                                                aria-label="Remove item"
+                                            >
+                                                <UiIcon name="strong-trash" :size="24" color="#2a2f3d" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            </section>
+                        </section>
 
                         <section
                             v-if="props.featuredOpen"
@@ -118,12 +344,13 @@ const { t } = useI18n();
                                     tone="neutral"
                                     size="sm"
                                     icon-only
+                                    icon="strong-times"
+                                    icon-size="md"
+                                    sr-label="Close featured items"
                                     class="cart-featured-close"
                                     @click="emit('close-featured')"
                                     data-testid="product-category-cart-featured-close-button"
-                                >
-                                    <UiIcon name="strong-times" :size="16" color="#2a2f3d" />
-                                </UiButton>
+                                />
                             </div>
                             <div class="cart-featured-grid" data-testid="product-category-cart-featured-list">
                                 <article
@@ -151,20 +378,32 @@ const { t } = useI18n();
                     </div>
 
                     <footer v-if="props.cartItemCount > 0" class="cart-preview-footer" data-testid="product-category-cart-footer">
-                        <p class="cart-preview-total" data-testid="product-category-cart-total-row">
-                            <span class="cart-preview-label">{{ t('cart.cartPreview.total') }}</span>
-                            <strong class="cart-preview-value">{{ props.formatPrice(props.total) }}</strong>
-                        </p>
-                        <div class="cart-preview-note-row" data-testid="product-category-cart-note-row">
-                            <p class="cart-preview-note-label">Note:</p>
-                            <p class="cart-preview-note">{{ t('cart.cartPreview.note') }}</p>
+                        <div class="cart-preview-summary" data-testid="product-category-cart-summary">
+                            <p class="cart-preview-total" data-testid="product-category-cart-total-row">
+                                <span class="cart-preview-label">{{ t('cart.cartPreview.total') }}</span>
+                                <strong class="cart-preview-value">{{ props.formatPrice(editedGrandTotal()) }}</strong>
+                            </p>
+                            <div class="cart-preview-note-row" data-testid="product-category-cart-note-row">
+                                <p class="cart-preview-note-label">Note:</p>
+                                <p class="cart-preview-note">{{ t('cart.cartPreview.note') }}</p>
+                            </div>
                         </div>
                         <div class="cart-preview-actions" data-testid="product-category-cart-actions">
-                            <UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" class="cart-preview-view-btn" data-testid="product-category-cart-view-button">
+                            <UiButton
+                                type="button"
+                                variant="outline"
+                                tone="neutral"
+                                size="md"
+                                height="48px"
+                                class="cart-preview-view-btn"
+                                :disabled="redirectingToCart"
+                                @click="goToCart"
+                                data-testid="product-category-cart-view-button"
+                            >
                                 {{ t('cart.cartPreview.viewCart') }}
                             </UiButton>
                             <UiButton type="button" variant="filled" tone="neutral" size="md" height="48px" class="cart-preview-checkout-btn" data-testid="product-category-cart-checkout-button">
-                                <UiIcon name="strong-paper-plane" :size="16" color="#ffffff" />
+                                <UiIcon name="regular-paper-plane" :size="16" color="#ffffff" />
                                 {{ t('cart.cartPreview.proceedToCheckout') }}
                             </UiButton>
                         </div>
@@ -185,8 +424,36 @@ const { t } = useI18n();
     align-items: stretch;
     justify-content: flex-end;
 
+    .cart-redirect-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(246, 246, 248, 0.72);
+        display: grid;
+        place-items: center;
+        z-index: 2;
+    }
+
+    .cart-redirect-loader {
+        width: 74px;
+        height: 74px;
+        position: relative;
+        display: grid;
+        place-items: center;
+    }
+
+    .cart-redirect-lottie {
+        width: 100%;
+        height: 100%;
+
+        :deep(svg) {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    }
+
     .cart-preview-panel {
-        width: min(568px, 100vw);
+        width: min(540px, 100vw);
         max-width: 100vw;
         background: var(--contrast-light);
         border-left: 1px solid var(--gray-30);
@@ -234,8 +501,21 @@ const { t } = useI18n();
     .cart-preview-body {
         display: flex;
         flex-direction: column;
-        overflow: auto;
-        padding: 20px 22px 16px;
+        overflow: hidden;
+        padding: 0;
+        min-height: 0;
+
+        .cart-preview-items-scroll {
+            min-height: 0;
+            overflow: auto;
+            height: 100%;
+        }
+
+        .cart-preview-items {
+            display: grid;
+            gap: 16px;
+            padding: 24px;
+        }
 
         .cart-preview-item {
             padding: 0 0 16px;
@@ -244,24 +524,26 @@ const { t } = useI18n();
             justify-content: space-between;
             gap: 12px;
             border-bottom: 1px solid var(--gray-30);
+            min-height: 106px;
         }
 
         .cart-preview-item-main {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
+            gap: 16px;
             min-width: 0;
         }
 
         .cart-preview-item-thumb {
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             border-radius: 10px;
             background: var(--gray-10);
             overflow: hidden;
             flex-shrink: 0;
 
             .cart-preview-image {
+                padding: 12px;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -269,21 +551,48 @@ const { t } = useI18n();
         }
 
         .cart-preview-item-copy {
+            min-width: 0;
+            flex: 1;
+            min-height: 72px;
+
             .cart-preview-section-title {
-                margin: 0 0 4px;
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
                 font-size: 14px;
-                line-height: 1.3;
+                line-height: 24px;
                 color: var(--text-primary);
             }
 
             .cart-preview-meta {
                 margin: 0;
                 font-size: 14px;
-                line-height: 1.5;
+                line-height: 24px;
                 color: var(--text-secondary);
+                min-height: 24px;
+                display: flex;
+                align-items: center;
+            }
+
+            .cart-preview-inline-edit {
+                margin-top: 0;
+                display: grid;
+                gap: 0;
+                max-width: 320px;
+                .cart-inline-select {
+                    height: 24px;
+                    padding-right: 8px;
+                    padding-bottom: 1px;
+                    border-radius: 8px;
+                    background: #fff;
+                    color: #2a2f3d;
+                    vertical-align: middle;
+
+                    option {
+                        color: #2a2f3d;
+                        background: #fff;
+                    }
+                }
             }
         }
 
@@ -291,32 +600,47 @@ const { t } = useI18n();
             display: grid;
             justify-items: end;
             gap: 8px;
+            min-width: 118px;
+            align-self: stretch;
+            align-content: start;
         }
 
         .cart-preview-item-price {
-            font-size: 38px;
-            line-height: 1;
+            font-size: 18px;
+            line-height: 32px;
             color: var(--text-primary);
             white-space: nowrap;
         }
 
         .cart-preview-item-actions {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: flex-end;
+            gap: 16px;
+            width: 100%;
+            min-height: 32px;
         }
 
         .cart-item-icon-btn {
-            width: 24px;
-            height: 24px;
-            min-width: 24px;
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
             border-radius: 6px;
             padding: 0;
-            --btn-soft: transparent;
+            border: 0;
+            background: transparent;
+            display: inline-grid;
+            place-items: center;
+            cursor: pointer;
+
+            &:hover {
+                background: var(--gray-20);
+            }
         }
 
         .cart-featured {
-            padding-top: 18px;
+            margin-top: 16px;
+            padding: 16px 24px;
             border-top: 1px solid var(--gray-30);
         }
 
@@ -360,6 +684,7 @@ const { t } = useI18n();
             grid-template-rows: minmax(420px, 1fr) auto;
             align-items: stretch;
             padding-top: 0;
+            overflow: auto;
 
             .cart-preview-empty {
                 height: 100%;
@@ -382,8 +707,8 @@ const { t } = useI18n();
 
             .cart-preview-section-title {
                 margin: 0;
-                font-size: 28px;
-                line-height: 1.15;
+                font-size: 16px;
+                line-height: 28px;
                 color: var(--text-primary);
             }
         }
@@ -401,7 +726,7 @@ const { t } = useI18n();
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding-bottom: 8px;
+            padding-bottom: 12px;
             scrollbar-width: thin;
 
             &::-webkit-scrollbar {
@@ -419,7 +744,7 @@ const { t } = useI18n();
         }
 
         .cart-featured-card {
-            min-width: 178px;
+            min-width: 184px;
             border: 1px solid var(--gray-30);
             border-radius: 10px;
             background: var(--contrast-light);
@@ -440,20 +765,22 @@ const { t } = useI18n();
 
             .cart-featured-item-title {
                 margin: 0;
-                font-size: 16px;
-                line-height: 1.35;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 24px;
                 color: var(--text-primary);
             }
 
             .cart-featured-customize-btn {
-                width: calc(100% - 4px);
+                width: 100%;
                 margin: 0 auto;
-                height: 38px;
+                height: 32px;
                 border-radius: 8px;
                 background: var(--gray-20);
                 color: var(--text-primary);
                 font-size: 14px;
                 font-weight: 600;
+                line-height: 24px;
                 box-shadow: none;
                 transition: background-color 0.18s ease;
 
@@ -469,11 +796,11 @@ const { t } = useI18n();
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 12px;
+            padding: 20px 22px;
         }
 
         .cart-featured-content {
-            padding: 12px 12px 10px;
+            padding: 16px;
             display: grid;
             gap: 8px;
         }
@@ -487,12 +814,13 @@ const { t } = useI18n();
 
             .cart-preview-label {
                 font-size: 14px;
+                line-height: 24px;
                 color: var(--text-secondary);
             }
 
             .cart-preview-value {
-                font-size: 32px;
-                line-height: 1;
+                font-size: 16px;
+                line-height: 28px;
                 color: var(--text-primary);
             }
         }
@@ -500,7 +828,10 @@ const { t } = useI18n();
 
     .cart-preview-footer {
         border-top: 1px solid var(--gray-30);
-        padding: 14px 22px 20px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
 
         .cart-preview-total {
             margin: 0;
@@ -510,20 +841,20 @@ const { t } = useI18n();
             padding-top: 2px;
 
             .cart-preview-label {
-                font-size: 32px;
-                line-height: 1.2;
+                font-size: 16px;
+                line-height: 28px;
                 color: var(--text-primary);
             }
 
             .cart-preview-value {
-                font-size: 46px;
+                font-size: 24px;
+                line-height: 36px;
                 line-height: 1;
                 color: var(--text-primary);
             }
         }
 
         .cart-preview-note-row {
-            margin-top: 4px;
             display: grid;
             grid-template-columns: auto 1fr;
             align-items: start;
@@ -533,19 +864,19 @@ const { t } = useI18n();
         .cart-preview-note-label {
             margin: 0;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 24px;
             color: var(--text-secondary);
         }
 
         .cart-preview-note {
             margin: 0;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 24px;
             color: var(--text-secondary);
+            text-align: right;
         }
 
         .cart-preview-actions {
-            margin-top: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -553,15 +884,15 @@ const { t } = useI18n();
         }
 
         .cart-preview-view-btn {
-            width: 120px;
             border-radius: 16px;
-            border: 1px solid var(--gray-60);
+            border: 1px solid var(--gray-80);
             background: var(--contrast-light);
             color: var(--text-primary);
             font-size: 16px;
             font-weight: 600;
             box-shadow: none;
             transition: background-color 0.18s ease;
+            padding: 10px 16px;
 
             &:hover {
                 background: var(--gray-20);
@@ -569,7 +900,6 @@ const { t } = useI18n();
         }
 
         .cart-preview-checkout-btn {
-            width: 286px;
             border-radius: 16px;
             background: var(--gray-100);
             color: #ffffff;
@@ -580,6 +910,7 @@ const { t } = useI18n();
             font-size: 16px;
             font-weight: 600;
             transition: filter 0.18s ease;
+            padding: 10px 20px;
 
             &:hover {
                 filter: brightness(1.05);
@@ -647,5 +978,16 @@ const { t } = useI18n();
 .cart-preview-slide-leave-active .cart-preview-panel {
     transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
+
+.cart-redirect-fade-enter-active,
+.cart-redirect-fade-leave-active {
+    transition: opacity 0.16s ease;
+}
+
+.cart-redirect-fade-enter-from,
+.cart-redirect-fade-leave-to {
+    opacity: 0;
+}
+
 </style>
 
