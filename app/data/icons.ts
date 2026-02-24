@@ -1,4 +1,48 @@
 export const icons = {
+  "brand-facebook": {
+    "id": "icon-brand-facebook",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-fb-circle": {
+    "id": "icon-brand-fb-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-fb-messenger": {
+    "id": "icon-brand-fb-messenger",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-fb-square": {
+    "id": "icon-brand-fb-square",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-instagram-square": {
+    "id": "icon-brand-instagram-square",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-instagram": {
+    "id": "icon-brand-instagram",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-pinterest-circle": {
+    "id": "icon-brand-pinterest-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-pinterest-square": {
+    "id": "icon-brand-pinterest-square",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-pinterest": {
+    "id": "icon-brand-pinterest",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-tiktok": {
+    "id": "icon-brand-tiktok",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-youtube": {
+    "id": "icon-brand-youtube",
+    "viewBox": "0 0 32 32"
+  },
   "light-alarm-clock": {
     "id": "icon-light-alarm-clock",
     "viewBox": "0 0 32 32"
@@ -507,6 +551,14 @@ export const icons = {
     "id": "icon-light-play",
     "viewBox": "0 0 32 32"
   },
+  "light-plus-circle": {
+    "id": "icon-light-plus-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "light-plus-square": {
+    "id": "icon-light-plus-square",
+    "viewBox": "0 0 32 32"
+  },
   "light-plus": {
     "id": "icon-light-plus",
     "viewBox": "0 0 32 32"
@@ -1001,6 +1053,14 @@ export const icons = {
   },
   "regular-eye": {
     "id": "icon-regular-eye",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-file-details": {
+    "id": "icon-regular-file-details",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-file-edit": {
+    "id": "icon-regular-file-edit",
     "viewBox": "0 0 32 32"
   },
   "regular-file-chart-line": {

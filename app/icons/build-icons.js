@@ -18,7 +18,7 @@ const ICON_SCAN_DIRS = [
   "utils",
 ]
 const PUBLIC_SPRITE = path.resolve(__dirname, "../../public/icons/sprite.svg")
-const DATA_FILE = path.resolve(__dirname, "../../app/data/icons.ts")
+const DATA_FILE = path.resolve(__dirname, "../../app/data/ui/icons.ts")
 const GUIDE_ICONS_REF = process.env.GUIDE_ICONS_REF || "site-with-guide"
 
 fs.mkdirSync(path.dirname(PUBLIC_SPRITE), { recursive: true })
