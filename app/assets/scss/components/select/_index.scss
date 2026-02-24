@@ -7,7 +7,6 @@
 
 .ui-select {
     position: relative;
-    min-width: 220px;
 }
 
 .ui-select-trigger {
@@ -33,7 +32,7 @@
 .ui-select-placeholder {
     font-family: t.$font-base;
     font-size: t.$body-base;
-    line-height: 1.5;
+    line-height: 24px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

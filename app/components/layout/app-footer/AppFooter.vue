@@ -6,15 +6,17 @@ import { useRoute } from 'vue-router';
 
 const year = new Date().getFullYear();
 const route = useRoute();
-const isAuthRoute = computed(() => route.path.startsWith('/auth'));
+const isAuthRoute = computed(() => /\/auth(\/|$)/.test(route.path));
+const isCartRoute = computed(() => /\/cart(\/|$)/.test(route.path));
+const useCompactFooter = computed(() => isAuthRoute.value || isCartRoute.value);
 const isProductRoute = computed(() =>
     /\/(stickers|roll-stickers|sheet-stickers)(\/|$)/.test(route.path)
 );
 </script>
 
 <template>
-    <footer class="home-footer" :class="{ 'is-auth': isAuthRoute, 'is-product': isProductRoute }" data-testid="app-footer">
-        <AppFooterCompact v-if="isAuthRoute" :year="year" data-testid="app-footer-compact" />
+    <footer class="home-footer" :class="{ 'is-auth': useCompactFooter, 'is-product': isProductRoute }" data-testid="app-footer">
+        <AppFooterCompact v-if="useCompactFooter" :year="year" data-testid="app-footer-compact" />
         <AppFooterMain v-else :year="year" :is-product="isProductRoute" data-testid="app-footer-main" />
     </footer>
 </template>

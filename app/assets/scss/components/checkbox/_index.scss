@@ -35,17 +35,15 @@
         border-color 0.15s ease,
         background-color 0.15s ease,
         box-shadow 0.15s ease;
+}
 
-    &::after {
-        content: '';
-        width: 10px;
-        height: 6px;
-        border-left: 2px solid c.$text-inverse;
-        border-bottom: 2px solid c.$text-inverse;
-        transform: rotate(-45deg) scale(0);
-        transform-origin: center;
-        transition: transform 0.12s ease;
-    }
+.ui-checkbox-icon {
+    color: var(--text-inverse);
+    opacity: 0;
+    transform: scale(0.84);
+    transition:
+        opacity 0.12s ease,
+        transform 0.12s ease;
 }
 
 .ui-checkbox-label {
@@ -63,8 +61,9 @@
     background: c.$text-primary;
 }
 
-.ui-checkbox-input:checked + .ui-checkbox-box::after {
-    transform: rotate(-45deg) scale(1);
+.ui-checkbox-input:checked + .ui-checkbox-box .ui-checkbox-icon {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .ui-checkbox[data-size='sm'] {
