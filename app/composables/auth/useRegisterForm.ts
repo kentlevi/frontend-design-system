@@ -39,6 +39,32 @@ export function useRegisterForm() {
         termsError.value = '';
     }
 
+    watch(firstName, (value) => {
+        if (value.trim()) {
+            firstNameError.value = '';
+        }
+    });
+
+    watch(email, (value) => {
+        const trimmed = value.trim();
+        if (!trimmed) return;
+        if (isValidEmail(trimmed)) {
+            emailError.value = '';
+        }
+    });
+
+    watch(password, (value) => {
+        if (value.trim()) {
+            passwordError.value = '';
+        }
+    });
+
+    watch(agreeTerms, (value) => {
+        if (value) {
+            termsError.value = '';
+        }
+    });
+
     interface RegisterVerificationResponse {
         success: boolean;
         message: string;
@@ -96,6 +122,23 @@ export function useRegisterForm() {
         return String(value[0] ?? '').trim();
     }
 
+    function resolveRegisterErrorMessage(payloadMessage?: string, fallbackMessage?: string) {
+        const technicalMessagePattern = /(failed to fetch|\[post\]|network|fetch failed|load failed)/i;
+        const message = (payloadMessage || fallbackMessage || '').trim();
+        if (!message || technicalMessagePattern.test(message)) {
+            return t('auth.register.validation.requestFailed');
+        }
+        return message;
+    }
+
+    function normalizeEmailErrorMessage(message: string) {
+        if (!message) return message;
+        if (/already been taken/i.test(message)) {
+            return 'Email has already been taken.';
+        }
+        return message;
+    }
+
     async function submitRegister() {
         clearErrors();
 
@@ -151,7 +194,9 @@ export function useRegisterForm() {
                 firstNameError.value =
                     getFirstError(response.data, 'given_name') ||
                     getFirstError(response.data, 'first_name');
-                emailError.value = getFirstError(response.data, 'email');
+                emailError.value = normalizeEmailErrorMessage(
+                    getFirstError(response.data, 'email')
+                );
                 passwordError.value = getFirstError(response.data, 'password');
                 termsError.value =
                     getFirstError(response.data, 'terms_of_service') ||
@@ -162,7 +207,10 @@ export function useRegisterForm() {
                     !passwordError.value &&
                     !termsError.value
                 ) {
-                    emailError.value = response.message || 'Registration failed.';
+                    emailError.value = resolveRegisterErrorMessage(
+                        response.message,
+                        'Registration failed.'
+                    );
                 }
                 return response
             }
@@ -179,17 +227,19 @@ export function useRegisterForm() {
             firstNameError.value =
                 getFirstError(validation, 'given_name') ||
                 getFirstError(validation, 'first_name');
-            emailError.value = getFirstError(validation, 'email');
+            emailError.value = normalizeEmailErrorMessage(
+                getFirstError(validation, 'email')
+            );
             passwordError.value = getFirstError(validation, 'password');
             termsError.value =
                 getFirstError(validation, 'terms_of_service') ||
                 getFirstError(validation, 'terms');
 
             if (!firstNameError.value && !emailError.value && !passwordError.value && !termsError.value) {
-                emailError.value =
-                    payload?.message ||
-                    error?.message ||
-                    'Registration failed.';
+                emailError.value = resolveRegisterErrorMessage(
+                    payload?.message,
+                    error?.message || 'Registration failed.'
+                );
             }
         }
     }

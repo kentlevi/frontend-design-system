@@ -24,7 +24,8 @@
             "validation": {
                 "fieldBlank": "Required.",
                 "emailInvalid": "Invalid email format.",
-                "mustAgree": "You must agree to the Terms of Service and Privacy Policy."
+                "mustAgree": "You must agree to the Terms of Service.",
+                "requestFailed": "Unable to connect right now. Please try again."
             }
         }
     }

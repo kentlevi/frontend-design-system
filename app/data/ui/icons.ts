@@ -1,48 +1,5 @@
+export const iconSpriteVersion = "1772013857115" as const
 export const icons = {
-  "brand-facebook": {
-    "id": "icon-brand-facebook",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-fb-circle": {
-    "id": "icon-brand-fb-circle",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-fb-messenger": {
-    "id": "icon-brand-fb-messenger",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-fb-square": {
-    "id": "icon-brand-fb-square",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-instagram-square": {
-    "id": "icon-brand-instagram-square",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-instagram": {
-    "id": "icon-brand-instagram",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-pinterest-circle": {
-    "id": "icon-brand-pinterest-circle",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-pinterest-square": {
-    "id": "icon-brand-pinterest-square",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-pinterest": {
-    "id": "icon-brand-pinterest",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-tiktok": {
-    "id": "icon-brand-tiktok",
-    "viewBox": "0 0 32 32"
-  },
-  "brand-youtube": {
-    "id": "icon-brand-youtube",
-    "viewBox": "0 0 32 32"
-  },
   "light-alarm-clock": {
     "id": "icon-light-alarm-clock",
     "viewBox": "0 0 32 32"
@@ -89,6 +46,10 @@ export const icons = {
   },
   "light-arrow-right": {
     "id": "icon-light-arrow-right",
+    "viewBox": "0 0 32 32"
+  },
+  "light-arrow-to-bottom": {
+    "id": "icon-light-arrow-to-bottom",
     "viewBox": "0 0 32 32"
   },
   "light-arrow-up": {
@@ -163,6 +124,10 @@ export const icons = {
     "id": "icon-light-camera",
     "viewBox": "0 0 32 32"
   },
+  "light-card-view": {
+    "id": "icon-light-card-view",
+    "viewBox": "0 0 32 32"
+  },
   "light-caret-down": {
     "id": "icon-light-caret-down",
     "viewBox": "0 0 32 32"
@@ -181,6 +146,14 @@ export const icons = {
   },
   "light-chart-bar": {
     "id": "icon-light-chart-bar",
+    "viewBox": "0 0 32 32"
+  },
+  "light-chart-decrease": {
+    "id": "icon-light-chart-decrease",
+    "viewBox": "0 0 32 32"
+  },
+  "light-chart-increase": {
+    "id": "icon-light-chart-increase",
     "viewBox": "0 0 32 32"
   },
   "light-check-circle": {
@@ -259,6 +232,14 @@ export const icons = {
     "id": "icon-light-comments",
     "viewBox": "0 0 32 32"
   },
+  "light-compress": {
+    "id": "icon-light-compress",
+    "viewBox": "0 0 32 32"
+  },
+  "light-copy": {
+    "id": "icon-light-copy",
+    "viewBox": "0 0 32 32"
+  },
   "light-credit-card": {
     "id": "icon-light-credit-card",
     "viewBox": "0 0 32 32"
@@ -281,7 +262,7 @@ export const icons = {
   },
   "light-ellipsis-vertical": {
     "id": "icon-light-ellipsis-vertical",
-    "viewBox": "0 0 24 24"
+    "viewBox": "0 0 32 32"
   },
   "light-envelope": {
     "id": "icon-light-envelope",
@@ -301,6 +282,10 @@ export const icons = {
   },
   "light-exclamation": {
     "id": "icon-light-exclamation",
+    "viewBox": "0 0 32 32"
+  },
+  "light-exclamation-triangle": {
+    "id": "icon-light-exclamation-triangle",
     "viewBox": "0 0 32 32"
   },
   "light-expand": {
@@ -363,6 +348,10 @@ export const icons = {
     "id": "icon-light-file-image",
     "viewBox": "0 0 32 32"
   },
+  "light-file-pdf": {
+    "id": "icon-light-file-pdf",
+    "viewBox": "0 0 32 32"
+  },
   "light-file-times": {
     "id": "icon-light-file-times",
     "viewBox": "0 0 32 32"
@@ -375,8 +364,20 @@ export const icons = {
     "id": "icon-light-filter",
     "viewBox": "0 0 32 32"
   },
+  "light-flag": {
+    "id": "icon-light-flag",
+    "viewBox": "0 0 32 32"
+  },
   "light-folders": {
     "id": "icon-light-folders",
+    "viewBox": "0 0 32 32"
+  },
+  "light-font-color": {
+    "id": "icon-light-font-color",
+    "viewBox": "0 0 32 32"
+  },
+  "light-globe": {
+    "id": "icon-light-globe",
     "viewBox": "0 0 32 32"
   },
   "light-hand-holding-box": {
@@ -385,6 +386,10 @@ export const icons = {
   },
   "light-hand-receive": {
     "id": "icon-light-hand-receive",
+    "viewBox": "0 0 32 32"
+  },
+  "light-hands-usd": {
+    "id": "icon-light-hands-usd",
     "viewBox": "0 0 32 32"
   },
   "light-hard-break": {
@@ -405,6 +410,18 @@ export const icons = {
   },
   "light-heading-4": {
     "id": "icon-light-heading-4",
+    "viewBox": "0 0 32 32"
+  },
+  "light-heading": {
+    "id": "icon-light-heading",
+    "viewBox": "0 0 32 32"
+  },
+  "light-heart": {
+    "id": "icon-light-heart",
+    "viewBox": "0 0 32 32"
+  },
+  "light-highlight": {
+    "id": "icon-light-highlight",
     "viewBox": "0 0 32 32"
   },
   "light-history": {
@@ -459,8 +476,16 @@ export const icons = {
     "id": "icon-light-italic",
     "viewBox": "0 0 32 32"
   },
+  "light-keyboard": {
+    "id": "icon-light-keyboard",
+    "viewBox": "0 0 32 32"
+  },
   "light-layer": {
     "id": "icon-light-layer",
+    "viewBox": "0 0 32 32"
+  },
+  "light-link": {
+    "id": "icon-light-link",
     "viewBox": "0 0 32 32"
   },
   "light-long-arrow-down": {
@@ -509,6 +534,14 @@ export const icons = {
   },
   "light-mobile": {
     "id": "icon-light-mobile",
+    "viewBox": "0 0 32 32"
+  },
+  "light-money-edit": {
+    "id": "icon-light-money-edit",
+    "viewBox": "0 0 32 32"
+  },
+  "light-money-envelope": {
+    "id": "icon-light-money-envelope",
     "viewBox": "0 0 32 32"
   },
   "light-notes": {
@@ -675,6 +708,14 @@ export const icons = {
     "id": "icon-light-tags",
     "viewBox": "0 0 32 32"
   },
+  "light-thumbs-down": {
+    "id": "icon-light-thumbs-down",
+    "viewBox": "0 0 32 32"
+  },
+  "light-thumbs-up": {
+    "id": "icon-light-thumbs-up",
+    "viewBox": "0 0 32 32"
+  },
   "light-ticket": {
     "id": "icon-light-ticket",
     "viewBox": "0 0 32 32"
@@ -771,6 +812,54 @@ export const icons = {
     "id": "icon-light-wallet",
     "viewBox": "0 0 32 32"
   },
+  "light-wowpress": {
+    "id": "icon-light-wowpress",
+    "viewBox": "0 0 32 32"
+  },
+  "light-zoom-in": {
+    "id": "icon-light-zoom-in",
+    "viewBox": "0 0 32 32"
+  },
+  "light-zoom-out": {
+    "id": "icon-light-zoom-out",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-facebook": {
+    "id": "icon-regular-facebook",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-fb-circle": {
+    "id": "icon-regular-fb-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-fb-messenger": {
+    "id": "icon-regular-fb-messenger",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-fb-square": {
+    "id": "icon-regular-fb-square",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-instagram-square": {
+    "id": "icon-regular-instagram-square",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-instagram": {
+    "id": "icon-regular-instagram",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-pinterest-circle": {
+    "id": "icon-regular-pinterest-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-pinterest-square": {
+    "id": "icon-regular-pinterest-square",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-pinterest": {
+    "id": "icon-regular-pinterest",
+    "viewBox": "0 0 32 32"
+  },
   "regular-alarm-clock": {
     "id": "icon-regular-alarm-clock",
     "viewBox": "0 0 32 32"
@@ -817,6 +906,10 @@ export const icons = {
   },
   "regular-arrow-right": {
     "id": "icon-regular-arrow-right",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-arrow-to-bottom": {
+    "id": "icon-regular-arrow-to-bottom",
     "viewBox": "0 0 32 32"
   },
   "regular-arrow-up": {
@@ -891,6 +984,10 @@ export const icons = {
     "id": "icon-regular-camera",
     "viewBox": "0 0 32 32"
   },
+  "regular-card-view": {
+    "id": "icon-regular-card-view",
+    "viewBox": "0 0 32 32"
+  },
   "regular-caret-down": {
     "id": "icon-regular-caret-down",
     "viewBox": "0 0 32 32"
@@ -909,6 +1006,14 @@ export const icons = {
   },
   "regular-chart-bar": {
     "id": "icon-regular-chart-bar",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-chart-decrease": {
+    "id": "icon-regular-chart-decrease",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-chart-increase": {
+    "id": "icon-regular-chart-increase",
     "viewBox": "0 0 32 32"
   },
   "regular-check-circle": {
@@ -987,6 +1092,14 @@ export const icons = {
     "id": "icon-regular-comments",
     "viewBox": "0 0 32 32"
   },
+  "regular-compress": {
+    "id": "icon-regular-compress",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-copy": {
+    "id": "icon-regular-copy",
+    "viewBox": "0 0 32 32"
+  },
   "regular-credit-card": {
     "id": "icon-regular-credit-card",
     "viewBox": "0 0 32 32"
@@ -1033,6 +1146,10 @@ export const icons = {
   },
   "regular-exclamation": {
     "id": "icon-regular-exclamation",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-exclamation-triangle": {
+    "id": "icon-regular-exclamation-triangle",
     "viewBox": "0 0 32 32"
   },
   "regular-expand": {
@@ -1095,16 +1212,24 @@ export const icons = {
     "id": "icon-regular-file-image",
     "viewBox": "0 0 32 32"
   },
+  "regular-file-pdf": {
+    "id": "icon-regular-file-pdf",
+    "viewBox": "0 0 32 32"
+  },
   "regular-file-times": {
     "id": "icon-regular-file-times",
     "viewBox": "0 0 32 32"
   },
   "regular-filter-lines": {
     "id": "icon-regular-filter-lines",
-    "viewBox": "0 0 24 24"
+    "viewBox": "0 0 32 32"
   },
   "regular-filter": {
     "id": "icon-regular-filter",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-flag": {
+    "id": "icon-regular-flag",
     "viewBox": "0 0 32 32"
   },
   "regular-folders": {
@@ -1115,12 +1240,20 @@ export const icons = {
     "id": "icon-regular-font-color",
     "viewBox": "0 0 32 32"
   },
+  "regular-globe": {
+    "id": "icon-regular-globe",
+    "viewBox": "0 0 32 32"
+  },
   "regular-hand-holding-box": {
     "id": "icon-regular-hand-holding-box",
     "viewBox": "0 0 32 32"
   },
   "regular-hand-receive": {
     "id": "icon-regular-hand-receive",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-hands-usd": {
+    "id": "icon-regular-hands-usd",
     "viewBox": "0 0 32 32"
   },
   "regular-hard-break": {
@@ -1141,6 +1274,14 @@ export const icons = {
   },
   "regular-heading-4": {
     "id": "icon-regular-heading-4",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-heading": {
+    "id": "icon-regular-heading",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-heart": {
+    "id": "icon-regular-heart",
     "viewBox": "0 0 32 32"
   },
   "regular-highlight": {
@@ -1193,6 +1334,10 @@ export const icons = {
   },
   "regular-italic": {
     "id": "icon-regular-italic",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-keyboard": {
+    "id": "icon-regular-keyboard",
     "viewBox": "0 0 32 32"
   },
   "regular-layer": {
@@ -1249,6 +1394,14 @@ export const icons = {
   },
   "regular-mobile": {
     "id": "icon-regular-mobile",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-money-edit": {
+    "id": "icon-regular-money-edit",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-money-envelope": {
+    "id": "icon-regular-money-envelope",
     "viewBox": "0 0 32 32"
   },
   "regular-notes": {
@@ -1419,6 +1572,14 @@ export const icons = {
     "id": "icon-regular-tags",
     "viewBox": "0 0 32 32"
   },
+  "regular-thumbs-down": {
+    "id": "icon-regular-thumbs-down",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-thumbs-up": {
+    "id": "icon-regular-thumbs-up",
+    "viewBox": "0 0 32 32"
+  },
   "regular-ticket": {
     "id": "icon-regular-ticket",
     "viewBox": "0 0 32 32"
@@ -1511,6 +1672,30 @@ export const icons = {
     "id": "icon-regular-wallet",
     "viewBox": "0 0 32 32"
   },
+  "regular-wowpress": {
+    "id": "icon-regular-wowpress",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-zoom-in": {
+    "id": "icon-regular-zoom-in",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-zoom-out": {
+    "id": "icon-regular-zoom-out",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-tiktok": {
+    "id": "icon-regular-tiktok",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-twitter-x": {
+    "id": "icon-regular-twitter-x",
+    "viewBox": "0 0 32 32"
+  },
+  "regular-youtube": {
+    "id": "icon-regular-youtube",
+    "viewBox": "0 0 32 32"
+  },
   "strong-alarm-clock": {
     "id": "icon-strong-alarm-clock",
     "viewBox": "0 0 32 32"
@@ -1557,6 +1742,10 @@ export const icons = {
   },
   "strong-arrow-right": {
     "id": "icon-strong-arrow-right",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-arrow-to-bottom": {
+    "id": "icon-strong-arrow-to-bottom",
     "viewBox": "0 0 32 32"
   },
   "strong-arrow-up": {
@@ -1631,6 +1820,10 @@ export const icons = {
     "id": "icon-strong-camera",
     "viewBox": "0 0 32 32"
   },
+  "strong-card-view": {
+    "id": "icon-strong-card-view",
+    "viewBox": "0 0 32 32"
+  },
   "strong-caret-down": {
     "id": "icon-strong-caret-down",
     "viewBox": "0 0 32 32"
@@ -1649,6 +1842,14 @@ export const icons = {
   },
   "strong-chart-bar": {
     "id": "icon-strong-chart-bar",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-chart-decrease": {
+    "id": "icon-strong-chart-decrease",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-chart-increase": {
+    "id": "icon-strong-chart-increase",
     "viewBox": "0 0 32 32"
   },
   "strong-check-circle": {
@@ -1727,6 +1928,14 @@ export const icons = {
     "id": "icon-strong-comments",
     "viewBox": "0 0 32 32"
   },
+  "strong-compress": {
+    "id": "icon-strong-compress",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-copy": {
+    "id": "icon-strong-copy",
+    "viewBox": "0 0 32 32"
+  },
   "strong-credit-card": {
     "id": "icon-strong-credit-card",
     "viewBox": "0 0 32 32"
@@ -1769,6 +1978,10 @@ export const icons = {
   },
   "strong-exclamation": {
     "id": "icon-strong-exclamation",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-exclamation-triangle": {
+    "id": "icon-strong-exclamation-triangle",
     "viewBox": "0 0 32 32"
   },
   "strong-expand": {
@@ -1831,6 +2044,10 @@ export const icons = {
     "id": "icon-strong-file-image",
     "viewBox": "0 0 32 32"
   },
+  "strong-file-pdf": {
+    "id": "icon-strong-file-pdf",
+    "viewBox": "0 0 32 32"
+  },
   "strong-file-times": {
     "id": "icon-strong-file-times",
     "viewBox": "0 0 32 32"
@@ -1843,8 +2060,20 @@ export const icons = {
     "id": "icon-strong-filter",
     "viewBox": "0 0 32 32"
   },
+  "strong-flag": {
+    "id": "icon-strong-flag",
+    "viewBox": "0 0 32 32"
+  },
   "strong-folders": {
     "id": "icon-strong-folders",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-font-color": {
+    "id": "icon-strong-font-color",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-globe": {
+    "id": "icon-strong-globe",
     "viewBox": "0 0 32 32"
   },
   "strong-hand-holding-box": {
@@ -1853,6 +2082,10 @@ export const icons = {
   },
   "strong-hand-receive": {
     "id": "icon-strong-hand-receive",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-hands-usd": {
+    "id": "icon-strong-hands-usd",
     "viewBox": "0 0 32 32"
   },
   "strong-hard-break": {
@@ -1873,6 +2106,18 @@ export const icons = {
   },
   "strong-heading-4": {
     "id": "icon-strong-heading-4",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-heading": {
+    "id": "icon-strong-heading",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-heart": {
+    "id": "icon-strong-heart",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-highlight": {
+    "id": "icon-strong-highlight",
     "viewBox": "0 0 32 32"
   },
   "strong-history": {
@@ -1921,6 +2166,10 @@ export const icons = {
   },
   "strong-italic": {
     "id": "icon-strong-italic",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-keyboard": {
+    "id": "icon-strong-keyboard",
     "viewBox": "0 0 32 32"
   },
   "strong-layer": {
@@ -1977,6 +2226,14 @@ export const icons = {
   },
   "strong-mobile": {
     "id": "icon-strong-mobile",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-money-edit": {
+    "id": "icon-strong-money-edit",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-money-envelope": {
+    "id": "icon-strong-money-envelope",
     "viewBox": "0 0 32 32"
   },
   "strong-notes": {
@@ -2147,6 +2404,14 @@ export const icons = {
     "id": "icon-strong-tags",
     "viewBox": "0 0 32 32"
   },
+  "strong-thumbs-down": {
+    "id": "icon-strong-thumbs-down",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-thumbs-up": {
+    "id": "icon-strong-thumbs-up",
+    "viewBox": "0 0 32 32"
+  },
   "strong-ticket": {
     "id": "icon-strong-ticket",
     "viewBox": "0 0 32 32"
@@ -2241,6 +2506,18 @@ export const icons = {
   },
   "strong-wallet": {
     "id": "icon-strong-wallet",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-wowpress": {
+    "id": "icon-strong-wowpress",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-zoom-in": {
+    "id": "icon-strong-zoom-in",
+    "viewBox": "0 0 32 32"
+  },
+  "strong-zoom-out": {
+    "id": "icon-strong-zoom-out",
     "viewBox": "0 0 32 32"
   }
 } as const
