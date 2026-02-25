@@ -19,15 +19,32 @@ const ICON_SCAN_DIRS = [
 ]
 const PUBLIC_SPRITE = path.resolve(__dirname, "../../public/icons/sprite.svg")
 const DATA_FILE = path.resolve(__dirname, "../../app/data/icons.ts")
+const DATA_FILE_UI = path.resolve(__dirname, "../../app/data/ui/icons.ts")
 const GUIDE_ICONS_REF = process.env.GUIDE_ICONS_REF || "site-with-guide"
 
 fs.mkdirSync(path.dirname(PUBLIC_SPRITE), { recursive: true })
 fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true })
+fs.mkdirSync(path.dirname(DATA_FILE_UI), { recursive: true })
 
 const icons = {}
 let symbols = ""
 const copiedFromGuide = []
 const missingInGuide = []
+const iconSpriteVersion = Date.now().toString()
+
+function normalizeSvgColors(svgBody) {
+  return svgBody.replace(/\s(fill|stroke)="([^"]*)"/g, (full, attr, value) => {
+    const normalized = String(value).trim().toLowerCase()
+    if (
+      normalized === "none" ||
+      normalized === "currentcolor" ||
+      normalized.startsWith("url(")
+    ) {
+      return full
+    }
+    return ` ${attr}="currentColor"`
+  })
+}
 
 function normalizeName(folder, file) {
   let base = file.replace(".svg", "")
@@ -156,9 +173,12 @@ function walk(dir) {
     const name = normalizeName(folder, entry.name)
     const id = `icon-${name}`
 
+    let body = match[1].trim()
+    body = normalizeSvgColors(body)
+
     symbols += `
   <symbol id="${id}" viewBox="${viewBox}">
-    ${match[1].trim()}
+    ${body}
   </symbol>`
 
     icons[name] = { id, viewBox }
@@ -175,7 +195,11 @@ ${symbols}
 fs.writeFileSync(PUBLIC_SPRITE, sprite)
 fs.writeFileSync(
   DATA_FILE,
-  `export const icons = ${JSON.stringify(icons, null, 2)} as const\n`
+  `export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
+)
+fs.writeFileSync(
+  DATA_FILE_UI,
+  `export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
 )
 
 console.log("Icons built -> sprite + typed data")

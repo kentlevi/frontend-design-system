@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import UiTooltip from '@/components/ui/Tooltip.vue';
 import { useRegisterForm } from '@/composables/auth/useRegisterForm';
 
 const localePath = useLocalePath();
 const { t } = useI18n();
-
-const termsErrorOpen = ref(false);
+const termsErrorPopoverPinned = ref(false);
+const termsErrorPopoverHovered = ref(false);
+const termsErrorHoverCloseTimer = ref<ReturnType<typeof setTimeout> | null>(null);
+const termsErrorPopoverOpen = computed(
+    () => termsErrorPopoverPinned.value || termsErrorPopoverHovered.value
+);
+const termsErrorIconStrong = computed(() => termsErrorPopoverOpen.value);
+const termsErrorRef = ref<HTMLElement | null>(null);
 
 const {
     firstName,
@@ -26,6 +33,59 @@ const {
     submitRegister,
     submitVerification,
 } = useRegisterForm();
+
+watch(
+    () => Boolean(termsError.value && !agreeTerms.value),
+    (hasTermsError) => {
+        if (!hasTermsError) {
+            clearTermsErrorHoverCloseTimer();
+            termsErrorPopoverPinned.value = false;
+            termsErrorPopoverHovered.value = false;
+        }
+    }
+);
+
+function clearTermsErrorHoverCloseTimer() {
+    if (!termsErrorHoverCloseTimer.value) return;
+    clearTimeout(termsErrorHoverCloseTimer.value);
+    termsErrorHoverCloseTimer.value = null;
+}
+
+function toggleTermsErrorPopover() {
+    termsErrorPopoverPinned.value = !termsErrorPopoverPinned.value;
+}
+
+function onTermsErrorHoverStart() {
+    clearTermsErrorHoverCloseTimer();
+    termsErrorPopoverHovered.value = true;
+}
+
+function onTermsErrorHoverEnd() {
+    clearTermsErrorHoverCloseTimer();
+    termsErrorHoverCloseTimer.value = setTimeout(() => {
+        termsErrorPopoverHovered.value = false;
+        termsErrorHoverCloseTimer.value = null;
+    }, 90);
+}
+
+function onDocumentClick(event: MouseEvent) {
+    const target = event.target as Node | null;
+    if (!target) return;
+    if (!termsErrorRef.value?.contains(target)) {
+        clearTermsErrorHoverCloseTimer();
+        termsErrorPopoverPinned.value = false;
+        termsErrorPopoverHovered.value = false;
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', onDocumentClick);
+});
+
+onBeforeUnmount(() => {
+    clearTermsErrorHoverCloseTimer();
+    document.removeEventListener('click', onDocumentClick);
+});
 </script>
 
 <template>
@@ -148,39 +208,76 @@ const {
             </p>
         </div>
 
-        <UiCheckbox
-            v-model="agreeTerms"
-            class="auth-register-check"
-            :state="termsError ? 'error' : 'default'"
-            data-testid="auth-register-agree-terms"
-        >
-            <span class="auth-register-check-text">
-                {{ t('auth.register.agreePrefix') }}
-                <a href="#" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</a>
-                {{ t('auth.register.and') }}
-                <a href="#" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</a>
-                .
-            </span>
-        </UiCheckbox>
-        <div v-if="termsError" class="auth-register-terms-error" data-testid="auth-register-terms-error">
-            <button
-                type="button"
-                class="auth-register-terms-error-trigger"
-                :aria-expanded="termsErrorOpen"
-                aria-haspopup="dialog"
-                data-testid="auth-register-terms-error-trigger"
-                @click="termsErrorOpen = !termsErrorOpen"
-                @blur="termsErrorOpen = false"
+        <div class="auth-register-check-row">
+            <UiCheckbox
+                v-model="agreeTerms"
+                class="auth-register-check"
+                :state="termsError && !agreeTerms ? 'error' : 'default'"
+                data-testid="auth-register-agree-terms"
             >
-                <UiIcon name="strong-info-circle" :size="16" />
-            </button>
+                <span class="auth-register-check-text">
+                    {{ t('auth.register.agreePrefix') }}
+                    <a href="#" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</a>
+                    {{ t('auth.register.and') }}
+                    <a href="#" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</a>
+                    .
+                </span>
+            </UiCheckbox>
             <div
-                class="auth-register-terms-error-toast"
-                role="status"
-                :class="{ 'is-visible': termsErrorOpen }"
-                data-testid="auth-register-terms-error-toast"
+                v-if="termsError && !agreeTerms"
+                ref="termsErrorRef"
+                class="auth-register-terms-error"
+                data-testid="auth-register-terms-error"
+                @mouseenter="onTermsErrorHoverStart"
+                @mouseleave="onTermsErrorHoverEnd"
             >
-                <span class="auth-register-terms-error-toast-text">{{ termsError }}</span>
+                <UiTooltip
+                    :open="termsErrorPopoverOpen"
+                    side="right"
+                    mobile-side="left"
+                    tone="danger"
+                    :offset="10"
+                    :slide-distance="36"
+                    content-testid="auth-register-terms-error-popover"
+                    class="auth-register-terms-error-tooltip"
+                >
+                    <template #trigger>
+                        <button
+                            type="button"
+                            class="auth-register-terms-error-button"
+                            :aria-expanded="termsErrorPopoverOpen"
+                            aria-haspopup="dialog"
+                            data-testid="auth-register-terms-error-button"
+                            @click="toggleTermsErrorPopover"
+                            @focus="onTermsErrorHoverStart"
+                        >
+                            <span class="auth-register-terms-error-icon-stack" aria-hidden="true">
+                                <UiIcon
+                                    name="regular-info-circle"
+                                    :size="24"
+                                    color="var(--error)"
+                                    class="auth-register-terms-error-icon auth-register-terms-error-icon-regular"
+                                    :class="{ 'is-hidden': termsErrorIconStrong }"
+                                />
+                                <UiIcon
+                                    name="strong-info-circle"
+                                    :size="24"
+                                    color="var(--error)"
+                                    class="auth-register-terms-error-icon auth-register-terms-error-icon-strong"
+                                    :class="{ 'is-visible': termsErrorIconStrong }"
+                                />
+                            </span>
+                        </button>
+                    </template>
+
+                    <UiIcon
+                        name="strong-exclamation-triangle"
+                        :size="24"
+                        color="var(--contrast-light)"
+                        class="auth-register-terms-error-popover-icon"
+                    />
+                    <span>{{ termsError }}</span>
+                </UiTooltip>
             </div>
         </div>
 
@@ -231,7 +328,7 @@ const {
     background: var(--contrast-light);
     border-radius: 22px;
     box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
-    padding: 42px 54px 40px;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -264,7 +361,7 @@ const {
     .auth-register-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        gap: 24px;
 
         .auth-register-field {
             display: flex;
@@ -288,6 +385,7 @@ const {
         .auth-register-label {
             font-size: 14px;
             font-weight: 600;
+            line-height: 24px;
             color: var(--text-primary);
 
             .auth-register-optional {
@@ -298,8 +396,9 @@ const {
 
         .auth-register-label-error {
             color: var(--error);
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
+            line-height: 24px;
         }
 
         .auth-register-input {
@@ -327,17 +426,18 @@ const {
             margin: 0;
             color: var(--text-secondary);
             font-size: 14px;
-            line-height: 1.55;
+            font-weight: 400;
+            line-height: 24px;
         }
     }
 
     .auth-register-check {
         display: inline-flex;
-        align-items: flex-start;
+        align-items: center;
         gap: 10px;
         color: var(--text-secondary);
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 24px;
 
         .auth-register-check-link {
             color: var(--text-primary);
@@ -345,88 +445,88 @@ const {
         }
     }
 
-    .auth-register-error,
-    .auth-register-error-inline {
-        margin: 0;
-        color: var(--error);
-        font-size: 13px;
-        line-height: 1.2;
-    }
+    .auth-register-check-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
 
-    .auth-register-error-inline {
-        align-self: flex-end;
-        margin-top: -6px;
+        .auth-register-check {
+            flex: 1;
+        }
     }
 
     .auth-register-terms-error {
-        align-self: flex-end;
-        position: relative;
         display: inline-flex;
         align-items: center;
-        justify-content: flex-end;
-        margin-top: -6px;
-        margin-right: 6px;
+        gap: 6px;
+        color: var(--error);
+        font-size: 14px;
+        line-height: 24px;
+        text-align: right;
+        max-width: 220px;
+        position: relative;
 
-        .auth-register-terms-error-trigger {
-            border: 0;
-            background: transparent;
-            color: #ef2e2e;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        .auth-register-terms-error-icon {
+            flex-shrink: 0;
+            transition: opacity 0.2s ease;
+            transform-origin: center;
+            color: var(--error);
+        }
+
+        .auth-register-terms-error-icon-stack {
+            position: relative;
             width: 24px;
             height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .auth-register-terms-error-toast {
-            position: absolute;
-            right: 0;
-            top: calc(100% + 8px);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 14px;
-            border-radius: 18px;
-            background: #ef2e2e;
-            color: var(--contrast-light);
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 8px 18px rgba(239, 46, 46, 0.25);
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(-4px);
-            transition: opacity 0.15s ease, transform 0.15s ease;
-            max-width: 140px;
-            text-align: center;
-            line-height: 1.35;
 
-            &::before {
-                content: '';
+            .auth-register-terms-error-icon {
                 position: absolute;
-                right: 12px;
-                top: -6px;
-                width: 0;
-                height: 0;
-                border-left: 6px solid transparent;
-                border-right: 6px solid transparent;
-                border-bottom: 6px solid #ef2e2e;
-            }
-
-            .auth-register-terms-error-toast-icon {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
+                inset: 0;
+                margin: auto;
             }
         }
 
-        .auth-register-terms-error-trigger:focus-visible + .auth-register-terms-error-toast,
-        &:hover .auth-register-terms-error-toast,
-        .auth-register-terms-error-toast.is-visible {
+        .auth-register-terms-error-icon-regular {
             opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
+
+            &.is-hidden {
+                opacity: 0;
+            }
+        }
+
+        .auth-register-terms-error-icon-strong {
+            opacity: 0;
+
+            &.is-visible {
+                opacity: 1;
+            }
+        }
+
+        .auth-register-terms-error-button {
+            border: 0;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            color: var(--error);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--error);
+        }
+
+        .auth-register-terms-error-popover-icon {
+            flex-shrink: 0;
+        }
+
+        .auth-register-terms-error-tooltip {
+            :deep(.ui-tooltip-content) {
+                font-size: 14px;
+                line-height: 24px;
+            }
         }
     }
 
@@ -464,6 +564,35 @@ const {
 
         .auth-register-grid {
             grid-template-columns: 1fr;
+        }
+
+        .auth-register-check-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .auth-register-terms-error {
+            justify-content: flex-start;
+            text-align: left;
+            max-width: none;
+
+            .auth-register-terms-error-tooltip {
+                :deep(.ui-tooltip-content) {
+                    min-width: 220px;
+                }
+            }
+        }
+
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-register-card {
+        .auth-register-terms-error {
+            .auth-register-terms-error-icon {
+                transition: none;
+            }
         }
     }
 }

@@ -46,10 +46,6 @@
         transform 0.12s ease;
 }
 
-.ui-checkbox-label {
-    font-size: t.$body-base;
-    line-height: 1.5;
-}
 
 .ui-checkbox-input:focus-visible + .ui-checkbox-box {
     border-color: c.$brand-primary;

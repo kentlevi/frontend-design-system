@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { icons } from '~/data/ui/icons';
+import { iconSpriteVersion, icons } from '~/data/ui/icons';
 
 type Size = 'sm' | 'md' | 'lg' | number | string;
 
@@ -30,7 +30,7 @@ const iconSize = computed<string>(() => {
 const iconMeta = computed(() => icons[props.name] ?? null);
 
 const spriteHref = computed(() =>
-    iconMeta.value ? `/icons/sprite.svg#${iconMeta.value.id}` : null
+    iconMeta.value ? `/icons/sprite.svg?v=${iconSpriteVersion}#${iconMeta.value.id}` : null
 );
 </script>
 
