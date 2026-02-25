@@ -63,8 +63,6 @@ sw.*
 #.node_repl_history
 #.editorconfig
 npm-debug.log*
-# IDE / Editor
-.vscode
 
 # Dependency directories
 node_modules/
