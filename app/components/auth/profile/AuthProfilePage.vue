@@ -5,10 +5,6 @@ import AuthProfileSidebar from '@/components/auth/profile/AuthProfileSidebar.vue
 import AuthProfileWelcomeToast from '@/components/auth/profile/AuthProfileWelcomeToast.vue';
 import { useAuthProfileSetup } from '@/composables/auth/useAuthProfileSetup';
 
-definePageMeta({
-    layout: 'home',
-});
-
 const {
     step,
     showWelcomeToast,
@@ -76,20 +72,25 @@ const {
 
 <style lang="scss">
 .auth-profile {
-    min-height: calc(100vh - 176px);
     background: var(--bg-page);
     position: relative;
-    padding: 34px 24px 52px;
+    padding-top: 40px;
+    padding-bottom: 60px;
 
     .auth-profile-shell {
-        max-width: 1240px;
+        max-width: 1200px;
         margin: 0 auto;
-        display: grid;
-        grid-template-columns: 344px 1fr;
-        gap: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        gap: 36px;
 
         .auth-profile-main {
-            padding: 30px 0 0;
+            width: 100%;
+            max-width: 690px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
     }
 }
@@ -97,11 +98,11 @@ const {
 @media (max-width: 1180px) {
     .auth-profile {
         .auth-profile-shell {
-            grid-template-columns: 1fr;
+            flex-direction: column;
             gap: 30px;
 
             .auth-profile-main {
-                padding-top: 0;
+                max-width: none;
             }
         }
     }

@@ -1,0 +1,305 @@
+
+[41m[30m ERROR [39m[49m [31mInternal server error: Element is missing end tag.[39m
+  Plugin: [35mvite:vue[39m
+  File: [36mC:/Users/Glophics/projects/accounts/MuSticker/frontend/app/components/cart/CartPreview.vue[39m:411:29
+[33m  409 |                                  {{ t('cart.cartPreview.viewCart') }}
+  410 |                              </UiButton>
+  411 |                              <UiButton type="button" variant="filled" tone="neutral" size="md" height="48px" class="ca...
+      |                               ^
+  412 |                              <UiButton type="button" variant="filled" tone="neutral" size="md" height="48px" class="ca...
+  413 |                                  <UiIcon name="regular-paper-plane" :size="16" color="#ffffff" />[39m
+      at createCompilerError (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-core\dist\compiler-core.cjs.js:1378:17)
+      at emitError (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-core\dist\compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-core\dist\compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-core\dist\compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-core\dist\compiler-core.cjs.js:1157:16)
+      at Object.baseParse (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-core\dist\compiler-core.cjs.js:3053:13)
+      at Object.parse (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-dom\dist\compiler-dom.cjs.js:910:23)
+      at Object.parse$1 [as parse] (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\@vue\compiler-sfc\dist\compiler-sfc.cjs.js:1824:24)
+      at createDescriptor (file:///C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:54:42)
+      at handleHotUpdate (file:///C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs:1162:25)
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/components/cart/CartPreview.vue?t=1771927038619
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928634489
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928634489&macro=true
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+[2m ⁃ at [3mrunNextTicks[23m ([3mnode:internal/process/task_queues:65:5[23m)[22m
+[2m ⁃ at [3mprocess.processImmediate[23m ([3mnode:internal/timers:453:9[23m)[22m
+[2m ⁃ at [3mprocess.callbackTrampoline[23m ([3mnode:internal/async_hooks:130:17[23m)[22m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928634489&macro=true
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [31mInternal server error: [sass] Unexpected ")".
+  ╷
+4 │ });
+  │  ^
+  ╵
+  app\pages\checkoutt\index.vue 4:2  root stylesheet[39m
+  Plugin: [35mvite:css[39m
+  File: [36mC:/Users/Glophics/projects/accounts/MuSticker/frontend/app/pages/checkoutt/index.vue?vue&type=style&index=0&scoped=7acb4202&lang.scss[39m:4:2
+[33m  [sass] Unexpected ")".
+    ╷
+  4 │ });
+    │  ^
+    ╵
+    app\pages\checkoutt\index.vue 4:2  root stylesheet[39m
+      at Object.wrapException (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:2337:47)
+      at SpanScanner.error$3$length$position (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:87080:15)
+      at SpanScanner.error$1 (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:87083:19)
+      at ScssParser0.almostAnyValue$1$omitComments (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:126437:18)
+      at ScssParser0.almostAnyValue$0 (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:126458:19)
+      at ScssParser0.styleRuleSelector$0 (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:119099:19)
+      at ScssParser0._stylesheet0$_styleRule$2 (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:123936:50)
+      at ScssParser0._stylesheet0$_styleRule$0 (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:123948:19)
+      at ScssParser0._stylesheet0$_variableDeclarationOrStyleRule$0 (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:123761:22)
+      at ScssParser0._stylesheet0$_statement$1$root (C:\Users\Glophics\projects\accounts\MuSticker\frontend\node_modules\sass\sass.dart.js:123697:211)
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928645374&vue&type=style&index=0&scoped=7acb4202&lang.scss
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928722933&macro=true
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+[2m ⁃ at [3mrunNextTicks[23m ([3mnode:internal/process/task_queues:65:5[23m)[22m
+[2m ⁃ at [3mprocess.processImmediate[23m ([3mnode:internal/timers:453:9[23m)[22m
+[2m ⁃ at [3mprocess.callbackTrampoline[23m ([3mnode:internal/async_hooks:130:17[23m)[22m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928722933
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928722933&vue&type=style&index=0&scoped=7acb4202&lang.scss
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+
+
+[41m[30m ERROR [39m[49m [request error] [unhandled] [GET] http://localhost:3001/_nuxt/pages/checkoutt/index.vue?t=1771928722933&macro=true
+
+ 
+[31mℹ Error: [39m
+
+ ⁃ at createError [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:54:14)[39m
+
+   [2m49[22m [2m┃[22m  	}
+   [2m50[22m [2m┃[22m  };
+   [2m51[22m [2m┃[22m  function createError(input) {
+   [2m52[22m [2m┃[22m  	if (typeof input === [32m"string"[0m) return new H3Error(input);
+   [2m53[22m [2m┃[22m  	if (isError(input)) return input;
+ [41m❯ 54 ┃  	const err = new H3Error(input.message ?? input.statusMessage ?? "", { cause: input.cause || input });[49m
+   [2m55[22m [2m┃[22m  	if (hasProp(input, [32m"stack"[0m)) try {
+   [2m56[22m [2m┃[22m  		Object.defineProperty(err, [32m"stack"[0m, { get() {
+   [2m57[22m [2m┃[22m  			return input.stack;
+   [2m58[22m [2m┃[22m  		} });
+   [2m59[22m [2m┃[22m  	} catch {
+
+ ⁃ at NuxtDevServer.toNodeHandle [33m(C:/Users/Glophics/projects/accounts/MuSticker/frontend/node_modules/@nuxt/cli/dist/dev-KB30iboK.mjs:264:18)[39m
+
+[31m[CAUSE][39m
+{
+  status: 404,
+}
+
+

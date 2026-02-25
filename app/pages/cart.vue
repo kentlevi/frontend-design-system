@@ -32,9 +32,11 @@ type CartRow = {
     artworkPreviewUrl: string;
 };
 
+const CHECKOUT_SELECTION_STORAGE_KEY = 'musticker-checkout-selection-v1';
 const CART_STORAGE_KEY = 'musticker-product-cart-v1';
 const { t } = useI18n();
 const localePath = useLocalePath();
+const router = useRouter();
 const cartState = ref<StoredCartState[]>([]);
 const selectedIds = ref<string[]>([]);
 
@@ -163,6 +165,17 @@ function removeByIds(ids: string[]) {
     writeCartStateToStorage(cartState.value);
 }
 
+function goToCheckout() {
+    if (!selectedRows.value.length) return;
+    if (typeof window !== 'undefined') {
+        window.localStorage.setItem(
+            CHECKOUT_SELECTION_STORAGE_KEY,
+            JSON.stringify(selectedRows.value.map((row) => row.id))
+        );
+    }
+    void router.push(localePath('/checkout'));
+}
+
 onMounted(() => {
     cartState.value = readCartStateFromStorage();
     selectedIds.value = cartState.value.map((item) => item.id);
@@ -285,6 +298,8 @@ onMounted(() => {
                                     tone="neutral"
                                     size="md"
                                     class="cart-checkout-btn"
+                                    :disabled="selectedRows.length === 0"
+                                    @click="goToCheckout"
                                 >
                                     Proceed Checkout ({{ selectedRows.length }})
                                 </UiButton>
@@ -470,7 +485,7 @@ onMounted(() => {
                             img {
                                 width: 62px;
                                 height: 62px;
-                                object-fit: contain;
+                                object-fit: cover;
                             }
                         }
 
@@ -718,3 +733,4 @@ onMounted(() => {
     }
 }
 </style>
+

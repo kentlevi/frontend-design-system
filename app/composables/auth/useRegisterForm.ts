@@ -42,10 +42,12 @@ export function useRegisterForm() {
     interface RegisterVerificationResponse {
         success: boolean;
         message: string;
-        data: {
-            email: string;
-            token: string;
-        };
+        data:
+            | {
+                  email: string;
+                  token: string;
+              }
+            | Record<string, string[]>;
         meta: {};
         error: {};
     }
@@ -58,21 +60,57 @@ export function useRegisterForm() {
         error: {};
     }
 
+    interface LoginResponse {
+        success: boolean;
+        message: string;
+        data: {
+            user?: {
+                id: number;
+                code: string;
+                email: string;
+                profile: {
+                    id: number;
+                    user_id: number;
+                    file_path_id: number;
+                    file_name: string;
+                    user_field_values: [{
+                        id: number;
+                        user_profile_id: number;
+                        country_field_ids?: number;
+                        country_fields_id?: number;
+                        value: string;
+                    }]
+                }
+            }
+            auth_token?: string
+        }
+    }
+
+    function getFirstError(
+        payload: RegisterVerificationResponse['data'] | undefined,
+        key: string
+    ) {
+        if (!payload || Array.isArray(payload) || typeof payload !== 'object') return '';
+        const value = (payload as Record<string, unknown>)[key];
+        if (!Array.isArray(value) || !value.length) return '';
+        return String(value[0] ?? '').trim();
+    }
+
     async function submitRegister() {
         clearErrors();
 
         if (!firstName.value.trim()) {
-            firstNameError.value = t('auth.login.validation.fieldBlank');
+            firstNameError.value = t('auth.register.validation.fieldBlank');
         }
 
         if (!email.value.trim()) {
-            emailError.value = t('auth.login.validation.fieldBlank');
+            emailError.value = t('auth.register.validation.fieldBlank');
         } else if (!isValidEmail(email.value.trim())) {
-            emailError.value = t('auth.login.validation.emailInvalid');
+            emailError.value = t('auth.register.validation.emailInvalid');
         }
 
         if (!password.value.trim()) {
-            passwordError.value = t('auth.login.validation.fieldBlank');
+            passwordError.value = t('auth.register.validation.fieldBlank');
         }
 
         if (!agreeTerms.value) {
@@ -96,28 +134,64 @@ export function useRegisterForm() {
         // });
         // await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
 
-        const response = await api<RegisterVerificationResponse>('/kr/auth/register/verification', {
-            method: 'POST',
-            body: {
-                given_name: firstName.value.trim(),
-                family_name: lastName.value.trim(),
-                email: email.value.trim(),
-                password: password.value.trim(),
-                terms_of_service: agreeTerms.value,
-                newsletter: optInPromos.value
+        try {
+            const response = await api<RegisterVerificationResponse>('/kr/auth/register/verification', {
+                method: 'POST',
+                body: {
+                    given_name: firstName.value.trim(),
+                    family_name: lastName.value.trim(),
+                    email: email.value.trim(),
+                    password: password.value.trim(),
+                    terms_of_service: agreeTerms.value,
+                    newsletter: optInPromos.value
+                }
+            })
+
+            if (response.success === false) {
+                firstNameError.value =
+                    getFirstError(response.data, 'given_name') ||
+                    getFirstError(response.data, 'first_name');
+                emailError.value = getFirstError(response.data, 'email');
+                passwordError.value = getFirstError(response.data, 'password');
+                termsError.value =
+                    getFirstError(response.data, 'terms_of_service') ||
+                    getFirstError(response.data, 'terms');
+                if (
+                    !firstNameError.value &&
+                    !emailError.value &&
+                    !passwordError.value &&
+                    !termsError.value
+                ) {
+                    emailError.value = response.message || 'Registration failed.';
+                }
+                return response
             }
-        })
 
-        if (response.success === false) {
+            verificationEmail.value = (response.data as { email: string }).email;
+            verificationToken.value = (response.data as { token: string }).token;
+            verificationCode.value = '';
+            verificationError.value = '';
+            isVerificationModalOpen.value = true;
             return response
-        }
+        } catch (error: any) {
+            const payload = error?.data as RegisterVerificationResponse | undefined;
+            const validation = payload?.data;
+            firstNameError.value =
+                getFirstError(validation, 'given_name') ||
+                getFirstError(validation, 'first_name');
+            emailError.value = getFirstError(validation, 'email');
+            passwordError.value = getFirstError(validation, 'password');
+            termsError.value =
+                getFirstError(validation, 'terms_of_service') ||
+                getFirstError(validation, 'terms');
 
-        verificationEmail.value = response.data.email;
-        verificationToken.value = response.data.token;
-        verificationCode.value = '';
-        verificationError.value = '';
-        isVerificationModalOpen.value = true;
-        return response
+            if (!firstNameError.value && !emailError.value && !passwordError.value && !termsError.value) {
+                emailError.value =
+                    payload?.message ||
+                    error?.message ||
+                    'Registration failed.';
+            }
+        }
     }
 
     async function submitVerification() {
@@ -142,6 +216,33 @@ export function useRegisterForm() {
             if (response.success === false) {
                 verificationError.value = response.message || 'Invalid verification code.';
                 return response;
+            }
+
+            try {
+                const loginResponse = await api<LoginResponse>('/kr/auth/login', {
+                    method: 'POST',
+                    body: {
+                        email: email.value.trim(),
+                        password: password.value.trim(),
+                        remember_me: true
+                    }
+                })
+
+                if (loginResponse?.success && loginResponse.data?.auth_token) {
+                    const authToken = useCookie('auth_token', {
+                        maxAge: 60 * 60 * 24 * 90,
+                        sameSite: 'lax',
+                        path: '/'
+                    })
+
+                    authToken.value = loginResponse.data.auth_token ?? ''
+
+                    if (loginResponse.data.user) {
+                        userStore.setUser(loginResponse.data.user)
+                    }
+                }
+            } catch (error) {
+                console.warn('Auto-login after registration failed.', error)
             }
 
             userStore.setOnboardingProfile({

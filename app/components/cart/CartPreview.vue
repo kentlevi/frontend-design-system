@@ -53,6 +53,7 @@ const draftQty = ref<number>(0);
 const redirectingToCart = ref(false);
 const redirectLoaderRef = ref<HTMLElement | null>(null);
 const CART_REDIRECT_DELAY_MS = 1000;
+const CHECKOUT_SELECTION_STORAGE_KEY = 'musticker-checkout-selection-v1';
 let redirectLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 function openInlineEdit(item: (typeof props.cartItems)[number]) {
@@ -135,6 +136,18 @@ async function goToCart() {
     emit('close');
     destroyRedirectAnimation();
     redirectingToCart.value = false;
+}
+
+async function goToCheckout() {
+    if (redirectingToCart.value) return;
+    if (typeof window !== 'undefined') {
+        window.localStorage.setItem(
+            CHECKOUT_SELECTION_STORAGE_KEY,
+            JSON.stringify(props.cartItems.map((item) => item.id))
+        );
+    }
+    emit('close');
+    await router.push(localePath('/checkout'));
 }
 
 onBeforeUnmount(() => {
@@ -402,7 +415,7 @@ onBeforeUnmount(() => {
                             >
                                 {{ t('cart.cartPreview.viewCart') }}
                             </UiButton>
-                            <UiButton type="button" variant="filled" tone="neutral" size="md" height="48px" class="cart-preview-checkout-btn" data-testid="product-category-cart-checkout-button">
+                            <UiButton type="button" variant="filled" tone="neutral" size="md" height="48px" class="cart-preview-checkout-btn" data-testid="product-category-cart-checkout-button" @click="goToCheckout">
                                 <UiIcon name="regular-paper-plane" :size="16" color="#ffffff" />
                                 {{ t('cart.cartPreview.proceedToCheckout') }}
                             </UiButton>
@@ -990,4 +1003,5 @@ onBeforeUnmount(() => {
 }
 
 </style>
+
 

@@ -11,132 +11,174 @@ withDefaults(
 
 <template>
     <aside class="auth-profile-sidebar" data-testid="auth-profile-sidebar">
-        <UiLogo
-            name="musticker"
-            variant="full"
-            color="colored"
-            :size="54"
-        />
+        <div class="auth-profile-sidebar-main">
+            <UiLogo class="auth-profile-sidebar-logo" name="musticker" variant="full" color="colored" :size="58" />
 
-        <div class="auth-profile-sidebar-head">
-            {{ $t('auth.profile.sidebar.title') }}
-        </div>
-
-        <div class="auth-profile-steps" data-testid="auth-profile-steps">
-            <div
-                class="auth-profile-step"
-                :class="{ 'is-active': step === 1 }"
-                data-testid="auth-profile-step-1"
-            >
-                <span class="auth-profile-step-icon">
-                    <UiIcon
-                        :name="step === 1 ? 'strong-user-plus' : 'strong-check'"
-                        :size="18"
-                    />
-                </span>
-                <div>
-                    <p class="auth-profile-step-title">
-                        {{ $t('auth.profile.sidebar.profile.title') }}
-                    </p>
-                    <p class="auth-profile-step-text">
-                        {{ $t('auth.profile.sidebar.profile.text') }}
-                    </p>
+            <div class="auth-profile-sidebar-content">
+                <div class="auth-profile-sidebar-head">
+                    {{ $t('auth.profile.sidebar.title') }}
                 </div>
-            </div>
 
-            <div
-                class="auth-profile-step"
-                :class="{ 'is-active': step === 2 }"
-                data-testid="auth-profile-step-2"
-            >
-                <span class="auth-profile-step-icon">
-                    <UiIcon name="strong-cog" :size="18" />
-                </span>
-                <div>
-                    <p class="auth-profile-step-title">
-                        {{ $t('auth.profile.sidebar.settings.title') }}
-                    </p>
-                    <p class="auth-profile-step-text">
-                        {{ $t('auth.profile.sidebar.settings.text') }}
-                    </p>
+                <div class="auth-profile-steps" data-testid="auth-profile-steps">
+                    <div
+                        class="auth-profile-step"
+                        :class="{ 'is-active': step === 1, 'is-complete': step === 2 }"
+                        data-testid="auth-profile-step-1"
+                    >
+                        <span class="auth-profile-step-icon">
+                            <UiIcon :name="step === 2 ? 'regular-check' : 'regular-user-plus'" :size="24" />
+                        </span>
+                        <div class="auth-profile-step-body">
+                            <p class="auth-profile-step-title">
+                                {{ $t('auth.profile.sidebar.profile.title') }}
+                            </p>
+                            <p class="auth-profile-step-text">
+                                {{ $t('auth.profile.sidebar.profile.text') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="auth-profile-step" :class="{ 'is-active': step === 2 }"
+                        data-testid="auth-profile-step-2">
+                        <span class="auth-profile-step-icon">
+                            <UiIcon name="regular-cogs" :size="24" />
+                        </span>
+                        <div class="auth-profile-step-body">
+                            <p class="auth-profile-step-title">
+                                {{ $t('auth.profile.sidebar.settings.title') }}
+                            </p>
+                            <p class="auth-profile-step-text">
+                                {{ $t('auth.profile.sidebar.settings.text') }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="auth-profile-progress" data-testid="auth-profile-progress">
-            <span :class="{ 'is-on': step === 1 }" />
-            <span :class="{ 'is-on': step === 2 }" />
+            <span class="auth-profile-progress-item" :class="{ 'is-on': step === 1 }" />
+            <span class="auth-profile-progress-item" :class="{ 'is-on': step === 2 }" />
         </div>
     </aside>
 </template>
 
 <style lang="scss">
 .auth-profile-sidebar {
-    background: var(--surface-subtle);
+    background: var(--gray-10);
     border-radius: 16px;
     padding: 44px 50px;
     display: flex;
     flex-direction: column;
-    gap: 42px;
+    justify-content: space-between;
     min-height: 850px;
+    max-width: 384px;
 
-    .auth-profile-sidebar-head {
-        font-size: 32px;
-        line-height: 1.15;
-        font-weight: 700;
-        color: var(--text-primary);
-    }
-
-    .auth-profile-steps {
+    .auth-profile-sidebar-main {
         display: flex;
         flex-direction: column;
-        gap: 30px;
+        gap: 80px;
 
-        .auth-profile-step {
-            display: grid;
-            grid-template-columns: 42px 1fr;
-            gap: 14px;
-            opacity: 0.4;
+        .ui-logo.auth-profile-sidebar-logo {
+            align-self: flex-start;
+        }
 
-            &.is-active {
-                opacity: 1;
-            }
+        .auth-profile-sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
 
-            .auth-profile-step-icon {
-                width: 36px;
-                height: 36px;
-                border: 1px solid var(--border-default);
-                border-radius: 8px;
-                display: grid;
-                place-items: center;
-                color: var(--text-primary);
-                background: var(--contrast-light);
-            }
-
-            .auth-profile-step-title {
-                margin: 0;
-                font-size: 18px;
-                line-height: 1.3;
+            .auth-profile-sidebar-head {
+                font-size: 16px;
+                line-height: 28px;
                 font-weight: 700;
                 color: var(--text-primary);
             }
 
-            .auth-profile-step-text {
-                margin: 8px 0 0;
-                color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 1.5;
+            .auth-profile-steps {
+                display: flex;
+                flex-direction: column;
+                gap: 40px;
+
+                .auth-profile-step {
+                    display: grid;
+                    grid-template-columns: 40px 1fr;
+                    gap: 24px;
+
+                    &.is-complete {
+                        .auth-profile-step-icon {
+                            border-color: var(--success);
+                            background: var(--success-bg);
+                            color: var(--success);
+                        }
+
+                        .auth-profile-step-title {
+                            color: var(--text-muted);
+                        }
+
+                        .auth-profile-step-text {
+                            color: var(--text-muted);
+                        }
+                    }
+
+                    &.is-active {
+                        .auth-profile-step-icon {
+                            border-color: var(--border-default);
+                            background: var(--contrast-light);
+                            color: var(--text-primary);
+                        }
+
+                        .auth-profile-step-title {
+                            color: var(--text-primary);
+                        }
+
+                        .auth-profile-step-text {
+                            color: var(--text-secondary);
+                        }
+                    }
+
+                    .auth-profile-step-icon {
+                        width: 40px;
+                        height: 40px;
+                        border: 1px solid var(--border-default);
+                        border-radius: 10px;
+                        display: grid;
+                        place-items: center;
+                        color: var(--text-muted);
+                        background: var(--contrast-light);
+                        transition: border-color 0.2s ease, background-color 0.2s ease,
+                            color 0.2s ease;
+                    }
+
+                    .auth-profile-step-title {
+                        margin: 0;
+                        font-size: 18px;
+                        line-height: 1.3;
+                        font-weight: 700;
+                        color: var(--text-muted);
+                    }
+
+                    .auth-profile-step-text {
+                        color: var(--text-muted);
+                        font-size: 14px;
+                        line-height: 1.5;
+                    }
+
+                    .auth-profile-step-body {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                }
             }
         }
     }
 
     .auth-profile-progress {
-        margin-top: auto;
         display: flex;
         justify-content: center;
         gap: 10px;
 
-        span {
+        .auth-profile-progress-item {
             width: 72px;
             height: 10px;
             border-radius: 999px;
@@ -152,6 +194,7 @@ withDefaults(
 @media (max-width: 1180px) {
     .auth-profile-sidebar {
         min-height: auto;
+        max-width: none;
         padding: 28px 22px;
     }
 }

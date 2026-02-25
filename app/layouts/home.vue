@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import AppHeaderRoot from '~/components/layout/app-header/AppHeader.vue';
 import AppFooterRoot from '~/components/layout/app-footer/AppFooter.vue';
+
+const route = useRoute();
 </script>
 
 <template>
     <div class="home-layout">
-        <AppHeaderRoot />
+        <AppHeaderRoot v-if="!route.meta.hideHeader" />
         <main class="home-layout-main">
             <slot />
         </main>

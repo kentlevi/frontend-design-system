@@ -145,6 +145,7 @@ export function useAppHeaderAccount() {
             authToken.value = null;
             userStore.clearUser();
             userStore.clearOnboardingProfile();
+            navigateTo(localePath('/'));
         });
     }
 

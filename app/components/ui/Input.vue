@@ -37,6 +37,8 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 
+const inputRef = ref<HTMLInputElement | null>(null);
+
 const iconMap: Record<Exclude<Icon, null>, IconName> = {
     mail: 'strong-envelope',
     search: 'strong-search',
@@ -54,6 +56,11 @@ const rightIcon = computed<IconName | null>(() =>
 function onInput(event: Event) {
     emit('update:modelValue', (event.target as HTMLInputElement).value);
 }
+
+function focusInput() {
+    if (props.disabled || props.readonly) return;
+    inputRef.value?.focus();
+}
 </script>
 
 <template>
@@ -63,6 +70,7 @@ function onInput(event: Event) {
         :data-state="state !== 'default' ? state : null"
         :data-readonly="readonly || null"
         :data-disabled="disabled || null"
+        @click="focusInput"
     >
         <span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
             <slot name="icon-left">
@@ -71,6 +79,7 @@ function onInput(event: Event) {
         </span>
 
         <input
+            ref="inputRef"
             class="ui-input-field"
             :type="type"
             :value="modelValue"

@@ -17,8 +17,13 @@ const emit = defineEmits<{
     <Transition name="profile-toast">
         <div v-if="visible" class="auth-profile-toast" data-testid="auth-profile-toast">
             <UiIcon name="strong-check-circle" :size="18" />
-            <span>{{ $t('auth.profile.toast') }}</span>
-            <button type="button" data-testid="auth-profile-toast-close-button" @click="emit('close')">
+            <span class="auth-profile-toast-text">{{ $t('auth.profile.toast') }}</span>
+            <button
+                type="button"
+                class="auth-profile-toast-close"
+                data-testid="auth-profile-toast-close-button"
+                @click="emit('close')"
+            >
                 <UiIcon name="strong-times" :size="14" />
             </button>
         </div>
@@ -44,7 +49,11 @@ const emit = defineEmits<{
     gap: 10px;
     z-index: 30;
 
-    button {
+    .auth-profile-toast-text {
+        line-height: 1.4;
+    }
+
+    .auth-profile-toast-close {
         border: 0;
         background: transparent;
         color: inherit;
