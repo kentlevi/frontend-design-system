@@ -22,6 +22,8 @@
             "alreadyMember": "Already a Member?",
             "signInHere": "Sign In Here",
             "validation": {
+                "fieldBlank": "Required.",
+                "emailInvalid": "Invalid email format.",
                 "mustAgree": "You must agree to the Terms of Service and Privacy Policy."
             }
         }

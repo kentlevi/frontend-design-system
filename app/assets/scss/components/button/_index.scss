@@ -19,13 +19,13 @@
     gap: sp.$space-1;
     padding-inline: sp.$space-3;
 
-    border-radius: r.$radius-md;
+    border-radius: r.$radius-xl;
     border: 1px solid transparent;
 
     font-family: t.$font-base;
     font-size: t.$body-base;
     font-weight: 600;
-    line-height: 1;
+    line-height: 24px;
 
     cursor: pointer;
     user-select: none;

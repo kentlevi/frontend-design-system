@@ -30,10 +30,10 @@ export function useAuthProfileSetup() {
 
     const photoUrl = ref<string | null>(null);
 
-    const promotions = ref(false);
-    const reviews = ref(false);
-    const confirmations = ref(false);
-    const useShippingAsBilling = ref(false);
+    const promotions = ref(true);
+    const reviews = ref(true);
+    const confirmations = ref(true);
+    const useShippingAsBilling = ref(true);
     const unit = ref<ProfileUnit>('millimeter');
 
     const initials = computed(() => {
@@ -86,11 +86,14 @@ export function useAuthProfileSetup() {
     }
 
     async function completeSetup() {
-        mockUser.value = {
-            firstName: firstName.value.trim() || accountProfileDefaults.firstName,
-            lastName: lastName.value.trim() || accountProfileDefaults.lastName,
-            email: email.value.trim() || accountProfileDefaults.email,
-        };
+        const authToken = useCookie<string | null>('auth_token');
+        if (!authToken.value) {
+            mockUser.value = {
+                firstName: firstName.value.trim() || accountProfileDefaults.firstName,
+                lastName: lastName.value.trim() || accountProfileDefaults.lastName,
+                email: email.value.trim() || accountProfileDefaults.email,
+            };
+        }
         await navigateTo(localePath('/'));
     }
 

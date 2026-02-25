@@ -19,6 +19,7 @@
 
     background: c.$bg-page;
     box-shadow: sh.$shadow-md;
+    cursor: text;
 
     transition:
         border-color 0.15s ease,
@@ -51,7 +52,8 @@
     color: c.$text-muted;
 }
 
-.ui-input:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
+.ui-input:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']),
+.ui-input:focus-within:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
     border-color: c.$border-strong;
 }
 
