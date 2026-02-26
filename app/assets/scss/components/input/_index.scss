@@ -3,7 +3,6 @@
 
 @use '../../brand/spacing' as sp;
 @use '../../brand/radius' as r;
-@use '../../brand/shadows' as sh;
 
 .ui-input {
     display: flex;
@@ -18,7 +17,7 @@
     border: 1px solid c.$border-default;
 
     background: c.$bg-page;
-    box-shadow: sh.$shadow-md;
+    box-shadow: var(--shadow-sm);
     cursor: text;
 
     transition:

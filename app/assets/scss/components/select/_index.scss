@@ -3,7 +3,6 @@
 
 @use '../../brand/spacing' as sp;
 @use '../../brand/radius' as r;
-@use '../../brand/shadows' as sh;
 
 .ui-select {
     position: relative;
@@ -15,7 +14,7 @@
     border-radius: r.$radius-md;
     border: 1px solid c.$border-default;
     background: c.$bg-page;
-    box-shadow: sh.$shadow-md;
+    box-shadow: var(--shadow-sm);
     padding: 0 sp.$space-3;
     display: flex;
     align-items: center;
@@ -55,7 +54,7 @@
     border: 1px solid c.$border-default;
     border-radius: r.$radius-md;
     background: c.$contrast-light;
-    box-shadow: sh.$shadow-lg;
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
 
