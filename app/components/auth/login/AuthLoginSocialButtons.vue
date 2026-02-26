@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
 
-interface socialLogin {
+interface SocialLogin {
     data: {
         url: string
     }
@@ -13,7 +13,7 @@ interface socialLogin {
 /* @desc social login popup */
 async function handleSocial(provider: string) {
     try {
-        const response = await api<socialLogin>('/kr/auth/social/redirect', {
+        const response = await api<SocialLogin>('/kr/auth/social/redirect', {
             method: 'POST',
             body: {
                 provider

@@ -1,22 +1,20 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { ref } from 'vue'
+import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
 
-const props = (
-    defineProps<{
-        modelValue: boolean;
-        email?: string;
-        token?: string;
-        firstName?: string;
-        lastName?: string;
-        onboarding?: boolean;
-    }>()
-);
+const props = defineProps<{
+    modelValue: boolean;
+    email?: string;
+    token?: string;
+    firstName?: string;
+    lastName?: string;
+    onboarding?: boolean;
+}>();
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void;
@@ -28,7 +26,7 @@ const inputRefs = ref<HTMLInputElement[]>([]);
 interface RegisterResponse {
     success: boolean;
     message: string;
-    data: {}
+    data: Record<string, never>;
 }
 
 async function handleSubmit() {

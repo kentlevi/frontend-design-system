@@ -1,12 +1,13 @@
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '@/composables/auth/useLoginForm';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export function useLoginPageForm() {
     const api = useApi();
     const { t } = useI18n();
 
     const router = useRouter();
+    const route = useRoute();
 
     const {
         memberType,
@@ -109,42 +110,42 @@ export function useLoginPageForm() {
     }
 
     interface LoginResponse {
-        success: boolean
-        message: string
+        success: boolean;
+        message: string;
         data: {
-                    user?: {
-                        id: number;
-                        code: string;
-                        email: string;
-                        profile: {
+            user?: {
+                id: number;
+                code: string;
+                email: string;
+                profile: {
                     id: number;
                     user_id: number;
                     file_path_id: number;
                     file_name: string;
-                            user_field_values: [{
-                                id: number;
-                                user_profile_id: number;
-                                country_field_ids?: number;
-                                country_fields_id?: number;
-                                value: string;
-                            }]
-                        }
-                    }
-            auth_token?: string
-        }
+                    user_field_values: Array<{
+                        id: number;
+                        user_profile_id: number;
+                        country_field_ids?: number;
+                        country_fields_id?: number;
+                        value: string;
+                    }>;
+                };
+            };
+            auth_token?: string;
+        };
     }
 
     async function onSubmitClick() {
         if (isNonMember.value === false) {
             const response = await memberLoginHandler();
-            if (response?.success === true) router.push('/')
+            if (response?.success === true) router.push('/');
         } else {
             await nonMemberLoginHandler();
         }
     }
 
     async function memberLoginHandler() {
-        if (!validateMember()) return
+        if (!validateMember()) return;
 
         try {
             const response = await api<LoginResponse>('/kr/auth/login', {
@@ -152,30 +153,31 @@ export function useLoginPageForm() {
                 body: {
                     email: memberEmail.value.trim(),
                     password: memberPassword.value.trim(),
-                    remember_me: keepSignedIn.value
-                }
-            })
+                    remember_me: keepSignedIn.value,
+                },
+            });
 
             if (response.success === false) {
                 memberPasswordError.value =
                     response.message || t('auth.login.validation.credentialsMismatch');
-                return response
+                return response;
             }
 
-            let tokenDuration = keepSignedIn.value === true ? 60*60*24*90 : 60*60*24*3;
+            const tokenDuration =
+                keepSignedIn.value === true ? 60 * 60 * 24 * 90 : 60 * 60 * 24 * 3;
             // store auth_token in cookie
             const authToken = useCookie('auth_token', {
                 maxAge: tokenDuration,
                 sameSite: 'lax',
-                path: '/'
-            })
+                path: '/',
+            });
 
-            authToken.value = response.data.auth_token ?? ''
+            authToken.value = response.data.auth_token ?? '';
 
             // store user in Pinia
-            const userStore = useUserStore()
+            const userStore = useUserStore();
             if (response.data.user) {
-                userStore.setUser(response.data.user)
+                userStore.setUser(response.data.user);
 
                 const mockUser = useCookie<{
                     firstName: string;
@@ -202,16 +204,16 @@ export function useLoginPageForm() {
                     email: response.data.user.email || memberEmail.value.trim(),
                 };
             } else {
-                console.warn('No user returned from login API')
+                console.warn('No user returned from login API');
             }
 
-            return response
+            return response;
         } catch (error: any) {
             memberPasswordError.value =
                 error?.data?.message ||
                 error?.message ||
                 t('auth.login.validation.credentialsMismatch');
-            console.error(error)
+            console.error(error);
         }
     }
 
@@ -220,13 +222,13 @@ export function useLoginPageForm() {
             return;
         }
 
-        const verificationResponse = await api('/kr/auth/login/guest/verification', {
+        await api('/kr/auth/login/guest/verification', {
             method: 'POST',
             body: {
                 email: nonMemberEmail.value.trim(),
-                order_number: nonMemberOrderNumber.value.trim()
-            }
-        })
+                order_number: nonMemberOrderNumber.value.trim(),
+            },
+        });
 
         isVerificationModalOpen.value = true;
     }
@@ -234,6 +236,26 @@ export function useLoginPageForm() {
     function openForgotPasswordModal() {
         isForgotPasswordModalOpen.value = true;
     }
+
+    onMounted(() => {
+        const modalQuery = Array.isArray(route.query.modal)
+            ? route.query.modal[0]
+            : route.query.modal;
+        const shouldOpenForgotPassword =
+            modalQuery === 'forgot-password' || modalQuery === 'reset-password';
+
+        if (!shouldOpenForgotPassword) return;
+
+        const emailQuery = Array.isArray(route.query.email)
+            ? route.query.email[0]
+            : route.query.email;
+
+        if (typeof emailQuery === 'string' && emailQuery.trim().length > 0) {
+            memberEmail.value = emailQuery;
+        }
+
+        isForgotPasswordModalOpen.value = true;
+    });
 
     return {
         memberType,
