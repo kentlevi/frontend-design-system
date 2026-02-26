@@ -90,8 +90,8 @@ withDefaults(
 
             .auth-profile-sidebar-head {
                 font-size: 16px;
-                line-height: 28px;
                 font-weight: 700;
+                line-height: 28px;
                 color: var(--text-primary);
             }
 
@@ -152,9 +152,9 @@ withDefaults(
 
                     .auth-profile-step-title {
                         margin: 0;
-                        font-size: 18px;
-                        line-height: 1.3;
+                        font-size: 16px;
                         font-weight: 700;
+                        line-height: 28px;
                         color: var(--text-muted);
                     }
 

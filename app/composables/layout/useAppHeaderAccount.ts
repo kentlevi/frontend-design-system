@@ -91,9 +91,25 @@ export function useAppHeaderAccount() {
         isMockLoggedIn.value ? 'account-dropdown' : 'account-dropdown-guest'
     );
 
+    function normalizeNavPath(path: string) {
+        const trimmed = path.replace(/\/+$/, '') || '/';
+        const segments = trimmed.split('/').filter(Boolean);
+
+        if (segments[0] === 'en' || segments[0] === 'kr') {
+            segments.shift();
+        }
+
+        return `/${segments.join('/')}` || '/';
+    }
+
     function isNavLinkActive(linkPath: string) {
-        const normalizedRoutePath = route.path.replace(/\/+$/, '');
-        const normalizedLinkPath = linkPath.replace(/\/+$/, '');
+        const normalizedRoutePath = normalizeNavPath(route.path);
+        const normalizedLinkPath = normalizeNavPath(linkPath);
+
+        if (normalizedLinkPath === '/') {
+            return normalizedRoutePath === '/';
+        }
+
         return (
             normalizedRoutePath === normalizedLinkPath ||
             normalizedRoutePath.startsWith(`${normalizedLinkPath}/`)

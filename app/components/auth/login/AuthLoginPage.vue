@@ -213,7 +213,8 @@ const {
                     width: 100%;
                     border-radius: 16px;
                     box-shadow: none;
-                    font-size: 18px;
+                    font-size: 16px;
+                    line-height: 28px;
                 }
             }
         }

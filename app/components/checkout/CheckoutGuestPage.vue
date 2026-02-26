@@ -722,9 +722,9 @@ const selectedPaymentMethod = ref<'credit-card' | 'paypal' | 'bank-transfer'>('c
 
         .checkout-summary-price {
             font-size: 16px;
+            font-weight: 700;
             line-height: 28px;
             color: var(--text-primary);
-            font-weight: 700;
         }
 
         .checkout-summary-lines {

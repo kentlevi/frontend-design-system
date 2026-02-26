@@ -25,7 +25,7 @@ const emit = defineEmits<{
                 <UiInput
                     class="auth-login-input"
                     type="email"
-                    size="lg"
+                    size="md"
                     :state="emailError ? 'error' : 'default'"
                     :placeholder="t('auth.login.enterEmail')"
                     :model-value="email"
@@ -44,7 +44,7 @@ const emit = defineEmits<{
                 <UiInput
                     class="auth-login-input"
                     type="text"
-                    size="lg"
+                    size="md"
                     :state="orderError ? 'error' : 'default'"
                     :placeholder="t('auth.login.enterOrderNumber')"
                     :model-value="orderNumber"

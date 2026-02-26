@@ -1,10 +1,11 @@
 <script setup lang="ts">
 const { t } = useI18n();
 const localePath = useLocalePath();
+type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
     to: string;
-    icon: string;
+    icon: IconName;
     label: string;
 };
 
@@ -278,9 +279,9 @@ const emit = defineEmits<{
 
             .home-account-summary-name {
                 margin: 0;
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: 700;
-                line-height: 1.2;
+                line-height: 28px;
                 color: var(--text-primary);
             }
 

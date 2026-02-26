@@ -106,7 +106,7 @@ function updateEmail(value: string) {
                                 <UiButton
                                     variant="outline"
                                     tone="neutral"
-                                    size="lg"
+                                    size="md"
                                     class="auth-profile-outline-btn"
                                     @click="openFilePicker"
                                     data-testid="auth-profile-photo-upload-button"
@@ -137,7 +137,7 @@ function updateEmail(value: string) {
                         <UiInput
                             :model-value="props.firstName"
                             type="text"
-                            size="lg"
+                            size="md"
                             class="auth-profile-field-input"
                             data-testid="auth-profile-first-name"
                             @update:model-value="updateFirstName"
@@ -151,7 +151,7 @@ function updateEmail(value: string) {
                         <UiInput
                             :model-value="props.lastName"
                             type="text"
-                            size="lg"
+                            size="md"
                             class="auth-profile-field-input"
                             data-testid="auth-profile-last-name"
                             @update:model-value="updateLastName"
@@ -164,7 +164,7 @@ function updateEmail(value: string) {
                         <UiInput
                             :model-value="props.email"
                             type="email"
-                            size="lg"
+                            size="md"
                             class="auth-profile-field-input"
                             data-testid="auth-profile-email"
                             @update:model-value="updateEmail"
@@ -178,7 +178,7 @@ function updateEmail(value: string) {
             <UiButton
                 variant="ghost"
                 tone="neutral"
-                size="lg"
+                size="md"
                 class="auth-profile-link-btn"
                 @click="emit('next')"
                 data-testid="auth-profile-skip-button"
@@ -188,7 +188,7 @@ function updateEmail(value: string) {
             <UiButton
                 variant="filled"
                 tone="neutral"
-                size="lg"
+                size="md"
                 class="auth-profile-continue-btn"
                 data-testid="auth-profile-continue-button"
                 @click="emit('next')"
@@ -306,6 +306,7 @@ function updateEmail(value: string) {
                                 color: var(--text-primary);
                                 font-size: 16px;
                                 font-weight: 600;
+                                line-height: 28px;
                                 cursor: pointer;
                             }
 
@@ -314,6 +315,7 @@ function updateEmail(value: string) {
                                 background: transparent;
                                 color: var(--error);
                                 font-size: 16px;
+                                line-height: 28px;
                                 cursor: pointer;
                             }
                         }
@@ -411,14 +413,16 @@ function updateEmail(value: string) {
 
             .auth-profile-link-btn {
                 order: 2;
-                font-size: 18px;
+                font-size: 16px;
+                line-height: 28px;
                 text-align: center;
             }
 
             .ui-button {
                 width: 100%;
                 min-width: 0;
-                font-size: 18px;
+                font-size: 16px;
+                line-height: 28px;
             }
         }
     }

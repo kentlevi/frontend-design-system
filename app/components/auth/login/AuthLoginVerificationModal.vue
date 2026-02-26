@@ -352,6 +352,7 @@ function handlePaste(event: ClipboardEvent) {
 
         .auth-verify-resend {
             font-size: 16px;
+            line-height: 28px;
         }
     }
 }

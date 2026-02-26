@@ -74,7 +74,7 @@ function focusInput() {
     >
         <span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
             <slot name="icon-left">
-                <UiIcon :name="leftIcon" :size="16" decorative />
+                <UiIcon :name="leftIcon" :size="24" decorative />
             </slot>
         </span>
 

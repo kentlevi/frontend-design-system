@@ -3,4 +3,6 @@ const localePath = useLocalePath();
 await navigateTo(localePath('/'));
 </script>
 
-<template></template>
+<template>
+    <div />
+</template>

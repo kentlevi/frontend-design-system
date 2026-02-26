@@ -376,7 +376,8 @@ function updateUnit(value: ProfileUnit) {
             .ui-button {
                 width: 100%;
                 min-width: 0;
-                font-size: 18px;
+                font-size: 16px;
+                line-height: 28px;
             }
         }
     }

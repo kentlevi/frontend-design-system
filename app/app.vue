@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import DevOnboarding from '~/components/layout/DevOnboarding.vue';
+
 const { t } = useI18n();
 const { locale } = useI18n();
 const isDev = import.meta.dev;

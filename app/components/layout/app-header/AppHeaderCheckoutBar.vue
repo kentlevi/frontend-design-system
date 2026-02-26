@@ -98,7 +98,8 @@ const localePath = useLocalePath();
 
             .checkout-header-left {
                 .checkout-header-title {
-                    font-size: 18px;
+                    font-size: 16px;
+                    line-height: 28px;
                 }
             }
 

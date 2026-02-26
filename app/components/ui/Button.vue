@@ -11,7 +11,7 @@ type IconSizeValue = ButtonSize | number | `${number}`;
 const props = withDefaults(
     defineProps<{
         variant?: ButtonVariant;
-        size?: ButtonSize;
+        size?: ButtonSize | number | `${number}`;
         tone?: ButtonTone;
 
         icon?: IconName | null;
@@ -132,3 +132,4 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
     border: 0;
 }
 </style>
+

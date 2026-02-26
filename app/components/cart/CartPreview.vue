@@ -903,6 +903,7 @@ onBeforeUnmount(() => {
             color: var(--text-primary);
             font-size: 16px;
             font-weight: 600;
+            line-height: 28px;
             box-shadow: none;
             transition: background-color 0.18s ease;
             padding: 10px 16px;
@@ -922,6 +923,7 @@ onBeforeUnmount(() => {
             gap: 8px;
             font-size: 16px;
             font-weight: 600;
+            line-height: 28px;
             transition: filter 0.18s ease;
             padding: 10px 20px;
 

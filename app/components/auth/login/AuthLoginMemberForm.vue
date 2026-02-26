@@ -29,7 +29,7 @@ const emit = defineEmits<{
                 </div>
                 <UiInput
                     class="auth-login-input"
-                    size="lg"
+                    size="md"
                     :state="emailError ? 'error' : 'default'"
                     :placeholder="t('auth.login.enterEmail')"
                     :model-value="email"
@@ -48,7 +48,7 @@ const emit = defineEmits<{
                 <div class="auth-login-password-wrap">
                     <UiInput
                         class="auth-login-input"
-                        size="lg"
+                        size="md"
                         :state="passwordError ? 'error' : 'default'"
                         :placeholder="t('auth.login.enterPassword')"
                         :type="showPassword ? 'text' : 'password'"
@@ -65,7 +65,7 @@ const emit = defineEmits<{
                                 @click="emit('togglePassword')"
                             >
                                 <UiIcon
-                                    :name="showPassword ? 'regular-eye-slash' : 'regular-eye'"
+                                    :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
                                     :size="24"
                                     color="var(--gray-90)"
                                 />
@@ -146,14 +146,8 @@ const emit = defineEmits<{
                 position: relative;
 
                 .auth-login-password-toggle {
-                    position: absolute;
-                    right: 10px;
-                    top: 50%;
-                    transform: translateY(-50%);
                     border: 0;
                     background: transparent;
-                    width: 30px;
-                    height: 30px;
                     display: grid;
                     place-items: center;
                 }
