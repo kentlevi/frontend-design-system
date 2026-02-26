@@ -16,10 +16,12 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const api = useApi();
 
 const resetEmail = ref('');
 const error = ref('');
 const sent = ref(false);
+const loading = ref(false);
 
 watch(
     () => props.modelValue,
@@ -39,9 +41,10 @@ function closeModal() {
     emit('update:modelValue', false);
 }
 
-function submitReset() {
+async function submitReset() {
     const value = resetEmail.value.trim();
     error.value = '';
+    sent.value = false;
 
     if (!value) {
         error.value = t('auth.login.validation.fieldBlank');
@@ -53,7 +56,31 @@ function submitReset() {
         return;
     }
 
-    sent.value = true;
+    loading.value = true;
+
+    try {
+        const response = await api<{ success: boolean; message: string }>(
+            '/kr/auth/password/reset-link',
+            {
+                method: 'POST',
+                body: {
+                    email: value,
+                },
+            }
+        );
+
+        if (!response?.success) {
+            error.value = response?.message || 'Unable to send reset email.';
+            return;
+        }
+
+        sent.value = true;
+    } catch (err: any) {
+        error.value =
+            err?.data?.message || err?.message || 'Unable to send reset email.';
+    } finally {
+        loading.value = false;
+    }
 }
 </script>
 
@@ -108,9 +135,10 @@ function submitReset() {
                     size="lg"
                     class="auth-forgot-submit"
                     data-testid="auth-login-forgot-password-submit-button"
+                    :disabled="loading"
                     @click="submitReset"
                 >
-                    Send Password Reset Email
+                    {{ loading ? 'Sending...' : 'Send Password Reset Email' }}
                 </UiButton>
 
                 <UiButton
