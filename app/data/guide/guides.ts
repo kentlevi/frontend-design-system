@@ -103,6 +103,20 @@ export const guides: GuideItem[] = [
         related: ['/guide/buttons', '/guide/auth-flow'],
     },
     {
+        title: 'Tooltip',
+        description:
+            'Contextual helper messaging for validation and inline control guidance.',
+        path: '/guide/tooltip',
+        category: 'base',
+        status: 'stable',
+        tags: ['tooltip', 'validation', 'feedback'],
+        usedIn: [
+            { label: 'Tooltip UI', path: 'frontend/app/components/ui/Tooltip.vue' },
+            { label: 'Auth Register', path: 'frontend/app/components/auth/register/AuthRegisterCard.vue' },
+        ],
+        related: ['/guide/form-controls', '/guide/auth-flow', '/guide/testing'],
+    },
+    {
         title: 'Typography',
         description:
             'Type scale, weights, and text usage patterns for headings and body copy.',
@@ -121,6 +135,20 @@ export const guides: GuideItem[] = [
         status: 'stable',
         tags: ['layout', 'spacing', 'rhythm'],
         related: ['/guide/typography', '/guide/cards'],
+    },
+    {
+        title: 'Shadows',
+        description:
+            'Elevation scale and shadow usage for surfaces, overlays, and emphasis.',
+        path: '/guide/shadows',
+        category: 'base',
+        status: 'stable',
+        tags: ['elevation', 'shadow', 'surface'],
+        usedIn: [
+            { label: 'Button UI', path: 'frontend/app/components/ui/Button.vue' },
+            { label: 'Select UI', path: 'frontend/app/components/ui/Select.vue' },
+        ],
+        related: ['/guide/spacing', '/guide/cards', '/guide/modals'],
     },
     {
         title: 'Animation',

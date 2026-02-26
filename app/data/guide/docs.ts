@@ -798,6 +798,76 @@ export const guideDocs: Record<string, GuideDoc> = {
             },
         ],
     },
+    '/guide/tooltip': {
+        summary:
+            'Tooltip provides compact contextual helper text anchored to a trigger element.',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        lastUpdatedAt: '2026-02-25',
+        lastUpdatedBy: 'Codex',
+        sections: [
+            {
+                title: 'When To Use',
+                points: [
+                    'Supplement nearby controls with brief clarification.',
+                    'Surface validation hints where inline text would add visual noise.',
+                    'Keep message copy short and directly tied to the trigger.',
+                ],
+            },
+            {
+                title: 'Placement and Behavior',
+                points: [
+                    'Use side and mobileSide to keep content visible across viewport sizes.',
+                    'Use tone="danger" only for corrective or blocking guidance.',
+                    'Keep offset and slideDistance values consistent within a flow.',
+                ],
+            },
+        ],
+        doDont: {
+            do: [
+                'Pair tooltip content with a clear trigger affordance.',
+                'Write concise actionable copy.',
+                'Use tone and placement to reinforce context.',
+            ],
+            dont: [
+                'Put long-form help text or multi-step instructions in a tooltip.',
+                'Use tooltip as the only source of required information.',
+                'Stack multiple open tooltips in the same compact area.',
+            ],
+        },
+        accessibilityChecklist: [
+            'Tooltip content is available when trigger receives focus.',
+            'Trigger remains keyboard reachable and visually apparent.',
+            'Tooltip meaning is understandable without relying only on color.',
+        ],
+        qaChecklist: [
+            'Each side variant renders without clipping in common container widths.',
+            'Danger tone text remains readable with expected contrast.',
+            'Mobile side override behavior matches expected placement.',
+        ],
+        snippets: [
+            {
+                title: 'Tooltip Base Usage',
+                language: 'vue',
+                code: `<UiTooltip :open="isOpen" side="right" tone="default">
+  Helpful guidance for the related control.
+  <template #trigger>
+    <button type="button">Trigger</button>
+  </template>
+</UiTooltip>`,
+            },
+        ],
+        changelog: [
+            {
+                version: 'v1.0.0',
+                date: '2026-02-25',
+                changes: ['Added tooltip guide page and metadata coverage entry.'],
+                diffLinks: [
+                    { label: 'Tooltip Guide Page', path: 'frontend/app/pages/guide/tooltip.vue' },
+                    { label: 'Tooltip Component', path: 'frontend/app/components/ui/Tooltip.vue' },
+                ],
+            },
+        ],
+    },
     '/guide/badges': {
         summary: 'Status and metadata badge patterns by tone and variant.',
         lastUpdatedAt: '2026-02-20',
@@ -1445,6 +1515,52 @@ cart.cartPreview.emptyDescription`,
                     "Added spacing do/don't guidance and QA checklist.",
                     'Added responsive notes and spacing token guardrails.',
                 ],
+            },
+        ],
+    },
+    '/guide/shadows': {
+        summary: 'Shadow scale references for elevation, focus, and surface layering.',
+        sections: [
+            {
+                title: 'Shadow Scale',
+                points: [
+                    'Use small shadows for subtle raised controls.',
+                    'Use medium shadows for default elevated surfaces.',
+                    'Use large and extra-large shadows for overlays and high-emphasis layers.',
+                ],
+            },
+            {
+                title: 'Usage Rules',
+                points: [
+                    'Keep one dominant elevation level per local UI cluster.',
+                    'Combine border and shadow for clarity on light backgrounds.',
+                    'Prefer consistent shadow tokens over ad-hoc RGBA values.',
+                ],
+            },
+        ],
+        doDont: {
+            do: [
+                'Use documented shadow scale values for consistency.',
+                'Match shadow strength to interaction priority and depth.',
+            ],
+            dont: [
+                'Do not stack multiple heavy shadows on adjacent elements.',
+                'Do not use shadow-only separation when a border is required.',
+            ],
+        },
+        qaChecklist: [
+            'Elevation scale remains consistent across components using the same depth.',
+            'Shadows remain visible but not overpowering on standard displays.',
+            'Dark-mode or inverse surfaces maintain sufficient layer distinction.',
+        ],
+        tokenGuardrails: [
+            'Prefer brand shadow tokens from `app/assets/scss/brand/_shadows.scss`.',
+            'Avoid one-off shadow values in shared UI components.',
+        ],
+        changelog: [
+            {
+                date: '2026-02-26',
+                changes: ['Added shadows guide with scale, usage rules, and QA guardrails.'],
             },
         ],
     },

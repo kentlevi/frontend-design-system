@@ -1,4 +1,5 @@
 @use './semantic' as s;
+@use '../../brand/shadows' as sh;
 
 :root {
     color-scheme: light;
@@ -50,6 +51,11 @@
 
     --overlay-backdrop: #{s.$overlay-backdrop};
     --overlay-soft: #{s.$overlay-soft};
+
+    --shadow-sm: #{sh.$shadow-sm};
+    --shadow-md: #{sh.$shadow-md};
+    --shadow-lg: #{sh.$shadow-lg};
+    --shadow-xl: #{sh.$shadow-xl};
 }
 
 [data-theme='dark'] {
