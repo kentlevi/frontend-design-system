@@ -234,27 +234,35 @@ const {
 
         .account-profile-title {
             margin: 0 0 26px;
-            font-size: 52px;
-            line-height: 1.05;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 40px;
+            letter-spacing: -0.5px;
             color: var(--text-primary);
         }
 
         .account-profile-section {
             display: grid;
             grid-template-columns: 300px 1fr;
-            gap: 42px;
+            gap: 126px;
             padding: 26px 0;
 
             .account-profile-section-title {
-                margin: 0 0 8px;
-                font-size: 34px;
+                margin: 0 0 0px;
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 32px;
+                letter-spacing: -0.5px;
+
             }
 
             .account-profile-section-description {
                 margin: 0;
                 color: var(--text-secondary);
                 font-size: 14px;
-                line-height: 1.5;
+                font-weight: 400;
+                line-height: 24px;
+                letter-spacing: -0.5px;
             }
 
             .account-profile-label {
@@ -409,7 +417,6 @@ const {
                     .account-profile-setting-title {
                         margin: 0 0 4px;
                         font-size: 16px;
-                        line-height: 28px;
                     }
 
                     .account-profile-switch {
@@ -491,3 +498,4 @@ const {
     }
 }
 </style>
+

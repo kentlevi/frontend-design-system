@@ -77,6 +77,11 @@ const { items } = useAccountAddressBook();
     .account-content {
         padding-top: 24px;
     }
+    .address-book-cards{
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
 
     .account-address-book-header {
         display: flex;
@@ -87,8 +92,10 @@ const { items } = useAccountAddressBook();
 
         .account-address-book-title {
             margin: 0;
-            font-size: 52px;
-            line-height: 1.05;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 40px;
+            letter-spacing: -0.5px;
             color: var(--text-primary);
         }
     }
@@ -96,22 +103,21 @@ const { items } = useAccountAddressBook();
     .account-address-book-layout {
         display: grid;
         grid-template-columns: 340px 1fr;
-        gap: 24px;
+        gap: 126px;
+    }
+    .account-address-book-info h2{
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 32px;
+        letter-spacing: -0.5px;
+    }
+    .account-address-book-info p{
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        letter-spacing: -0.5px;
     }
 
-    .account-address-book-info {
-        .account-address-book-subtitle {
-            margin: 0 0 8px;
-            font-size: 34px;
-        }
-
-        .account-address-book-description {
-            margin: 0;
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-    }
 
     .account-address-book-list {
         display: grid;
@@ -189,3 +195,4 @@ const { items } = useAccountAddressBook();
     }
 }
 </style>
+

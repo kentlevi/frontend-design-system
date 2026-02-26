@@ -144,15 +144,19 @@ const tabs = [
 
     .account-shell-name {
         margin: 0;
-        font-size: 38px;
-        line-height: 1.05;
+        font-size: 20px;
+        line-height: 28px;
         font-weight: 700;
+        letter-spacing: -0.5px;
         color: var(--text-primary);
     }
 
     .account-shell-level {
         margin: 4px 0 0;
         font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        letter-spacing: -0.5px;
         color: var(--text-secondary);
     }
 
@@ -185,7 +189,7 @@ const tabs = [
 
     .account-shell-tabs {
         margin-top: 20px;
-        border-top: 1px solid var(--border-default);
+        //border-top: 1px solid var(--border-default);
         border-bottom: 1px solid var(--border-default);
         padding: 14px 0;
         display: flex;
@@ -229,3 +233,4 @@ const tabs = [
     }
 }
 </style>
+
