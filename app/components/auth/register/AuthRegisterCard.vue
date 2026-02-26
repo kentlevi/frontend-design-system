@@ -119,7 +119,7 @@ onBeforeUnmount(() => {
                 <UiInput
                     v-model="firstName"
                     type="text"
-                    size="lg"
+                    size="md"
                     class="auth-register-input"
                     :state="firstNameError ? 'error' : 'default'"
                     :placeholder="t('auth.register.enterFirstName')"
@@ -139,7 +139,7 @@ onBeforeUnmount(() => {
                 <UiInput
                     v-model="lastName"
                     type="text"
-                    size="lg"
+                    size="md"
                     class="auth-register-input"
                     :placeholder="t('auth.register.enterLastName')"
                     data-testid="auth-register-last-name-input"
@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
             <UiInput
                 v-model="email"
                 type="email"
-                size="lg"
+                size="md"
                 class="auth-register-input"
                 :state="emailError ? 'error' : 'default'"
                 :placeholder="t('auth.register.enterEmail')"
@@ -180,7 +180,7 @@ onBeforeUnmount(() => {
                 <UiInput
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
-                    size="lg"
+                    size="md"
                     class="auth-register-input"
                     :state="passwordError ? 'error' : 'default'"
                     :placeholder="t('auth.register.enterPassword')"
@@ -195,7 +195,7 @@ onBeforeUnmount(() => {
                             @click="showPassword = !showPassword"
                         >
                             <UiIcon
-                                :name="showPassword ? 'regular-eye-slash' : 'regular-eye'"
+                                :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
                                 :size="24"
                                 color="var(--gray-90)"
                             />
@@ -288,7 +288,7 @@ onBeforeUnmount(() => {
         <UiButton
             variant="filled"
             tone="neutral"
-            size="lg"
+            size="md"
             class="auth-register-submit"
             data-testid="auth-register-submit"
             @click="submitRegister"
@@ -409,14 +409,8 @@ onBeforeUnmount(() => {
             position: relative;
 
             .auth-register-password-toggle {
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
                 border: 0;
                 background: transparent;
-                width: 30px;
-                height: 30px;
                 display: grid;
                 place-items: center;
             }
@@ -535,7 +529,8 @@ onBeforeUnmount(() => {
         width: 100%;
         border-radius: 16px;
         box-shadow: none;
-        font-size: 18px;
+        font-size: 16px;
+        line-height: 28px;
     }
 
     .auth-register-login {

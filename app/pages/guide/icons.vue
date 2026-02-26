@@ -237,5 +237,6 @@ onBeforeUnmount(() =>
                 </GuideCopy>
             </div>
         </section>
+
     </section>
 </template>

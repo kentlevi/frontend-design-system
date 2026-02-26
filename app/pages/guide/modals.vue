@@ -8,6 +8,14 @@ const isArchiveModalOpen = ref(false);
 const isSupportModalOpen = ref(false);
 const lastModalAction = ref('No modal action yet.');
 
+type ModalVerticalAlign = 'top' | 'center' | 'bottom';
+const modalVerticalAlign = ref<ModalVerticalAlign>('top');
+const modalVerticalAlignOptions: Array<{ label: string; value: ModalVerticalAlign }> = [
+    { label: 'top', value: 'top' },
+    { label: 'center', value: 'center' },
+    { label: 'bottom', value: 'bottom' },
+];
+
 const supportName = ref('');
 const supportEmail = ref('');
 const supportMessage = ref('');
@@ -214,6 +222,20 @@ function submitSupportRequest() {
         </header>
 
         <section class="guide-section">
+            <h2 class="guide-section-title">Vertical Alignment</h2>
+            <p class="guide-section-description">
+                Switch modal vertical placement between top, center, and bottom.
+            </p>
+
+            <div class="guide-modal-controls">
+                <label class="guide-modal-control">
+                    <span>Vertical Align</span>
+                    <UiSelect v-model="modalVerticalAlign" :options="modalVerticalAlignOptions" />
+                </label>
+            </div>
+        </section>
+
+        <section class="guide-section">
             <h2 class="guide-section-title">Confirmation Modal</h2>
             <p class="guide-section-description">
                 Use this pattern for destructive or irreversible actions.
@@ -269,7 +291,7 @@ function submitSupportRequest() {
             </div>
         </section>
 
-        <UiModal v-model="isArchiveModalOpen" title="Archive project?" width="480px">
+        <UiModal v-model="isArchiveModalOpen" title="Archive project?" width="480px" :align="modalVerticalAlign">
             <p class="guide-modal-copy">
                 This action moves the project to archive and hides it from your active workspace.
             </p>
@@ -294,7 +316,7 @@ function submitSupportRequest() {
             </template>
         </UiModal>
 
-        <UiModal v-model="isSupportModalOpen" title="Request support callback" width="520px">
+        <UiModal v-model="isSupportModalOpen" title="Request support callback" width="520px" :align="modalVerticalAlign">
             <div class="guide-modal-form">
                 <UiInput
                     v-model="supportName"
@@ -338,6 +360,7 @@ function submitSupportRequest() {
             v-model="isLocaleModalOpen"
             title="Local preferences"
             width="520px"
+            :align="modalVerticalAlign"
         >
             <div class="guide-locale-list">
                 <button
@@ -364,6 +387,15 @@ function submitSupportRequest() {
 </template>
 
 <style scoped lang="scss">
+.guide-modal-controls {
+    width: min(300px, 100%);
+}
+
+.guide-modal-control {
+    display: grid;
+    gap: 8px;
+}
+
 .guide-modal-status {
     margin: 0;
     color: var(--text-secondary);
@@ -389,3 +421,4 @@ function submitSupportRequest() {
     gap: 10px;
 }
 </style>
+

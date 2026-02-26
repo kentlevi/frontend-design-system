@@ -1407,6 +1407,92 @@ cart.cartPreview.emptyDescription`,
             },
         ],
     },
+    '/guide/toast': {
+        summary:
+            'Toast provides temporary, non-blocking feedback messages with semantic tone styling.',
+        sections: [
+            {
+                title: 'When To Use',
+                points: [
+                    'Use to confirm background or secondary actions (for example: save complete).',
+                    'Use for passive alerts that do not require immediate interruption.',
+                    'Do not replace blocking validation or destructive confirmations with toast alone.',
+                ],
+            },
+            {
+                title: 'Behavior',
+                points: [
+                    'Toast appears near the viewport edge and auto-dismisses after a short delay.',
+                    'Use one toast at a time per context to avoid stacked visual noise.',
+                    'Allow manual dismissal for longer or more critical messages.',
+                ],
+            },
+            {
+                title: 'Tone Mapping',
+                points: [
+                    'primary: brand-highlighted confirmation for key product moments.',
+                    'success: confirms completed action.',
+                    'warning: highlights caution without blocking.',
+                    'error: communicates failure and next step.',
+                    'info: neutral system update.',
+                ],
+            },
+        ],
+        doDont: {
+            do: [
+                'Keep messages concise, clear, and action-oriented.',
+                'Use semantic tone that matches message intent.',
+            ],
+            dont: [
+                'Do not use toast for complex, multi-step error explanations.',
+                'Do not show repeated toasts for the same action in quick succession.',
+            ],
+        },
+        accessibilityChecklist: [
+            'Toast uses polite live region announcements for non-blocking status updates.',
+            'Dismiss button has an accessible label when visible.',
+            'Message text remains readable at responsive widths.',
+        ],
+        qaChecklist: [
+            'Auto-hide timing is predictable and reset when re-triggered.',
+            'Close button dismisses toast immediately.',
+            'Tone variants render correct icon and colors.',
+        ],
+        snippets: [
+            {
+                title: 'Basic Toast',
+                language: 'vue',
+                code: `<UiToast
+  :visible="showToast"
+  tone="primary"
+  message="Your password has been successfully updated."
+  @close="showToast = false"
+/>`,
+            },
+        ],
+        testHooks: [
+            {
+                hook: 'ui-toast',
+                intent: 'Toast visibility and message assertions',
+                target: 'UiToast',
+            },
+            {
+                hook: 'ui-toast-close-button',
+                intent: 'Dismiss interaction coverage',
+                target: 'UiToast',
+            },
+        ],
+        changelog: [
+            {
+                date: '2026-02-26',
+                changes: ['Added dedicated Toast guide with tones, playground behavior, and QA/a11y checks.'],
+                diffLinks: [
+                    { label: 'Toast Guide Page', path: 'frontend/app/pages/guide/toast.vue' },
+                    { label: 'Toast Component', path: 'frontend/app/components/ui/Toast.vue' },
+                ],
+            },
+        ],
+    },
     '/guide/typography': {
         summary: 'Type scale and text hierarchy references.',
         sections: [
@@ -2338,6 +2424,137 @@ cart.cartPreview.emptyDescription`,
                 changes: ['Added guide coverage dashboard baseline and scoring model.'],
                 diffLinks: [
                     { label: 'Coverage Page', path: 'frontend/app/pages/guide/coverage.vue' },
+                ],
+            },
+        ],
+    },
+    '/guide/standards': {
+        summary:
+            'Current implemented standards for coding style, shared component workflow, and accessibility baseline.',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        lastUpdatedAt: '2026-02-26',
+        lastUpdatedBy: 'Codex',
+        sections: [
+            {
+                title: 'System Description',
+                points: [
+                    'Guide-driven design system with shared foundation tokens and UI primitives.',
+                    'Guide pages are used to document shared component behavior.',
+                    'Changes to shared UI should be reflected in guide docs in the same cycle.',
+                ],
+            },
+            {
+                title: 'Code Style and Linting (Required)',
+                points: [
+                    'Tabs are required for indentation.',
+                    'Tab width is 4 spaces.',
+                    'No trailing spaces.',
+                    'No extra newline at EOF.',
+                    'No unused variables (`no-unused-vars` is enforced as error).',
+                ],
+            },
+            {
+                title: 'Component and Guide Workflow (Required)',
+                points: [
+                    'Use existing semantic tokens and shared values before adding raw custom values.',
+                    'Keep reusable primitives in `app/components/ui`.',
+                    'Update the related guide page/docs when shared component behavior changes.',
+                ],
+            },
+            {
+                title: 'Accessibility Baseline (Required)',
+                points: [
+                    'Interactive controls must be keyboard reachable.',
+                    'Visible focus indicators must remain enabled.',
+                    'Icon-only controls require accessible names.',
+                ],
+            },
+            {
+                title: 'Class Naming and SCSS Structure (Required)',
+                points: [
+                    'Use descriptive, component-scoped class names.',
+                    'Keep reusable UI in `app/components/ui`; keep feature-only styles in feature folders.',
+                    'Prefer class selectors over deep descendant element selectors.',
+                    'Use semantic CSS variables before raw values.',
+                ],
+            },
+            {
+                title: 'API Naming Standards (Required)',
+                points: [
+                    'Variables use `snake_case`.',
+                    'Constants use `UPPER_CASE`.',
+                    'Functions use `KebabCase`.',
+                ],
+            },
+            {
+                title: 'Recommended Practices',
+                points: [
+                    'Use ESLint, Prettier, and EditorConfig in your editor.',
+                    'Run `npm run lint` before commit/push.',
+                    'Attach screenshots when UI is changed.',
+                    'Keep SCSS nesting shallow and use clear state class names.',
+                ],
+            },
+            {
+                title: 'Recommended Conventions',
+                points: [
+                    'File naming: components in PascalCase, composables in `useXxx.ts`, SCSS partials in `_kebab-case.scss`.',
+                    'Import order: framework -> libraries -> app aliases -> relative imports.',
+                    'Type props/emits and provide defaults for optional props.',
+                    'Move complex template logic into `computed`.',
+                    'Show user-friendly error messages instead of raw API errors.',
+                    'Use i18n keys for reusable component copy.',
+                    'Use stable `data-testid` only for critical actions.',
+                    'Avoid `!important` and ID selectors in component styling.',
+                ],
+            },
+            {
+                title: 'Onboarding First Tasks',
+                points: [
+                    'Run app locally: `npm install`, `npm run dev`.',
+                    'Run lint: `npm run lint`.',
+                    'Implement using existing tokens/components first.',
+                    'Update guide docs if shared behavior changed.',
+                    'Attach screenshot proof for UI changes.',
+                ],
+            },
+        ],
+        doDont: {
+            do: [
+                'Keep implementation and guide docs updated in the same delivery cycle.',
+                'Use shared linting and editor tooling for consistent formatting.',
+            ],
+            dont: [
+                'Do not bypass token conventions with ad-hoc styling values.',
+                'Do not merge code with unresolved lint errors.',
+            ],
+        },
+        qaChecklist: [
+            'Standards page is reachable from onboarding flow and guide navigation.',
+            'Rules shown in standards match `.editorconfig`, `.prettierrc`, and `.eslintrc.json`.',
+            'Versioned standards acknowledgment redirects correctly after confirm action.',
+        ],
+        accessibilityChecklist: [
+            'Standards page heading structure remains semantic.',
+            'Action buttons are keyboard reachable.',
+        ],
+        contentGuidelines: [
+            'Keep rules limited to currently implemented standards.',
+            'Avoid policy statements that are not enforced yet.',
+        ],
+        changelog: [
+            {
+                version: 'v2.1.0',
+                date: '2026-02-26',
+                changes: [
+                    'Simplified standards content to currently implemented and enforced rules only.',
+                    'Kept Required vs Recommended structure with compact checklist format.',
+                    'Retained standards versioned acknowledgment flow (v2).',
+                ],
+                diffLinks: [
+                    { label: 'Standards Page', path: 'frontend/app/pages/guide/standards.vue' },
+                    { label: 'Guide Middleware', path: 'frontend/app/middleware/guide-onboarding.global.ts' },
+                    { label: 'Guide Docs', path: 'frontend/app/data/guide/docs.ts' },
                 ],
             },
         ],

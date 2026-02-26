@@ -85,8 +85,8 @@
 
     .type-body {
         font-size: 16px;
-        line-height: 28px;
         font-weight: 400;
+        line-height: 28px;
     }
 
     .type-caption {

@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "lint": "set ESLINT_USE_FLAT_CONFIG=false&& eslint .",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "test:e2e": "playwright test",

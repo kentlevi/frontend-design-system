@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
 .guide-carousel-card-title {
     margin: 0;
     color: var(--text-primary);
-    font-size: 18px;
+    font-size: 16px;
     line-height: 28px;
 }
 

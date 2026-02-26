@@ -336,7 +336,7 @@ const redirectTarget = computed(() => {
         return redirectValue;
     }
 
-    return localePath('/guide');
+    return localePath('/guide/standards');
 });
 
 function initQuizAnswers() {
@@ -797,7 +797,7 @@ initQuizAnswers();
 .guide-onboarding-gate-title {
     margin: 0 0 10px;
     font-size: 16px;
-    line-height: 24px;
+    line-height: 28px;
     color: var(--text-primary);
 }
 

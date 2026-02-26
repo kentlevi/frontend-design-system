@@ -4,6 +4,7 @@ import type { FlagCode } from '~/data/ui/flags';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type NavLink = {
     key: string;
@@ -13,7 +14,7 @@ type NavLink = {
 
 type AccountLink = {
     to: string;
-    icon: string;
+    icon: IconName;
     label: string;
 };
 

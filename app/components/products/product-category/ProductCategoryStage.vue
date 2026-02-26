@@ -264,9 +264,9 @@ const unitPrice = computed(() =>
         margin: 0;
         text-align: center;
         font-size: 16px;
+        font-weight: 500;
         line-height: 28px;
         color: var(--text-primary);
-        font-weight: 500;
         padding-bottom: 24px;
     }
 

@@ -32,6 +32,8 @@
     font-family: t.$font-base;
     font-size: t.$body-base;
     line-height: 24px;
+    min-width: 0;
+    display: block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -43,6 +45,28 @@
 
 .ui-select-placeholder {
     color: c.$text-muted;
+}
+
+.ui-select-trigger-icon {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+    backface-visibility: hidden;
+    transition: transform 0.15s ease;
+    transform-origin: center;
+}
+
+.ui-select-trigger-icon.is-open {
+    transform: rotate(180deg);
+}
+
+.ui-select[data-open='true'] {
+    .ui-select-trigger {
+        border-color: c.$border-strong;
+    }
 }
 
 .ui-select-menu {
@@ -57,6 +81,7 @@
     box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
+
 
 .ui-select-search {
     height: sp.$space-10;
@@ -88,6 +113,7 @@
 }
 
 .ui-select-option {
+    position: relative;
     width: 100%;
     min-height: 44px;
     border: 0;
@@ -99,13 +125,16 @@
     gap: sp.$space-2;
     text-align: left;
     cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 
     &:hover {
         background: c.$surface-subtle;
     }
 
     &.is-selected {
-        background: c.$surface-subtle;
+        background: c.$surface-raised;
     }
 }
 
@@ -119,8 +148,12 @@
     margin: 0;
     font-family: t.$font-base;
     font-size: t.$body-base;
-    line-height: 1.4;
+    line-height: 24px;
     color: c.$text-primary;
+}
+
+.ui-select-option.is-selected .ui-select-option-label {
+    font-weight: 600;
 }
 
 .ui-select-option-description {
@@ -154,3 +187,4 @@
         color: c.$text-muted;
     }
 }
+

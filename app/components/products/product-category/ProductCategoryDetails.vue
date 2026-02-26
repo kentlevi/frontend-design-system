@@ -106,15 +106,15 @@ const { t } = useI18n();
             }
 
             .product-guarantee-title {
-                font-size: 18px;
-                line-height: 1.2;
+                font-size: 16px;
+                line-height: 28px;
                 color: var(--text-primary);
             }
 
             .product-details-text {
                 padding: 0 40px;
-                font-size: 12px;
-                line-height: 1.45;
+                font-size: 14px;
+                line-height: 24px;
                 color: var(--text-secondary);
             }
         }

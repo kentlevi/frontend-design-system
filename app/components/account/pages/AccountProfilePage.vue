@@ -409,6 +409,7 @@ const {
                     .account-profile-setting-title {
                         margin: 0 0 4px;
                         font-size: 16px;
+                        line-height: 28px;
                     }
 
                     .account-profile-switch {

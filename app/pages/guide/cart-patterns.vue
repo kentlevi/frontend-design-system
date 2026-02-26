@@ -225,7 +225,7 @@ function toggleFeatured() {
     .cart-pattern-card-title {
         margin: 0;
         color: var(--text-primary);
-        font-size: 18px;
+        font-size: 16px;
         line-height: 28px;
     }
 
@@ -280,7 +280,7 @@ function toggleFeatured() {
         margin: 0;
         color: var(--text-primary);
         font-size: 16px;
-        line-height: 24px;
+        line-height: 28px;
     }
 
     .cart-demo-body {

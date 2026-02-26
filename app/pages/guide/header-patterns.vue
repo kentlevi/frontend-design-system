@@ -95,7 +95,7 @@ const demoQuery = ref('');
                         <UiInput
                             v-model="demoQuery"
                             placeholder="Search products..."
-                            icon-left="strong-search"
+                            icon-left="search"
                         />
                         <p>Recent searches, grouped results, and keyboard navigation live here.</p>
                     </section>
@@ -157,7 +157,7 @@ const demoQuery = ref('');
     .header-pattern-card-title {
         margin: 0;
         color: var(--text-primary);
-        font-size: 18px;
+        font-size: 16px;
         line-height: 28px;
     }
 

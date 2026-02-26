@@ -98,7 +98,8 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
 
                 .account-points-log-title {
                     margin: 0;
-                    font-size: 18px;
+                    font-size: 16px;
+                    line-height: 28px;
                 }
 
                 .account-points-log-date {

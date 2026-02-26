@@ -3,13 +3,13 @@ withDefaults(
     defineProps<{
         visible?: boolean;
         message?: string;
-        tone?: 'success' | 'warning' | 'error' | 'info';
+        tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
         dismissible?: boolean;
     }>(),
     {
         visible: false,
         message: '',
-        tone: 'success',
+        tone: 'primary',
         dismissible: true,
     }
 );
@@ -19,9 +19,10 @@ const emit = defineEmits<{
 }>();
 
 const iconByTone = {
+    primary: 'strong-check-circle',
     success: 'strong-check-circle',
     warning: 'strong-exclamation-triangle',
-    error: 'strong-triangle-exclamation',
+    error: 'strong-exclamation-circle',
     info: 'strong-info-circle',
 } as const;
 </script>
@@ -61,7 +62,7 @@ const iconByTone = {
     bottom: 84px;
     transform: translateX(-50%);
     z-index: 60;
-    min-width: 460px;
+    width: fit-content;
     max-width: calc(100vw - 24px);
     padding: 10px 14px;
     border-radius: 12px;
@@ -70,10 +71,16 @@ const iconByTone = {
     gap: 10px;
     box-shadow: 0 10px 24px rgba(17, 24, 39, 0.16);
 
-    &[data-tone='success'] {
+    &[data-tone='primary'] {
         background: var(--brand-primary);
         color: var(--text-primary);
         border: 1px solid color-mix(in srgb, var(--brand-primary) 72%, #111827 28%);
+    }
+
+    &[data-tone='success'] {
+        background: var(--success-bg);
+        color: var(--success-90);
+        border: 1px solid color-mix(in srgb, var(--success) 40%, var(--success-bg));
     }
 
     &[data-tone='warning'] {
@@ -95,7 +102,7 @@ const iconByTone = {
     }
 
     .ui-toast-text {
-        flex: 1;
+        flex: 0 1 auto;
         font-size: 14px;
         font-weight: 600;
         line-height: 1.3;
@@ -124,7 +131,6 @@ const iconByTone = {
 
 @media (max-width: 860px) {
     .ui-toast {
-        min-width: 0;
         width: calc(100vw - 24px);
         bottom: 84px;
     }

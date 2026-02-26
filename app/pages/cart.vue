@@ -245,14 +245,14 @@ onMounted(() => {
                             <div class="cart-item-copy">
                                 <h3 class="cart-item-title">{{ row.product.name }}</h3>
                                 <p class="cart-item-size">Size: {{ sizeDimOnly(row.sizeLabel) }}mm</p>
-                                <UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
+                                <UiButton class="cart-link-btn" variant="ghost" tone="default" size="md">
                                     Replace Artwork
                                 </UiButton>
                             </div>
                         </div>
 
                         <div class="cart-qty-wrap">
-                            <UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
+                            <UiButton class="cart-link-btn" variant="ghost" tone="default" size="md">
                                 Edit Size
                             </UiButton>
                             <UiSelect
@@ -590,9 +590,9 @@ onMounted(() => {
                         .cart-summary-title {
                             margin: 0;
                             font-size: 16px;
+                            font-weight: 700;
                             line-height: 28px;
                             color: var(--text-primary);
-                            font-weight: 700;
                         }
                     }
 
@@ -632,8 +632,8 @@ onMounted(() => {
                                 height: 48px;
                                 border-radius: 16px;
                                 font-size: 16px;
-                                line-height: 28px;
                                 font-weight: 500;
+                                line-height: 28px;
                                 box-shadow: none;
                             }
 
@@ -690,8 +690,8 @@ onMounted(() => {
                 }
 
                 .cart-page-continue {
-                    font-size: 18px;
-                    line-height: 26px;
+                    font-size: 16px;
+                    line-height: 28px;
                 }
             }
 

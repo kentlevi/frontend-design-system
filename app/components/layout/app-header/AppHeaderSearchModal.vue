@@ -827,7 +827,8 @@ const { t } = useI18n();
         .home-search-modal {
             .home-search-head {
                 .home-search-input {
-                    font-size: 18px;
+                    font-size: 16px;
+                    line-height: 28px;
                 }
             }
 
@@ -848,6 +849,7 @@ const { t } = useI18n();
                     .home-search-recent-head {
                         .home-search-heading {
                             font-size: 16px;
+                            line-height: 28px;
                         }
                     }
 
@@ -859,21 +861,25 @@ const { t } = useI18n();
                 .home-search-results {
                     .home-search-group .home-search-heading {
                         font-size: 16px;
+                        line-height: 28px;
                     }
 
                     .home-search-result-title {
-                        font-size: 18px;
+                        font-size: 16px;
+                        line-height: 28px;
                     }
 
                     .home-search-result-blurb {
                         font-size: 14px;
+                        line-height: 24px;
                     }
                 }
             }
 
             .home-search-footer {
                 .home-search-foot-hint {
-                    font-size: 13px;
+                    font-size: 14px;
+                    line-height: 24px;
                 }
             }
         }

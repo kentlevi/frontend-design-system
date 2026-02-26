@@ -117,6 +117,20 @@ export const guides: GuideItem[] = [
         related: ['/guide/form-controls', '/guide/auth-flow', '/guide/testing'],
     },
     {
+        title: 'Toast',
+        description:
+            'Transient status feedback banners for success, warning, info, and error events.',
+        path: '/guide/toast',
+        category: 'base',
+        status: 'stable',
+        tags: ['toast', 'feedback', 'status'],
+        usedIn: [
+            { label: 'Toast UI', path: 'frontend/app/components/ui/Toast.vue' },
+            { label: 'Home Reset Flow', path: 'frontend/app/pages/index.vue' },
+        ],
+        related: ['/guide/feedback-empty-states', '/guide/modals', '/guide/auth-flow'],
+    },
+    {
         title: 'Typography',
         description:
             'Type scale, weights, and text usage patterns for headings and body copy.',
@@ -357,12 +371,13 @@ export const guides: GuideItem[] = [
         related: ['/guide/colors', '/guide/spacing'],
     },
     {
-        title: 'Coverage Dashboard',
+        title: 'Standards',
         description:
-            'Coverage matrix for shared UI components and guide documentation status.',
-        path: '/guide/coverage',
+            'Read-first governance for architecture boundaries, delivery checklists, and enforced quality rules.',
+        path: '/guide/standards',
         category: 'core',
-        status: 'draft',
-        tags: ['coverage', 'governance', 'documentation'],
+        status: 'stable',
+        tags: ['governance', 'onboarding', 'enforcement', 'linting', 'review-policy'],
+        related: ['/guide/onboarding', '/guide/testing'],
     },
 ];

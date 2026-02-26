@@ -10,7 +10,7 @@ const props = withDefaults(
         width?: string;
         padding?: string;
         gap?: string;
-        align?: 'top' | 'center';
+        align?: 'top' | 'center' | 'bottom';
         modalClass?: string;
     }>(),
     {
@@ -80,7 +80,10 @@ onBeforeUnmount(() => {
             <div
                 v-if="modelValue"
                 class="ui-modal-overlay"
-                :class="{ 'ui-modal-overlay--center': align === 'center' }"
+                :class="{
+                    'ui-modal-overlay--center': align === 'center',
+                    'ui-modal-overlay--bottom': align === 'bottom',
+                }"
                 role="presentation"
                 @click="onBackdropClick"
             >
@@ -132,3 +135,4 @@ onBeforeUnmount(() => {
         </Transition>
     </Teleport>
 </template>
+

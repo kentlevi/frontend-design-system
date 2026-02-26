@@ -211,7 +211,7 @@ function replayStagger() {
         margin: 0;
         color: var(--text-primary);
         font-size: 16px;
-        line-height: 26px;
+        line-height: 28px;
     }
 
     .animation-reference-source {

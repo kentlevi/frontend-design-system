@@ -332,6 +332,7 @@ function handlePaste(event: ClipboardEvent) {
 
         .auth-register-verification-label {
             font-size: 16px;
+            line-height: 28px;
         }
 
         .auth-register-verification-input {
@@ -340,11 +341,13 @@ function handlePaste(event: ClipboardEvent) {
         }
 
         .auth-register-verification-submit {
-            font-size: 18px;
+            font-size: 16px;
+            line-height: 28px;
         }
 
         .auth-register-verification-resend {
             font-size: 16px;
+            line-height: 28px;
         }
     }
 }

@@ -9,9 +9,18 @@ import GuidePlaygroundControls from '@/components/guide/GuidePlaygroundControls.
 const route = useRoute();
 const { locales } = useI18n();
 const localePath = useLocalePath();
-const guideSidebarQueryStorageKey = 'guide-sidebar-query';
+const GUIDE_STANDARDS_VERSION = 'v2';
+const GUIDE_STANDARDS_COOKIE = `guide_standards_read_${GUIDE_STANDARDS_VERSION}`;
+const standardsCookie = useCookie<string | null>(GUIDE_STANDARDS_COOKIE, {
+    path: '/',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 365,
+});
 const baseGuides = guides.filter((item) => item.category === 'base');
-const coreGuides = guides.filter((item) => item.category === 'core');
+const coreGuides = guides.filter(
+    (item) => item.category === 'core' && item.path !== '/guide/standards'
+);
+const standardsGuideItem = guides.find((item) => item.path === '/guide/standards') ?? null;
 const guideQuery = ref('');
 const checklistStatusFilter = ref<'all' | 'planned' | 'in-progress' | 'done'>('all');
 const checklistPhaseFilter = ref<'all' | 'phase-1' | 'phase-2' | 'phase-3' | 'phase-4'>('all');
@@ -56,6 +65,7 @@ const currentDoc = computed(
     () => guideDocs[guidePath.value] ?? (isOverviewPath.value ? guideDocs['/guide'] : null)
 );
 const canShowDocs = computed(() => Boolean(currentDoc.value));
+const isDocumentationOnlyGuide = computed(() => guidePath.value === '/guide/standards');
 const currentGuideItem = computed(() =>
     guides.find((item) =>
         isOverviewPath.value ? item.path === '/guide' : item.path === guidePath.value
@@ -450,9 +460,31 @@ const toAnchorId = (value: string) =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
+const standardsContinueTarget = computed(() => {
+    const redirect = route.query.redirect;
+    const value = Array.isArray(redirect) ? redirect[0] : redirect;
+    if (typeof value === 'string' && value.includes('/guide')) return value;
+    return localePath('/guide');
+});
+
+function confirmStandardsRead() {
+    standardsCookie.value = '1';
+    navigateTo(standardsContinueTarget.value);
+}
+
 watch(
     guidePath,
-    () => {
+    (nextPath, previousPath) => {
+        if (isDocumentationOnlyGuide.value) {
+            viewMode.value = 'documentation';
+            return;
+        }
+
+        if (previousPath === '/guide/standards') {
+            viewMode.value = 'preview';
+            return;
+        }
+
         if (!canShowDocs.value) {
             viewMode.value = 'preview';
         }
@@ -461,14 +493,6 @@ watch(
 );
 
 onMounted(() => {
-    const persistedGuideQuery = window.sessionStorage.getItem(
-        guideSidebarQueryStorageKey
-    );
-
-    if (persistedGuideQuery !== null) {
-        guideQuery.value = persistedGuideQuery;
-    }
-
     if (currentPlaygroundConfig.value) {
         playgroundState.value = {
             size: currentPlaygroundConfig.value.defaultSize ?? 'md',
@@ -486,19 +510,6 @@ onBeforeUnmount(() => {
     document.removeEventListener('keydown', onGuideShortcut);
     window.removeEventListener('keydown', onGuideShortcut);
 });
-
-watch(
-    guideQuery,
-    (value) => {
-        if (typeof window === 'undefined') return;
-        if (value) {
-            window.sessionStorage.setItem(guideSidebarQueryStorageKey, value);
-            return;
-        }
-        window.sessionStorage.removeItem(guideSidebarQueryStorageKey);
-    },
-    { flush: 'sync' }
-);
 
 watch([guidePath, viewMode, previewFrame], async () => {
     await nextTick();
@@ -522,14 +533,28 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 <h2 class="guide-heading">Guide</h2>
             </div>
 
-            <NuxtLink
-                :to="localePath('/guide')"
-                class="guide-link guide-link-overview"
-                :class="{ 'is-active': isOverviewPath }"
-            >
-                Overview
-                <span class="guide-link-status is-stable">Stable</span>
-            </NuxtLink>
+            <div class="guide-sidebar-primary">
+                <NuxtLink
+                    v-if="standardsGuideItem"
+                    :to="localePath('/guide/standards')"
+                    class="guide-link guide-link-overview"
+                    :class="{ 'is-active': guidePath.startsWith('/guide/standards') }"
+                >
+                    {{ standardsGuideItem.title }}
+                    <span class="guide-link-status" :class="`is-${standardsGuideItem.status ?? 'stable'}`">
+                        {{ guideStatusLabel(standardsGuideItem.status) }}
+                    </span>
+                </NuxtLink>
+
+                <NuxtLink
+                    :to="localePath('/guide')"
+                    class="guide-link guide-link-overview"
+                    :class="{ 'is-active': isOverviewPath }"
+                >
+                    Overview
+                    <span class="guide-link-status is-stable">Stable</span>
+                </NuxtLink>
+            </div>
 
             <label class="guide-sidebar-search">
                 <span class="guide-sidebar-search-label">Search guides</span>
@@ -600,7 +625,31 @@ watch([guidePath, viewMode, previewFrame], async () => {
             </div>
 
             <footer class="guide-sidebar-footer">
-                <div class="guide-view-toggle" role="tablist" aria-label="Guide content view">
+                <div
+                    v-if="isDocumentationOnlyGuide"
+                    class="guide-view-toggle"
+                    role="tablist"
+                    aria-label="Guide content view"
+                >
+                    <button
+                        type="button"
+                        role="tab"
+                        id="guide-tab-documentation-only"
+                        class="guide-view-toggle-button is-active"
+                        aria-controls="guide-panel-documentation"
+                        aria-selected="true"
+                        tabindex="0"
+                        disabled
+                    >
+                        Documentation
+                    </button>
+                </div>
+                <div
+                    v-else
+                    class="guide-view-toggle"
+                    role="tablist"
+                    aria-label="Guide content view"
+                >
                     <button
                         type="button"
                         role="tab"
@@ -634,7 +683,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
         <main class="guide-content">
             <section
-                v-if="viewMode === 'preview' || !currentDoc"
+                v-if="!isDocumentationOnlyGuide && (viewMode === 'preview' || !currentDoc)"
                 id="guide-panel-preview"
                 class="guide-preview-panel"
                 role="tabpanel"
@@ -1214,6 +1263,18 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         </NuxtLink>
                     </div>
                 </section>
+
+                <section
+                    v-if="isDocumentationOnlyGuide"
+                    class="guide-docs-section"
+                    id="doc-standards-acknowledgement"
+                >
+                    <div class="guide-standards-actions">
+                        <UiButton variant="filled" tone="neutral" size="md" @click="confirmStandardsRead">
+                            I have read the standards
+                        </UiButton>
+                    </div>
+                </section>
             </section>
         </main>
     </div>
@@ -1292,6 +1353,13 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-link-overview {
     margin-right: 4px;
+}
+
+.guide-sidebar-primary {
+    display: grid;
+    gap: 6px;
+    margin-right: 4px;
+    margin-bottom: 8px;
 }
 
 .guide-sidebar-search {
@@ -1918,8 +1986,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-docs-section-title {
     margin: 0 0 12px;
-    font-size: 18px;
-    line-height: 30px;
+    font-size: 16px;
+    line-height: 28px;
     color: var(--text-primary);
 }
 
@@ -2036,6 +2104,11 @@ watch([guidePath, viewMode, previewFrame], async () => {
     text-decoration: none;
     color: var(--text-primary);
     background: var(--contrast-light);
+}
+
+.guide-standards-actions {
+    display: flex;
+    justify-content: flex-start;
 }
 
 @media (max-width: 860px) {

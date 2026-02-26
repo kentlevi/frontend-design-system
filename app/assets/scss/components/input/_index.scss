@@ -34,6 +34,7 @@
 
     font-family: t.$font-base;
     font-size: t.$body-base;
+    line-height: 24px;
     color: c.$text-primary;
 
     &::placeholder {
@@ -42,8 +43,8 @@
 }
 
 .ui-input-icon {
-    width: sp.$space-4;
-    height: sp.$space-4;
+    width: 24px;
+    height: 24px;
 
     display: grid;
     place-items: center;

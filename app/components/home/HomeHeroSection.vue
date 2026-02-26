@@ -88,7 +88,8 @@ const { t } = useI18n();
 
             .home-hero-subtitle {
                 margin: 0;
-                font-size: 18px;
+                font-size: 16px;
+                line-height: 28px;
                 color: #273046;
             }
 

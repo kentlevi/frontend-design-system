@@ -42,7 +42,7 @@ const localePath = useLocalePath();
 
         .auth-login-create-account-link {
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 700;
             text-decoration: underline;
         }
     }

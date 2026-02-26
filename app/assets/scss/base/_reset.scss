@@ -4,7 +4,6 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    letter-spacing: -0.5px;
 }
 
 html,
@@ -46,6 +45,7 @@ select {
     background: none;
     border: none;
     outline: none;
+    letter-spacing: -0.5px;
 }
 
 button {
@@ -73,8 +73,8 @@ h3,
 h4,
 h5,
 h6,
-p,
-.b-as-e-_r-es-et-p {
+p {
+    letter-spacing: -0.5px;
     overflow-wrap: break-word;
 }
 

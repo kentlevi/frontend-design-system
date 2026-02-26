@@ -89,8 +89,8 @@ defineProps<{
             .product-reviews-card-title {
                 margin: 0;
                 font-size: 16px;
-                line-height: 28px;
                 font-weight: 500;
+                line-height: 28px;
                 color: var(--text-primary);
             }
 

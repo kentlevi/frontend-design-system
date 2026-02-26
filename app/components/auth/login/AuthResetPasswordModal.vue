@@ -212,7 +212,7 @@ async function submitChangePassword() {
                 <UiInput
                     :model-value="password"
                     :type="passwordVisible ? 'text' : 'password'"
-                    size="lg"
+                    size="md"
                     :state="error ? 'error' : 'default'"
                     placeholder="Enter New Password"
                     data-testid="auth-reset-password-input"
@@ -226,7 +226,7 @@ async function submitChangePassword() {
                             @click="passwordVisible = !passwordVisible"
                         >
                             <UiIcon
-                                :name="passwordVisible ? 'regular-eye-slash' : 'regular-eye'"
+                                :name="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
                                 :size="20"
                             />
                         </button>
@@ -239,7 +239,7 @@ async function submitChangePassword() {
                 <UiInput
                     :model-value="confirmPassword"
                     :type="confirmVisible ? 'text' : 'password'"
-                    size="lg"
+                    size="md"
                     :state="error ? 'error' : 'default'"
                     placeholder="Confirm New Password"
                     data-testid="auth-reset-password-confirm-input"
@@ -253,7 +253,7 @@ async function submitChangePassword() {
                             @click="confirmVisible = !confirmVisible"
                         >
                             <UiIcon
-                                :name="confirmVisible ? 'regular-eye-slash' : 'regular-eye'"
+                                :name="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
                                 :size="20"
                             />
                         </button>
@@ -266,7 +266,7 @@ async function submitChangePassword() {
             <UiButton
                 variant="filled"
                 tone="neutral"
-                size="lg"
+                size="md"
                 class="auth-reset-submit"
                 :disabled="loading"
                 data-testid="auth-reset-password-submit-button"

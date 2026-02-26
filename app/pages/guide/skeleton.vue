@@ -247,15 +247,15 @@ const toggleLoading = () => {
 
     h3 {
         margin: 0;
-        font-size: 18px;
-        line-height: 24px;
+        font-size: 16px;
+        line-height: 28px;
         color: var(--text-primary);
     }
 
     p {
         margin: 0;
         font-size: 14px;
-        line-height: 22px;
+        line-height: 24px;
         color: var(--text-secondary);
     }
 }

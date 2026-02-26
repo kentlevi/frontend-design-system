@@ -87,6 +87,7 @@ async function submitReset() {
 <template>
     <UiModal
         :model-value="modelValue"
+        align="center"
         width="504px"
         padding="40px"
         gap="24px"
@@ -102,56 +103,79 @@ async function submitReset() {
                     :size="40"
                     class="auth-forgot-logo"
                 />
-                <h3 class="auth-forgot-title">Forgot your password?</h3>
+                <h3 class="auth-forgot-title">
+                    {{ sent ? 'Please check your email' : 'Forgot your password?' }}
+                </h3>
             </div>
         </template>
 
         <div class="auth-forgot-body">
-            <p class="auth-forgot-description">
-                Enter your user account's verified email address and we will
-                send you a password reset link.
-            </p>
+            <template v-if="!sent">
+                <p class="auth-forgot-description">
+                    Enter your user account's verified email address and we will
+                    send you a password reset link.
+                </p>
 
-            <label class="auth-forgot-label">{{ t('auth.login.email') }}</label>
-            <UiInput
-                class="auth-forgot-input"
-                type="email"
-                size="lg"
-                :model-value="resetEmail"
-                :state="error ? 'error' : 'default'"
-                :placeholder="t('auth.login.enterEmail')"
-                data-testid="auth-login-forgot-password-email-input"
-                @update:model-value="resetEmail = $event"
-            />
-            <p v-if="error" class="auth-forgot-error">{{ error }}</p>
-            <p v-if="sent" class="auth-forgot-success">
-                Password reset email sent. Please check your inbox.
-            </p>
+                <div class="auth-forgot-label-row">
+                    <label class="auth-forgot-label">{{ t('auth.login.email') }}</label>
+                    <p v-if="error" class="auth-forgot-error">{{ error }}</p>
+                </div>
+                <UiInput
+                    class="auth-forgot-input"
+                    type="email"
+                    size="md"
+                    :model-value="resetEmail"
+                    :state="error ? 'error' : 'default'"
+                    :placeholder="t('auth.login.enterEmail')"
+                    data-testid="auth-login-forgot-password-email-input"
+                    @update:model-value="resetEmail = $event"
+                />
 
-            <div class="auth-forgot-actions">
-                <UiButton
-                    variant="filled"
-                    tone="neutral"
-                    size="lg"
-                    class="auth-forgot-submit"
-                    data-testid="auth-login-forgot-password-submit-button"
-                    :disabled="loading"
-                    @click="submitReset"
-                >
-                    {{ loading ? 'Sending...' : 'Send Password Reset Email' }}
-                </UiButton>
+                <div class="auth-forgot-actions">
+                    <UiButton
+                        variant="filled"
+                        tone="neutral"
+                        size="md"
+                        class="auth-forgot-submit"
+                        data-testid="auth-login-forgot-password-submit-button"
+                        :disabled="loading"
+                        @click="submitReset"
+                    >
+                        {{ loading ? 'Sending...' : 'Send Password Reset Email' }}
+                    </UiButton>
 
-                <UiButton
-                    variant="ghost"
-                    tone="neutral"
-                    size="sm"
-                    class="auth-forgot-return"
-                    data-testid="auth-login-forgot-password-return-button"
-                    @click="closeModal"
-                >
-                    Return to Login
-                </UiButton>
-            </div>
+                    <UiButton
+                        variant="ghost"
+                        tone="neutral"
+                        size="sm"
+                        class="auth-forgot-return"
+                        data-testid="auth-login-forgot-password-return-button"
+                        @click="closeModal"
+                    >
+                        Return to Login
+                    </UiButton>
+                </div>
+            </template>
+
+            <template v-else>
+                <p class="auth-forgot-description">
+                    Check your email for a link to reset your password. If it
+                    doesn't appear within a few minutes, check your spam folder.
+                </p>
+
+                <div class="auth-forgot-actions auth-forgot-actions-success">
+                    <UiButton
+                        variant="filled"
+                        tone="neutral"
+                        size="md"
+                        class="auth-forgot-submit"
+                        data-testid="auth-login-forgot-password-return-button"
+                        @click="closeModal"
+                    >
+                        Return to Login
+                    </UiButton>
+                </div>
+            </template>
         </div>
     </UiModal>
 </template>
@@ -188,20 +212,30 @@ async function submitReset() {
         color: var(--text-secondary);
     }
 
-    .auth-forgot-label {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-primary);
+    .auth-forgot-label-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+
+        .auth-forgot-label {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 24px;
+            color: var(--text-primary);
+        }
+
+        .auth-forgot-error {
+            margin: 0;
+            font-size: 14px;
+            line-height: 24px;
+            font-weight: 600;
+            color: var(--error);
+        }
     }
 
     .auth-forgot-input {
         width: 100%;
-    }
-
-    .auth-forgot-error {
-        margin: 0;
-        font-size: 13px;
-        color: var(--error);
     }
 
     .auth-forgot-success {
@@ -251,6 +285,10 @@ async function submitReset() {
             }
         }
     }
+
+    .auth-forgot-actions-success {
+        margin-top: 8px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -262,3 +300,5 @@ async function submitReset() {
     }
 }
 </style>
+
+

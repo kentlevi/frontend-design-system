@@ -27,8 +27,8 @@ const props = withDefaults(
         searchable: false,
         disabled: false,
         emptyText: 'No results found.',
-        iconSize: 14,
-        iconFamily: 'strong',
+        iconSize: 24,
+        iconFamily: 'regular',
     }
 );
 
@@ -40,6 +40,8 @@ const rootRef = ref<HTMLElement | null>(null);
 const searchRef = ref<HTMLInputElement | null>(null);
 const isOpen = ref(false);
 const query = ref('');
+const SUPPRESS_TOGGLE_MS = 200;
+let suppressToggleUntil = 0;
 
 const selectedOption = computed(() =>
     props.options.find((item) => item.value === props.modelValue) ?? null
@@ -61,13 +63,9 @@ const filteredOptions = computed(() => {
     });
 });
 
-const triggerIconName = computed(() => {
-    const family = props.iconFamily;
-    if (isOpen.value) {
-        return family === 'regular' ? 'regular-angle-up' : 'strong-angle-up';
-    }
-    return family === 'regular' ? 'regular-angle-down' : 'strong-angle-down';
-});
+const triggerIconName = computed(() =>
+    props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
+);
 
 function closeMenu() {
     isOpen.value = false;
@@ -83,6 +81,9 @@ function openMenu() {
 }
 
 function toggleMenu() {
+    if (Date.now() < suppressToggleUntil) {
+        return;
+    }
     if (isOpen.value) {
         closeMenu();
         return;
@@ -96,11 +97,14 @@ function selectOption(option: SelectOption) {
     closeMenu();
 }
 
-function handleOutsideClick(event: MouseEvent) {
+function handleOutsidePointerDown(event: PointerEvent) {
     const target = event.target as Node | null;
     if (!target) return;
     if (rootRef.value?.contains(target)) return;
+    if (!isOpen.value) return;
+
     closeMenu();
+    suppressToggleUntil = Date.now() + SUPPRESS_TOGGLE_MS;
 }
 
 function handleWindowKeydown(event: KeyboardEvent) {
@@ -110,12 +114,12 @@ function handleWindowKeydown(event: KeyboardEvent) {
 }
 
 onMounted(() => {
-    window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('pointerdown', handleOutsidePointerDown, true);
     window.addEventListener('keydown', handleWindowKeydown);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('click', handleOutsideClick);
+    window.removeEventListener('pointerdown', handleOutsidePointerDown, true);
     window.removeEventListener('keydown', handleWindowKeydown);
 });
 </script>
@@ -145,55 +149,54 @@ onBeforeUnmount(() => {
                 :name="triggerIconName"
                 :size="props.iconSize"
                 color="var(--text-secondary)"
+                class="ui-select-trigger-icon"
+                :class="{ 'is-open': isOpen }"
             />
         </button>
 
-        <div v-if="isOpen" class="ui-select-menu" role="listbox">
-            <div v-if="props.searchable" class="ui-select-search">
-                <UiIcon
-                    name="strong-search"
-                    :size="14"
-                    color="var(--text-muted)"
-                />
-                <input
-                    ref="searchRef"
-                    v-model="query"
-                    type="text"
-                    class="ui-select-search-input"
-                    placeholder="Search..."
-                />
-            </div>
+        <Transition name="ui-select-menu">
+            <div v-if="isOpen" class="ui-select-menu" role="listbox">
+                <div v-if="props.searchable" class="ui-select-search">
+                    <UiIcon
+                        name="strong-search"
+                        :size="14"
+                        color="var(--text-muted)"
+                    />
+                    <input
+                        ref="searchRef"
+                        v-model="query"
+                        type="text"
+                        class="ui-select-search-input"
+                        placeholder="Search..."
+                    />
+                </div>
 
-            <div class="ui-select-options">
+                <div class="ui-select-options">
                 <button
                     v-for="option in filteredOptions"
                     :key="option.value"
                     type="button"
                     class="ui-select-option"
-                    :class="{
-                        'is-selected': option.value === props.modelValue,
-                    }"
-                    @click="selectOption(option)"
-                >
-                    <div class="ui-select-option-copy">
-                        <p class="ui-select-option-label">{{ option.label }}</p>
-                        <p v-if="option.description" class="ui-select-option-description">
-                            {{ option.description }}
-                        </p>
-                    </div>
+                        :class="{
+                            'is-selected': option.value === props.modelValue,
+                        }"
+                        @mousedown.prevent="selectOption(option)"
+                    >
+                        <div class="ui-select-option-copy">
+                            <p class="ui-select-option-label">{{ option.label }}</p>
+                            <p v-if="option.description" class="ui-select-option-description">
+                                {{ option.description }}
+                            </p>
+                        </div>
+                    </button>
 
-                    <UiIcon
-                        v-if="option.value === props.modelValue"
-                        name="strong-check"
-                        :size="14"
-                        color="var(--text-primary)"
-                    />
-                </button>
-
-                <p v-if="filteredOptions.length === 0" class="ui-select-empty">
-                    {{ props.emptyText }}
-                </p>
+                    <p v-if="filteredOptions.length === 0" class="ui-select-empty">
+                        {{ props.emptyText }}
+                    </p>
+                </div>
             </div>
-        </div>
+        </Transition>
     </div>
 </template>
+
+

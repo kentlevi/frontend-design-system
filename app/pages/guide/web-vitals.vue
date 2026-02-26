@@ -313,13 +313,14 @@ function routeBudgetLabel(row: RouteVitals): string {
     .web-vitals-panel h2 {
         margin: 0 0 8px;
         font-size: 16px;
+        line-height: 28px;
         color: var(--text-primary);
     }
 
     .web-vitals-panel p {
         margin: 0;
-        font-size: 13px;
-        line-height: 22px;
+        font-size: 14px;
+        line-height: 24px;
         color: var(--text-secondary);
     }
 

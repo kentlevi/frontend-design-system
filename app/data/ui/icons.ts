@@ -1,5 +1,49 @@
-export const iconSpriteVersion = "1772013857115" as const
+export const iconSpriteVersion = "1772085553306" as const
 export const icons = {
+  "brand-facebook": {
+    "id": "icon-brand-facebook",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-fb-circle": {
+    "id": "icon-brand-fb-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-fb-messenger": {
+    "id": "icon-brand-fb-messenger",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-fb-square": {
+    "id": "icon-brand-fb-square",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-instagram-square": {
+    "id": "icon-brand-instagram-square",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-instagram": {
+    "id": "icon-brand-instagram",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-pinterest-circle": {
+    "id": "icon-brand-pinterest-circle",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-pinterest-square": {
+    "id": "icon-brand-pinterest-square",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-pinterest": {
+    "id": "icon-brand-pinterest",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-tiktok": {
+    "id": "icon-brand-tiktok",
+    "viewBox": "0 0 32 32"
+  },
+  "brand-youtube": {
+    "id": "icon-brand-youtube",
+    "viewBox": "0 0 32 32"
+  },
   "light-alarm-clock": {
     "id": "icon-light-alarm-clock",
     "viewBox": "0 0 32 32"
