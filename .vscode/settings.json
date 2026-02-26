@@ -1,0 +1,17 @@
+{
+  "editor.insertSpaces": false,
+  "editor.tabSize": 4,
+  "editor.detectIndentation": false,
+  "editor.autoIndent": "full",
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  "eslint.validate": ["javascript", "typescript", "vue"],
+  "eslint.run": "onType",
+  "eslint.alwaysShowStatus": true,
+
+  "files.insertFinalNewline": false,
+  "files.trimTrailingWhitespace": true,
+
+  "editor.formatOnSave": false
+}
