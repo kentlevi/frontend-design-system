@@ -85,8 +85,10 @@ const { orders, activeOrder } = useAccountOrders();
 
             .account-orders-title {
                 margin: 0;
-                font-size: 52px;
-                line-height: 1.05;
+                font-size: 28px;
+                font-weight: 700;
+                line-height: 40px;
+                letter-spacing: -0.5px;
             }
         }
 
@@ -192,3 +194,4 @@ const { orders, activeOrder } = useAccountOrders();
     }
 }
 </style>
+
