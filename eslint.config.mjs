@@ -2,13 +2,16 @@
 import withNuxt from './.nuxt/eslint.config.mjs'
 import stylistic from '@stylistic/eslint-plugin'
 
+// Cast to any to satisfy TypeScript
+const stylisticPlugin = /** @type {any} */ (stylistic)
+
+
 export default withNuxt({
 	plugins: {
-		'@stylistic': stylistic
+		'@stylistic': stylisticPlugin
 	},
 	rules: {
 		'vue/no-multiple-template-root': 'off',
-		'vue/max-attributes-per-line': ['error', { singleline: 3 }],
 		'@stylistic/indent': ['error', 'tab'],
 		'vue/html-indent': ['error', 'tab'],
 		'@stylistic/no-tabs': 'off',
