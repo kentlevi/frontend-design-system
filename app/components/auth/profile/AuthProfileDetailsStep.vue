@@ -3,11 +3,11 @@ import { ref } from 'vue';
 
 const props = withDefaults(
     defineProps<{
-        firstName: string;
-        lastName: string;
-        email: string;
-        initials: string;
-        photoUrl: string | null;
+        firstName?: string;
+        lastName?: string;
+        email?: string;
+        initials?: string;
+        photoUrl?: string | null;
     }>(),
     {
         firstName: '',
@@ -81,7 +81,7 @@ function updateEmail(value: string) {
                                 :src="photoUrl"
                                 alt="Profile photo"
                                 class="auth-profile-avatar-image"
-                            />
+                            >
                             <span v-else class="auth-profile-avatar-initials">{{ initials }}</span>
                         </div>
 
@@ -100,16 +100,16 @@ function updateEmail(value: string) {
                                     type="file"
                                     class="auth-profile-file-input"
                                     accept=".jpg,.jpeg,.png"
-                                    @change="onFilePicked"
                                     data-testid="auth-profile-photo-input"
-                                />
+                                    @change="onFilePicked"
+                                >
                                 <UiButton
                                     variant="outline"
                                     tone="neutral"
                                     size="md"
                                     class="auth-profile-outline-btn"
-                                    @click="openFilePicker"
                                     data-testid="auth-profile-photo-upload-button"
+                                    @click="openFilePicker"
                                 >
                                     {{ $t('auth.profile.details.upload') }}
                                 </UiButton>
@@ -119,8 +119,8 @@ function updateEmail(value: string) {
                                     tone="danger"
                                     size="md"
                                     class="auth-profile-delete-btn"
-                                    @click="emit('photo-remove')"
                                     data-testid="auth-profile-photo-delete-button"
+                                    @click="emit('photo-remove')"
                                 >
                                     {{ $t('auth.profile.details.delete') }}
                                 </UiButton>
@@ -180,8 +180,8 @@ function updateEmail(value: string) {
                 tone="neutral"
                 size="md"
                 class="auth-profile-link-btn"
-                @click="emit('next')"
                 data-testid="auth-profile-skip-button"
+                @click="emit('next')"
             >
                 {{ $t('auth.profile.details.skip') }}
             </UiButton>

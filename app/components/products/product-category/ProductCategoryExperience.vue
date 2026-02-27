@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { toRef, defineAsyncComponent  } from 'vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
 import { useProductCategoryExperience } from '~/composables/products/useProductCategoryExperience';
-import { type ProductCategoryKey } from '~/data/products/catalog';
-import { defineAsyncComponent } from 'vue';
+import type { ProductCategoryKey } from '~/data/products/catalog';
+
 
 const ProductReviewsSection = defineAsyncComponent(
     () => import('~/components/products/product-reviews/ProductReviewsSection.vue')
@@ -36,7 +36,6 @@ const {
     cartPreviewOpen,
     featuredOpen,
     specialInstructions,
-    artworkFile,
     artworkPreviewUrl,
     artworkInputRef,
     sizeOptionModels,
@@ -93,11 +92,11 @@ const {
                 :get-product-blurb="getProductBlurb"
                 :format-price="formatPrice"
                 :quantity-price="quantityPrice"
+                data-testid="product-category-stage"
                 @select-product="selectProduct"
                 @update:selected-size="selectedSize = $event"
                 @update:selected-qty="selectedQty = $event"
                 @open-upload="openUploadModal"
-                data-testid="product-category-stage"
             />
         </div>
 
@@ -106,9 +105,10 @@ const {
             data-testid="product-category-details"
         />
 
-        <input ref="artworkInputRef" type="file" class="artwork-file-input"
-            accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" @change="onArtworkSelected"
-            data-testid="product-category-artwork-input" />
+        <input
+ref="artworkInputRef" type="file" class="artwork-file-input"
+            accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" data-testid="product-category-artwork-input"
+            @change="onArtworkSelected" >
 
         <CartUploadModal
             v-if="uploadModalOpen"
@@ -120,13 +120,13 @@ const {
             :cart-artwork-size="cartArtworkSize"
             :special-instructions="specialInstructions"
             :add-to-cart-loading="addToCartLoading"
+            data-testid="product-category-upload-modal"
             @close="closeUploadModal"
             @open-file-picker="openFilePicker"
             @remove-artwork="removeArtwork"
             @update:special-instructions="specialInstructions = $event"
             @skip-upload-later="skipAndUploadLater"
             @proceed-to-cart="proceedToCart"
-            data-testid="product-category-upload-modal"
         />
 
         <CartPreview
@@ -141,11 +141,11 @@ const {
             :get-product-name="getProductName"
             :format-price="formatPrice"
             :featured-start-price="featuredStartPrice"
+            data-testid="product-category-cart-preview"
             @close="closeCartPreview"
             @update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty)"
             @remove-item="removeCartItem($event)"
             @close-featured="closeFeaturedItems"
-            data-testid="product-category-cart-preview"
         />
 
         <ProductReviewsSection

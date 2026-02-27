@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AccountProfilePage from '~/components/account/pages/AccountProfilePage.vue';
 definePageMeta({
     layout: 'home',
 });
-import AccountProfilePage from '~/components/account/pages/AccountProfilePage.vue';
 </script>
 
 <template>

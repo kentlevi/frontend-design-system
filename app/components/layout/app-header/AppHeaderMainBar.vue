@@ -81,10 +81,10 @@ const emit = defineEmits<{
                 type="button"
                 class="home-header-icon home-header-locale"
                 :aria-label="t('layout.header.locale.aria')"
+                data-testid="app-header-locale-button"
                 @click="emit('open-locale')"
                 @mouseenter="emit('prefetch-locale')"
                 @focus="emit('prefetch-locale')"
-                data-testid="app-header-locale-button"
             >
                 <UiFlag :code="props.selectedLocale" :size="24" />
             </button>
@@ -97,10 +97,10 @@ const emit = defineEmits<{
                 icon-size="md"
                 class="home-header-icon"
                 :aria-label="t('layout.header.search')"
+                data-testid="app-header-search-button"
                 @click="emit('open-search')"
                 @mouseenter="emit('prefetch-search')"
                 @focus="emit('prefetch-search')"
-                data-testid="app-header-search-button"
             />
             <div class="home-header-cart-wrap">
                 <UiButton
@@ -112,10 +112,10 @@ const emit = defineEmits<{
                     icon-size="md"
                     class="home-header-icon"
                     :aria-label="t('layout.header.cart')"
+                    data-testid="app-header-cart-button"
                     @click="emit('open-cart')"
                     @mouseenter="emit('prefetch-cart')"
                     @focus="emit('prefetch-cart')"
-                    data-testid="app-header-cart-button"
                 />
                 <span
                     v-if="props.cartItemCount > 0"
@@ -143,12 +143,12 @@ const emit = defineEmits<{
                 :account-transition-name="props.accountTransitionName"
                 :account-links="props.accountLinks"
                 :set-wrap-ref="props.setAccountMenuRef"
+                data-testid="app-header-account-menu"
                 @toggle="emit('toggle-account')"
                 @close="emit('close-account')"
                 @mouse-enter="emit('account-mouse-enter')"
                 @mouse-leave="emit('account-mouse-leave')"
                 @logout="emit('logout')"
-                data-testid="app-header-account-menu"
             />
         </div>
     </div>

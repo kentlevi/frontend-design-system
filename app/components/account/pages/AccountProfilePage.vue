@@ -51,7 +51,7 @@ const {
                                     :src="photoUrl"
                                     :alt="t('account.profile.profilePhoto')"
                                     class="account-profile-avatar-image"
-                                />
+                                >
                                 <span v-else class="account-profile-avatar-text">{{ initials }}</span>
                             </div>
                             <div>
@@ -63,14 +63,14 @@ const {
                                         type="file"
                                         class="account-profile-file-input"
                                         accept=".jpg,.jpeg,.png"
-                                        @change="onFilePicked"
                                         data-testid="account-profile-photo-input"
-                                    />
+                                        @change="onFilePicked"
+                                    >
                                     <button
                                         type="button"
                                         class="account-profile-outline-button"
-                                        @click="openFilePicker"
                                         data-testid="account-profile-photo-upload-button"
+                                        @click="openFilePicker"
                                     >
                                         {{ t('account.profile.uploadNewPhoto') }}
                                     </button>
@@ -78,8 +78,8 @@ const {
                                         v-if="photoUrl"
                                         type="button"
                                         class="account-profile-delete-button"
-                                        @click="removePhoto"
                                         data-testid="account-profile-photo-delete-button"
+                                        @click="removePhoto"
                                     >
                                         {{ t('account.profile.delete') }}
                                     </button>
@@ -128,7 +128,7 @@ const {
                             </UiFormField>
                         </div>
                         <div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-                            <UiButton variant="filled" tone="neutral" size="md" @click="saveProfile" data-testid="account-profile-save-button">
+                            <UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="saveProfile">
                                 {{ t('account.profile.saveChanges') }}
                             </UiButton>
                         </div>
@@ -201,7 +201,7 @@ const {
                                 <p class="account-profile-muted">{{ t('account.profile.promotionsDesc') }}</p>
                             </div>
                             <label class="account-profile-switch">
-                                <input v-model="promotions" type="checkbox" data-testid="account-profile-toggle-promotions" />
+                                <input v-model="promotions" type="checkbox" data-testid="account-profile-toggle-promotions" >
                                 <span />
                             </label>
                         </div>
@@ -211,7 +211,7 @@ const {
                                 <p class="account-profile-muted">{{ t('account.profile.reviewsDesc') }}</p>
                             </div>
                             <label class="account-profile-switch">
-                                <input v-model="reviews" type="checkbox" data-testid="account-profile-toggle-reviews" />
+                                <input v-model="reviews" type="checkbox" data-testid="account-profile-toggle-reviews" >
                                 <span />
                             </label>
                         </div>
@@ -221,7 +221,7 @@ const {
                                 <p class="account-profile-muted">{{ t('account.profile.confirmationsDesc') }}</p>
                             </div>
                             <label class="account-profile-switch">
-                                <input v-model="confirmations" type="checkbox" data-testid="account-profile-toggle-confirmations" />
+                                <input v-model="confirmations" type="checkbox" data-testid="account-profile-toggle-confirmations" >
                                 <span />
                             </label>
                         </div>
@@ -234,23 +234,23 @@ const {
                                 <button
                                     type="button"
                                     :class="{ active: unit === 'millimeter' }"
-                                    @click="unit = 'millimeter'"
                                     data-testid="account-profile-unit-millimeter-button"
+                                    @click="unit = 'millimeter'"
                                 >
                                     {{ t('account.profile.millimeter') }}
                                 </button>
                                 <button
                                     type="button"
                                     :class="{ active: unit === 'inch' }"
-                                    @click="unit = 'inch'"
                                     data-testid="account-profile-unit-inch-button"
+                                    @click="unit = 'inch'"
                                 >
                                     {{ t('account.profile.inch') }}
                                 </button>
                             </div>
                         </div>
                         <div class="account-profile-actions-right" data-testid="account-profile-signout-wrap">
-                            <UiButton variant="outline" tone="neutral" size="md" @click="signOut" data-testid="account-profile-signout-button">
+                            <UiButton variant="outline" tone="neutral" size="md" data-testid="account-profile-signout-button" @click="signOut">
                                 {{ t('account.profile.signOut') }}
                             </UiButton>
                         </div>

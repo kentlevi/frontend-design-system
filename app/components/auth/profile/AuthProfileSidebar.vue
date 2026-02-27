@@ -1,7 +1,7 @@
 <script setup lang="ts">
 withDefaults(
     defineProps<{
-        step: 1 | 2;
+        step?: 1 | 2;
     }>(),
     {
         step: 1,
@@ -38,7 +38,8 @@ withDefaults(
                         </div>
                     </div>
 
-                    <div class="auth-profile-step" :class="{ 'is-active': step === 2 }"
+                    <div
+class="auth-profile-step" :class="{ 'is-active': step === 2 }"
                         data-testid="auth-profile-step-2">
                         <span class="auth-profile-step-icon">
                             <UiIcon name="regular-cogs" :size="24" />

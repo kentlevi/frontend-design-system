@@ -44,8 +44,8 @@ const emit = defineEmits<{
                 :sr-label="t('product.reviews.controls.previous')"
                 class="product-reviews-control-button"
                 :disabled="!canGoPrev"
-                @click="emit('prev')"
                 data-testid="product-reviews-prev-button"
+                @click="emit('prev')"
             />
             <UiButton
                 type="button"
@@ -58,8 +58,8 @@ const emit = defineEmits<{
                 :sr-label="t('product.reviews.controls.next')"
                 class="product-reviews-control-button"
                 :disabled="!canGoNext"
-                @click="emit('next')"
                 data-testid="product-reviews-next-button"
+                @click="emit('next')"
             />
         </div>
     </div>

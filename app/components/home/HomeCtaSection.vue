@@ -7,7 +7,7 @@ const { t } = useI18n();
         <div class="home-cta-panel">
             <div class="home-cta-inner">
                 <h2 class="home-cta-title">
-                    {{ t('home.cta.titleLine1') }}<br />
+                    {{ t('home.cta.titleLine1') }}<br >
                     {{ t('home.cta.titleLine2') }}
                 </h2>
 

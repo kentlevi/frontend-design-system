@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AccountQuoteRequestsPage from '~/components/account/pages/AccountQuoteRequestsPage.vue';
 definePageMeta({
     layout: 'home',
 });
-import AccountQuoteRequestsPage from '~/components/account/pages/AccountQuoteRequestsPage.vue';
 </script>
 
 <template>

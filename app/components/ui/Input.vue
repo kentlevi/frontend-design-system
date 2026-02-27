@@ -110,7 +110,7 @@ function focusInput() {
             :readonly="readonly"
             :disabled="disabled"
             @input="onInput"
-        />
+        >
 
         <span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
             <slot name="icon-right">

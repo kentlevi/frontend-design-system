@@ -11,7 +11,7 @@ defineProps<{
 <template>
     <article class="product-reviews-card" :data-testid="`product-reviews-card-${card.id}`">
         <div class="product-reviews-body" data-testid="product-reviews-card-body">
-            <div class="product-reviews-media" :class="card.mediaClass" :data-testid="`product-reviews-card-media-${card.id}`"></div>
+            <div class="product-reviews-media" :class="card.mediaClass" :data-testid="`product-reviews-card-media-${card.id}`"/>
 
             <div class="product-reviews-content" data-testid="product-reviews-card-content">
                 <h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${card.id}`">{{ t(`product.reviews.cards.${card.id}.title`) }}</h3>
@@ -21,7 +21,7 @@ defineProps<{
 
         <div class="product-reviews-meta" data-testid="product-reviews-card-meta">
             <div class="product-reviews-card-author" data-testid="product-reviews-card-author">
-                <span class="product-reviews-card-avatar" data-testid="product-reviews-card-avatar"></span>
+                <span class="product-reviews-card-avatar" data-testid="product-reviews-card-avatar"/>
                 <div class="product-reviews-card-author-details" data-testid="product-reviews-card-author-details">
                     <strong class="product-reviews-card-author-name" :data-testid="`product-reviews-card-author-name-${card.id}`">{{ card.author }}</strong>
                     <small class="product-reviews-card-date" :data-testid="`product-reviews-card-date-${card.id}`">{{ card.date }}</small>

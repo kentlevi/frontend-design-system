@@ -68,7 +68,7 @@ const carouselLabel = 'Client reviews carousel';
         <div class="home-reviews-card">
             <div class="home-reviews-head">
                 <h2 class="home-reviews-title">
-                    {{ t('home.reviews.titleLine1') }}<br />
+                    {{ t('home.reviews.titleLine1') }}<br >
                     {{ t('home.reviews.titleLine2') }}
                 </h2>
 
@@ -118,16 +118,16 @@ const carouselLabel = 'Client reviews carousel';
                     <article
                         v-for="(review, idx) in reviews"
                         :key="`${review.title}-${review.author}-${idx}`"
-                        class="home-reviews-item"
-                        :data-testid="`home-review-card-${idx + 1}`"
-                        role="group"
-                        :aria-label="`Review ${idx + 1} of ${reviews.length}`"
                         :ref="
                             (el) => {
                                 if (idx === 0)
                                     setCardRef(el);
                             }
                         "
+                        class="home-reviews-item"
+                        :data-testid="`home-review-card-${idx + 1}`"
+                        role="group"
+                        :aria-label="`Review ${idx + 1} of ${reviews.length}`"
                     >
                         <div
                             class="home-reviews-media"

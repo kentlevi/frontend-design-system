@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DevOnboarding from '~/components/layout/DevOnboarding.vue';
 import {
     COUNTRY_TO_HTML_LANG,
     DEFAULT_COUNTRY,
@@ -7,9 +6,6 @@ import {
 } from '~/constants/countries';
 
 const { t, locale } = useI18n();
-const isDev = import.meta.dev;
-const route = useRoute();
-const isGuideRoute = computed(() => /\/guide(\/|$)/i.test(route.path));
 const resolvedLocaleCountry = computed(
     () => resolveSupportedCountry(String(locale.value)) || DEFAULT_COUNTRY
 );
@@ -44,7 +40,6 @@ useHead(() => ({
 
 <template>
     <NuxtLayout>
-        <DevOnboarding v-if="isDev && !isGuideRoute" />
         <NuxtPage />
     </NuxtLayout>
 </template>

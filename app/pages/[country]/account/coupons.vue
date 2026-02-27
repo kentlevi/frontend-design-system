@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AccountCouponsPage from '~/components/account/pages/AccountCouponsPage.vue';
 definePageMeta({
     layout: 'home',
 });
-import AccountCouponsPage from '~/components/account/pages/AccountCouponsPage.vue';
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AccountOrdersPage from '~/components/account/pages/AccountOrdersPage.vue';
 definePageMeta({
     layout: 'home',
 });
-import AccountOrdersPage from '~/components/account/pages/AccountOrdersPage.vue';
 </script>
 
 <template>

@@ -12,7 +12,7 @@ const apiCountry = computed(() =>
     country.value === 'en' ? 'ph' : country.value
 );
 
-const props = defineProps<{
+defineProps<{
     modelValue: boolean;
     email: string;
     orderNumber: string;

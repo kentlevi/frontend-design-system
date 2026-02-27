@@ -195,7 +195,7 @@ const fieldValidationByKey = computed(() =>
                                     :src="method.icon"
                                     :alt="t(`${method.i18nKey}.alt`)"
                                     class="checkout-shipping-method-icon"
-                                />
+                                >
                                 <div class="checkout-shipping-method-content">
                                     <div class="checkout-shipping-method-main">
                                         <div class="checkout-shipping-method-name">{{ t(`${method.i18nKey}.name`) }}</div>
@@ -224,7 +224,7 @@ const fieldValidationByKey = computed(() =>
                                 :src="method.icon"
                                 :alt="t(`checkout.guest.paymentMethods.${method.i18nKey}.alt`)"
                                 class="checkout-pay-btn-icon"
-                            />
+                            >
                             <span class="checkout-pay-btn-label">{{ t(`checkout.guest.paymentMethods.${method.i18nKey}.label`) }}</span>
                         </button>
                     </div>
@@ -298,7 +298,7 @@ const fieldValidationByKey = computed(() =>
                                     :src="item.artworkPreviewUrl || item.product.image"
                                     :alt="item.product.name"
                                     class="checkout-summary-thumb-image"
-                                />
+                                >
                             </div>
                             <div class="checkout-summary-info">
                                 <div class="checkout-summary-name">{{ item.product.name }}</div>

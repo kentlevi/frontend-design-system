@@ -6,14 +6,14 @@ const { t } = useI18n();
     <section class="home-feature" data-testid="home-feature-highlight-section">
         <div class="home-feature-card">
             <div class="home-feature-media" aria-hidden="true">
-                <div class="home-feature-sticker home-feature-sticker-a"></div>
-                <div class="home-feature-sticker home-feature-sticker-b"></div>
-                <div class="home-feature-sticker home-feature-sticker-c"></div>
+                <div class="home-feature-sticker home-feature-sticker-a"/>
+                <div class="home-feature-sticker home-feature-sticker-b"/>
+                <div class="home-feature-sticker home-feature-sticker-c"/>
             </div>
 
             <div class="home-feature-copy">
                 <h2 class="home-feature-title">
-                    {{ t('home.feature.titleLine1') }}<br />
+                    {{ t('home.feature.titleLine1') }}<br >
                     {{ t('home.feature.titleLine2') }}
                 </h2>
 

@@ -11,5 +11,3 @@
   - `getHexFromToken(token)`: resolves CSS variable color token to hex-like string.
 - `cart.ts`
   - `sizeDimOnly(label)`: extracts dimension portion from size labels.
-- `text.ts`
-  - `toGuideLabel(value)`: normalizes short guide labels for display.

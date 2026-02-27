@@ -2,8 +2,8 @@
 import type { PropType } from 'vue';
 import { toRef } from 'vue';
 import { useTooltip } from '~/composables/ui/useTooltip';
-import type { UiTooltipProps } from '~/data/ui/tooltip';
-import { tooltipSides, tooltipTones, uiTooltipDefaults } from '~/data/ui/tooltip';
+import type { UiTooltipProps , tooltipSides, tooltipTones} from '~/data/ui/tooltip';
+import { uiTooltipDefaults } from '~/data/ui/tooltip';
 
 const props = defineProps({
     open: {

@@ -1,3 +1,10 @@
+import { DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries';
+
+function resolveCountryFromPath(path: string) {
+    const [firstSegment] = path.split('/').filter(Boolean);
+    return resolveSupportedCountry(firstSegment || '') || DEFAULT_COUNTRY;
+}
+
 export default defineNuxtRouteMiddleware((to) => {
     const segments = to.path.split('/').filter(Boolean);
     const isAccountRoute =
@@ -14,6 +21,6 @@ export default defineNuxtRouteMiddleware((to) => {
     } | null>('mock_user');
     if (mockUser.value?.email) return;
 
-    const { withCountry } = useCountry();
-    return navigateTo(withCountry('/'));
+    const country = resolveCountryFromPath(to.path);
+    return navigateTo(`/${country}`);
 });

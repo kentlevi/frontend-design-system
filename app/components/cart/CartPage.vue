@@ -79,7 +79,7 @@ const {
                                 <img
                                     :src="row.artworkPreviewUrl || row.product.image"
                                     :alt="row.product.name"
-                                />
+                                >
                             </div>
                             <div class="cart-item-copy">
                                 <h3 class="cart-item-title">{{ row.product.name }}</h3>

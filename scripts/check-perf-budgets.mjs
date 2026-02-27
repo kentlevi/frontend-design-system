@@ -91,7 +91,11 @@ for (const [route, routeReports] of grouped.entries()) {
 
     const core = {
         LCP: { value: lcp, threshold: budget.LCP, status: lcp !== null && lcp <= budget.LCP ? 'pass' : 'fail' },
-        INP: { value: inp, threshold: budget.INP, status: inp !== null && inp <= budget.INP ? 'pass' : 'fail' },
+        INP: {
+            value: inp,
+            threshold: budget.INP,
+            status: inp === null ? 'skip' : inp <= budget.INP ? 'pass' : 'fail',
+        },
         CLS: { value: cls, threshold: budget.CLS, status: cls !== null && cls <= budget.CLS ? 'pass' : 'fail' },
     };
 
@@ -110,7 +114,7 @@ for (const [route, routeReports] of grouped.entries()) {
 
     for (const item of Object.values(core)) {
         if (item.status === 'fail') coreFailures += 1;
-        else corePass += 1;
+        else if (item.status === 'pass') corePass += 1;
     }
     for (const item of Object.values(secondary)) {
         if (item.status === 'warn') secondaryWarn += 1;

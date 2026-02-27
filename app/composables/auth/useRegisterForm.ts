@@ -287,7 +287,7 @@ export function useRegisterForm() {
             isVerificationModalOpen.value = false;
             await router.push(`/${country.value}/auth/profile`);
             return response;
-        } catch (error) {
+        } catch {
             verificationError.value = t('auth.verification.invalidCode');
         } finally {
             isVerifying.value = false;

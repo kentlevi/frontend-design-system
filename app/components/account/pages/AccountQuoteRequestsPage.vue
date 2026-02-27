@@ -61,7 +61,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                                 type="text"
                                 :placeholder="t('account.quoteRequests.messagePlaceholder')"
                                 data-testid="account-quote-requests-input"
-                            />
+                            >
                             <button type="button" data-testid="account-quote-requests-send-button">
                                 {{ t('account.quoteRequests.send') }}
                             </button>

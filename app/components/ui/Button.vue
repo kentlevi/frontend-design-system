@@ -42,6 +42,9 @@ const props = withDefaults(
         selected: false,
         disabled: false,
         loading: false,
+        width: '',
+        height: '',
+        style: () => ({}),
     }
 );
 

@@ -20,5 +20,5 @@ const alt = computed(() => props.alt ?? `Flag of ${props.code.toUpperCase()}`);
         :height="size ?? 24"
         loading="lazy"
         decoding="async"
-    />
+    >
 </template>

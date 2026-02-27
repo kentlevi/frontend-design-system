@@ -185,7 +185,7 @@ onBeforeUnmount(() => {
                         class="ui-select-search-input"
                         placeholder="Search..."
                         :data-testid="testId ? `${testId}-search` : undefined"
-                    />
+                    >
                 </div>
 
                 <div class="ui-select-options">

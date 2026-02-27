@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AccountReviewsPage from '~/components/account/pages/AccountReviewsPage.vue';
 definePageMeta({
     layout: 'home',
 });
-import AccountReviewsPage from '~/components/account/pages/AccountReviewsPage.vue';
 </script>
 
 <template>

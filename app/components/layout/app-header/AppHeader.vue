@@ -383,6 +383,7 @@ onBeforeUnmount(() => {
             :account-links="accountLinks"
             :cart-item-count="cartItemCount"
             :set-account-menu-ref="setAccountMenuRef"
+            data-testid="app-header-main-bar"
             @open-locale="openLocaleModal"
             @open-search="openSearchModal"
             @open-cart="openCartPreview"
@@ -394,7 +395,6 @@ onBeforeUnmount(() => {
             @account-mouse-enter="onAccountMouseEnter"
             @account-mouse-leave="onAccountMouseLeave"
             @logout="logoutMock"
-            data-testid="app-header-main-bar"
         />
 
         <AppHeaderLocaleModal
@@ -402,9 +402,9 @@ onBeforeUnmount(() => {
             :open="localeModalOpen"
             :locale-value="locale"
             :locale-options="localeOptions"
+            data-testid="app-header-locale-modal"
             @close="closeLocaleModal"
             @select="selectLocale"
-            data-testid="app-header-locale-modal"
         />
 
         <AppHeaderSearchModal
@@ -424,6 +424,7 @@ onBeforeUnmount(() => {
             :highlight-search-match="highlightSearchMatch"
             :set-modal-ref="setSearchModalRef"
             :set-input-ref="setSearchInputRef"
+            data-testid="app-header-search-modal"
             @close="closeSearchModal"
             @update:search-query="searchQuery = $event"
             @focus-input="focusSearchInput"
@@ -432,7 +433,6 @@ onBeforeUnmount(() => {
             @remove-recent="removeRecentSearch"
             @apply-suggested="applySuggestedSearch"
             @select-result="selectSearchResult"
-            data-testid="app-header-search-modal"
         />
 
         <CartPreview
