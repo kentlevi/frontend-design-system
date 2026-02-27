@@ -19,14 +19,16 @@ const { t } = useI18n();
             </div>
 
             <div class="home-hero-content">
-                <h1 class="home-hero-title">
-                    {{ t('home.hero.title') }}
-                </h1>
-                <p class="home-hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+                <div class="home-hero-copy">
+                    <h1 class="home-hero-title">
+                        {{ t('home.hero.title') }}
+                    </h1>
+                    <p class="home-hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+                </div>
                 <UiButton
                     variant="filled"
                     tone="neutral"
-                    size="md"
+                    size="lg"
                     class="home-hero-cta"
                     data-testid="home-hero-cta-button"
                 >
@@ -42,6 +44,7 @@ const { t } = useI18n();
     background: var(--brand-primary);
     padding: 36px 24px 44px;
     max-height: 380px;
+    margin-bottom: 56px;
 
     .home-hero-container {
         max-width: 1280px;
@@ -74,31 +77,39 @@ const { t } = useI18n();
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 32px;
+
+            .home-hero-copy {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
 
             .home-hero-title {
                 margin: 0;
                 font-family: var(--font-base);
                 font-size: 48px;
-                line-height: 68px;
-                
-                color: #202638;
                 font-weight: 700;
+                line-height: 68px;
+                color: var(--abyss-base);
             }
 
             .home-hero-subtitle {
                 margin: 0;
-                font-size: 16px;
-                line-height: 28px;
-                color: #273046;
+                font-size: 18px;
+                line-height: 32px;
+                color: var(--abyss-base);
             }
 
             .home-hero-cta {
-                width: 130px;
+                width: 160px;
                 border-radius: 16px;
                 --btn-border: transparent;
                 border: 0;
                 box-shadow: none;
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 28px;
             }
         }
     }

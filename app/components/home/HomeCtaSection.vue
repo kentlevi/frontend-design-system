@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
+
 const { t } = useI18n();
+const { resolveFileUrl } = useFileBaseUrl();
+const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
 </script>
 
 <template>
     <section class="home-cta" data-testid="home-cta-section">
-        <div class="home-cta-panel">
+        <div class="home-cta-panel" :style="{ backgroundImage: `url(${ctaBackgroundImage})` }">
             <div class="home-cta-inner">
                 <h2 class="home-cta-title">
                     {{ t('home.cta.titleLine1') }}<br >
@@ -15,7 +20,7 @@ const { t } = useI18n();
                     <UiButton
                         variant="filled"
                         tone="default"
-                        size="md"
+                        size="lg"
                         class="home-cta-btn"
                         data-testid="home-cta-primary-button"
                     >
@@ -24,7 +29,7 @@ const { t } = useI18n();
                     <UiButton
                         variant="outline"
                         tone="default"
-                        size="md"
+                        size="lg"
                         class="home-cta-btn-alt"
                         data-testid="home-cta-secondary-button"
                     >
@@ -38,29 +43,18 @@ const { t } = useI18n();
 
 <style scoped lang="scss">
 .home-cta {
-    padding: 0 24px;
     margin-bottom: 0;
 
     .home-cta-panel {
         max-width: 1200px;
         margin: 0 auto;
-        min-height: 380px;
+        min-height: 520px;
         border-radius: 0;
         overflow: hidden;
-        background:
-            linear-gradient(
-                66deg,
-                rgba(255, 255, 255, 0.08) 14%,
-                rgba(255, 255, 255, 0) 14% 40%,
-                rgba(255, 255, 255, 0.08) 40% 60%,
-                rgba(255, 255, 255, 0) 60%
-            ),
-            radial-gradient(
-                circle at 98% 100%,
-                rgba(255, 255, 255, 0.06) 0 14%,
-                rgba(255, 255, 255, 0) 14%
-            ),
-            linear-gradient(120deg, #3d40e8 0%, #4f56f2 48%, #3d44ee 100%);
+        background-color: var(--brand-primary);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
         display: grid;
         place-items: center;
 
@@ -70,15 +64,14 @@ const { t } = useI18n();
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 42px;
+            gap: 64px;
 
             .home-cta-title {
                 margin: 0;
                 font-family: var(--font-base);
-                color: #ffffff;
+                color: var(--contrast-light);
                 font-size: 48px;
                 line-height: 68px;
-                
                 font-weight: 700;
             }
 
@@ -88,23 +81,29 @@ const { t } = useI18n();
                 gap: 14px;
 
                 .home-cta-btn {
-                    width: 176px;
+                    width: 232px;
                     border-radius: 10px;
                     border: 0;
-                    background: #f5f7ff;
-                    color: #3643e8;
+                    background: var(--contrast-light);
+                    color: #4747FF;
+                    font-size: 18px;
+                    font-weight: 700;
+                    line-height: 32px;
                     box-shadow: none;
                 }
 
                 .home-cta-btn-alt {
-                    width: 176px;
+                    width: 232px;
                     border-radius: 10px;
-                    --btn-bg: #ffffff;
-                    --btn-border: rgba(255, 255, 255, 0.8);
-                    --btn-soft: rgba(255, 255, 255, 0.22);
-                    border-color: rgba(255, 255, 255, 0.8);
-                    color: #ffffff;
-                    background: transparent;
+                    --btn-bg: var(--contrast-light);
+                    --btn-border: color-mix(in srgb, var(--contrast-light) 80%, transparent);
+                    --btn-soft: color-mix(in srgb, var(--contrast-light) 22%, transparent);
+                    border-color: color-mix(in srgb, var(--contrast-light) 80%, transparent);
+                    color: var(--contrast-light);
+                    font-size: 18px;
+                    font-weight: 700;
+                    line-height: 32px;
+                    background: #4747FF;
                 }
             }
         }

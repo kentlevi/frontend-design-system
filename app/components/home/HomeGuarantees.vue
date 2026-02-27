@@ -1,19 +1,23 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
+
 const { t } = useI18n();
+const { resolveFileUrl } = useFileBaseUrl();
 
 const items = [
     {
-        icon: 'strong-shield' as const,
+        image: resolveFileUrl('/home/guarantees/best-value-guarantee.png'),
         titleKey: 'quality.title',
         textKey: 'quality.text',
     },
     {
-        icon: 'strong-ship' as const,
+        image: resolveFileUrl('/home/guarantees/fast-air-delivery.png'),
         titleKey: 'shipping.title',
         textKey: 'shipping.text',
     },
     {
-        icon: 'strong-truck' as const,
+        image: resolveFileUrl('/home/guarantees/rush-delivery-truck.png'),
         titleKey: 'freeDelivery.title',
         textKey: 'freeDelivery.text',
     },
@@ -30,14 +34,16 @@ const items = [
                 :data-testid="`home-guarantee-${item.titleKey.replace('.title', '')}`"
             >
                 <div class="home-guarantees-icon">
-                    <UiIcon :name="item.icon" :size="30" color="var(--text-primary)" />
+                    <img :src="item.image" :alt="t(`home.guarantees.${item.titleKey}`)" class="home-guarantees-icon-image">
                 </div>
-                <h3 class="home-guarantees-title">
-                    {{ t(`home.guarantees.${item.titleKey}`) }}
-                </h3>
-                <p class="home-guarantees-text">
-                    {{ t(`home.guarantees.${item.textKey}`) }}
-                </p>
+                <div class="home-guarantees-copy">
+                    <h3 class="home-guarantees-title">
+                        {{ t(`home.guarantees.${item.titleKey}`) }}
+                    </h3>
+                    <p class="home-guarantees-text">
+                        {{ t(`home.guarantees.${item.textKey}`) }}
+                    </p>
+                </div>
             </article>
         </div>
     </section>
@@ -45,8 +51,8 @@ const items = [
 
 <style scoped lang="scss">
 .home-guarantees {
-    padding: 0 24px 70px;
-
+    margin-bottom: 64px;
+    
     .home-guarantees-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -60,17 +66,21 @@ const items = [
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
 
             .home-guarantees-icon {
-                width: 54px;
-                height: 54px;
+                width: 108px;
+                height: 108px;
                 margin: 0;
-                border-radius: 12px;
-                background: var(--surface-subtle);
-                border: 1px solid var(--border-default);
                 display: grid;
                 place-items: center;
+
+                .home-guarantees-icon-image {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    display: block;
+                }
             }
 
             .home-guarantees-title {
@@ -85,6 +95,12 @@ const items = [
                 font-size: 16px;
                 line-height: 28px;
                 color: var(--text-secondary);
+            }
+
+            .home-guarantees-copy {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
             }
         }
     }

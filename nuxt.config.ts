@@ -4,6 +4,13 @@ import { loadAppEnv } from './config';
 process.env.ENV = process.env.ENV || 'development';
 loadAppEnv();
 
+const rawApiBase = process.env.NUXT_PUBLIC_API_BASE?.replace(/\/+$/, '');
+const rawApiServer = process.env.API_SERVER?.replace(/\/+$/, '');
+const normalizedApiBase = rawApiBase ||
+    (rawApiServer
+        ? (/\/sys$/i.test(rawApiServer) ? rawApiServer : `${rawApiServer}/sys`)
+        : 'http://127.0.0.1:8001/sys');
+
 export default defineNuxtConfig({
     css: [],
     compatibilityDate: '2025-07-15',
@@ -29,9 +36,7 @@ export default defineNuxtConfig({
             webVitalsDebug: false,
             webVitalsEndpoint: '/api/web-vitals',
             apiBase:
-                process.env.NUXT_PUBLIC_API_BASE ||
-                process.env.API_SERVER ||
-                'http://127.0.0.1:8001/sys',
+                normalizedApiBase,
         },
     },
     vite: {

@@ -1,42 +1,65 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useHomeReviewsCarousel } from '@/composables/home/useHomeReviewsCarousel';
+import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 
 const { t } = useI18n();
+const { resolveFileUrl } = useFileBaseUrl();
 
 type ReviewItem = {
     title: string;
     text: string;
     author: string;
     badge?: string;
-    mediaClass: string;
+    badgeTone?: 'default' | 'success';
+    image: string;
 };
 
 const reviews = computed<ReviewItem[]>(() => [
     {
-        title: t('home.reviews.items.excellent.title'),
-        text: t('home.reviews.items.excellent.text'),
-        author: 'James',
-        mediaClass: 'is-james',
-    },
-    {
-        title: t('home.reviews.items.football.title'),
-        text: t('home.reviews.items.football.text'),
+        title: 'Football Stickers',
+        text: "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they'd buy more or recommend them to fellow football fans.",
         author: 'Hans',
-        badge: t('home.reviews.badge'),
-        mediaClass: 'is-hans',
+        badge: '1 Month Use',
+        badgeTone: 'success',
+        image: resolveFileUrl('/home/reviews/review-01.png'),
     },
     {
-        title: t('home.reviews.items.print.title'),
-        text: t('home.reviews.items.print.text'),
-        author: 'Ari',
-        mediaClass: 'is-ari',
+        title: 'Great service, excellent products!',
+        text: 'I had an amazing experience! The service was friendly and super responsive, and the products exceeded my expectations.',
+        author: 'Elizabeth',
+        image: resolveFileUrl('/home/reviews/review-02.png'),
     },
     {
-        title: t('home.reviews.items.delivery.title'),
-        text: t('home.reviews.items.delivery.text'),
-        author: 'Mina',
-        mediaClass: 'is-mina',
+        title: 'Market Sticker',
+        text: 'I love this Market Sticker! The design is vibrant, the material feels durable, and it stuck perfectly wherever I placed it.',
+        author: 'Tricia',
+        image: resolveFileUrl('/home/reviews/review-03.png'),
+    },
+    {
+        title: 'Fast and flawless.',
+        text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
+        author: 'Katrina',
+        badge: 'Repurchase',
+        badgeTone: 'default',
+        image: resolveFileUrl('/home/reviews/review-04.png'),
+    },
+    {
+        title: 'Top quality!',
+        text: 'The durability and water resistance are excellent, and everything is great, but since there are 100 sheets, quite a few stickers are skewed to one side.',
+        author: 'Michelle',
+        badge: 'Repurchase',
+        badgeTone: 'default',
+        image: resolveFileUrl('/home/reviews/review-05.png'),
+    },
+    {
+        title: 'Fast and flawless.',
+        text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
+        author: 'Katrina',
+        badge: 'Repurchase',
+        badgeTone: 'default',
+        image: resolveFileUrl('/home/reviews/review-06.png'),
     },
 ]);
 
@@ -129,11 +152,12 @@ const carouselLabel = 'Client reviews carousel';
                         role="group"
                         :aria-label="`Review ${idx + 1} of ${reviews.length}`"
                     >
-                        <div
+                        <img
                             class="home-reviews-media"
-                            :class="review.mediaClass"
-                            aria-hidden="true"
-                        />
+                            :src="review.image"
+                            :alt="review.author"
+                            loading="lazy"
+                        >
 
                         <div class="home-reviews-content">
                             <div class="home-reviews-item-head">
@@ -143,7 +167,7 @@ const carouselLabel = 'Client reviews carousel';
                                 <UiBadge
                                     v-if="review.badge"
                                     variant="outline"
-                                    tone="success"
+                                    :tone="review.badgeTone ?? 'success'"
                                     size="sm"
                                 >
                                     {{ review.badge }}
@@ -174,11 +198,12 @@ const carouselLabel = 'Client reviews carousel';
 
 <style scoped lang="scss">
 .home-reviews {
-    padding: 0 24px 72px;
     font-family: var(--font-base);
+    margin-bottom: 64px;
 
     .home-reviews-card {
         max-width: 1200px;
+        height: 522px;
         margin: 0 auto;
         border-radius: 16px;
         background: linear-gradient(
@@ -189,7 +214,8 @@ const carouselLabel = 'Client reviews carousel';
         padding: 56px 42px 48px;
         display: flex;
         flex-direction: column;
-        gap: 30px;
+        justify-content: center;
+        gap: 48px;
 
         .home-reviews-head {
             display: flex;
@@ -198,9 +224,9 @@ const carouselLabel = 'Client reviews carousel';
 
             .home-reviews-title {
                 margin: 0;
-                font-size: var(--heading-2);
-                line-height: 1.1;
-                letter-spacing: -0.03em;
+                font-size: 36px;
+                font-weight: 700;
+                line-height: 52px;
                 color: var(--text-primary);
             }
 
@@ -242,35 +268,16 @@ const carouselLabel = 'Client reviews carousel';
                     background: var(--contrast-light);
                     padding: 18px;
                     display: grid;
-                    grid-template-columns: 190px 1fr;
+                    grid-template-columns: 144px 1fr;
                     gap: 18px;
 
                     .home-reviews-media {
                         width: 100%;
-                        height: auto;
+                        height: 100%;
                         min-height: 150px;
                         align-self: stretch;
                         border-radius: 18px;
-                        background: linear-gradient(140deg, #8e8f93 0%, #5f6574 100%);
-                        background-size: cover;
-                        background-position: center;
                         object-fit: cover;
-
-                        &.is-james {
-                            background: linear-gradient(140deg, #827f76 0%, #545962 100%);
-                        }
-
-                        &.is-hans {
-                            background: linear-gradient(140deg, #7f8088 0%, #2c2f39 100%);
-                        }
-
-                        &.is-ari {
-                            background: linear-gradient(140deg, #8f8c85 0%, #5a6474 100%);
-                        }
-
-                        &.is-mina {
-                            background: linear-gradient(140deg, #687489 0%, #3a3f49 100%);
-                        }
                     }
 
                     .home-reviews-content {

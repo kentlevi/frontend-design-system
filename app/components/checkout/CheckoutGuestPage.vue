@@ -7,6 +7,7 @@ const country = computed(() =>
 );
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
 import { useCountry } from '@/composables/app/useCountry';
+import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 import {
     checkoutFieldValidation,
     checkoutPaymentBrands,
@@ -18,6 +19,7 @@ import {
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const { resolveFileUrl } = useFileBaseUrl();
 
 const {
     provinceOptions,
@@ -44,10 +46,20 @@ const {
 } = useCheckoutGuest();
 
 const activeShippingMethods = computed(() =>
-    checkoutShippingMethods.filter((method) => method.enabled !== false)
+    checkoutShippingMethods
+        .filter((method) => method.enabled !== false)
+        .map((method) => ({
+            ...method,
+            icon: resolveFileUrl(method.icon),
+        }))
 );
 const activePaymentMethods = computed(() =>
-    checkoutPaymentMethods.filter((method) => method.enabled !== false)
+    checkoutPaymentMethods
+        .filter((method) => method.enabled !== false)
+        .map((method) => ({
+            ...method,
+            icon: resolveFileUrl(method.icon),
+        }))
 );
 
 const selectedShippingMethod = ref<CheckoutShippingMethodKey>(
