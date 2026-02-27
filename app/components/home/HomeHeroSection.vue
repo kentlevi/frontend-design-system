@@ -81,7 +81,7 @@ const { t } = useI18n();
                 font-family: var(--font-base);
                 font-size: 48px;
                 line-height: 68px;
-                letter-spacing: -0.5px;
+                
                 color: #202638;
                 font-weight: 700;
             }

@@ -95,7 +95,7 @@ const { items } = useAccountAddressBook();
             font-size: 28px;
             font-weight: 700;
             line-height: 40px;
-            letter-spacing: -0.5px;
+            
             color: var(--text-primary);
         }
     }
@@ -109,13 +109,13 @@ const { items } = useAccountAddressBook();
         font-size: 18px;
         font-weight: 600;
         line-height: 32px;
-        letter-spacing: -0.5px;
+        
     }
     .account-address-book-info p{
         font-size: 14px;
         font-weight: 400;
         line-height: 24px;
-        letter-spacing: -0.5px;
+        
     }
 
 

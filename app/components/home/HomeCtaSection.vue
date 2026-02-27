@@ -78,7 +78,7 @@ const { t } = useI18n();
                 color: #ffffff;
                 font-size: 48px;
                 line-height: 68px;
-                letter-spacing: -0.5px;
+                
                 font-weight: 700;
             }
 

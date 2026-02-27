@@ -150,7 +150,7 @@ const tabs = [
         font-size: 20px;
         line-height: 28px;
         font-weight: 700;
-        letter-spacing: -0.5px;
+        
         color: var(--text-primary);
     }
 
@@ -159,7 +159,7 @@ const tabs = [
         font-size: 14px;
         font-weight: 400;
         line-height: 24px;
-        letter-spacing: -0.5px;
+        
         color: var(--text-secondary);
     }
 
