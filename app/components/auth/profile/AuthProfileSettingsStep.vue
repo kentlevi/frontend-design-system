@@ -3,11 +3,11 @@ type ProfileUnit = 'millimeter' | 'inch';
 
 const props = withDefaults(
     defineProps<{
-        promotions: boolean;
-        reviews: boolean;
-        confirmations: boolean;
-        useShippingAsBilling: boolean;
-        unit: ProfileUnit;
+        promotions?: boolean;
+        reviews?: boolean;
+        confirmations?: boolean;
+        useShippingAsBilling?: boolean;
+        unit?: ProfileUnit;
     }>(),
     {
         promotions: true,
@@ -63,7 +63,7 @@ function updateUnit(value: ProfileUnit) {
                                 type="checkbox"
                                 data-testid="auth-profile-toggle-promotions"
                                 @change="emit('update:promotions', ($event.target as HTMLInputElement).checked)"
-                            />
+                            >
                             <span class="auth-profile-switch-track" />
                         </label>
                     </div>
@@ -84,7 +84,7 @@ function updateUnit(value: ProfileUnit) {
                                 type="checkbox"
                                 data-testid="auth-profile-toggle-reviews"
                                 @change="emit('update:reviews', ($event.target as HTMLInputElement).checked)"
-                            />
+                            >
                             <span class="auth-profile-switch-track" />
                         </label>
                     </div>
@@ -105,7 +105,7 @@ function updateUnit(value: ProfileUnit) {
                                 type="checkbox"
                                 data-testid="auth-profile-toggle-confirmations"
                                 @change="emit('update:confirmations', ($event.target as HTMLInputElement).checked)"
-                            />
+                            >
                             <span class="auth-profile-switch-track" />
                         </label>
                     </div>
@@ -161,7 +161,7 @@ function updateUnit(value: ProfileUnit) {
                             type="checkbox"
                             data-testid="auth-profile-toggle-billing"
                             @change="emit('update:useShippingAsBilling', ($event.target as HTMLInputElement).checked)"
-                        />
+                        >
                         <span class="auth-profile-switch-track" />
                     </label>
                 </div>

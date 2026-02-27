@@ -55,8 +55,8 @@ const unitPrice = computed(() =>
                 type="button"
                 class="product-picker-item"
                 :class="{ 'is-active': props.selectedId === product.id }"
-                @click="emit('select-product', product.id)"
                 :data-testid="`product-category-picker-item-${product.id}`"
+                @click="emit('select-product', product.id)"
             >
                 <div class="product-picker-icon" :class="`is-${product.id}`">
                     <img
@@ -68,7 +68,7 @@ const unitPrice = computed(() =>
                         width="156"
                         height="120"
                         class="product-picker-image"
-                    />
+                    >
                 </div>
                 <p class="product-picker-name">
                     {{ props.getProductName(product) }}
@@ -95,14 +95,14 @@ const unitPrice = computed(() =>
                                 type="button"
                                 class="mini-feature"
                                 :class="{ 'is-active': props.selectedSize === feature.key }"
-                                @click="emit('update:selectedSize', feature.key)"
                                 :data-testid="`product-category-feature-card-${feature.key}`"
+                                @click="emit('update:selectedSize', feature.key)"
                             >
                                 <h4 class="mini-feature-title">{{ t(`product.sizes.${feature.key}.label`) }}</h4>
                                 <img
                                     :src="feature.image"
                                     :alt="t(`product.sizes.${feature.key}.label`)"
-                                    loading="lazy" class="mini-feature-image" />
+                                    loading="lazy" class="mini-feature-image" >
 
                                 <p class="mini-feature-description">
                                     {{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
@@ -124,8 +124,8 @@ const unitPrice = computed(() =>
                                     type="button"
                                     class="option-pill"
                                     :class="{ 'is-active': props.selectedSize === size.key }"
-                                    @click="emit('update:selectedSize', size.key)"
                                     :data-testid="`product-category-size-option-${size.key}`"
+                                    @click="emit('update:selectedSize', size.key)"
                                 >
                                     <span class="size-pill-name">{{ size.name }}</span>
                                     <span class="size-pill-dim">{{ size.dim }}</span>
@@ -150,8 +150,8 @@ const unitPrice = computed(() =>
                                     type="button"
                                     class="option-pill"
                                     :class="{ 'is-active': props.selectedQty === qty }"
-                                    @click="emit('update:selectedQty', qty)"
                                     :data-testid="`product-category-quantity-option-${qty}`"
+                                    @click="emit('update:selectedQty', qty)"
                                 >
                                     <span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
                                     <strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
@@ -201,8 +201,8 @@ const unitPrice = computed(() =>
                                 height="48px"
                                 class="next-step-btn"
                                 :disabled="props.navigationInFlight"
-                                @click="emit('open-upload')"
                                 data-testid="product-category-next-step-button"
+                                @click="emit('open-upload')"
                             >
                                 {{ t('product.price.nextStep') }}
                             </UiButton>

@@ -57,7 +57,7 @@ const {
                     :alt="t('auth.login.title')"
                     loading="lazy"
                     class="auth-login-illustration-image"
-                />
+                >
             </div>
 
             <div class="auth-login-shell auth-shell-enter">
@@ -123,7 +123,7 @@ const {
                     :alt="t('auth.login.title')"
                     loading="lazy"
                     class="auth-login-illustration-image"
-                />
+                >
             </div>
         </div>
 

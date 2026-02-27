@@ -15,7 +15,7 @@ const { t } = useI18n();
                     src="/illustrations/products/sticker-kids/kid-falling-sticker.svg"
                     :alt="t('auth.register.title')"
                     loading="lazy"
-                />
+                >
             </div>
 
             <div class="auth-register-shell auth-shell-enter" data-testid="auth-register-shell">
@@ -30,7 +30,7 @@ const { t } = useI18n();
                     src="/illustrations/products/sticker-kids/kid-standing-sticker.svg"
                     :alt="t('auth.register.title')"
                     loading="lazy"
-                />
+                >
             </div>
         </div>
     </section>

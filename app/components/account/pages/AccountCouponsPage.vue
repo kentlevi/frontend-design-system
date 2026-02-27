@@ -16,7 +16,7 @@ const { coupons } = useAccountCoupons();
                             type="text"
                             :placeholder="t('account.coupons.codePlaceholder')"
                             data-testid="account-coupons-code-input"
-                        />
+                        >
                         <UiButton variant="filled" tone="neutral" size="md" data-testid="account-coupons-add-button">
                             {{ t('account.coupons.addCoupon') }}
                         </UiButton>

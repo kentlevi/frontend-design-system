@@ -3,7 +3,7 @@ type Variant = 'filled' | 'tonal' | 'outline' | 'subtle';
 type Tone = 'default' | 'success' | 'danger' | 'warning';
 type Size = 'sm' | 'md';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         variant?: Variant;
         tone?: Tone;

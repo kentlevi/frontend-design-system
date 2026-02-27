@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
 <template>
     <Teleport to="body">
         <Transition name="cart-preview-slide">
-            <div v-if="props.open" class="cart-preview-shell" @click.self="emit('close')" data-testid="product-category-cart-overlay">
+            <div v-if="props.open" class="cart-preview-shell" data-testid="product-category-cart-overlay" @click.self="emit('close')">
                 <Transition name="cart-redirect-fade">
                     <div
                         v-if="redirectingToCart"
@@ -177,8 +177,8 @@ onBeforeUnmount(() => {
                             variant="ghost"
                             tone="neutral"
                             class="cart-preview-continue"
-                            @click="emit('close')"
                             data-testid="product-category-cart-continue-shopping-button"
+                            @click="emit('close')"
                         >
                             {{ t('cart.cartPreview.continueShopping') }}
                             <UiIcon name="strong-long-arrow-right" :size="18" color="#2a2f3d" />
@@ -197,7 +197,7 @@ onBeforeUnmount(() => {
                                 width="112"
                                 height="112"
                                 class="cart-preview-empty-image"
-                            />
+                            >
                             <h4 class="cart-preview-empty-title">{{ t('cart.cartPreview.emptyTitle') }}</h4>
                             <p class="cart-preview-empty-description">{{ t('cart.cartPreview.emptyDescription') }}</p>
                         </section>
@@ -221,7 +221,7 @@ onBeforeUnmount(() => {
                                         <div class="cart-preview-item-thumb">
                                             <img
                                                 :src="item.artworkPreviewUrl || item.product.image"
-                                                :alt="props.getProductName(item.product)" class="cart-preview-image" />
+                                                :alt="props.getProductName(item.product)" class="cart-preview-image" >
                                         </div>
                                         <div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
                                             <h4 class="cart-preview-section-title" data-testid="product-category-cart-item-name">
@@ -297,18 +297,18 @@ onBeforeUnmount(() => {
                                             <button
                                                 type="button"
                                                 class="cart-item-icon-btn"
-                                                @click="saveInlineEdit(item.id)"
                                                 data-testid="product-category-cart-item-save-button"
                                                 :aria-label="t('cart.cartPreview.aria.saveItemChanges')"
+                                                @click="saveInlineEdit(item.id)"
                                             >
                                                 <UiIcon name="strong-save" :size="24" color="#2a2f3d" />
                                             </button>
                                             <button
                                                 type="button"
                                                 class="cart-item-icon-btn"
-                                                @click="cancelInlineEdit"
                                                 data-testid="product-category-cart-item-cancel-button"
                                                 :aria-label="t('cart.cartPreview.aria.cancelItemChanges')"
+                                                @click="cancelInlineEdit"
                                             >
                                                 <UiIcon name="strong-times" :size="24" color="#2a2f3d" />
                                             </button>
@@ -321,18 +321,18 @@ onBeforeUnmount(() => {
                                             <button
                                                 type="button"
                                                 class="cart-item-icon-btn"
-                                                @click="openInlineEdit(item)"
                                                 data-testid="product-category-cart-item-edit-button"
                                                 :aria-label="t('cart.cartPreview.aria.editItem')"
+                                                @click="openInlineEdit(item)"
                                             >
                                                 <UiIcon name="strong-edit" :size="24" color="#2a2f3d" />
                                             </button>
                                             <button
                                                 type="button"
                                                 class="cart-item-icon-btn"
-                                                @click="emit('remove-item', item.id)"
                                                 data-testid="product-category-cart-item-delete-button"
                                                 :aria-label="t('cart.cartPreview.aria.removeItem')"
+                                                @click="emit('remove-item', item.id)"
                                             >
                                                 <UiIcon name="strong-trash" :size="24" color="#2a2f3d" />
                                             </button>
@@ -360,8 +360,8 @@ onBeforeUnmount(() => {
                                     icon-size="md"
                                     :sr-label="t('cart.cartPreview.closeFeaturedItems')"
                                     class="cart-featured-close"
-                                    @click="emit('close-featured')"
                                     data-testid="product-category-cart-featured-close-button"
+                                    @click="emit('close-featured')"
                                 />
                             </div>
                             <div class="cart-featured-grid" data-testid="product-category-cart-featured-list">
@@ -372,7 +372,7 @@ onBeforeUnmount(() => {
                                     :data-testid="`product-category-cart-featured-item-${item.id}`"
                                 >
                                     <div class="cart-featured-media">
-                                        <img :src="item.image" :alt="props.getProductName(item)" class="cart-preview-image" />
+                                        <img :src="item.image" :alt="props.getProductName(item)" class="cart-preview-image" >
                                     </div>
                                     <div class="cart-featured-content">
                                         <h5 class="cart-featured-item-title">{{ props.getProductName(item) }}</h5>
@@ -409,8 +409,8 @@ onBeforeUnmount(() => {
                                 height="48px"
                                 class="cart-preview-view-btn"
                                 :disabled="redirectingToCart"
-                                @click="goToCart"
                                 data-testid="product-category-cart-view-button"
+                                @click="goToCart"
                             >
                                 {{ t('cart.cartPreview.viewCart') }}
                             </UiButton>

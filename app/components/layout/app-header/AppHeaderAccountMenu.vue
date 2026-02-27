@@ -35,9 +35,9 @@ const emit = defineEmits<{
     <div
         :ref="setWrapRef"
         class="home-header-account-wrap"
+        data-testid="app-header-account-wrap"
         @mouseenter="emit('mouse-enter')"
         @mouseleave="emit('mouse-leave')"
-        data-testid="app-header-account-wrap"
     >
         <button
             type="button"
@@ -49,8 +49,8 @@ const emit = defineEmits<{
             :aria-label="t('layout.header.account')"
             aria-haspopup="menu"
             :aria-expanded="accountOpen"
-            @click.stop="emit('toggle')"
             data-testid="app-header-account-toggle-button"
+            @click.stop="emit('toggle')"
         >
             <span v-if="isMockLoggedIn" class="home-header-avatar">
                 {{ userInitial }}
@@ -95,8 +95,8 @@ const emit = defineEmits<{
                     :to="withCountry(link.to)"
                     class="home-account-link"
                     role="menuitem"
-                    @click="emit('close')"
                     :data-testid="`app-header-account-link-${link.to.replace('/', '').replace('/', '-') || 'root'}`"
+                    @click="emit('close')"
                 >
                     <UiIcon
                         :name="link.icon"
@@ -112,8 +112,8 @@ const emit = defineEmits<{
                     size="sm"
                     class="home-account-link home-account-link-button"
                     role="menuitem"
-                    @click="emit('logout')"
                     data-testid="app-header-account-logout-button"
+                    @click="emit('logout')"
                 >
                     <UiIcon
                         name="strong-sign-out"
@@ -134,8 +134,8 @@ const emit = defineEmits<{
                     :to="withCountry('/auth/login')"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
-                    @click="emit('close')"
                     data-testid="app-header-account-login"
+                    @click="emit('close')"
                 >
                     {{ t('layout.header.login') }}
                 </NuxtLink>
@@ -143,8 +143,8 @@ const emit = defineEmits<{
                     :to="withCountry('/auth/register')"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
-                    @click="emit('close')"
                     data-testid="app-header-account-register"
+                    @click="emit('close')"
                 >
                     {{ t('layout.header.register') }}
                 </NuxtLink>

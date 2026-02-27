@@ -59,5 +59,5 @@ const src = computed(
         :loading="loading"
         :fetchpriority="fetchpriority"
         decoding="async"
-    />
+    >
 </template>

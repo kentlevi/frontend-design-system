@@ -145,7 +145,7 @@ function onPaste(event: ClipboardEvent) {
                         @input="onInput(index, $event)"
                         @keydown="handleKeyDown(index, $event)"
                         @paste="onPaste"
-                    />
+                    >
                 </div>
                 <p v-if="error" class="auth-verification-error">
                     {{ error }}

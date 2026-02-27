@@ -1,7 +1,7 @@
 <script setup lang="ts">
 withDefaults(
     defineProps<{
-        visible: boolean;
+        visible?: boolean;
     }>(),
     {
         visible: false,

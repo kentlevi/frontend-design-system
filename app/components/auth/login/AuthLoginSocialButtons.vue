@@ -66,16 +66,18 @@ async function handleSocial(provider: string) {
         </div>
 
         <div class="auth-login-social-buttons">
-            <UiButton variant="outline" tone="neutral" size="md" class="auth-login-social"
-                @click="handleSocial('facebook')" data-testid="auth-login-social-facebook">
+            <UiButton
+variant="outline" tone="neutral" size="md" class="auth-login-social"
+                data-testid="auth-login-social-facebook" @click="handleSocial('facebook')">
                 <span class="auth-login-social-content">
                     <UiSocialIcon name="facebook" :size="24" variant="colored" />
                     <span class="auth-login-social-text">{{ t('auth.login.signInFacebook') }}</span>
                 </span>
             </UiButton>
 
-            <UiButton variant="outline" tone="neutral" size="md" class="auth-login-social"
-                @click="handleSocial('google')" data-testid="auth-login-social-google">
+            <UiButton
+variant="outline" tone="neutral" size="md" class="auth-login-social"
+                data-testid="auth-login-social-google" @click="handleSocial('google')">
                 <span class="auth-login-social-content">
                     <UiSocialIcon name="google" :size="24" variant="colored" />
                     <span class="auth-login-social-text">{{ t('auth.login.signInGoogle') }}</span>

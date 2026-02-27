@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AccountGalleryPage from '~/components/account/pages/AccountGalleryPage.vue';
 definePageMeta({
     layout: 'home',
 });
-import AccountGalleryPage from '~/components/account/pages/AccountGalleryPage.vue';
 </script>
 
 <template>

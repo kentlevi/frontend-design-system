@@ -13,7 +13,7 @@ const { t } = useI18n();
                 <img
                     src="/icons/custom/guarantees/delivery-truck.svg"
                     :alt="t('product.guarantees.madeToday.title')"
-                    loading="lazy" class="product-details-image" />
+                    loading="lazy" class="product-details-image" >
                 <h4 class="product-guarantee-title">{{ t('product.guarantees.madeToday.title') }}</h4>
                 <p class="product-details-text">{{ t('product.guarantees.madeToday.text') }}</p>
             </article>
@@ -21,7 +21,7 @@ const { t } = useI18n();
                 <img
                     src="/icons/custom/guarantees/proof-review.svg"
                     :alt="t('product.guarantees.proofReview.title')"
-                    loading="lazy" class="product-details-image" />
+                    loading="lazy" class="product-details-image" >
                 <h4 class="product-guarantee-title">{{ t('product.guarantees.proofReview.title') }}</h4>
                 <p class="product-details-text">{{ t('product.guarantees.proofReview.text') }}</p>
             </article>
@@ -29,7 +29,7 @@ const { t } = useI18n();
                 <img
                     src="/icons/custom/guarantees/weather-durability.svg"
                     :alt="t('product.guarantees.durability.title')"
-                    loading="lazy" class="product-details-image" />
+                    loading="lazy" class="product-details-image" >
                 <h4 class="product-guarantee-title">{{ t('product.guarantees.durability.title') }}</h4>
                 <p class="product-details-text">{{ t('product.guarantees.durability.text') }}</p>
             </article>
@@ -43,7 +43,7 @@ const { t } = useI18n();
                     <img
                         src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
                         :alt="t('product.story.timeless.title')"
-                        loading="lazy" class="product-details-image" />
+                        loading="lazy" class="product-details-image" >
                 </div>
                 <div class="story-copy">
                     <h3 class="product-story-title">{{ t('product.story.timeless.title') }}</h3>
@@ -55,7 +55,7 @@ const { t } = useI18n();
                     <img
                         src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
                         :alt="t('product.story.quickStick.title')"
-                        loading="lazy" class="product-details-image" />
+                        loading="lazy" class="product-details-image" >
                 </div>
                 <div class="story-copy">
                     <h3 class="product-story-title">{{ t('product.story.quickStick.title') }}</h3>
@@ -67,7 +67,7 @@ const { t } = useI18n();
                     <img
                         src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
                         :alt="t('product.story.preciseCut.title')"
-                        loading="lazy" class="product-details-image" />
+                        loading="lazy" class="product-details-image" >
                 </div>
                 <div class="story-copy">
                     <h3 class="product-story-title">{{ t('product.story.preciseCut.title') }}</h3>

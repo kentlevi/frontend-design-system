@@ -28,7 +28,9 @@ export async function copyTextToClipboard(text: string) {
         try {
             await navigator.clipboard.writeText(text);
             return;
-        } catch {}
+        } catch {
+            // Fallback to execCommand flow on clipboard API errors.
+        }
     }
 
     if (fallbackCopy()) {

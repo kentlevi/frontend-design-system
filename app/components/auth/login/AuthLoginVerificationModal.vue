@@ -3,7 +3,7 @@ import { authVerificationConfig } from '@/data/auth/verification';
 
 const { t } = useI18n();
 
-const props = defineProps<{
+defineProps<{
     modelValue: boolean;
     email: string;
     orderNumber: string;

@@ -25,7 +25,7 @@ const { t } = useI18n();
 <template>
     <Teleport to="body">
         <Transition name="upload-modal-fade">
-            <div v-if="props.open" class="upload-modal-overlay" @click.self="emit('close')" data-testid="product-category-upload-overlay">
+            <div v-if="props.open" class="upload-modal-overlay" data-testid="product-category-upload-overlay" @click.self="emit('close')">
                 <section class="upload-modal" role="dialog" aria-modal="true" data-testid="product-category-upload-dialog">
                     <header class="upload-modal-header" data-testid="product-category-upload-header">
                         <h3 class="upload-modal-title" data-testid="product-category-upload-title">{{ t('cart.uploadArtwork.title') }}</h3>
@@ -39,8 +39,8 @@ const { t } = useI18n();
                             icon-size="lg"
                             sr-label="Close upload modal"
                             class="upload-modal-close-btn"
-                            @click="emit('close')"
                             data-testid="product-category-upload-close-button"
+                            @click="emit('close')"
                         />
                     </header>
 
@@ -65,8 +65,8 @@ const { t } = useI18n();
                                     size="md"
                                     height="44px"
                                     class="upload-secondary-btn"
-                                    @click="emit('open-file-picker')"
                                     data-testid="product-category-upload-select-files-button"
+                                    @click="emit('open-file-picker')"
                                 >
                                     {{ t('cart.uploadArtwork.selectFiles') }}
                                 </UiButton>
@@ -79,7 +79,7 @@ const { t } = useI18n();
                                             :src="props.artworkPreviewUrl"
                                             :alt="props.cartArtworkName"
                                             class="upload-artwork-image"
-                                        />
+                                        >
                                         <UiIcon v-else name="strong-file-image" :size="22" color="#2a2f3d" />
                                     </div>
                                     <div>
@@ -97,8 +97,8 @@ const { t } = useI18n();
                                         size="md"
                                         height="44px"
                                         class="upload-secondary-btn"
-                                        @click="emit('open-file-picker')"
                                         data-testid="product-category-upload-replace-image-button"
+                                        @click="emit('open-file-picker')"
                                     >
                                         {{ t('cart.uploadArtwork.replaceImage') }}
                                     </UiButton>
@@ -114,8 +114,8 @@ const { t } = useI18n();
                                         width="44px"
                                         height="44px"
                                         class="upload-icon-btn"
-                                        @click="emit('remove-artwork')"
                                         data-testid="product-category-upload-remove-image-button"
+                                        @click="emit('remove-artwork')"
                                     />
                                 </div>
                             </template>
@@ -129,8 +129,8 @@ const { t } = useI18n();
                                 rows="4"
                                 resize="none"
                                 :placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
-                                @update:model-value="emit('update:specialInstructions', $event)"
                                 data-testid="product-category-upload-special-instructions"
+                                @update:model-value="emit('update:specialInstructions', $event)"
                             />
                         </label>
 
@@ -146,8 +146,8 @@ const { t } = useI18n();
                             tone="neutral"
                             class="upload-skip-btn"
                             :disabled="props.hasUploadedArtwork"
-                            @click="emit('skip-upload-later')"
                             data-testid="product-category-upload-skip-button"
+                            @click="emit('skip-upload-later')"
                         >
                             {{ t('cart.uploadArtwork.skipUploadLater') }}
                         </UiButton>
@@ -159,8 +159,8 @@ const { t } = useI18n();
                             height="44px"
                             class="upload-primary-btn"
                             :disabled="!props.hasUploadedArtwork || props.addToCartLoading"
-                            @click="emit('proceed-to-cart')"
                             data-testid="product-category-upload-proceed-button"
+                            @click="emit('proceed-to-cart')"
                         >
                             <UiIcon
                                 v-if="!props.addToCartLoading"

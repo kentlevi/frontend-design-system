@@ -20,7 +20,7 @@ const { items } = useAccountGallery();
                             type="text"
                             :placeholder="t('account.gallery.searchPlaceholder')"
                             data-testid="account-gallery-search"
-                        />
+                        >
                     </div>
                 </header>
 

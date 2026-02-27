@@ -51,6 +51,10 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+function stripHtml(value: string) {
+    return value.replace(/<[^>]*>/g, '');
+}
 </script>
 
 <template>
@@ -70,8 +74,8 @@ const { t } = useI18n();
                             type="button"
                             class="home-search-head-action"
                             :aria-label="t('layout.header.search')"
-                            @click="emit('focus-input')"
                             data-testid="app-header-search-focus-button"
+                            @click="emit('focus-input')"
                         >
                             <UiIcon
                                 name="strong-search"
@@ -87,14 +91,14 @@ const { t } = useI18n();
                             :placeholder="t('layout.header.search.modal.placeholder')"
                             class="home-search-input"
                             autocomplete="off"
+                            data-testid="app-header-search-input"
                             @input="
                                 emit(
                                     'update:searchQuery',
                                     ($event.target as HTMLInputElement).value
                                 )
                             "
-                            data-testid="app-header-search-input"
-                        />
+                        >
                     </div>
                 </div>
 
@@ -122,8 +126,8 @@ const { t } = useI18n();
                                 tone="default"
                                 size="sm"
                                 class="home-search-recent-clear"
-                                @click="emit('clear-recent')"
                                 data-testid="app-header-search-recent-clear-button"
+                                @click="emit('clear-recent')"
                             >
                                 {{ t('layout.header.search.modal.recent.clearAll') }}
                             </UiButton>
@@ -140,15 +144,15 @@ const { t } = useI18n();
                                     type="button"
                                     class="home-search-recent-term"
                                     :data-search-nav-index="index"
-                                    @click="emit('apply-recent', entry.term)"
                                     :data-testid="`app-header-search-recent-apply-${index}-button`"
+                                    @click="emit('apply-recent', entry.term)"
                                 >
                                     <div class="home-search-recent-icon">
                                         <img
                                             v-if="entry.matchedItem"
                                             :src="entry.matchedItem.image"
                                             :alt="entry.matchedItem.name"
-                                            loading="lazy" class="home-search-image" />
+                                            loading="lazy" class="home-search-image" >
                                         <UiIcon
                                             v-else
                                             name="strong-search"
@@ -172,8 +176,8 @@ const { t } = useI18n();
                                     type="button"
                                     class="home-search-recent-remove"
                                     :aria-label="t('layout.header.search.modal.recent.remove')"
-                                    @click="emit('remove-recent', entry.term)"
                                     :data-testid="`app-header-search-recent-remove-${index}-button`"
+                                    @click="emit('remove-recent', entry.term)"
                                 >
                                     <UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
                                 </button>
@@ -187,7 +191,7 @@ const { t } = useI18n();
                                 src="/icons/custom/search/no-recent-searches.svg"
                                 :alt="t('layout.header.search.modal.noRecent.title')"
                                 width="48"
-                                height="48" class="home-search-image" />
+                                height="48" class="home-search-image" >
                         </div>
                         <div class="home-search-empty-copy">
                             <h4 class="home-search-heading">{{ t('layout.header.search.modal.noRecent.title') }}</h4>
@@ -198,8 +202,8 @@ const { t } = useI18n();
                                     tone="default"
                                     size="sm"
                                     class="home-search-suggest"
-                                    @click="emit('apply-suggested')"
                                     data-testid="app-header-search-suggest-empty-recent-button"
+                                    @click="emit('apply-suggested')"
                                 >
                                     "{{ props.searchEmptySuggestedTerm }}"
                                 </UiButton>
@@ -213,7 +217,7 @@ const { t } = useI18n();
                                 src="/icons/custom/search/no-recent-searches.svg"
                                 :alt="t('layout.header.search.modal.noResult.title')"
                                 width="48"
-                                height="48" class="home-search-image" />
+                                height="48" class="home-search-image" >
                         </div>
                         <div class="home-search-empty-copy">
                             <h4 class="home-search-heading">{{ t('layout.header.search.modal.noResult.title') }}</h4>
@@ -224,8 +228,8 @@ const { t } = useI18n();
                                     tone="default"
                                     size="sm"
                                     class="home-search-suggest"
-                                    @click="emit('apply-suggested')"
                                     data-testid="app-header-search-suggest-empty-result-button"
+                                    @click="emit('apply-suggested')"
                                 >
                                     "{{ props.searchEmptySuggestedTerm }}"
                                 </UiButton>
@@ -252,21 +256,19 @@ const { t } = useI18n();
                                         props.searchNavIndexByResultId[item.id],
                                 }"
                                 :data-search-nav-index="props.searchNavIndexByResultId[item.id]"
-                                @click="emit('select-result', item)"
                                 :data-testid="`app-header-search-result-${item.id}-button`"
+                                @click="emit('select-result', item)"
                             >
                                 <div class="home-search-result-icon">
-                                    <img :src="item.image" :alt="item.name" loading="lazy" class="home-search-image" />
+                                    <img :src="item.image" :alt="item.name" loading="lazy" class="home-search-image" >
                                 </div>
                                 <div class="home-search-result-copy">
-                                    <p
-                                        class="home-search-result-title"
-                                        v-html="props.highlightSearchMatch(item.name)"
-                                    />
-                                    <p
-                                        class="home-search-result-blurb"
-                                        v-html="props.highlightSearchMatch(item.blurb)"
-                                    />
+                                    <p class="home-search-result-title">
+                                        {{ stripHtml(props.highlightSearchMatch(item.name)) }}
+                                    </p>
+                                    <p class="home-search-result-blurb">
+                                        {{ stripHtml(props.highlightSearchMatch(item.blurb)) }}
+                                    </p>
                                 </div>
                             </button>
                         </section>
@@ -310,8 +312,8 @@ const { t } = useI18n();
                             tone="default"
                             size="sm"
                             class="home-search-close-text"
-                            @click="emit('close')"
                             data-testid="app-header-search-close-button"
+                            @click="emit('close')"
                         >
                             {{ t('layout.header.search.modal.footer.close') }}
                         </UiButton>

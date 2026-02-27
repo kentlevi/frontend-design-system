@@ -105,7 +105,7 @@ export function useAppHeaderAccount() {
             segments.shift();
         }
 
-        return `/${segments.join('/')}` || '/';
+        return segments.length ? `/${segments.join('/')}` : '/';
     }
 
     function isNavLinkActive(linkPath: string) {

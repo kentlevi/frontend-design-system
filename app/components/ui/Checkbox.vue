@@ -67,7 +67,7 @@ function onChange(event: Event) {
             :checked="props.modelValue"
             :disabled="props.disabled"
             @change="onChange"
-        />
+        >
         <span class="ui-checkbox-box" aria-hidden="true">
             <UiIcon
                 name="strong-check"

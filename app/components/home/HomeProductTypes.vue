@@ -50,7 +50,7 @@ const types = [
                         aria-hidden="true"
                         loading="lazy"
                         class="home-types-image"
-                    />
+                    >
                 </div>
                 <p class="home-types-label">
                     {{ t(`home.productTypes.${item.key}`) }}

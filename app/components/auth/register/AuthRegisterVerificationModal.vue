@@ -3,7 +3,7 @@ import { authVerificationConfig } from '@/data/auth/verification';
 
 const { t } = useI18n();
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         modelValue: boolean;
         email: string;
@@ -50,7 +50,7 @@ const emit = defineEmits<{
                 src="/illustrations/icon-verification.svg"
                 :alt="t('auth.verification.iconAlt')"
                 class="auth-register-verification-icon"
-            />
+            >
         </template>
     </AuthVerificationModal>
 </template>

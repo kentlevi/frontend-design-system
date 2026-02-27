@@ -25,7 +25,7 @@ onMounted(() => {
         return
     }
 
-    let tokenDuration = 60 * 60 * 24 * 3;
+    const tokenDuration = 60 * 60 * 24 * 3;
     // store auth_token in cookie
     const authToken = useCookie('auth_token', {
         maxAge: tokenDuration,

@@ -15,7 +15,7 @@ const { t } = useI18n();
                     decoding="sync"
                     width="280"
                     height="274"
-                />
+                >
             </div>
 
             <div class="home-hero-content">
