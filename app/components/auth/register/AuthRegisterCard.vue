@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
                 />
             </UiFormField>
 
-            <UiFormField class="auth-register-field">
+            <UiFormField class="auth-register-field" :label="t('auth.register.lastName')">
                 <template #label>
                     <span class="auth-register-label">
                         {{ t('auth.register.lastName') }}

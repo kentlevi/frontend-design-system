@@ -62,7 +62,7 @@ const types = [
 
 <style scoped lang="scss">
 .home-types {
-    padding: 54px 24px 30px;
+    margin-bottom: 56px;
 
     .home-types-container {
         max-width: 1200px;
@@ -70,14 +70,13 @@ const types = [
         display: flex;
         justify-content: center;
         gap: 46px;
+
         .home-types-item {
-            width: 136px;
-            display: grid;
-            justify-items: center;
-            gap: 10px;
+            width: 180px;
+            display: flex;
+            flex-direction: column;
             border-radius: 16px;
             text-decoration: none;
-            padding: 8px 6px 12px;
             transition: background-color 0.2s ease;
 
             &:hover {
@@ -89,14 +88,15 @@ const types = [
             }
 
             .home-types-icon {
-                width: 104px;
-                height: 86px;
-                display: grid;
+                width: 180px;
+                height: 120px;
+                display: flex;
                 place-items: center;
+                justify-content: center;
 
                 .home-types-image {
-                    max-width: 100%;
-                    max-height: 100%;
+                    max-width: 125px;
+                    max-height: 96px;
                     width: auto;
                     height: auto;
                     display: block;
@@ -107,9 +107,10 @@ const types = [
             }
 
             .home-types-label {
-                margin: 0;
-                font-size: 14px;
-                line-height: 1.25;
+                padding-bottom: 12px;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 28px;
                 text-align: center;
                 color: #232735;
             }
