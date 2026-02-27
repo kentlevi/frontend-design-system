@@ -1,13 +1,20 @@
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
 export function useRegisterForm() {
     const router = useRouter();
+    const route = useRoute();
     const userStore = useUserStore();
     const isVerificationModalOpen = ref(false);
     const api = useApi();
     const { t } = useI18n();
+    const country = computed(() =>
+        String(route.params.country || 'en').toLowerCase()
+    );
+    const apiCountry = computed(() =>
+        country.value === 'en' ? 'ph' : country.value
+    );
 
     const firstName = ref('');
     const lastName = ref('');
@@ -178,7 +185,7 @@ export function useRegisterForm() {
         // await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
 
         try {
-            const response = await api<RegisterVerificationResponse>('/kr/auth/register/verification', {
+            const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
                 method: 'POST',
                 body: {
                     given_name: firstName.value.trim(),
@@ -254,7 +261,7 @@ export function useRegisterForm() {
         verificationError.value = '';
 
         try {
-            const response = await api<RegisterResponse>('/kr/auth/register', {
+            const response = await api<RegisterResponse>(`/${apiCountry.value}/auth/register`, {
                 method: 'POST',
                 body: {
                     email: verificationEmail.value,
@@ -269,7 +276,7 @@ export function useRegisterForm() {
             }
 
             try {
-                const loginResponse = await api<LoginResponse>('/kr/auth/login', {
+                const loginResponse = await api<LoginResponse>(`/${apiCountry.value}/auth/login`, {
                     method: 'POST',
                     body: {
                         email: email.value.trim(),
@@ -303,7 +310,7 @@ export function useRegisterForm() {
             });
 
             isVerificationModalOpen.value = false;
-            await router.push('/auth/profile');
+            await router.push(`/${country.value}/auth/profile`);
             return response;
         } catch (error) {
             verificationError.value = 'Invalid verification code.';

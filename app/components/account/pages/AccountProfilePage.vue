@@ -2,8 +2,11 @@
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
 
 const { t } = useI18n();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
 const {
-    localePath,
     firstName,
     lastName,
     email,
@@ -145,7 +148,7 @@ const {
                             <UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
                                 {{ t('account.profile.changePassword') }}
                             </UiButton>
-                            <NuxtLink :to="localePath('/auth/login')" data-testid="account-profile-forgot-password">
+                            <NuxtLink :to="`/${country}/auth/login`" data-testid="account-profile-forgot-password">
                                 {{ t('account.profile.forgotPassword') }}
                             </NuxtLink>
                         </div>

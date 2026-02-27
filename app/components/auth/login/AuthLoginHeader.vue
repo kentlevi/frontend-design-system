@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const { t } = useI18n();
-const localePath = useLocalePath();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
 </script>
 
 <template>
@@ -9,7 +12,7 @@ const localePath = useLocalePath();
         <p class="auth-login-subtitle">
             {{ t('auth.login.subtitle') }}
             <NuxtLink
-                :to="localePath('/auth/register')"
+                :to="`/${country}/auth/register`"
                 class="auth-login-create-account-link"
                 data-testid="auth-login-create-account-link"
             >

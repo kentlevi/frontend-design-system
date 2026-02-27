@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const { t } = useI18n();
-const localePath = useLocalePath();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
@@ -90,7 +93,7 @@ const emit = defineEmits<{
                 <NuxtLink
                     v-for="link in accountLinks"
                     :key="link.to"
-                    :to="localePath(link.to)"
+                    :to="`/${country}${link.to}`"
                     class="home-account-link"
                     role="menuitem"
                     @click="emit('close')"
@@ -129,7 +132,7 @@ const emit = defineEmits<{
                 data-testid="app-header-account-dropdown-guest"
             >
                 <NuxtLink
-                    :to="localePath('/auth/login')"
+                    :to="`/${country}/auth/login`"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     @click="emit('close')"
@@ -138,7 +141,7 @@ const emit = defineEmits<{
                     {{ t('layout.header.login') }}
                 </NuxtLink>
                 <NuxtLink
-                    :to="localePath('/auth/register')"
+                    :to="`/${country}/auth/register`"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     @click="emit('close')"

@@ -7,7 +7,7 @@ export default defineNuxtConfig({
             webVitalsEnabled: true,
             webVitalsDebug: false,
             webVitalsEndpoint: '/api/web-vitals',
-            apiBase: '',
+            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://127.0.0.1:8001/sys',
         },
     },
     vite: {

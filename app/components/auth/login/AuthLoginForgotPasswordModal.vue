@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = withDefaults(
     defineProps<{
@@ -17,6 +17,13 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const api = useApi();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
+const apiCountry = computed(() =>
+    country.value === 'en' ? 'ph' : country.value
+);
 
 const resetEmail = ref('');
 const error = ref('');
@@ -60,7 +67,7 @@ async function submitReset() {
 
     try {
         const response = await api<{ success: boolean; message: string }>(
-            '/kr/auth/password/reset-link',
+            `/${apiCountry.value}/auth/password/reset-link`,
             {
                 method: 'POST',
                 body: {
@@ -135,7 +142,7 @@ async function submitReset() {
                     <UiButton
                         variant="filled"
                         tone="neutral"
-                        size="md"
+                        size="lg"
                         class="auth-forgot-submit"
                         data-testid="auth-login-forgot-password-submit-button"
                         :disabled="loading"

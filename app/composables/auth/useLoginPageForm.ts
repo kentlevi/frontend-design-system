@@ -8,6 +8,12 @@ export function useLoginPageForm() {
 
     const router = useRouter();
     const route = useRoute();
+    const country = computed(() =>
+        String(route.params.country || 'en').toLowerCase()
+    );
+    const apiCountry = computed(() =>
+        country.value === 'en' ? 'ph' : country.value
+    );
 
     const {
         memberType,
@@ -138,7 +144,9 @@ export function useLoginPageForm() {
     async function onSubmitClick() {
         if (isNonMember.value === false) {
             const response = await memberLoginHandler();
-            if (response?.success === true) router.push('/');
+            if (response?.success === true) {
+                await router.push(`/${country.value}`);
+            }
         } else {
             await nonMemberLoginHandler();
         }
@@ -148,7 +156,7 @@ export function useLoginPageForm() {
         if (!validateMember()) return;
 
         try {
-            const response = await api<LoginResponse>('/kr/auth/login', {
+            const response = await api<LoginResponse>(`/${apiCountry.value}/auth/login`, {
                 method: 'POST',
                 body: {
                     email: memberEmail.value.trim(),
@@ -172,7 +180,7 @@ export function useLoginPageForm() {
                 path: '/',
             });
 
-            authToken.value = response.data.auth_token ?? '';
+            authToken.value = response?.data?.auth_token ?? '';
 
             // store user in Pinia
             const userStore = useUserStore();
@@ -222,7 +230,7 @@ export function useLoginPageForm() {
             return;
         }
 
-        await api('/kr/auth/login/guest/verification', {
+        await api(`/${apiCountry.value}/auth/login/guest/verification`, {
             method: 'POST',
             body: {
                 email: nonMemberEmail.value.trim(),

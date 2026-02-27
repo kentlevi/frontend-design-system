@@ -6,6 +6,13 @@ import { useUserStore } from '@/stores/user';
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
+const apiCountry = computed(() =>
+    country.value === 'en' ? 'ph' : country.value
+);
 
 const props = defineProps<{
     modelValue: boolean;
@@ -30,7 +37,7 @@ interface RegisterResponse {
 }
 
 async function handleSubmit() {
-    const response = await api<RegisterResponse>('/kr/auth/register', {
+    const response = await api<RegisterResponse>(`/${apiCountry.value}/auth/register`, {
         method: 'POST',
         body: {
             email: props.email,
@@ -53,7 +60,11 @@ async function handleSubmit() {
         });
     }
 
-    router.push(props.onboarding ? '/auth/profile' : '/account/profile')
+    router.push(
+        props.onboarding
+            ? `/${country.value}/auth/profile`
+            : `/${country.value}/account/profile`
+    )
     closeModal()
 }
 

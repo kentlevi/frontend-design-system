@@ -1,5 +1,5 @@
 export const COUNTRIES = {
-    ph: {
+    en: {
         name: 'Philippines',
         currency: { 
             code: 'PHP', 

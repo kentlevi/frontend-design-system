@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
-const localePath = useLocalePath();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
 
 const {
@@ -42,7 +45,7 @@ const selectedPaymentMethod = ref<'credit-card' | 'paypal' | 'bank-transfer'>('c
                         <label class="checkout-label">Email Address*</label>
                         <div class="checkout-login-link">
                             <span class="checkout-login-link-text">Already have an account?</span>
-                            <NuxtLink :to="localePath('/auth/login')" class="checkout-login-link-action">Login</NuxtLink>
+                            <NuxtLink :to="`/${country}/auth/login`" class="checkout-login-link-action">Login</NuxtLink>
                         </div>
                     </div>
                     <UiInput

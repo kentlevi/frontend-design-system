@@ -2,8 +2,11 @@
 import UiTooltip from '@/components/ui/Tooltip.vue';
 import { useRegisterForm } from '@/composables/auth/useRegisterForm';
 
-const localePath = useLocalePath();
 const { t } = useI18n();
+const route = useRoute();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
 const termsErrorPopoverPinned = ref(false);
 const termsErrorPopoverHovered = ref(false);
 const termsErrorHoverCloseTimer = ref<ReturnType<typeof setTimeout> | null>(null);
@@ -299,7 +302,7 @@ onBeforeUnmount(() => {
         <p class="auth-register-login">
             {{ t('auth.register.alreadyMember') }}
             <NuxtLink
-                :to="localePath('/auth/login')"
+                :to="`/${country}/auth/login`"
                 class="auth-register-login-link"
                 data-testid="auth-register-login-link"
             >

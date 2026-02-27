@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
 const props = withDefaults(
@@ -22,7 +22,14 @@ const emit = defineEmits<{
 
 const api = useApi();
 const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
+const country = computed(() =>
+    String(route.params.country || 'en').toLowerCase()
+);
+const apiCountry = computed(() =>
+    country.value === 'en' ? 'ph' : country.value
+);
 
 const password = ref('');
 const confirmPassword = ref('');
@@ -81,7 +88,7 @@ async function submitChangePassword() {
 
     try {
         const response = await api<{ success: boolean; message: string }>(
-            '/kr/auth/password/reset',
+            `/${apiCountry.value}/auth/password/reset`,
             {
                 method: 'POST',
                 body: {
@@ -116,7 +123,7 @@ async function submitChangePassword() {
                     };
                 };
             };
-        }>('/kr/auth/login', {
+        }>(`/${apiCountry.value}/auth/login`, {
             method: 'POST',
             body: {
                 email,
@@ -176,7 +183,7 @@ async function submitChangePassword() {
 
         emit('update:modelValue', false);
         emit('updated');
-        router.push('/');
+        router.push(`/${country.value}`);
     } catch (err: any) {
         error.value =
             err?.data?.message || err?.message || 'Unable to reset password.';
@@ -266,7 +273,7 @@ async function submitChangePassword() {
             <UiButton
                 variant="filled"
                 tone="neutral"
-                size="md"
+                size="lg"
                 class="auth-reset-submit"
                 :disabled="loading"
                 data-testid="auth-reset-password-submit-button"
