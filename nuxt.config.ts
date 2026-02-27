@@ -1,13 +1,37 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
+import { loadAppEnv } from './config';
+
+process.env.ENV = process.env.ENV || 'development';
+loadAppEnv();
+
 export default defineNuxtConfig({
     css: [],
     compatibilityDate: '2025-07-15',
     devtools: { enabled: true },
+    imports: {
+        dirs: ['composables', 'composables/core', 'composables/ui'],
+    },
     runtimeConfig: {
+        ENV: process.env.ENV,
+        app_name: process.env.APP,
+        node_env: process.env.NODE_ENV,
         public: {
+            ENV: process.env.ENV,
+            app_name: process.env.APP,
+            node_env: process.env.NODE_ENV,
+            app_url: process.env.APP_URI,
+            api_url: process.env.API_SERVER,
+            file_url: process.env.FILE_URL,
+            s3_file_url: process.env.S3_FILE_URL,
+            file_base_url: process.env.FILE_BASE_URL,
+            host: process.env.APP_HOST,
             webVitalsEnabled: true,
             webVitalsDebug: false,
             webVitalsEndpoint: '/api/web-vitals',
-            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://127.0.0.1:8001/sys',
+            apiBase:
+                process.env.NUXT_PUBLIC_API_BASE ||
+                process.env.API_SERVER ||
+                'http://127.0.0.1:8001/sys',
         },
     },
     vite: {
@@ -33,7 +57,7 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ['@pinia/nuxt', '@nuxtjs/i18n'],
+    modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n'],
 
     i18n: {
         defaultLocale: 'en',
