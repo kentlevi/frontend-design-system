@@ -20,6 +20,12 @@ const {
     setKeepSignedIn,
     submitLabel,
     isVerificationModalOpen,
+    guestVerificationEmail,
+    guestVerificationOrderNumber,
+    guestVerificationToken,
+    guestVerificationCode,
+    guestVerificationError,
+    isGuestVerifying,
     isForgotPasswordModalOpen,
     memberEmail,
     memberPassword,
@@ -34,6 +40,8 @@ const {
     onNonMemberEmailInput,
     onNonMemberOrderInput,
     onSubmitClick,
+    submitGuestVerification,
+    resendGuestVerification,
     openForgotPasswordModal,
 } = useLoginPageForm();
 </script>
@@ -126,7 +134,16 @@ const {
         />
         <AuthLoginVerificationModal
             v-model="isVerificationModalOpen"
+            :email="guestVerificationEmail"
+            :order-number="guestVerificationOrderNumber"
+            :token="guestVerificationToken"
+            :code="guestVerificationCode"
+            :error="guestVerificationError"
+            :verifying="isGuestVerifying"
             data-testid="auth-login-verification-modal"
+            @update:code="guestVerificationCode = $event"
+            @verify="submitGuestVerification"
+            @resend="resendGuestVerification"
         />
     </section>
 </template>

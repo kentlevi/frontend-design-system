@@ -6,6 +6,7 @@ import {
     HEADER_SEARCH_LOADING_MIN_VISIBLE_MS,
     headerSearchCategories,
 } from '~/data/layout/header';
+import { useCountry } from '~/composables/app/useCountry';
 
 export type SearchItem = {
     id: string;
@@ -33,7 +34,7 @@ export function useAppHeaderSearch() {
     const { t } = useI18n();
     const route = useRoute();
     const router = useRouter();
-    const localePath = useLocalePath();
+    const { withCountry } = useCountry();
     const searchRecentTermsCookie = useCookie<string[]>('search_recent_terms', {
         default: () => [],
         sameSite: 'lax',
@@ -89,7 +90,7 @@ export function useAppHeaderSearch() {
                     name: toSearchDisplayName(t(`product.items.${product.id}.name`)),
                     blurb: t(`product.items.${product.id}.blurb`),
                     image: product.image,
-                    to: localePath(`/${categoryKey}/${productSlug}`),
+                    to: withCountry(`/${categoryKey}/${productSlug}`),
                 };
             })
         )

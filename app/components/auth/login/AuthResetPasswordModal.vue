@@ -2,6 +2,8 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import type { UserFieldValue, UserIdentity, UserProfile } from '@/stores/user';
+import { useCountry } from '@/composables/app/useCountry';
 
 const props = withDefaults(
     defineProps<{
@@ -64,23 +66,22 @@ async function submitChangePassword() {
     const confirmNewPassword = confirmPassword.value.trim();
 
     if (!email || !token) {
-        error.value = 'Reset link is missing required information.';
+        error.value = t('auth.reset.errors.missingLink');
         return;
     }
 
     if (!newPassword || !confirmNewPassword) {
-        error.value = 'Please fill in both password fields.';
+        error.value = t('auth.reset.errors.fillBoth');
         return;
     }
 
     if (!isStrongPassword(newPassword)) {
-        error.value =
-            'Password must be at least 6 characters and include uppercase, number, and special character.';
+        error.value = t('auth.reset.description');
         return;
     }
 
     if (newPassword !== confirmNewPassword) {
-        error.value = 'Passwords do not match.';
+        error.value = t('auth.reset.errors.mismatch');
         return;
     }
 
@@ -101,7 +102,7 @@ async function submitChangePassword() {
         );
 
         if (!response?.success) {
-            error.value = response?.message || 'Unable to reset password.';
+            error.value = response?.message || t('auth.reset.errors.unable');
             return;
         }
 
@@ -110,17 +111,8 @@ async function submitChangePassword() {
             message: string;
             data: {
                 auth_token?: string;
-                user?: {
-                    id: number;
-                    code: string;
-                    email: string;
-                    profile?: {
-                        user_field_values?: Array<{
-                            country_field_ids?: number;
-                            country_fields_id?: number;
-                            value?: string;
-                        }>;
-                    };
+                user?: UserIdentity & {
+                    profile?: Pick<UserProfile, 'user_field_values'> | null;
                 };
             };
         }>(`/${apiCountry.value}/auth/login`, {
@@ -135,7 +127,7 @@ async function submitChangePassword() {
         if (!loginResponse?.success || !loginResponse?.data?.auth_token) {
             error.value =
                 loginResponse?.message ||
-                'Password changed, but automatic login failed.';
+                t('auth.reset.errors.autoLoginFailed');
             return;
         }
 
@@ -163,13 +155,13 @@ async function submitChangePassword() {
                 loginResponse.data.user.profile?.user_field_values ?? [];
             const firstName =
                 fields.find(
-                    (field) =>
+                    (field: UserFieldValue) =>
                         (field.country_field_ids ?? field.country_fields_id) ===
                         1
                 )?.value?.trim() || '';
             const lastName =
                 fields.find(
-                    (field) =>
+                    (field: UserFieldValue) =>
                         (field.country_field_ids ?? field.country_fields_id) ===
                         2
                 )?.value?.trim() || '';
@@ -186,7 +178,7 @@ async function submitChangePassword() {
         router.push(`/${country.value}`);
     } catch (err: any) {
         error.value =
-            err?.data?.message || err?.message || 'Unable to reset password.';
+            err?.data?.message || err?.message || t('auth.reset.errors.unable');
     } finally {
         loading.value = false;
     }
@@ -205,23 +197,22 @@ async function submitChangePassword() {
         <template #header>
             <div class="auth-reset-header">
                 <UiLogo name="musticker" variant="mark" color="colored" :size="34" />
-                <h3 class="auth-reset-title">Change Password</h3>
+                <h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
                 <p class="auth-reset-description">
-                    Password must be at least 6 characters and include an
-                    uppercase letter, number, or special character.
+                    {{ t('auth.reset.description') }}
                 </p>
             </div>
         </template>
 
         <div class="auth-reset-body">
             <div class="auth-reset-field">
-                <label class="auth-reset-label">New Password</label>
+                <label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
                 <UiInput
                     :model-value="password"
                     :type="passwordVisible ? 'text' : 'password'"
                     size="md"
                     :state="error ? 'error' : 'default'"
-                    placeholder="Enter New Password"
+                    :placeholder="t('auth.reset.enterNewPassword')"
                     data-testid="auth-reset-password-input"
                     @update:model-value="password = $event"
                 >
@@ -229,7 +220,7 @@ async function submitChangePassword() {
                         <button
                             type="button"
                             class="auth-reset-toggle"
-                            aria-label="Toggle password visibility"
+                            :aria-label="t('auth.reset.togglePassword')"
                             @click="passwordVisible = !passwordVisible"
                         >
                             <UiIcon
@@ -242,13 +233,13 @@ async function submitChangePassword() {
             </div>
 
             <div class="auth-reset-field">
-                <label class="auth-reset-label">Confirm Password</label>
+                <label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
                 <UiInput
                     :model-value="confirmPassword"
                     :type="confirmVisible ? 'text' : 'password'"
                     size="md"
                     :state="error ? 'error' : 'default'"
-                    placeholder="Confirm New Password"
+                    :placeholder="t('auth.reset.enterConfirmPassword')"
                     data-testid="auth-reset-password-confirm-input"
                     @update:model-value="confirmPassword = $event"
                 >
@@ -256,7 +247,7 @@ async function submitChangePassword() {
                         <button
                             type="button"
                             class="auth-reset-toggle"
-                            aria-label="Toggle confirm password visibility"
+                            :aria-label="t('auth.reset.toggleConfirmPassword')"
                             @click="confirmVisible = !confirmVisible"
                         >
                             <UiIcon
@@ -279,7 +270,7 @@ async function submitChangePassword() {
                 data-testid="auth-reset-password-submit-button"
                 @click="submitChangePassword"
             >
-                {{ loading ? 'Changing...' : 'Change Password' }}
+                {{ loading ? t('auth.reset.changing') : t('auth.reset.submit') }}
             </UiButton>
         </div>
     </UiModal>

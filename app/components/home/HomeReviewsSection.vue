@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed } from 'vue';
+import { useHomeReviewsCarousel } from '@/composables/home/useHomeReviewsCarousel';
+
 const { t } = useI18n();
 
 type ReviewItem = {
@@ -38,98 +40,22 @@ const reviews = computed<ReviewItem[]>(() => [
     },
 ]);
 
-const reviewGap = 24;
-const currentSlide = ref(0);
-const cardWidth = ref(0);
-const viewportRef = ref<HTMLElement | null>(null);
-const cardRef = ref<HTMLElement | null>(null);
-const sectionRef = ref<HTMLElement | null>(null);
-const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
-const viewportObserver = ref<IntersectionObserver | null>(null);
-
-const trackStyle = computed(() => ({
-    transform: `translateX(-${currentSlide.value * (cardWidth.value + reviewGap)}px)`,
-}));
-
-const visibleCards = computed(() => {
-    const viewportWidth = viewportRef.value?.getBoundingClientRect().width ?? 0;
-    const slideWidth = cardWidth.value + reviewGap;
-    if (!viewportWidth || !slideWidth) return 1;
-    return Math.max(1, Math.floor((viewportWidth + reviewGap) / slideWidth));
+const {
+    sectionRef,
+    viewportRef,
+    trackStyle,
+    canGoPrev,
+    canGoNext,
+    nextSlide,
+    prevSlide,
+    startAuto,
+    stopAuto,
+    setCardRef,
+} = useHomeReviewsCarousel(computed(() => reviews.value.length), {
+    gap: 24,
+    intervalMs: 3200,
 });
-
-const maxSlide = computed(() =>
-    Math.max(0, reviews.value.length - visibleCards.value)
-);
-const canGoPrev = computed(() => currentSlide.value > 0);
-const canGoNext = computed(() => currentSlide.value < maxSlide.value);
 const carouselLabel = 'Client reviews carousel';
-
-function syncCardWidth() {
-    if (!cardRef.value) return;
-    cardWidth.value = cardRef.value.getBoundingClientRect().width;
-}
-
-function nextReview() {
-    if (currentSlide.value >= maxSlide.value) {
-        currentSlide.value = 0;
-        return;
-    }
-
-    currentSlide.value += 1;
-}
-
-function prevReview() {
-    if (currentSlide.value === 0) {
-        return;
-    }
-
-    currentSlide.value -= 1;
-}
-
-function startAuto() {
-    stopAuto();
-    autoTimer.value = setInterval(nextReview, 3200);
-}
-
-function stopAuto() {
-    if (!autoTimer.value) return;
-    clearInterval(autoTimer.value);
-    autoTimer.value = null;
-}
-
-onMounted(() => {
-    syncCardWidth();
-    currentSlide.value = 0;
-
-    if ('IntersectionObserver' in window && sectionRef.value) {
-        viewportObserver.value = new IntersectionObserver(
-            (entries) => {
-                const [entry] = entries;
-                if (entry?.isIntersecting) {
-                    syncCardWidth();
-                    startAuto();
-                    return;
-                }
-
-                stopAuto();
-            },
-            { threshold: 0.2 }
-        );
-
-        viewportObserver.value.observe(sectionRef.value);
-    } else {
-        startAuto();
-    }
-
-    window.addEventListener('resize', syncCardWidth);
-});
-
-onBeforeUnmount(() => {
-    stopAuto();
-    viewportObserver.value?.disconnect();
-    window.removeEventListener('resize', syncCardWidth);
-});
 </script>
 
 <template>
@@ -159,7 +85,7 @@ onBeforeUnmount(() => {
                         class="home-reviews-arrow"
                         data-testid="home-reviews-prev-button"
                         :disabled="!canGoPrev"
-                        @click="prevReview"
+                        @click="prevSlide"
                     />
                     <UiButton
                         variant="outline"
@@ -173,7 +99,7 @@ onBeforeUnmount(() => {
                         class="home-reviews-arrow"
                         data-testid="home-reviews-next-button"
                         :disabled="!canGoNext"
-                        @click="nextReview"
+                        @click="nextSlide"
                     />
                 </div>
             </div>
@@ -199,7 +125,7 @@ onBeforeUnmount(() => {
                         :ref="
                             (el) => {
                                 if (idx === 0)
-                                    cardRef = el as HTMLElement | null;
+                                    setCardRef(el);
                             }
                         "
                     >

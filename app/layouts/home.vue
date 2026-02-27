@@ -18,9 +18,12 @@ const route = useRoute();
 <style scoped lang="scss">
 .home-layout {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: var(--brand-primary);
 
     .home-layout-main {
+        flex: 1;
         width: 100%;
     }
 }

@@ -1,0 +1,23 @@
+{
+    "auth": {
+        "reset": {
+            "title": "Change Password",
+            "description": "Password must be at least 6 characters and include uppercase, number, and special character.",
+            "newPassword": "New Password",
+            "enterNewPassword": "Enter New Password",
+            "confirmPassword": "Confirm Password",
+            "enterConfirmPassword": "Confirm New Password",
+            "togglePassword": "Toggle password visibility",
+            "toggleConfirmPassword": "Toggle confirm password visibility",
+            "submit": "Change Password",
+            "changing": "Changing...",
+            "errors": {
+                "missingLink": "Reset link is missing required information.",
+                "fillBoth": "Please fill in both password fields.",
+                "mismatch": "Passwords do not match.",
+                "unable": "Unable to reset password.",
+                "autoLoginFailed": "Password changed, but automatic login failed."
+            }
+        }
+    }
+}

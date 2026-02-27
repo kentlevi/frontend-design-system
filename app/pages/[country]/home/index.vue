@@ -1,6 +1,8 @@
 <script setup lang="ts">
-const localePath = useLocalePath();
-await navigateTo(localePath('/'));
+import { useCountry } from '~/composables/app/useCountry';
+
+const { withCountry } = useCountry();
+await navigateTo(withCountry('/'));
 </script>
 
 <template>

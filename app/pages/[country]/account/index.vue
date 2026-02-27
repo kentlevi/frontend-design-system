@@ -1,6 +1,8 @@
 <script setup lang="ts">
-const localePath = useLocalePath();
-await navigateTo(localePath('/account/profile'), { redirectCode: 302 });
+import { useCountry } from '~/composables/app/useCountry';
+
+const { withCountry } = useCountry();
+await navigateTo(withCountry('/account/profile'), { redirectCode: 302 });
 </script>
 
 <template>

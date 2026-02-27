@@ -1,6 +1,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
-import { accountProfileDefaults, type AccountMockUser } from '@/data/account/profile';
-import { useUserStore } from '@/stores/user';
+import { accountProfileDefaults, type AccountMockUser } from '~/data/account/profile';
+import { useCountry } from '~/composables/app/useCountry';
+import { useUserStore } from '~/stores/user';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -8,7 +9,7 @@ type ProfileUnit = 'millimeter' | 'inch';
 const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 export function useAuthProfileSetup() {
-    const localePath = useLocalePath();
+    const { withCountry } = useCountry();
     const userStore = useUserStore();
     const mockUser = useCookie<AccountMockUser | null>('mock_user', {
         default: () => null,
@@ -94,7 +95,7 @@ export function useAuthProfileSetup() {
                 email: email.value.trim() || accountProfileDefaults.email,
             };
         }
-        await navigateTo(localePath('/'));
+        await navigateTo(withCountry('/'));
     }
 
     watch(

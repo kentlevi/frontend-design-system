@@ -38,6 +38,22 @@ yarn dev
 bun run dev
 ```
 
+## Live Automation Testing
+
+Run Playwright in UI mode with a visible browser:
+
+```bash
+npm run test:live
+```
+
+What this does:
+- Starts the Nuxt app automatically through Playwright `webServer` (default `http://127.0.0.1:4173`)
+- Opens Playwright UI so you can run tests interactively
+- Runs tests in headed mode so you can watch automation live
+
+Tip:
+- Use `npm run test:e2e:ui` if you want the same UI without forcing headed browser windows.
+
 ## Production
 
 Build the application for production:

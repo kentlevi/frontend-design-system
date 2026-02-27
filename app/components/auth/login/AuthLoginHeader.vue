@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCountry } from '@/composables/app/useCountry';
+
 const { t } = useI18n();
 const route = useRoute();
 const country = computed(() =>

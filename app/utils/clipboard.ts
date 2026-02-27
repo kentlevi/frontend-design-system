@@ -1,4 +1,8 @@
 export async function copyTextToClipboard(text: string) {
+    if (typeof document === 'undefined' || typeof navigator === 'undefined') {
+        throw new Error('Clipboard unavailable in non-browser context');
+    }
+
     const fallbackCopy = () => {
         const textarea = document.createElement('textarea');
         textarea.value = text;

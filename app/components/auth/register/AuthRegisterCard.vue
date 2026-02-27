@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import UiTooltip from '@/components/ui/Tooltip.vue';
 import { useRegisterForm } from '@/composables/auth/useRegisterForm';
+import { useCountry } from '@/composables/app/useCountry';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -110,15 +111,7 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="auth-register-grid">
-            <div class="auth-register-field">
-                <div class="auth-register-label-row">
-                    <label class="auth-register-label">
-                        {{ t('auth.register.firstName') }}
-                    </label>
-                    <span v-if="firstNameError" class="auth-register-label-error">
-                        {{ firstNameError }}
-                    </span>
-                </div>
+            <UiFormField class="auth-register-field" :label="t('auth.register.firstName')" :error="firstNameError">
                 <UiInput
                     v-model="firstName"
                     type="text"
@@ -128,17 +121,17 @@ onBeforeUnmount(() => {
                     :placeholder="t('auth.register.enterFirstName')"
                     data-testid="auth-register-first-name-input"
                 />
-            </div>
+            </UiFormField>
 
-            <div class="auth-register-field">
-                <div class="auth-register-label-row">
-                    <label class="auth-register-label">
+            <UiFormField class="auth-register-field">
+                <template #label>
+                    <span class="auth-register-label">
                         {{ t('auth.register.lastName') }}
                         <span class="auth-register-optional">
                             ({{ t('auth.register.optional') }})
                         </span>
-                    </label>
-                </div>
+                    </span>
+                </template>
                 <UiInput
                     v-model="lastName"
                     type="text"
@@ -147,18 +140,10 @@ onBeforeUnmount(() => {
                     :placeholder="t('auth.register.enterLastName')"
                     data-testid="auth-register-last-name-input"
                 />
-            </div>
+            </UiFormField>
         </div>
 
-        <div class="auth-register-field">
-            <div class="auth-register-label-row">
-                <label class="auth-register-label">
-                    {{ t('auth.register.email') }}
-                </label>
-                <span v-if="emailError" class="auth-register-label-error">
-                    {{ emailError }}
-                </span>
-            </div>
+        <UiFormField class="auth-register-field" :label="t('auth.register.email')" :error="emailError">
             <UiInput
                 v-model="email"
                 type="email"
@@ -168,17 +153,9 @@ onBeforeUnmount(() => {
                 :placeholder="t('auth.register.enterEmail')"
                 data-testid="auth-register-email-input"
             />
-        </div>
+        </UiFormField>
 
-        <div class="auth-register-field">
-            <div class="auth-register-label-row">
-                <label class="auth-register-label">
-                    {{ t('auth.register.password') }}
-                </label>
-                <span v-if="passwordError" class="auth-register-label-error">
-                    {{ passwordError }}
-                </span>
-            </div>
+        <UiFormField class="auth-register-field" :label="t('auth.register.password')" :error="passwordError">
             <div class="auth-register-password-wrap">
                 <UiInput
                     v-model="password"
@@ -206,10 +183,12 @@ onBeforeUnmount(() => {
                     </template>
                 </UiInput>
             </div>
-            <p class="auth-register-hint">
-                {{ t('auth.register.passwordHint') }}
-            </p>
-        </div>
+            <template #hint>
+                <p class="auth-register-hint">
+                    {{ t('auth.register.passwordHint') }}
+                </p>
+            </template>
+        </UiFormField>
 
         <div class="auth-register-check-row">
             <UiCheckbox
@@ -378,13 +357,7 @@ onBeforeUnmount(() => {
         flex-direction: column;
         gap: 8px;
 
-        .auth-register-label-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
+        :deep(.ui-form-field-label),
         .auth-register-label {
             font-size: 14px;
             font-weight: 600;
@@ -397,7 +370,7 @@ onBeforeUnmount(() => {
             }
         }
 
-        .auth-register-label-error {
+        :deep(.ui-form-field-error) {
             color: var(--error);
             font-size: 14px;
             font-weight: 600;

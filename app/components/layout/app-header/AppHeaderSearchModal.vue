@@ -304,7 +304,7 @@ const { t } = useI18n();
                         </div>
                     </div>
                     <div class="home-search-foot-hint" data-testid="app-header-search-footer-close-wrap">
-                        <span class="home-search-key home-search-key-esc">esc</span>
+                        <span class="home-search-key home-search-key-esc">{{ t('layout.header.search.modal.footer.escKeyLabel') }}</span>
                         <UiButton
                             variant="ghost"
                             tone="default"

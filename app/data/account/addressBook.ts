@@ -14,7 +14,7 @@ export const accountAddressBookItems: AccountAddressBookItem[] = [
         name: 'Primary Contact',
         phone: '+1 (551) 236-4533',
         address:
-            '176-6, Yusan-ri, Gusan-myeon, Gaseong-si, Incheon 01000, Republic of Korea',
+            '250 Hudson St, New York, NY 10013, United States',
         company: 'Summit Inc.',
         tag: 'Home',
         isDefault: true,
@@ -22,15 +22,15 @@ export const accountAddressBookItems: AccountAddressBookItem[] = [
     {
         name: 'Primary Contact',
         phone: '+1 (818) 922-5542',
-        address: '9F, 310 Teheran-ro, Gangnam-gu, Seoul 06241, Republic of Korea',
+        address: '600 Wilshire Blvd, Los Angeles, CA 90017, United States',
         company: 'Lock&Lock Inc.',
         tag: 'Office',
     },
     {
         name: 'Primary Contact',
-        phone: '+1 (963) 524-8858',
+        phone: '+1 (917) 524-8858',
         address:
-            '18F, 45 Gwanggyo Jungang-ro, Yeongtong-gu, Suwon-si, Gyeonggi-do 41577, Republic of Korea',
+            '401 Congress Ave, Austin, TX 78701, United States',
         company: 'Lock&Lock Inc.',
         tag: 'Client',
     },

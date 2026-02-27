@@ -1,0 +1,24 @@
+{
+    "cart": {
+        "cartPage": {
+            "title": "My Cart",
+            "continueShopping": "Continue Shopping",
+            "selectAll": "Select All: {count} item(s)",
+            "remove": "Remove",
+            "headers": {
+                "item": "ITEM",
+                "quantity": "QUANTITY",
+                "price": "PRICE"
+            },
+            "sizeLabel": "Size: {size}mm",
+            "replaceArtwork": "Replace Artwork",
+            "editSize": "Edit Size",
+            "removeItemSr": "Remove item",
+            "orderSummary": "Order Summary",
+            "total": "Total:",
+            "proceedCheckout": "Proceed Checkout ({count})",
+            "note": "Shipping fees and discounts are calculated at checkout.",
+            "availablePaymentOptions": "Available Payment Options:"
+        }
+    }
+}

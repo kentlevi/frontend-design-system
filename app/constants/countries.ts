@@ -7,15 +7,15 @@ export const COUNTRIES = {
             locale: 'en-PH', 
             decimals: 2 
         },
-        timezone: 'Asia/Manila',
+        timezone: 'America/New_York',
     },
     kr: {
         name: 'Korea',
-        currency: { 
-            code: 'KRW', 
-            symbol: '₩', 
-            locale: 'ko-KR', 
-            decimals: 0 
+        currency: {
+            code: 'KRW',
+            symbol: '\u20A9',
+            locale: 'ko-KR',
+            decimals: 0,
         },
         timezone: 'Asia/Seoul',
     },

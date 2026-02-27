@@ -14,13 +14,22 @@ export default defineNuxtConfig({
         server: {
             allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev'],
         },
-        css: {
-            devSourcemap: false,
-            preprocessorOptions: {
-                scss: {
-                    api: 'modern-compiler',
+        build: {
+            rollupOptions: {
+                onwarn(warning, warn) {
+                    if (
+                        warning.code === 'EVAL' &&
+                        typeof warning.id === 'string' &&
+                        warning.id.includes('lottie-web/build/player/lottie.js')
+                    ) {
+                        return;
+                    }
+                    warn(warning);
                 },
             },
+        },
+        css: {
+            devSourcemap: false,
         },
     },
 
@@ -43,6 +52,7 @@ export default defineNuxtConfig({
                     'en/layout/footer.json',
                     'en/home/seo.json',
                     'en/home/hero.json',
+                    'en/home/toast.json',
                     'en/home/productTypes.json',
                     'en/home/feature.json',
                     'en/home/reviews.json',
@@ -50,6 +60,10 @@ export default defineNuxtConfig({
                     'en/home/cta.json',
                     'en/layout/header/search.json',
                     'en/auth/login.json',
+                    'en/auth/verification.json',
+                    'en/auth/guestVerification.json',
+                    'en/auth/reset.json',
+                    'en/auth/callback.json',
                     'en/auth/register.json',
                     'en/auth/profile.json',
                     'en/account/shell.json',
@@ -68,6 +82,8 @@ export default defineNuxtConfig({
                     'en/product/reviews.json',
                     'en/cart/uploadArtwork.json',
                     'en/cart/cartPreview.json',
+                    'en/cart/cartPage.json',
+                    'en/checkout/guest.json',
                 ],
             },
             {
@@ -81,6 +97,7 @@ export default defineNuxtConfig({
                     'kr/layout/footer.json',
                     'kr/home/seo.json',
                     'kr/home/hero.json',
+                    'kr/home/toast.json',
                     'kr/home/productTypes.json',
                     'kr/home/feature.json',
                     'kr/home/reviews.json',
@@ -88,6 +105,10 @@ export default defineNuxtConfig({
                     'kr/home/cta.json',
                     'kr/layout/header/search.json',
                     'kr/auth/login.json',
+                    'kr/auth/verification.json',
+                    'kr/auth/guestVerification.json',
+                    'kr/auth/reset.json',
+                    'kr/auth/callback.json',
                     'kr/auth/register.json',
                     'kr/auth/profile.json',
                     'kr/account/shell.json',
@@ -106,6 +127,8 @@ export default defineNuxtConfig({
                     'kr/product/reviews.json',
                     'kr/cart/uploadArtwork.json',
                     'kr/cart/cartPreview.json',
+                    'kr/cart/cartPage.json',
+                    'kr/checkout/guest.json',
                 ],
             },
         ],

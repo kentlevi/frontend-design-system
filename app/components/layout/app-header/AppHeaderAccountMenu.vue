@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCountry } from '@/composables/app/useCountry';
+
 const { t } = useI18n();
 const route = useRoute();
 const country = computed(() =>
@@ -296,21 +298,21 @@ const emit = defineEmits<{
             }
         }
 
-            .home-account-link {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                height: 42px;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                line-height: 1.2;
-                color: var(--text-primary);
-                padding: 0 12px;
+        .home-account-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 42px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.2;
+            color: var(--text-primary);
+            padding: 0 12px;
 
-                :deep(.ui-icon) {
-                    flex-shrink: 0;
-                }
+            :deep(.ui-icon) {
+                flex-shrink: 0;
+            }
 
             &:hover {
                 background: var(--gold-20);

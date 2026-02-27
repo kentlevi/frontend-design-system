@@ -1,5 +1,4 @@
-// app/data/button-demos.ts
-import type { ButtonVariant, ButtonSize, ButtonTone } from './buttons';
+import type { ButtonSize, ButtonTone, ButtonVariant } from '~/data/ui/buttons';
 
 export type ButtonDemoItem = {
     label?: string;
@@ -33,7 +32,6 @@ export const buttonDemoSections: ButtonDemoSection[] = [
         title: 'Custom Button',
         description: 'Configure variant, size, tone, and custom color.',
     },
-
     {
         type: 'examples',
         title: 'Icon Positions',
@@ -41,11 +39,7 @@ export const buttonDemoSections: ButtonDemoSection[] = [
             { label: 'Left icon', props: { icon: 'light-plus', tone: 'neutral' } },
             {
                 label: 'Right icon',
-                props: {
-                    icon: 'light-plus',
-                    iconPosition: 'right',
-                    tone: 'neutral',
-                },
+                props: { icon: 'light-plus', iconPosition: 'right', tone: 'neutral' },
             },
             {
                 props: {
@@ -57,7 +51,6 @@ export const buttonDemoSections: ButtonDemoSection[] = [
             },
         ],
     },
-
     {
         type: 'examples',
         title: 'States',
@@ -76,15 +69,9 @@ export const buttonDemoSections: ButtonDemoSection[] = [
             },
         ],
     },
-
     {
         type: 'examples',
         title: 'Long Label',
-        items: [
-            {
-                label: 'Long Button Text',
-                props: { icon: 'light-arrow-right', tone: 'neutral' },
-            },
-        ],
+        items: [{ label: 'Long Button Text', props: { icon: 'light-arrow-right', tone: 'neutral' } }],
     },
 ];
