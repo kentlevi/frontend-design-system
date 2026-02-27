@@ -130,7 +130,12 @@ const unitPrice = computed(() =>
                                     <span class="size-pill-name">{{ size.name }}</span>
                                     <span class="size-pill-dim">{{ size.dim }}</span>
                                 </button>
-                                <button type="button" class="option-pill option-pill-wide" data-testid="product-category-size-option-custom-button">
+                                <button
+                                    type="button"
+                                    class="option-pill option-pill-wide is-disabled"
+                                    disabled
+                                    data-testid="product-category-size-option-custom-button"
+                                >
                                     {{ t('product.options.customSize') }}
                                 </button>
                             </div>
@@ -151,7 +156,12 @@ const unitPrice = computed(() =>
                                     <span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
                                     <strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
                                 </button>
-                                <button type="button" class="option-pill option-pill-wide" data-testid="product-category-quantity-option-custom-button">
+                                <button
+                                    type="button"
+                                    class="option-pill option-pill-wide is-disabled"
+                                    disabled
+                                    data-testid="product-category-quantity-option-custom-button"
+                                >
                                     {{ t('product.options.customQuantity') }}
                                 </button>
                             </div>
@@ -488,6 +498,11 @@ const unitPrice = computed(() =>
                 &.is-active {
                     border-color: var(--gold-base);
                     background: var(--gold-10);
+                }
+
+                &.is-disabled {
+                    cursor: not-allowed;
+                    opacity: 0.55;
                 }
             }
 

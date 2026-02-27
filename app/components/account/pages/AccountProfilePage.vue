@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
+import { useCountry } from '@/composables/app/useCountry';
 
 const { t } = useI18n();
+const { withCountry } = useCountry();
 const {
-    localePath,
     firstName,
     lastName,
     email,
@@ -83,21 +84,45 @@ const {
                             </div>
                         </div>
                         <div class="account-profile-grid" data-testid="account-profile-form">
-                            <div>
-                                <label>{{ t('account.profile.firstName') }}</label>
-                                <input v-model="firstName" type="text" data-testid="account-profile-first-name" />
-                            </div>
-                            <div>
-                                <label>
-                                    {{ t('account.profile.lastName') }}
-                                    <span class="account-profile-optional">({{ t('account.profile.optional') }})</span>
-                                </label>
-                                <input v-model="lastName" type="text" data-testid="account-profile-last-name" />
-                            </div>
-                            <div class="account-profile-grid-full">
-                                <label>{{ t('account.profile.emailAddress') }}</label>
-                                <input v-model="email" type="email" data-testid="account-profile-email" />
-                            </div>
+                            <UiFormField :label="t('account.profile.firstName')" :required="true">
+                                <template #default="{ inputId, describedBy }">
+                                    <UiInput
+                                        :id="inputId"
+                                        v-model="firstName"
+                                        type="text"
+                                        :aria-describedby="describedBy || undefined"
+                                        data-testid="account-profile-first-name"
+                                    />
+                                </template>
+                            </UiFormField>
+                            <UiFormField
+                                :label="`${t('account.profile.lastName')} (${t('account.profile.optional')})`"
+                            >
+                                <template #default="{ inputId, describedBy }">
+                                    <UiInput
+                                        :id="inputId"
+                                        v-model="lastName"
+                                        type="text"
+                                        :aria-describedby="describedBy || undefined"
+                                        data-testid="account-profile-last-name"
+                                    />
+                                </template>
+                            </UiFormField>
+                            <UiFormField
+                                class="account-profile-grid-full"
+                                :label="t('account.profile.emailAddress')"
+                                :required="true"
+                            >
+                                <template #default="{ inputId, describedBy }">
+                                    <UiInput
+                                        :id="inputId"
+                                        v-model="email"
+                                        type="email"
+                                        :aria-describedby="describedBy || undefined"
+                                        data-testid="account-profile-email"
+                                    />
+                                </template>
+                            </UiFormField>
                         </div>
                         <div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
                             <UiButton variant="filled" tone="neutral" size="md" @click="saveProfile" data-testid="account-profile-save-button">
@@ -113,39 +138,48 @@ const {
                         <p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
                     </div>
                     <div class="account-profile-stack" data-testid="account-profile-password-form">
-                        <div>
-                            <label>{{ t('account.profile.currentPassword') }}</label>
-                            <input
-                                v-model="currentPassword"
-                                type="password"
-                                :placeholder="t('account.profile.currentPasswordPlaceholder')"
-                                data-testid="account-profile-current-password"
-                            />
-                        </div>
+                        <UiFormField :label="t('account.profile.currentPassword')" :required="true">
+                            <template #default="{ inputId, describedBy }">
+                                <UiInput
+                                    :id="inputId"
+                                    v-model="currentPassword"
+                                    type="password"
+                                    :aria-describedby="describedBy || undefined"
+                                    :placeholder="t('account.profile.currentPasswordPlaceholder')"
+                                    data-testid="account-profile-current-password"
+                                />
+                            </template>
+                        </UiFormField>
                         <p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
-                        <div>
-                            <label>{{ t('account.profile.newPassword') }}</label>
-                            <input
-                                v-model="newPassword"
-                                type="password"
-                                :placeholder="t('account.profile.newPasswordPlaceholder')"
-                                data-testid="account-profile-new-password"
-                            />
-                        </div>
-                        <div>
-                            <label>{{ t('account.profile.confirmNewPassword') }}</label>
-                            <input
-                                v-model="confirmPassword"
-                                type="password"
-                                :placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
-                                data-testid="account-profile-confirm-password"
-                            />
-                        </div>
+                        <UiFormField :label="t('account.profile.newPassword')" :required="true">
+                            <template #default="{ inputId, describedBy }">
+                                <UiInput
+                                    :id="inputId"
+                                    v-model="newPassword"
+                                    type="password"
+                                    :aria-describedby="describedBy || undefined"
+                                    :placeholder="t('account.profile.newPasswordPlaceholder')"
+                                    data-testid="account-profile-new-password"
+                                />
+                            </template>
+                        </UiFormField>
+                        <UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
+                            <template #default="{ inputId, describedBy }">
+                                <UiInput
+                                    :id="inputId"
+                                    v-model="confirmPassword"
+                                    type="password"
+                                    :aria-describedby="describedBy || undefined"
+                                    :placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
+                                    data-testid="account-profile-confirm-password"
+                                />
+                            </template>
+                        </UiFormField>
                         <div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
                             <UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
                                 {{ t('account.profile.changePassword') }}
                             </UiButton>
-                            <NuxtLink :to="localePath('/auth/login')" data-testid="account-profile-forgot-password">
+                            <NuxtLink :to="withCountry('/auth/login')" data-testid="account-profile-forgot-password">
                                 {{ t('account.profile.forgotPassword') }}
                             </NuxtLink>
                         </div>

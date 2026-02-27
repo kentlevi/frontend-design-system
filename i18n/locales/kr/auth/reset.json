@@ -1,0 +1,23 @@
+{
+    "auth": {
+        "reset": {
+            "title": "비밀번호 변경",
+            "description": "비밀번호는 6자 이상이며 대문자, 숫자, 특수문자를 포함해야 합니다.",
+            "newPassword": "새 비밀번호",
+            "enterNewPassword": "새 비밀번호를 입력하세요",
+            "confirmPassword": "비밀번호 확인",
+            "enterConfirmPassword": "새 비밀번호를 다시 입력하세요",
+            "togglePassword": "비밀번호 표시 전환",
+            "toggleConfirmPassword": "비밀번호 확인 표시 전환",
+            "submit": "비밀번호 변경",
+            "changing": "변경 중...",
+            "errors": {
+                "missingLink": "재설정 링크 정보가 올바르지 않습니다.",
+                "fillBoth": "두 비밀번호 입력란을 모두 입력해 주세요.",
+                "mismatch": "비밀번호가 일치하지 않습니다.",
+                "unable": "비밀번호를 재설정할 수 없습니다.",
+                "autoLoginFailed": "비밀번호는 변경되었지만 자동 로그인에 실패했습니다."
+            }
+        }
+    }
+}

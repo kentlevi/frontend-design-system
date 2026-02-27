@@ -22,7 +22,11 @@
             "alreadyMember": "이미 회원이신가요?",
             "signInHere": "로그인하기",
             "validation": {
+                "fieldBlank": "필수 입력 항목입니다.",
+                "emailInvalid": "이메일 형식이 올바르지 않습니다.",
                 "mustAgree": "서비스 이용약관 및 개인정보처리방침에 동의해 주세요."
+                ,
+                "requestFailed": "지금은 연결할 수 없습니다. 잠시 후 다시 시도해 주세요."
             }
         }
     }

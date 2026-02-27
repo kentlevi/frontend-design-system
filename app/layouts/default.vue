@@ -4,10 +4,10 @@ import AppFooterRoot from '~/components/layout/app-footer/AppFooter.vue';
 </script>
 
 <template>
-    <div class="layout">
+    <div class="default-layout">
         <AppHeaderRoot />
 
-        <main class="layout-main">
+        <main class="default-layout-main">
             <slot />
         </main>
 
@@ -16,12 +16,12 @@ import AppFooterRoot from '~/components/layout/app-footer/AppFooter.vue';
 </template>
 
 <style scoped lang="scss">
-.layout {
+.default-layout {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 
-    .layout-main {
+    .default-layout-main {
         flex: 1;
     }
 }

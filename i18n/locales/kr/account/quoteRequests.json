@@ -13,6 +13,7 @@
             "sampleMessage": "안녕하세요! 흰색 베이스에 이 스티커를 인쇄해보려고 합니다.",
             "requestLabel": "요청",
             "sampleRequestPrefix": "투명 스티커",
+            "sampleRequestDetails": "투명 스티커 / 200x200mm / 10pcs",
             "messagePlaceholder": "메시지를 입력하세요...",
             "send": "전송"
         }

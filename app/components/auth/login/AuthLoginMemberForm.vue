@@ -22,58 +22,68 @@ const emit = defineEmits<{
 <template>
     <div class="auth-login-form" data-testid="auth-login-member-form">
         <div class="auth-login-inputs">
-            <div class="auth-login-field">
-                <div class="auth-login-label-row">
-                    <label class="auth-login-label">{{ t('auth.login.email') }}</label>
-                    <p v-if="emailError" class="auth-login-error">{{ emailError }}</p>
-                </div>
-                <UiInput
-                    class="auth-login-input"
-                    size="md"
-                    :state="emailError ? 'error' : 'default'"
-                    :placeholder="t('auth.login.enterEmail')"
-                    :model-value="email"
-                    data-testid="auth-login-member-email-input"
-                    @update:model-value="emit('update:email', $event)"
-                />
-            </div>
-
-            <div class="auth-login-field">
-                <div class="auth-login-label-row">
-                    <label class="auth-login-label">
-                        {{ t('auth.login.password') }}
-                    </label>
-                    <p v-if="passwordError" class="auth-login-error">{{ passwordError }}</p>
-                </div>
-                <div class="auth-login-password-wrap">
+            <UiFormField
+                class="auth-login-field"
+                :label="t('auth.login.email')"
+                :error="emailError"
+                :required="true"
+            >
+                <template #default="{ inputId, describedBy }">
                     <UiInput
+                        :id="inputId"
                         class="auth-login-input"
                         size="md"
-                        :state="passwordError ? 'error' : 'default'"
-                        :placeholder="t('auth.login.enterPassword')"
-                        :type="showPassword ? 'text' : 'password'"
-                        :model-value="password"
-                        data-testid="auth-login-member-password-input"
-                        @update:model-value="emit('update:password', $event)"
-                    >
-                        <template #icon-right>
-                            <button
-                                type="button"
-                                class="auth-login-password-toggle"
-                                :aria-label="t('auth.login.togglePassword')"
-                                data-testid="auth-login-member-password-toggle-button"
-                                @click="emit('togglePassword')"
-                            >
-                                <UiIcon
-                                    :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
-                                    :size="24"
-                                    color="var(--gray-90)"
-                                />
-                            </button>
-                        </template>
-                    </UiInput>
-                </div>
-            </div>
+                        :state="emailError ? 'error' : 'default'"
+                        :aria-invalid="emailError ? 'true' : 'false'"
+                        :aria-describedby="describedBy || undefined"
+                        :placeholder="t('auth.login.enterEmail')"
+                        :model-value="email"
+                        data-testid="auth-login-member-email-input"
+                        @update:model-value="emit('update:email', $event)"
+                    />
+                </template>
+            </UiFormField>
+
+            <UiFormField
+                class="auth-login-field"
+                :label="t('auth.login.password')"
+                :error="passwordError"
+                :required="true"
+            >
+                <template #default="{ inputId, describedBy }">
+                    <div class="auth-login-password-wrap">
+                        <UiInput
+                            :id="inputId"
+                            class="auth-login-input"
+                            size="md"
+                            :state="passwordError ? 'error' : 'default'"
+                            :aria-invalid="passwordError ? 'true' : 'false'"
+                            :aria-describedby="describedBy || undefined"
+                            :placeholder="t('auth.login.enterPassword')"
+                            :type="showPassword ? 'text' : 'password'"
+                            :model-value="password"
+                            data-testid="auth-login-member-password-input"
+                            @update:model-value="emit('update:password', $event)"
+                        >
+                            <template #icon-right>
+                                <button
+                                    type="button"
+                                    class="auth-login-password-toggle"
+                                    :aria-label="t('auth.login.togglePassword')"
+                                    data-testid="auth-login-member-password-toggle-button"
+                                    @click="emit('togglePassword')"
+                                >
+                                    <UiIcon
+                                        :name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
+                                        :size="24"
+                                        color="var(--gray-90)"
+                                    />
+                                </button>
+                            </template>
+                        </UiInput>
+                    </div>
+                </template>
+            </UiFormField>
         </div>
 
         <div class="auth-login-inline">
@@ -106,23 +116,17 @@ const emit = defineEmits<{
     flex-direction: column;
     gap: 8px;
 
-    .auth-login-inputs {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-
-        .auth-login-field {
+        .auth-login-inputs {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 16px;
 
-            .auth-login-label-row {
+            .auth-login-field {
                 display: flex;
-                align-items: baseline;
-                justify-content: space-between;
-                gap: 12px;
+                flex-direction: column;
+                gap: 8px;
 
-                .auth-login-label {
+                :deep(.ui-form-field-label) {
                     display: block;
                     margin: 0;
                     font-size: 14px;
@@ -130,13 +134,12 @@ const emit = defineEmits<{
                     color: var(--text-primary);
                 }
 
-                .auth-login-error {
+                :deep(.ui-form-field-error) {
                     margin: 0;
                     font-size: 14px;
                     line-height: 1.2;
                     color: var(--error);
                 }
-            }
 
             .auth-login-input {
                 width: 100%;

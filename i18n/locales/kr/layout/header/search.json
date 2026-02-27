@@ -23,6 +23,7 @@
                     "footer": {
                         "navigate": "이동",
                         "select": "선택",
+                        "escKeyLabel": "esc",
                         "close": "닫기"
                     }
                 }

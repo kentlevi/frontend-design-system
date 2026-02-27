@@ -1,3 +1,5 @@
+import { resolveSupportedCountry } from '~/constants/countries';
+
 type WebVitalName = 'LCP' | 'CLS' | 'INP';
 type WebVitalRating = 'good' | 'needs-improvement' | 'poor';
 type NavType = 'initial' | 'soft';
@@ -63,8 +65,16 @@ function normalizeRoute(route: string): string {
     return path.startsWith('/') ? path : `/${path}`;
 }
 
+function stripCountryPrefix(route: string): string {
+    const path = normalizeRoute(route);
+    const [firstSegment, ...rest] = path.split('/').filter(Boolean);
+    if (!firstSegment) return '/';
+    if (!resolveSupportedCountry(firstSegment)) return path;
+    return rest.length ? `/${rest.join('/')}` : '/';
+}
+
 function classifyPageType(route: string): PageType {
-    const path = normalizeRoute(route).toLowerCase();
+    const path = stripCountryPrefix(route).toLowerCase();
     if (path === '/') return 'home';
     if (/^\/(stickers|sheet-stickers|roll-stickers)\/[^/]+$/.test(path)) return 'product-detail';
     if (

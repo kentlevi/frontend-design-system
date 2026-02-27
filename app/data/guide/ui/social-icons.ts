@@ -18,18 +18,18 @@ export const socialIcons = [
 export const socialVariants = [
     {
         label: 'Social Brand Color',
-        desc: 'Social icons displayed in their original brand colors provide instant recognition and maintain consistency with each platform’s identity.',
+        desc: 'Social icons in brand colors improve recognition and preserve platform identity.',
         color: 'colored',
     },
     {
         label: 'White Color',
-        desc: 'White social icons are used on dark or colored backgrounds to ensure clarity and contrast while maintaining a clean, minimal appearance.',
+        desc: 'White social icons are designed for dark backgrounds to maximize contrast.',
         color: 'white',
         dark: true,
     },
     {
         label: 'Brand Black Color',
-        desc: 'Social icons in a neutral black tone create a professional and consistent visual style across the interface.',
+        desc: 'Neutral black icons provide a consistent and professional visual style.',
         color: 'black',
     },
 ] as const;

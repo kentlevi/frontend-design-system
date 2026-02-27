@@ -13,6 +13,7 @@
             "sampleMessage": "Hi Good Day! I am trying out this sticker to print on a white base.",
             "requestLabel": "Request",
             "sampleRequestPrefix": "Transparent Sticker",
+            "sampleRequestDetails": "Transparent Sticker / 200x200mm / 10pcs",
             "messagePlaceholder": "Enter message here...",
             "send": "Send"
         }

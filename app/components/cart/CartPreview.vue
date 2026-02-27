@@ -2,6 +2,9 @@
 import { nextTick, onBeforeUnmount, ref } from 'vue';
 import lottie from 'lottie-web';
 import type { ProductItem } from '~/data/products/catalog';
+import { useCountry } from '~/composables/app/useCountry';
+import { CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
+import { sizeDimOnly } from '~/utils/cart';
 
 const props = withDefaults(
     defineProps<{
@@ -45,7 +48,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const router = useRouter();
-const localePath = useLocalePath();
+const { withCountry } = useCountry();
 
 const editingItemId = ref<string | null>(null);
 const draftSizeKey = ref<string>('');
@@ -53,7 +56,6 @@ const draftQty = ref<number>(0);
 const redirectingToCart = ref(false);
 const redirectLoaderRef = ref<HTMLElement | null>(null);
 const CART_REDIRECT_DELAY_MS = 1000;
-const CHECKOUT_SELECTION_STORAGE_KEY = 'musticker-checkout-selection-v1';
 let redirectLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 function openInlineEdit(item: (typeof props.cartItems)[number]) {
@@ -76,14 +78,6 @@ function saveInlineEdit(itemId: string) {
         qty: draftQty.value,
     });
     cancelInlineEdit();
-}
-
-function sizeDimOnly(label: string) {
-    const matched = label.match(/(\d+\s*(?:x|\u00d7)\s*\d+)/i);
-    if (matched?.[1]) {
-        return matched[1].replace(/\s+/g, '');
-    }
-    return label;
 }
 
 function editedItemTotal(item: (typeof props.cartItems)[number]) {
@@ -132,7 +126,7 @@ async function goToCart() {
     await nextTick();
     await mountRedirectAnimation();
     await new Promise((resolve) => setTimeout(resolve, CART_REDIRECT_DELAY_MS));
-    await router.push(localePath('/cart'));
+    await router.push(withCountry('/cart'));
     emit('close');
     destroyRedirectAnimation();
     redirectingToCart.value = false;
@@ -147,7 +141,7 @@ async function goToCheckout() {
         );
     }
     emit('close');
-    await router.push(localePath('/checkout'));
+    await router.push(withCountry('/checkout'));
 }
 
 onBeforeUnmount(() => {
@@ -165,7 +159,12 @@ onBeforeUnmount(() => {
                         class="cart-redirect-overlay"
                         data-testid="product-category-cart-redirect-loading"
                     >
-                        <div class="cart-redirect-loader" role="status" aria-live="polite" aria-label="Redirecting to cart">
+                        <div
+                            class="cart-redirect-loader"
+                            role="status"
+                            aria-live="polite"
+                            :aria-label="t('cart.cartPreview.redirectingToCart')"
+                        >
                             <div ref="redirectLoaderRef" class="cart-redirect-lottie" aria-hidden="true" />
                         </div>
                     </div>
@@ -300,7 +299,7 @@ onBeforeUnmount(() => {
                                                 class="cart-item-icon-btn"
                                                 @click="saveInlineEdit(item.id)"
                                                 data-testid="product-category-cart-item-save-button"
-                                                aria-label="Save item changes"
+                                                :aria-label="t('cart.cartPreview.aria.saveItemChanges')"
                                             >
                                                 <UiIcon name="strong-save" :size="24" color="#2a2f3d" />
                                             </button>
@@ -309,7 +308,7 @@ onBeforeUnmount(() => {
                                                 class="cart-item-icon-btn"
                                                 @click="cancelInlineEdit"
                                                 data-testid="product-category-cart-item-cancel-button"
-                                                aria-label="Cancel item changes"
+                                                :aria-label="t('cart.cartPreview.aria.cancelItemChanges')"
                                             >
                                                 <UiIcon name="strong-times" :size="24" color="#2a2f3d" />
                                             </button>
@@ -324,7 +323,7 @@ onBeforeUnmount(() => {
                                                 class="cart-item-icon-btn"
                                                 @click="openInlineEdit(item)"
                                                 data-testid="product-category-cart-item-edit-button"
-                                                aria-label="Edit item"
+                                                :aria-label="t('cart.cartPreview.aria.editItem')"
                                             >
                                                 <UiIcon name="strong-edit" :size="24" color="#2a2f3d" />
                                             </button>
@@ -333,7 +332,7 @@ onBeforeUnmount(() => {
                                                 class="cart-item-icon-btn"
                                                 @click="emit('remove-item', item.id)"
                                                 data-testid="product-category-cart-item-delete-button"
-                                                aria-label="Remove item"
+                                                :aria-label="t('cart.cartPreview.aria.removeItem')"
                                             >
                                                 <UiIcon name="strong-trash" :size="24" color="#2a2f3d" />
                                             </button>
@@ -359,7 +358,7 @@ onBeforeUnmount(() => {
                                     icon-only
                                     icon="strong-times"
                                     icon-size="md"
-                                    sr-label="Close featured items"
+                                    :sr-label="t('cart.cartPreview.closeFeaturedItems')"
                                     class="cart-featured-close"
                                     @click="emit('close-featured')"
                                     data-testid="product-category-cart-featured-close-button"
@@ -397,7 +396,7 @@ onBeforeUnmount(() => {
                                 <strong class="cart-preview-value">{{ props.formatPrice(editedGrandTotal()) }}</strong>
                             </p>
                             <div class="cart-preview-note-row" data-testid="product-category-cart-note-row">
-                                <p class="cart-preview-note-label">Note:</p>
+                                <p class="cart-preview-note-label">{{ t('cart.cartPreview.noteLabel') }}</p>
                                 <p class="cart-preview-note">{{ t('cart.cartPreview.note') }}</p>
                             </div>
                         </div>

@@ -3,9 +3,12 @@ import AppHeaderMainBar from '~/components/layout/app-header/AppHeaderMainBar.vu
 import { useAppHeaderAccount } from '~/composables/layout/useAppHeaderAccount';
 import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/useAppHeaderKeyboardShortcuts';
 import { useAppHeaderSearch } from '~/composables/layout/useAppHeaderSearch';
+import { CART_STORAGE_KEY, CART_UPDATED_EVENT } from '~/data/cart/page';
 import { quantityOptions, sizeOptions } from '~/data/products/categoryExperience';
 import type { ProductItem } from '~/data/products/catalog';
 import { productCatalog } from '~/data/products/catalog';
+import { useCountry } from '~/composables/app/useCountry';
+import { formatCurrencyByCountry } from '~/utils/currency';
 import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
 
 const AppHeaderLocaleModal = defineAsyncComponent(
@@ -17,9 +20,8 @@ const AppHeaderSearchModal = defineAsyncComponent(
 const CartPreview = defineAsyncComponent(
     () => import('~/components/cart/CartPreview.vue')
 );
-const { locale } = useI18n();
-const { t } = useI18n();
-const CART_STORAGE_KEY = 'musticker-product-cart-v1';
+const { locale, t } = useI18n();
+const { country } = useCountry();
 
 type StoredCartState = {
     id: string;
@@ -136,11 +138,7 @@ function getCartProductName(product: ProductItem) {
 }
 
 function formatCartPrice(value: number) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(value);
+    return formatCurrencyByCountry(value, country.value);
 }
 
 function cartFeaturedStartPrice() {
@@ -271,7 +269,7 @@ function writeCartStateToStorage(next: StoredCartState[]) {
     } else {
         window.localStorage.removeItem(CART_STORAGE_KEY);
     }
-    window.dispatchEvent(new CustomEvent('musticker:cart-updated'));
+    window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
 }
 
 function removeCartItem(itemId: string) {
@@ -327,7 +325,7 @@ onMounted(() => {
     syncCartFromStorage();
     window.addEventListener('storage', handleStorage);
     window.addEventListener(
-        'musticker:cart-updated',
+        CART_UPDATED_EVENT,
         syncCartFromStorage as EventListener
     );
 
@@ -354,7 +352,7 @@ onBeforeUnmount(() => {
     if (typeof window === 'undefined') return;
     window.removeEventListener('storage', handleStorage);
     window.removeEventListener(
-        'musticker:cart-updated',
+        CART_UPDATED_EVENT,
         syncCartFromStorage as EventListener
     );
 

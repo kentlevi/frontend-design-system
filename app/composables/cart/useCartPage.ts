@@ -7,9 +7,13 @@ import {
 } from '~/data/products/catalog';
 import {
     CART_STORAGE_KEY,
+    CART_UPDATED_EVENT,
     CHECKOUT_SELECTION_STORAGE_KEY,
     cartPaymentOptions,
 } from '~/data/cart/page';
+import { useCountry } from '~/composables/app/useCountry';
+import { formatCurrencyByCountry } from '~/utils/currency';
+import { sizeDimOnly } from '~/utils/cart';
 
 export type StoredCartState = {
     id: string;
@@ -67,26 +71,12 @@ function writeCartStateToStorage(next: StoredCartState[]) {
     } else {
         window.localStorage.removeItem(CART_STORAGE_KEY);
     }
-    window.dispatchEvent(new CustomEvent('musticker:cart-updated'));
-}
-
-function formatPrice(value: number) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(value);
-}
-
-function sizeDimOnly(label: string) {
-    const matched = label.match(/(\d+\s*(?:x|\u00d7)\s*\d+)/i);
-    if (matched?.[1]) return matched[1].replace(/\s+/g, '');
-    return label;
+    window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
 }
 
 export function useCartPage() {
     const { t } = useI18n();
-    const localePath = useLocalePath();
+    const { withCountry, country } = useCountry();
     const router = useRouter();
 
     const cartState = ref<StoredCartState[]>([]);
@@ -177,10 +167,10 @@ export function useCartPage() {
                 JSON.stringify(selectedRows.value.map((row) => row.id))
             );
         }
-        void router.push(localePath('/checkout'));
+        void router.push(withCountry('/checkout'));
     }
 
-    const continueShoppingPath = computed(() => localePath('/stickers'));
+    const continueShoppingPath = computed(() => withCountry('/stickers'));
 
     onMounted(() => {
         cartState.value = readCartStateFromStorage();
@@ -200,7 +190,8 @@ export function useCartPage() {
         updateQty,
         removeByIds,
         goToCheckout,
-        formatPrice,
+        formatPrice: (value: number) =>
+            formatCurrencyByCountry(value, country.value),
         sizeDimOnly,
     };
 }

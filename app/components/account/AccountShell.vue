@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useCountry } from '@/composables/app/useCountry';
+import type { UserFieldValue } from '@/stores/user';
+
 const props = defineProps<{
     activeTab:
         | 'profile'
@@ -12,7 +15,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const localePath = useLocalePath();
+const { withCountry } = useCountry();
 const userStore = useUserStore();
 const mockUser = useCookie<{
     firstName: string;
@@ -23,7 +26,7 @@ const mockUser = useCookie<{
 const profileFieldValues = computed(
     () => userStore.profile?.user_field_values ?? []
 );
-function getCountryFieldId(field: { country_field_ids?: number; country_fields_id?: number }) {
+function getCountryFieldId(field: UserFieldValue) {
     return field.country_field_ids ?? field.country_fields_id;
 }
 const storeFirstName = computed(
@@ -88,7 +91,7 @@ const tabs = [
                 </div>
                 <div class="account-shell-stat">
                     <span class="account-shell-stat-label">{{ t('account.shell.stats.totalSpent') }}</span>
-                    <strong class="account-shell-stat-value">KRW 0.00</strong>
+                    <strong class="account-shell-stat-value">{{ t('account.shell.defaultBalance') }}</strong>
                 </div>
             </div>
         </div>
@@ -97,7 +100,7 @@ const tabs = [
             <NuxtLink
                 v-for="tab in tabs"
                 :key="tab.key"
-                :to="localePath(tab.to)"
+                :to="withCountry(tab.to)"
                 class="account-shell-tab"
                 :class="{ 'is-active': props.activeTab === tab.key }"
                 :data-testid="`account-shell-tab-${tab.key}`"

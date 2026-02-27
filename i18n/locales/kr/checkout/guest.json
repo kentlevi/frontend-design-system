@@ -1,0 +1,115 @@
+{
+    "checkout": {
+        "guest": {
+            "contactInformation": "연락처 정보",
+            "loginPrompt": "이미 계정이 있으신가요?",
+            "login": "로그인",
+            "shippingInformation": "배송 정보",
+            "shippingMethod": "배송 방법",
+            "shippingNote": "참고: 오늘 주문이 확정될 경우의 예상 배송일입니다.",
+            "payment": "결제",
+            "paymentSubnote": "원하는 결제 수단으로 안전하게 결제하세요.",
+            "useShippingAsBilling": "배송지 주소를 청구지 주소로 사용",
+            "viewBillingAddresses": "청구지 주소 보기",
+            "orderSummary": "주문 요약",
+            "noItemsSelected": "결제할 상품이 선택되지 않았습니다.",
+            "completeCheckout": "결제 완료",
+            "fields": {
+                "email": {
+                    "label": "이메일 주소*",
+                    "placeholder": "이메일 주소를 입력하세요"
+                },
+                "fullName": {
+                    "label": "이름*",
+                    "placeholder": "이름을 입력하세요"
+                },
+                "company": {
+                    "label": "회사명 (선택)",
+                    "placeholder": "회사명을 입력하세요"
+                },
+                "streetAddress": {
+                    "label": "도로명 주소*",
+                    "line1Placeholder": "주소 1을 입력하세요",
+                    "line2Placeholder": "주소 2를 입력하세요"
+                },
+                "province": {
+                    "label": "주/도*",
+                    "placeholder": "주/도를 선택하세요"
+                },
+                "city": {
+                    "label": "시/군/구*",
+                    "placeholder": "시/군/구를 입력하세요"
+                },
+                "postalCode": {
+                    "label": "우편번호*",
+                    "placeholder": "우편번호를 입력하세요"
+                },
+                "phone": {
+                    "label": "전화번호",
+                    "placeholder": "(000) 000-0000"
+                },
+                "cardNumber": {
+                    "label": "카드 번호*",
+                    "placeholder": "카드 번호를 입력하세요"
+                },
+                "expiration": {
+                    "label": "유효기간*",
+                    "placeholder": "MM/YY"
+                },
+                "cvv": {
+                    "label": "CVV*",
+                    "placeholder": "CVV"
+                }
+            },
+            "shippingMethods": {
+                "standard": {
+                    "alt": "일반 배송",
+                    "name": "일반",
+                    "date": "2025년 12월 15일",
+                    "price": "무료"
+                },
+                "express": {
+                    "alt": "빠른 배송",
+                    "name": "빠른 배송",
+                    "date": "2025년 12월 12일",
+                    "price": "무료"
+                }
+            },
+            "paymentMethods": {
+                "creditCard": {
+                    "alt": "신용카드",
+                    "label": "신용카드"
+                },
+                "paypal": {
+                    "alt": "페이팔",
+                    "label": "페이팔"
+                },
+                "bankTransfer": {
+                    "alt": "계좌이체",
+                    "label": "계좌이체"
+                }
+            },
+            "provinceOptions": {
+                "placeholder": "주 선택",
+                "california": "캘리포니아",
+                "new-york": "뉴욕",
+                "texas": "텍사스",
+                "florida": "플로리다"
+            },
+            "summary": {
+                "itemMeta": "{size}mm / {qty}pcs.",
+                "subtotal": "소계:",
+                "shippingFee": "배송비:",
+                "discounts": "할인:",
+                "total": "합계:"
+            },
+            "agreement": {
+                "prefix": "\"결제 완료\"를 클릭하면 다음 약관에 동의하게 됩니다:",
+                "terms": "서비스 이용약관",
+                "and": "및",
+                "privacy": "개인정보 처리방침",
+                "suffix": "."
+            }
+        }
+    }
+}

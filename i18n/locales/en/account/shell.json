@@ -2,6 +2,7 @@
     "account": {
         "shell": {
             "level": "Bumper Boss (Level 3)",
+            "defaultBalance": "KRW 0.00",
             "stats": {
                 "order": "Order",
                 "points": "Points",

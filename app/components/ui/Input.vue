@@ -8,6 +8,10 @@ type State = 'default' | 'error' | 'success';
 type Icon = 'mail' | 'search' | 'user' | null;
 type IconName = keyof typeof icons;
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const props = withDefaults(
     defineProps<{
         modelValue?: string;
@@ -36,6 +40,7 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
+const attrs = useAttrs();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
@@ -52,6 +57,22 @@ const leftIcon = computed<IconName | null>(() =>
 const rightIcon = computed<IconName | null>(() =>
     props.iconRight ? iconMap[props.iconRight] : null
 );
+const testId = computed(() => String(attrs['data-testid'] || '').trim());
+const rootAttrs = computed(() => {
+    const { class: className, style, 'data-testid': _testId } = attrs;
+    return {
+        class: className,
+        style,
+        ...(testId.value ? { 'data-testid': testId.value } : {}),
+    };
+});
+const inputAttrs = computed(() => {
+    const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
+    return {
+        ...rest,
+        ...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
+    };
+});
 
 function onInput(event: Event) {
     emit('update:modelValue', (event.target as HTMLInputElement).value);
@@ -65,6 +86,7 @@ function focusInput() {
 
 <template>
     <div
+        v-bind="rootAttrs"
         class="ui-input"
         :data-size="size"
         :data-state="state !== 'default' ? state : null"
@@ -79,6 +101,7 @@ function focusInput() {
         </span>
 
         <input
+            v-bind="inputAttrs"
             ref="inputRef"
             class="ui-input-field"
             :type="type"

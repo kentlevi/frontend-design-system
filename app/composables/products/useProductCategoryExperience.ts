@@ -1,4 +1,6 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
+import { useCountry } from '~/composables/app/useCountry';
+import { CART_STORAGE_KEY, CART_UPDATED_EVENT } from '~/data/cart/page';
 import {
     productCatalog,
     type ProductCategoryKey,
@@ -10,10 +12,9 @@ import {
     sizeFeatureCards,
     sizeOptions,
 } from '~/data/products/categoryExperience';
+import { formatCurrencyByCountry } from '~/utils/currency';
 
 export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) {
-    const CART_STORAGE_KEY = 'musticker-product-cart-v1';
-
     type StoredCartState = {
         id: string;
         category: ProductCategoryKey;
@@ -28,7 +29,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
     const { t } = useI18n();
     const route = useRoute();
     const router = useRouter();
-    const localePath = useLocalePath();
+    const { withCountry, country } = useCountry();
 
     const categoryData = computed(() => productCatalog[category.value]);
     const selectedId = ref<string | null>(null);
@@ -221,7 +222,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
         } else {
             window.localStorage.removeItem(CART_STORAGE_KEY);
         }
-        window.dispatchEvent(new CustomEvent('musticker:cart-updated'));
+        window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
     }
 
     function isPlainItem(item: StoredCartState) {
@@ -305,7 +306,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
         hasPickedProduct.value = true;
 
         const productSlug = productIdToSlug(productId);
-        const targetPath = localePath(`/${category.value}/${productSlug}`);
+        const targetPath = withCountry(`/${category.value}/${productSlug}`);
         if (route.path === targetPath) {
             selectionNavigationInFlight.value = false;
             return;
@@ -490,7 +491,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
         hasPickedProduct.value = true;
 
         const targetSlug = productIdToSlugByCategory(entry.productId, entry.category);
-        const targetPath = localePath(`/${entry.category}/${targetSlug}`);
+        const targetPath = withCountry(`/${entry.category}/${targetSlug}`);
 
         if (route.path !== targetPath) {
             preserveUploadModalOnNextRouteSync = true;
@@ -530,7 +531,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 
     function featuredStartPrice() {
         const startingQty = quantityOptions[0];
-        return formatPrice(quantityPrice(startingQty));
+        return formatCurrencyByCountry(quantityPrice(startingQty), country.value);
     }
 
     function formatFileSize(bytes: number) {
@@ -551,14 +552,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
             reader.onerror = () => resolve('');
             reader.readAsDataURL(file);
         });
-    }
-
-    function formatPrice(value: number) {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-        }).format(value);
     }
 
     function quantityPrice(qty: number) {
@@ -680,7 +673,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
         skipAndUploadLater,
         closeFeaturedItems,
         featuredStartPrice,
-        formatPrice,
+        formatPrice: (value: number) =>
+            formatCurrencyByCountry(value, country.value),
         quantityPrice,
         getProductName,
         getProductBlurb,

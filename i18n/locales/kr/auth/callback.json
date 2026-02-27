@@ -1,0 +1,8 @@
+﻿{
+    "auth": {
+        "callback": {
+            "signingIn": "로그인하는 중...",
+            "cancelling": "취소하는 중..."
+        }
+    }
+}

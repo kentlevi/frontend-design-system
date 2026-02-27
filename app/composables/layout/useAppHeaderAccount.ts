@@ -1,16 +1,22 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { FlagCode } from '~/data/ui/flags';
 import {
+    type SupportedCountry,
+    isSupportedCountry,
+} from '~/constants/countries';
+import {
     headerAccountLinkConfig,
     headerLocaleOptionConfig,
     headerNavLinkConfig,
 } from '~/data/layout/header';
-import { useUserStore } from '@/stores/user';
+import { useCountry } from '~/composables/app/useCountry';
+import { useUserStore } from '~/stores/user';
+import type { UserFieldValue } from '~/stores/user';
 
 export function useAppHeaderAccount() {
     const { t, locale, setLocale } = useI18n();
     const route = useRoute();
-    const localePath = useLocalePath();
+    const { withCountry } = useCountry();
     const userStore = useUserStore();
     const authToken = useCookie<string | null>('auth_token');
     const mockUser = useCookie<{
@@ -32,7 +38,7 @@ export function useAppHeaderAccount() {
         headerNavLinkConfig.map((item) => ({
             key: item.key,
             label: t(item.labelKey),
-            to: localePath(item.to),
+            to: withCountry(item.to),
         }))
     );
 
@@ -56,7 +62,7 @@ export function useAppHeaderAccount() {
     const storeFieldValues = computed(
         () => userStore.profile?.user_field_values ?? []
     );
-    function getCountryFieldId(field: { country_field_ids?: number; country_fields_id?: number }) {
+    function getCountryFieldId(field: UserFieldValue) {
         return field.country_field_ids ?? field.country_fields_id;
     }
     const storeFirstName = computed(() =>
@@ -95,7 +101,7 @@ export function useAppHeaderAccount() {
         const trimmed = path.replace(/\/+$/, '') || '/';
         const segments = trimmed.split('/').filter(Boolean);
 
-        if (segments[0] === 'en' || segments[0] === 'kr') {
+        if (segments[0] && isSupportedCountry(segments[0])) {
             segments.shift();
         }
 
@@ -149,7 +155,7 @@ export function useAppHeaderAccount() {
         localeModalOpen.value = false;
     }
 
-    function selectLocale(code: 'en' | 'kr') {
+    function selectLocale(code: SupportedCountry) {
         setLocale(code);
         closeLocaleModal();
     }
@@ -161,7 +167,7 @@ export function useAppHeaderAccount() {
             authToken.value = null;
             userStore.clearUser();
             userStore.clearOnboardingProfile();
-            navigateTo(localePath('/'));
+            navigateTo(withCountry('/'));
         });
     }
 

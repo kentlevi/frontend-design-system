@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useCartPage } from '~/composables/cart/useCartPage';
 
+const { t } = useI18n();
+
 const {
     rows,
     selectedIds,
@@ -23,10 +25,10 @@ const {
     <main class="cart-page" data-testid="cart-page">
         <section class="cart-page-shell">
             <header class="cart-page-head">
-                <h1 class="cart-page-title">My Cart</h1>
+                <h1 class="cart-page-title">{{ t('cart.cartPage.title') }}</h1>
                 <NuxtLink :to="continueShoppingPath" class="cart-page-continue">
                     <UiIcon name="strong-long-arrow-right" :size="24" color="var(--text-primary)" />
-                    Continue Shopping
+                    {{ t('cart.cartPage.continueShopping') }}
                 </NuxtLink>
             </header>
 
@@ -38,7 +40,7 @@ const {
                             :model-value="allSelected"
                             @update:model-value="allSelected = $event"
                         >
-                            Select All: {{ rows.length }} item(s)
+                            {{ t('cart.cartPage.selectAll', { count: rows.length }) }}
                         </UiCheckbox>
                         <UiButton
                             class="cart-remove-btn"
@@ -49,14 +51,14 @@ const {
                             @click="removeByIds(selectedIds)"
                         >
                             <UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
-                            Remove
+                            {{ t('cart.cartPage.remove') }}
                         </UiButton>
                     </div>
 
                     <div class="cart-list-head">
-                        <span class="cart-list-head-label">ITEM</span>
-                        <span class="cart-list-head-label">QUANTITY</span>
-                        <span class="cart-list-head-label">PRICE</span>
+                        <span class="cart-list-head-label">{{ t('cart.cartPage.headers.item') }}</span>
+                        <span class="cart-list-head-label">{{ t('cart.cartPage.headers.quantity') }}</span>
+                        <span class="cart-list-head-label">{{ t('cart.cartPage.headers.price') }}</span>
                         <span class="cart-list-head-spacer" />
                     </div>
 
@@ -81,16 +83,16 @@ const {
                             </div>
                             <div class="cart-item-copy">
                                 <h3 class="cart-item-title">{{ row.product.name }}</h3>
-                                <p class="cart-item-size">Size: {{ sizeDimOnly(row.sizeLabel) }}mm</p>
+                                <p class="cart-item-size">{{ t('cart.cartPage.sizeLabel', { size: sizeDimOnly(row.sizeLabel) }) }}</p>
                                 <UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
-                                    Replace Artwork
+                                    {{ t('cart.cartPage.replaceArtwork') }}
                                 </UiButton>
                             </div>
                         </div>
 
                         <div class="cart-qty-wrap">
                             <UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
-                                Edit Size
+                                {{ t('cart.cartPage.editSize') }}
                             </UiButton>
                             <UiSelect
                                 class="cart-qty-select-control"
@@ -112,7 +114,7 @@ const {
                             icon-only
                             icon="regular-trash"
                             icon-size="24"
-                            sr-label="Remove item"
+                            :sr-label="t('cart.cartPage.removeItemSr')"
                             @click="removeByIds([row.id])"
                         />
                     </article>
@@ -121,11 +123,11 @@ const {
                 <aside class="cart-summary-column" data-testid="cart-page-summary">
                     <section class="cart-summary-card">
                         <header class="cart-summary-header">
-                            <h2 class="cart-summary-title">Order Summary</h2>
+                            <h2 class="cart-summary-title">{{ t('cart.cartPage.orderSummary') }}</h2>
                         </header>
                         <div class="cart-summary-body">
                             <div class="cart-summary-line">
-                                <span class="cart-summary-total-label">Total:</span>
+                                <span class="cart-summary-total-label">{{ t('cart.cartPage.total') }}</span>
                                 <strong class="cart-summary-total-value">{{ formatPrice(selectedTotal) }}</strong>
                             </div>
                             <div class="cart-summary-actions">
@@ -138,17 +140,17 @@ const {
                                     :disabled="selectedRows.length === 0"
                                     @click="goToCheckout"
                                 >
-                                    Proceed Checkout ({{ selectedRows.length }})
+                                    {{ t('cart.cartPage.proceedCheckout', { count: selectedRows.length }) }}
                                 </UiButton>
                                 <p class="cart-summary-note">
-                                    Shipping fees and discounts are calculated at checkout.
+                                    {{ t('cart.cartPage.note') }}
                                 </p>
                             </div>
                         </div>
                     </section>
 
                     <section class="cart-payment-section">
-                        <p class="cart-payment-label">Available Payment Options:</p>
+                        <p class="cart-payment-label">{{ t('cart.cartPage.availablePaymentOptions') }}</p>
                         <div class="cart-payment-grid">
                             <span
                                 v-for="option in paymentOptions"

@@ -1,13 +1,14 @@
 <template>
     <div class="callback_container">
         <p>
-            {{ token ? 'Signing you in...' : 'Cancelling...' }}
+            {{ token ? t('auth.callback.signingIn') : t('auth.callback.cancelling') }}
         </p>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+const { t } = useI18n()
 
 /* @desc reactive token state shared with template */
 const token = ref<string | null>(null)
