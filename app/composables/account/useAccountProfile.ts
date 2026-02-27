@@ -4,9 +4,11 @@ import {
     type AccountMockUser,
     type AccountUnit,
 } from '~/data/account/profile';
+import { useCountry } from '~/composables/app/useCountry';
+import type { UserFieldValue } from '~/stores/user';
 
 export function useAccountProfile() {
-    const localePath = useLocalePath();
+    const { withCountry } = useCountry();
     const userStore = useUserStore();
     const mockUser = useCookie<AccountMockUser | null>('mock_user');
     const authToken = useCookie<string | null>('auth_token');
@@ -14,7 +16,7 @@ export function useAccountProfile() {
     const profileFieldValues = computed(
         () => userStore.profile?.user_field_values ?? []
     );
-    function getCountryFieldId(field: { country_field_ids?: number; country_fields_id?: number }) {
+    function getCountryFieldId(field: UserFieldValue) {
         return field.country_field_ids ?? field.country_fields_id;
     }
     const storeFirstName = computed(
@@ -83,7 +85,7 @@ export function useAccountProfile() {
         authToken.value = null;
         userStore.clearUser();
         userStore.clearOnboardingProfile();
-        navigateTo(localePath('/'));
+        navigateTo(withCountry('/'));
     }
 
     onBeforeUnmount(() => {
@@ -93,7 +95,6 @@ export function useAccountProfile() {
     });
 
     return {
-        localePath,
         firstName,
         lastName,
         email,

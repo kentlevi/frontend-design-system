@@ -1,25 +1,54 @@
 export const COUNTRIES = {
-    ph: {
-        name: 'Philippines',
-        currency: { 
-            code: 'PHP', 
-            symbol: '₱', 
-            locale: 'en-PH', 
-            decimals: 2 
+    en: {
+        name: 'United States',
+        currency: {
+            code: 'USD',
+            symbol: '$',
+            locale: 'en-US',
+            decimals: 2,
         },
-        timezone: 'Asia/Manila',
+        timezone: 'America/New_York',
     },
     kr: {
         name: 'Korea',
-        currency: { 
-            code: 'KRW', 
-            symbol: '₩', 
-            locale: 'ko-KR', 
-            decimals: 0 
+        currency: {
+            code: 'KRW',
+            symbol: '\u20A9',
+            locale: 'ko-KR',
+            decimals: 0,
         },
         timezone: 'Asia/Seoul',
     },
 } as const
 
 export type SupportedCountry = keyof typeof COUNTRIES
-export const SUPPORTED_COUNTRY_SET = new Set(Object.keys(COUNTRIES))
+export const DEFAULT_COUNTRY: SupportedCountry = 'en'
+export const SUPPORTED_COUNTRY_SET = new Set<SupportedCountry>(
+    Object.keys(COUNTRIES) as SupportedCountry[]
+)
+export const SUPPORTED_COUNTRIES = Object.keys(COUNTRIES) as SupportedCountry[]
+export const COUNTRY_CODE_ALIASES: Record<string, SupportedCountry> = {
+    us: 'en',
+    en: 'en',
+    kr: 'kr',
+    ko: 'kr',
+}
+export const COUNTRY_TO_API_COUNTRY: Record<SupportedCountry, string> = {
+    en: 'us',
+    kr: 'kr',
+}
+export const COUNTRY_TO_HTML_LANG: Record<SupportedCountry, string> = {
+    en: 'en',
+    kr: 'ko',
+}
+
+export function isSupportedCountry(value: string): value is SupportedCountry {
+    return SUPPORTED_COUNTRY_SET.has(value as SupportedCountry)
+}
+
+export function resolveSupportedCountry(value: string | null | undefined): SupportedCountry | null {
+    if (!value) return null
+    const normalized = value.toLowerCase()
+    if (isSupportedCountry(normalized)) return normalized
+    return COUNTRY_CODE_ALIASES[normalized] || null
+}

@@ -1,6 +1,8 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '~/stores/user';
+import { useCountry } from '~/composables/app/useCountry';
+import type { UserIdentity, UserProfile } from '~/stores/user';
 
 export function useRegisterForm() {
     const router = useRouter();
@@ -8,6 +10,7 @@ export function useRegisterForm() {
     const isVerificationModalOpen = ref(false);
     const api = useApi();
     const { t } = useI18n();
+    const { withCountry, apiCountry } = useCountry();
 
     const firstName = ref('');
     const lastName = ref('');
@@ -90,24 +93,7 @@ export function useRegisterForm() {
         success: boolean;
         message: string;
         data: {
-            user?: {
-                id: number;
-                code: string;
-                email: string;
-                profile: {
-                    id: number;
-                    user_id: number;
-                    file_path_id: number;
-                    file_name: string;
-                    user_field_values: [{
-                        id: number;
-                        user_profile_id: number;
-                        country_field_ids?: number;
-                        country_fields_id?: number;
-                        value: string;
-                    }]
-                }
-            }
+            user?: UserIdentity & { profile: UserProfile | null }
             auth_token?: string
         }
     }
@@ -169,16 +155,8 @@ export function useRegisterForm() {
             return;
         }
 
-        // const params = new URLSearchParams({
-        //     firstName: firstName.value.trim(),
-        //     lastName: lastName.value.trim(),
-        //     email: email.value.trim(),
-        //     onboarding: '1',
-        // });
-        // await navigateTo(`${localePath('/auth/profile')}?${params.toString()}`);
-
         try {
-            const response = await api<RegisterVerificationResponse>('/kr/auth/register/verification', {
+            const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
                 method: 'POST',
                 body: {
                     given_name: firstName.value.trim(),
@@ -246,7 +224,7 @@ export function useRegisterForm() {
 
     async function submitVerification() {
         if (!verificationCode.value.trim()) {
-            verificationError.value = t('auth.login.verification.codeRequired');
+            verificationError.value = t('auth.verification.codeRequired');
             return;
         }
 
@@ -254,7 +232,7 @@ export function useRegisterForm() {
         verificationError.value = '';
 
         try {
-            const response = await api<RegisterResponse>('/kr/auth/register', {
+            const response = await api<RegisterResponse>(`/${apiCountry.value}/auth/register`, {
                 method: 'POST',
                 body: {
                     email: verificationEmail.value,
@@ -264,12 +242,12 @@ export function useRegisterForm() {
             });
 
             if (response.success === false) {
-                verificationError.value = response.message || 'Invalid verification code.';
+                verificationError.value = response.message || t('auth.verification.invalidCode');
                 return response;
             }
 
             try {
-                const loginResponse = await api<LoginResponse>('/kr/auth/login', {
+                const loginResponse = await api<LoginResponse>(`/${apiCountry.value}/auth/login`, {
                     method: 'POST',
                     body: {
                         email: email.value.trim(),
@@ -303,10 +281,10 @@ export function useRegisterForm() {
             });
 
             isVerificationModalOpen.value = false;
-            await router.push('/auth/profile');
+            await router.push(withCountry('/auth/profile'));
             return response;
         } catch (error) {
-            verificationError.value = 'Invalid verification code.';
+            verificationError.value = t('auth.verification.invalidCode');
         } finally {
             isVerifying.value = false;
         }

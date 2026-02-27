@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import DevOnboarding from '~/components/layout/DevOnboarding.vue';
+import {
+    COUNTRY_TO_HTML_LANG,
+    DEFAULT_COUNTRY,
+    resolveSupportedCountry,
+} from '~/constants/countries';
 
-const { t } = useI18n();
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 const isDev = import.meta.dev;
 const route = useRoute();
 const isGuideRoute = computed(() => /\/guide(\/|$)/i.test(route.path));
+const resolvedLocaleCountry = computed(
+    () => resolveSupportedCountry(String(locale.value)) || DEFAULT_COUNTRY
+);
+const htmlLang = computed(
+    () => COUNTRY_TO_HTML_LANG[resolvedLocaleCountry.value]
+);
 
 useHead(() => ({
     htmlAttrs: {
-        lang: locale.value === 'kr' ? 'ko' : 'en',
+        lang: htmlLang.value,
     },
     title: t('home.seo.title'),
     meta: [

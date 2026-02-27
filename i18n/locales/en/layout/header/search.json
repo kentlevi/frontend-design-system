@@ -23,6 +23,7 @@
                     "footer": {
                         "navigate": "Navigate",
                         "select": "Select",
+                        "escKeyLabel": "esc",
                         "close": "Close"
                     }
                 }

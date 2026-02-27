@@ -12,9 +12,18 @@
             "startsAt": "Starts at:",
             "customize": "Customize",
             "total": "Total:",
+            "noteLabel": "Note:",
             "note": "Shipping fees and discounts are calculated at checkout.",
             "viewCart": "View Cart",
-            "proceedToCheckout": "Proceed to Checkout"
+            "proceedToCheckout": "Proceed to Checkout",
+            "redirectingToCart": "Redirecting to cart",
+            "closeFeaturedItems": "Close featured items",
+            "aria": {
+                "saveItemChanges": "Save item changes",
+                "cancelItemChanges": "Cancel item changes",
+                "editItem": "Edit item",
+                "removeItem": "Remove item"
+            }
         }
     }
 }

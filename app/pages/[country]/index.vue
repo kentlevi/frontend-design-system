@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
-import AuthLoginForgotPasswordModal from '@/components/auth/login/AuthLoginForgotPasswordModal.vue';
-import AuthResetPasswordModal from '@/components/auth/login/AuthResetPasswordModal.vue';
+import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
+import AuthResetPasswordModal from '~/components/auth/login/AuthResetPasswordModal.vue';
 import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const HomeFeatureHighlight = defineAsyncComponent(
@@ -141,7 +141,7 @@ useHead({
         <UiToast
             :visible="isResetSuccessToastVisible"
             tone="success"
-            message="Your password has been successfully updated."
+            :message="t('home.toast.passwordUpdated')"
             data-testid="home-reset-password-success-toast"
             @close="isResetSuccessToastVisible = false"
         />

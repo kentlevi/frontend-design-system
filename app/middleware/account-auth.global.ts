@@ -1,5 +1,8 @@
 export default defineNuxtRouteMiddleware((to) => {
-    if (!to.path.includes('/account')) return;
+    const segments = to.path.split('/').filter(Boolean);
+    const isAccountRoute =
+        segments[0] === 'account' || segments[1] === 'account';
+    if (!isAccountRoute) return;
 
     const authToken = useCookie<string | null>('auth_token');
     if (authToken.value) return;
@@ -11,6 +14,6 @@ export default defineNuxtRouteMiddleware((to) => {
     } | null>('mock_user');
     if (mockUser.value?.email) return;
 
-    const localePath = useLocalePath();
-    return navigateTo(localePath('/'));
+    const { withCountry } = useCountry();
+    return navigateTo(withCountry('/'));
 });

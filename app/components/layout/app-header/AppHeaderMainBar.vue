@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
 import type { FlagCode } from '~/data/ui/flags';
+import { useCountry } from '@/composables/app/useCountry';
 
 const { t } = useI18n();
-const localePath = useLocalePath();
+const { withCountry } = useCountry();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type NavLink = {
@@ -50,7 +51,7 @@ const emit = defineEmits<{
 
 <template>
     <div class="home-header-container" data-testid="app-header-main-bar-container">
-        <NuxtLink :to="localePath('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
+        <NuxtLink :to="withCountry('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
             <UiLogo
                 name="musticker"
                 variant="full"

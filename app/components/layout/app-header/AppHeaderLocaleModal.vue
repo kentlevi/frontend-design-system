@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { SupportedCountry } from '~/constants/countries';
 import type { FlagCode } from '~/data/ui/flags';
 
 const props = defineProps<{
     open: boolean;
     localeValue: string;
-    localeOptions: Array<{ code: 'en' | 'kr'; flagCode: FlagCode; label: string }>;
+    localeOptions: Array<{ code: SupportedCountry; flagCode: FlagCode; label: string }>;
 }>();
 
 const emit = defineEmits<{
     close: [];
-    select: [code: 'en' | 'kr'];
+    select: [code: SupportedCountry];
 }>();
 
 const { t } = useI18n();

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useCountry } from '@/composables/app/useCountry';
+
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
+const { withCountry, apiCountry } = useCountry();
 
 interface SocialLogin {
     data: {
@@ -13,7 +16,7 @@ interface SocialLogin {
 /* @desc social login popup */
 async function handleSocial(provider: string) {
     try {
-        const response = await api<SocialLogin>('/kr/auth/social/redirect', {
+        const response = await api<SocialLogin>(`/${apiCountry.value}/auth/social/redirect`, {
             method: 'POST',
             body: {
                 provider
@@ -47,7 +50,7 @@ async function handleSocial(provider: string) {
                     return
                 }
 
-                router.push('/account/profile')
+                router.push(withCountry('/account/profile'))
             }
         }, 500)
     } catch (error: any) {

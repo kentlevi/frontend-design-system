@@ -52,7 +52,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                                 {{ t('account.quoteRequests.sampleMessage') }}
                                 <div class="account-quote-chat-request">
                                     <b>{{ t('account.quoteRequests.requestLabel') }}:</b>
-                                    {{ t('account.quoteRequests.sampleRequestPrefix') }} / 200x200mm / 10pcs
+                                    {{ t('account.quoteRequests.sampleRequestDetails') }}
                                 </div>
                             </div>
                         </div>

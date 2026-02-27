@@ -1,6 +1,8 @@
 import { computed, onMounted, ref, watch } from 'vue';
-import { useLoginForm } from '@/composables/auth/useLoginForm';
+import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
+import { useCountry } from '~/composables/app/useCountry';
+import type { UserIdentity, UserProfile } from '~/stores/user';
 
 export function useLoginPageForm() {
     const api = useApi();
@@ -8,6 +10,7 @@ export function useLoginPageForm() {
 
     const router = useRouter();
     const route = useRoute();
+    const { withCountry, apiCountry } = useCountry();
 
     const {
         memberType,
@@ -25,6 +28,12 @@ export function useLoginPageForm() {
 
     const isVerificationModalOpen = ref(false);
     const isForgotPasswordModalOpen = ref(false);
+    const guestVerificationEmail = ref('');
+    const guestVerificationOrderNumber = ref('');
+    const guestVerificationToken = ref('');
+    const guestVerificationCode = ref('');
+    const guestVerificationError = ref('');
+    const isGuestVerifying = ref(false);
 
     const memberEmail = ref('');
     const memberPassword = ref('');
@@ -113,32 +122,35 @@ export function useLoginPageForm() {
         success: boolean;
         message: string;
         data: {
-            user?: {
-                id: number;
-                code: string;
-                email: string;
-                profile: {
-                    id: number;
-                    user_id: number;
-                    file_path_id: number;
-                    file_name: string;
-                    user_field_values: Array<{
-                        id: number;
-                        user_profile_id: number;
-                        country_field_ids?: number;
-                        country_fields_id?: number;
-                        value: string;
-                    }>;
-                };
-            };
+            user?: UserIdentity & { profile: UserProfile | null };
             auth_token?: string;
+        };
+    }
+
+    interface GuestOtpRequestResponse {
+        success: boolean;
+        message: string;
+        data?: {
+            verification_token?: string;
+            expires_in?: number;
+        };
+    }
+
+    interface GuestOtpVerifyResponse {
+        success: boolean;
+        message: string;
+        data?: {
+            order_lookup_token?: string;
+            order_number?: string;
         };
     }
 
     async function onSubmitClick() {
         if (isNonMember.value === false) {
             const response = await memberLoginHandler();
-            if (response?.success === true) router.push('/');
+            if (response?.success === true) {
+                await router.push(withCountry('/'));
+            }
         } else {
             await nonMemberLoginHandler();
         }
@@ -148,7 +160,7 @@ export function useLoginPageForm() {
         if (!validateMember()) return;
 
         try {
-            const response = await api<LoginResponse>('/kr/auth/login', {
+            const response = await api<LoginResponse>(`/${apiCountry.value}/auth/login`, {
                 method: 'POST',
                 body: {
                     email: memberEmail.value.trim(),
@@ -172,7 +184,7 @@ export function useLoginPageForm() {
                 path: '/',
             });
 
-            authToken.value = response.data.auth_token ?? '';
+            authToken.value = response?.data?.auth_token ?? '';
 
             // store user in Pinia
             const userStore = useUserStore();
@@ -222,16 +234,117 @@ export function useLoginPageForm() {
             return;
         }
 
-        await api('/kr/auth/login/guest/verification', {
-            method: 'POST',
-            body: {
-                email: nonMemberEmail.value.trim(),
-                order_number: nonMemberOrderNumber.value.trim(),
-            },
-        });
+        const email = nonMemberEmail.value.trim();
+        const orderNumber = nonMemberOrderNumber.value.trim();
 
-        isVerificationModalOpen.value = true;
+        guestVerificationError.value = '';
+
+        try {
+            const response = await api<GuestOtpRequestResponse>(
+                `/${apiCountry.value}/auth/login/guest/verification`,
+                {
+                    method: 'POST',
+                    body: {
+                        email,
+                        order_number: orderNumber,
+                    },
+                }
+            );
+
+            if (!response.success) {
+                guestVerificationError.value =
+                    response.message || t('auth.guestVerification.requestFailed');
+                return;
+            }
+
+            guestVerificationEmail.value = email;
+            guestVerificationOrderNumber.value = orderNumber;
+            guestVerificationToken.value = response.data?.verification_token || '';
+            guestVerificationCode.value = '';
+            isVerificationModalOpen.value = true;
+        } catch (error: any) {
+            guestVerificationError.value =
+                error?.data?.message ||
+                error?.message ||
+                t('auth.guestVerification.requestFailed');
+        }
     }
+
+    async function submitGuestVerification() {
+        if (!guestVerificationCode.value.trim()) {
+            guestVerificationError.value = t('auth.guestVerification.codeRequired');
+            return;
+        }
+
+        isGuestVerifying.value = true;
+        guestVerificationError.value = '';
+
+        try {
+            const response = await api<GuestOtpVerifyResponse>(
+                `/${apiCountry.value}/auth/login/guest/verify`,
+                {
+                    method: 'POST',
+                    body: {
+                        email: guestVerificationEmail.value,
+                        order_number: guestVerificationOrderNumber.value,
+                        verification_token: guestVerificationToken.value || undefined,
+                        otp: guestVerificationCode.value.trim(),
+                    },
+                }
+            );
+
+            if (!response.success) {
+                guestVerificationError.value =
+                    response.message || t('auth.guestVerification.invalidCode');
+                return;
+            }
+
+            const resolvedOrderNumber =
+                response.data?.order_number || guestVerificationOrderNumber.value;
+
+            isVerificationModalOpen.value = false;
+            await router.push(
+                withCountry(`/account/orders?order_number=${encodeURIComponent(resolvedOrderNumber)}`)
+            );
+        } catch (error: any) {
+            guestVerificationError.value =
+                error?.data?.message ||
+                error?.message ||
+                t('auth.guestVerification.invalidCode');
+        } finally {
+            isGuestVerifying.value = false;
+        }
+    }
+
+    async function resendGuestVerification() {
+        if (!guestVerificationEmail.value || !guestVerificationOrderNumber.value) return;
+
+        try {
+            const response = await api<GuestOtpRequestResponse>(
+                `/${apiCountry.value}/auth/login/guest/verification`,
+                {
+                    method: 'POST',
+                    body: {
+                        email: guestVerificationEmail.value,
+                        order_number: guestVerificationOrderNumber.value,
+                    },
+                }
+            );
+
+            if (response.success) {
+                guestVerificationToken.value = response.data?.verification_token || '';
+            }
+        } catch {
+            // Keep UX non-blocking for resend tap failures.
+        }
+    }
+
+    watch(isVerificationModalOpen, (open) => {
+        if (open) return;
+        guestVerificationCode.value = '';
+        guestVerificationError.value = '';
+        isGuestVerifying.value = false;
+    });
 
     function openForgotPasswordModal() {
         isForgotPasswordModalOpen.value = true;
@@ -270,6 +383,12 @@ export function useLoginPageForm() {
         isForgotPasswordModalOpen,
         memberEmail,
         memberPassword,
+        guestVerificationEmail,
+        guestVerificationOrderNumber,
+        guestVerificationToken,
+        guestVerificationCode,
+        guestVerificationError,
+        isGuestVerifying,
         nonMemberEmail,
         nonMemberOrderNumber,
         memberEmailError,
@@ -280,6 +399,8 @@ export function useLoginPageForm() {
         onMemberPasswordInput,
         onNonMemberEmailInput,
         onNonMemberOrderInput,
+        submitGuestVerification,
+        resendGuestVerification,
         onSubmitClick,
         openForgotPasswordModal,
     };

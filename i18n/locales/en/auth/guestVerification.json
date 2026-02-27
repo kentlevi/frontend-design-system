@@ -1,0 +1,20 @@
+{
+    "auth": {
+        "guestVerification": {
+            "title": "Order Verification Required",
+            "messagePrefix": "To verify your guest order, we sent a verification code to ",
+            "messageSuffix": ". Enter the code below to continue.",
+            "enterCode": "Enter verification code",
+            "orderNumberLabel": "Order Number",
+            "verify": "Verify Order",
+            "verifying": "Verifying...",
+            "codeRequired": "Please enter the verification code sent to your email.",
+            "invalidCode": "The verification code is invalid or expired.",
+            "requestFailed": "We couldn't send a verification code right now.",
+            "closeModal": "Close modal",
+            "resendPrefix": "Didn't receive a code? ",
+            "resendCta": "Resend code",
+            "resendSuffix": "."
+        }
+    }
+}

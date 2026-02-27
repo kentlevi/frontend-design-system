@@ -1,5 +1,6 @@
 import type { ProductCategoryKey } from '~/data/products/catalog';
 import type { FlagCode } from '~/data/ui/flags';
+import type { SupportedCountry } from '~/constants/countries';
 
 export const HEADER_MAX_RECENT_SEARCHES = 5;
 export const HEADER_SEARCH_DEBOUNCE_DELAY_MS = 480;
@@ -30,7 +31,7 @@ export const headerNavLinkConfig = [
 ] as const;
 
 export const headerLocaleOptionConfig: Array<{
-    code: 'en' | 'kr';
+    code: SupportedCountry;
     flagCode: FlagCode;
     labelKey: string;
 }> = [
@@ -85,3 +86,9 @@ export const headerAccountLinkConfig = [
         icon: 'strong-site-redirect',
     },
 ] as const;
+
+export const headerCheckoutConfig = {
+    title: 'Secure Checkout',
+    phone: '+1 551 236 4533',
+    email: 'info@mustickers.com',
+} as const;

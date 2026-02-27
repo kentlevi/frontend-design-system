@@ -1,0 +1,20 @@
+{
+    "auth": {
+        "verification": {
+            "title": "Verification Required",
+            "iconAlt": "Verification shield",
+            "messagePrefix": "To ensure your security, we'll send a verification code to your email ",
+            "messageSuffix": ". The code will expire in 5 minutes.",
+            "enterCode": "Please enter the code:",
+            "codeRequired": "Please enter the verification code sent to your email.",
+            "invalidCode": "Invalid verification code.",
+            "verify": "Verify",
+            "verifyEmailAddress": "Verify Email Address",
+            "verifying": "Verifying...",
+            "closeModal": "Close modal",
+            "resendPrefix": "Didn't receive any? Please check your spam or ",
+            "resendCta": "Resend Code",
+            "resendSuffix": "."
+        }
+    }
+}

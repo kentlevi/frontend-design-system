@@ -10,48 +10,58 @@ defineProps<{
 
 const emit = defineEmits<{
     (e: 'update:email', value: string): void;
-    (e: 'update:orderNumber', value: string): void;
+    (e: 'update:order-number', value: string): void;
 }>();
 </script>
 
 <template>
     <div class="auth-login-form" data-testid="auth-login-non-member-form">
         <div class="auth-login-inputs">
-            <div class="auth-login-field">
-                <div class="auth-login-label-row">
-                    <label class="auth-login-label">{{ t('auth.login.email') }}</label>
-                    <p v-if="emailError" class="auth-login-error">{{ emailError }}</p>
-                </div>
-                <UiInput
-                    class="auth-login-input"
-                    type="email"
-                    size="md"
-                    :state="emailError ? 'error' : 'default'"
-                    :placeholder="t('auth.login.enterEmail')"
-                    :model-value="email"
-                    data-testid="auth-login-non-member-email-input"
-                    @update:model-value="emit('update:email', $event)"
-                />
-            </div>
+            <UiFormField
+                class="auth-login-field"
+                :label="t('auth.login.email')"
+                :error="emailError"
+                :required="true"
+            >
+                <template #default="{ inputId, describedBy }">
+                    <UiInput
+                        :id="inputId"
+                        class="auth-login-input"
+                        type="email"
+                        size="md"
+                        :state="emailError ? 'error' : 'default'"
+                        :aria-invalid="emailError ? 'true' : 'false'"
+                        :aria-describedby="describedBy || undefined"
+                        :placeholder="t('auth.login.enterEmail')"
+                        :model-value="email"
+                        data-testid="auth-login-non-member-email-input"
+                        @update:model-value="emit('update:email', $event)"
+                    />
+                </template>
+            </UiFormField>
 
-            <div class="auth-login-field">
-                <div class="auth-login-label-row">
-                    <label class="auth-login-label">
-                        {{ t('auth.login.orderNumber') }}
-                    </label>
-                    <p v-if="orderError" class="auth-login-error">{{ orderError }}</p>
-                </div>
-                <UiInput
-                    class="auth-login-input"
-                    type="text"
-                    size="md"
-                    :state="orderError ? 'error' : 'default'"
-                    :placeholder="t('auth.login.enterOrderNumber')"
-                    :model-value="orderNumber"
-                    data-testid="auth-login-non-member-order-number-input"
-                    @update:model-value="emit('update:orderNumber', $event)"
-                />
-            </div>
+            <UiFormField
+                class="auth-login-field"
+                :label="t('auth.login.orderNumber')"
+                :error="orderError"
+                :required="true"
+            >
+                <template #default="{ inputId, describedBy }">
+                    <UiInput
+                        :id="inputId"
+                        class="auth-login-input"
+                        type="text"
+                        size="md"
+                        :state="orderError ? 'error' : 'default'"
+                        :aria-invalid="orderError ? 'true' : 'false'"
+                        :aria-describedby="describedBy || undefined"
+                        :placeholder="t('auth.login.enterOrderNumber')"
+                        :model-value="orderNumber"
+                        data-testid="auth-login-non-member-order-number-input"
+                        @update:model-value="emit('update:order-number', $event)"
+                    />
+                </template>
+            </UiFormField>
         </div>
     </div>
 </template>
@@ -62,23 +72,17 @@ const emit = defineEmits<{
     flex-direction: column;
     gap: 8px;
 
-    .auth-login-inputs {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-
-        .auth-login-field {
+        .auth-login-inputs {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 16px;
 
-            .auth-login-label-row {
+            .auth-login-field {
                 display: flex;
-                align-items: baseline;
-                justify-content: space-between;
-                gap: 12px;
+                flex-direction: column;
+                gap: 8px;
 
-                .auth-login-label {
+                :deep(.ui-form-field-label) {
                     display: block;
                     margin: 0;
                     font-size: 14px;
@@ -86,13 +90,12 @@ const emit = defineEmits<{
                     color: var(--text-primary);
                 }
 
-                .auth-login-error {
+                :deep(.ui-form-field-error) {
                     margin: 0;
                     font-size: 14px;
                     line-height: 1.2;
                     color: var(--error);
                 }
-            }
 
             .auth-login-input {
                 width: 100%;

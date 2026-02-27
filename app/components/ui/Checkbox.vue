@@ -4,6 +4,10 @@ import UiIcon from '~/components/ui/Icon.vue';
 type Size = 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const props = withDefaults(
     defineProps<{
         modelValue?: boolean;
@@ -24,6 +28,24 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void;
 }>();
+const attrs = useAttrs();
+
+const testId = computed(() => String(attrs['data-testid'] || '').trim());
+const rootAttrs = computed(() => {
+    const { class: className, style, 'data-testid': _testId } = attrs;
+    return {
+        class: className,
+        style,
+        ...(testId.value ? { 'data-testid': testId.value } : {}),
+    };
+});
+const inputAttrs = computed(() => {
+    const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
+    return {
+        ...rest,
+        ...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
+    };
+});
 
 function onChange(event: Event) {
     emit('update:modelValue', (event.target as HTMLInputElement).checked);
@@ -32,12 +54,14 @@ function onChange(event: Event) {
 
 <template>
     <label
+        v-bind="rootAttrs"
         class="ui-checkbox"
         :data-size="props.size"
         :data-state="props.state !== 'default' ? props.state : null"
         :data-disabled="props.disabled || null"
     >
         <input
+            v-bind="inputAttrs"
             class="ui-checkbox-input"
             type="checkbox"
             :checked="props.modelValue"

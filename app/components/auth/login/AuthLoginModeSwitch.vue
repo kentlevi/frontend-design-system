@@ -8,7 +8,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:memberType', value: LoginMemberType): void;
+    (e: 'update:member-type', value: LoginMemberType): void;
 }>();
 </script>
 
@@ -23,7 +23,7 @@ const emit = defineEmits<{
                     ? 'auth-login-mode-member-active-button'
                     : 'auth-login-mode-member-inactive-button'
             "
-            @click="emit('update:memberType', 'member')"
+            @click="emit('update:member-type', 'member')"
         >
             {{ t('auth.login.member') }}
         </button>
@@ -38,7 +38,7 @@ const emit = defineEmits<{
                     ? 'auth-login-mode-non-member-active-button'
                     : 'auth-login-mode-non-member-inactive-button'
             "
-            @click="emit('update:memberType', 'non-member')"
+            @click="emit('update:member-type', 'non-member')"
         >
             {{ t('auth.login.nonMember') }}
         </button>

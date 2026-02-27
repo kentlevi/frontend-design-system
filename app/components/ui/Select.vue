@@ -9,6 +9,10 @@ type SelectOption = {
     description?: string;
 };
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const props = withDefaults(
     defineProps<{
         modelValue?: SelectValue | null;
@@ -35,6 +39,7 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'update:modelValue', value: SelectValue): void;
 }>();
+const attrs = useAttrs();
 
 const rootRef = ref<HTMLElement | null>(null);
 const searchRef = ref<HTMLInputElement | null>(null);
@@ -66,6 +71,15 @@ const filteredOptions = computed(() => {
 const triggerIconName = computed(() =>
     props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
+const testId = computed(() => String(attrs['data-testid'] || '').trim());
+const rootAttrs = computed(() => {
+    const { class: className, style, 'data-testid': _testId } = attrs;
+    return {
+        class: className,
+        style,
+        ...(testId.value ? { 'data-testid': testId.value } : {}),
+    };
+});
 
 function closeMenu() {
     isOpen.value = false;
@@ -126,6 +140,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div
+        v-bind="rootAttrs"
         ref="rootRef"
         class="ui-select"
         :data-open="isOpen || null"
@@ -135,6 +150,7 @@ onBeforeUnmount(() => {
             type="button"
             class="ui-select-trigger"
             :disabled="props.disabled"
+            :data-testid="testId ? `${testId}-trigger` : undefined"
             @click="toggleMenu"
         >
             <span
@@ -168,6 +184,7 @@ onBeforeUnmount(() => {
                         type="text"
                         class="ui-select-search-input"
                         placeholder="Search..."
+                        :data-testid="testId ? `${testId}-search` : undefined"
                     />
                 </div>
 

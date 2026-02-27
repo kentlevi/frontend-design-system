@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useCountry } from '@/composables/app/useCountry';
+
 const { t } = useI18n();
-const localePath = useLocalePath();
+const { withCountry } = useCountry();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
@@ -90,7 +92,7 @@ const emit = defineEmits<{
                 <NuxtLink
                     v-for="link in accountLinks"
                     :key="link.to"
-                    :to="localePath(link.to)"
+                    :to="withCountry(link.to)"
                     class="home-account-link"
                     role="menuitem"
                     @click="emit('close')"
@@ -129,7 +131,7 @@ const emit = defineEmits<{
                 data-testid="app-header-account-dropdown-guest"
             >
                 <NuxtLink
-                    :to="localePath('/auth/login')"
+                    :to="withCountry('/auth/login')"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     @click="emit('close')"
@@ -138,7 +140,7 @@ const emit = defineEmits<{
                     {{ t('layout.header.login') }}
                 </NuxtLink>
                 <NuxtLink
-                    :to="localePath('/auth/register')"
+                    :to="withCountry('/auth/register')"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     @click="emit('close')"
@@ -293,21 +295,21 @@ const emit = defineEmits<{
             }
         }
 
-            .home-account-link {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                height: 42px;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                line-height: 1.2;
-                color: var(--text-primary);
-                padding: 0 12px;
+        .home-account-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 42px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.2;
+            color: var(--text-primary);
+            padding: 0 12px;
 
-                :deep(.ui-icon) {
-                    flex-shrink: 0;
-                }
+            :deep(.ui-icon) {
+                flex-shrink: 0;
+            }
 
             &:hover {
                 background: var(--gold-20);

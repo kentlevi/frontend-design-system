@@ -1,13 +1,14 @@
 import { computed, onMounted, ref } from 'vue';
+import { CART_STORAGE_KEY, CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
 import { checkoutProvinceOptions } from '~/data/checkout/options';
 import {
     productCatalog,
     type ProductCategoryKey,
     type ProductItem,
 } from '~/data/products/catalog';
-
-const CART_STORAGE_KEY = 'musticker-product-cart-v1';
-const CHECKOUT_SELECTION_STORAGE_KEY = 'musticker-checkout-selection-v1';
+import { useCountry } from '~/composables/app/useCountry';
+import { formatCurrencyByCountry } from '~/utils/currency';
+import { sizeDimOnly } from '~/utils/cart';
 
 type StoredCartState = {
     id: string;
@@ -59,22 +60,9 @@ function readSelectionIdsFromStorage() {
     }
 }
 
-function formatPrice(value: number) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(value);
-}
-
-function sizeDimOnly(label: string) {
-    const matched = label.match(/(\d+\s*(?:x|\u00d7)\s*\d+)/i);
-    if (matched?.[1]) return matched[1].replace(/\s+/g, '');
-    return label;
-}
-
 export function useCheckoutGuest() {
     const { t } = useI18n();
+    const { country } = useCountry();
 
     const email = ref('');
     const fullName = ref('');
@@ -112,6 +100,15 @@ export function useCheckoutGuest() {
             .filter((item): item is CheckoutItem => Boolean(item))
     );
 
+    const provinceOptions = computed(() =>
+        checkoutProvinceOptions
+            .filter((option) => option.enabled !== false)
+            .map((option) => ({
+                value: option.value,
+                label: t(option.i18nKey),
+            }))
+    );
+
     const selectedCheckoutItems = computed(() => {
         if (!selectedItemIds.value.length) return checkoutItems.value;
         const selected = checkoutItems.value.filter((item) =>
@@ -144,7 +141,7 @@ export function useCheckoutGuest() {
     });
 
     return {
-        provinceOptions: checkoutProvinceOptions,
+        provinceOptions,
         email,
         fullName,
         company,
@@ -163,7 +160,7 @@ export function useCheckoutGuest() {
         orderDiscount,
         orderShippingFee,
         orderSubtotal,
-        formatPrice,
+        formatPrice: (value: number) => formatCurrencyByCountry(value, country.value),
         sizeDimOnly,
     };
 }

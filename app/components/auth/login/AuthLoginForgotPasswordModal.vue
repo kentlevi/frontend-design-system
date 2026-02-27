@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { useCountry } from '@/composables/app/useCountry';
 
 const props = withDefaults(
     defineProps<{
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const api = useApi();
+const { apiCountry } = useCountry();
 
 const resetEmail = ref('');
 const error = ref('');
@@ -60,7 +62,7 @@ async function submitReset() {
 
     try {
         const response = await api<{ success: boolean; message: string }>(
-            '/kr/auth/password/reset-link',
+            `/${apiCountry.value}/auth/password/reset-link`,
             {
                 method: 'POST',
                 body: {
@@ -70,14 +72,14 @@ async function submitReset() {
         );
 
         if (!response?.success) {
-            error.value = response?.message || 'Unable to send reset email.';
+            error.value = response?.message || t('auth.login.forgot.requestFailed');
             return;
         }
 
         sent.value = true;
     } catch (err: any) {
         error.value =
-            err?.data?.message || err?.message || 'Unable to send reset email.';
+            err?.data?.message || err?.message || t('auth.login.forgot.requestFailed');
     } finally {
         loading.value = false;
     }
@@ -104,7 +106,7 @@ async function submitReset() {
                     class="auth-forgot-logo"
                 />
                 <h3 class="auth-forgot-title">
-                    {{ sent ? 'Please check your email' : 'Forgot your password?' }}
+                    {{ sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
                 </h3>
             </div>
         </template>
@@ -112,36 +114,43 @@ async function submitReset() {
         <div class="auth-forgot-body">
             <template v-if="!sent">
                 <p class="auth-forgot-description">
-                    Enter your user account's verified email address and we will
-                    send you a password reset link.
+                    {{ t('auth.login.forgot.description') }}
                 </p>
 
-                <div class="auth-forgot-label-row">
-                    <label class="auth-forgot-label">{{ t('auth.login.email') }}</label>
-                    <p v-if="error" class="auth-forgot-error">{{ error }}</p>
-                </div>
-                <UiInput
-                    class="auth-forgot-input"
-                    type="email"
-                    size="md"
-                    :model-value="resetEmail"
-                    :state="error ? 'error' : 'default'"
-                    :placeholder="t('auth.login.enterEmail')"
-                    data-testid="auth-login-forgot-password-email-input"
-                    @update:model-value="resetEmail = $event"
-                />
+                <UiFormField
+                    class="auth-forgot-field"
+                    :label="t('auth.login.email')"
+                    :error="error"
+                    :required="true"
+                >
+                    <template #default="{ inputId, describedBy }">
+                        <UiInput
+                            :id="inputId"
+                            class="auth-forgot-input"
+                            type="email"
+                            size="md"
+                            :model-value="resetEmail"
+                            :state="error ? 'error' : 'default'"
+                            :aria-invalid="error ? 'true' : 'false'"
+                            :aria-describedby="describedBy || undefined"
+                            :placeholder="t('auth.login.enterEmail')"
+                            data-testid="auth-login-forgot-password-email-input"
+                            @update:model-value="resetEmail = $event"
+                        />
+                    </template>
+                </UiFormField>
 
                 <div class="auth-forgot-actions">
                     <UiButton
                         variant="filled"
                         tone="neutral"
-                        size="md"
+                        size="lg"
                         class="auth-forgot-submit"
                         data-testid="auth-login-forgot-password-submit-button"
                         :disabled="loading"
                         @click="submitReset"
                     >
-                        {{ loading ? 'Sending...' : 'Send Password Reset Email' }}
+                        {{ loading ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
                     </UiButton>
 
                     <UiButton
@@ -152,15 +161,14 @@ async function submitReset() {
                         data-testid="auth-login-forgot-password-return-button"
                         @click="closeModal"
                     >
-                        Return to Login
+                        {{ t('auth.login.forgot.returnToLogin') }}
                     </UiButton>
                 </div>
             </template>
 
             <template v-else>
                 <p class="auth-forgot-description">
-                    Check your email for a link to reset your password. If it
-                    doesn't appear within a few minutes, check your spam folder.
+                    {{ t('auth.login.forgot.checkEmailDescription') }}
                 </p>
 
                 <div class="auth-forgot-actions auth-forgot-actions-success">
@@ -172,7 +180,7 @@ async function submitReset() {
                         data-testid="auth-login-forgot-password-return-button"
                         @click="closeModal"
                     >
-                        Return to Login
+                        {{ t('auth.login.forgot.returnToLogin') }}
                     </UiButton>
                 </div>
             </template>
@@ -212,20 +220,15 @@ async function submitReset() {
         color: var(--text-secondary);
     }
 
-    .auth-forgot-label-row {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 12px;
-
-        .auth-forgot-label {
+    .auth-forgot-field {
+        :deep(.ui-form-field-label) {
             font-size: 14px;
             font-weight: 600;
             line-height: 24px;
             color: var(--text-primary);
         }
 
-        .auth-forgot-error {
+        :deep(.ui-form-field-error) {
             margin: 0;
             font-size: 14px;
             line-height: 24px;

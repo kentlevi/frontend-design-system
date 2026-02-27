@@ -1,18 +1,8 @@
 <script setup lang="ts">
+import { useCountry } from '@/composables/app/useCountry';
+
 const { t } = useI18n();
-const route = useRoute();
-
-const currentCountry = computed(() => {
-    const country = route.params.country;
-    if (typeof country === 'string' && country.length > 0) return country;
-    if (Array.isArray(country) && country[0]) return country[0];
-    return 'en';
-});
-
-function withCountry(path: string) {
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    return `/${currentCountry.value}${normalizedPath}`;
-}
+const { withCountry } = useCountry();
 
 const types = [
     {
