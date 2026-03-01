@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
 import { useRegisterForm } from '@/composables/auth/useRegisterForm';
 import { useCountry } from '@/composables/app/useCountry';

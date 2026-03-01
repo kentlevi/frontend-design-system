@@ -172,7 +172,7 @@ function updateUnit(value: ProfileUnit) {
             <UiButton
                 variant="outline"
                 tone="neutral"
-                size="lg"
+                size="md"
                 class="auth-profile-back-btn"
                 data-testid="auth-profile-back-button"
                 @click="emit('back')"
@@ -182,12 +182,12 @@ function updateUnit(value: ProfileUnit) {
             <UiButton
                 variant="filled"
                 tone="neutral"
-                size="lg"
+                size="md"
                 class="auth-profile-complete-btn"
                 data-testid="auth-profile-complete-button"
                 @click="emit('complete')"
             >
-                <UiIcon name="strong-check" :size="24" />
+                <UiIcon name="regular-clipboard-check" :size="24" />
                 {{ $t('auth.profile.settings.complete') }}
             </UiButton>
         </div>
@@ -341,10 +341,14 @@ function updateUnit(value: ProfileUnit) {
 
         .auth-profile-back-btn {
             padding: 8px 24px;
+            font-size: 14px;
+            line-height: 24px;
         }
 
         .auth-profile-complete-btn {
             padding: 8px 32px;
+            font-size: 14px;
+            line-height: 24px;
         }
     }
 

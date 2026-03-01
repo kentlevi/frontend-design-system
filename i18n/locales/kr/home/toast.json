@@ -1,7 +1,39 @@
 {
     "home": {
         "toast": {
-            "passwordUpdated": "비밀번호가 성공적으로 업데이트되었습니다."
+            "passwordUpdated": "비밀번호가 성공적으로 업데이트되었습니다.",
+            "loginSuccess": "로그인되었습니다.",
+            "welcome": {
+                "title": "Hi {name}, welcome to the fun side!",
+                "defaultName": "there",
+                "bodyPrefix": "As a thank you for registering, ",
+                "bodyHighlight": "you've earned {points} points to kickstart your journey.",
+                "bodySuffix": " If you need a hand, this guided tour will walk you through the key features to help you get started.",
+                "skip": "Skip",
+                "getStarted": "Get Started"
+            },
+            "tour": {
+                "close": "Close guide tour",
+                "next": "Next",
+                "done": "Done",
+                "stepLabel": "Step {current} of {total}",
+                "step1": {
+                    "title": "Your profile at a glance",
+                    "body": "Manage everything from your profile dropdown: track points, coupons, order history, and reviews."
+                },
+                "step2": {
+                    "title": "Explore our products",
+                    "body": "Navigate product categories in the header to quickly find sticker types that match your needs."
+                },
+                "step3": {
+                    "title": "Easy product search",
+                    "body": "Use the search icon in the header to find products instantly by name and keyword."
+                },
+                "step4": {
+                    "title": "You're ready to go!",
+                    "body": "For more information and tutorials, check out our \"Getting Started\" guide located on the account dropdown panel."
+                }
+            }
         }
     }
 }

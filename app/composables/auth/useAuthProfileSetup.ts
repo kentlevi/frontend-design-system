@@ -1,5 +1,6 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { accountProfileDefaults, type AccountMockUser } from '~/data/account/profile';
+import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { useCountry } from '~/composables/app/useCountry';
 import { useUserStore } from '~/stores/user';
 
@@ -18,7 +19,8 @@ export function useAuthProfileSetup() {
     });
 
     const step = ref<ProfileStep>(1);
-    const showWelcomeToast = ref(Boolean(userStore.onboardingProfile?.onboarding));
+    const isNewOnboardingFlow = Boolean(userStore.onboardingProfile?.onboarding);
+    const showWelcomeToast = ref(isNewOnboardingFlow);
     let toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const firstName = ref(
@@ -87,6 +89,10 @@ export function useAuthProfileSetup() {
     }
 
     async function completeSetup() {
+        if (process.client && isNewOnboardingFlow) {
+            window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
+        }
+
         const authToken = useCookie<string | null>('auth_token');
         if (!authToken.value) {
             mockUser.value = {

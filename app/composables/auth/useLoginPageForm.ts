@@ -3,6 +3,7 @@ import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
+import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 
 export function useLoginPageForm() {
     const api = useApi();
@@ -149,6 +150,9 @@ export function useLoginPageForm() {
         if (isNonMember.value === false) {
             const response = await memberLoginHandler();
             if (response?.success === true) {
+                if (import.meta.client) {
+                    window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+                }
                 await router.push(withCountry('/'));
             }
         } else {

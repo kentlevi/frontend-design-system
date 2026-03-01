@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/user';
 import { useCountry } from '~/composables/app/useCountry';
@@ -25,8 +25,8 @@ export function useRegisterForm() {
     const passwordError = ref('');
     const termsError = ref('');
 
-    const verificationEmail = ref();
-    const verificationToken = ref();
+    const verificationEmail = ref('');
+    const verificationToken = ref('');
     const verificationCode = ref('');
     const verificationError = ref('');
     const isVerifying = ref(false);
@@ -69,7 +69,7 @@ export function useRegisterForm() {
     });
 
     interface RegisterVerificationResponse {
-        success: boolean;
+        success: boolean | string | number;
         message: string;
         data:
             | {
@@ -168,7 +168,8 @@ export function useRegisterForm() {
                 }
             })
 
-            if (response.success === false) {
+            const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
+            if (!isSuccess) {
                 firstNameError.value =
                     getFirstError(response.data, 'given_name') ||
                     getFirstError(response.data, 'first_name');
@@ -193,10 +194,29 @@ export function useRegisterForm() {
                 return response
             }
 
-            verificationEmail.value = (response.data as { email: string }).email;
-            verificationToken.value = (response.data as { token: string }).token;
+            const verificationData = response.data as { email?: string; token?: string } | undefined;
+            const resolvedEmail =
+                typeof verificationData?.email === 'string' && verificationData.email.trim()
+                    ? verificationData.email.trim()
+                    : email.value.trim();
+            const resolvedToken =
+                typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
+
+            if (!resolvedToken) {
+                emailError.value = resolveRegisterErrorMessage(
+                    response.message,
+                    'Registration failed.'
+                );
+                return response;
+            }
+
+            verificationEmail.value = resolvedEmail;
+            verificationToken.value = resolvedToken;
             verificationCode.value = '';
             verificationError.value = '';
+            // Re-open explicitly in case state was previously left open/closed by a stale render cycle.
+            isVerificationModalOpen.value = false;
+            await nextTick();
             isVerificationModalOpen.value = true;
             return response
         } catch (error: any) {

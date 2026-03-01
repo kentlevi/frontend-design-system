@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useVerificationCodeInput } from '@/composables/auth/useVerificationCodeInput';
 import { authVerificationConfig, type AuthVerificationI18nBase } from '@/data/auth/verification';
 

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import AuthVerificationModal from '@/components/auth/shared/AuthVerificationModal.vue';
 import { authVerificationConfig } from '@/data/auth/verification';
 
 const { t } = useI18n();

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import AuthRegisterCard from '@/components/auth/register/AuthRegisterCard.vue';
 
 const { t } = useI18n();
