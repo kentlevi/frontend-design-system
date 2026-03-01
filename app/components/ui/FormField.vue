@@ -52,7 +52,12 @@ const describedBy = computed(() => {
                 </slot>
             </label>
             <slot name="label-right">
-                <span v-if="error" :id="resolvedErrorId" class="ui-form-field-error">
+                <span
+                    v-if="error"
+                    :id="resolvedErrorId"
+                    class="ui-form-field-error"
+                    :data-testid="`${resolvedErrorId}-message`"
+                >
                     {{ error }}
                 </span>
             </slot>
