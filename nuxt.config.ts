@@ -32,9 +32,6 @@ export default defineNuxtConfig({
             s3_file_url: process.env.S3_FILE_URL,
             file_base_url: process.env.FILE_BASE_URL,
             host: process.env.APP_HOST,
-            webVitalsEnabled: true,
-            webVitalsDebug: false,
-            webVitalsEndpoint: '/api/web-vitals',
             apiBase:
                 normalizedApiBase,
         },
