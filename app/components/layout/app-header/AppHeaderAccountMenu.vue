@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useCountry } from '@/composables/app/useCountry';
+import {
+    HOME_WELCOME_POPOVER_PENDING_KEY,
+    HOME_WELCOME_POPOVER_TRIGGER_EVENT,
+} from '~/data/home/onboarding';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -14,7 +19,7 @@ type AccountLink = {
     label: string;
 };
 
-defineProps<{
+const props = defineProps<{
     accountOpen: boolean;
     isMockLoggedIn: boolean;
     userInitial: string;
@@ -32,6 +37,29 @@ const emit = defineEmits<{
     (e: 'mouse-leave'): void;
     (e: 'logout'): void;
 }>();
+
+function handleAccountLinkClick(event: MouseEvent, to: string) {
+    if (to === '/auth/profile') {
+        event.preventDefault();
+        if (process.client) {
+            window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
+            window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
+        }
+        emit('close');
+        void navigateTo(`/${country.value}`);
+        return;
+    }
+
+    emit('close');
+}
+
+const primaryAccountLinks = computed(() =>
+    props.accountLinks.filter((link) => link.to !== '/auth/profile')
+);
+
+const gettingStartedLink = computed(
+    () => props.accountLinks.find((link) => link.to === '/auth/profile') ?? null
+);
 </script>
 
 <template>
@@ -66,8 +94,8 @@ const emit = defineEmits<{
             />
             <UiIcon
                 v-if="isMockLoggedIn"
-                name="strong-angle-down"
-                :size="12"
+                name="strong-caret-down"
+                :size="16"
                 color="var(--text-primary)"
             />
         </button>
@@ -92,39 +120,59 @@ const emit = defineEmits<{
                     </div>
                 </div>
 
-                <NuxtLink
-                    v-for="link in accountLinks"
-                    :key="link.to"
-                    :to="`/${country}${link.to}`"
-                    class="home-account-link"
-                    role="menuitem"
-                    :data-testid="`app-header-account-link-${link.to.replace('/', '').replace('/', '-') || 'root'}`"
-                    @click="emit('close')"
-                >
-                    <UiIcon
-                        :name="link.icon"
-                        :size="24"
-                        color="var(--text-primary)"
-                    />
-                    <span class="home-account-link-label">{{ link.label }}</span>
-                </NuxtLink>
+                <div class="home-account-link-group home-account-link-group--primary">
+                    <NuxtLink
+                        v-for="link in primaryAccountLinks"
+                        :key="link.to"
+                        :to="`/${country}${link.to}`"
+                        class="home-account-link"
+                        role="menuitem"
+                        :data-testid="`app-header-account-link-${link.to.replace('/', '').replace('/', '-') || 'root'}`"
+                        @click="handleAccountLinkClick($event, link.to)"
+                    >
+                        <UiIcon
+                            :name="link.icon"
+                            :size="24"
+                            color="var(--text-primary)"
+                        />
+                        <span class="home-account-link-label">{{ link.label }}</span>
+                    </NuxtLink>
+                </div>
 
-                <UiButton
-                    variant="ghost"
-                    tone="default"
-                    size="sm"
-                    class="home-account-link home-account-link-button"
-                    role="menuitem"
-                    data-testid="app-header-account-logout-button"
-                    @click="emit('logout')"
-                >
-                    <UiIcon
-                        name="strong-sign-out"
-                        :size="24"
-                        color="var(--text-primary)"
-                    />
-                    <span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
-                </UiButton>
+                <div class="home-account-link-group home-account-link-group--secondary">
+                    <NuxtLink
+                        v-if="gettingStartedLink"
+                        :to="`/${country}${gettingStartedLink.to}`"
+                        class="home-account-link home-account-link--section-start"
+                        role="menuitem"
+                        :data-testid="`app-header-account-link-${gettingStartedLink.to.replace('/', '').replace('/', '-') || 'root'}`"
+                        @click="handleAccountLinkClick($event, gettingStartedLink.to)"
+                    >
+                        <UiIcon
+                            :name="gettingStartedLink.icon"
+                            :size="24"
+                            color="var(--text-primary)"
+                        />
+                        <span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
+                    </NuxtLink>
+
+                    <UiButton
+                        variant="ghost"
+                        tone="default"
+                        size="sm"
+                        class="home-account-link home-account-link-button"
+                        role="menuitem"
+                        data-testid="app-header-account-logout-button"
+                        @click="emit('logout')"
+                    >
+                        <UiIcon
+                            name="strong-sign-out"
+                            :size="24"
+                            color="var(--text-primary)"
+                        />
+                        <span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
+                    </UiButton>
+                </div>
             </div>
             <div
                 v-else-if="accountOpen"
@@ -297,45 +345,50 @@ const emit = defineEmits<{
                 line-height: 1.2;
             }
         }
+        .home-account-link-group {
+            padding: 8px 0;
 
-        .home-account-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            height: 42px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.2;
-            color: var(--text-primary);
-            padding: 0 12px;
-
-            :deep(.ui-icon) {
-                flex-shrink: 0;
-            }
-
-            &:hover {
-                background: var(--gold-20);
-            }
-
-            &.home-account-link--guest {
-                justify-content: center;
-            }
-
-            &.home-account-link-button {
-                --btn-bg: var(--text-primary);
-                --btn-soft: var(--gold-20);
-                --btn-border: transparent;
-
-                width: 100%;
+            &.home-account-link-group--secondary {
                 border-top: 1px solid var(--border-default);
-                min-height: 42px;
-                border-radius: 0;
-                box-shadow: none;
-                justify-content: flex-start;
-                padding: 0 12px;
+            }
+
+            .home-account-link {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                height: 40px;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.2;
+                color: var(--text-primary);
+                padding: 0 20px;
+
+                :deep(.ui-icon) {
+                    flex-shrink: 0;
+                }
+
+                &:hover {
+                    background: var(--gold-20);
+                }
+
+                &.home-account-link--guest {
+                    justify-content: center;
+                }
+
+                &.home-account-link-button {
+                    --btn-bg: var(--text-primary);
+                    --btn-soft: var(--gold-20);
+                    --btn-border: transparent;
+
+                    width: 100%;
+                    border-radius: 0;
+                    box-shadow: none;
+                    justify-content: flex-start;
+                }
             }
         }
+
     }
 }
 

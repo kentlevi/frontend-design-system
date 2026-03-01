@@ -58,7 +58,7 @@ export const headerAccountLinkConfig = [
     {
         labelKey: 'layout.header.accountLinks.gallery',
         to: '/account/gallery',
-        icon: 'strong-image',
+        icon: 'regular-image',
     },
     {
         labelKey: 'layout.header.accountLinks.points',
@@ -83,7 +83,7 @@ export const headerAccountLinkConfig = [
     {
         labelKey: 'layout.header.accountLinks.gettingStarted',
         to: '/auth/profile',
-        icon: 'strong-site-redirect',
+        icon: 'strong-flag',
     },
 ] as const;
 
