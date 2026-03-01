@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useCountry } from '@/composables/app/useCountry';
 import {
     HOME_WELCOME_POPOVER_PENDING_KEY,
@@ -7,10 +6,7 @@ import {
 } from '~/data/home/onboarding';
 
 const { t } = useI18n();
-const route = useRoute();
-const country = computed(() =>
-    String(route.params.country || 'en').toLowerCase()
-);
+const { withCountry } = useCountry();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
@@ -46,7 +42,7 @@ function handleAccountLinkClick(event: MouseEvent, to: string) {
             window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
         }
         emit('close');
-        void navigateTo(`/${country.value}`);
+        void navigateTo(withCountry('/'));
         return;
     }
 
@@ -124,7 +120,7 @@ const gettingStartedLink = computed(
                     <NuxtLink
                         v-for="link in primaryAccountLinks"
                         :key="link.to"
-                        :to="`/${country}${link.to}`"
+                        :to="withCountry(link.to)"
                         class="home-account-link"
                         role="menuitem"
                         :data-testid="`app-header-account-link-${link.to.replace('/', '').replace('/', '-') || 'root'}`"
@@ -142,7 +138,7 @@ const gettingStartedLink = computed(
                 <div class="home-account-link-group home-account-link-group--secondary">
                     <NuxtLink
                         v-if="gettingStartedLink"
-                        :to="`/${country}${gettingStartedLink.to}`"
+                        :to="withCountry(gettingStartedLink.to)"
                         class="home-account-link home-account-link--section-start"
                         role="menuitem"
                         :data-testid="`app-header-account-link-${gettingStartedLink.to.replace('/', '').replace('/', '-') || 'root'}`"
@@ -182,7 +178,7 @@ const gettingStartedLink = computed(
                 data-testid="app-header-account-dropdown-guest"
             >
                 <NuxtLink
-                    :to="`/${country}/auth/login`"
+                    :to="withCountry('/auth/login')"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     data-testid="app-header-account-login"
@@ -191,7 +187,7 @@ const gettingStartedLink = computed(
                     {{ t('layout.header.login') }}
                 </NuxtLink>
                 <NuxtLink
-                    :to="`/${country}/auth/register`"
+                    :to="withCountry('/auth/register')"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     data-testid="app-header-account-register"
