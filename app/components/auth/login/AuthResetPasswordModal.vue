@@ -259,7 +259,13 @@ async function submitChangePassword() {
                 </UiInput>
             </div>
 
-            <p v-if="error" class="auth-reset-error">{{ error }}</p>
+            <p
+                v-if="error"
+                class="auth-reset-error"
+                data-testid="auth-reset-error"
+            >
+                {{ error }}
+            </p>
 
             <UiButton
                 variant="filled"

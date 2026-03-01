@@ -147,7 +147,11 @@ function onPaste(event: ClipboardEvent) {
                         @paste="onPaste"
                     >
                 </div>
-                <p v-if="error" class="auth-verification-error">
+                <p
+                    v-if="error"
+                    class="auth-verification-error"
+                    data-testid="auth-verification-error"
+                >
                     {{ error }}
                 </p>
             </div>
