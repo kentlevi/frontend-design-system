@@ -27,8 +27,16 @@ export function useLoginPageForm() {
     const submitLabel = computed(() =>
         isNonMember.value ? t('auth.login.checkOrder') : t('auth.login.signIn')
     );
+    function getRedirectCandidate() {
+        const queryRedirect = Array.isArray(route.query.redirect)
+            ? route.query.redirect[0]
+            : route.query.redirect;
+        if (queryRedirect) return queryRedirect;
+        if (!import.meta.client) return null;
+        return window.history.state?.back ?? null;
+    }
     const postLoginRedirect = computed(() =>
-        resolvePostLoginRedirect(route.query.redirect, withCountry)
+        resolvePostLoginRedirect(getRedirectCandidate(), withCountry)
     );
 
     const isVerificationModalOpen = ref(false);
