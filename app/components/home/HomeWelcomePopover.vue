@@ -31,14 +31,35 @@ const mockUser = useCookie<{
     path: '/',
 });
 
-function getCountryFieldId(field: UserFieldValue) {
-    return field.country_field_ids ?? field.country_fields_id;
+function getFieldValueByKey(key: 'first_name' | 'last_name') {
+    const legacyId = key === 'first_name' ? 1 : 2;
+    const fieldValues = userStore.profile?.user_field_values ?? [];
+    const directMatch =
+        fieldValues
+            .find(
+                (field) =>
+                    field.country_field?.field_key === key ||
+                    (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
+            )
+            ?.value?.trim() || '';
+    if (directMatch) return directMatch;
+
+    const fallbackRows = [...fieldValues]
+        .filter((field) => typeof field.value === 'string' && field.value.trim())
+        .sort(
+            (a, b) =>
+                (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+        )
+        .slice(0, 2);
+    if (fallbackRows.length < 2) return '';
+    return key === 'first_name'
+        ? (fallbackRows[0]?.value?.trim() || '')
+        : (fallbackRows[1]?.value?.trim() || '');
 }
 
 const storeFirstName = computed(() =>
-    (userStore.profile?.user_field_values ?? [])
-        .find((field) => getCountryFieldId(field) === 1)
-        ?.value?.trim() || ''
+    getFieldValueByKey('first_name')
 );
 
 const emailLocalPart = computed(() => {

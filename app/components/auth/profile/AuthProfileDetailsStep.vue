@@ -75,27 +75,15 @@ function updateEmail(value: string) {
                         {{ $t('auth.profile.details.photoTitle') }}
                     </label>
                     <div class="auth-profile-photo-row" data-testid="auth-profile-photo-row">
-                        <button
-                            type="button"
-                            class="auth-profile-photo-picker"
-                            data-testid="auth-profile-photo-upload-button"
-                            @click="openFilePicker"
-                        >
-                            <div class="auth-profile-avatar">
-                                <img
-                                    v-if="photoUrl"
-                                    :src="photoUrl"
-                                    alt="Profile photo"
-                                    class="auth-profile-avatar-image"
-                                >
-                                <span v-else class="auth-profile-avatar-initials">{{ initials }}</span>
-                            </div>
-                            <UiIcon
-                                name="strong-angle-down"
-                                :size="28"
-                                class="auth-profile-photo-picker-icon"
-                            />
-                        </button>
+                        <div class="auth-profile-avatar">
+                            <img
+                                v-if="photoUrl"
+                                :src="photoUrl"
+                                alt="Profile photo"
+                                class="auth-profile-avatar-image"
+                            >
+                            <span v-else class="auth-profile-avatar-initials">{{ initials }}</span>
+                        </div>
 
                         <div class="auth-profile-photo-meta">
                             <div class="auth-profile-photo-meta-text-group">
@@ -115,6 +103,16 @@ function updateEmail(value: string) {
                                     data-testid="auth-profile-photo-input"
                                     @change="onFilePicked"
                                 >
+                                <UiButton
+                                    variant="outline"
+                                    tone="neutral"
+                                    size="md"
+                                    class="auth-profile-outline-btn"
+                                    data-testid="auth-profile-photo-upload-button"
+                                    @click="openFilePicker"
+                                >
+                                    {{ $t('auth.profile.details.upload') }}
+                                </UiButton>
                                 <UiButton
                                     v-if="photoUrl"
                                     variant="ghost"
@@ -252,69 +250,26 @@ function updateEmail(value: string) {
 
                 .auth-profile-photo-row {
                     display: grid;
-                    grid-template-columns: minmax(280px, 1fr) 1fr;
+                    grid-template-columns: 110px 1fr;
                     gap: 32px;
                     align-items: center;
 
-                    .auth-profile-photo-picker {
-                        position: relative;
-                        width: 100%;
-                        min-height: 188px;
-                        border-radius: 999px;
-                        border: 6px solid var(--brand-primary);
-                        background: color-mix(in srgb, var(--contrast-light) 92%, var(--brand-primary) 8%);
-                        box-shadow:
-                            0 0 0 14px color-mix(in srgb, var(--brand-primary) 20%, transparent);
-                        padding: 18px 56px 18px 66px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        cursor: pointer;
-                        transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+                    .auth-profile-avatar {
+                        width: 110px;
+                        height: 110px;
+                        border-radius: 50%;
+                        background: var(--gray-40);
+                        display: grid;
+                        place-items: center;
+                        color: var(--black-base);
+                        font-size: 40px;
+                        font-weight: 700;
+                        overflow: hidden;
 
-                        &::before {
-                            content: '';
-                            position: absolute;
-                            inset: -18px;
-                            border-radius: inherit;
-                            border: 1px solid color-mix(in srgb, var(--brand-primary) 36%, transparent);
-                            background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
-                            z-index: -1;
-                        }
-
-                        &:hover {
-                            border-color: color-mix(in srgb, var(--brand-primary) 86%, #f6cc00);
-                            box-shadow:
-                                0 0 0 16px color-mix(in srgb, var(--brand-primary) 24%, transparent);
-                        }
-
-                        &:focus-visible {
-                            outline: 2px solid var(--text-primary);
-                            outline-offset: 4px;
-                        }
-
-                        .auth-profile-avatar {
-                            width: 168px;
-                            height: 168px;
-                            border-radius: 50%;
-                            background: var(--border-default);
-                            display: grid;
-                            place-items: center;
-                            color: var(--text-primary);
-                            font-size: 40px;
-                            font-weight: 700;
-                            overflow: hidden;
-
-                            .auth-profile-avatar-image {
-                                width: 100%;
-                                height: 100%;
-                                object-fit: cover;
-                            }
-                        }
-
-                        .auth-profile-photo-picker-icon {
-                            color: var(--text-primary);
-                            flex-shrink: 0;
+                        .auth-profile-avatar-image {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
                         }
                     }
 
@@ -341,6 +296,18 @@ function updateEmail(value: string) {
 
                             .auth-profile-file-input {
                                 display: none;
+                            }
+
+                            .auth-profile-outline-btn {
+                                padding: 8px 24px;
+                                border-radius: 16px;
+                                border: 1px solid var(--text-primary);
+                                background: transparent;
+                                color: var(--text-primary);
+                                font-size: 16px;
+                                font-weight: 600;
+                                line-height: 28px;
+                                cursor: pointer;
                             }
 
                             .auth-profile-delete-btn {

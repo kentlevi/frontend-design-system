@@ -2,7 +2,7 @@ import { nextTick, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/user';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserIdentity, UserProfile } from '~/stores/user';
+import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
 
 export function useRegisterForm() {
     const router = useRouter();
@@ -287,6 +287,64 @@ export function useRegisterForm() {
 
                     if (loginResponse.data.user) {
                         userStore.setUser(loginResponse.data.user)
+
+                        const mockUser = useCookie<{
+                            firstName: string;
+                            lastName: string;
+                            email: string;
+                        } | null>('mock_user', {
+                            sameSite: 'lax',
+                            path: '/',
+                        });
+
+                        const fields = loginResponse.data.user.profile?.user_field_values ?? [];
+                        const resolvedFirstName =
+                            fields.find(
+                                (field: UserFieldValue) =>
+                                    field.country_field?.field_key === 'first_name' ||
+                                    (field.country_field_id ??
+                                        field.country_field_ids ??
+                                        field.country_fields_id) === 1
+                            )?.value?.trim() || firstName.value.trim();
+                        const resolvedLastName =
+                            fields.find(
+                                (field: UserFieldValue) =>
+                                    field.country_field?.field_key === 'last_name' ||
+                                    (field.country_field_id ??
+                                        field.country_field_ids ??
+                                        field.country_fields_id) === 2
+                            )?.value?.trim() || lastName.value.trim();
+                        const fallbackRows = [...fields]
+                            .filter((field) => typeof field.value === 'string' && field.value.trim())
+                            .sort(
+                                (a, b) =>
+                                    (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                                    (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+                            )
+                            .slice(0, 2);
+                        let normalizedFirstName = resolvedFirstName || 'User';
+                        let normalizedLastName = resolvedLastName || '';
+
+                        if (!resolvedFirstName && fallbackRows[0]?.value) {
+                            normalizedFirstName = fallbackRows[0].value.trim();
+                        }
+                        if (!resolvedLastName && fallbackRows[1]?.value) {
+                            normalizedLastName = fallbackRows[1].value.trim();
+                        }
+
+                        if (!normalizedLastName && normalizedFirstName.includes(' ')) {
+                            const parts = normalizedFirstName.split(/\s+/).filter(Boolean);
+                            if (parts.length >= 2) {
+                                normalizedFirstName = parts.slice(0, -1).join(' ');
+                                normalizedLastName = parts[parts.length - 1] || '';
+                            }
+                        }
+
+                        mockUser.value = {
+                            firstName: normalizedFirstName,
+                            lastName: normalizedLastName,
+                            email: loginResponse.data.user.email || email.value.trim(),
+                        };
                     }
                 }
             } catch (error) {

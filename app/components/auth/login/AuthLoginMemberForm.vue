@@ -8,6 +8,7 @@ defineProps<{
     password: string;
     emailError?: string;
     passwordError?: string;
+    passwordInvalid?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -56,8 +57,8 @@ const emit = defineEmits<{
                             :id="inputId"
                             class="auth-login-input"
                             size="md"
-                            :state="passwordError ? 'error' : 'default'"
-                            :aria-invalid="passwordError ? 'true' : 'false'"
+                            :state="passwordError || passwordInvalid ? 'error' : 'default'"
+                            :aria-invalid="passwordError || passwordInvalid ? 'true' : 'false'"
                             :aria-describedby="describedBy || undefined"
                             :placeholder="t('auth.login.enterPassword')"
                             :type="showPassword ? 'text' : 'password'"
@@ -126,18 +127,24 @@ const emit = defineEmits<{
                 flex-direction: column;
                 gap: 8px;
 
+                :deep(.ui-form-field-head) {
+                    min-height: 24px;
+                    align-items: center;
+                }
+
                 :deep(.ui-form-field-label) {
                     display: block;
                     margin: 0;
                     font-size: 14px;
                     font-weight: 600;
+                    line-height: 24px;
                     color: var(--text-primary);
                 }
 
                 :deep(.ui-form-field-error) {
                     margin: 0;
                     font-size: 14px;
-                    line-height: 1.2;
+                    line-height: 24px;
                     color: var(--error);
                 }
 

@@ -8,7 +8,8 @@ import { useCountry } from '~/composables/app/useCountry';
 import type { UserFieldValue } from '~/stores/user';
 
 export function useAccountProfile() {
-    const { withCountry } = useCountry();
+    const { withCountry, apiCountry } = useCountry();
+    const api = useApi();
     const userStore = useUserStore();
     const mockUser = useCookie<AccountMockUser | null>('mock_user');
     const authToken = useCookie<string | null>('auth_token');
@@ -16,18 +17,67 @@ export function useAccountProfile() {
     const profileFieldValues = computed(
         () => userStore.profile?.user_field_values ?? []
     );
-    function getCountryFieldId(field: UserFieldValue) {
-        return field.country_field_ids ?? field.country_fields_id;
+    function getFieldValueByKey(key: 'first_name' | 'last_name') {
+        const legacyId = key === 'first_name' ? 1 : 2;
+        const directMatch =
+            profileFieldValues.value.find(
+                (field) =>
+                    field.country_field?.field_key === key ||
+                    (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
+            )?.value?.trim() || '';
+        if (directMatch) return directMatch;
+
+        // Fallback for environments where field keys are not returned in API payload.
+        const fallbackRows = [...profileFieldValues.value]
+            .filter((field) => typeof field.value === 'string' && field.value.trim())
+            .sort(
+                (a, b) =>
+                    (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                    (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+            )
+            .slice(0, 2);
+        if (fallbackRows.length < 2) return '';
+        return key === 'first_name'
+            ? (fallbackRows[0]?.value?.trim() || '')
+            : (fallbackRows[1]?.value?.trim() || '');
     }
     const storeFirstName = computed(
-        () => profileFieldValues.value.find((field) => getCountryFieldId(field) === 1)?.value?.trim() || ''
+        () => getFieldValueByKey('first_name')
     );
     const storeLastName = computed(
-        () => profileFieldValues.value.find((field) => getCountryFieldId(field) === 2)?.value?.trim() || ''
+        () => getFieldValueByKey('last_name')
     );
 
-    const firstName = ref(storeFirstName.value || mockUser.value?.firstName || accountProfileDefaults.firstName);
-    const lastName = ref(storeLastName.value || mockUser.value?.lastName || accountProfileDefaults.lastName);
+    function normalizeName(first: string, last: string) {
+        const firstTrimmed = first.trim();
+        const lastTrimmed = last.trim();
+        if (lastTrimmed || !firstTrimmed.includes(' ')) {
+            return { firstName: firstTrimmed, lastName: lastTrimmed };
+        }
+        const parts = firstTrimmed.split(/\s+/).filter(Boolean);
+        if (parts.length < 2) {
+            return { firstName: firstTrimmed, lastName: lastTrimmed };
+        }
+        return {
+            firstName: parts.slice(0, -1).join(' '),
+            lastName: parts[parts.length - 1] || '',
+        };
+    }
+
+    const rawFirstName =
+        storeFirstName.value ||
+        userStore.onboardingProfile?.firstName ||
+        mockUser.value?.firstName ||
+        accountProfileDefaults.firstName;
+    const rawLastName =
+        storeLastName.value ||
+        userStore.onboardingProfile?.lastName ||
+        mockUser.value?.lastName ||
+        accountProfileDefaults.lastName;
+    const normalizedName = normalizeName(rawFirstName, rawLastName);
+
+    const firstName = ref(normalizedName.firstName || accountProfileDefaults.firstName);
+    const lastName = ref(normalizedName.lastName || accountProfileDefaults.lastName);
     const email = ref(userStore.email || mockUser.value?.email || accountProfileDefaults.email);
     const currentPassword = ref('');
     const newPassword = ref('');
@@ -80,12 +130,20 @@ export function useAccountProfile() {
         };
     }
 
-    function signOut() {
-        mockUser.value = null;
-        authToken.value = null;
-        userStore.clearUser();
-        userStore.clearOnboardingProfile();
-        navigateTo(withCountry('/'));
+    async function signOut() {
+        try {
+            await api(`/${apiCountry.value}/auth/logout`, {
+                method: 'POST',
+            });
+        } catch {
+            // Continue with local sign-out cleanup even if API logout fails.
+        } finally {
+            mockUser.value = null;
+            authToken.value = null;
+            userStore.clearUser();
+            userStore.clearOnboardingProfile();
+            await navigateTo(withCountry('/'));
+        }
     }
 
     onBeforeUnmount(() => {

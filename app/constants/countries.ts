@@ -1,5 +1,5 @@
 export const COUNTRIES = {
-    en: {
+    us: {
         name: 'United States',
         currency: {
             code: 'USD',
@@ -22,23 +22,23 @@ export const COUNTRIES = {
 } as const
 
 export type SupportedCountry = keyof typeof COUNTRIES
-export const DEFAULT_COUNTRY: SupportedCountry = 'en'
+export const DEFAULT_COUNTRY: SupportedCountry = 'us'
 export const SUPPORTED_COUNTRY_SET = new Set<SupportedCountry>(
     Object.keys(COUNTRIES) as SupportedCountry[]
 )
 export const SUPPORTED_COUNTRIES = Object.keys(COUNTRIES) as SupportedCountry[]
 export const COUNTRY_CODE_ALIASES: Record<string, SupportedCountry> = {
-    us: 'en',
-    en: 'en',
+    us: 'us',
+    en: 'us',
     kr: 'kr',
     ko: 'kr',
 }
 export const COUNTRY_TO_API_COUNTRY: Record<SupportedCountry, string> = {
-    en: 'us',
+    us: 'us',
     kr: 'kr',
 }
 export const COUNTRY_TO_HTML_LANG: Record<SupportedCountry, string> = {
-    en: 'en',
+    us: 'en',
     kr: 'ko',
 }
 

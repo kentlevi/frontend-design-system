@@ -310,6 +310,7 @@ useHead({
             :visible="isLoginSuccessToastVisible"
             tone="primary"
             :message="t('home.toast.loginSuccess')"
+            variant="outlined"
             data-testid="home-login-success-toast"
             @close="isLoginSuccessToastVisible = false"
         />
