@@ -10,6 +10,7 @@ const props = withDefaults(
         inputId?: string;
         errorId?: string;
         hintId?: string;
+        errorTestId?: string;
     }>(),
     {
         label: '',
@@ -21,6 +22,7 @@ const props = withDefaults(
         inputId: '',
         errorId: '',
         hintId: '',
+        errorTestId: '',
     }
 );
 
@@ -28,6 +30,7 @@ const fallbackId = useId();
 const resolvedInputId = computed(() => props.inputId || props.forId || `field-${fallbackId}`);
 const resolvedErrorId = computed(() => props.errorId || `${resolvedInputId.value}-error`);
 const resolvedHintId = computed(() => props.hintId || `${resolvedInputId.value}-hint`);
+const resolvedErrorTestId = computed(() => props.errorTestId || `${resolvedErrorId.value}-message`);
 const describedBy = computed(() => {
     const ids: string[] = [];
     if (props.hint) ids.push(resolvedHintId.value);
@@ -56,7 +59,7 @@ const describedBy = computed(() => {
                     v-if="error"
                     :id="resolvedErrorId"
                     class="ui-form-field-error"
-                    :data-testid="`${resolvedErrorId}-message`"
+                    :data-testid="resolvedErrorTestId"
                 >
                     {{ error }}
                 </span>
