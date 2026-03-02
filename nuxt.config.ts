@@ -71,4 +71,4 @@ export default defineNuxtConfig({
 
 		langDir: 'locales/',
 	},
-})
+});
