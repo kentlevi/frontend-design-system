@@ -1,0 +1,48 @@
+{
+    "auth": {
+        "profile": {
+            "toast": "모든 준비가 완료되었습니다. 지금부터 시작해볼까요?",
+            "sidebar": {
+                "title": "계정 온보딩",
+                "profile": {
+                    "title": "프로필 정보",
+                    "text": "개인정보, 연락처, 프로필 환경설정을 관리하세요."
+                },
+                "settings": {
+                    "title": "계정 설정",
+                    "text": "프로모션/할인 알림, 리뷰 알림 등 계정 환경설정을 관리하세요."
+                }
+            },
+            "details": {
+                "title": "{name}님, 환영합니다! 프로필을 만들어볼까요?",
+                "subtitle": "개인정보를 관리하세요.",
+                "photoTitle": "프로필 사진 추가",
+                "photoHint1": "권장 파일 크기: 최소 800x800px",
+                "photoHint2": "지원 파일 형식: .jpg, .png",
+                "upload": "사진 업로드",
+                "delete": "삭제",
+                "firstName": "이름",
+                "lastName": "성",
+                "email": "이메일 주소",
+                "skip": "나중에 추가",
+                "continue": "계속"
+            },
+            "settings": {
+                "title": "계정 설정",
+                "subtitle": "계정 환경설정을 관리하세요.",
+                "promotions": "프로모션 및 할인",
+                "promotionsDesc": "할인, 신상품, 프로모션 정보를 이메일로 받아보세요.",
+                "reviews": "리뷰",
+                "reviewsDesc": "주문 완료 및 리뷰 게시 관련 이메일을 받아보세요.",
+                "confirmations": "확인 알림",
+                "confirmationsDesc": "최종 시안, 디자인 변경, 결제 확인 관련 이메일을 받아보세요.",
+                "unit": "측정 단위",
+                "unitDesc": "기본으로 사용할 측정 단위를 선택하세요.",
+                "billing": "청구지 주소",
+                "billingDesc": "배송지 주소를 기본 청구지 주소로 사용합니다.",
+                "back": "뒤로",
+                "complete": "설정 완료"
+            }
+        }
+    }
+}

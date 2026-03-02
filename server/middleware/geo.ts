@@ -1,4 +1,4 @@
-import { SUPPORTED_COUNTRY_SET } from '~/constants/countries'
+import { resolveSupportedCountry } from '~/constants/countries'
 
 export default defineEventHandler(async (event) => {
     const url = getRequestURL(event)
@@ -15,8 +15,12 @@ export default defineEventHandler(async (event) => {
 
     // 1) Cookie
     const countryCookie = getCookie(event, 'country')
-    if (countryCookie && SUPPORTED_COUNTRY_SET.has(countryCookie as any)) {
-        return sendRedirect(event, `/${countryCookie}`, 302)
+    const cookieCountry = resolveSupportedCountry(countryCookie)
+    if (cookieCountry) {
+        if (countryCookie !== cookieCountry) {
+            setCookie(event, 'country', cookieCountry, { path: '/', maxAge: 60 * 60 * 24 * 30 })
+        }
+        return sendRedirect(event, `/${cookieCountry}`, 302)
     }
 
     // 2) Infra header
@@ -26,10 +30,10 @@ export default defineEventHandler(async (event) => {
         getHeader(event, 'x-vercel-ip-country')
 
     if (hdr) {
-        const code = hdr.toLowerCase()
-        if (SUPPORTED_COUNTRY_SET.has(code as any)) {
-            setCookie(event, 'country', code, { path: '/', maxAge: 60 * 60 * 24 * 30 })
-            return sendRedirect(event, `/${code}`, 302)
+        const resolved = resolveSupportedCountry(hdr)
+        if (resolved) {
+            setCookie(event, 'country', resolved, { path: '/', maxAge: 60 * 60 * 24 * 30 })
+            return sendRedirect(event, `/${resolved}`, 302)
         }
 
         return
@@ -51,10 +55,10 @@ export default defineEventHandler(async (event) => {
             { timeout: 2000 }
         )
 
-        const code = geo?.countryCode?.toLowerCase()
-        if (code && SUPPORTED_COUNTRY_SET.has(code as any)) {
-            setCookie(event, 'country', code, { path: '/', maxAge: 60 * 60 * 24 * 30 })
-            return sendRedirect(event, `/${code}`, 302)
+        const resolved = resolveSupportedCountry(geo?.countryCode)
+        if (resolved) {
+            setCookie(event, 'country', resolved, { path: '/', maxAge: 60 * 60 * 24 * 30 })
+            return sendRedirect(event, `/${resolved}`, 302)
         }
     } catch (e: any) {
         console.log('[geo] external lookup failed:', e?.message || e)

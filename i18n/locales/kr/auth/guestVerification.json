@@ -1,0 +1,20 @@
+{
+    "auth": {
+        "guestVerification": {
+            "title": "주문 인증이 필요합니다",
+            "messagePrefix": "비회원 주문 확인을 위해 다음 이메일로 인증 코드를 보냈습니다 ",
+            "messageSuffix": ". 아래 코드를 입력해 계속 진행하세요.",
+            "enterCode": "인증 코드를 입력하세요",
+            "orderNumberLabel": "주문번호",
+            "verify": "주문 인증하기",
+            "verifying": "인증 중...",
+            "codeRequired": "이메일로 전송된 인증 코드를 입력해 주세요.",
+            "invalidCode": "인증 코드가 올바르지 않거나 만료되었습니다.",
+            "requestFailed": "지금은 인증 코드를 보낼 수 없습니다.",
+            "closeModal": "모달 닫기",
+            "resendPrefix": "코드를 받지 못하셨나요? ",
+            "resendCta": "코드 다시 보내기",
+            "resendSuffix": "."
+        }
+    }
+}

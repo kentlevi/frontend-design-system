@@ -1,0 +1,49 @@
+{
+    "product": {
+        "selectedBanner": "{name} 선택됨",
+        "changeProduct": "상품 변경",
+        "options": {
+            "selectSize": "원하는 사이즈 선택",
+            "unitMm": "(단위: mm)",
+            "customSize": "사이즈 직접 입력",
+            "selectQuantity": "원하는 수량 선택",
+            "customQuantity": "수량 직접 입력"
+        },
+        "sizes": {
+            "small30": {
+                "label": "소형 30x30"
+            },
+            "medium75": {
+                "label": "중형 75x75"
+            },
+            "large100": {
+                "label": "대형 100x100"
+            },
+            "extraLarge125": {
+                "label": "특대형 125x125"
+            }
+        },
+        "featureCards": {
+            "small": {
+                "description": "휴대폰과 헬멧 등 작은 스티커에 적합합니다."
+            },
+            "medium": {
+                "description": "텀블러, 노트, 다이어리에 적합합니다."
+            },
+            "large": {
+                "description": "눈에 띄는 표면과 라벨에 이상적입니다."
+            },
+            "extraLarge": {
+                "description": "차량, 박스, 공구함에 딱 맞는 크기입니다."
+            }
+        },
+        "price": {
+            "subtotal": "소계",
+            "discount": "할인",
+            "total": "총액",
+            "benefitShipping": "$50.00 이상 무료배송",
+            "benefitShipsTomorrow": "시안 승인 후 내일 출고",
+            "nextStep": "다음 단계"
+        }
+    }
+}

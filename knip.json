@@ -1,0 +1,25 @@
+{
+    "entry": [
+        "nuxt.config.ts",
+        "app/app.vue",
+        "app/pages/**/*.vue"
+    ],
+    "project": [
+        "app/**/*.{ts,vue}",
+        "server/**/*.ts",
+        "nuxt.config.ts"
+    ],
+    "ignore": [
+        "app/data/guide/**",
+        "tests/**",
+        "scripts/**"
+    ],
+    "paths": {
+        "~/*": [
+            "app/*"
+        ],
+        "@/*": [
+            "app/*"
+        ]
+    }
+}

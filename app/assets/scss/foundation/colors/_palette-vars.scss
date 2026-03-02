@@ -1,0 +1,157 @@
+@use '../../brand/colors' as brand;
+
+:root {
+    --gold-base: #{brand.$gold-base};
+    --abyss-base: #{brand.$abyss-base};
+
+    --white-base: #{brand.$white-base};
+    --black-base: #{brand.$black-base};
+    --gray-base: #{brand.$gray-base};
+
+    --success-base: #{brand.$success-base};
+    --warning-base: #{brand.$warning-base};
+    --error-base: #{brand.$error-base};
+
+    --ultramarine-base: #{brand.$ultramarine-base};
+    --lynch-base: #{brand.$lynch-base};
+    --azure-base: #{brand.$azure-base};
+    --aloha-base: #{brand.$aloha-base};
+    --blood-base: #{brand.$blood-base};
+    --amber-base: #{brand.$amber-base};
+
+    --white: #{brand.$white};
+    --black-pure: #{brand.$black-pure};
+    --transparent: #{brand.$transparent};
+
+    --gold-10: #{brand.$gold-10};
+    --gold-20: #{brand.$gold-20};
+    --gold-30: #{brand.$gold-30};
+    --gold-40: #{brand.$gold-40};
+    --gold-50: #{brand.$gold-50};
+    --gold-60: #{brand.$gold-60};
+    --gold-70: #{brand.$gold-70};
+    --gold-80: #{brand.$gold-80};
+    --gold-90: #{brand.$gold-90};
+    --gold-100: #{brand.$gold-100};
+
+    --abyss-10: #{brand.$abyss-10};
+    --abyss-20: #{brand.$abyss-20};
+    --abyss-30: #{brand.$abyss-30};
+    --abyss-40: #{brand.$abyss-40};
+    --abyss-50: #{brand.$abyss-50};
+    --abyss-60: #{brand.$abyss-60};
+    --abyss-70: #{brand.$abyss-70};
+    --abyss-80: #{brand.$abyss-80};
+    --abyss-90: #{brand.$abyss-90};
+    --abyss-100: #{brand.$abyss-100};
+
+    --gray-10: #{brand.$gray-10};
+    --gray-20: #{brand.$gray-20};
+    --gray-30: #{brand.$gray-30};
+    --gray-40: #{brand.$gray-40};
+    --gray-50: #{brand.$gray-50};
+    --gray-60: #{brand.$gray-60};
+    --gray-70: #{brand.$gray-70};
+    --gray-80: #{brand.$gray-80};
+    --gray-90: #{brand.$gray-90};
+    --gray-100: #{brand.$gray-100};
+
+    --success-10: #{brand.$success-10};
+    --success-20: #{brand.$success-20};
+    --success-30: #{brand.$success-30};
+    --success-40: #{brand.$success-40};
+    --success-50: #{brand.$success-50};
+    --success-60: #{brand.$success-60};
+    --success-70: #{brand.$success-70};
+    --success-80: #{brand.$success-80};
+    --success-90: #{brand.$success-90};
+    --success-100: #{brand.$success-100};
+
+    --warning-10: #{brand.$warning-10};
+    --warning-20: #{brand.$warning-20};
+    --warning-30: #{brand.$warning-30};
+    --warning-40: #{brand.$warning-40};
+    --warning-50: #{brand.$warning-50};
+    --warning-60: #{brand.$warning-60};
+    --warning-70: #{brand.$warning-70};
+    --warning-80: #{brand.$warning-80};
+    --warning-90: #{brand.$warning-90};
+    --warning-100: #{brand.$warning-100};
+
+    --error-10: #{brand.$error-10};
+    --error-20: #{brand.$error-20};
+    --error-30: #{brand.$error-30};
+    --error-40: #{brand.$error-40};
+    --error-50: #{brand.$error-50};
+    --error-60: #{brand.$error-60};
+    --error-70: #{brand.$error-70};
+    --error-80: #{brand.$error-80};
+    --error-90: #{brand.$error-90};
+    --error-100: #{brand.$error-100};
+
+    --ultramarine-10: #{brand.$ultramarine-10};
+    --ultramarine-20: #{brand.$ultramarine-20};
+    --ultramarine-30: #{brand.$ultramarine-30};
+    --ultramarine-40: #{brand.$ultramarine-40};
+    --ultramarine-50: #{brand.$ultramarine-50};
+    --ultramarine-60: #{brand.$ultramarine-60};
+    --ultramarine-70: #{brand.$ultramarine-70};
+    --ultramarine-80: #{brand.$ultramarine-80};
+    --ultramarine-90: #{brand.$ultramarine-90};
+    --ultramarine-100: #{brand.$ultramarine-100};
+
+    --lynch-10: #{brand.$lynch-10};
+    --lynch-20: #{brand.$lynch-20};
+    --lynch-30: #{brand.$lynch-30};
+    --lynch-40: #{brand.$lynch-40};
+    --lynch-50: #{brand.$lynch-50};
+    --lynch-60: #{brand.$lynch-60};
+    --lynch-70: #{brand.$lynch-70};
+    --lynch-80: #{brand.$lynch-80};
+    --lynch-90: #{brand.$lynch-90};
+    --lynch-100: #{brand.$lynch-100};
+
+    --azure-10: #{brand.$azure-10};
+    --azure-20: #{brand.$azure-20};
+    --azure-30: #{brand.$azure-30};
+    --azure-40: #{brand.$azure-40};
+    --azure-50: #{brand.$azure-50};
+    --azure-60: #{brand.$azure-60};
+    --azure-70: #{brand.$azure-70};
+    --azure-80: #{brand.$azure-80};
+    --azure-90: #{brand.$azure-90};
+    --azure-100: #{brand.$azure-100};
+
+    --aloha-10: #{brand.$aloha-10};
+    --aloha-20: #{brand.$aloha-20};
+    --aloha-30: #{brand.$aloha-30};
+    --aloha-40: #{brand.$aloha-40};
+    --aloha-50: #{brand.$aloha-50};
+    --aloha-60: #{brand.$aloha-60};
+    --aloha-70: #{brand.$aloha-70};
+    --aloha-80: #{brand.$aloha-80};
+    --aloha-90: #{brand.$aloha-90};
+    --aloha-100: #{brand.$aloha-100};
+
+    --blood-10: #{brand.$blood-10};
+    --blood-20: #{brand.$blood-20};
+    --blood-30: #{brand.$blood-30};
+    --blood-40: #{brand.$blood-40};
+    --blood-50: #{brand.$blood-50};
+    --blood-60: #{brand.$blood-60};
+    --blood-70: #{brand.$blood-70};
+    --blood-80: #{brand.$blood-80};
+    --blood-90: #{brand.$blood-90};
+    --blood-100: #{brand.$blood-100};
+
+    --amber-10: #{brand.$amber-10};
+    --amber-20: #{brand.$amber-20};
+    --amber-30: #{brand.$amber-30};
+    --amber-40: #{brand.$amber-40};
+    --amber-50: #{brand.$amber-50};
+    --amber-60: #{brand.$amber-60};
+    --amber-70: #{brand.$amber-70};
+    --amber-80: #{brand.$amber-80};
+    --amber-90: #{brand.$amber-90};
+    --amber-100: #{brand.$amber-100};
+}

@@ -1,0 +1,24 @@
+{
+    "cart": {
+        "cartPage": {
+            "title": "장바구니",
+            "continueShopping": "쇼핑 계속하기",
+            "selectAll": "전체 선택: {count}개 상품",
+            "remove": "삭제",
+            "headers": {
+                "item": "상품",
+                "quantity": "수량",
+                "price": "가격"
+            },
+            "sizeLabel": "사이즈: {size}mm",
+            "replaceArtwork": "아트워크 교체",
+            "editSize": "사이즈 수정",
+            "removeItemSr": "상품 삭제",
+            "orderSummary": "주문 요약",
+            "total": "합계:",
+            "proceedCheckout": "결제 진행 ({count})",
+            "note": "배송비 및 할인 금액은 결제 단계에서 계산됩니다.",
+            "availablePaymentOptions": "사용 가능한 결제 수단:"
+        }
+    }
+}

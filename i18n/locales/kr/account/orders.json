@@ -1,0 +1,21 @@
+{
+    "account": {
+        "orders": {
+            "title": "주문 내역",
+            "selectDate": "날짜 선택",
+            "filters": "필터",
+            "orderLabel": "주문",
+            "meta": "{count}개 품목 | 주문일: {date}",
+            "status": {
+                "beforeProduction": "제작 전",
+                "processing": "진행 중",
+                "actionRequired": "조치 필요"
+            },
+            "orderSummary": "주문 요약",
+            "summaryText": "이 패널에서 아트워크 업로드 및 송장/결제 항목을 확인할 수 있습니다.",
+            "actions": "작업",
+            "uploadArtwork": "아트워크 업로드",
+            "cancelOrder": "주문 취소"
+        }
+    }
+}

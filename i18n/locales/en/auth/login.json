@@ -1,0 +1,41 @@
+{
+    "auth": {
+        "login": {
+            "title": "Log in to your account",
+            "subtitle": "Get exclusive benefits on your first order after signing up!",
+            "createAccount": "Create an account",
+            "member": "Member",
+            "nonMember": "Non-member",
+            "email": "Email Address",
+            "enterEmail": "Enter Email Address",
+            "password": "Password",
+            "enterPassword": "Enter Password",
+            "togglePassword": "Toggle password visibility",
+            "keepSignedIn": "Keep me signed in",
+            "forgotPassword": "Forgot Password?",
+            "orderNumber": "Order Number",
+            "enterOrderNumber": "Enter Order Number",
+            "signIn": "Sign In",
+            "checkOrder": "Check Your Order",
+            "socialLabel": "Sign in with your social accounts",
+            "signInFacebook": "Sign in with Facebook",
+            "signInGoogle": "Sign in with Google",
+            "forgot": {
+                "title": "Forgot your password?",
+                "description": "Enter your email and we'll send you a reset link.",
+                "sendResetEmail": "Send Password Reset Email",
+                "sending": "Sending...",
+                "returnToLogin": "Return to Login",
+                "checkEmailTitle": "Please check your email",
+                "checkEmailDescription": "If an account exists for this email, a password reset link has been sent.",
+                "requestFailed": "Unable to send a reset link right now."
+            },
+            "validation": {
+                "fieldBlank": "Field cannot be blank.",
+                "emailInvalid": "Email format is invalid.",
+                "credentialsMismatch": "Email address & password does not match.",
+                "orderNotFound": "Order does not exist."
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "layout": {
+        "header": {
+            "locale": {
+                "aria": "지역 설정",
+                "title": "지역 설정",
+                "close": "지역 설정 닫기",
+                "en": "English (USD)",
+                "kr": "한국어 (KRW)"
+            }
+        }
+    }
+}

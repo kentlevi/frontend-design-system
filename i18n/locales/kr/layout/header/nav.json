@@ -1,0 +1,11 @@
+{
+    "layout": {
+        "header": {
+            "nav": {
+                "stickers": "스티커",
+                "rollStickers": "롤 스티커",
+                "sheetStickers": "시트 스티커"
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+.ui-icon {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.ui-icon--missing {
+    border: 1px dashed var(--border-default);
+    border-radius: 4px;
+}

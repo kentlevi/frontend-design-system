@@ -1,0 +1,18 @@
+{
+    "layout": {
+        "header": {
+            "accountLinks": {
+                "profile": "프로필",
+                "addressBook": "주소록",
+                "orders": "주문 내역",
+                "gallery": "갤러리",
+                "points": "포인트",
+                "coupons": "쿠폰",
+                "reviews": "내 리뷰",
+                "quoteRequests": "견적 요청",
+                "gettingStarted": "시작하기",
+                "signOut": "로그아웃"
+            }
+        }
+    }
+}

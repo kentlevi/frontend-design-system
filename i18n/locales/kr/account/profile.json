@@ -1,0 +1,43 @@
+{
+    "account": {
+        "profile": {
+            "title": "프로필",
+            "personalDetails": "개인 정보",
+            "personalDetailsDesc": "개인 정보와 연락처를 관리하세요.",
+            "profilePhoto": "프로필 사진",
+            "photoHint1": "권장 파일 크기: 최소 800x800px",
+            "photoHint2": "지원 파일 형식: .jpg, .png",
+            "uploadNewPhoto": "새 사진 업로드",
+            "delete": "삭제",
+            "firstName": "이름",
+            "lastName": "성",
+            "optional": "선택",
+            "emailAddress": "이메일 주소",
+            "saveChanges": "변경사항 저장",
+            "password": "비밀번호",
+            "passwordDesc": "강력한 비밀번호를 설정해 계정을 안전하게 보호하세요.",
+            "currentPassword": "현재 비밀번호",
+            "currentPasswordPlaceholder": "현재 비밀번호를 입력하세요",
+            "passwordHint": "비밀번호는 6자 이상이며 대문자, 숫자 또는 특수문자를 포함해야 합니다.",
+            "newPassword": "새 비밀번호",
+            "newPasswordPlaceholder": "새 비밀번호를 입력하세요",
+            "confirmNewPassword": "새 비밀번호 확인",
+            "confirmNewPasswordPlaceholder": "새 비밀번호를 다시 입력하세요",
+            "changePassword": "비밀번호 변경",
+            "forgotPassword": "비밀번호를 잊으셨나요?",
+            "settings": "설정",
+            "settingsDesc": "프로모션/할인 알림과 리뷰 관련 설정 등 계정 환경설정을 관리하세요.",
+            "promotions": "프로모션 및 할인",
+            "promotionsDesc": "할인, 신상품, 프로모션 정보를 이메일로 받아보세요.",
+            "reviews": "리뷰",
+            "reviewsDesc": "주문 완료 및 리뷰 게시 관련 이메일을 받아보세요.",
+            "confirmations": "확인 알림",
+            "confirmationsDesc": "최종 시안, 디자인 변경, 결제 확인 관련 이메일을 받아보세요.",
+            "unit": "측정 단위",
+            "unitDesc": "기본으로 사용할 측정 단위를 선택하세요.",
+            "millimeter": "밀리미터",
+            "inch": "인치",
+            "signOut": "로그아웃"
+        }
+    }
+}

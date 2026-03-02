@@ -1,0 +1,12 @@
+@use '../../brand/radius' as brand;
+
+$radius-none: brand.$radius-none;
+
+$radius-xs: brand.$radius-xs;
+$radius-sm: brand.$radius-sm;
+$radius-md: brand.$radius-md;
+$radius-lg: brand.$radius-lg;
+$radius-xl: brand.$radius-xl;
+$radius-2xl: brand.$radius-2xl;
+
+$radius-pill: brand.$radius-full;

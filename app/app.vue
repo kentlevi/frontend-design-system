@@ -1,37 +1,45 @@
-<template>
-	<div>
-		<!-- TEMPORARY -->
-		<div v-if="is_dev" class="dev_site" >
-			<p>This is a staged site for {{ app_name }}</p>
-		</div>
-		<NuxtLayout>
-			<NuxtPage />
-		</NuxtLayout>
-	</div>
-</template>
 <script setup lang="ts">
-const config = useRuntimeConfig()
+import {
+    COUNTRY_TO_HTML_LANG,
+    DEFAULT_COUNTRY,
+    resolveSupportedCountry,
+} from '~/constants/countries';
 
-const env = String(config.public.ENV || '').toLowerCase()
-const is_dev = env === 'development' || env === 'homestead'
+const { t, locale } = useI18n();
+const resolvedLocaleCountry = computed(
+    () => resolveSupportedCountry(String(locale.value)) || DEFAULT_COUNTRY
+);
+const htmlLang = computed(
+    () => COUNTRY_TO_HTML_LANG[resolvedLocaleCountry.value]
+);
 
-const app_name = config.public.app_name
+useHead(() => ({
+    htmlAttrs: {
+        lang: htmlLang.value,
+    },
+    title: t('home.seo.title'),
+    meta: [
+        {
+            name: 'description',
+            content: t('home.seo.description'),
+        },
+    ],
+    link: [
+        {
+            rel: 'icon',
+            type: 'image/svg+xml',
+            href: '/logos/mark/colored/musticker.svg',
+        },
+        {
+            rel: 'shortcut icon',
+            href: '/logos/mark/colored/musticker.svg',
+        },
+    ],
+}));
 </script>
-<style lang="scss" scoped>
-.dev_site {
-    min-height: 60px;
-    width: 100%;
-    background: #2E2E2E;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    padding: 21px;
-    z-index: 102;
-    p {
-        color: #fff;
-        font-weight: 600;
-        line-height: 17px;
-        margin: 0;
-    }
-}
-</style>
+
+<template>
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
+</template>

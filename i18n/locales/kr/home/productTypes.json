@@ -1,0 +1,11 @@
+{
+    "home": {
+        "productTypes": {
+            "dieCut": "다이컷 스티커",
+            "dieCutRoll": "다이컷 롤 스티커",
+            "sheet": "스티커 시트",
+            "hologram": "홀로그램 스티커",
+            "vinyl": "비닐 레터링"
+        }
+    }
+}

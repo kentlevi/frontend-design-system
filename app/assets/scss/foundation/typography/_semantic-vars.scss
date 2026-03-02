@@ -1,0 +1,28 @@
+@use './semantic' as sem;
+
+:root {
+    --font-base: #{sem.$font-base};
+
+    --font-size-xs: #{sem.$font-size-xs};
+    --font-size-sm: #{sem.$font-size-sm};
+    --font-size-base: #{sem.$font-size-base};
+    --font-size-lg: #{sem.$font-size-lg};
+    --font-size-xl: #{sem.$font-size-xl};
+    --font-size-2xl: #{sem.$font-size-2xl};
+    --font-size-3xl: #{sem.$font-size-3xl};
+    --font-size-4xl: #{sem.$font-size-4xl};
+    --font-size-5xl: #{sem.$font-size-5xl};
+    --font-size-6xl: #{sem.$font-size-6xl};
+
+    --heading-1: #{sem.$heading-1};
+    --heading-2: #{sem.$heading-2};
+    --heading-3: #{sem.$heading-3};
+    --heading-4: #{sem.$heading-4};
+    --heading-5: #{sem.$heading-5};
+    --heading-6: #{sem.$heading-6};
+
+    --body-base: #{sem.$body-base};
+    --body-large: #{sem.$body-large};
+    --body-small: #{sem.$body-small};
+    --body-xs: #{sem.$body-xs};
+}

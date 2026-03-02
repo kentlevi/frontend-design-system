@@ -1,0 +1,115 @@
+{
+    "checkout": {
+        "guest": {
+            "contactInformation": "Contact Information",
+            "loginPrompt": "Already have an account?",
+            "login": "Login",
+            "shippingInformation": "Shipping Information",
+            "shippingMethod": "Shipping Method",
+            "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
+            "payment": "Payment",
+            "paymentSubnote": "Pay securely with your preferred payment method.",
+            "useShippingAsBilling": "Use shipping address as billing address",
+            "viewBillingAddresses": "View Billing Addresses",
+            "orderSummary": "Order Summary",
+            "noItemsSelected": "No items selected for checkout.",
+            "completeCheckout": "Complete Checkout",
+            "fields": {
+                "email": {
+                    "label": "Email Address*",
+                    "placeholder": "Enter Email Address"
+                },
+                "fullName": {
+                    "label": "Full Name*",
+                    "placeholder": "Enter Full Name"
+                },
+                "company": {
+                    "label": "Company (Optional)",
+                    "placeholder": "Enter Company Name"
+                },
+                "streetAddress": {
+                    "label": "Street Address*",
+                    "line1Placeholder": "Enter Address Line 1",
+                    "line2Placeholder": "Enter Address Line 2"
+                },
+                "province": {
+                    "label": "Province/State*",
+                    "placeholder": "Select Province/State"
+                },
+                "city": {
+                    "label": "City/Town*",
+                    "placeholder": "Enter City/Town"
+                },
+                "postalCode": {
+                    "label": "Postal Code*",
+                    "placeholder": "Enter Postal Code"
+                },
+                "phone": {
+                    "label": "Phone Number",
+                    "placeholder": "(000) 000-0000"
+                },
+                "cardNumber": {
+                    "label": "Card Number*",
+                    "placeholder": "Enter Card Number"
+                },
+                "expiration": {
+                    "label": "Expiration*",
+                    "placeholder": "MM/YY"
+                },
+                "cvv": {
+                    "label": "CVV*",
+                    "placeholder": "CVV"
+                }
+            },
+            "shippingMethods": {
+                "standard": {
+                    "alt": "Standard shipping",
+                    "name": "Standard",
+                    "date": "December 15, 2025",
+                    "price": "Free"
+                },
+                "express": {
+                    "alt": "Express shipping",
+                    "name": "Express",
+                    "date": "December 12, 2025",
+                    "price": "Free"
+                }
+            },
+            "paymentMethods": {
+                "creditCard": {
+                    "alt": "Credit card",
+                    "label": "Credit Card"
+                },
+                "paypal": {
+                    "alt": "Paypal",
+                    "label": "Paypal"
+                },
+                "bankTransfer": {
+                    "alt": "Bank transfer",
+                    "label": "Bank Transfer"
+                }
+            },
+            "provinceOptions": {
+                "placeholder": "Select State",
+                "california": "California",
+                "new-york": "New York",
+                "texas": "Texas",
+                "florida": "Florida"
+            },
+            "summary": {
+                "itemMeta": "{size}mm / {qty}pcs.",
+                "subtotal": "Subtotal:",
+                "shippingFee": "Shipping Fee:",
+                "discounts": "Discounts:",
+                "total": "Total:"
+            },
+            "agreement": {
+                "prefix": "By clicking \"Complete Checkout\", you agree with our",
+                "terms": "Terms of Services",
+                "and": "and",
+                "privacy": "Privacy Policy",
+                "suffix": "."
+            }
+        }
+    }
+}

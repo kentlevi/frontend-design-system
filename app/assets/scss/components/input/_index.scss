@@ -1,0 +1,95 @@
+@use '../../foundation/colors/semantic' as c;
+@use '../../foundation/typography/semantic' as t;
+
+@use '../../brand/spacing' as sp;
+@use '../../brand/radius' as r;
+
+.ui-input {
+    display: flex;
+    align-items: center;
+
+    gap: sp.$space-2;
+    padding-inline: sp.$space-3;
+
+    height: sp.$space-10;
+
+    border-radius: r.$radius-md;
+    border: 1px solid c.$border-default;
+
+    background: c.$bg-page;
+    box-shadow: var(--shadow-sm);
+    cursor: text;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+
+.ui-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: t.$font-base;
+    font-size: t.$body-base;
+    line-height: 24px;
+    color: c.$text-primary;
+
+    &::placeholder {
+        color: c.$text-muted;
+    }
+}
+
+.ui-input-icon {
+    width: 24px;
+    height: 24px;
+
+    display: grid;
+    place-items: center;
+
+    color: c.$text-muted;
+}
+
+.ui-input:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']),
+.ui-input:focus-within:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
+    border-color: c.$border-strong;
+}
+
+.ui-input[data-state='error'],
+.ui-input[data-state='error']:hover:not([data-disabled='true']) {
+    border-color: c.$error;
+}
+
+.ui-input[data-state='success'],
+.ui-input[data-state='success']:hover:not([data-disabled='true']) {
+    border-color: c.$success;
+}
+
+.ui-input[data-disabled='true'] {
+    background: c.$bg-muted;
+    border-color: c.$bg-muted;
+    box-shadow: none;
+
+    cursor: not-allowed;
+
+    .ui-input-field {
+        color: c.$text-muted;
+        cursor: not-allowed;
+    }
+}
+
+.ui-input[data-readonly='true']:not([data-disabled='true']) {
+    background: c.$surface-subtle;
+}
+
+.ui-input[data-size='lg'] {
+    height: sp.$space-12;
+}
+.ui-input[data-size='md'] {
+    height: sp.$space-10;
+}
+.ui-input[data-size='sm'] {
+    height: sp.$space-8;
+}

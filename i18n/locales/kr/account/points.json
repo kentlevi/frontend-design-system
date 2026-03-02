@@ -1,0 +1,15 @@
+{
+    "account": {
+        "points": {
+            "title": "포인트",
+            "tierName": "범퍼 보스",
+            "lastTierUpgrade": "최근 등급 갱신일",
+            "pointsUnit": "포인트",
+            "logs": {
+                "earned": "포인트 적립 (주문 #12405077220)",
+                "used": "포인트 사용 (주문 #12405077220)",
+                "quest": "스티커 퀘스트 (스티커 탐험가)"
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+@use '../../brand/spacing' as brand;
+
+$space-xxs: brand.$space-1;
+$space-xs: brand.$space-2;
+$space-sm: brand.$space-3;
+$space-md: brand.$space-4;
+$space-lg: brand.$space-6;
+$space-xl: brand.$space-8;
+$space-2xl: brand.$space-10;
+$space-3xl: brand.$space-12;
+$space-4xl: brand.$space-16;
+$space-5xl: brand.$space-20;
+$space-6xl: brand.$space-24;

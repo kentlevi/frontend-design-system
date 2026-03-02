@@ -1,0 +1,49 @@
+{
+    "product": {
+        "selectedBanner": "{name} selected",
+        "changeProduct": "Change product",
+        "options": {
+            "selectSize": "Select your preferred size",
+            "unitMm": "(unit: mm)",
+            "customSize": "Custom Size",
+            "selectQuantity": "Select your preferred quantity",
+            "customQuantity": "Custom Quantity"
+        },
+        "sizes": {
+            "small30": {
+                "label": "Small 30×30"
+            },
+            "medium75": {
+                "label": "Medium 75×75"
+            },
+            "large100": {
+                "label": "Large 100×100"
+            },
+            "extraLarge125": {
+                "label": "Extra Large 125×125"
+            }
+        },
+        "featureCards": {
+            "small": {
+                "description": "Great for small stickers on phones and helmets."
+            },
+            "medium": {
+                "description": "Perfect for tumblers, notebooks, and diaries."
+            },
+            "large": {
+                "description": "Ideal for prominent surfaces."
+            },
+            "extraLarge": {
+                "description": "Perfect size for cars, iceboxes, or toolboxes."
+            }
+        },
+        "price": {
+            "subtotal": "Subtotal",
+            "discount": "Discount",
+            "total": "Total",
+            "benefitShipping": "Free shipping over $50.00",
+            "benefitShipsTomorrow": "Ships tomorrow after design approval",
+            "nextStep": "Next Step"
+        }
+    }
+}

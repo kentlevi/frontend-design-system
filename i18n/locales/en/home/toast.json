@@ -1,0 +1,39 @@
+{
+    "home": {
+        "toast": {
+            "passwordUpdated": "Your password has been successfully updated.",
+            "loginSuccess": "You have successfully logged in.",
+            "welcome": {
+                "title": "Hi {name}👋, welcome to the fun side! 🎉",
+                "defaultName": "there",
+                "bodyPrefix": "As a thank you for registering, ",
+                "bodyHighlight": "you've earned {points} points to kickstart your journey.",
+                "bodySuffix": " If you need a hand, this guided tour will walk you through the key features to help you get started.",
+                "skip": "Skip",
+                "getStarted": "Get Started"
+            },
+            "tour": {
+                "close": "Close guide tour",
+                "next": "Next",
+                "done": "Done",
+                "stepLabel": "Step {current} of {total}",
+                "step1": {
+                    "title": "Your Profile at a Glance 😎",
+                    "body": "Manage everything from your profile page: track your points and coupons, view order history, read and write reviews, and request quotes."
+                },
+                "step2": {
+                    "title": "Explore Our Products 🧐",
+                    "body": "Navigate product categories in the header to quickly find sticker types that match your needs."
+                },
+                "step3": {
+                    "title": "Easy Product Search 🔎",
+                    "body": "Use the search icon in the header to find products instantly by name and keyword."
+                },
+                "step4": {
+                    "title": "You're ready to go! 🥳",
+                    "body": "For more information and tutorials, check out our \"Getting Started\" guide located on the account dropdown panel."
+                }
+            }
+        }
+    }
+}
