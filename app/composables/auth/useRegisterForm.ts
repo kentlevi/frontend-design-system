@@ -368,6 +368,50 @@ export function useRegisterForm() {
         }
     }
 
+    async function resendVerification() {
+        verificationError.value = '';
+
+        try {
+            const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
+                method: 'POST',
+                body: {
+                    given_name: firstName.value.trim(),
+                    family_name: lastName.value.trim(),
+                    email: verificationEmail.value.trim() || email.value.trim(),
+                    password: password.value.trim(),
+                    terms_of_service: agreeTerms.value,
+                    newsletter: optInPromos.value
+                }
+            });
+
+            const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
+            if (!isSuccess) {
+                verificationError.value = response?.message || t('auth.verification.invalidCode');
+                return;
+            }
+
+            const verificationData = response.data as { email?: string; token?: string } | undefined;
+            const resolvedToken =
+                typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
+            const resolvedEmail =
+                typeof verificationData?.email === 'string' && verificationData.email.trim()
+                    ? verificationData.email.trim()
+                    : verificationEmail.value.trim() || email.value.trim();
+
+            if (!resolvedToken) {
+                verificationError.value = response?.message || t('auth.verification.invalidCode');
+                return;
+            }
+
+            verificationEmail.value = resolvedEmail;
+            verificationToken.value = resolvedToken;
+            verificationCode.value = '';
+        } catch (error: any) {
+            verificationError.value =
+                error?.data?.message || error?.message || t('auth.verification.invalidCode');
+        }
+    }
+
     return {
         firstName,
         lastName,
@@ -388,5 +432,6 @@ export function useRegisterForm() {
         isVerifying,
         submitRegister,
         submitVerification,
+        resendVerification,
     };
 }

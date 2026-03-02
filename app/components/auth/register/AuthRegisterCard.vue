@@ -36,6 +36,7 @@ const {
     isVerificationModalOpen,
     submitRegister,
     submitVerification,
+    resendVerification,
 } = useRegisterForm();
 
 watch(
@@ -298,6 +299,7 @@ onBeforeUnmount(() => {
             data-testid="auth-register-verification-modal"
             @update:code="verificationCode = $event"
             @verify="submitVerification"
+            @resend="resendVerification"
         />
     </div>
 </template>

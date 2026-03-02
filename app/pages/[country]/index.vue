@@ -55,6 +55,11 @@ const guideTourTargetRect = ref<{
 let currentGuideTargetEl: Element | null = null;
 let resetToastTimer: ReturnType<typeof setTimeout> | null = null;
 let loginToastTimer: ReturnType<typeof setTimeout> | null = null;
+let welcomePopoverTimer: ReturnType<typeof setTimeout> | null = null;
+let welcomePopoverAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+let guideDonePopoverAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+const WELCOME_POPOVER_SHOW_DELAY_MS = 500;
+const HOME_POPOVER_AUTO_CLOSE_MS = 5000;
 
 const guideTargetSelectorByStep: Record<number, string> = {
     1: '.home-header-account-wrap',
@@ -72,6 +77,24 @@ function clearLoginToastTimer() {
     if (!loginToastTimer) return;
     clearTimeout(loginToastTimer);
     loginToastTimer = null;
+}
+
+function clearWelcomePopoverTimer() {
+    if (!welcomePopoverTimer) return;
+    clearTimeout(welcomePopoverTimer);
+    welcomePopoverTimer = null;
+}
+
+function clearWelcomePopoverAutoCloseTimer() {
+    if (!welcomePopoverAutoCloseTimer) return;
+    clearTimeout(welcomePopoverAutoCloseTimer);
+    welcomePopoverAutoCloseTimer = null;
+}
+
+function clearGuideDonePopoverAutoCloseTimer() {
+    if (!guideDonePopoverAutoCloseTimer) return;
+    clearTimeout(guideDonePopoverAutoCloseTimer);
+    guideDonePopoverAutoCloseTimer = null;
 }
 
 function clearModalQuery() {
@@ -108,7 +131,34 @@ function showLoginSuccessToast() {
 }
 
 function dismissWelcomePopover() {
+    clearWelcomePopoverTimer();
+    clearWelcomePopoverAutoCloseTimer();
     isWelcomePopoverVisible.value = false;
+}
+
+function showWelcomePopoverNow() {
+    isWelcomePopoverVisible.value = true;
+    clearWelcomePopoverAutoCloseTimer();
+    welcomePopoverAutoCloseTimer = setTimeout(() => {
+        isWelcomePopoverVisible.value = false;
+        welcomePopoverAutoCloseTimer = null;
+    }, HOME_POPOVER_AUTO_CLOSE_MS);
+    if (import.meta.client) {
+        window.localStorage.removeItem(HOME_WELCOME_POPOVER_PENDING_KEY);
+    }
+}
+
+function scheduleWelcomePopover(delayMs = 0) {
+    clearWelcomePopoverTimer();
+    if (delayMs <= 0) {
+        showWelcomePopoverNow();
+        return;
+    }
+
+    welcomePopoverTimer = setTimeout(() => {
+        welcomePopoverTimer = null;
+        showWelcomePopoverNow();
+    }, delayMs);
 }
 
 function syncGuideTourTargetRect() {
@@ -147,6 +197,7 @@ function syncGuideTourTargetRect() {
 
 async function openGuideTour(step = 1) {
     dismissWelcomePopover();
+    clearGuideDonePopoverAutoCloseTimer();
     isGuideDonePopoverVisible.value = false;
     guideTourStep.value = Math.min(Math.max(step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS);
     isGuideTourVisible.value = true;
@@ -166,7 +217,12 @@ function closeGuideTour() {
 async function goToNextGuideTourStep() {
     if (guideTourStep.value >= HOME_GUIDE_TOUR_TOTAL_STEPS) {
         closeGuideTour();
+        clearGuideDonePopoverAutoCloseTimer();
         isGuideDonePopoverVisible.value = true;
+        guideDonePopoverAutoCloseTimer = setTimeout(() => {
+            isGuideDonePopoverVisible.value = false;
+            guideDonePopoverAutoCloseTimer = null;
+        }, HOME_POPOVER_AUTO_CLOSE_MS);
         return;
     }
 
@@ -176,10 +232,7 @@ async function goToNextGuideTourStep() {
 }
 
 function openWelcomePopoverFromTrigger() {
-    isWelcomePopoverVisible.value = true;
-    if (import.meta.client) {
-        window.localStorage.removeItem(HOME_WELCOME_POPOVER_PENDING_KEY);
-    }
+    scheduleWelcomePopover(0);
 }
 
 onMounted(() => {
@@ -187,8 +240,7 @@ onMounted(() => {
         const shouldShowWelcomePopover =
             window.localStorage.getItem(HOME_WELCOME_POPOVER_PENDING_KEY) === '1';
         if (shouldShowWelcomePopover) {
-            isWelcomePopoverVisible.value = true;
-            window.localStorage.removeItem(HOME_WELCOME_POPOVER_PENDING_KEY);
+            scheduleWelcomePopover(WELCOME_POPOVER_SHOW_DELAY_MS);
         }
         const shouldShowLoginSuccessToast =
             window.localStorage.getItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY) === '1';
@@ -243,6 +295,9 @@ watch(isForgotPasswordModalOpen, (open, previous) => {
 onBeforeUnmount(() => {
     clearResetToastTimer();
     clearLoginToastTimer();
+    clearWelcomePopoverTimer();
+    clearWelcomePopoverAutoCloseTimer();
+    clearGuideDonePopoverAutoCloseTimer();
     setGuideTourBodyState(false);
     currentGuideTargetEl?.classList.remove('home-guide-tour-target-active');
     currentGuideTargetEl = null;
@@ -328,7 +383,7 @@ useHead({
         />
         <HomeGuideTourDonePopover
             :visible="isGuideDonePopoverVisible"
-            @close="isGuideDonePopoverVisible = false"
+            @close="clearGuideDonePopoverAutoCloseTimer(); isGuideDonePopoverVisible = false"
         />
     </main>
 </template>
@@ -341,8 +396,10 @@ useHead({
 :global(.home-guide-tour-target-active) {
     position: relative;
     z-index: 145 !important;
-    border: 2px solid var(--brand-primary) !important;
-    box-shadow: 0 0 0 4px color-mix(in srgb, #ffffff 40%, transparent) !important;
+    border: 0 !important;
+    box-shadow:
+        inset 0 0 0 2px var(--brand-primary),
+        0 0 0 4px color-mix(in srgb, #ffffff 40%, transparent) !important;
 }
 
 :global(.home-header-account-wrap.home-guide-tour-target-active) {

@@ -27,7 +27,7 @@
                 "sending": "Sending...",
                 "returnToLogin": "Return to Login",
                 "checkEmailTitle": "Please check your email",
-                "checkEmailDescription": "If an account exists for this email, a password reset link has been sent.",
+                "checkEmailDescription": "Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.",
                 "requestFailed": "Unable to send a reset link right now."
             },
             "validation": {
