@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
+import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 
 export function useLoginPageForm() {
     const api = useApi();
@@ -25,6 +26,9 @@ export function useLoginPageForm() {
 
     const submitLabel = computed(() =>
         isNonMember.value ? t('auth.login.checkOrder') : t('auth.login.signIn')
+    );
+    const postLoginRedirect = computed(() =>
+        resolvePostLoginRedirect(route.query.redirect, withCountry)
     );
 
     const isVerificationModalOpen = ref(false);
@@ -159,7 +163,7 @@ export function useLoginPageForm() {
                 if (import.meta.client) {
                     window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
                 }
-                await router.push(withCountry('/'));
+                await router.push(postLoginRedirect.value);
             }
         } else {
             await nonMemberLoginHandler();
