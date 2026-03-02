@@ -1,12 +1,22 @@
 // @ts-check
-import withNuxt from './node_modules/.cache/nuxt/.nuxt/eslint.config.mjs'
+import withNuxt from './.nuxt/eslint.config.mjs'
+import stylistic from '@stylistic/eslint-plugin'
 
-export default withNuxt(
-  {
-    rules: {
-      '@typescript-eslint/unified-signatures': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off',
-    },
-  },
-)
+// Cast to any to satisfy TypeScript
+const stylisticPlugin = /** @type {any} */ (stylistic)
+
+
+export default withNuxt({
+	plugins: {
+		'@stylistic': stylisticPlugin
+	},
+	rules: {
+		'vue/no-multiple-template-root': 'off',
+		'@stylistic/indent': ['error', 'tab'],
+		'vue/html-indent': ['error', 'tab'],
+		'@stylistic/no-tabs': 'off',
+		'no-unused-vars': 'error',
+		'eol-last': ['error', 'never'],
+		'no-trailing-spaces': 'error'
+	}
+})
