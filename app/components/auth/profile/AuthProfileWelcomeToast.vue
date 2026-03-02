@@ -16,7 +16,8 @@ const emit = defineEmits<{
 <template>
     <UiToast
         :visible="visible"
-        tone="success"
+        tone="primary"
+        variant="outlined"
         :message="$t('auth.profile.toast')"
         data-testid="auth-profile-toast"
         @close="emit('close')"

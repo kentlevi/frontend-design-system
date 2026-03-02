@@ -26,14 +26,34 @@ const mockUser = useCookie<{
 const profileFieldValues = computed(
     () => userStore.profile?.user_field_values ?? []
 );
-function getCountryFieldId(field: UserFieldValue) {
-    return field.country_field_ids ?? field.country_fields_id;
+function getFieldValueByKey(key: 'first_name' | 'last_name') {
+    const legacyId = key === 'first_name' ? 1 : 2;
+    const directMatch =
+        profileFieldValues.value.find(
+            (field) =>
+                field.country_field?.field_key === key ||
+                (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
+        )?.value?.trim() || '';
+    if (directMatch) return directMatch;
+
+    const fallbackRows = [...profileFieldValues.value]
+        .filter((field) => typeof field.value === 'string' && field.value.trim())
+        .sort(
+            (a, b) =>
+                (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+        )
+        .slice(0, 2);
+    if (fallbackRows.length < 2) return '';
+    return key === 'first_name'
+        ? (fallbackRows[0]?.value?.trim() || '')
+        : (fallbackRows[1]?.value?.trim() || '');
 }
 const storeFirstName = computed(
-    () => profileFieldValues.value.find((field) => getCountryFieldId(field) === 1)?.value?.trim() || ''
+    () => getFieldValueByKey('first_name')
 );
 const storeLastName = computed(
-    () => profileFieldValues.value.find((field) => getCountryFieldId(field) === 2)?.value?.trim() || ''
+    () => getFieldValueByKey('last_name')
 );
 const emailLocalPart = computed(() => {
     const source = (userStore.email || mockUser.value?.email || '').trim();
@@ -48,9 +68,20 @@ const fullName = computed(() => {
 });
 
 const userEmail = computed(() => userStore.email || mockUser.value?.email || '');
-const initials = computed(() =>
-    ((storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'U').charAt(0) || 'U').toUpperCase()
-);
+const initials = computed(() => {
+    const first = (
+        storeFirstName.value ||
+        mockUser.value?.firstName ||
+        emailLocalPart.value ||
+        'U'
+    )
+        .charAt(0)
+        .toUpperCase();
+    const last = (storeLastName.value || mockUser.value?.lastName || '')
+        .charAt(0)
+        .toUpperCase();
+    return `${first || 'U'}${last || ''}`;
+});
 
 const tabs = [
     { key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
@@ -137,8 +168,8 @@ const tabs = [
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: #9bb3c0;
-        color: #ffffff;
+        background: var(--gray-40);
+        color: var(--black-base);
         display: grid;
         place-items: center;
         font-weight: 700;

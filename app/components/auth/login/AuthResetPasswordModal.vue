@@ -156,19 +156,29 @@ async function submitChangePassword() {
             const firstName =
                 fields.find(
                     (field: UserFieldValue) =>
-                        (field.country_field_ids ?? field.country_fields_id) ===
+                        field.country_field?.field_key === 'first_name' ||
+                        (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) ===
                         1
                 )?.value?.trim() || '';
             const lastName =
                 fields.find(
                     (field: UserFieldValue) =>
-                        (field.country_field_ids ?? field.country_fields_id) ===
+                        field.country_field?.field_key === 'last_name' ||
+                        (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) ===
                         2
                 )?.value?.trim() || '';
+            const fallbackRows = [...fields]
+                .filter((field) => typeof field.value === 'string' && field.value.trim())
+                .sort(
+                    (a, b) =>
+                        (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                        (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+                )
+                .slice(0, 2);
 
             mockUser.value = {
-                firstName,
-                lastName,
+                firstName: firstName || fallbackRows[0]?.value?.trim() || '',
+                lastName: lastName || fallbackRows[1]?.value?.trim() || '',
                 email: loginResponse.data.user.email || email,
             };
         }

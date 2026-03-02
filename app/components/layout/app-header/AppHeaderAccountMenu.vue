@@ -273,8 +273,8 @@ const gettingStartedLink = computed(
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: var(--lynch-base);
-            color: var(--contrast-light);
+            background: var(--gray-40);
+            color: var(--black-base);
             font-size: 13px;
             font-weight: 700;
             display: grid;
@@ -319,8 +319,8 @@ const gettingStartedLink = computed(
                 width: 36px;
                 height: 36px;
                 border-radius: 50%;
-                background: var(--lynch-base);
-                color: var(--text-inverse);
+                background: var(--gray-40);
+                color: var(--black-base);
                 display: grid;
                 place-items: center;
                 font-weight: 700;

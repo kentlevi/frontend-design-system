@@ -5,12 +5,14 @@ withDefaults(
         message?: string;
         tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
         dismissible?: boolean;
+        variant?: 'default' | 'outlined';
     }>(),
     {
         visible: false,
         message: '',
         tone: 'primary',
         dismissible: true,
+        variant: 'default',
     }
 );
 
@@ -33,6 +35,7 @@ const iconByTone = {
             v-if="visible"
             class="ui-toast"
             :data-tone="tone"
+            :data-variant="variant"
             role="status"
             aria-live="polite"
             data-testid="ui-toast"
@@ -59,7 +62,7 @@ const iconByTone = {
 .ui-toast {
     position: fixed;
     left: 50%;
-    bottom: 84px;
+    bottom: 32px;
     transform: translateX(-50%);
     z-index: 60;
     width: fit-content;
@@ -101,6 +104,10 @@ const iconByTone = {
         border: 1px solid #93c5fd;
     }
 
+    &[data-variant='outlined'] {
+        border: 2px solid var(--white-base);
+    }
+
     .ui-toast-text {
         flex: 0 1 auto;
         font-size: 14px;
@@ -132,7 +139,7 @@ const iconByTone = {
 @media (max-width: 860px) {
     .ui-toast {
         width: calc(100vw - 24px);
-        bottom: 84px;
+        bottom: 32px;
     }
 }
 </style>

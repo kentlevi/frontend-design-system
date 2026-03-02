@@ -1,7 +1,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { accountProfileDefaults, type AccountMockUser } from '~/data/account/profile';
 import { useCountry } from '~/composables/app/useCountry';
-import { useUserStore } from '~/stores/user';
+import { useUserStore, type UserFieldValue } from '~/stores/user';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -21,13 +21,57 @@ export function useAuthProfileSetup() {
     const showWelcomeToast = ref(Boolean(userStore.onboardingProfile?.onboarding));
     let toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
+    const profileFieldValues = computed(
+        () => userStore.profile?.user_field_values ?? []
+    );
+    function getFieldValueByKey(key: 'first_name' | 'last_name') {
+        const legacyId = key === 'first_name' ? 1 : 2;
+        const directMatch =
+            profileFieldValues.value.find(
+                (field) =>
+                    field.country_field?.field_key === key ||
+                    (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
+            )?.value?.trim() || '';
+        if (directMatch) return directMatch;
+
+        const fallbackRows = [...profileFieldValues.value]
+            .filter((field) => typeof field.value === 'string' && field.value.trim())
+            .sort(
+                (a, b) =>
+                    (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                    (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+            )
+            .slice(0, 2);
+        if (fallbackRows.length < 2) return '';
+        return key === 'first_name'
+            ? (fallbackRows[0]?.value?.trim() || '')
+            : (fallbackRows[1]?.value?.trim() || '');
+    }
+    const storeFirstName = computed(
+        () => getFieldValueByKey('first_name')
+    );
+    const storeLastName = computed(
+        () => getFieldValueByKey('last_name')
+    );
+
     const firstName = ref(
-        userStore.onboardingProfile?.firstName || accountProfileDefaults.firstName
+        storeFirstName.value ||
+            userStore.onboardingProfile?.firstName ||
+            mockUser.value?.firstName ||
+            accountProfileDefaults.firstName
     );
     const lastName = ref(
-        userStore.onboardingProfile?.lastName || accountProfileDefaults.lastName
+        storeLastName.value ||
+            userStore.onboardingProfile?.lastName ||
+            mockUser.value?.lastName ||
+            accountProfileDefaults.lastName
     );
-    const email = ref(userStore.onboardingProfile?.email || accountProfileDefaults.email);
+    const email = ref(
+        userStore.email ||
+            userStore.onboardingProfile?.email ||
+            mockUser.value?.email ||
+            accountProfileDefaults.email
+    );
 
     const photoUrl = ref<string | null>(null);
 

@@ -86,7 +86,7 @@ const describedBy = computed(() => {
 
 .ui-form-field-head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
 }
@@ -100,6 +100,8 @@ const describedBy = computed(() => {
 }
 
 .ui-form-field-error {
+    display: block;
+    overflow: visible;
     color: var(--error);
     font-size: 14px;
     font-weight: 600;

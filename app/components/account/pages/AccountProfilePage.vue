@@ -320,7 +320,8 @@ const {
                     width: 98px;
                     height: 98px;
                     border-radius: 50%;
-                    background: var(--border-default);
+                    background: var(--gray-40);
+                    color: var(--black-base);
                     display: grid;
                     place-items: center;
                     overflow: hidden;

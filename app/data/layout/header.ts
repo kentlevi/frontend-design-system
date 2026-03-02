@@ -35,7 +35,7 @@ export const headerLocaleOptionConfig: Array<{
     flagCode: FlagCode;
     labelKey: string;
 }> = [
-    { code: 'en', flagCode: 'us', labelKey: 'layout.header.locale.en' },
+    { code: 'us', flagCode: 'us', labelKey: 'layout.header.locale.en' },
     { code: 'kr', flagCode: 'kr', labelKey: 'layout.header.locale.kr' },
 ];
 

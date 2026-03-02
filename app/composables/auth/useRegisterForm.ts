@@ -1,20 +1,16 @@
-import { computed, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user';
+import { nextTick, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '~/stores/user';
+import { useCountry } from '~/composables/app/useCountry';
+import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
 
 export function useRegisterForm() {
     const router = useRouter();
-    const route = useRoute();
     const userStore = useUserStore();
     const isVerificationModalOpen = ref(false);
     const api = useApi();
     const { t } = useI18n();
-    const country = computed(() =>
-        String(route.params.country || 'en').toLowerCase()
-    );
-    const apiCountry = computed(() =>
-        country.value === 'en' ? 'ph' : country.value
-    );
+    const { withCountry, apiCountry } = useCountry();
 
     const firstName = ref('');
     const lastName = ref('');
@@ -29,8 +25,8 @@ export function useRegisterForm() {
     const passwordError = ref('');
     const termsError = ref('');
 
-    const verificationEmail = ref();
-    const verificationToken = ref();
+    const verificationEmail = ref('');
+    const verificationToken = ref('');
     const verificationCode = ref('');
     const verificationError = ref('');
     const isVerifying = ref(false);
@@ -73,7 +69,7 @@ export function useRegisterForm() {
     });
 
     interface RegisterVerificationResponse {
-        success: boolean;
+        success: boolean | string | number;
         message: string;
         data:
             | {
@@ -172,7 +168,8 @@ export function useRegisterForm() {
                 }
             })
 
-            if (response.success === false) {
+            const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
+            if (!isSuccess) {
                 firstNameError.value =
                     getFirstError(response.data, 'given_name') ||
                     getFirstError(response.data, 'first_name');
@@ -197,10 +194,29 @@ export function useRegisterForm() {
                 return response
             }
 
-            verificationEmail.value = (response.data as { email: string }).email;
-            verificationToken.value = (response.data as { token: string }).token;
+            const verificationData = response.data as { email?: string; token?: string } | undefined;
+            const resolvedEmail =
+                typeof verificationData?.email === 'string' && verificationData.email.trim()
+                    ? verificationData.email.trim()
+                    : email.value.trim();
+            const resolvedToken =
+                typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
+
+            if (!resolvedToken) {
+                emailError.value = resolveRegisterErrorMessage(
+                    response.message,
+                    'Registration failed.'
+                );
+                return response;
+            }
+
+            verificationEmail.value = resolvedEmail;
+            verificationToken.value = resolvedToken;
             verificationCode.value = '';
             verificationError.value = '';
+            // Re-open explicitly in case state was previously left open/closed by a stale render cycle.
+            isVerificationModalOpen.value = false;
+            await nextTick();
             isVerificationModalOpen.value = true;
             return response
         } catch (error: any) {
@@ -271,6 +287,64 @@ export function useRegisterForm() {
 
                     if (loginResponse.data.user) {
                         userStore.setUser(loginResponse.data.user)
+
+                        const mockUser = useCookie<{
+                            firstName: string;
+                            lastName: string;
+                            email: string;
+                        } | null>('mock_user', {
+                            sameSite: 'lax',
+                            path: '/',
+                        });
+
+                        const fields = loginResponse.data.user.profile?.user_field_values ?? [];
+                        const resolvedFirstName =
+                            fields.find(
+                                (field: UserFieldValue) =>
+                                    field.country_field?.field_key === 'first_name' ||
+                                    (field.country_field_id ??
+                                        field.country_field_ids ??
+                                        field.country_fields_id) === 1
+                            )?.value?.trim() || firstName.value.trim();
+                        const resolvedLastName =
+                            fields.find(
+                                (field: UserFieldValue) =>
+                                    field.country_field?.field_key === 'last_name' ||
+                                    (field.country_field_id ??
+                                        field.country_field_ids ??
+                                        field.country_fields_id) === 2
+                            )?.value?.trim() || lastName.value.trim();
+                        const fallbackRows = [...fields]
+                            .filter((field) => typeof field.value === 'string' && field.value.trim())
+                            .sort(
+                                (a, b) =>
+                                    (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                                    (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+                            )
+                            .slice(0, 2);
+                        let normalizedFirstName = resolvedFirstName || 'User';
+                        let normalizedLastName = resolvedLastName || '';
+
+                        if (!resolvedFirstName && fallbackRows[0]?.value) {
+                            normalizedFirstName = fallbackRows[0].value.trim();
+                        }
+                        if (!resolvedLastName && fallbackRows[1]?.value) {
+                            normalizedLastName = fallbackRows[1].value.trim();
+                        }
+
+                        if (!normalizedLastName && normalizedFirstName.includes(' ')) {
+                            const parts = normalizedFirstName.split(/\s+/).filter(Boolean);
+                            if (parts.length >= 2) {
+                                normalizedFirstName = parts.slice(0, -1).join(' ');
+                                normalizedLastName = parts[parts.length - 1] || '';
+                            }
+                        }
+
+                        mockUser.value = {
+                            firstName: normalizedFirstName,
+                            lastName: normalizedLastName,
+                            email: loginResponse.data.user.email || email.value.trim(),
+                        };
                     }
                 }
             } catch (error) {
@@ -285,7 +359,7 @@ export function useRegisterForm() {
             });
 
             isVerificationModalOpen.value = false;
-            await router.push(`/${country.value}/auth/profile`);
+            await router.push(withCountry('/auth/profile'));
             return response;
         } catch {
             verificationError.value = t('auth.verification.invalidCode');

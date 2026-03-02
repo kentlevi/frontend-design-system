@@ -33,6 +33,7 @@ const {
     nonMemberOrderNumber,
     memberEmailError,
     memberPasswordError,
+    memberInvalidCredentials,
     nonMemberEmailError,
     nonMemberOrderError,
     onMemberEmailInput,
@@ -79,6 +80,7 @@ const {
                         :password="memberPassword"
                         :email-error="memberEmailError"
                         :password-error="memberPasswordError"
+                        :password-invalid="memberInvalidCredentials"
                         @toggle-password="togglePassword"
                         @update:keep-signed-in="setKeepSignedIn"
                         @update:email="onMemberEmailInput"

@@ -258,10 +258,10 @@ function updateEmail(value: string) {
                         width: 110px;
                         height: 110px;
                         border-radius: 50%;
-                        background: var(--border-default);
+                        background: var(--gray-40);
                         display: grid;
                         place-items: center;
-                        color: var(--text-primary);
+                        color: var(--black-base);
                         font-size: 40px;
                         font-weight: 700;
                         overflow: hidden;
