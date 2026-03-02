@@ -347,41 +347,41 @@ const gettingStartedLink = computed(
             &.home-account-link-group--secondary {
                 border-top: 1px solid var(--border-default);
             }
+        }
 
-            .home-account-link {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                height: 40px;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                line-height: 1.2;
-                color: var(--text-primary);
-                padding: 0 20px;
+        .home-account-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.2;
+            color: var(--text-primary);
+            padding: 0 20px;
 
-                :deep(.ui-icon) {
-                    flex-shrink: 0;
-                }
+            :deep(.ui-icon) {
+                flex-shrink: 0;
+            }
 
-                &:hover {
-                    background: var(--gold-20);
-                }
+            &:hover {
+                background: var(--gold-20);
+            }
 
-                &.home-account-link--guest {
-                    justify-content: center;
-                }
+            &.home-account-link--guest {
+                justify-content: center;
+            }
 
-                &.home-account-link-button {
-                    --btn-bg: var(--text-primary);
-                    --btn-soft: var(--gold-20);
-                    --btn-border: transparent;
+            &.home-account-link-button {
+                --btn-bg: var(--text-primary);
+                --btn-soft: var(--gold-20);
+                --btn-border: transparent;
 
-                    width: 100%;
-                    border-radius: 0;
-                    box-shadow: none;
-                    justify-content: flex-start;
-                }
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                justify-content: flex-start;
             }
         }
 
