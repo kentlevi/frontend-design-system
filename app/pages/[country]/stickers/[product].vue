@@ -3,7 +3,6 @@ import ProductCategoryExperience from '~/components/products/product-category/Pr
 
 definePageMeta({
     layout: 'home',
-    middleware: ['require-auth'],
 });
 </script>
 

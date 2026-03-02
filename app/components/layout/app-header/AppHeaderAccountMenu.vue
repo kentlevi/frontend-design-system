@@ -7,6 +7,7 @@ import {
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const route = useRoute();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
@@ -178,7 +179,12 @@ const gettingStartedLink = computed(
                 data-testid="app-header-account-dropdown-guest"
             >
                 <NuxtLink
-                    :to="withCountry('/auth/login')"
+                    :to="{
+                        path: withCountry('/auth/login'),
+                        query: {
+                            redirect: route.fullPath,
+                        },
+                    }"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     data-testid="app-header-account-login"
