@@ -21,6 +21,7 @@ const emit = defineEmits<{
                 class="auth-login-field"
                 :label="t('auth.login.email')"
                 :error="emailError"
+                error-test-id="auth-login-non-member-email-error"
                 :required="true"
             >
                 <template #default="{ inputId, describedBy }">
@@ -44,6 +45,7 @@ const emit = defineEmits<{
                 class="auth-login-field"
                 :label="t('auth.login.orderNumber')"
                 :error="orderError"
+                error-test-id="auth-login-non-member-order-number-error"
                 :required="true"
             >
                 <template #default="{ inputId, describedBy }">
