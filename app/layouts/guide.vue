@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { guides } from '@/data/guide/guides';
 import { guideDocs } from '@/data/guide/docs';
 import GuideCopy from '@/components/guide/GuideCopy.vue';
-import GuidePlaygroundControls from '@/components/guide/GuidePlaygroundControls.vue';
 
 const route = useRoute();
 const { locales } = useI18n();
@@ -25,17 +24,6 @@ const guideQuery = ref('');
 const checklistStatusFilter = ref<'all' | 'planned' | 'in-progress' | 'done'>('all');
 const checklistPhaseFilter = ref<'all' | 'phase-1' | 'phase-2' | 'phase-3' | 'phase-4'>('all');
 const guideSearchInputRef = ref<HTMLInputElement | null>(null);
-const previewFrame = ref<'mobile' | 'tablet' | 'desktop'>('desktop');
-const showPreviewTools = ref(false);
-const playgroundState = ref({
-    size: 'md',
-    tone: 'neutral',
-    state: 'default',
-});
-const viewMode = useState<'preview' | 'documentation'>(
-    'guide-view-mode',
-    () => 'preview'
-);
 
 const normalizedRoutePath = computed(() =>
     route.path !== '/' && route.path.endsWith('/')
@@ -64,7 +52,6 @@ const isOverviewPath = computed(
 const currentDoc = computed(
     () => guideDocs[guidePath.value] ?? (isOverviewPath.value ? guideDocs['/guide'] : null)
 );
-const canShowDocs = computed(() => Boolean(currentDoc.value));
 const isDocumentationOnlyGuide = computed(() => guidePath.value === '/guide/standards');
 const currentGuideItem = computed(() =>
     guides.find((item) =>
@@ -72,9 +59,6 @@ const currentGuideItem = computed(() =>
     ) ?? null
 );
 const normalizedGuideQuery = computed(() => guideQuery.value.trim().toLowerCase());
-const a11yQuickChecks = ref<
-    Array<{ id: string; label: string; passed: boolean; detail: string }>
->([]);
 const currentDocLastUpdated = computed(
     () => currentDoc.value?.lastUpdatedAt ?? currentDoc.value?.changelog?.[0]?.date ?? null
 );
@@ -196,20 +180,6 @@ const changelogEntries = computed(() =>
                   })),
     }))
 );
-const currentPlaygroundConfig = computed(() => currentDoc.value?.playground ?? null);
-const previewFrameStyle = computed(() => {
-    const sizeScale =
-        playgroundState.value.size === 'sm'
-            ? 0.92
-            : playgroundState.value.size === 'lg'
-                ? 1.08
-                : 1;
-    const stateOpacity = playgroundState.value.state === 'disabled' ? 0.72 : 1;
-    return {
-        '--guide-playground-scale': `${sizeScale}`,
-        '--guide-playground-opacity': `${stateOpacity}`,
-    };
-});
 
 const normalizedChecklistState = (status: 'planned' | 'in-progress' | 'done') =>
     status === 'in-progress' ? 'In Progress' : status[0].toUpperCase() + status.slice(1);
@@ -370,65 +340,6 @@ const doDontVisualCopy = computed(
         }
 );
 
-const runA11yQuickChecks = () => {
-    if (typeof document === 'undefined' || viewMode.value !== 'preview') {
-        a11yQuickChecks.value = [];
-        return;
-    }
-
-    const previewPanel = document.querySelector('#guide-panel-preview');
-    const focusable = previewPanel?.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const iconOnlyButtons = previewPanel?.querySelectorAll(
-        'button[aria-label]'
-    );
-    const hasFocusVisibleDeclaration = Array.from(document.styleSheets).some((sheet) => {
-        try {
-            return Array.from(sheet.cssRules).some((rule) =>
-                rule.cssText.includes(':focus-visible')
-            );
-        } catch {
-            return false;
-        }
-    });
-    const hasTokenGuidance = Boolean(currentDoc.value?.tokenGuardrails?.length);
-
-    a11yQuickChecks.value = [
-        {
-            id: 'keyboard',
-            label: 'Keyboard reachable controls',
-            passed: Boolean(focusable && focusable.length > 0),
-            detail: focusable?.length
-                ? `${focusable.length} focusable controls found`
-                : 'No focusable controls found in preview.',
-        },
-        {
-            id: 'focus',
-            label: 'Visible focus style declaration',
-            passed: hasFocusVisibleDeclaration,
-            detail: hasFocusVisibleDeclaration
-                ? 'At least one :focus-visible style rule detected.'
-                : 'No :focus-visible rule detected.',
-        },
-        {
-            id: 'labels',
-            label: 'Icon-only accessible labels',
-            passed: Boolean(iconOnlyButtons && iconOnlyButtons.length > 0),
-            detail: iconOnlyButtons?.length
-                ? `${iconOnlyButtons.length} labeled icon-only controls detected.`
-                : 'No labeled icon-only controls detected in preview.',
-        },
-        {
-            id: 'contrast',
-            label: 'Color/contrast guidance declared',
-            passed: hasTokenGuidance,
-            detail: hasTokenGuidance
-                ? 'Token guardrails include color contrast guidance.'
-                : 'No token guardrails declared for this guide.',
-        },
-    ];
-};
 
 const isTypingTarget = (target: EventTarget | null) => {
     if (!(target instanceof HTMLElement)) return false;
@@ -472,38 +383,9 @@ function confirmStandardsRead() {
     navigateTo(standardsContinueTarget.value);
 }
 
-watch(
-    guidePath,
-    (nextPath, previousPath) => {
-        if (isDocumentationOnlyGuide.value) {
-            viewMode.value = 'documentation';
-            return;
-        }
-
-        if (previousPath === '/guide/standards') {
-            viewMode.value = 'preview';
-            return;
-        }
-
-        if (!canShowDocs.value) {
-            viewMode.value = 'preview';
-        }
-    },
-    { immediate: true }
-);
-
 onMounted(() => {
-    if (currentPlaygroundConfig.value) {
-        playgroundState.value = {
-            size: currentPlaygroundConfig.value.defaultSize ?? 'md',
-            tone: currentPlaygroundConfig.value.defaultTone ?? 'neutral',
-            state: currentPlaygroundConfig.value.defaultState ?? 'default',
-        };
-    }
-
     document.addEventListener('keydown', onGuideShortcut);
     window.addEventListener('keydown', onGuideShortcut);
-    runA11yQuickChecks();
 });
 
 onBeforeUnmount(() => {
@@ -511,18 +393,6 @@ onBeforeUnmount(() => {
     window.removeEventListener('keydown', onGuideShortcut);
 });
 
-watch([guidePath, viewMode, previewFrame], async () => {
-    await nextTick();
-    const config = currentPlaygroundConfig.value;
-    if (config) {
-        playgroundState.value = {
-            size: config.defaultSize ?? 'md',
-            tone: config.defaultTone ?? 'neutral',
-            state: config.defaultState ?? 'default',
-        };
-    }
-    runA11yQuickChecks();
-});
 </script>
 
 <template>
@@ -653,27 +523,12 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     <button
                         type="button"
                         role="tab"
-                        id="guide-tab-preview"
-                        class="guide-view-toggle-button"
-                        :class="{ 'is-active': viewMode === 'preview' }"
-                        aria-controls="guide-panel-preview"
-                        :aria-selected="viewMode === 'preview'"
-                        :tabindex="viewMode === 'preview' ? 0 : -1"
-                        @click="viewMode = 'preview'"
-                    >
-                        Preview
-                    </button>
-                    <button
-                        type="button"
-                        role="tab"
                         id="guide-tab-documentation"
-                        class="guide-view-toggle-button"
-                        :class="{ 'is-active': viewMode === 'documentation' }"
+                        class="guide-view-toggle-button is-active"
                         aria-controls="guide-panel-documentation"
-                        :aria-selected="viewMode === 'documentation'"
-                        :disabled="!canShowDocs"
-                        :tabindex="viewMode === 'documentation' ? 0 : -1"
-                        @click="viewMode = 'documentation'"
+                        aria-selected="true"
+                        tabindex="0"
+                        disabled
                     >
                         Documentation
                     </button>
@@ -683,67 +538,6 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
         <main class="guide-content">
             <section
-                v-if="!isDocumentationOnlyGuide && (viewMode === 'preview' || !currentDoc)"
-                id="guide-panel-preview"
-                class="guide-preview-panel"
-                role="tabpanel"
-                aria-labelledby="guide-tab-preview"
-            >
-                <div class="guide-preview-toolbar-toggle-wrap">
-                    <button
-                        type="button"
-                        class="guide-preview-tools-toggle"
-                        :aria-expanded="showPreviewTools"
-                        data-testid="guide-preview-tools-toggle"
-                        @click="showPreviewTools = !showPreviewTools"
-                    >
-                        {{ showPreviewTools ? 'Hide Preview Tools' : 'Show Preview Tools' }}
-                    </button>
-                </div>
-
-                <header v-if="showPreviewTools" class="guide-preview-toolbar">
-                    <div class="guide-preview-frames" role="group" aria-label="Preview device frame">
-                        <button
-                            v-for="frame in ['mobile', 'tablet', 'desktop'] as const"
-                            :key="frame"
-                            type="button"
-                            class="guide-preview-frame-toggle"
-                            :class="{ 'is-active': previewFrame === frame }"
-                            @click="previewFrame = frame"
-                        >
-                            {{ frame }}
-                        </button>
-                    </div>
-                    <GuidePlaygroundControls
-                        v-if="currentPlaygroundConfig"
-                        v-model="playgroundState"
-                        :config="currentPlaygroundConfig"
-                    />
-                    <div class="guide-preview-checks">
-                        <UiBadge
-                            v-for="check in a11yQuickChecks"
-                            :key="check.id"
-                            variant="tonal"
-                            :tone="check.passed ? 'success' : 'danger'"
-                            :title="check.detail"
-                        >
-                            {{ check.label }}: {{ check.passed ? 'Pass' : 'Fail' }}
-                        </UiBadge>
-                    </div>
-                </header>
-                <div
-                    class="guide-preview-frame-wrap"
-                    :class="`is-${previewFrame}`"
-                    :data-tone="playgroundState.tone"
-                    :data-state="playgroundState.state"
-                    :style="previewFrameStyle"
-                >
-                    <NuxtPage />
-                </div>
-            </section>
-
-            <section
-                v-else
                 id="guide-panel-documentation"
                 class="guide-docs"
                 role="tabpanel"
@@ -1522,118 +1316,6 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
     &.is-deprecated {
         background: color-mix(in srgb, #dc2626 18%, var(--contrast-light));
-    }
-}
-
-.guide-preview-panel {
-    padding: 20px;
-}
-
-.guide-preview-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-}
-
-.guide-preview-toolbar-toggle-wrap {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 8px;
-}
-
-.guide-preview-tools-toggle {
-    border: 1px solid var(--border-default);
-    border-radius: 999px;
-    background: var(--contrast-light);
-    color: var(--text-secondary);
-    padding: 6px 12px;
-    font-size: 12px;
-    line-height: 18px;
-    cursor: pointer;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease;
-
-    &:hover {
-        background: color-mix(in srgb, var(--brand-secondary) 14%, var(--contrast-light));
-        border-color: color-mix(in srgb, var(--brand-secondary) 36%, var(--border-default));
-        color: var(--text-primary);
-    }
-}
-
-.guide-preview-frames {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.guide-preview-frame-toggle {
-    border: 1px solid var(--border-default);
-    border-radius: 999px;
-    background: var(--contrast-light);
-    color: var(--text-secondary);
-    padding: 6px 10px;
-    text-transform: capitalize;
-    cursor: pointer;
-
-    &.is-active {
-        background: var(--brand-secondary);
-        color: var(--contrast-light);
-    }
-}
-
-.guide-preview-checks {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.guide-preview-frame-wrap {
-    margin-inline: auto;
-    width: 100%;
-    border: 1px solid var(--border-default);
-    border-radius: 14px;
-    padding: 12px;
-    background: var(--contrast-light);
-    transition: max-width 0.2s ease;
-    transform: scale(var(--guide-playground-scale, 1));
-    transform-origin: top center;
-    opacity: var(--guide-playground-opacity, 1);
-
-    &.is-mobile {
-        max-width: 390px;
-    }
-
-    &.is-tablet {
-        max-width: 860px;
-    }
-
-    &.is-desktop {
-        max-width: 1200px;
-    }
-
-    &[data-tone='success'] {
-        border-color: color-mix(in srgb, #16a34a 45%, var(--border-default));
-    }
-
-    &[data-tone='warning'] {
-        border-color: color-mix(in srgb, #f59e0b 45%, var(--border-default));
-    }
-
-    &[data-tone='danger'] {
-        border-color: color-mix(in srgb, #dc2626 45%, var(--border-default));
-    }
-
-    &[data-state='active'] {
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-primary) 30%, transparent);
-    }
-
-    &[data-state='hover'] {
-        box-shadow: 0 8px 28px color-mix(in srgb, var(--gray-90) 12%, transparent);
     }
 }
 
