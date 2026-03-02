@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { accountProfileDefaults, type AccountMockUser } from '~/data/account/profile';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { useCountry } from '~/composables/app/useCountry';
-import { useUserStore, type UserFieldValue } from '~/stores/user';
+import { useUserStore } from '~/stores/user';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -133,7 +133,7 @@ export function useAuthProfileSetup() {
     }
 
     async function completeSetup() {
-        if (process.client && isNewOnboardingFlow) {
+        if (import.meta.client && isNewOnboardingFlow) {
             window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
         }
 

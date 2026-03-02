@@ -2,7 +2,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 
 export function useLoginPageForm() {

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useUserStore } from '~/stores/user';
-import type { UserFieldValue } from '~/stores/user';
 
 const props = withDefaults(
     defineProps<{
