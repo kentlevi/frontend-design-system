@@ -1,7 +1,8 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { accountProfileDefaults, type AccountMockUser } from '~/data/account/profile';
+import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { useCountry } from '~/composables/app/useCountry';
-import { useUserStore, type UserFieldValue } from '~/stores/user';
+import { useUserStore } from '~/stores/user';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -18,7 +19,8 @@ export function useAuthProfileSetup() {
     });
 
     const step = ref<ProfileStep>(1);
-    const showWelcomeToast = ref(Boolean(userStore.onboardingProfile?.onboarding));
+    const isNewOnboardingFlow = Boolean(userStore.onboardingProfile?.onboarding);
+    const showWelcomeToast = ref(isNewOnboardingFlow);
     let toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const profileFieldValues = computed(
@@ -131,6 +133,10 @@ export function useAuthProfileSetup() {
     }
 
     async function completeSetup() {
+        if (import.meta.client && isNewOnboardingFlow) {
+            window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
+        }
+
         const authToken = useCookie<string | null>('auth_token');
         if (!authToken.value) {
             mockUser.value = {

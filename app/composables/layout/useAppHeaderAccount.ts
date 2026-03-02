@@ -11,7 +11,6 @@ import {
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/useCountry';
 import { useUserStore } from '~/stores/user';
-import type { UserFieldValue } from '~/stores/user';
 
 export function useAppHeaderAccount() {
     const { t, locale, setLocale } = useI18n();

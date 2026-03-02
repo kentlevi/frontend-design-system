@@ -37,7 +37,7 @@ const emit = defineEmits<{
 function handleAccountLinkClick(event: MouseEvent, to: string) {
     if (to === '/auth/profile') {
         event.preventDefault();
-        if (process.client) {
+        if (import.meta.client) {
             window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
             window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
         }

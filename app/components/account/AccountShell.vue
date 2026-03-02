@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useCountry } from '@/composables/app/useCountry';
-import type { UserFieldValue } from '@/stores/user';
 
 const props = defineProps<{
     activeTab:

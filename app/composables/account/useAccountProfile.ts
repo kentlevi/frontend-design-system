@@ -5,7 +5,6 @@ import {
     type AccountUnit,
 } from '~/data/account/profile';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserFieldValue } from '~/stores/user';
 
 export function useAccountProfile() {
     const { withCountry, apiCountry } = useCountry();
