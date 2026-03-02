@@ -4,41 +4,41 @@ import type { ReviewCard } from '~/data/products/product-reviews';
 const { t } = useI18n();
 
 defineProps<{
-    card: ReviewCard;
+	card: ReviewCard;
 }>();
 </script>
 
 <template>
-    <article class="product-reviews-card" :data-testid="`product-reviews-card-${card.id}`">
-        <div class="product-reviews-body" data-testid="product-reviews-card-body">
-            <div class="product-reviews-media" :class="card.mediaClass" :data-testid="`product-reviews-card-media-${card.id}`"/>
+	<article class="product-reviews-card" :data-testid="`product-reviews-card-${card.id}`">
+		<div class="product-reviews-body" data-testid="product-reviews-card-body">
+			<div class="product-reviews-media" :class="card.mediaClass" :data-testid="`product-reviews-card-media-${card.id}`"/>
 
-            <div class="product-reviews-content" data-testid="product-reviews-card-content">
-                <h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${card.id}`">{{ t(`product.reviews.cards.${card.id}.title`) }}</h3>
-                <p class="product-reviews-card-text" :data-testid="`product-reviews-card-text-${card.id}`">{{ t(`product.reviews.cards.${card.id}.text`) }}</p>
-            </div>
-        </div>
+			<div class="product-reviews-content" data-testid="product-reviews-card-content">
+				<h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${card.id}`">{{ t(`product.reviews.cards.${card.id}.title`) }}</h3>
+				<p class="product-reviews-card-text" :data-testid="`product-reviews-card-text-${card.id}`">{{ t(`product.reviews.cards.${card.id}.text`) }}</p>
+			</div>
+		</div>
 
-        <div class="product-reviews-meta" data-testid="product-reviews-card-meta">
-            <div class="product-reviews-card-author" data-testid="product-reviews-card-author">
-                <span class="product-reviews-card-avatar" data-testid="product-reviews-card-avatar"/>
-                <div class="product-reviews-card-author-details" data-testid="product-reviews-card-author-details">
-                    <strong class="product-reviews-card-author-name" :data-testid="`product-reviews-card-author-name-${card.id}`">{{ card.author }}</strong>
-                    <small class="product-reviews-card-date" :data-testid="`product-reviews-card-date-${card.id}`">{{ card.date }}</small>
-                </div>
-            </div>
-            <span class="product-reviews-card-stars" :data-testid="`product-reviews-card-stars-${card.id}`">
-                <UiIcon
-                    v-for="star in 5"
-                    :key="`${card.author}-star-${star}`"
-                    name="strong-star"
-                    :size="20"
-                    color="var(--amber-base)"
-                    :data-testid="`product-reviews-card-star-${card.id}-${star}`"
-                />
-            </span>
-        </div>
-    </article>
+		<div class="product-reviews-meta" data-testid="product-reviews-card-meta">
+			<div class="product-reviews-card-author" data-testid="product-reviews-card-author">
+				<span class="product-reviews-card-avatar" data-testid="product-reviews-card-avatar"/>
+				<div class="product-reviews-card-author-details" data-testid="product-reviews-card-author-details">
+					<strong class="product-reviews-card-author-name" :data-testid="`product-reviews-card-author-name-${card.id}`">{{ card.author }}</strong>
+					<small class="product-reviews-card-date" :data-testid="`product-reviews-card-date-${card.id}`">{{ card.date }}</small>
+				</div>
+			</div>
+			<span class="product-reviews-card-stars" :data-testid="`product-reviews-card-stars-${card.id}`">
+				<UiIcon
+					v-for="star in 5"
+					:key="`${card.author}-star-${star}`"
+					name="strong-star"
+					:size="20"
+					color="var(--amber-base)"
+					:data-testid="`product-reviews-card-star-${card.id}-${star}`"
+				/>
+			</span>
+		</div>
+	</article>
 </template>
 
 <style scoped lang="scss">

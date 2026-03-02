@@ -5,50 +5,50 @@ import { useProductReviewsCarousel } from '@/composables/products/useProductRevi
 import { reviewCards } from '~/data/products/product-reviews';
 
 const {
-    viewportRef,
-    trackStyle,
-    canGoPrev,
-    canGoNext,
-    setCardRef,
-    nextReview,
-    prevReview,
-    startAuto,
-    stopAuto,
+	viewportRef,
+	trackStyle,
+	canGoPrev,
+	canGoNext,
+	setCardRef,
+	nextReview,
+	prevReview,
+	startAuto,
+	stopAuto,
 } = useProductReviewsCarousel(reviewCards.length);
 </script>
 
 <template>
-    <section class="product-reviews" data-testid="product-reviews-section">
-        <div class="product-reviews-wrap" data-testid="product-reviews-wrap">
-            <ProductReviewsHeader
-                :can-go-prev="canGoPrev"
-                :can-go-next="canGoNext"
-                data-testid="product-reviews-header"
-                @prev="prevReview"
-                @next="nextReview"
-            />
+	<section class="product-reviews" data-testid="product-reviews-section">
+		<div class="product-reviews-wrap" data-testid="product-reviews-wrap">
+			<ProductReviewsHeader
+				:can-go-prev="canGoPrev"
+				:can-go-next="canGoNext"
+				data-testid="product-reviews-header"
+				@prev="prevReview"
+				@next="nextReview"
+			/>
 
-            <div
-                ref="viewportRef"
-                class="product-reviews-viewport"
-                data-testid="product-reviews-viewport"
-                @mouseenter="stopAuto"
-                @mouseleave="startAuto"
-            >
-                <div class="product-reviews-track" :style="trackStyle" data-testid="product-reviews-track">
-                    <div
-                        v-for="(card, index) in reviewCards"
-                        :key="`${card.id}-${index}`"
-                        :ref="(el) => setCardRef(el as Element | null, index)"
-                        class="product-reviews-card-shell"
-                        :data-testid="`product-reviews-card-shell-${card.id}-${index}`"
-                    >
-                        <ProductReviewsCard :card="card" :data-testid="`product-reviews-card-${card.id}-${index}`" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+			<div
+				ref="viewportRef"
+				class="product-reviews-viewport"
+				data-testid="product-reviews-viewport"
+				@mouseenter="stopAuto"
+				@mouseleave="startAuto"
+			>
+				<div class="product-reviews-track" :style="trackStyle" data-testid="product-reviews-track">
+					<div
+						v-for="(card, index) in reviewCards"
+						:key="`${card.id}-${index}`"
+						:ref="(el) => setCardRef(el as Element | null, index)"
+						class="product-reviews-card-shell"
+						:data-testid="`product-reviews-card-shell-${card.id}-${index}`"
+					>
+						<ProductReviewsCard :card="card" :data-testid="`product-reviews-card-${card.id}-${index}`" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">

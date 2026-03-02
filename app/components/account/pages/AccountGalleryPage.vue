@@ -6,42 +6,42 @@ const { items } = useAccountGallery();
 </script>
 
 <template>
-    <section class="account-page" data-testid="account-gallery-page">
-        <AccountShell active-tab="gallery">
-            <div class="account-content" data-testid="account-gallery-content">
-                <header class="account-gallery-header" data-testid="account-gallery-header">
-                    <h1 class="account-gallery-title" data-testid="account-gallery-title">{{ t('account.gallery.title') }}</h1>
-                    <div class="account-gallery-actions" data-testid="account-gallery-actions">
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters-button">
-                            {{ t('account.gallery.filters') }}
-                        </UiButton>
-                        <input
-                            class="account-gallery-search"
-                            type="text"
-                            :placeholder="t('account.gallery.searchPlaceholder')"
-                            data-testid="account-gallery-search"
-                        >
-                    </div>
-                </header>
+	<section class="account-page" data-testid="account-gallery-page">
+		<AccountShell active-tab="gallery">
+			<div class="account-content" data-testid="account-gallery-content">
+				<header class="account-gallery-header" data-testid="account-gallery-header">
+					<h1 class="account-gallery-title" data-testid="account-gallery-title">{{ t('account.gallery.title') }}</h1>
+					<div class="account-gallery-actions" data-testid="account-gallery-actions">
+						<UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters-button">
+							{{ t('account.gallery.filters') }}
+						</UiButton>
+						<input
+							class="account-gallery-search"
+							type="text"
+							:placeholder="t('account.gallery.searchPlaceholder')"
+							data-testid="account-gallery-search"
+						>
+					</div>
+				</header>
 
-                <div class="account-gallery-grid" data-testid="account-gallery-grid">
-                    <article
-                        v-for="item in items"
-                        :key="item.name"
-                        class="account-gallery-card"
-                        :data-testid="`account-gallery-item-${item.name}`"
-                    >
-                        <div class="account-gallery-preview" />
-                        <h3 class="account-gallery-name">{{ item.name }}</h3>
-                        <p class="account-gallery-size">
-                            {{ t('account.gallery.sizeLabel') }} {{ item.size }} {{ t('account.gallery.sizeUnit') }}
-                        </p>
-                        <span class="account-gallery-tag">{{ t(`account.gallery.tags.${item.tag}`) }}</span>
-                    </article>
-                </div>
-            </div>
-        </AccountShell>
-    </section>
+				<div class="account-gallery-grid" data-testid="account-gallery-grid">
+					<article
+						v-for="item in items"
+						:key="item.name"
+						class="account-gallery-card"
+						:data-testid="`account-gallery-item-${item.name}`"
+					>
+						<div class="account-gallery-preview" />
+						<h3 class="account-gallery-name">{{ item.name }}</h3>
+						<p class="account-gallery-size">
+							{{ t('account.gallery.sizeLabel') }} {{ item.size }} {{ t('account.gallery.sizeUnit') }}
+						</p>
+						<span class="account-gallery-tag">{{ t(`account.gallery.tags.${item.tag}`) }}</span>
+					</article>
+				</div>
+			</div>
+		</AccountShell>
+	</section>
 </template>
 
 <style scoped lang="scss">

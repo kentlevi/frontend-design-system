@@ -6,59 +6,59 @@ const { t } = useI18n();
 const { withCountry } = useCountry();
 
 const types = [
-    {
-        key: 'dieCut',
-        image: '/illustrations/products/stickers/die-cut.svg',
-        to: '/stickers/die-cut',
-    },
-    {
-        key: 'dieCutRoll',
-        image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
-        to: '/roll-stickers/die-cut-roll',
-    },
-    {
-        key: 'sheet',
-        image: '/illustrations/products/stickers/sheet.svg',
-        to: '/stickers/sticker-sheet',
-    },
-    {
-        key: 'hologram',
-        image: '/illustrations/products/stickers/hologram.svg',
-        to: '/stickers/hologram',
-    },
-    {
-        key: 'vinyl',
-        image: '/illustrations/products/stickers/vinyl-lettering.svg',
-        to: '/stickers/vinyl-lettering',
-    },
+	{
+		key: 'dieCut',
+		image: '/illustrations/products/stickers/die-cut.svg',
+		to: '/stickers/die-cut',
+	},
+	{
+		key: 'dieCutRoll',
+		image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
+		to: '/roll-stickers/die-cut-roll',
+	},
+	{
+		key: 'sheet',
+		image: '/illustrations/products/stickers/sheet.svg',
+		to: '/stickers/sticker-sheet',
+	},
+	{
+		key: 'hologram',
+		image: '/illustrations/products/stickers/hologram.svg',
+		to: '/stickers/hologram',
+	},
+	{
+		key: 'vinyl',
+		image: '/illustrations/products/stickers/vinyl-lettering.svg',
+		to: '/stickers/vinyl-lettering',
+	},
 ];
 </script>
 
 <template>
-    <section class="home-types" data-testid="home-product-types-section">
-        <div class="home-types-container">
-            <NuxtLink
-                v-for="item in types"
-                :key="item.key"
-                :to="withCountry(item.to)"
-                class="home-types-item"
-                :data-testid="`home-product-type-${item.key}`"
-            >
-                <div class="home-types-icon">
-                    <img
-                        :src="item.image"
-                        alt=""
-                        aria-hidden="true"
-                        loading="lazy"
-                        class="home-types-image"
-                    >
-                </div>
-                <p class="home-types-label">
-                    {{ t(`home.productTypes.${item.key}`) }}
-                </p>
-            </NuxtLink>
-        </div>
-    </section>
+	<section class="home-types" data-testid="home-product-types-section">
+		<div class="home-types-container">
+			<NuxtLink
+				v-for="item in types"
+				:key="item.key"
+				:to="withCountry(item.to)"
+				class="home-types-item"
+				:data-testid="`home-product-type-${item.key}`"
+			>
+				<div class="home-types-icon">
+					<img
+						:src="item.image"
+						alt=""
+						aria-hidden="true"
+						loading="lazy"
+						class="home-types-image"
+					>
+				</div>
+				<p class="home-types-label">
+					{{ t(`home.productTypes.${item.key}`) }}
+				</p>
+			</NuxtLink>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">

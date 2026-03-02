@@ -2,7 +2,7 @@
 import { useCountry } from '@/composables/app/useCountry';
 
 const props = defineProps<{
-    activeTab:
+	activeTab:
         | 'profile'
         | 'address-book'
         | 'orders'
@@ -17,131 +17,131 @@ const { t } = useI18n();
 const { withCountry } = useCountry();
 const userStore = useUserStore();
 const mockUser = useCookie<{
-    firstName: string;
-    lastName: string;
-    email: string;
+	firstName: string;
+	lastName: string;
+	email: string;
 } | null>('mock_user');
 
 const profileFieldValues = computed(
-    () => userStore.profile?.user_field_values ?? []
+	() => userStore.profile?.user_field_values ?? []
 );
 function getFieldValueByKey(key: 'first_name' | 'last_name') {
-    const legacyId = key === 'first_name' ? 1 : 2;
-    const directMatch =
-        profileFieldValues.value.find(
-            (field) =>
-                field.country_field?.field_key === key ||
+	const legacyId = key === 'first_name' ? 1 : 2;
+	const directMatch =
+		profileFieldValues.value.find(
+			(field) =>
+				field.country_field?.field_key === key ||
                 (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
-        )?.value?.trim() || '';
-    if (directMatch) return directMatch;
+		)?.value?.trim() || '';
+	if (directMatch) return directMatch;
 
-    const fallbackRows = [...profileFieldValues.value]
-        .filter((field) => typeof field.value === 'string' && field.value.trim())
-        .sort(
-            (a, b) =>
-                (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+	const fallbackRows = [...profileFieldValues.value]
+		.filter((field) => typeof field.value === 'string' && field.value.trim())
+		.sort(
+			(a, b) =>
+				(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
                 (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-        )
-        .slice(0, 2);
-    if (fallbackRows.length < 2) return '';
-    return key === 'first_name'
-        ? (fallbackRows[0]?.value?.trim() || '')
-        : (fallbackRows[1]?.value?.trim() || '');
+		)
+		.slice(0, 2);
+	if (fallbackRows.length < 2) return '';
+	return key === 'first_name'
+		? (fallbackRows[0]?.value?.trim() || '')
+		: (fallbackRows[1]?.value?.trim() || '');
 }
 const storeFirstName = computed(
-    () => getFieldValueByKey('first_name')
+	() => getFieldValueByKey('first_name')
 );
 const storeLastName = computed(
-    () => getFieldValueByKey('last_name')
+	() => getFieldValueByKey('last_name')
 );
 const emailLocalPart = computed(() => {
-    const source = (userStore.email || mockUser.value?.email || '').trim();
-    if (!source.includes('@')) return '';
-    return source.split('@')[0] || '';
+	const source = (userStore.email || mockUser.value?.email || '').trim();
+	if (!source.includes('@')) return '';
+	return source.split('@')[0] || '';
 });
 
 const fullName = computed(() => {
-    const first = storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User';
-    const last = storeLastName.value || mockUser.value?.lastName || '';
-    return [first, last].filter(Boolean).join(' ').trim();
+	const first = storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User';
+	const last = storeLastName.value || mockUser.value?.lastName || '';
+	return [first, last].filter(Boolean).join(' ').trim();
 });
 
 const userEmail = computed(() => userStore.email || mockUser.value?.email || '');
 const initials = computed(() => {
-    const first = (
-        storeFirstName.value ||
+	const first = (
+		storeFirstName.value ||
         mockUser.value?.firstName ||
         emailLocalPart.value ||
         'U'
-    )
-        .charAt(0)
-        .toUpperCase();
-    const last = (storeLastName.value || mockUser.value?.lastName || '')
-        .charAt(0)
-        .toUpperCase();
-    return `${first || 'U'}${last || ''}`;
+	)
+		.charAt(0)
+		.toUpperCase();
+	const last = (storeLastName.value || mockUser.value?.lastName || '')
+		.charAt(0)
+		.toUpperCase();
+	return `${first || 'U'}${last || ''}`;
 });
 
 const tabs = [
-    { key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
-    { key: 'address-book', label: t('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'light-home' },
-    { key: 'orders', label: t('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'light-box-full' },
-    { key: 'gallery', label: t('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'light-image' },
-    { key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'light-star' },
-    { key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'light-ticket' },
-    { key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'light-comments' },
-    { key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'light-file-details' },
+	{ key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
+	{ key: 'address-book', label: t('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'light-home' },
+	{ key: 'orders', label: t('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'light-box-full' },
+	{ key: 'gallery', label: t('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'light-image' },
+	{ key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'light-star' },
+	{ key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'light-ticket' },
+	{ key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'light-comments' },
+	{ key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'light-file-details' },
 ] as const;
 </script>
 
 <template>
-    <section class="account-shell" data-testid="account-shell">
-        <div class="account-shell-top" data-testid="account-shell-top">
-            <div class="account-shell-user" data-testid="account-shell-user">
-                <div class="account-shell-avatar">{{ initials }}</div>
-                <div>
-                    <p class="account-shell-name">{{ fullName }}</p>
-                    <p class="account-shell-level">{{ t('account.shell.level') }}</p>
-                    <p class="account-shell-email">{{ userEmail }}</p>
-                </div>
-            </div>
+	<section class="account-shell" data-testid="account-shell">
+		<div class="account-shell-top" data-testid="account-shell-top">
+			<div class="account-shell-user" data-testid="account-shell-user">
+				<div class="account-shell-avatar">{{ initials }}</div>
+				<div>
+					<p class="account-shell-name">{{ fullName }}</p>
+					<p class="account-shell-level">{{ t('account.shell.level') }}</p>
+					<p class="account-shell-email">{{ userEmail }}</p>
+				</div>
+			</div>
 
-            <div class="account-shell-stats" data-testid="account-shell-stats">
-                <div class="account-shell-stat">
-                    <span class="account-shell-stat-label">{{ t('account.shell.stats.order') }}</span>
-                    <strong class="account-shell-stat-value">0</strong>
-                </div>
-                <div class="account-shell-stat">
-                    <span class="account-shell-stat-label">{{ t('account.shell.stats.points') }}</span>
-                    <strong class="account-shell-stat-value">0.00</strong>
-                </div>
-                <div class="account-shell-stat">
-                    <span class="account-shell-stat-label">{{ t('account.shell.stats.coupons') }}</span>
-                    <strong class="account-shell-stat-value">0</strong>
-                </div>
-                <div class="account-shell-stat">
-                    <span class="account-shell-stat-label">{{ t('account.shell.stats.totalSpent') }}</span>
-                    <strong class="account-shell-stat-value">{{ t('account.shell.defaultBalance') }}</strong>
-                </div>
-            </div>
-        </div>
+			<div class="account-shell-stats" data-testid="account-shell-stats">
+				<div class="account-shell-stat">
+					<span class="account-shell-stat-label">{{ t('account.shell.stats.order') }}</span>
+					<strong class="account-shell-stat-value">0</strong>
+				</div>
+				<div class="account-shell-stat">
+					<span class="account-shell-stat-label">{{ t('account.shell.stats.points') }}</span>
+					<strong class="account-shell-stat-value">0.00</strong>
+				</div>
+				<div class="account-shell-stat">
+					<span class="account-shell-stat-label">{{ t('account.shell.stats.coupons') }}</span>
+					<strong class="account-shell-stat-value">0</strong>
+				</div>
+				<div class="account-shell-stat">
+					<span class="account-shell-stat-label">{{ t('account.shell.stats.totalSpent') }}</span>
+					<strong class="account-shell-stat-value">{{ t('account.shell.defaultBalance') }}</strong>
+				</div>
+			</div>
+		</div>
 
-        <nav class="account-shell-tabs" data-testid="account-shell-tabs">
-            <NuxtLink
-                v-for="tab in tabs"
-                :key="tab.key"
-                :to="withCountry(tab.to)"
-                class="account-shell-tab"
-                :class="{ 'is-active': props.activeTab === tab.key }"
-                :data-testid="`account-shell-tab-${tab.key}`"
-            >
-                <UiIcon :name="tab.icon" :size="14" />
-                <span class="account-shell-tab-label">{{ tab.label }}</span>
-            </NuxtLink>
-        </nav>
+		<nav class="account-shell-tabs" data-testid="account-shell-tabs">
+			<NuxtLink
+				v-for="tab in tabs"
+				:key="tab.key"
+				:to="withCountry(tab.to)"
+				class="account-shell-tab"
+				:class="{ 'is-active': props.activeTab === tab.key }"
+				:data-testid="`account-shell-tab-${tab.key}`"
+			>
+				<UiIcon :name="tab.icon" :size="14" />
+				<span class="account-shell-tab-label">{{ tab.label }}</span>
+			</NuxtLink>
+		</nav>
 
-        <slot />
-    </section>
+		<slot />
+	</section>
 </template>
 
 <style scoped lang="scss">
@@ -180,7 +180,7 @@ const tabs = [
         font-size: 20px;
         line-height: 28px;
         font-weight: 700;
-        
+
         color: var(--text-primary);
     }
 
@@ -189,7 +189,7 @@ const tabs = [
         font-size: 14px;
         font-weight: 400;
         line-height: 24px;
-        
+
         color: var(--text-secondary);
     }
 
@@ -266,4 +266,3 @@ const tabs = [
     }
 }
 </style>
-

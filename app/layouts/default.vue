@@ -4,15 +4,15 @@ import AppFooterRoot from '~/components/layout/app-footer/AppFooter.vue';
 </script>
 
 <template>
-    <div class="default-layout">
-        <AppHeaderRoot />
+	<div class="default-layout">
+		<AppHeaderRoot />
 
-        <main class="default-layout-main">
-            <slot />
-        </main>
+		<main class="default-layout-main">
+			<slot />
+		</main>
 
-        <AppFooterRoot />
-    </div>
+		<AppFooterRoot />
+	</div>
 </template>
 
 <style scoped lang="scss">

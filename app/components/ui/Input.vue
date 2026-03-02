@@ -9,113 +9,113 @@ type Icon = 'mail' | 'search' | 'user' | null;
 type IconName = keyof typeof icons;
 
 defineOptions({
-    inheritAttrs: false,
+	inheritAttrs: false,
 });
 
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string;
-        type?: 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
-        placeholder?: string;
-        size?: Size;
-        state?: State;
-        iconLeft?: Icon;
-        iconRight?: Icon;
-        readonly?: boolean;
-        disabled?: boolean;
-    }>(),
-    {
-        modelValue: '',
-        type: 'text',
-        placeholder: '',
-        size: 'md',
-        state: 'default',
-        iconLeft: null,
-        iconRight: null,
-        readonly: false,
-        disabled: false,
-    }
+	defineProps<{
+		modelValue?: string;
+		type?: 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
+		placeholder?: string;
+		size?: Size;
+		state?: State;
+		iconLeft?: Icon;
+		iconRight?: Icon;
+		readonly?: boolean;
+		disabled?: boolean;
+	}>(),
+	{
+		modelValue: '',
+		type: 'text',
+		placeholder: '',
+		size: 'md',
+		state: 'default',
+		iconLeft: null,
+		iconRight: null,
+		readonly: false,
+		disabled: false,
+	}
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: string): void;
+	(e: 'update:modelValue', value: string): void;
 }>();
 const attrs = useAttrs();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
 const iconMap: Record<Exclude<Icon, null>, IconName> = {
-    mail: 'strong-envelope',
-    search: 'strong-search',
-    user: 'strong-user',
+	mail: 'strong-envelope',
+	search: 'strong-search',
+	user: 'strong-user',
 };
 
 const leftIcon = computed<IconName | null>(() =>
-    props.iconLeft ? iconMap[props.iconLeft] : null
+	props.iconLeft ? iconMap[props.iconLeft] : null
 );
 
 const rightIcon = computed<IconName | null>(() =>
-    props.iconRight ? iconMap[props.iconRight] : null
+	props.iconRight ? iconMap[props.iconRight] : null
 );
 const testId = computed(() => String(attrs['data-testid'] || '').trim());
 const rootAttrs = computed(() => {
-    const { class: className, style, 'data-testid': _testId } = attrs;
-    return {
-        class: className,
-        style,
-        ...(testId.value ? { 'data-testid': testId.value } : {}),
-    };
+	const { class: className, style, 'data-testid': _testId } = attrs;
+	return {
+		class: className,
+		style,
+		...(testId.value ? { 'data-testid': testId.value } : {}),
+	};
 });
 const inputAttrs = computed(() => {
-    const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
-    return {
-        ...rest,
-        ...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
-    };
+	const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
+	return {
+		...rest,
+		...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
+	};
 });
 
 function onInput(event: Event) {
-    emit('update:modelValue', (event.target as HTMLInputElement).value);
+	emit('update:modelValue', (event.target as HTMLInputElement).value);
 }
 
 function focusInput() {
-    if (props.disabled || props.readonly) return;
-    inputRef.value?.focus();
+	if (props.disabled || props.readonly) return;
+	inputRef.value?.focus();
 }
 </script>
 
 <template>
-    <div
-        v-bind="rootAttrs"
-        class="ui-input"
-        :data-size="size"
-        :data-state="state !== 'default' ? state : null"
-        :data-readonly="readonly || null"
-        :data-disabled="disabled || null"
-        @click="focusInput"
-    >
-        <span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
-            <slot name="icon-left">
-                <UiIcon :name="leftIcon" :size="24" decorative />
-            </slot>
-        </span>
+	<div
+		v-bind="rootAttrs"
+		class="ui-input"
+		:data-size="size"
+		:data-state="state !== 'default' ? state : null"
+		:data-readonly="readonly || null"
+		:data-disabled="disabled || null"
+		@click="focusInput"
+	>
+		<span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
+			<slot name="icon-left">
+				<UiIcon :name="leftIcon" :size="24" decorative />
+			</slot>
+		</span>
 
-        <input
-            v-bind="inputAttrs"
-            ref="inputRef"
-            class="ui-input-field"
-            :type="type"
-            :value="modelValue"
-            :placeholder="placeholder"
-            :readonly="readonly"
-            :disabled="disabled"
-            @input="onInput"
-        >
+		<input
+			v-bind="inputAttrs"
+			ref="inputRef"
+			class="ui-input-field"
+			:type="type"
+			:value="modelValue"
+			:placeholder="placeholder"
+			:readonly="readonly"
+			:disabled="disabled"
+			@input="onInput"
+		>
 
-        <span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
-            <slot name="icon-right">
-                <UiIcon :name="rightIcon" :size="16" decorative />
-            </slot>
-        </span>
-    </div>
+		<span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
+			<slot name="icon-right">
+				<UiIcon :name="rightIcon" :size="16" decorative />
+			</slot>
+		</span>
+	</div>
 </template>

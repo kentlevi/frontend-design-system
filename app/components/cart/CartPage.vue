@@ -4,167 +4,167 @@ import { useCartPage } from '~/composables/cart/useCartPage';
 const { t } = useI18n();
 
 const {
-    rows,
-    selectedIds,
-    allSelected,
-    selectedRows,
-    selectedTotal,
-    qtySelectOptions,
-    paymentOptions,
-    continueShoppingPath,
-    toggleRowSelection,
-    updateQty,
-    removeByIds,
-    goToCheckout,
-    formatPrice,
-    sizeDimOnly,
+	rows,
+	selectedIds,
+	allSelected,
+	selectedRows,
+	selectedTotal,
+	qtySelectOptions,
+	paymentOptions,
+	continueShoppingPath,
+	toggleRowSelection,
+	updateQty,
+	removeByIds,
+	goToCheckout,
+	formatPrice,
+	sizeDimOnly,
 } = useCartPage();
 </script>
 
 <template>
-    <main class="cart-page" data-testid="cart-page">
-        <section class="cart-page-shell">
-            <header class="cart-page-head">
-                <h1 class="cart-page-title">{{ t('cart.cartPage.title') }}</h1>
-                <NuxtLink :to="continueShoppingPath" class="cart-page-continue">
-                    <UiIcon name="strong-long-arrow-right" :size="24" color="var(--text-primary)" />
-                    {{ t('cart.cartPage.continueShopping') }}
-                </NuxtLink>
-            </header>
+	<main class="cart-page" data-testid="cart-page">
+		<section class="cart-page-shell">
+			<header class="cart-page-head">
+				<h1 class="cart-page-title">{{ t('cart.cartPage.title') }}</h1>
+				<NuxtLink :to="continueShoppingPath" class="cart-page-continue">
+					<UiIcon name="strong-long-arrow-right" :size="24" color="var(--text-primary)" />
+					{{ t('cart.cartPage.continueShopping') }}
+				</NuxtLink>
+			</header>
 
-            <section class="cart-page-layout">
-                <section class="cart-list" data-testid="cart-page-list">
-                    <div class="cart-list-controls">
-                        <UiCheckbox
-                            class="cart-check-row"
-                            :model-value="allSelected"
-                            @update:model-value="allSelected = $event"
-                        >
-                            {{ t('cart.cartPage.selectAll', { count: rows.length }) }}
-                        </UiCheckbox>
-                        <UiButton
-                            class="cart-remove-btn"
-                            variant="outline"
-                            tone="default"
-                            size="md"
-                            :disabled="selectedIds.length === 0"
-                            @click="removeByIds(selectedIds)"
-                        >
-                            <UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
-                            {{ t('cart.cartPage.remove') }}
-                        </UiButton>
-                    </div>
+			<section class="cart-page-layout">
+				<section class="cart-list" data-testid="cart-page-list">
+					<div class="cart-list-controls">
+						<UiCheckbox
+							class="cart-check-row"
+							:model-value="allSelected"
+							@update:model-value="allSelected = $event"
+						>
+							{{ t('cart.cartPage.selectAll', { count: rows.length }) }}
+						</UiCheckbox>
+						<UiButton
+							class="cart-remove-btn"
+							variant="outline"
+							tone="default"
+							size="md"
+							:disabled="selectedIds.length === 0"
+							@click="removeByIds(selectedIds)"
+						>
+							<UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
+							{{ t('cart.cartPage.remove') }}
+						</UiButton>
+					</div>
 
-                    <div class="cart-list-head">
-                        <span class="cart-list-head-label">{{ t('cart.cartPage.headers.item') }}</span>
-                        <span class="cart-list-head-label">{{ t('cart.cartPage.headers.quantity') }}</span>
-                        <span class="cart-list-head-label">{{ t('cart.cartPage.headers.price') }}</span>
-                        <span class="cart-list-head-spacer" />
-                    </div>
+					<div class="cart-list-head">
+						<span class="cart-list-head-label">{{ t('cart.cartPage.headers.item') }}</span>
+						<span class="cart-list-head-label">{{ t('cart.cartPage.headers.quantity') }}</span>
+						<span class="cart-list-head-label">{{ t('cart.cartPage.headers.price') }}</span>
+						<span class="cart-list-head-spacer" />
+					</div>
 
-                    <article
-                        v-for="row in rows"
-                        :key="row.id"
-                        class="cart-row"
-                        data-testid="cart-page-row"
-                    >
-                        <UiCheckbox
-                            class="cart-check-row cart-check-row--item"
-                            :model-value="selectedIds.includes(row.id)"
-                            @update:model-value="toggleRowSelection(row.id, $event)"
-                        />
+					<article
+						v-for="row in rows"
+						:key="row.id"
+						class="cart-row"
+						data-testid="cart-page-row"
+					>
+						<UiCheckbox
+							class="cart-check-row cart-check-row--item"
+							:model-value="selectedIds.includes(row.id)"
+							@update:model-value="toggleRowSelection(row.id, $event)"
+						/>
 
-                        <div class="cart-item">
-                            <div class="cart-item-thumb">
-                                <img
-                                    :src="row.artworkPreviewUrl || row.product.image"
-                                    :alt="row.product.name"
-                                >
-                            </div>
-                            <div class="cart-item-copy">
-                                <h3 class="cart-item-title">{{ row.product.name }}</h3>
-                                <p class="cart-item-size">{{ t('cart.cartPage.sizeLabel', { size: sizeDimOnly(row.sizeLabel) }) }}</p>
-                                <UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
-                                    {{ t('cart.cartPage.replaceArtwork') }}
-                                </UiButton>
-                            </div>
-                        </div>
+						<div class="cart-item">
+							<div class="cart-item-thumb">
+								<img
+									:src="row.artworkPreviewUrl || row.product.image"
+									:alt="row.product.name"
+								>
+							</div>
+							<div class="cart-item-copy">
+								<h3 class="cart-item-title">{{ row.product.name }}</h3>
+								<p class="cart-item-size">{{ t('cart.cartPage.sizeLabel', { size: sizeDimOnly(row.sizeLabel) }) }}</p>
+								<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
+									{{ t('cart.cartPage.replaceArtwork') }}
+								</UiButton>
+							</div>
+						</div>
 
-                        <div class="cart-qty-wrap">
-                            <UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
-                                {{ t('cart.cartPage.editSize') }}
-                            </UiButton>
-                            <UiSelect
-                                class="cart-qty-select-control"
-                                :model-value="row.qty"
-                                :options="qtySelectOptions"
-                                icon-family="regular"
-                                :icon-size="24"
-                                @update:model-value="updateQty(row.id, Number($event))"
-                            />
-                        </div>
+						<div class="cart-qty-wrap">
+							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24">
+								{{ t('cart.cartPage.editSize') }}
+							</UiButton>
+							<UiSelect
+								class="cart-qty-select-control"
+								:model-value="row.qty"
+								:options="qtySelectOptions"
+								icon-family="regular"
+								:icon-size="24"
+								@update:model-value="updateQty(row.id, Number($event))"
+							/>
+						</div>
 
-                        <strong class="cart-row-price">{{ formatPrice(row.total) }}</strong>
+						<strong class="cart-row-price">{{ formatPrice(row.total) }}</strong>
 
-                        <UiButton
-                            class="cart-delete-btn"
-                            variant="ghost"
-                            tone="default"
-                            size="sm"
-                            icon-only
-                            icon="regular-trash"
-                            icon-size="24"
-                            :sr-label="t('cart.cartPage.removeItemSr')"
-                            @click="removeByIds([row.id])"
-                        />
-                    </article>
-                </section>
+						<UiButton
+							class="cart-delete-btn"
+							variant="ghost"
+							tone="default"
+							size="sm"
+							icon-only
+							icon="regular-trash"
+							icon-size="24"
+							:sr-label="t('cart.cartPage.removeItemSr')"
+							@click="removeByIds([row.id])"
+						/>
+					</article>
+				</section>
 
-                <aside class="cart-summary-column" data-testid="cart-page-summary">
-                    <section class="cart-summary-card">
-                        <header class="cart-summary-header">
-                            <h2 class="cart-summary-title">{{ t('cart.cartPage.orderSummary') }}</h2>
-                        </header>
-                        <div class="cart-summary-body">
-                            <div class="cart-summary-line">
-                                <span class="cart-summary-total-label">{{ t('cart.cartPage.total') }}</span>
-                                <strong class="cart-summary-total-value">{{ formatPrice(selectedTotal) }}</strong>
-                            </div>
-                            <div class="cart-summary-actions">
-                                <UiButton
-                                    type="button"
-                                    variant="filled"
-                                    tone="neutral"
-                                    size="md"
-                                    class="cart-checkout-btn"
-                                    :disabled="selectedRows.length === 0"
-                                    @click="goToCheckout"
-                                >
-                                    {{ t('cart.cartPage.proceedCheckout', { count: selectedRows.length }) }}
-                                </UiButton>
-                                <p class="cart-summary-note">
-                                    {{ t('cart.cartPage.note') }}
-                                </p>
-                            </div>
-                        </div>
-                    </section>
+				<aside class="cart-summary-column" data-testid="cart-page-summary">
+					<section class="cart-summary-card">
+						<header class="cart-summary-header">
+							<h2 class="cart-summary-title">{{ t('cart.cartPage.orderSummary') }}</h2>
+						</header>
+						<div class="cart-summary-body">
+							<div class="cart-summary-line">
+								<span class="cart-summary-total-label">{{ t('cart.cartPage.total') }}</span>
+								<strong class="cart-summary-total-value">{{ formatPrice(selectedTotal) }}</strong>
+							</div>
+							<div class="cart-summary-actions">
+								<UiButton
+									type="button"
+									variant="filled"
+									tone="neutral"
+									size="md"
+									class="cart-checkout-btn"
+									:disabled="selectedRows.length === 0"
+									@click="goToCheckout"
+								>
+									{{ t('cart.cartPage.proceedCheckout', { count: selectedRows.length }) }}
+								</UiButton>
+								<p class="cart-summary-note">
+									{{ t('cart.cartPage.note') }}
+								</p>
+							</div>
+						</div>
+					</section>
 
-                    <section class="cart-payment-section">
-                        <p class="cart-payment-label">{{ t('cart.cartPage.availablePaymentOptions') }}</p>
-                        <div class="cart-payment-grid">
-                            <span
-                                v-for="option in paymentOptions"
-                                :key="option"
-                                class="cart-payment-chip"
-                            >
-                                {{ option }}
-                            </span>
-                        </div>
-                    </section>
-                </aside>
-            </section>
-        </section>
-    </main>
+					<section class="cart-payment-section">
+						<p class="cart-payment-label">{{ t('cart.cartPage.availablePaymentOptions') }}</p>
+						<div class="cart-payment-grid">
+							<span
+								v-for="option in paymentOptions"
+								:key="option"
+								class="cart-payment-chip"
+							>
+								{{ option }}
+							</span>
+						</div>
+					</section>
+				</aside>
+			</section>
+		</section>
+	</main>
 </template>
 
 <style scoped lang="scss">
@@ -172,7 +172,7 @@ const {
     min-height: calc(100dvh - 120px);
     background: var(--bg-page);
     padding: 48px 24px 72px;
-    
+
     .cart-page-shell {
         max-width: 1200px;
         margin: 0 auto;
@@ -376,7 +376,7 @@ const {
 
                         .cart-qty-select-control {
                             width: 129px;
-                            
+
                             :deep(.ui-select) {
                                 min-width: 129px;
                                 width: 129px;
@@ -574,10 +574,3 @@ const {
     }
 }
 </style>
-
-
-
-
-
-
-

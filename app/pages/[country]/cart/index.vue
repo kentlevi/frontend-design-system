@@ -2,10 +2,10 @@
 import CartPage from '~/components/cart/CartPage.vue';
 
 definePageMeta({
-    layout: 'home',
+	layout: 'home',
 });
 </script>
 
 <template>
-    <CartPage />
+	<CartPage />
 </template>

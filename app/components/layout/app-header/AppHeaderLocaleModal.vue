@@ -3,68 +3,68 @@ import type { SupportedCountry } from '~/constants/countries';
 import type { FlagCode } from '~/data/ui/flags';
 
 const props = defineProps<{
-    open: boolean;
-    localeValue: string;
-    localeOptions: Array<{ code: SupportedCountry; flagCode: FlagCode; label: string }>;
+	open: boolean;
+	localeValue: string;
+	localeOptions: Array<{ code: SupportedCountry; flagCode: FlagCode; label: string }>;
 }>();
 
 const emit = defineEmits<{
-    close: [];
-    select: [code: SupportedCountry];
+	close: [];
+	select: [code: SupportedCountry];
 }>();
 
 const { t } = useI18n();
 </script>
 
 <template>
-    <Transition name="locale-modal">
-        <div
-            v-if="props.open"
-            class="home-locale-overlay"
-            data-testid="app-header-locale-overlay"
-            @click.self="emit('close')"
-        >
-            <div
-                class="home-locale-modal"
-                role="dialog"
-                aria-modal="true"
-                :aria-label="t('layout.header.locale.title')"
-                data-testid="app-header-locale-dialog"
-            >
-                <UiButton
-                    variant="ghost"
-                    tone="default"
-                    size="sm"
-                    :icon-only="true"
-                    icon="regular-times"
-                    icon-size="md"
-                    class="home-locale-close"
-                    :aria-label="t('layout.header.locale.close')"
-                    data-testid="app-header-locale-close-button"
-                    @click="emit('close')"
-                />
+	<Transition name="locale-modal">
+		<div
+			v-if="props.open"
+			class="home-locale-overlay"
+			data-testid="app-header-locale-overlay"
+			@click.self="emit('close')"
+		>
+			<div
+				class="home-locale-modal"
+				role="dialog"
+				aria-modal="true"
+				:aria-label="t('layout.header.locale.title')"
+				data-testid="app-header-locale-dialog"
+			>
+				<UiButton
+					variant="ghost"
+					tone="default"
+					size="sm"
+					:icon-only="true"
+					icon="regular-times"
+					icon-size="md"
+					class="home-locale-close"
+					:aria-label="t('layout.header.locale.close')"
+					data-testid="app-header-locale-close-button"
+					@click="emit('close')"
+				/>
 
-                <h3 class="home-locale-title" data-testid="app-header-locale-title">
-                    {{ t('layout.header.locale.title') }}
-                </h3>
+				<h3 class="home-locale-title" data-testid="app-header-locale-title">
+					{{ t('layout.header.locale.title') }}
+				</h3>
 
-                <div class="home-locale-list" data-testid="app-header-locale-list">
-                    <button
-                        v-for="option in props.localeOptions"
-                        :key="option.code"
-                        type="button"
-                        class="home-locale-item"
-                        :class="{ 'is-active': props.localeValue === option.code }"
-                        :data-testid="`app-header-locale-option-${option.code}-button`"
-                        @click="emit('select', option.code)"
-                    >
-                        <UiFlag :code="option.flagCode" :size="20" />
-                        <span class="home-locale-item-label">{{ option.label }}</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </Transition>
+				<div class="home-locale-list" data-testid="app-header-locale-list">
+					<button
+						v-for="option in props.localeOptions"
+						:key="option.code"
+						type="button"
+						class="home-locale-item"
+						:class="{ 'is-active': props.localeValue === option.code }"
+						:data-testid="`app-header-locale-option-${option.code}-button`"
+						@click="emit('select', option.code)"
+					>
+						<UiFlag :code="option.flagCode" :size="20" />
+						<span class="home-locale-item-label">{{ option.label }}</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</Transition>
 </template>
 
 <style scoped lang="scss">

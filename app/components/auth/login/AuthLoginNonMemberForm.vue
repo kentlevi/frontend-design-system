@@ -2,70 +2,70 @@
 const { t } = useI18n();
 
 defineProps<{
-    email: string;
-    orderNumber: string;
-    emailError?: string;
-    orderError?: string;
+	email: string;
+	orderNumber: string;
+	emailError?: string;
+	orderError?: string;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:email', value: string): void;
-    (e: 'update:order-number', value: string): void;
+	(e: 'update:email', value: string): void;
+	(e: 'update:order-number', value: string): void;
 }>();
 </script>
 
 <template>
-    <div class="auth-login-form" data-testid="auth-login-non-member-form">
-        <div class="auth-login-inputs">
-            <UiFormField
-                class="auth-login-field"
-                :label="t('auth.login.email')"
-                :error="emailError"
-                error-test-id="auth-login-non-member-email-error"
-                :required="true"
-            >
-                <template #default="{ inputId, describedBy }">
-                    <UiInput
-                        :id="inputId"
-                        class="auth-login-input"
-                        type="email"
-                        size="md"
-                        :state="emailError ? 'error' : 'default'"
-                        :aria-invalid="emailError ? 'true' : 'false'"
-                        :aria-describedby="describedBy || undefined"
-                        :placeholder="t('auth.login.enterEmail')"
-                        :model-value="email"
-                        data-testid="auth-login-non-member-email-input"
-                        @update:model-value="emit('update:email', $event)"
-                    />
-                </template>
-            </UiFormField>
+	<div class="auth-login-form" data-testid="auth-login-non-member-form">
+		<div class="auth-login-inputs">
+			<UiFormField
+				class="auth-login-field"
+				:label="t('auth.login.email')"
+				:error="emailError"
+				error-test-id="auth-login-non-member-email-error"
+				:required="true"
+			>
+				<template #default="{ inputId, describedBy }">
+					<UiInput
+						:id="inputId"
+						class="auth-login-input"
+						type="email"
+						size="md"
+						:state="emailError ? 'error' : 'default'"
+						:aria-invalid="emailError ? 'true' : 'false'"
+						:aria-describedby="describedBy || undefined"
+						:placeholder="t('auth.login.enterEmail')"
+						:model-value="email"
+						data-testid="auth-login-non-member-email-input"
+						@update:model-value="emit('update:email', $event)"
+					/>
+				</template>
+			</UiFormField>
 
-            <UiFormField
-                class="auth-login-field"
-                :label="t('auth.login.orderNumber')"
-                :error="orderError"
-                error-test-id="auth-login-non-member-order-number-error"
-                :required="true"
-            >
-                <template #default="{ inputId, describedBy }">
-                    <UiInput
-                        :id="inputId"
-                        class="auth-login-input"
-                        type="text"
-                        size="md"
-                        :state="orderError ? 'error' : 'default'"
-                        :aria-invalid="orderError ? 'true' : 'false'"
-                        :aria-describedby="describedBy || undefined"
-                        :placeholder="t('auth.login.enterOrderNumber')"
-                        :model-value="orderNumber"
-                        data-testid="auth-login-non-member-order-number-input"
-                        @update:model-value="emit('update:order-number', $event)"
-                    />
-                </template>
-            </UiFormField>
-        </div>
-    </div>
+			<UiFormField
+				class="auth-login-field"
+				:label="t('auth.login.orderNumber')"
+				:error="orderError"
+				error-test-id="auth-login-non-member-order-number-error"
+				:required="true"
+			>
+				<template #default="{ inputId, describedBy }">
+					<UiInput
+						:id="inputId"
+						class="auth-login-input"
+						type="text"
+						size="md"
+						:state="orderError ? 'error' : 'default'"
+						:aria-invalid="orderError ? 'true' : 'false'"
+						:aria-describedby="describedBy || undefined"
+						:placeholder="t('auth.login.enterOrderNumber')"
+						:model-value="orderNumber"
+						data-testid="auth-login-non-member-order-number-input"
+						@update:model-value="emit('update:order-number', $event)"
+					/>
+				</template>
+			</UiFormField>
+		</div>
+	</div>
 </template>
 
 <style lang="scss">

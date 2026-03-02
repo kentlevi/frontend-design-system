@@ -1,9 +1,9 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'checkout',
+	layout: 'checkout',
 });
 </script>
 
 <template>
-    <CheckoutGuestPage />
+	<CheckoutGuestPage />
 </template>

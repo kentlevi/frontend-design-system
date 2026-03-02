@@ -6,15 +6,15 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
-    <div class="checkout-layout">
-        <AppHeaderCheckoutBar />
-        <main class="checkout-layout-main">
-            <slot />
-        </main>
-        <footer class="checkout-layout-footer">
-            <AppFooterCompact :year="year" />
-        </footer>
-    </div>
+	<div class="checkout-layout">
+		<AppHeaderCheckoutBar />
+		<main class="checkout-layout-main">
+			<slot />
+		</main>
+		<footer class="checkout-layout-footer">
+			<AppFooterCompact :year="year" />
+		</footer>
+	</div>
 </template>
 
 <style scoped lang="scss">

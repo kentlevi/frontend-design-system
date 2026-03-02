@@ -6,31 +6,31 @@ const { withCountry } = useCountry();
 </script>
 
 <template>
-    <header class="checkout-header" data-testid="checkout-header">
-        <div class="checkout-header-inner">
-            <div class="checkout-header-left">
-                <NuxtLink :to="withCountry('/')" class="checkout-header-logo" aria-label="Musticker">
-                    <UiLogo name="musticker" variant="full" color="colored" :width="112" :size="54" />
-                </NuxtLink>
-                <span class="checkout-header-divider" aria-hidden="true" />
-                <p class="checkout-header-title">
-                    <UiIcon name="strong-shield" :size="32" color="var(--text-primary)" />
-                    {{ headerCheckoutConfig.title }}
-                </p>
-            </div>
+	<header class="checkout-header" data-testid="checkout-header">
+		<div class="checkout-header-inner">
+			<div class="checkout-header-left">
+				<NuxtLink :to="withCountry('/')" class="checkout-header-logo" aria-label="Musticker">
+					<UiLogo name="musticker" variant="full" color="colored" :width="112" :size="54" />
+				</NuxtLink>
+				<span class="checkout-header-divider" aria-hidden="true" />
+				<p class="checkout-header-title">
+					<UiIcon name="strong-shield" :size="32" color="var(--text-primary)" />
+					{{ headerCheckoutConfig.title }}
+				</p>
+			</div>
 
-            <div class="checkout-header-contact">
-                <a :href="`tel:${headerCheckoutConfig.phone.replace(/\\s+/g, '')}`" class="checkout-header-link">
-                    <UiIcon name="strong-phone" :size="24" color="var(--text-primary)" />
-                    {{ headerCheckoutConfig.phone }}
-                </a>
-                <a :href="`mailto:${headerCheckoutConfig.email}`" class="checkout-header-link">
-                    <UiIcon name="strong-envelope" :size="24" color="var(--text-primary)" />
-                    {{ headerCheckoutConfig.email }}
-                </a>
-            </div>
-        </div>
-    </header>
+			<div class="checkout-header-contact">
+				<a :href="`tel:${headerCheckoutConfig.phone.replace(/\\s+/g, '')}`" class="checkout-header-link">
+					<UiIcon name="strong-phone" :size="24" color="var(--text-primary)" />
+					{{ headerCheckoutConfig.phone }}
+				</a>
+				<a :href="`mailto:${headerCheckoutConfig.email}`" class="checkout-header-link">
+					<UiIcon name="strong-envelope" :size="24" color="var(--text-primary)" />
+					{{ headerCheckoutConfig.email }}
+				</a>
+			</div>
+		</div>
+	</header>
 </template>
 
 <style scoped lang="scss">

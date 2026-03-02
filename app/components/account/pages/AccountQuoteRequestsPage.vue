@@ -6,71 +6,71 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 </script>
 
 <template>
-    <section class="account-page" data-testid="account-quote-requests-page">
-        <AccountShell active-tab="quote-requests">
-            <div class="account-content" data-testid="account-quote-requests-content">
-                <header class="account-quote-header" data-testid="account-quote-requests-header">
-                    <h1 class="account-quote-title" data-testid="account-quote-requests-title">{{ t('account.quoteRequests.title') }}</h1>
-                    <div class="account-quote-tools" data-testid="account-quote-requests-tools">
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-select-date-button">
-                            {{ t('account.quoteRequests.selectDate') }}
-                        </UiButton>
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-filters-button">
-                            {{ t('account.quoteRequests.filters') }}
-                        </UiButton>
-                    </div>
-                </header>
+	<section class="account-page" data-testid="account-quote-requests-page">
+		<AccountShell active-tab="quote-requests">
+			<div class="account-content" data-testid="account-quote-requests-content">
+				<header class="account-quote-header" data-testid="account-quote-requests-header">
+					<h1 class="account-quote-title" data-testid="account-quote-requests-title">{{ t('account.quoteRequests.title') }}</h1>
+					<div class="account-quote-tools" data-testid="account-quote-requests-tools">
+						<UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-select-date-button">
+							{{ t('account.quoteRequests.selectDate') }}
+						</UiButton>
+						<UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-filters-button">
+							{{ t('account.quoteRequests.filters') }}
+						</UiButton>
+					</div>
+				</header>
 
-                <div class="account-quote-layout" data-testid="account-quote-requests-layout">
-                    <aside class="account-quote-list" data-testid="account-quote-requests-list">
-                        <article
-                            v-for="(item, index) in requests"
-                            :key="item.id"
-                            class="account-quote-item"
-                            :class="{ active: index === 0 }"
-                            :data-testid="`account-quote-requests-item-${index}`"
-                        >
-                            <h3 class="account-quote-item-title">
-                                {{ t('account.quoteRequests.orderLabel') }} #{{ item.id }}
-                            </h3>
-                            <p class="account-quote-item-meta">
-                                {{ t('account.quoteRequests.quoteDate') }}: {{ item.date }}
-                            </p>
-                        </article>
-                    </aside>
-                    <section class="account-quote-chat" data-testid="account-quote-requests-chat">
-                        <header class="account-quote-chat-header" data-testid="account-quote-requests-chat-header">
-                            <h2 class="account-quote-chat-title">
-                                {{ t('account.quoteRequests.orderLabel') }} #{{ activeRequest?.id }}
-                            </h2>
-                            <span class="account-quote-chat-status">
-                                {{ t(`account.quoteRequests.status.${activeRequest?.statusKey || 'inReview'}`) }}
-                            </span>
-                        </header>
-                        <div class="account-quote-chat-messages" data-testid="account-quote-requests-messages">
-                            <div class="account-quote-chat-bubble" data-testid="account-quote-requests-bubble">
-                                {{ t('account.quoteRequests.sampleMessage') }}
-                                <div class="account-quote-chat-request">
-                                    <b>{{ t('account.quoteRequests.requestLabel') }}:</b>
-                                    {{ t('account.quoteRequests.sampleRequestDetails') }}
-                                </div>
-                            </div>
-                        </div>
-                        <footer class="account-quote-chat-footer" data-testid="account-quote-requests-footer">
-                            <input
-                                type="text"
-                                :placeholder="t('account.quoteRequests.messagePlaceholder')"
-                                data-testid="account-quote-requests-input"
-                            >
-                            <button type="button" data-testid="account-quote-requests-send-button">
-                                {{ t('account.quoteRequests.send') }}
-                            </button>
-                        </footer>
-                    </section>
-                </div>
-            </div>
-        </AccountShell>
-    </section>
+				<div class="account-quote-layout" data-testid="account-quote-requests-layout">
+					<aside class="account-quote-list" data-testid="account-quote-requests-list">
+						<article
+							v-for="(item, index) in requests"
+							:key="item.id"
+							class="account-quote-item"
+							:class="{ active: index === 0 }"
+							:data-testid="`account-quote-requests-item-${index}`"
+						>
+							<h3 class="account-quote-item-title">
+								{{ t('account.quoteRequests.orderLabel') }} #{{ item.id }}
+							</h3>
+							<p class="account-quote-item-meta">
+								{{ t('account.quoteRequests.quoteDate') }}: {{ item.date }}
+							</p>
+						</article>
+					</aside>
+					<section class="account-quote-chat" data-testid="account-quote-requests-chat">
+						<header class="account-quote-chat-header" data-testid="account-quote-requests-chat-header">
+							<h2 class="account-quote-chat-title">
+								{{ t('account.quoteRequests.orderLabel') }} #{{ activeRequest?.id }}
+							</h2>
+							<span class="account-quote-chat-status">
+								{{ t(`account.quoteRequests.status.${activeRequest?.statusKey || 'inReview'}`) }}
+							</span>
+						</header>
+						<div class="account-quote-chat-messages" data-testid="account-quote-requests-messages">
+							<div class="account-quote-chat-bubble" data-testid="account-quote-requests-bubble">
+								{{ t('account.quoteRequests.sampleMessage') }}
+								<div class="account-quote-chat-request">
+									<b>{{ t('account.quoteRequests.requestLabel') }}:</b>
+									{{ t('account.quoteRequests.sampleRequestDetails') }}
+								</div>
+							</div>
+						</div>
+						<footer class="account-quote-chat-footer" data-testid="account-quote-requests-footer">
+							<input
+								type="text"
+								:placeholder="t('account.quoteRequests.messagePlaceholder')"
+								data-testid="account-quote-requests-input"
+							>
+							<button type="button" data-testid="account-quote-requests-send-button">
+								{{ t('account.quoteRequests.send') }}
+							</button>
+						</footer>
+					</section>
+				</div>
+			</div>
+		</AccountShell>
+	</section>
 </template>
 
 <style scoped lang="scss">

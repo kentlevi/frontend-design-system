@@ -15,7 +15,13 @@ export default withNuxt({
 		'@stylistic/indent': ['error', 'tab'],
 		'vue/html-indent': ['error', 'tab'],
 		'@stylistic/no-tabs': 'off',
-		'no-unused-vars': 'error',
+		'no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': ['error', {
+			argsIgnorePattern: '^_',
+			varsIgnorePattern: '^_',
+			caughtErrorsIgnorePattern: '^_'
+		}],
+		'@typescript-eslint/unified-signatures': 'off',
 		'eol-last': ['error', 'never'],
 		'no-trailing-spaces': 'error'
 	}

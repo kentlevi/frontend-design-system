@@ -3,17 +3,17 @@ import { ref, watch } from 'vue';
 import { useCountry } from '@/composables/app/useCountry';
 
 const props = withDefaults(
-    defineProps<{
-        modelValue: boolean;
-        email?: string;
-    }>(),
-    {
-        email: '',
-    }
+	defineProps<{
+		modelValue: boolean;
+		email?: string;
+	}>(),
+	{
+		email: '',
+	}
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean): void;
+	(e: 'update:modelValue', value: boolean): void;
 }>();
 
 const { t } = useI18n();
@@ -26,166 +26,167 @@ const sent = ref(false);
 const loading = ref(false);
 
 watch(
-    () => props.modelValue,
-    (open) => {
-        if (!open) return;
-        resetEmail.value = props.email ?? '';
-        error.value = '';
-        sent.value = false;
-    },
-    { immediate: true }
+	() => props.modelValue,
+	(open) => {
+		if (!open) return;
+		resetEmail.value = props.email ?? '';
+		error.value = '';
+		sent.value = false;
+	},
+	{ immediate: true }
 );
 
 const isValidEmail = (value: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+	/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 function closeModal() {
-    emit('update:modelValue', false);
+	emit('update:modelValue', false);
 }
 
 async function submitReset() {
-    const value = resetEmail.value.trim();
-    error.value = '';
-    sent.value = false;
+	const value = resetEmail.value.trim();
+	error.value = '';
+	sent.value = false;
 
-    if (!value) {
-        error.value = t('auth.login.validation.fieldBlank');
-        return;
-    }
+	if (!value) {
+		error.value = t('auth.login.validation.fieldBlank');
+		return;
+	}
 
-    if (!isValidEmail(value)) {
-        error.value = t('auth.login.validation.emailInvalid');
-        return;
-    }
+	if (!isValidEmail(value)) {
+		error.value = t('auth.login.validation.emailInvalid');
+		return;
+	}
 
-    loading.value = true;
+	loading.value = true;
 
-    try {
-        const response = await api<{ success: boolean; message: string }>(
-            `/${apiCountry.value}/auth/password/reset-link`,
-            {
-                method: 'POST',
-                body: {
-                    email: value,
-                },
-            }
-        );
+	try {
+		const response = await api<{ success: boolean; message: string }>(
+			`/${apiCountry.value}/auth/password/reset-link`,
+			{
+				method: 'POST',
+				body: {
+					email: value,
+				},
+			}
+		);
 
-        if (!response?.success) {
-            error.value = response?.message || t('auth.login.forgot.requestFailed');
-            return;
-        }
+		if (!response?.success) {
+			error.value = response?.message || t('auth.login.forgot.requestFailed');
+			return;
+		}
 
-        sent.value = true;
-    } catch (err: any) {
-        error.value =
-            err?.data?.message || err?.message || t('auth.login.forgot.requestFailed');
-    } finally {
-        loading.value = false;
-    }
+		sent.value = true;
+	} catch (err: unknown) {
+		const errorPayload = err as { data?: { message?: string }; message?: string };
+		error.value =
+			errorPayload?.data?.message || errorPayload?.message || t('auth.login.forgot.requestFailed');
+	} finally {
+		loading.value = false;
+	}
 }
 </script>
 
 <template>
-    <UiModal
-        :model-value="modelValue"
-        align="center"
-        width="504px"
-        padding="40px"
-        gap="24px"
-        data-testid="auth-login-forgot-password-modal"
-        @update:model-value="emit('update:modelValue', $event)"
-    >
-        <template #header>
-            <div class="auth-forgot-header">
-                <UiLogo
-                    name="musticker"
-                    variant="mark"
-                    color="colored"
-                    :size="40"
-                    class="auth-forgot-logo"
-                />
-                <h3 class="auth-forgot-title">
-                    {{ sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
-                </h3>
-            </div>
-        </template>
+	<UiModal
+		:model-value="modelValue"
+		align="center"
+		width="504px"
+		padding="40px"
+		gap="24px"
+		data-testid="auth-login-forgot-password-modal"
+		@update:model-value="emit('update:modelValue', $event)"
+	>
+		<template #header>
+			<div class="auth-forgot-header">
+				<UiLogo
+					name="musticker"
+					variant="mark"
+					color="colored"
+					:size="40"
+					class="auth-forgot-logo"
+				/>
+				<h3 class="auth-forgot-title">
+					{{ sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
+				</h3>
+			</div>
+		</template>
 
-        <div class="auth-forgot-body">
-            <template v-if="!sent">
-                <p class="auth-forgot-description">
-                    {{ t('auth.login.forgot.description') }}
-                </p>
+		<div class="auth-forgot-body">
+			<template v-if="!sent">
+				<p class="auth-forgot-description">
+					{{ t('auth.login.forgot.description') }}
+				</p>
 
-                <UiFormField
-                    class="auth-forgot-field"
-                    :label="t('auth.login.email')"
-                    :error="error"
-                    :required="true"
-                >
-                    <template #default="{ inputId, describedBy }">
-                        <UiInput
-                            :id="inputId"
-                            class="auth-forgot-input"
-                            type="email"
-                            size="md"
-                            :model-value="resetEmail"
-                            :state="error ? 'error' : 'default'"
-                            :aria-invalid="error ? 'true' : 'false'"
-                            :aria-describedby="describedBy || undefined"
-                            :placeholder="t('auth.login.enterEmail')"
-                            data-testid="auth-login-forgot-password-email-input"
-                            @update:model-value="resetEmail = $event"
-                        />
-                    </template>
-                </UiFormField>
+				<UiFormField
+					class="auth-forgot-field"
+					:label="t('auth.login.email')"
+					:error="error"
+					:required="true"
+				>
+					<template #default="{ inputId, describedBy }">
+						<UiInput
+							:id="inputId"
+							class="auth-forgot-input"
+							type="email"
+							size="md"
+							:model-value="resetEmail"
+							:state="error ? 'error' : 'default'"
+							:aria-invalid="error ? 'true' : 'false'"
+							:aria-describedby="describedBy || undefined"
+							:placeholder="t('auth.login.enterEmail')"
+							data-testid="auth-login-forgot-password-email-input"
+							@update:model-value="resetEmail = $event"
+						/>
+					</template>
+				</UiFormField>
 
-                <div class="auth-forgot-actions">
-                    <UiButton
-                        variant="filled"
-                        tone="neutral"
-                        size="lg"
-                        class="auth-forgot-submit"
-                        data-testid="auth-login-forgot-password-submit-button"
-                        :disabled="loading"
-                        @click="submitReset"
-                    >
-                        {{ loading ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
-                    </UiButton>
+				<div class="auth-forgot-actions">
+					<UiButton
+						variant="filled"
+						tone="neutral"
+						size="lg"
+						class="auth-forgot-submit"
+						data-testid="auth-login-forgot-password-submit-button"
+						:disabled="loading"
+						@click="submitReset"
+					>
+						{{ loading ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
+					</UiButton>
 
-                    <UiButton
-                        variant="ghost"
-                        tone="neutral"
-                        size="sm"
-                        class="auth-forgot-return"
-                        data-testid="auth-login-forgot-password-return-button"
-                        @click="closeModal"
-                    >
-                        {{ t('auth.login.forgot.returnToLogin') }}
-                    </UiButton>
-                </div>
-            </template>
+					<UiButton
+						variant="ghost"
+						tone="neutral"
+						size="sm"
+						class="auth-forgot-return"
+						data-testid="auth-login-forgot-password-return-button"
+						@click="closeModal"
+					>
+						{{ t('auth.login.forgot.returnToLogin') }}
+					</UiButton>
+				</div>
+			</template>
 
-            <template v-else>
-                <p class="auth-forgot-description">
-                    {{ t('auth.login.forgot.checkEmailDescription') }}
-                </p>
+			<template v-else>
+				<p class="auth-forgot-description">
+					{{ t('auth.login.forgot.checkEmailDescription') }}
+				</p>
 
-                <div class="auth-forgot-actions auth-forgot-actions-success">
-                    <UiButton
-                        variant="filled"
-                        tone="neutral"
-                        size="md"
-                        class="auth-forgot-submit"
-                        data-testid="auth-login-forgot-password-return-button"
-                        @click="closeModal"
-                    >
-                        {{ t('auth.login.forgot.returnToLogin') }}
-                    </UiButton>
-                </div>
-            </template>
-        </div>
-    </UiModal>
+				<div class="auth-forgot-actions auth-forgot-actions-success">
+					<UiButton
+						variant="filled"
+						tone="neutral"
+						size="md"
+						class="auth-forgot-submit"
+						data-testid="auth-login-forgot-password-return-button"
+						@click="closeModal"
+					>
+						{{ t('auth.login.forgot.returnToLogin') }}
+					</UiButton>
+				</div>
+			</template>
+		</div>
+	</UiModal>
 </template>
 
 <style scoped lang="scss">
@@ -303,5 +304,3 @@ async function submitReset() {
     }
 }
 </style>
-
-

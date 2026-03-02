@@ -11,143 +11,143 @@ import { useLoginPageForm } from '@/composables/auth/useLoginPageForm';
 const { t } = useI18n();
 
 const {
-    memberType,
-    keepSignedIn,
-    showPassword,
-    isNonMember,
-    setMemberType,
-    togglePassword,
-    setKeepSignedIn,
-    submitLabel,
-    isVerificationModalOpen,
-    guestVerificationEmail,
-    guestVerificationOrderNumber,
-    guestVerificationToken,
-    guestVerificationCode,
-    guestVerificationError,
-    isGuestVerifying,
-    isForgotPasswordModalOpen,
-    memberEmail,
-    memberPassword,
-    nonMemberEmail,
-    nonMemberOrderNumber,
-    memberEmailError,
-    memberPasswordError,
-    memberInvalidCredentials,
-    nonMemberEmailError,
-    nonMemberOrderError,
-    onMemberEmailInput,
-    onMemberPasswordInput,
-    onNonMemberEmailInput,
-    onNonMemberOrderInput,
-    onSubmitClick,
-    submitGuestVerification,
-    resendGuestVerification,
-    openForgotPasswordModal,
+	memberType,
+	keepSignedIn,
+	showPassword,
+	isNonMember,
+	setMemberType,
+	togglePassword,
+	setKeepSignedIn,
+	submitLabel,
+	isVerificationModalOpen,
+	guestVerificationEmail,
+	guestVerificationOrderNumber,
+	guestVerificationToken,
+	guestVerificationCode,
+	guestVerificationError,
+	isGuestVerifying,
+	isForgotPasswordModalOpen,
+	memberEmail,
+	memberPassword,
+	nonMemberEmail,
+	nonMemberOrderNumber,
+	memberEmailError,
+	memberPasswordError,
+	memberInvalidCredentials,
+	nonMemberEmailError,
+	nonMemberOrderError,
+	onMemberEmailInput,
+	onMemberPasswordInput,
+	onNonMemberEmailInput,
+	onNonMemberOrderInput,
+	onSubmitClick,
+	submitGuestVerification,
+	resendGuestVerification,
+	openForgotPasswordModal,
 } = useLoginPageForm();
 </script>
 
 <template>
-    <section class="auth-login" data-testid="auth-login-page">
-        <div class="auth-login-top">
-            <div
-                class="auth-login-illustration auth-login-illustration-left auth-illustration-enter auth-illustration-enter-left"
-            >
-                <img
-                    src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
-                    :alt="t('auth.login.title')"
-                    loading="lazy"
-                    class="auth-login-illustration-image"
-                >
-            </div>
+	<section class="auth-login" data-testid="auth-login-page">
+		<div class="auth-login-top">
+			<div
+				class="auth-login-illustration auth-login-illustration-left auth-illustration-enter auth-illustration-enter-left"
+			>
+				<img
+					src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
+					:alt="t('auth.login.title')"
+					loading="lazy"
+					class="auth-login-illustration-image"
+				>
+			</div>
 
-            <div class="auth-login-shell auth-shell-enter">
-                <div class="auth-login-card">
-                    <div class="auth-login-intro">
-                        <AuthLoginHeader />
+			<div class="auth-login-shell auth-shell-enter">
+				<div class="auth-login-card">
+					<div class="auth-login-intro">
+						<AuthLoginHeader />
 
-                        <AuthLoginModeSwitch
-                            :member-type="memberType"
-                            @update:member-type="setMemberType"
-                        />
-                    </div>
+						<AuthLoginModeSwitch
+							:member-type="memberType"
+							@update:member-type="setMemberType"
+						/>
+					</div>
 
-                    <AuthLoginMemberForm
-                        v-if="!isNonMember"
-                        :show-password="showPassword"
-                        :keep-signed-in="keepSignedIn"
-                        :email="memberEmail"
-                        :password="memberPassword"
-                        :email-error="memberEmailError"
-                        :password-error="memberPasswordError"
-                        :password-invalid="memberInvalidCredentials"
-                        @toggle-password="togglePassword"
-                        @update:keep-signed-in="setKeepSignedIn"
-                        @update:email="onMemberEmailInput"
-                        @update:password="onMemberPasswordInput"
-                        @open-forgot-password="openForgotPasswordModal"
-                    />
+					<AuthLoginMemberForm
+						v-if="!isNonMember"
+						:show-password="showPassword"
+						:keep-signed-in="keepSignedIn"
+						:email="memberEmail"
+						:password="memberPassword"
+						:email-error="memberEmailError"
+						:password-error="memberPasswordError"
+						:password-invalid="memberInvalidCredentials"
+						@toggle-password="togglePassword"
+						@update:keep-signed-in="setKeepSignedIn"
+						@update:email="onMemberEmailInput"
+						@update:password="onMemberPasswordInput"
+						@open-forgot-password="openForgotPasswordModal"
+					/>
 
-                    <AuthLoginNonMemberForm
-                        v-else
-                        :email="nonMemberEmail"
-                        :order-number="nonMemberOrderNumber"
-                        :email-error="nonMemberEmailError"
-                        :order-error="nonMemberOrderError"
-                        @update:email="onNonMemberEmailInput"
-                        @update:order-number="onNonMemberOrderInput"
-                    />
+					<AuthLoginNonMemberForm
+						v-else
+						:email="nonMemberEmail"
+						:order-number="nonMemberOrderNumber"
+						:email-error="nonMemberEmailError"
+						:order-error="nonMemberOrderError"
+						@update:email="onNonMemberEmailInput"
+						@update:order-number="onNonMemberOrderInput"
+					/>
 
-                    <UiButton
-                        variant="filled"
-                        tone="neutral"
-                        size="lg"
-                        class="auth-login-submit"
-                        :data-testid="
-                            isNonMember
-                                ? 'auth-login-submit-non-member-button'
-                                : 'auth-login-submit-member-button'
-                        "
-                        @click="onSubmitClick"
-                    >
-                        {{ submitLabel }}
-                    </UiButton>
+					<UiButton
+						variant="filled"
+						tone="neutral"
+						size="lg"
+						class="auth-login-submit"
+						:data-testid="
+							isNonMember
+								? 'auth-login-submit-non-member-button'
+								: 'auth-login-submit-member-button'
+						"
+						@click="onSubmitClick"
+					>
+						{{ submitLabel }}
+					</UiButton>
 
-                    <AuthLoginSocialButtons v-if="!isNonMember" />
-                </div>
-            </div>
+					<AuthLoginSocialButtons v-if="!isNonMember" />
+				</div>
+			</div>
 
-            <div
-                class="auth-login-illustration auth-login-illustration-right auth-illustration-enter auth-illustration-enter-right"
-            >
-                <img
-                    src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
-                    :alt="t('auth.login.title')"
-                    loading="lazy"
-                    class="auth-login-illustration-image"
-                >
-            </div>
-        </div>
+			<div
+				class="auth-login-illustration auth-login-illustration-right auth-illustration-enter auth-illustration-enter-right"
+			>
+				<img
+					src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
+					:alt="t('auth.login.title')"
+					loading="lazy"
+					class="auth-login-illustration-image"
+				>
+			</div>
+		</div>
 
-        <AuthLoginForgotPasswordModal
-            v-model="isForgotPasswordModalOpen"
-            :email="memberEmail"
-            data-testid="auth-login-forgot-password-modal"
-        />
-        <AuthLoginVerificationModal
-            v-model="isVerificationModalOpen"
-            :email="guestVerificationEmail"
-            :order-number="guestVerificationOrderNumber"
-            :token="guestVerificationToken"
-            :code="guestVerificationCode"
-            :error="guestVerificationError"
-            :verifying="isGuestVerifying"
-            data-testid="auth-login-verification-modal"
-            @update:code="guestVerificationCode = $event"
-            @verify="submitGuestVerification"
-            @resend="resendGuestVerification"
-        />
-    </section>
+		<AuthLoginForgotPasswordModal
+			v-model="isForgotPasswordModalOpen"
+			:email="memberEmail"
+			data-testid="auth-login-forgot-password-modal"
+		/>
+		<AuthLoginVerificationModal
+			v-model="isVerificationModalOpen"
+			:email="guestVerificationEmail"
+			:order-number="guestVerificationOrderNumber"
+			:token="guestVerificationToken"
+			:code="guestVerificationCode"
+			:error="guestVerificationError"
+			:verifying="isGuestVerifying"
+			data-testid="auth-login-verification-modal"
+			@update:code="guestVerificationCode = $event"
+			@verify="submitGuestVerification"
+			@resend="resendGuestVerification"
+		/>
+	</section>
 </template>
 
 <style lang="scss">

@@ -1,81 +1,81 @@
 <script setup lang="ts">
 const props = defineProps<{
-    hasPickedProduct: boolean;
+	hasPickedProduct: boolean;
 }>();
 
 const { t } = useI18n();
 </script>
 
 <template>
-    <section v-show="props.hasPickedProduct" class="product-guarantees-band" data-testid="product-category-guarantees-band">
-        <div class="product-guarantees" data-testid="product-category-guarantees">
-            <article class="guarantee-card" data-testid="product-category-guarantee-made-today">
-                <img
-                    src="/icons/custom/guarantees/delivery-truck.svg"
-                    :alt="t('product.guarantees.madeToday.title')"
-                    loading="lazy" class="product-details-image" >
-                <h4 class="product-guarantee-title">{{ t('product.guarantees.madeToday.title') }}</h4>
-                <p class="product-details-text">{{ t('product.guarantees.madeToday.text') }}</p>
-            </article>
-            <article class="guarantee-card" data-testid="product-category-guarantee-proof-review">
-                <img
-                    src="/icons/custom/guarantees/proof-review.svg"
-                    :alt="t('product.guarantees.proofReview.title')"
-                    loading="lazy" class="product-details-image" >
-                <h4 class="product-guarantee-title">{{ t('product.guarantees.proofReview.title') }}</h4>
-                <p class="product-details-text">{{ t('product.guarantees.proofReview.text') }}</p>
-            </article>
-            <article class="guarantee-card" data-testid="product-category-guarantee-durability">
-                <img
-                    src="/icons/custom/guarantees/weather-durability.svg"
-                    :alt="t('product.guarantees.durability.title')"
-                    loading="lazy" class="product-details-image" >
-                <h4 class="product-guarantee-title">{{ t('product.guarantees.durability.title') }}</h4>
-                <p class="product-details-text">{{ t('product.guarantees.durability.text') }}</p>
-            </article>
-        </div>
-    </section>
+	<section v-show="props.hasPickedProduct" class="product-guarantees-band" data-testid="product-category-guarantees-band">
+		<div class="product-guarantees" data-testid="product-category-guarantees">
+			<article class="guarantee-card" data-testid="product-category-guarantee-made-today">
+				<img
+					src="/icons/custom/guarantees/delivery-truck.svg"
+					:alt="t('product.guarantees.madeToday.title')"
+					loading="lazy" class="product-details-image" >
+				<h4 class="product-guarantee-title">{{ t('product.guarantees.madeToday.title') }}</h4>
+				<p class="product-details-text">{{ t('product.guarantees.madeToday.text') }}</p>
+			</article>
+			<article class="guarantee-card" data-testid="product-category-guarantee-proof-review">
+				<img
+					src="/icons/custom/guarantees/proof-review.svg"
+					:alt="t('product.guarantees.proofReview.title')"
+					loading="lazy" class="product-details-image" >
+				<h4 class="product-guarantee-title">{{ t('product.guarantees.proofReview.title') }}</h4>
+				<p class="product-details-text">{{ t('product.guarantees.proofReview.text') }}</p>
+			</article>
+			<article class="guarantee-card" data-testid="product-category-guarantee-durability">
+				<img
+					src="/icons/custom/guarantees/weather-durability.svg"
+					:alt="t('product.guarantees.durability.title')"
+					loading="lazy" class="product-details-image" >
+				<h4 class="product-guarantee-title">{{ t('product.guarantees.durability.title') }}</h4>
+				<p class="product-details-text">{{ t('product.guarantees.durability.text') }}</p>
+			</article>
+		</div>
+	</section>
 
-    <div class="product-experience-container" data-testid="product-category-story-container">
-        <section class="product-story" data-testid="product-category-story">
-            <article class="story-row" data-testid="product-category-story-timeless">
-                <div class="story-image">
-                    <img
-                        src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
-                        :alt="t('product.story.timeless.title')"
-                        loading="lazy" class="product-details-image" >
-                </div>
-                <div class="story-copy">
-                    <h3 class="product-story-title">{{ t('product.story.timeless.title') }}</h3>
-                    <p class="product-details-text">{{ t('product.story.timeless.text') }}</p>
-                </div>
-            </article>
-            <article class="story-row reverse" data-testid="product-category-story-quick-stick">
-                <div class="story-image">
-                    <img
-                        src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
-                        :alt="t('product.story.quickStick.title')"
-                        loading="lazy" class="product-details-image" >
-                </div>
-                <div class="story-copy">
-                    <h3 class="product-story-title">{{ t('product.story.quickStick.title') }}</h3>
-                    <p class="product-details-text">{{ t('product.story.quickStick.text') }}</p>
-                </div>
-            </article>
-            <article class="story-row" data-testid="product-category-story-precise-cut">
-                <div class="story-image">
-                    <img
-                        src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
-                        :alt="t('product.story.preciseCut.title')"
-                        loading="lazy" class="product-details-image" >
-                </div>
-                <div class="story-copy">
-                    <h3 class="product-story-title">{{ t('product.story.preciseCut.title') }}</h3>
-                    <p class="product-details-text">{{ t('product.story.preciseCut.text') }}</p>
-                </div>
-            </article>
-        </section>
-    </div>
+	<div class="product-experience-container" data-testid="product-category-story-container">
+		<section class="product-story" data-testid="product-category-story">
+			<article class="story-row" data-testid="product-category-story-timeless">
+				<div class="story-image">
+					<img
+						src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
+						:alt="t('product.story.timeless.title')"
+						loading="lazy" class="product-details-image" >
+				</div>
+				<div class="story-copy">
+					<h3 class="product-story-title">{{ t('product.story.timeless.title') }}</h3>
+					<p class="product-details-text">{{ t('product.story.timeless.text') }}</p>
+				</div>
+			</article>
+			<article class="story-row reverse" data-testid="product-category-story-quick-stick">
+				<div class="story-image">
+					<img
+						src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
+						:alt="t('product.story.quickStick.title')"
+						loading="lazy" class="product-details-image" >
+				</div>
+				<div class="story-copy">
+					<h3 class="product-story-title">{{ t('product.story.quickStick.title') }}</h3>
+					<p class="product-details-text">{{ t('product.story.quickStick.text') }}</p>
+				</div>
+			</article>
+			<article class="story-row" data-testid="product-category-story-precise-cut">
+				<div class="story-image">
+					<img
+						src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
+						:alt="t('product.story.preciseCut.title')"
+						loading="lazy" class="product-details-image" >
+				</div>
+				<div class="story-copy">
+					<h3 class="product-story-title">{{ t('product.story.preciseCut.title') }}</h3>
+					<p class="product-details-text">{{ t('product.story.preciseCut.text') }}</p>
+				</div>
+			</article>
+		</section>
+	</div>
 </template>
 
 <style scoped lang="scss">
