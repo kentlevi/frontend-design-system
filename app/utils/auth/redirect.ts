@@ -5,6 +5,10 @@ export function resolvePostLoginRedirect(
     withCountry: (path: string) => string
 ) {
     const fallback = withCountry('/');
+    const normalizePath = (path: string) => path.replace(/\/+$/, '') || '/';
+    const homePath = normalizePath(withCountry('/'));
+    const loginPath = normalizePath(withCountry('/auth/login'));
+    const registerPath = normalizePath(withCountry('/auth/register'));
 
     if (typeof rawRedirect !== 'string') return fallback;
 
@@ -23,5 +27,16 @@ export function resolvePostLoginRedirect(
             ? `/${resolvedCountry}/${segments.slice(1).join('/')}`
             : `/${resolvedCountry}`;
 
-    return `${normalizedPath}${parsed.search}${parsed.hash}`;
+    const normalizedTargetPath = normalizePath(normalizedPath);
+    if (
+        normalizedTargetPath === homePath ||
+        normalizedTargetPath === loginPath ||
+        normalizedTargetPath === registerPath
+    ) {
+        return fallback;
+    }
+
+    parsed.searchParams.delete('redirect');
+    const normalizedSearch = parsed.searchParams.toString();
+    return `${normalizedPath}${normalizedSearch ? `?${normalizedSearch}` : ''}${parsed.hash}`;
 }

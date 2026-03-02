@@ -97,17 +97,14 @@
 
 .ui-tooltip-slide-enter-active,
 .ui-tooltip-slide-leave-active {
-    transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.25s ease;
-    will-change: transform, opacity;
+    transition: opacity 0.5s ease-in;
+    will-change: opacity;
 }
 
 .ui-tooltip-slide-enter-from,
 .ui-tooltip-slide-leave-to {
     opacity: 0;
-    transform: translate(
-        calc(var(--ui-tooltip-base-x, 0px) + var(--ui-tooltip-slide-x, 0px)),
-        calc(var(--ui-tooltip-base-y, 0px) + var(--ui-tooltip-slide-y, 0px))
-    );
+    transform: translate(var(--ui-tooltip-base-x, 0px), var(--ui-tooltip-base-y, 0px));
 }
 
 .ui-tooltip-slide-enter-to,
