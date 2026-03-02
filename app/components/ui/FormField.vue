@@ -30,7 +30,7 @@ const fallbackId = useId();
 const resolvedInputId = computed(() => props.inputId || props.forId || `field-${fallbackId}`);
 const resolvedErrorId = computed(() => props.errorId || `${resolvedInputId.value}-error`);
 const resolvedHintId = computed(() => props.hintId || `${resolvedInputId.value}-hint`);
-const resolvedErrorTestId = computed(() => props.errorTestId || `${resolvedErrorId.value}-message`);
+const resolvedErrorTestId = computed(() => props.errorTestId || 'ui-form-field-error-message');
 const describedBy = computed(() => {
     const ids: string[] = [];
     if (props.hint) ids.push(resolvedHintId.value);
