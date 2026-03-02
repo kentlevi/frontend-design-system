@@ -8,150 +8,150 @@ const { withCountry } = useCountry();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type NavLink = {
-    key: string;
-    label: string;
-    to: string;
+	key: string;
+	label: string;
+	to: string;
 };
 
 type AccountLink = {
-    to: string;
-    icon: IconName;
-    label: string;
+	to: string;
+	icon: IconName;
+	label: string;
 };
 
 const props = defineProps<{
-    navLinks: NavLink[];
-    isNavLinkActive: (path: string) => boolean;
-    selectedLocale: FlagCode;
-    isMockLoggedIn: boolean;
-    accountOpen: boolean;
-    userInitial: string;
-    displayName: string;
-    displayEmail: string;
-    accountTransitionName: string;
-    accountLinks: AccountLink[];
-    cartItemCount: number;
-    setAccountMenuRef: (el: HTMLElement | null) => void;
+	navLinks: NavLink[];
+	isNavLinkActive: (path: string) => boolean;
+	selectedLocale: FlagCode;
+	isMockLoggedIn: boolean;
+	accountOpen: boolean;
+	userInitial: string;
+	displayName: string;
+	displayEmail: string;
+	accountTransitionName: string;
+	accountLinks: AccountLink[];
+	cartItemCount: number;
+	setAccountMenuRef: (el: HTMLElement | null) => void;
 }>();
 
 const emit = defineEmits<{
-    (e: 'open-locale'): void;
-    (e: 'open-search'): void;
-    (e: 'open-cart'): void;
-    (e: 'prefetch-locale'): void;
-    (e: 'prefetch-search'): void;
-    (e: 'prefetch-cart'): void;
-    (e: 'toggle-account'): void;
-    (e: 'close-account'): void;
-    (e: 'account-mouse-enter'): void;
-    (e: 'account-mouse-leave'): void;
-    (e: 'logout'): void;
+	(e: 'open-locale'): void;
+	(e: 'open-search'): void;
+	(e: 'open-cart'): void;
+	(e: 'prefetch-locale'): void;
+	(e: 'prefetch-search'): void;
+	(e: 'prefetch-cart'): void;
+	(e: 'toggle-account'): void;
+	(e: 'close-account'): void;
+	(e: 'account-mouse-enter'): void;
+	(e: 'account-mouse-leave'): void;
+	(e: 'logout'): void;
 }>();
 </script>
 
 <template>
-    <div class="home-header-container" data-testid="app-header-main-bar-container">
-        <NuxtLink :to="withCountry('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
-            <UiLogo
-                name="musticker"
-                variant="full"
-                color="colored"
-                :size="54"
-                :width="112"
-                loading="eager"
-                fetchpriority="high"
-            />
-        </NuxtLink>
+	<div class="home-header-container" data-testid="app-header-main-bar-container">
+		<NuxtLink :to="withCountry('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
+			<UiLogo
+				name="musticker"
+				variant="full"
+				color="colored"
+				:size="54"
+				:width="112"
+				loading="eager"
+				fetchpriority="high"
+			/>
+		</NuxtLink>
 
-        <nav class="home-header-nav" :aria-label="t('layout.header.primaryNav')" data-testid="app-header-nav">
-            <NuxtLink
-                v-for="link in props.navLinks"
-                :key="link.key"
-                :to="link.to"
-                class="home-header-link"
-                :class="{ 'is-active': props.isNavLinkActive(link.to) }"
-                :data-testid="`app-header-nav-link-${link.key}`"
-            >
-                {{ link.label }}
-            </NuxtLink>
-        </nav>
+		<nav class="home-header-nav" :aria-label="t('layout.header.primaryNav')" data-testid="app-header-nav">
+			<NuxtLink
+				v-for="link in props.navLinks"
+				:key="link.key"
+				:to="link.to"
+				class="home-header-link"
+				:class="{ 'is-active': props.isNavLinkActive(link.to) }"
+				:data-testid="`app-header-nav-link-${link.key}`"
+			>
+				{{ link.label }}
+			</NuxtLink>
+		</nav>
 
-        <div class="home-header-tools" data-testid="app-header-tools">
-            <button
-                type="button"
-                class="home-header-icon home-header-locale"
-                :aria-label="t('layout.header.locale.aria')"
-                data-testid="app-header-locale-button"
-                @click="emit('open-locale')"
-                @mouseenter="emit('prefetch-locale')"
-                @focus="emit('prefetch-locale')"
-            >
-                <UiFlag :code="props.selectedLocale" :size="24" />
-            </button>
-            <UiButton
-                variant="ghost"
-                tone="default"
-                size="md"
-                :icon-only="true"
-                icon="strong-search"
-                icon-size="md"
-                class="home-header-icon"
-                :aria-label="t('layout.header.search')"
-                data-testid="app-header-search-button"
-                @click="emit('open-search')"
-                @mouseenter="emit('prefetch-search')"
-                @focus="emit('prefetch-search')"
-            />
-            <div class="home-header-cart-wrap">
-                <UiButton
-                    variant="ghost"
-                    tone="default"
-                    size="md"
-                    :icon-only="true"
-                    icon="strong-shop-cart"
-                    icon-size="md"
-                    class="home-header-icon"
-                    :aria-label="t('layout.header.cart')"
-                    data-testid="app-header-cart-button"
-                    @click="emit('open-cart')"
-                    @mouseenter="emit('prefetch-cart')"
-                    @focus="emit('prefetch-cart')"
-                />
-                <span
-                    v-if="props.cartItemCount > 0"
-                    class="home-header-cart-dot"
-                    data-testid="app-header-cart-count"
-                >
-                    {{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
-                </span>
-            </div>
-            <button
-                v-if="props.isMockLoggedIn"
-                type="button"
-                class="home-header-icon home-header-bell"
-                data-testid="app-header-notification-button"
-            >
-                <UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
-            </button>
+		<div class="home-header-tools" data-testid="app-header-tools">
+			<button
+				type="button"
+				class="home-header-icon home-header-locale"
+				:aria-label="t('layout.header.locale.aria')"
+				data-testid="app-header-locale-button"
+				@click="emit('open-locale')"
+				@mouseenter="emit('prefetch-locale')"
+				@focus="emit('prefetch-locale')"
+			>
+				<UiFlag :code="props.selectedLocale" :size="24" />
+			</button>
+			<UiButton
+				variant="ghost"
+				tone="default"
+				size="md"
+				:icon-only="true"
+				icon="strong-search"
+				icon-size="md"
+				class="home-header-icon"
+				:aria-label="t('layout.header.search')"
+				data-testid="app-header-search-button"
+				@click="emit('open-search')"
+				@mouseenter="emit('prefetch-search')"
+				@focus="emit('prefetch-search')"
+			/>
+			<div class="home-header-cart-wrap">
+				<UiButton
+					variant="ghost"
+					tone="default"
+					size="md"
+					:icon-only="true"
+					icon="strong-shop-cart"
+					icon-size="md"
+					class="home-header-icon"
+					:aria-label="t('layout.header.cart')"
+					data-testid="app-header-cart-button"
+					@click="emit('open-cart')"
+					@mouseenter="emit('prefetch-cart')"
+					@focus="emit('prefetch-cart')"
+				/>
+				<span
+					v-if="props.cartItemCount > 0"
+					class="home-header-cart-dot"
+					data-testid="app-header-cart-count"
+				>
+					{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
+				</span>
+			</div>
+			<button
+				v-if="props.isMockLoggedIn"
+				type="button"
+				class="home-header-icon home-header-bell"
+				data-testid="app-header-notification-button"
+			>
+				<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
+			</button>
 
-            <AppHeaderAccountMenu
-                :account-open="props.accountOpen"
-                :is-mock-logged-in="props.isMockLoggedIn"
-                :user-initial="props.userInitial"
-                :display-name="props.displayName"
-                :display-email="props.displayEmail"
-                :account-transition-name="props.accountTransitionName"
-                :account-links="props.accountLinks"
-                :set-wrap-ref="props.setAccountMenuRef"
-                data-testid="app-header-account-menu"
-                @toggle="emit('toggle-account')"
-                @close="emit('close-account')"
-                @mouse-enter="emit('account-mouse-enter')"
-                @mouse-leave="emit('account-mouse-leave')"
-                @logout="emit('logout')"
-            />
-        </div>
-    </div>
+			<AppHeaderAccountMenu
+				:account-open="props.accountOpen"
+				:is-mock-logged-in="props.isMockLoggedIn"
+				:user-initial="props.userInitial"
+				:display-name="props.displayName"
+				:display-email="props.displayEmail"
+				:account-transition-name="props.accountTransitionName"
+				:account-links="props.accountLinks"
+				:set-wrap-ref="props.setAccountMenuRef"
+				data-testid="app-header-account-menu"
+				@toggle="emit('toggle-account')"
+				@close="emit('close-account')"
+				@mouse-enter="emit('account-mouse-enter')"
+				@mouse-leave="emit('account-mouse-leave')"
+				@logout="emit('logout')"
+			/>
+		</div>
+	</div>
 </template>
 
 <style scoped lang="scss">
@@ -271,5 +271,3 @@ const emit = defineEmits<{
     }
 }
 </style>
-
-

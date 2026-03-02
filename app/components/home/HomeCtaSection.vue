@@ -8,37 +8,37 @@ const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
 </script>
 
 <template>
-    <section class="home-cta" data-testid="home-cta-section">
-        <div class="home-cta-panel" :style="{ backgroundImage: `url(${ctaBackgroundImage})` }">
-            <div class="home-cta-inner">
-                <h2 class="home-cta-title">
-                    {{ t('home.cta.titleLine1') }}<br >
-                    {{ t('home.cta.titleLine2') }}
-                </h2>
+	<section class="home-cta" data-testid="home-cta-section">
+		<div class="home-cta-panel" :style="{ backgroundImage: `url(${ctaBackgroundImage})` }">
+			<div class="home-cta-inner">
+				<h2 class="home-cta-title">
+					{{ t('home.cta.titleLine1') }}<br >
+					{{ t('home.cta.titleLine2') }}
+				</h2>
 
-                <div class="home-cta-actions">
-                    <UiButton
-                        variant="filled"
-                        tone="default"
-                        size="lg"
-                        class="home-cta-btn"
-                        data-testid="home-cta-primary-button"
-                    >
-                        {{ t('home.cta.primary') }}
-                    </UiButton>
-                    <UiButton
-                        variant="outline"
-                        tone="default"
-                        size="lg"
-                        class="home-cta-btn-alt"
-                        data-testid="home-cta-secondary-button"
-                    >
-                        {{ t('home.cta.secondary') }}
-                    </UiButton>
-                </div>
-            </div>
-        </div>
-    </section>
+				<div class="home-cta-actions">
+					<UiButton
+						variant="filled"
+						tone="default"
+						size="lg"
+						class="home-cta-btn"
+						data-testid="home-cta-primary-button"
+					>
+						{{ t('home.cta.primary') }}
+					</UiButton>
+					<UiButton
+						variant="outline"
+						tone="default"
+						size="lg"
+						class="home-cta-btn-alt"
+						data-testid="home-cta-secondary-button"
+					>
+						{{ t('home.cta.secondary') }}
+					</UiButton>
+				</div>
+			</div>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">

@@ -2,11 +2,11 @@
 import AuthRegisterPage from '~/components/auth/register/AuthRegisterPage.vue';
 
 definePageMeta({
-    layout: 'home',
-    middleware: ['guest-only'],
+	layout: 'home',
+	middleware: ['guest-only'],
 });
 </script>
 
 <template>
-    <AuthRegisterPage />
+	<AuthRegisterPage />
 </template>

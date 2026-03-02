@@ -5,174 +5,174 @@ import { HOME_GUIDE_TOUR_TOTAL_STEPS } from '~/data/home/onboarding';
 import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 
 type GuideTargetRect = {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
+	top: number;
+	left: number;
+	width: number;
+	height: number;
 };
 
 const props = withDefaults(
-    defineProps<{
-        visible?: boolean;
-        step?: number;
-        targetRect?: GuideTargetRect | null;
-    }>(),
-    {
-        visible: false,
-        step: 1,
-        targetRect: null,
-    }
+	defineProps<{
+		visible?: boolean;
+		step?: number;
+		targetRect?: GuideTargetRect | null;
+	}>(),
+	{
+		visible: false,
+		step: 1,
+		targetRect: null,
+	}
 );
 
 const emit = defineEmits<{
-    (event: 'close'): void;
-    (event: 'next'): void;
+	(event: 'close'): void;
+	(event: 'next'): void;
 }>();
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
 const safeStep = computed(() =>
-    Math.min(Math.max(props.step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS)
+	Math.min(Math.max(props.step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS)
 );
 const panelClass = computed(() => `home-guide-tour-panel--step-${safeStep.value}`);
 const title = computed(() => t(`home.toast.tour.step${safeStep.value}.title`));
 const body = computed(() => t(`home.toast.tour.step${safeStep.value}.body`));
 const ctaLabel = computed(() => t('home.toast.tour.next'));
 const headerImageByStep: Record<number, string> = {
-    1: '/home/guide-tour/step-1/profile-card.png',
-    2: '/home/guide-tour/step-2/categories-card.png',
-    3: '/home/guide-tour/step-3/search-card.png',
+	1: '/home/guide-tour/step-1/profile-card.png',
+	2: '/home/guide-tour/step-2/categories-card.png',
+	3: '/home/guide-tour/step-3/search-card.png',
 };
 const hasHeaderImage = computed(() => Boolean(headerImageByStep[safeStep.value]));
 const headerImagePath = computed(() => headerImageByStep[safeStep.value] || '');
 const stepImageUrls = computed(() => (
-    Object.values(headerImageByStep).map((path) => resolveFileUrl(path))
+	Object.values(headerImageByStep).map((path) => resolveFileUrl(path))
 ));
 const headerImageStyle = computed(() =>
-    hasHeaderImage.value
-        ? { backgroundImage: `url(${resolveFileUrl(headerImagePath.value)})` }
-        : {}
+	hasHeaderImage.value
+		? { backgroundImage: `url(${resolveFileUrl(headerImagePath.value)})` }
+		: {}
 );
 
 const panelInlineStyle = computed(() => {
-    const stepPosition: Record<number, { x: number; y: number }> = {
-        1: { x: 1314, y: 84 },
-        2: { x: 752, y: 88 },
-        3: { x: 1140, y: 84 },
-        4: { x: 1140, y: 680 },
-    };
+	const stepPosition: Record<number, { x: number; y: number }> = {
+		1: { x: 1314, y: 84 },
+		2: { x: 752, y: 88 },
+		3: { x: 1140, y: 84 },
+		4: { x: 1140, y: 680 },
+	};
 
-    const position = stepPosition[safeStep.value];
-    if (position) {
-        if (typeof window === 'undefined') return {};
+	const position = stepPosition[safeStep.value];
+	if (position) {
+		if (typeof window === 'undefined') return {};
 
-        const panelWidth = Math.min(416, window.innerWidth - 24);
-        const clampedLeft = Math.min(
-            Math.max(12, position.x),
-            Math.max(12, window.innerWidth - panelWidth - 12)
-        );
-        const clampedTop = Math.max(12, position.y);
+		const panelWidth = Math.min(416, window.innerWidth - 24);
+		const clampedLeft = Math.min(
+			Math.max(12, position.x),
+			Math.max(12, window.innerWidth - panelWidth - 12)
+		);
+		const clampedTop = Math.max(12, position.y);
 
-        return {
-            top: `${clampedTop}px`,
-            left: `${clampedLeft}px`,
-            right: 'auto',
-            transform: 'none',
-        };
-    }
+		return {
+			top: `${clampedTop}px`,
+			left: `${clampedLeft}px`,
+			right: 'auto',
+			transform: 'none',
+		};
+	}
 
-    if (!props.targetRect || typeof window === 'undefined') {
-        return {};
-    }
+	if (!props.targetRect || typeof window === 'undefined') {
+		return {};
+	}
 
-    const panelWidth = Math.min(520, window.innerWidth - 24);
-    const centeredLeft = props.targetRect.left + props.targetRect.width / 2 - panelWidth / 2;
-    const clampedLeft = Math.min(
-        Math.max(12, centeredLeft),
-        Math.max(12, window.innerWidth - panelWidth - 12)
-    );
+	const panelWidth = Math.min(520, window.innerWidth - 24);
+	const centeredLeft = props.targetRect.left + props.targetRect.width / 2 - panelWidth / 2;
+	const clampedLeft = Math.min(
+		Math.max(12, centeredLeft),
+		Math.max(12, window.innerWidth - panelWidth - 12)
+	);
 
-    return {
-        top: `${props.targetRect.top + props.targetRect.height + 12}px`,
-        left: `${clampedLeft}px`,
-        right: 'auto',
-        transform: 'none',
-    };
+	return {
+		top: `${props.targetRect.top + props.targetRect.height + 12}px`,
+		left: `${clampedLeft}px`,
+		right: 'auto',
+		transform: 'none',
+	};
 });
 
 onMounted(() => {
-    if (!import.meta.client) return;
-    for (const url of stepImageUrls.value) {
-        const img = new Image();
-        img.src = url;
-    }
+	if (!import.meta.client) return;
+	for (const url of stepImageUrls.value) {
+		const img = new Image();
+		img.src = url;
+	}
 });
 </script>
 
 <template>
-    <Transition name="home-guide-tour-fade">
-        <div
-            v-if="visible"
-            class="home-guide-tour"
-            role="dialog"
-            aria-live="polite"
-            data-testid="home-guide-tour"
-        >
-            <div class="home-guide-tour-overlay" />
+	<Transition name="home-guide-tour-fade">
+		<div
+			v-if="visible"
+			class="home-guide-tour"
+			role="dialog"
+			aria-live="polite"
+			data-testid="home-guide-tour"
+		>
+			<div class="home-guide-tour-overlay" />
 
-            <aside
-                class="home-guide-tour-panel"
-                :class="panelClass"
-                :style="panelInlineStyle"
-                data-testid="home-guide-tour-panel"
-            >
-                <button
-                    type="button"
-                    class="home-guide-tour-close"
-                    :aria-label="t('home.toast.tour.close')"
-                    data-testid="home-guide-tour-close"
-                    @click="emit('close')"
-                >
-                    <UiIcon name="strong-times" :size="18" />
-                </button>
+			<aside
+				class="home-guide-tour-panel"
+				:class="panelClass"
+				:style="panelInlineStyle"
+				data-testid="home-guide-tour-panel"
+			>
+				<button
+					type="button"
+					class="home-guide-tour-close"
+					:aria-label="t('home.toast.tour.close')"
+					data-testid="home-guide-tour-close"
+					@click="emit('close')"
+				>
+					<UiIcon name="strong-times" :size="18" />
+				</button>
 
-                <div
-                    v-if="hasHeaderImage"
-                    class="home-guide-tour-header"
-                    :style="headerImageStyle"
-                />
+				<div
+					v-if="hasHeaderImage"
+					class="home-guide-tour-header"
+					:style="headerImageStyle"
+				/>
 
-                <div class="home-guide-tour-body">
-                    <div class="home-guide-tour-copy">
-                        <h3 class="home-guide-tour-title">
-                            {{ title }}
-                        </h3>
-                        <p class="home-guide-tour-text">
-                            {{ body }}
-                        </p>
-                    </div>
+				<div class="home-guide-tour-body">
+					<div class="home-guide-tour-copy">
+						<h3 class="home-guide-tour-title">
+							{{ title }}
+						</h3>
+						<p class="home-guide-tour-text">
+							{{ body }}
+						</p>
+					</div>
 
-                    <div class="home-guide-tour-actions">
-                        <p class="home-guide-tour-step">
-                            {{ t('home.toast.tour.stepLabel', { current: safeStep, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
-                        </p>
+					<div class="home-guide-tour-actions">
+						<p class="home-guide-tour-step">
+							{{ t('home.toast.tour.stepLabel', { current: safeStep, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
+						</p>
 
-                        <UiButton
-                            variant="filled"
-                            tone="neutral"
-                            size="md"
-                            class="home-guide-tour-next"
-                            data-testid="home-guide-tour-next"
-                            @click="emit('next')"
-                        >
-                            {{ ctaLabel }}
-                        </UiButton>
-                    </div>
-                </div>
-            </aside>
-        </div>
-    </Transition>
+						<UiButton
+							variant="filled"
+							tone="neutral"
+							size="md"
+							class="home-guide-tour-next"
+							data-testid="home-guide-tour-next"
+							@click="emit('next')"
+						>
+							{{ ctaLabel }}
+						</UiButton>
+					</div>
+				</div>
+			</aside>
+		</div>
+	</Transition>
 </template>
 
 <style scoped lang="scss">

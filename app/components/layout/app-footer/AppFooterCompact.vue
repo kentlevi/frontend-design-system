@@ -2,22 +2,22 @@
 const { t } = useI18n();
 
 defineProps<{
-    year: number;
+	year: number;
 }>();
 </script>
 
 <template>
-    <div class="home-footer-compact" data-testid="app-footer-compact-container">
-        <div class="home-footer-compact-left" data-testid="app-footer-compact-left">
-            <span class="home-footer-compact-copy">&copy; GLOPHICS Corp. {{ year }}</span>
-            <a href="#" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ t('layout.footer.terms') }}</a>
-            <a href="#" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ t('layout.footer.privacy') }}</a>
-        </div>
-        <div class="home-footer-compact-links" data-testid="app-footer-compact-links">
-            <a href="#" class="home-footer-compact-action-link" data-testid="app-footer-compact-inquiry-link">{{ t('layout.footer.inquiry') }}</a>
-            <a href="#" class="home-footer-compact-action-link" data-testid="app-footer-compact-faq-link">{{ t('layout.footer.faq') }}</a>
-        </div>
-    </div>
+	<div class="home-footer-compact" data-testid="app-footer-compact-container">
+		<div class="home-footer-compact-left" data-testid="app-footer-compact-left">
+			<span class="home-footer-compact-copy">&copy; GLOPHICS Corp. {{ year }}</span>
+			<a href="#" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ t('layout.footer.terms') }}</a>
+			<a href="#" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ t('layout.footer.privacy') }}</a>
+		</div>
+		<div class="home-footer-compact-links" data-testid="app-footer-compact-links">
+			<a href="#" class="home-footer-compact-action-link" data-testid="app-footer-compact-inquiry-link">{{ t('layout.footer.inquiry') }}</a>
+			<a href="#" class="home-footer-compact-action-link" data-testid="app-footer-compact-faq-link">{{ t('layout.footer.faq') }}</a>
+		</div>
+	</div>
 </template>
 
 <style scoped lang="scss">

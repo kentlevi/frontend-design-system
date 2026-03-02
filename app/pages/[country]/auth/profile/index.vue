@@ -2,11 +2,11 @@
 import AuthProfilePage from '~/components/auth/profile/AuthProfilePage.vue';
 
 definePageMeta({
-    layout: 'home',
-    hideHeader: true,
+	layout: 'home',
+	hideHeader: true,
 });
 </script>
 
 <template>
-    <AuthProfilePage />
+	<AuthProfilePage />
 </template>

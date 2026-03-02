@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { useCountry } from '@/composables/app/useCountry';
 import {
-    HOME_WELCOME_POPOVER_PENDING_KEY,
-    HOME_WELCOME_POPOVER_TRIGGER_EVENT,
+	HOME_WELCOME_POPOVER_PENDING_KEY,
+	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 
 const { t } = useI18n();
@@ -12,262 +12,262 @@ const route = useRoute();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
-    to: string;
-    icon: IconName;
-    label: string;
+	to: string;
+	icon: IconName;
+	label: string;
 };
 
 const props = defineProps<{
-    accountOpen: boolean;
-    isMockLoggedIn: boolean;
-    userInitial: string;
-    displayName: string;
-    displayEmail: string;
-    accountTransitionName: string;
-    accountLinks: AccountLink[];
-    setWrapRef: (el: HTMLElement | null) => void;
+	accountOpen: boolean;
+	isMockLoggedIn: boolean;
+	userInitial: string;
+	displayName: string;
+	displayEmail: string;
+	accountTransitionName: string;
+	accountLinks: AccountLink[];
+	setWrapRef: (el: HTMLElement | null) => void;
 }>();
 
 const emit = defineEmits<{
-    (e: 'toggle'): void;
-    (e: 'close'): void;
-    (e: 'mouse-enter'): void;
-    (e: 'mouse-leave'): void;
-    (e: 'logout'): void;
+	(e: 'toggle'): void;
+	(e: 'close'): void;
+	(e: 'mouse-enter'): void;
+	(e: 'mouse-leave'): void;
+	(e: 'logout'): void;
 }>();
 
 function handleAccountLinkClick(event: MouseEvent, to: string) {
-    if (to === '/auth/profile') {
-        event.preventDefault();
-        if (import.meta.client) {
-            window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
-            window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
-        }
-        emit('close');
-        void navigateTo(withCountry('/'));
-        return;
-    }
+	if (to === '/auth/profile') {
+		event.preventDefault();
+		if (import.meta.client) {
+			window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
+			window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
+		}
+		emit('close');
+		void navigateTo(withCountry('/'));
+		return;
+	}
 
-    emit('close');
+	emit('close');
 }
 
 const primaryAccountLinks = computed(() =>
-    props.accountLinks.filter((link) => link.to !== '/auth/profile')
+	props.accountLinks.filter((link) => link.to !== '/auth/profile')
 );
 
 const gettingStartedLink = computed(
-    () => props.accountLinks.find((link) => link.to === '/auth/profile') ?? null
+	() => props.accountLinks.find((link) => link.to === '/auth/profile') ?? null
 );
 
 function normalizePath(path: string) {
-    return path.replace(/\/+$/, '') || '/';
+	return path.replace(/\/+$/, '') || '/';
 }
 
 function sanitizeRedirectSource(fullPath: string) {
-    const parsed = new URL(fullPath, 'http://localhost');
-    parsed.searchParams.delete('redirect');
-    const search = parsed.searchParams.toString();
-    return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
+	const parsed = new URL(fullPath, 'http://localhost');
+	parsed.searchParams.delete('redirect');
+	const search = parsed.searchParams.toString();
+	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
 }
 
 function sanitizeExistingRedirect(
-    rawRedirect: unknown,
-    homePath: string,
-    loginPath: string,
-    registerPath: string
+	rawRedirect: unknown,
+	homePath: string,
+	loginPath: string,
+	registerPath: string
 ) {
-    if (typeof rawRedirect !== 'string') return '';
-    const candidate = rawRedirect.trim();
-    if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
+	if (typeof rawRedirect !== 'string') return '';
+	const candidate = rawRedirect.trim();
+	if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
 
-    const parsed = new URL(candidate, 'http://localhost');
-    const targetPath = normalizePath(parsed.pathname);
-    if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) return '';
+	const parsed = new URL(candidate, 'http://localhost');
+	const targetPath = normalizePath(parsed.pathname);
+	if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) return '';
 
-    parsed.searchParams.delete('redirect');
-    const search = parsed.searchParams.toString();
-    return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
+	parsed.searchParams.delete('redirect');
+	const search = parsed.searchParams.toString();
+	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
 }
 
 const guestLoginTarget = computed(() => {
-    const loginPath = normalizePath(withCountry('/auth/login'));
-    const registerPath = normalizePath(withCountry('/auth/register'));
-    const homePath = normalizePath(withCountry('/'));
-    const currentPath = normalizePath(route.path);
+	const loginPath = normalizePath(withCountry('/auth/login'));
+	const registerPath = normalizePath(withCountry('/auth/register'));
+	const homePath = normalizePath(withCountry('/'));
+	const currentPath = normalizePath(route.path);
 
-    if (currentPath === homePath || currentPath === registerPath) {
-        return withCountry('/auth/login');
-    }
+	if (currentPath === homePath || currentPath === registerPath) {
+		return withCountry('/auth/login');
+	}
 
-    if (currentPath === loginPath) {
-        const currentRedirect = Array.isArray(route.query.redirect)
-            ? route.query.redirect[0]
-            : route.query.redirect;
-        const preservedRedirect = sanitizeExistingRedirect(
-            currentRedirect,
-            homePath,
-            loginPath,
-            registerPath
-        );
-        if (!preservedRedirect) return withCountry('/auth/login');
+	if (currentPath === loginPath) {
+		const currentRedirect = Array.isArray(route.query.redirect)
+			? route.query.redirect[0]
+			: route.query.redirect;
+		const preservedRedirect = sanitizeExistingRedirect(
+			currentRedirect,
+			homePath,
+			loginPath,
+			registerPath
+		);
+		if (!preservedRedirect) return withCountry('/auth/login');
 
-        return {
-            path: withCountry('/auth/login'),
-            query: {
-                redirect: preservedRedirect,
-            },
-        };
-    }
+		return {
+			path: withCountry('/auth/login'),
+			query: {
+				redirect: preservedRedirect,
+			},
+		};
+	}
 
-    return {
-        path: withCountry('/auth/login'),
-        query: {
-            redirect: sanitizeRedirectSource(route.fullPath),
-        },
-    };
+	return {
+		path: withCountry('/auth/login'),
+		query: {
+			redirect: sanitizeRedirectSource(route.fullPath),
+		},
+	};
 });
 </script>
 
 <template>
-    <div
-        :ref="setWrapRef"
-        class="home-header-account-wrap"
-        data-testid="app-header-account-wrap"
-        @mouseenter="emit('mouse-enter')"
-        @mouseleave="emit('mouse-leave')"
-    >
-        <button
-            type="button"
-            class="home-header-icon home-header-account"
-            :class="{
-                'is-open': accountOpen,
-                'is-open-guest': accountOpen && !isMockLoggedIn,
-            }"
-            :aria-label="t('layout.header.account')"
-            aria-haspopup="menu"
-            :aria-expanded="accountOpen"
-            data-testid="app-header-account-toggle-button"
-            @click.stop="emit('toggle')"
-        >
-            <span v-if="isMockLoggedIn" class="home-header-avatar">
-                {{ userInitial }}
-            </span>
-            <UiIcon
-                v-else
-                name="strong-user"
-                :size="22"
-                color="var(--text-primary)"
-            />
-            <UiIcon
-                v-if="isMockLoggedIn"
-                name="strong-caret-down"
-                :size="16"
-                color="var(--text-primary)"
-            />
-        </button>
+	<div
+		:ref="setWrapRef"
+		class="home-header-account-wrap"
+		data-testid="app-header-account-wrap"
+		@mouseenter="emit('mouse-enter')"
+		@mouseleave="emit('mouse-leave')"
+	>
+		<button
+			type="button"
+			class="home-header-icon home-header-account"
+			:class="{
+				'is-open': accountOpen,
+				'is-open-guest': accountOpen && !isMockLoggedIn,
+			}"
+			:aria-label="t('layout.header.account')"
+			aria-haspopup="menu"
+			:aria-expanded="accountOpen"
+			data-testid="app-header-account-toggle-button"
+			@click.stop="emit('toggle')"
+		>
+			<span v-if="isMockLoggedIn" class="home-header-avatar">
+				{{ userInitial }}
+			</span>
+			<UiIcon
+				v-else
+				name="strong-user"
+				:size="22"
+				color="var(--text-primary)"
+			/>
+			<UiIcon
+				v-if="isMockLoggedIn"
+				name="strong-caret-down"
+				:size="16"
+				color="var(--text-primary)"
+			/>
+		</button>
 
-        <Transition :name="accountTransitionName">
-            <div
-                v-if="accountOpen && isMockLoggedIn"
-                class="home-account-dropdown home-account-dropdown--member"
-                role="menu"
-                :aria-label="t('layout.header.accountMenu')"
-                data-testid="app-header-account-dropdown-member"
-            >
-                <div class="home-account-summary" data-testid="app-header-account-summary">
-                    <span class="home-account-summary-avatar">{{ userInitial }}</span>
-                    <div>
-                        <p class="home-account-summary-name">
-                            {{ displayName }}
-                        </p>
-                        <p class="home-account-summary-email">
-                            {{ displayEmail }}
-                        </p>
-                    </div>
-                </div>
+		<Transition :name="accountTransitionName">
+			<div
+				v-if="accountOpen && isMockLoggedIn"
+				class="home-account-dropdown home-account-dropdown--member"
+				role="menu"
+				:aria-label="t('layout.header.accountMenu')"
+				data-testid="app-header-account-dropdown-member"
+			>
+				<div class="home-account-summary" data-testid="app-header-account-summary">
+					<span class="home-account-summary-avatar">{{ userInitial }}</span>
+					<div>
+						<p class="home-account-summary-name">
+							{{ displayName }}
+						</p>
+						<p class="home-account-summary-email">
+							{{ displayEmail }}
+						</p>
+					</div>
+				</div>
 
-                <div class="home-account-link-group home-account-link-group--primary">
-                    <NuxtLink
-                        v-for="link in primaryAccountLinks"
-                        :key="link.to"
-                        :to="withCountry(link.to)"
-                        class="home-account-link"
-                        role="menuitem"
-                        :data-testid="`app-header-account-link-${link.to.replace('/', '').replace('/', '-') || 'root'}`"
-                        @click="handleAccountLinkClick($event, link.to)"
-                    >
-                        <UiIcon
-                            :name="link.icon"
-                            :size="24"
-                            color="var(--text-primary)"
-                        />
-                        <span class="home-account-link-label">{{ link.label }}</span>
-                    </NuxtLink>
-                </div>
+				<div class="home-account-link-group home-account-link-group--primary">
+					<NuxtLink
+						v-for="link in primaryAccountLinks"
+						:key="link.to"
+						:to="withCountry(link.to)"
+						class="home-account-link"
+						role="menuitem"
+						:data-testid="`app-header-account-link-${link.to.replace('/', '').replace('/', '-') || 'root'}`"
+						@click="handleAccountLinkClick($event, link.to)"
+					>
+						<UiIcon
+							:name="link.icon"
+							:size="24"
+							color="var(--text-primary)"
+						/>
+						<span class="home-account-link-label">{{ link.label }}</span>
+					</NuxtLink>
+				</div>
 
-                <div class="home-account-link-group home-account-link-group--secondary">
-                    <NuxtLink
-                        v-if="gettingStartedLink"
-                        :to="withCountry(gettingStartedLink.to)"
-                        class="home-account-link home-account-link--section-start"
-                        role="menuitem"
-                        :data-testid="`app-header-account-link-${gettingStartedLink.to.replace('/', '').replace('/', '-') || 'root'}`"
-                        @click="handleAccountLinkClick($event, gettingStartedLink.to)"
-                    >
-                        <UiIcon
-                            :name="gettingStartedLink.icon"
-                            :size="24"
-                            color="var(--text-primary)"
-                        />
-                        <span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
-                    </NuxtLink>
+				<div class="home-account-link-group home-account-link-group--secondary">
+					<NuxtLink
+						v-if="gettingStartedLink"
+						:to="withCountry(gettingStartedLink.to)"
+						class="home-account-link home-account-link--section-start"
+						role="menuitem"
+						:data-testid="`app-header-account-link-${gettingStartedLink.to.replace('/', '').replace('/', '-') || 'root'}`"
+						@click="handleAccountLinkClick($event, gettingStartedLink.to)"
+					>
+						<UiIcon
+							:name="gettingStartedLink.icon"
+							:size="24"
+							color="var(--text-primary)"
+						/>
+						<span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
+					</NuxtLink>
 
-                    <UiButton
-                        variant="ghost"
-                        tone="default"
-                        size="sm"
-                        class="home-account-link home-account-link-button"
-                        role="menuitem"
-                        data-testid="app-header-account-logout-button"
-                        @click="emit('logout')"
-                    >
-                        <UiIcon
-                            name="strong-sign-out"
-                            :size="24"
-                            color="var(--text-primary)"
-                        />
-                        <span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
-                    </UiButton>
-                </div>
-            </div>
-            <div
-                v-else-if="accountOpen"
-                class="home-account-dropdown home-account-dropdown--guest"
-                role="menu"
-                :aria-label="t('layout.header.accountMenu')"
-                data-testid="app-header-account-dropdown-guest"
-            >
-                <NuxtLink
-                    :to="guestLoginTarget"
-                    class="home-account-link home-account-link--guest"
-                    role="menuitem"
-                    data-testid="app-header-account-login"
-                    @click="emit('close')"
-                >
-                    {{ t('layout.header.login') }}
-                </NuxtLink>
-                <NuxtLink
-                    :to="withCountry('/auth/register')"
-                    class="home-account-link home-account-link--guest"
-                    role="menuitem"
-                    data-testid="app-header-account-register"
-                    @click="emit('close')"
-                >
-                    {{ t('layout.header.register') }}
-                </NuxtLink>
-            </div>
-        </Transition>
-    </div>
+					<UiButton
+						variant="ghost"
+						tone="default"
+						size="sm"
+						class="home-account-link home-account-link-button"
+						role="menuitem"
+						data-testid="app-header-account-logout-button"
+						@click="emit('logout')"
+					>
+						<UiIcon
+							name="strong-sign-out"
+							:size="24"
+							color="var(--text-primary)"
+						/>
+						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
+					</UiButton>
+				</div>
+			</div>
+			<div
+				v-else-if="accountOpen"
+				class="home-account-dropdown home-account-dropdown--guest"
+				role="menu"
+				:aria-label="t('layout.header.accountMenu')"
+				data-testid="app-header-account-dropdown-guest"
+			>
+				<NuxtLink
+					:to="guestLoginTarget"
+					class="home-account-link home-account-link--guest"
+					role="menuitem"
+					data-testid="app-header-account-login"
+					@click="emit('close')"
+				>
+					{{ t('layout.header.login') }}
+				</NuxtLink>
+				<NuxtLink
+					:to="withCountry('/auth/register')"
+					class="home-account-link home-account-link--guest"
+					role="menuitem"
+					data-testid="app-header-account-register"
+					@click="emit('close')"
+				>
+					{{ t('layout.header.register') }}
+				</NuxtLink>
+			</div>
+		</Transition>
+	</div>
 </template>
 
 <style scoped lang="scss">

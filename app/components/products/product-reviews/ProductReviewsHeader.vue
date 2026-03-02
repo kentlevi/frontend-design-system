@@ -2,67 +2,67 @@
 const { t } = useI18n();
 
 defineProps<{
-    canGoPrev: boolean;
-    canGoNext: boolean;
+	canGoPrev: boolean;
+	canGoNext: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'prev'): void;
-    (e: 'next'): void;
+	(e: 'prev'): void;
+	(e: 'next'): void;
 }>();
 </script>
 
 <template>
-    <div class="product-reviews-head" data-testid="product-reviews-head">
-        <div class="product-reviews-rating" data-testid="product-reviews-rating">
-            <span class="rating-badge" data-testid="product-reviews-rating-badge">{{ t('product.reviews.badge') }}</span>
-            <span class="rating-stars" data-testid="product-reviews-rating-stars">
-                <UiIcon
-                    v-for="star in 5"
-                    :key="`head-star-${star}`"
-                    name="strong-star"
-                    :size="20"
-                    color="var(--amber-base)"
-                    :data-testid="`product-reviews-rating-star-${star}`"
-                />
-            </span>
-            <span class="rating-score" data-testid="product-reviews-rating-score">5.0</span>
-        </div>
+	<div class="product-reviews-head" data-testid="product-reviews-head">
+		<div class="product-reviews-rating" data-testid="product-reviews-rating">
+			<span class="rating-badge" data-testid="product-reviews-rating-badge">{{ t('product.reviews.badge') }}</span>
+			<span class="rating-stars" data-testid="product-reviews-rating-stars">
+				<UiIcon
+					v-for="star in 5"
+					:key="`head-star-${star}`"
+					name="strong-star"
+					:size="20"
+					color="var(--amber-base)"
+					:data-testid="`product-reviews-rating-star-${star}`"
+				/>
+			</span>
+			<span class="rating-score" data-testid="product-reviews-rating-score">5.0</span>
+		</div>
 
-        <h2 class="product-reviews-headline" data-testid="product-reviews-headline">{{ t('product.reviews.headline') }}</h2>
-        <p class="product-reviews-description" data-testid="product-reviews-description">{{ t('product.reviews.description') }}</p>
+		<h2 class="product-reviews-headline" data-testid="product-reviews-headline">{{ t('product.reviews.headline') }}</h2>
+		<p class="product-reviews-description" data-testid="product-reviews-description">{{ t('product.reviews.description') }}</p>
 
-        <div class="product-reviews-controls" data-testid="product-reviews-controls">
-            <UiButton
-                type="button"
-                variant="outline"
-                tone="neutral"
-                size="md"
-                icon-only
-                icon="strong-long-arrow-left"
-                :aria-label="t('product.reviews.controls.previous')"
-                :sr-label="t('product.reviews.controls.previous')"
-                class="product-reviews-control-button"
-                :disabled="!canGoPrev"
-                data-testid="product-reviews-prev-button"
-                @click="emit('prev')"
-            />
-            <UiButton
-                type="button"
-                variant="outline"
-                tone="neutral"
-                size="md"
-                icon-only
-                icon="strong-long-arrow-right"
-                :aria-label="t('product.reviews.controls.next')"
-                :sr-label="t('product.reviews.controls.next')"
-                class="product-reviews-control-button"
-                :disabled="!canGoNext"
-                data-testid="product-reviews-next-button"
-                @click="emit('next')"
-            />
-        </div>
-    </div>
+		<div class="product-reviews-controls" data-testid="product-reviews-controls">
+			<UiButton
+				type="button"
+				variant="outline"
+				tone="neutral"
+				size="md"
+				icon-only
+				icon="strong-long-arrow-left"
+				:aria-label="t('product.reviews.controls.previous')"
+				:sr-label="t('product.reviews.controls.previous')"
+				class="product-reviews-control-button"
+				:disabled="!canGoPrev"
+				data-testid="product-reviews-prev-button"
+				@click="emit('prev')"
+			/>
+			<UiButton
+				type="button"
+				variant="outline"
+				tone="neutral"
+				size="md"
+				icon-only
+				icon="strong-long-arrow-right"
+				:aria-label="t('product.reviews.controls.next')"
+				:sr-label="t('product.reviews.controls.next')"
+				class="product-reviews-control-button"
+				:disabled="!canGoNext"
+				data-testid="product-reviews-next-button"
+				@click="emit('next')"
+			/>
+		</div>
+	</div>
 </template>
 
 <style scoped lang="scss">

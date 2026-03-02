@@ -4,26 +4,26 @@ type Tone = 'default' | 'success' | 'danger' | 'warning';
 type Size = 'sm' | 'md';
 
 withDefaults(
-    defineProps<{
-        variant?: Variant;
-        tone?: Tone;
-        size?: Size;
-    }>(),
-    {
-        variant: 'tonal',
-        tone: 'default',
-        size: 'md',
-    }
+	defineProps<{
+		variant?: Variant;
+		tone?: Tone;
+		size?: Size;
+	}>(),
+	{
+		variant: 'tonal',
+		tone: 'default',
+		size: 'md',
+	}
 );
 </script>
 
 <template>
-    <span
-        class="ui-badge"
-        :data-variant="variant"
-        :data-tone="tone"
-        :data-size="size"
-    >
-        <slot />
-    </span>
+	<span
+		class="ui-badge"
+		:data-variant="variant"
+		:data-tone="tone"
+		:data-size="size"
+	>
+		<slot />
+	</span>
 </template>

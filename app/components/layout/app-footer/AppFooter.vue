@@ -10,15 +10,15 @@ const isAuthRoute = computed(() => /\/auth(\/|$)/.test(route.path));
 const isCartRoute = computed(() => /\/cart(\/|$)/.test(route.path));
 const useCompactFooter = computed(() => isAuthRoute.value || isCartRoute.value);
 const isProductRoute = computed(() =>
-    /\/(stickers|roll-stickers|sheet-stickers)(\/|$)/.test(route.path)
+	/\/(stickers|roll-stickers|sheet-stickers)(\/|$)/.test(route.path)
 );
 </script>
 
 <template>
-    <footer class="home-footer" :class="{ 'is-auth': useCompactFooter, 'is-product': isProductRoute }" data-testid="app-footer">
-        <AppFooterCompact v-if="useCompactFooter" :year="year" data-testid="app-footer-compact" />
-        <AppFooterMain v-else :year="year" :is-product="isProductRoute" data-testid="app-footer-main" />
-    </footer>
+	<footer class="home-footer" :class="{ 'is-auth': useCompactFooter, 'is-product': isProductRoute }" data-testid="app-footer">
+		<AppFooterCompact v-if="useCompactFooter" :year="year" data-testid="app-footer-compact" />
+		<AppFooterMain v-else :year="year" :is-product="isProductRoute" data-testid="app-footer-main" />
+	</footer>
 </template>
 
 <style scoped lang="scss">

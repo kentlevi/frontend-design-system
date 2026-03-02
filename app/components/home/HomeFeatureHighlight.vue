@@ -8,29 +8,29 @@ const featureHighlightImage = resolveFileUrl('/home/feature/home-feature-highlig
 </script>
 
 <template>
-    <section class="home-feature" data-testid="home-feature-highlight-section">
-        <div class="home-feature-card">
-            <div class="home-feature-media" aria-hidden="true">
-                <img
-                    :src="featureHighlightImage"
-                    :alt="t('home.feature.titleLine1')"
-                    class="home-feature-media-image"
-                    loading="lazy"
-                >
-            </div>
+	<section class="home-feature" data-testid="home-feature-highlight-section">
+		<div class="home-feature-card">
+			<div class="home-feature-media" aria-hidden="true">
+				<img
+					:src="featureHighlightImage"
+					:alt="t('home.feature.titleLine1')"
+					class="home-feature-media-image"
+					loading="lazy"
+				>
+			</div>
 
-            <div class="home-feature-copy">
-                <h2 class="home-feature-title">
-                    {{ t('home.feature.titleLine1') }}<br >
-                    {{ t('home.feature.titleLine2') }}
-                </h2>
+			<div class="home-feature-copy">
+				<h2 class="home-feature-title">
+					{{ t('home.feature.titleLine1') }}<br >
+					{{ t('home.feature.titleLine2') }}
+				</h2>
 
-                <p class="home-feature-text">
-                    {{ t('home.feature.text') }}
-                </p>
-            </div>
-        </div>
-    </section>
+				<p class="home-feature-text">
+					{{ t('home.feature.text') }}
+				</p>
+			</div>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">
@@ -74,7 +74,7 @@ const featureHighlightImage = resolveFileUrl('/home/feature/home-feature-highlig
                 font-family: var(--font-base);
                 font-size: 36px;
                 line-height: 52px;
-                
+
                 color: #252b3a;
                 font-weight: 700;
             }

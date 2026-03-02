@@ -8,192 +8,192 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
 type ReviewItem = {
-    title: string;
-    text: string;
-    author: string;
-    badge?: string;
-    badgeTone?: 'default' | 'success';
-    image: string;
+	title: string;
+	text: string;
+	author: string;
+	badge?: string;
+	badgeTone?: 'default' | 'success';
+	image: string;
 };
 
 const reviews = computed<ReviewItem[]>(() => [
-    {
-        title: 'Football Stickers',
-        text: "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they'd buy more or recommend them to fellow football fans.",
-        author: 'Hans',
-        badge: '1 Month Use',
-        badgeTone: 'success',
-        image: resolveFileUrl('/home/reviews/review-01.png'),
-    },
-    {
-        title: 'Great service, excellent products!',
-        text: 'I had an amazing experience! The service was friendly and super responsive, and the products exceeded my expectations.',
-        author: 'Elizabeth',
-        image: resolveFileUrl('/home/reviews/review-02.png'),
-    },
-    {
-        title: 'Market Sticker',
-        text: 'I love this Market Sticker! The design is vibrant, the material feels durable, and it stuck perfectly wherever I placed it.',
-        author: 'Tricia',
-        image: resolveFileUrl('/home/reviews/review-03.png'),
-    },
-    {
-        title: 'Fast and flawless.',
-        text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
-        author: 'Katrina',
-        badge: 'Repurchase',
-        badgeTone: 'default',
-        image: resolveFileUrl('/home/reviews/review-04.png'),
-    },
-    {
-        title: 'Top quality!',
-        text: 'The durability and water resistance are excellent, and everything is great, but since there are 100 sheets, quite a few stickers are skewed to one side.',
-        author: 'Michelle',
-        badge: 'Repurchase',
-        badgeTone: 'default',
-        image: resolveFileUrl('/home/reviews/review-05.png'),
-    },
-    {
-        title: 'Fast and flawless.',
-        text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
-        author: 'Katrina',
-        badge: 'Repurchase',
-        badgeTone: 'default',
-        image: resolveFileUrl('/home/reviews/review-06.png'),
-    },
+	{
+		title: 'Football Stickers',
+		text: "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they'd buy more or recommend them to fellow football fans.",
+		author: 'Hans',
+		badge: '1 Month Use',
+		badgeTone: 'success',
+		image: resolveFileUrl('/home/reviews/review-01.png'),
+	},
+	{
+		title: 'Great service, excellent products!',
+		text: 'I had an amazing experience! The service was friendly and super responsive, and the products exceeded my expectations.',
+		author: 'Elizabeth',
+		image: resolveFileUrl('/home/reviews/review-02.png'),
+	},
+	{
+		title: 'Market Sticker',
+		text: 'I love this Market Sticker! The design is vibrant, the material feels durable, and it stuck perfectly wherever I placed it.',
+		author: 'Tricia',
+		image: resolveFileUrl('/home/reviews/review-03.png'),
+	},
+	{
+		title: 'Fast and flawless.',
+		text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
+		author: 'Katrina',
+		badge: 'Repurchase',
+		badgeTone: 'default',
+		image: resolveFileUrl('/home/reviews/review-04.png'),
+	},
+	{
+		title: 'Top quality!',
+		text: 'The durability and water resistance are excellent, and everything is great, but since there are 100 sheets, quite a few stickers are skewed to one side.',
+		author: 'Michelle',
+		badge: 'Repurchase',
+		badgeTone: 'default',
+		image: resolveFileUrl('/home/reviews/review-05.png'),
+	},
+	{
+		title: 'Fast and flawless.',
+		text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
+		author: 'Katrina',
+		badge: 'Repurchase',
+		badgeTone: 'default',
+		image: resolveFileUrl('/home/reviews/review-06.png'),
+	},
 ]);
 
 const {
-    sectionRef,
-    viewportRef,
-    trackStyle,
-    canGoPrev,
-    canGoNext,
-    nextSlide,
-    prevSlide,
-    startAuto,
-    stopAuto,
-    setCardRef,
+	sectionRef,
+	viewportRef,
+	trackStyle,
+	canGoPrev,
+	canGoNext,
+	nextSlide,
+	prevSlide,
+	startAuto,
+	stopAuto,
+	setCardRef,
 } = useHomeReviewsCarousel(computed(() => reviews.value.length), {
-    gap: 24,
-    intervalMs: 3200,
+	gap: 24,
+	intervalMs: 3200,
 });
 const carouselLabel = 'Client reviews carousel';
 </script>
 
 <template>
-    <section
-        ref="sectionRef"
-        class="home-reviews"
-        data-testid="home-reviews-section"
-        aria-label="Client reviews"
-    >
-        <div class="home-reviews-card">
-            <div class="home-reviews-head">
-                <h2 class="home-reviews-title">
-                    {{ t('home.reviews.titleLine1') }}<br >
-                    {{ t('home.reviews.titleLine2') }}
-                </h2>
+	<section
+		ref="sectionRef"
+		class="home-reviews"
+		data-testid="home-reviews-section"
+		aria-label="Client reviews"
+	>
+		<div class="home-reviews-card">
+			<div class="home-reviews-head">
+				<h2 class="home-reviews-title">
+					{{ t('home.reviews.titleLine1') }}<br >
+					{{ t('home.reviews.titleLine2') }}
+				</h2>
 
-                <div class="home-reviews-controls">
-                    <UiButton
-                        variant="outline"
-                        tone="neutral"
-                        size="md"
-                        :icon-only="true"
-                        icon="strong-long-arrow-left"
-                        icon-size="md"
-                        sr-label="Go to previous review"
-                        aria-label="Go to previous review"
-                        class="home-reviews-arrow"
-                        data-testid="home-reviews-prev-button"
-                        :disabled="!canGoPrev"
-                        @click="prevSlide"
-                    />
-                    <UiButton
-                        variant="outline"
-                        tone="neutral"
-                        size="md"
-                        :icon-only="true"
-                        icon="strong-long-arrow-right"
-                        icon-size="md"
-                        sr-label="Go to next review"
-                        aria-label="Go to next review"
-                        class="home-reviews-arrow"
-                        data-testid="home-reviews-next-button"
-                        :disabled="!canGoNext"
-                        @click="nextSlide"
-                    />
-                </div>
-            </div>
+				<div class="home-reviews-controls">
+					<UiButton
+						variant="outline"
+						tone="neutral"
+						size="md"
+						:icon-only="true"
+						icon="strong-long-arrow-left"
+						icon-size="md"
+						sr-label="Go to previous review"
+						aria-label="Go to previous review"
+						class="home-reviews-arrow"
+						data-testid="home-reviews-prev-button"
+						:disabled="!canGoPrev"
+						@click="prevSlide"
+					/>
+					<UiButton
+						variant="outline"
+						tone="neutral"
+						size="md"
+						:icon-only="true"
+						icon="strong-long-arrow-right"
+						icon-size="md"
+						sr-label="Go to next review"
+						aria-label="Go to next review"
+						class="home-reviews-arrow"
+						data-testid="home-reviews-next-button"
+						:disabled="!canGoNext"
+						@click="nextSlide"
+					/>
+				</div>
+			</div>
 
-            <div
-                ref="viewportRef"
-                class="home-reviews-viewport"
-                data-testid="home-reviews-viewport"
-                role="region"
-                aria-roledescription="carousel"
-                :aria-label="carouselLabel"
-                @mouseenter="stopAuto"
-                @mouseleave="startAuto"
-            >
-                <div class="home-reviews-row" :style="trackStyle">
-                    <article
-                        v-for="(review, idx) in reviews"
-                        :key="`${review.title}-${review.author}-${idx}`"
-                        :ref="
-                            (el) => {
-                                if (idx === 0)
-                                    setCardRef(el);
-                            }
-                        "
-                        class="home-reviews-item"
-                        :data-testid="`home-review-card-${idx + 1}`"
-                        role="group"
-                        :aria-label="`Review ${idx + 1} of ${reviews.length}`"
-                    >
-                        <img
-                            class="home-reviews-media"
-                            :src="review.image"
-                            :alt="review.author"
-                            loading="lazy"
-                        >
+			<div
+				ref="viewportRef"
+				class="home-reviews-viewport"
+				data-testid="home-reviews-viewport"
+				role="region"
+				aria-roledescription="carousel"
+				:aria-label="carouselLabel"
+				@mouseenter="stopAuto"
+				@mouseleave="startAuto"
+			>
+				<div class="home-reviews-row" :style="trackStyle">
+					<article
+						v-for="(review, idx) in reviews"
+						:key="`${review.title}-${review.author}-${idx}`"
+						:ref="
+							(el) => {
+								if (idx === 0)
+									setCardRef(el);
+							}
+						"
+						class="home-reviews-item"
+						:data-testid="`home-review-card-${idx + 1}`"
+						role="group"
+						:aria-label="`Review ${idx + 1} of ${reviews.length}`"
+					>
+						<img
+							class="home-reviews-media"
+							:src="review.image"
+							:alt="review.author"
+							loading="lazy"
+						>
 
-                        <div class="home-reviews-content">
-                            <div class="home-reviews-item-head">
-                                <h3 class="home-reviews-item-title">
-                                    {{ review.title }}
-                                </h3>
-                                <UiBadge
-                                    v-if="review.badge"
-                                    variant="outline"
-                                    :tone="review.badgeTone ?? 'success'"
-                                    size="sm"
-                                >
-                                    {{ review.badge }}
-                                </UiBadge>
-                            </div>
+						<div class="home-reviews-content">
+							<div class="home-reviews-item-head">
+								<h3 class="home-reviews-item-title">
+									{{ review.title }}
+								</h3>
+								<UiBadge
+									v-if="review.badge"
+									variant="outline"
+									:tone="review.badgeTone ?? 'success'"
+									size="sm"
+								>
+									{{ review.badge }}
+								</UiBadge>
+							</div>
 
-                            <p class="home-reviews-item-text">
-                                {{ review.text }}
-                            </p>
+							<p class="home-reviews-item-text">
+								{{ review.text }}
+							</p>
 
-                            <p class="home-reviews-stars">
-                                <UiIcon
-                                    v-for="star in 5"
-                                    :key="`${review.title}-star-${star}`"
-                                    name="strong-star"
-                                    color="var(--amber-base)"
-                                    size="var(--size-icon-md)"
-                                />
-                                <span class="home-reviews-author">{{ review.author }}</span>
-                            </p>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
-    </section>
+							<p class="home-reviews-stars">
+								<UiIcon
+									v-for="star in 5"
+									:key="`${review.title}-star-${star}`"
+									name="strong-star"
+									color="var(--amber-base)"
+									size="var(--size-icon-md)"
+								/>
+								<span class="home-reviews-author">{{ review.author }}</span>
+							</p>
+						</div>
+					</article>
+				</div>
+			</div>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">

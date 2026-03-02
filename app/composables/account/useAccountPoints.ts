@@ -1,13 +1,13 @@
 import {
-    accountPointBalance,
-    accountPointLastTierUpgradeDate,
-    accountPointLogs,
+	accountPointBalance,
+	accountPointLastTierUpgradeDate,
+	accountPointLogs,
 } from '~/data/account/points';
 
 export function useAccountPoints() {
-    return {
-        logs: accountPointLogs,
-        balance: accountPointBalance,
-        lastTierUpgradeDate: accountPointLastTierUpgradeDate,
-    };
+	return {
+		logs: accountPointLogs,
+		balance: accountPointBalance,
+		lastTierUpgradeDate: accountPointLastTierUpgradeDate,
+	};
 }

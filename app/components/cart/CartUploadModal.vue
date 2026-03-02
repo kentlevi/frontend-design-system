@@ -1,184 +1,184 @@
 <script setup lang="ts">
 const props = defineProps<{
-    open: boolean;
-    hasUploadedArtwork: boolean;
-    artworkPreviewUrl: string;
-    cartArtworkName: string;
-    cartArtworkExtension: string;
-    cartArtworkSize: string;
-    specialInstructions: string;
-    addToCartLoading: boolean;
+	open: boolean;
+	hasUploadedArtwork: boolean;
+	artworkPreviewUrl: string;
+	cartArtworkName: string;
+	cartArtworkExtension: string;
+	cartArtworkSize: string;
+	specialInstructions: string;
+	addToCartLoading: boolean;
 }>();
 
 const emit = defineEmits<{
-    close: [];
-    'open-file-picker': [];
-    'remove-artwork': [];
-    'update:specialInstructions': [value: string];
-    'skip-upload-later': [];
-    'proceed-to-cart': [];
+	close: [];
+	'open-file-picker': [];
+	'remove-artwork': [];
+	'update:specialInstructions': [value: string];
+	'skip-upload-later': [];
+	'proceed-to-cart': [];
 }>();
 
 const { t } = useI18n();
 </script>
 
 <template>
-    <Teleport to="body">
-        <Transition name="upload-modal-fade">
-            <div v-if="props.open" class="upload-modal-overlay" data-testid="product-category-upload-overlay" @click.self="emit('close')">
-                <section class="upload-modal" role="dialog" aria-modal="true" data-testid="product-category-upload-dialog">
-                    <header class="upload-modal-header" data-testid="product-category-upload-header">
-                        <h3 class="upload-modal-title" data-testid="product-category-upload-title">{{ t('cart.uploadArtwork.title') }}</h3>
-                        <UiButton
-                            type="button"
-                            variant="ghost"
-                            tone="neutral"
-                            size="sm"
-                            icon-only
-                            icon="regular-times"
-                            icon-size="lg"
-                            sr-label="Close upload modal"
-                            class="upload-modal-close-btn"
-                            data-testid="product-category-upload-close-button"
-                            @click="emit('close')"
-                        />
-                    </header>
+	<Teleport to="body">
+		<Transition name="upload-modal-fade">
+			<div v-if="props.open" class="upload-modal-overlay" data-testid="product-category-upload-overlay" @click.self="emit('close')">
+				<section class="upload-modal" role="dialog" aria-modal="true" data-testid="product-category-upload-dialog">
+					<header class="upload-modal-header" data-testid="product-category-upload-header">
+						<h3 class="upload-modal-title" data-testid="product-category-upload-title">{{ t('cart.uploadArtwork.title') }}</h3>
+						<UiButton
+							type="button"
+							variant="ghost"
+							tone="neutral"
+							size="sm"
+							icon-only
+							icon="regular-times"
+							icon-size="lg"
+							sr-label="Close upload modal"
+							class="upload-modal-close-btn"
+							data-testid="product-category-upload-close-button"
+							@click="emit('close')"
+						/>
+					</header>
 
-                    <div class="upload-modal-body" data-testid="product-category-upload-body">
-                        <div class="upload-dropzone" data-testid="product-category-upload-dropzone">
-                            <template v-if="!props.hasUploadedArtwork">
-                                <div class="upload-dropzone-copy" data-testid="product-category-upload-empty-state">
-                                    <UiIcon name="strong-cloud-upload" :size="20" color="#2a2f3d" />
-                                    <div>
-                                        <p class="upload-dropzone-title">
-                                            {{ t('cart.uploadArtwork.dragDropTitle') }}
-                                        </p>
-                                        <p class="upload-dropzone-meta">
-                                            {{ t('cart.uploadArtwork.acceptedTypes') }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <UiButton
-                                    type="button"
-                                    variant="outline"
-                                    tone="neutral"
-                                    size="md"
-                                    height="44px"
-                                    class="upload-secondary-btn"
-                                    data-testid="product-category-upload-select-files-button"
-                                    @click="emit('open-file-picker')"
-                                >
-                                    {{ t('cart.uploadArtwork.selectFiles') }}
-                                </UiButton>
-                            </template>
-                            <template v-else>
-                                <div class="upload-dropzone-copy" data-testid="product-category-upload-file-state">
-                                    <div class="upload-artwork-thumb">
-                                        <img
-                                            v-if="props.artworkPreviewUrl"
-                                            :src="props.artworkPreviewUrl"
-                                            :alt="props.cartArtworkName"
-                                            class="upload-artwork-image"
-                                        >
-                                        <UiIcon v-else name="strong-file-image" :size="22" color="#2a2f3d" />
-                                    </div>
-                                    <div>
-                                        <p class="upload-dropzone-title">{{ props.cartArtworkName }}</p>
-                                        <p class="upload-dropzone-meta">
-                                            .{{ props.cartArtworkExtension }} | {{ props.cartArtworkSize }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="upload-file-actions" data-testid="product-category-upload-file-actions">
-                                    <UiButton
-                                        type="button"
-                                        variant="outline"
-                                        tone="neutral"
-                                        size="md"
-                                        height="44px"
-                                        class="upload-secondary-btn"
-                                        data-testid="product-category-upload-replace-image-button"
-                                        @click="emit('open-file-picker')"
-                                    >
-                                        {{ t('cart.uploadArtwork.replaceImage') }}
-                                    </UiButton>
-                                    <UiButton
-                                        type="button"
-                                        variant="outline"
-                                        tone="neutral"
-                                        size="md"
-                                        icon-only
-                                        icon="strong-trash"
-                                        icon-size="md"
-                                        sr-label="Remove uploaded artwork"
-                                        width="44px"
-                                        height="44px"
-                                        class="upload-icon-btn"
-                                        data-testid="product-category-upload-remove-image-button"
-                                        @click="emit('remove-artwork')"
-                                    />
-                                </div>
-                            </template>
-                        </div>
+					<div class="upload-modal-body" data-testid="product-category-upload-body">
+						<div class="upload-dropzone" data-testid="product-category-upload-dropzone">
+							<template v-if="!props.hasUploadedArtwork">
+								<div class="upload-dropzone-copy" data-testid="product-category-upload-empty-state">
+									<UiIcon name="strong-cloud-upload" :size="20" color="#2a2f3d" />
+									<div>
+										<p class="upload-dropzone-title">
+											{{ t('cart.uploadArtwork.dragDropTitle') }}
+										</p>
+										<p class="upload-dropzone-meta">
+											{{ t('cart.uploadArtwork.acceptedTypes') }}
+										</p>
+									</div>
+								</div>
+								<UiButton
+									type="button"
+									variant="outline"
+									tone="neutral"
+									size="md"
+									height="44px"
+									class="upload-secondary-btn"
+									data-testid="product-category-upload-select-files-button"
+									@click="emit('open-file-picker')"
+								>
+									{{ t('cart.uploadArtwork.selectFiles') }}
+								</UiButton>
+							</template>
+							<template v-else>
+								<div class="upload-dropzone-copy" data-testid="product-category-upload-file-state">
+									<div class="upload-artwork-thumb">
+										<img
+											v-if="props.artworkPreviewUrl"
+											:src="props.artworkPreviewUrl"
+											:alt="props.cartArtworkName"
+											class="upload-artwork-image"
+										>
+										<UiIcon v-else name="strong-file-image" :size="22" color="#2a2f3d" />
+									</div>
+									<div>
+										<p class="upload-dropzone-title">{{ props.cartArtworkName }}</p>
+										<p class="upload-dropzone-meta">
+											.{{ props.cartArtworkExtension }} | {{ props.cartArtworkSize }}
+										</p>
+									</div>
+								</div>
+								<div class="upload-file-actions" data-testid="product-category-upload-file-actions">
+									<UiButton
+										type="button"
+										variant="outline"
+										tone="neutral"
+										size="md"
+										height="44px"
+										class="upload-secondary-btn"
+										data-testid="product-category-upload-replace-image-button"
+										@click="emit('open-file-picker')"
+									>
+										{{ t('cart.uploadArtwork.replaceImage') }}
+									</UiButton>
+									<UiButton
+										type="button"
+										variant="outline"
+										tone="neutral"
+										size="md"
+										icon-only
+										icon="strong-trash"
+										icon-size="md"
+										sr-label="Remove uploaded artwork"
+										width="44px"
+										height="44px"
+										class="upload-icon-btn"
+										data-testid="product-category-upload-remove-image-button"
+										@click="emit('remove-artwork')"
+									/>
+								</div>
+							</template>
+						</div>
 
-                        <label class="upload-notes" data-testid="product-category-upload-notes">
-                            <span>{{ t('cart.uploadArtwork.specialInstructions') }}</span>
-                            <UiTextarea
-                                class="upload-notes-textarea"
-                                :model-value="props.specialInstructions"
-                                rows="4"
-                                resize="none"
-                                :placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
-                                data-testid="product-category-upload-special-instructions"
-                                @update:model-value="emit('update:specialInstructions', $event)"
-                            />
-                        </label>
+						<label class="upload-notes" data-testid="product-category-upload-notes">
+							<span>{{ t('cart.uploadArtwork.specialInstructions') }}</span>
+							<UiTextarea
+								class="upload-notes-textarea"
+								:model-value="props.specialInstructions"
+								rows="4"
+								resize="none"
+								:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
+								data-testid="product-category-upload-special-instructions"
+								@update:model-value="emit('update:specialInstructions', $event)"
+							/>
+						</label>
 
-                        <p class="upload-note" data-testid="product-category-upload-note">
-                            {{ t('cart.uploadArtwork.note') }}
-                        </p>
-                    </div>
+						<p class="upload-note" data-testid="product-category-upload-note">
+							{{ t('cart.uploadArtwork.note') }}
+						</p>
+					</div>
 
-                    <footer class="upload-modal-footer" data-testid="product-category-upload-footer">
-                        <UiButton
-                            type="button"
-                            variant="ghost"
-                            tone="neutral"
-                            class="upload-skip-btn"
-                            :disabled="props.hasUploadedArtwork"
-                            data-testid="product-category-upload-skip-button"
-                            @click="emit('skip-upload-later')"
-                        >
-                            {{ t('cart.uploadArtwork.skipUploadLater') }}
-                        </UiButton>
-                        <UiButton
-                            type="button"
-                            variant="filled"
-                            tone="neutral"
-                            size="md"
-                            height="44px"
-                            class="upload-primary-btn"
-                            :disabled="!props.hasUploadedArtwork || props.addToCartLoading"
-                            data-testid="product-category-upload-proceed-button"
-                            @click="emit('proceed-to-cart')"
-                        >
-                            <UiIcon
-                                v-if="!props.addToCartLoading"
-                                name="strong-shop-cart"
-                                :size="18"
-                                color="#ffffff"
-                            />
-                            {{
-                                props.addToCartLoading
-                                    ? `${t('cart.uploadArtwork.addToCart')}...`
-                                    : t('cart.uploadArtwork.addToCart')
-                            }}
-                        </UiButton>
-                    </footer>
-                </section>
-            </div>
-        </Transition>
-    </Teleport>
+					<footer class="upload-modal-footer" data-testid="product-category-upload-footer">
+						<UiButton
+							type="button"
+							variant="ghost"
+							tone="neutral"
+							class="upload-skip-btn"
+							:disabled="props.hasUploadedArtwork"
+							data-testid="product-category-upload-skip-button"
+							@click="emit('skip-upload-later')"
+						>
+							{{ t('cart.uploadArtwork.skipUploadLater') }}
+						</UiButton>
+						<UiButton
+							type="button"
+							variant="filled"
+							tone="neutral"
+							size="md"
+							height="44px"
+							class="upload-primary-btn"
+							:disabled="!props.hasUploadedArtwork || props.addToCartLoading"
+							data-testid="product-category-upload-proceed-button"
+							@click="emit('proceed-to-cart')"
+						>
+							<UiIcon
+								v-if="!props.addToCartLoading"
+								name="strong-shop-cart"
+								:size="18"
+								color="#ffffff"
+							/>
+							{{
+								props.addToCartLoading
+									? `${t('cart.uploadArtwork.addToCart')}...`
+									: t('cart.uploadArtwork.addToCart')
+							}}
+						</UiButton>
+					</footer>
+				</section>
+			</div>
+		</Transition>
+	</Teleport>
 </template>
 
 <style scoped lang="scss">

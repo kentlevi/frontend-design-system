@@ -6,5 +6,5 @@ await navigateTo(withCountry('/'));
 </script>
 
 <template>
-    <div />
+	<div />
 </template>

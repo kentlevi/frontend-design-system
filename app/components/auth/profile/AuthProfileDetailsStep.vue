@@ -2,202 +2,202 @@
 import { ref } from 'vue';
 
 const props = withDefaults(
-    defineProps<{
-        firstName?: string;
-        lastName?: string;
-        email?: string;
-        initials?: string;
-        photoUrl?: string | null;
-    }>(),
-    {
-        firstName: '',
-        lastName: '',
-        email: '',
-        initials: '',
-        photoUrl: null,
-    }
+	defineProps<{
+		firstName?: string;
+		lastName?: string;
+		email?: string;
+		initials?: string;
+		photoUrl?: string | null;
+	}>(),
+	{
+		firstName: '',
+		lastName: '',
+		email: '',
+		initials: '',
+		photoUrl: null,
+	}
 );
 
 const emit = defineEmits<{
-    (event: 'update:firstName', value: string): void;
-    (event: 'update:lastName', value: string): void;
-    (event: 'update:email', value: string): void;
-    (event: 'next'): void;
-    (event: 'photo-file-picked', file: File): void;
-    (event: 'photo-remove'): void;
+	(event: 'update:firstName', value: string): void;
+	(event: 'update:lastName', value: string): void;
+	(event: 'update:email', value: string): void;
+	(event: 'next'): void;
+	(event: 'photo-file-picked', file: File): void;
+	(event: 'photo-remove'): void;
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
 function openFilePicker() {
-    fileInput.value?.click();
+	fileInput.value?.click();
 }
 
 function onFilePicked(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (!file) return;
+	const target = event.target as HTMLInputElement;
+	const file = target.files?.[0];
+	if (!file) return;
 
-    emit('photo-file-picked', file);
-    target.value = '';
+	emit('photo-file-picked', file);
+	target.value = '';
 }
 
 function updateFirstName(value: string) {
-    emit('update:firstName', value);
+	emit('update:firstName', value);
 }
 
 function updateLastName(value: string) {
-    emit('update:lastName', value);
+	emit('update:lastName', value);
 }
 
 function updateEmail(value: string) {
-    emit('update:email', value);
+	emit('update:email', value);
 }
 </script>
 
 <template>
-    <div class="auth-profile-details-step" data-testid="auth-profile-details-step">
-        <div class="auth-profile-details-main" data-testid="auth-profile-details-main">
-            <header class="auth-profile-head" data-testid="auth-profile-details-header">
-                <h1 class="auth-profile-head-title">
-                    {{
-                        $t('auth.profile.details.title', {
-                            name: firstName || 'User',
-                        })
-                    }}
-                </h1>
-                <p class="auth-profile-head-subtitle">{{ $t('auth.profile.details.subtitle') }}</p>
-            </header>
+	<div class="auth-profile-details-step" data-testid="auth-profile-details-step">
+		<div class="auth-profile-details-main" data-testid="auth-profile-details-main">
+			<header class="auth-profile-head" data-testid="auth-profile-details-header">
+				<h1 class="auth-profile-head-title">
+					{{
+						$t('auth.profile.details.title', {
+							name: firstName || 'User',
+						})
+					}}
+				</h1>
+				<p class="auth-profile-head-subtitle">{{ $t('auth.profile.details.subtitle') }}</p>
+			</header>
 
-            <div class="auth-profile-content" data-testid="auth-profile-details-content">
-                <div class="auth-profile-block" data-testid="auth-profile-photo-block">
-                    <label class="auth-profile-label">
-                        {{ $t('auth.profile.details.photoTitle') }}
-                    </label>
-                    <div class="auth-profile-photo-row" data-testid="auth-profile-photo-row">
-                        <div class="auth-profile-avatar">
-                            <img
-                                v-if="photoUrl"
-                                :src="photoUrl"
-                                alt="Profile photo"
-                                class="auth-profile-avatar-image"
-                            >
-                            <span v-else class="auth-profile-avatar-initials">{{ initials }}</span>
-                        </div>
+			<div class="auth-profile-content" data-testid="auth-profile-details-content">
+				<div class="auth-profile-block" data-testid="auth-profile-photo-block">
+					<label class="auth-profile-label">
+						{{ $t('auth.profile.details.photoTitle') }}
+					</label>
+					<div class="auth-profile-photo-row" data-testid="auth-profile-photo-row">
+						<div class="auth-profile-avatar">
+							<img
+								v-if="photoUrl"
+								:src="photoUrl"
+								alt="Profile photo"
+								class="auth-profile-avatar-image"
+							>
+							<span v-else class="auth-profile-avatar-initials">{{ initials }}</span>
+						</div>
 
-                        <div class="auth-profile-photo-meta">
-                            <div class="auth-profile-photo-meta-text-group">
-                                <p class="auth-profile-photo-meta-text">
-                                    {{ $t('auth.profile.details.photoHint1') }}
-                                </p>
-                                <p class="auth-profile-photo-meta-text">
-                                    {{ $t('auth.profile.details.photoHint2') }}
-                                </p>
-                            </div>
-                            <div class="auth-profile-photo-actions">
-                                <input
-                                    ref="fileInput"
-                                    type="file"
-                                    class="auth-profile-file-input"
-                                    accept=".jpg,.jpeg,.png"
-                                    data-testid="auth-profile-photo-input"
-                                    @change="onFilePicked"
-                                >
-                                <UiButton
-                                    variant="outline"
-                                    tone="neutral"
-                                    size="md"
-                                    class="auth-profile-outline-btn"
-                                    data-testid="auth-profile-photo-upload-button"
-                                    @click="openFilePicker"
-                                >
-                                    {{ $t('auth.profile.details.upload') }}
-                                </UiButton>
-                                <UiButton
-                                    v-if="photoUrl"
-                                    variant="ghost"
-                                    tone="danger"
-                                    size="md"
-                                    class="auth-profile-delete-btn"
-                                    data-testid="auth-profile-photo-delete-button"
-                                    @click="emit('photo-remove')"
-                                >
-                                    {{ $t('auth.profile.details.delete') }}
-                                </UiButton>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+						<div class="auth-profile-photo-meta">
+							<div class="auth-profile-photo-meta-text-group">
+								<p class="auth-profile-photo-meta-text">
+									{{ $t('auth.profile.details.photoHint1') }}
+								</p>
+								<p class="auth-profile-photo-meta-text">
+									{{ $t('auth.profile.details.photoHint2') }}
+								</p>
+							</div>
+							<div class="auth-profile-photo-actions">
+								<input
+									ref="fileInput"
+									type="file"
+									class="auth-profile-file-input"
+									accept=".jpg,.jpeg,.png"
+									data-testid="auth-profile-photo-input"
+									@change="onFilePicked"
+								>
+								<UiButton
+									variant="outline"
+									tone="neutral"
+									size="md"
+									class="auth-profile-outline-btn"
+									data-testid="auth-profile-photo-upload-button"
+									@click="openFilePicker"
+								>
+									{{ $t('auth.profile.details.upload') }}
+								</UiButton>
+								<UiButton
+									v-if="photoUrl"
+									variant="ghost"
+									tone="danger"
+									size="md"
+									class="auth-profile-delete-btn"
+									data-testid="auth-profile-photo-delete-button"
+									@click="emit('photo-remove')"
+								>
+									{{ $t('auth.profile.details.delete') }}
+								</UiButton>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                <div class="auth-profile-form-grid" data-testid="auth-profile-details-form">
-                    <div class="auth-profile-field">
-                        <label class="auth-profile-field-label">{{
-                            $t('auth.profile.details.firstName')
-                        }}</label>
-                        <UiInput
-                            :model-value="props.firstName"
-                            type="text"
-                            size="md"
-                            class="auth-profile-field-input"
-                            data-testid="auth-profile-first-name"
-                            @update:model-value="updateFirstName"
-                        />
-                    </div>
-                    <div class="auth-profile-field">
-                        <label class="auth-profile-field-label">
-                            {{ $t('auth.profile.details.lastName') }}
-                            <span class="auth-profile-field-label-optional">({{ $t('auth.register.optional') }})</span>
-                        </label>
-                        <UiInput
-                            :model-value="props.lastName"
-                            type="text"
-                            size="md"
-                            class="auth-profile-field-input"
-                            data-testid="auth-profile-last-name"
-                            @update:model-value="updateLastName"
-                        />
-                    </div>
-                    <div class="auth-profile-field auth-profile-field-full">
-                        <label class="auth-profile-field-label">{{
-                            $t('auth.profile.details.email')
-                        }}</label>
-                        <UiInput
-                            :model-value="props.email"
-                            type="email"
-                            size="md"
-                            class="auth-profile-field-input"
-                            data-testid="auth-profile-email"
-                            @update:model-value="updateEmail"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
+				<div class="auth-profile-form-grid" data-testid="auth-profile-details-form">
+					<div class="auth-profile-field">
+						<label class="auth-profile-field-label">{{
+							$t('auth.profile.details.firstName')
+						}}</label>
+						<UiInput
+							:model-value="props.firstName"
+							type="text"
+							size="md"
+							class="auth-profile-field-input"
+							data-testid="auth-profile-first-name"
+							@update:model-value="updateFirstName"
+						/>
+					</div>
+					<div class="auth-profile-field">
+						<label class="auth-profile-field-label">
+							{{ $t('auth.profile.details.lastName') }}
+							<span class="auth-profile-field-label-optional">({{ $t('auth.register.optional') }})</span>
+						</label>
+						<UiInput
+							:model-value="props.lastName"
+							type="text"
+							size="md"
+							class="auth-profile-field-input"
+							data-testid="auth-profile-last-name"
+							@update:model-value="updateLastName"
+						/>
+					</div>
+					<div class="auth-profile-field auth-profile-field-full">
+						<label class="auth-profile-field-label">{{
+							$t('auth.profile.details.email')
+						}}</label>
+						<UiInput
+							:model-value="props.email"
+							type="email"
+							size="md"
+							class="auth-profile-field-input"
+							data-testid="auth-profile-email"
+							@update:model-value="updateEmail"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <div class="auth-profile-actions" data-testid="auth-profile-details-actions">
-            <UiButton
-                variant="ghost"
-                tone="neutral"
-                size="md"
-                class="auth-profile-link-btn"
-                data-testid="auth-profile-skip-button"
-                @click="emit('next')"
-            >
-                {{ $t('auth.profile.details.skip') }}
-            </UiButton>
-            <UiButton
-                variant="filled"
-                tone="neutral"
-                size="md"
-                class="auth-profile-continue-btn"
-                data-testid="auth-profile-continue-button"
-                @click="emit('next')"
-            >
-                <UiIcon name="regular-long-arrow-right" :size="24" />
-                {{ $t('auth.profile.details.continue') }}
-            </UiButton>
-        </div>
-    </div>
+		<div class="auth-profile-actions" data-testid="auth-profile-details-actions">
+			<UiButton
+				variant="ghost"
+				tone="neutral"
+				size="md"
+				class="auth-profile-link-btn"
+				data-testid="auth-profile-skip-button"
+				@click="emit('next')"
+			>
+				{{ $t('auth.profile.details.skip') }}
+			</UiButton>
+			<UiButton
+				variant="filled"
+				tone="neutral"
+				size="md"
+				class="auth-profile-continue-btn"
+				data-testid="auth-profile-continue-button"
+				@click="emit('next')"
+			>
+				<UiIcon name="regular-long-arrow-right" :size="24" />
+				{{ $t('auth.profile.details.continue') }}
+			</UiButton>
+		</div>
+	</div>
 </template>
 
 <style lang="scss">

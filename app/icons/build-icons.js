@@ -9,13 +9,13 @@ const __dirname = path.dirname(__filename)
 const SRC_DIR = path.resolve(__dirname, "src")
 const APP_DIR = path.resolve(__dirname, "../../app")
 const ICON_SCAN_DIRS = [
-  "components",
-  "pages",
-  "layouts",
-  "composables",
-  "middleware",
-  "plugins",
-  "utils",
+	"components",
+	"pages",
+	"layouts",
+	"composables",
+	"middleware",
+	"plugins",
+	"utils",
 ]
 const PUBLIC_SPRITE = path.resolve(__dirname, "../../public/icons/sprite.svg")
 const DATA_FILE = path.resolve(__dirname, "../../app/data/icons.ts")
@@ -33,156 +33,156 @@ const missingInGuide = []
 const iconSpriteVersion = Date.now().toString()
 
 function normalizeSvgColors(svgBody) {
-  return svgBody.replace(/\s(fill|stroke)="([^"]*)"/g, (full, attr, value) => {
-    const normalized = String(value).trim().toLowerCase()
-    if (
-      normalized === "none" ||
+	return svgBody.replace(/\s(fill|stroke)="([^"]*)"/g, (full, attr, value) => {
+		const normalized = String(value).trim().toLowerCase()
+		if (
+			normalized === "none" ||
       normalized === "currentcolor" ||
       normalized.startsWith("url(")
-    ) {
-      return full
-    }
-    return ` ${attr}="currentColor"`
-  })
+		) {
+			return full
+		}
+		return ` ${attr}="currentColor"`
+	})
 }
 
 function normalizeName(folder, file) {
-  let base = file.replace(".svg", "")
-  base = base.replace(/^(l|r|s|b)\./, "")
-  base = base.replace(/[._]/g, "-")
+	let base = file.replace(".svg", "")
+	base = base.replace(/^(l|r|s|b)\./, "")
+	base = base.replace(/[._]/g, "-")
 
-  let prefix = "brand"
-  if (folder === "light") prefix = "light"
-  else if (folder === "regular") prefix = "regular"
-  else if (folder === "strong") prefix = "strong"
-  else if (folder === "brand-icons") prefix = "brand"
+	let prefix = "brand"
+	if (folder === "light") prefix = "light"
+	else if (folder === "regular") prefix = "regular"
+	else if (folder === "strong") prefix = "strong"
+	else if (folder === "brand-icons") prefix = "brand"
 
-  return `${prefix}-${base}`
+	return `${prefix}-${base}`
 }
 
 function getSourceFileFromIconName(iconName) {
-  const [set, ...rest] = iconName.split("-")
-  const base = rest.join("-")
-  if (!set || !base) return null
+	const [set, ...rest] = iconName.split("-")
+	const base = rest.join("-")
+	if (!set || !base) return null
 
-  const folderMap = {
-    light: "light",
-    regular: "regular",
-    strong: "strong",
-    brand: "brand-icons",
-  }
-  const prefixMap = {
-    light: "l",
-    regular: "r",
-    strong: "s",
-    brand: "b",
-  }
+	const folderMap = {
+		light: "light",
+		regular: "regular",
+		strong: "strong",
+		brand: "brand-icons",
+	}
+	const prefixMap = {
+		light: "l",
+		regular: "r",
+		strong: "s",
+		brand: "b",
+	}
 
-  const folder = folderMap[set]
-  const prefix = prefixMap[set]
-  if (!folder || !prefix) return null
+	const folder = folderMap[set]
+	const prefix = prefixMap[set]
+	if (!folder || !prefix) return null
 
-  const file = `${prefix}.${base.replace(/-/g, ".")}.svg`
-  return {
-    folder,
-    file,
-    fullPath: path.join(SRC_DIR, folder, file),
-  }
+	const file = `${prefix}.${base.replace(/-/g, ".")}.svg`
+	return {
+		folder,
+		file,
+		fullPath: path.join(SRC_DIR, folder, file),
+	}
 }
 
 function collectUsedIconNames(dir) {
-  const names = new Set()
-  const codeFileExt = new Set([".vue", ".ts", ".js"])
+	const names = new Set()
+	const codeFileExt = new Set([".vue", ".ts", ".js"])
 
-  function walkFiles(currentDir) {
-    for (const entry of fs.readdirSync(currentDir, { withFileTypes: true })) {
-      const full = path.join(currentDir, entry.name)
+	function walkFiles(currentDir) {
+		for (const entry of fs.readdirSync(currentDir, { withFileTypes: true })) {
+			const full = path.join(currentDir, entry.name)
 
-      if (entry.isDirectory()) {
-        walkFiles(full)
-        continue
-      }
+			if (entry.isDirectory()) {
+				walkFiles(full)
+				continue
+			}
 
-      if (!codeFileExt.has(path.extname(entry.name))) continue
+			if (!codeFileExt.has(path.extname(entry.name))) continue
 
-      const content = fs.readFileSync(full, "utf8")
-      const patterns = [
-        /\bname\s*=\s*["']((?:light|regular|strong|brand)-[a-z0-9-]+)["']/g,
-        /\bicon\s*=\s*["']((?:light|regular|strong|brand)-[a-z0-9-]+)["']/g,
-        /\b(?:name|icon)\s*:\s*["']((?:light|regular|strong|brand)-[a-z0-9-]+)["']/g,
-      ]
-      for (const pattern of patterns) {
-        const matches = content.matchAll(pattern)
-        for (const match of matches) {
-          if (match[1]) names.add(match[1])
-        }
-      }
-    }
-  }
+			const content = fs.readFileSync(full, "utf8")
+			const patterns = [
+				/\bname\s*=\s*["']((?:light|regular|strong|brand)-[a-z0-9-]+)["']/g,
+				/\bicon\s*=\s*["']((?:light|regular|strong|brand)-[a-z0-9-]+)["']/g,
+				/\b(?:name|icon)\s*:\s*["']((?:light|regular|strong|brand)-[a-z0-9-]+)["']/g,
+			]
+			for (const pattern of patterns) {
+				const matches = content.matchAll(pattern)
+				for (const match of matches) {
+					if (match[1]) names.add(match[1])
+				}
+			}
+		}
+	}
 
-  for (const scanDir of ICON_SCAN_DIRS) {
-    const full = path.join(dir, scanDir)
-    if (fs.existsSync(full)) {
-      walkFiles(full)
-    }
-  }
+	for (const scanDir of ICON_SCAN_DIRS) {
+		const full = path.join(dir, scanDir)
+		if (fs.existsSync(full)) {
+			walkFiles(full)
+		}
+	}
 
-  return Array.from(names)
+	return Array.from(names)
 }
 
 function copyMissingIconsFromGuide() {
-  const usedIcons = collectUsedIconNames(APP_DIR)
+	const usedIcons = collectUsedIconNames(APP_DIR)
 
-  for (const iconName of usedIcons) {
-    const source = getSourceFileFromIconName(iconName)
-    if (!source) continue
-    if (fs.existsSync(source.fullPath)) continue
+	for (const iconName of usedIcons) {
+		const source = getSourceFileFromIconName(iconName)
+		if (!source) continue
+		if (fs.existsSync(source.fullPath)) continue
 
-    const guidePath = `app/icons/src/${source.folder}/${source.file}`
-    try {
-      const svg = execSync(`git show ${GUIDE_ICONS_REF}:${guidePath}`, {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"],
-      })
-      fs.mkdirSync(path.dirname(source.fullPath), { recursive: true })
-      fs.writeFileSync(source.fullPath, svg)
-      copiedFromGuide.push(iconName)
-    } catch {
-      missingInGuide.push(iconName)
-    }
-  }
+		const guidePath = `app/icons/src/${source.folder}/${source.file}`
+		try {
+			const svg = execSync(`git show ${GUIDE_ICONS_REF}:${guidePath}`, {
+				encoding: "utf8",
+				stdio: ["ignore", "pipe", "ignore"],
+			})
+			fs.mkdirSync(path.dirname(source.fullPath), { recursive: true })
+			fs.writeFileSync(source.fullPath, svg)
+			copiedFromGuide.push(iconName)
+		} catch {
+			missingInGuide.push(iconName)
+		}
+	}
 }
 
 function walk(dir) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name)
+	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+		const full = path.join(dir, entry.name)
 
-    if (entry.isDirectory()) {
-      walk(full)
-      continue
-    }
+		if (entry.isDirectory()) {
+			walk(full)
+			continue
+		}
 
-    if (!entry.name.endsWith(".svg")) continue
+		if (!entry.name.endsWith(".svg")) continue
 
-    const folder = path.basename(path.dirname(full))
-    const svg = fs.readFileSync(full, "utf8")
-    const match = svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)
-    if (!match) continue
+		const folder = path.basename(path.dirname(full))
+		const svg = fs.readFileSync(full, "utf8")
+		const match = svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)
+		if (!match) continue
 
-    const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1] || "0 0 24 24"
-    const name = normalizeName(folder, entry.name)
-    const id = `icon-${name}`
+		const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1] || "0 0 24 24"
+		const name = normalizeName(folder, entry.name)
+		const id = `icon-${name}`
 
-    let body = match[1].trim()
-    body = normalizeSvgColors(body)
+		let body = match[1].trim()
+		body = normalizeSvgColors(body)
 
-    symbols += `
+		symbols += `
   <symbol id="${id}" viewBox="${viewBox}">
     ${body}
   </symbol>`
 
-    icons[name] = { id, viewBox }
-  }
+		icons[name] = { id, viewBox }
+	}
 }
 
 copyMissingIconsFromGuide()
@@ -194,22 +194,22 @@ ${symbols}
 
 fs.writeFileSync(PUBLIC_SPRITE, sprite)
 fs.writeFileSync(
-  DATA_FILE,
-  `export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
+	DATA_FILE,
+	`export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
 )
 fs.writeFileSync(
-  DATA_FILE_UI,
-  `export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
+	DATA_FILE_UI,
+	`export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
 )
 
 console.log("Icons built -> sprite + typed data")
 if (copiedFromGuide.length) {
-  console.log(
-    `Auto-copied ${copiedFromGuide.length} icon(s) from ${GUIDE_ICONS_REF}: ${copiedFromGuide.join(", ")}`
-  )
+	console.log(
+		`Auto-copied ${copiedFromGuide.length} icon(s) from ${GUIDE_ICONS_REF}: ${copiedFromGuide.join(", ")}`
+	)
 }
 if (missingInGuide.length) {
-  console.warn(
-    `Missing icon source in ${GUIDE_ICONS_REF}: ${missingInGuide.join(", ")}`
-  )
+	console.warn(
+		`Missing icon source in ${GUIDE_ICONS_REF}: ${missingInGuide.join(", ")}`
+	)
 }
