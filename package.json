@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs build",
-    "dev": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs dev",
+    "dev": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs dev -p 4000",
     "generate": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs generate",
     "preview": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs preview",
     "quality:deadcode": "node scripts/check-deadcode-scope.mjs",
