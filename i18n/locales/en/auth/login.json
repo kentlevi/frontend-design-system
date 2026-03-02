@@ -22,12 +22,12 @@
             "signInGoogle": "Sign in with Google",
             "forgot": {
                 "title": "Forgot your password?",
-                "description": "Enter your email and we'll send you a reset link.",
+                "description": "Enter your user account’s verified email address and we will send you a password reset link.",
                 "sendResetEmail": "Send Password Reset Email",
                 "sending": "Sending...",
                 "returnToLogin": "Return to Login",
                 "checkEmailTitle": "Please check your email",
-                "checkEmailDescription": "If an account exists for this email, a password reset link has been sent.",
+                "checkEmailDescription": "Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.",
                 "requestFailed": "Unable to send a reset link right now."
             },
             "validation": {

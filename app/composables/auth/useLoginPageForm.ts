@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
+import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 
 export function useLoginPageForm() {
     const api = useApi();
@@ -26,6 +27,17 @@ export function useLoginPageForm() {
     const submitLabel = computed(() =>
         isNonMember.value ? t('auth.login.checkOrder') : t('auth.login.signIn')
     );
+    function getRedirectCandidate() {
+        const queryRedirect = Array.isArray(route.query.redirect)
+            ? route.query.redirect[0]
+            : route.query.redirect;
+        if (queryRedirect) return queryRedirect;
+        if (!import.meta.client) return null;
+        return window.history.state?.back ?? null;
+    }
+    const postLoginRedirect = computed(() =>
+        resolvePostLoginRedirect(getRedirectCandidate(), withCountry)
+    );
 
     const isVerificationModalOpen = ref(false);
     const isForgotPasswordModalOpen = ref(false);
@@ -43,12 +55,14 @@ export function useLoginPageForm() {
 
     const memberEmailError = ref('');
     const memberPasswordError = ref('');
+    const memberInvalidCredentials = ref(false);
     const nonMemberEmailError = ref('');
     const nonMemberOrderError = ref('');
 
     watch(memberType, () => {
         memberEmailError.value = '';
         memberPasswordError.value = '';
+        memberInvalidCredentials.value = false;
         nonMemberEmailError.value = '';
         nonMemberOrderError.value = '';
     });
@@ -60,6 +74,7 @@ export function useLoginPageForm() {
     function validateMember() {
         memberEmailError.value = '';
         memberPasswordError.value = '';
+        memberInvalidCredentials.value = false;
 
         if (!memberEmail.value.trim()) {
             memberEmailError.value = t('auth.login.validation.fieldBlank');
@@ -102,11 +117,14 @@ export function useLoginPageForm() {
     function onMemberEmailInput(value: string) {
         memberEmail.value = value;
         memberEmailError.value = '';
+        memberInvalidCredentials.value = false;
     }
 
     function onMemberPasswordInput(value: string) {
         memberPassword.value = value;
         memberPasswordError.value = '';
+        memberEmailError.value = '';
+        memberInvalidCredentials.value = false;
     }
 
     function onNonMemberEmailInput(value: string) {
@@ -153,7 +171,7 @@ export function useLoginPageForm() {
                 if (import.meta.client) {
                     window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
                 }
-                await router.push(withCountry('/'));
+                await router.push(postLoginRedirect.value);
             }
         } else {
             await nonMemberLoginHandler();
@@ -174,10 +192,12 @@ export function useLoginPageForm() {
             });
 
             if (response.success === false) {
-                memberPasswordError.value =
-                    response.message || t('auth.login.validation.credentialsMismatch');
+                memberEmailError.value = t('auth.login.validation.credentialsMismatch');
+                memberPasswordError.value = '';
+                memberInvalidCredentials.value = true;
                 return response;
             }
+            memberInvalidCredentials.value = false;
 
             const tokenDuration =
                 keepSignedIn.value === true ? 60 * 60 * 24 * 90 : 60 * 60 * 24 * 3;
@@ -207,17 +227,41 @@ export function useLoginPageForm() {
                 const fields = response.data.user.profile?.user_field_values ?? [];
                 const firstName =
                     fields.find((field) =>
-                        (field.country_field_ids ?? field.country_fields_id) === 1
+                        field.country_field?.field_key === 'first_name' ||
+                        (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === 1
                     )?.value?.trim() || '';
                 const lastName =
                     fields.find((field) =>
-                        (field.country_field_ids ?? field.country_fields_id) === 2
+                        field.country_field?.field_key === 'last_name' ||
+                        (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === 2
                     )?.value?.trim() || '';
+                const existing = mockUser.value;
+                const emailValue = response.data.user.email || memberEmail.value.trim();
+                const fallbackRows = [...fields]
+                    .filter((field) => typeof field.value === 'string' && field.value.trim())
+                    .sort(
+                        (a, b) =>
+                            (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+                            (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+                    )
+                    .slice(0, 2);
+                let resolvedFirstName =
+                    firstName || fallbackRows[0]?.value?.trim() || existing?.firstName || '';
+                let resolvedLastName =
+                    lastName || fallbackRows[1]?.value?.trim() || existing?.lastName || '';
+
+                if (!resolvedLastName && resolvedFirstName.includes(' ')) {
+                    const parts = resolvedFirstName.split(/\s+/).filter(Boolean);
+                    if (parts.length >= 2) {
+                        resolvedFirstName = parts.slice(0, -1).join(' ');
+                        resolvedLastName = parts[parts.length - 1] || '';
+                    }
+                }
 
                 mockUser.value = {
-                    firstName,
-                    lastName,
-                    email: response.data.user.email || memberEmail.value.trim(),
+                    firstName: resolvedFirstName,
+                    lastName: resolvedLastName,
+                    email: emailValue,
                 };
             } else {
                 console.warn('No user returned from login API');
@@ -225,10 +269,9 @@ export function useLoginPageForm() {
 
             return response;
         } catch (error: any) {
-            memberPasswordError.value =
-                error?.data?.message ||
-                error?.message ||
-                t('auth.login.validation.credentialsMismatch');
+            memberEmailError.value = t('auth.login.validation.credentialsMismatch');
+            memberPasswordError.value = '';
+            memberInvalidCredentials.value = true;
             console.error(error);
         }
     }
@@ -397,6 +440,7 @@ export function useLoginPageForm() {
         nonMemberOrderNumber,
         memberEmailError,
         memberPasswordError,
+        memberInvalidCredentials,
         nonMemberEmailError,
         nonMemberOrderError,
         onMemberEmailInput,

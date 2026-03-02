@@ -1,4 +1,4 @@
-import { isSupportedCountry } from '~/constants/countries'
+import { resolveSupportedCountry } from '~/constants/countries'
 
 export default defineNuxtRouteMiddleware((to) => {
     // public routes that should NOT be treated as country codes
@@ -15,8 +15,8 @@ export default defineNuxtRouteMiddleware((to) => {
     // allow public routes (no country prefix)
     if (publicRoutes.has(first)) return
 
-    // allow supported countries
-    if (isSupportedCountry(first)) return
+    // allow supported countries and aliases
+    if (resolveSupportedCountry(first)) return
 
     // block unsupported 2-letter "country-like" segments
     if (/^[a-z]{2}$/.test(first)) {

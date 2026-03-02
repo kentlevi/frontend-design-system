@@ -1,0 +1,15 @@
+branch-defaults:
+  master:
+    environment: 2026-Dev-MS-SF
+global:
+  application_name: Musticker
+  default_ec2_keyname: null
+  default_platform: Node.js 24 running on 64bit Amazon Linux 2023
+  default_region: ap-northeast-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  sc: none
+  workspace_type: Application

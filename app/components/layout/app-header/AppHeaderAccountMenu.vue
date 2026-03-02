@@ -8,6 +8,7 @@ import {
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const route = useRoute();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
@@ -38,7 +39,7 @@ const emit = defineEmits<{
 function handleAccountLinkClick(event: MouseEvent, to: string) {
     if (to === '/auth/profile') {
         event.preventDefault();
-        if (process.client) {
+        if (import.meta.client) {
             window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
             window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
         }
@@ -57,6 +58,74 @@ const primaryAccountLinks = computed(() =>
 const gettingStartedLink = computed(
     () => props.accountLinks.find((link) => link.to === '/auth/profile') ?? null
 );
+
+function normalizePath(path: string) {
+    return path.replace(/\/+$/, '') || '/';
+}
+
+function sanitizeRedirectSource(fullPath: string) {
+    const parsed = new URL(fullPath, 'http://localhost');
+    parsed.searchParams.delete('redirect');
+    const search = parsed.searchParams.toString();
+    return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
+}
+
+function sanitizeExistingRedirect(
+    rawRedirect: unknown,
+    homePath: string,
+    loginPath: string,
+    registerPath: string
+) {
+    if (typeof rawRedirect !== 'string') return '';
+    const candidate = rawRedirect.trim();
+    if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
+
+    const parsed = new URL(candidate, 'http://localhost');
+    const targetPath = normalizePath(parsed.pathname);
+    if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) return '';
+
+    parsed.searchParams.delete('redirect');
+    const search = parsed.searchParams.toString();
+    return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
+}
+
+const guestLoginTarget = computed(() => {
+    const loginPath = normalizePath(withCountry('/auth/login'));
+    const registerPath = normalizePath(withCountry('/auth/register'));
+    const homePath = normalizePath(withCountry('/'));
+    const currentPath = normalizePath(route.path);
+
+    if (currentPath === homePath || currentPath === registerPath) {
+        return withCountry('/auth/login');
+    }
+
+    if (currentPath === loginPath) {
+        const currentRedirect = Array.isArray(route.query.redirect)
+            ? route.query.redirect[0]
+            : route.query.redirect;
+        const preservedRedirect = sanitizeExistingRedirect(
+            currentRedirect,
+            homePath,
+            loginPath,
+            registerPath
+        );
+        if (!preservedRedirect) return withCountry('/auth/login');
+
+        return {
+            path: withCountry('/auth/login'),
+            query: {
+                redirect: preservedRedirect,
+            },
+        };
+    }
+
+    return {
+        path: withCountry('/auth/login'),
+        query: {
+            redirect: sanitizeRedirectSource(route.fullPath),
+        },
+    };
+});
 </script>
 
 <template>
@@ -179,7 +248,7 @@ const gettingStartedLink = computed(
                 data-testid="app-header-account-dropdown-guest"
             >
                 <NuxtLink
-                    :to="withCountry('/auth/login')"
+                    :to="guestLoginTarget"
                     class="home-account-link home-account-link--guest"
                     role="menuitem"
                     data-testid="app-header-account-login"
@@ -274,8 +343,8 @@ const gettingStartedLink = computed(
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: var(--lynch-base);
-            color: var(--contrast-light);
+            background: var(--gray-40);
+            color: var(--black-base);
             font-size: 13px;
             font-weight: 700;
             display: grid;
@@ -320,8 +389,8 @@ const gettingStartedLink = computed(
                 width: 36px;
                 height: 36px;
                 border-radius: 50%;
-                background: var(--lynch-base);
-                color: var(--text-inverse);
+                background: var(--gray-40);
+                color: var(--black-base);
                 display: grid;
                 place-items: center;
                 font-weight: 700;

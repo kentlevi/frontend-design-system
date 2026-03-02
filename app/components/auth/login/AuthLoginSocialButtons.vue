@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useCountry } from '@/composables/app/useCountry';
+import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
+const route = useRoute();
 const { withCountry, apiCountry } = useCountry();
+
+function getRedirectCandidate() {
+    const queryRedirect = Array.isArray(route.query.redirect)
+        ? route.query.redirect[0]
+        : route.query.redirect;
+    if (queryRedirect) return queryRedirect;
+    if (!import.meta.client) return null;
+    return window.history.state?.back ?? null;
+}
 
 interface SocialLogin {
     data: {
@@ -50,7 +61,7 @@ async function handleSocial(provider: string) {
                     return
                 }
 
-                router.push(withCountry('/account/profile'))
+                router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
             }
         }, 500)
     } catch (error: any) {
