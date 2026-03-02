@@ -1,67 +1,67 @@
 <script setup lang="ts">
 withDefaults(
-    defineProps<{
-        step?: 1 | 2;
-    }>(),
-    {
-        step: 1,
-    }
+	defineProps<{
+		step?: 1 | 2;
+	}>(),
+	{
+		step: 1,
+	}
 );
 </script>
 
 <template>
-    <aside class="auth-profile-sidebar" data-testid="auth-profile-sidebar">
-        <div class="auth-profile-sidebar-main">
-            <UiLogo class="auth-profile-sidebar-logo" name="musticker" variant="full" color="colored" :size="58" />
+	<aside class="auth-profile-sidebar" data-testid="auth-profile-sidebar">
+		<div class="auth-profile-sidebar-main">
+			<UiLogo class="auth-profile-sidebar-logo" name="musticker" variant="full" color="colored" :size="58" />
 
-            <div class="auth-profile-sidebar-content">
-                <div class="auth-profile-sidebar-head">
-                    {{ $t('auth.profile.sidebar.title') }}
-                </div>
+			<div class="auth-profile-sidebar-content">
+				<div class="auth-profile-sidebar-head">
+					{{ $t('auth.profile.sidebar.title') }}
+				</div>
 
-                <div class="auth-profile-steps" data-testid="auth-profile-steps">
-                    <div
-                        class="auth-profile-step"
-                        :class="{ 'is-active': step === 1, 'is-complete': step === 2 }"
-                        data-testid="auth-profile-step-1"
-                    >
-                        <span class="auth-profile-step-icon">
-                            <UiIcon :name="step === 2 ? 'regular-check' : 'regular-user-plus'" :size="24" />
-                        </span>
-                        <div class="auth-profile-step-body">
-                            <p class="auth-profile-step-title">
-                                {{ $t('auth.profile.sidebar.profile.title') }}
-                            </p>
-                            <p class="auth-profile-step-text">
-                                {{ $t('auth.profile.sidebar.profile.text') }}
-                            </p>
-                        </div>
-                    </div>
+				<div class="auth-profile-steps" data-testid="auth-profile-steps">
+					<div
+						class="auth-profile-step"
+						:class="{ 'is-active': step === 1, 'is-complete': step === 2 }"
+						data-testid="auth-profile-step-1"
+					>
+						<span class="auth-profile-step-icon">
+							<UiIcon :name="step === 2 ? 'regular-check' : 'regular-user-plus'" :size="24" />
+						</span>
+						<div class="auth-profile-step-body">
+							<p class="auth-profile-step-title">
+								{{ $t('auth.profile.sidebar.profile.title') }}
+							</p>
+							<p class="auth-profile-step-text">
+								{{ $t('auth.profile.sidebar.profile.text') }}
+							</p>
+						</div>
+					</div>
 
-                    <div
-class="auth-profile-step" :class="{ 'is-active': step === 2 }"
-                        data-testid="auth-profile-step-2">
-                        <span class="auth-profile-step-icon">
-                            <UiIcon name="regular-cogs" :size="24" />
-                        </span>
-                        <div class="auth-profile-step-body">
-                            <p class="auth-profile-step-title">
-                                {{ $t('auth.profile.sidebar.settings.title') }}
-                            </p>
-                            <p class="auth-profile-step-text">
-                                {{ $t('auth.profile.sidebar.settings.text') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+					<div
+						class="auth-profile-step" :class="{ 'is-active': step === 2 }"
+						data-testid="auth-profile-step-2">
+						<span class="auth-profile-step-icon">
+							<UiIcon name="regular-cogs" :size="24" />
+						</span>
+						<div class="auth-profile-step-body">
+							<p class="auth-profile-step-title">
+								{{ $t('auth.profile.sidebar.settings.title') }}
+							</p>
+							<p class="auth-profile-step-text">
+								{{ $t('auth.profile.sidebar.settings.text') }}
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <div class="auth-profile-progress" data-testid="auth-profile-progress">
-            <span class="auth-profile-progress-item" :class="{ 'is-on': step === 1 }" />
-            <span class="auth-profile-progress-item" :class="{ 'is-on': step === 2 }" />
-        </div>
-    </aside>
+		<div class="auth-profile-progress" data-testid="auth-profile-progress">
+			<span class="auth-profile-progress-item" :class="{ 'is-on': step === 1 }" />
+			<span class="auth-profile-progress-item" :class="{ 'is-on': step === 2 }" />
+		</div>
+	</aside>
 </template>
 
 <style lang="scss">

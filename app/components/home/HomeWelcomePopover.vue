@@ -3,73 +3,73 @@ import { computed } from 'vue';
 import { useUserStore } from '~/stores/user';
 
 const props = withDefaults(
-    defineProps<{
-        visible?: boolean;
-        rewardPoints?: number;
-    }>(),
-    {
-        visible: false,
-        rewardPoints: 4,
-    }
+	defineProps<{
+		visible?: boolean;
+		rewardPoints?: number;
+	}>(),
+	{
+		visible: false,
+		rewardPoints: 4,
+	}
 );
 
 const emit = defineEmits<{
-    (event: 'close'): void;
-    (event: 'start'): void;
+	(event: 'close'): void;
+	(event: 'start'): void;
 }>();
 
 const { t } = useI18n();
 const userStore = useUserStore();
 const mockUser = useCookie<{
-    firstName: string;
-    lastName: string;
-    email: string;
+	firstName: string;
+	lastName: string;
+	email: string;
 } | null>('mock_user', {
-    default: () => null,
-    sameSite: 'lax',
-    path: '/',
+	default: () => null,
+	sameSite: 'lax',
+	path: '/',
 });
 
 function getFieldValueByKey(key: 'first_name' | 'last_name') {
-    const legacyId = key === 'first_name' ? 1 : 2;
-    const fieldValues = userStore.profile?.user_field_values ?? [];
-    const directMatch =
-        fieldValues
-            .find(
-                (field) =>
-                    field.country_field?.field_key === key ||
+	const legacyId = key === 'first_name' ? 1 : 2;
+	const fieldValues = userStore.profile?.user_field_values ?? [];
+	const directMatch =
+		fieldValues
+			.find(
+				(field) =>
+					field.country_field?.field_key === key ||
                     (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
-            )
-            ?.value?.trim() || '';
-    if (directMatch) return directMatch;
+			)
+			?.value?.trim() || '';
+	if (directMatch) return directMatch;
 
-    const fallbackRows = [...fieldValues]
-        .filter((field) => typeof field.value === 'string' && field.value.trim())
-        .sort(
-            (a, b) =>
-                (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+	const fallbackRows = [...fieldValues]
+		.filter((field) => typeof field.value === 'string' && field.value.trim())
+		.sort(
+			(a, b) =>
+				(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
                 (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-        )
-        .slice(0, 2);
-    if (fallbackRows.length < 2) return '';
-    return key === 'first_name'
-        ? (fallbackRows[0]?.value?.trim() || '')
-        : (fallbackRows[1]?.value?.trim() || '');
+		)
+		.slice(0, 2);
+	if (fallbackRows.length < 2) return '';
+	return key === 'first_name'
+		? (fallbackRows[0]?.value?.trim() || '')
+		: (fallbackRows[1]?.value?.trim() || '');
 }
 
 const storeFirstName = computed(() =>
-    getFieldValueByKey('first_name')
+	getFieldValueByKey('first_name')
 );
 
 const emailLocalPart = computed(() => {
-    const source = (userStore.email || mockUser.value?.email || '').trim();
-    if (!source.includes('@')) return '';
-    return source.split('@')[0] || '';
+	const source = (userStore.email || mockUser.value?.email || '').trim();
+	if (!source.includes('@')) return '';
+	return source.split('@')[0] || '';
 });
 
 const greetingName = computed(
-    () =>
-        storeFirstName.value ||
+	() =>
+		storeFirstName.value ||
         userStore.onboardingProfile?.firstName ||
         mockUser.value?.firstName ||
         emailLocalPart.value ||
@@ -78,58 +78,58 @@ const greetingName = computed(
 </script>
 
 <template>
-    <Transition name="home-welcome-popover">
-        <aside
-            v-if="visible"
-            class="home-welcome-popover"
-            role="dialog"
-            aria-live="polite"
-            data-testid="home-welcome-popover"
-        >
-            <button
-                type="button"
-                class="home-welcome-popover-close"
-                aria-label="Close welcome popover"
-                data-testid="home-welcome-popover-close"
-                @click="emit('close')"
-            >
-                <UiIcon name="strong-times" :size="20" />
-            </button>
+	<Transition name="home-welcome-popover">
+		<aside
+			v-if="visible"
+			class="home-welcome-popover"
+			role="dialog"
+			aria-live="polite"
+			data-testid="home-welcome-popover"
+		>
+			<button
+				type="button"
+				class="home-welcome-popover-close"
+				aria-label="Close welcome popover"
+				data-testid="home-welcome-popover-close"
+				@click="emit('close')"
+			>
+				<UiIcon name="strong-times" :size="20" />
+			</button>
 
-            <div class="home-welcome-popover-content">
-                <h3 class="home-welcome-popover-title">
-                    {{ $t('home.toast.welcome.title', { name: greetingName }) }}
-                </h3>
-                <p class="home-welcome-popover-text">
-                    <span>{{ $t('home.toast.welcome.bodyPrefix') }}</span>
-                    <strong>{{ $t('home.toast.welcome.bodyHighlight', { points: props.rewardPoints }) }}</strong>
-                    <span>{{ $t('home.toast.welcome.bodySuffix') }}</span>
-                </p>
-            </div>
+			<div class="home-welcome-popover-content">
+				<h3 class="home-welcome-popover-title">
+					{{ $t('home.toast.welcome.title', { name: greetingName }) }}
+				</h3>
+				<p class="home-welcome-popover-text">
+					<span>{{ $t('home.toast.welcome.bodyPrefix') }}</span>
+					<strong>{{ $t('home.toast.welcome.bodyHighlight', { points: props.rewardPoints }) }}</strong>
+					<span>{{ $t('home.toast.welcome.bodySuffix') }}</span>
+				</p>
+			</div>
 
-            <div class="home-welcome-popover-actions">
-                <button
-                    type="button"
-                    class="home-welcome-popover-skip"
-                    data-testid="home-welcome-popover-skip"
-                    @click="emit('close')"
-                >
-                    {{ $t('home.toast.welcome.skip') }}
-                </button>
-                <UiButton
-                    variant="filled"
-                    tone="neutral"
-                    size="md"
-                    class="home-welcome-popover-start"
-                    data-testid="home-welcome-popover-start"
-                    @click="emit('start')"
-                >
-                    <UiIcon name="regular-arrow-right" :size="18" />
-                    {{ $t('home.toast.welcome.getStarted') }}
-                </UiButton>
-            </div>
-        </aside>
-    </Transition>
+			<div class="home-welcome-popover-actions">
+				<button
+					type="button"
+					class="home-welcome-popover-skip"
+					data-testid="home-welcome-popover-skip"
+					@click="emit('close')"
+				>
+					{{ $t('home.toast.welcome.skip') }}
+				</button>
+				<UiButton
+					variant="filled"
+					tone="neutral"
+					size="md"
+					class="home-welcome-popover-start"
+					data-testid="home-welcome-popover-start"
+					@click="emit('start')"
+				>
+					<UiIcon name="regular-arrow-right" :size="18" />
+					{{ $t('home.toast.welcome.getStarted') }}
+				</UiButton>
+			</div>
+		</aside>
+	</Transition>
 </template>
 
 <style scoped lang="scss">

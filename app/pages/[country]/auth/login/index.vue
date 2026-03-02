@@ -1,10 +1,10 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: 'home',
-    middleware: ['guest-only'],
+	layout: 'home',
+	middleware: ['guest-only'],
 });
 </script>
 
 <template>
-    <AuthLoginPage />
+	<AuthLoginPage />
 </template>

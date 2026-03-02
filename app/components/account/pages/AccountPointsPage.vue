@@ -6,34 +6,34 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
 </script>
 
 <template>
-    <section class="account-page" data-testid="account-points-page">
-        <AccountShell active-tab="points">
-            <div class="account-content" data-testid="account-points-content">
-                <h1 class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</h1>
-                <div class="account-points-hero" data-testid="account-points-hero">
-                    <div>
-                        <h2 class="account-points-tier">{{ t('account.points.tierName') }}</h2>
-                        <p class="account-points-meta">{{ t('account.points.lastTierUpgrade') }}: {{ lastTierUpgradeDate }}</p>
-                    </div>
-                    <p class="account-points-balance" data-testid="account-points-balance">{{ balance }} {{ t('account.points.pointsUnit') }}</p>
-                </div>
-                <div class="account-points-logs" data-testid="account-points-logs">
-                    <article
-                        v-for="log in logs"
-                        :key="log.titleKey"
-                        class="account-points-log-row"
-                        :data-testid="`account-points-log-${log.titleKey}`"
-                    >
-                        <div>
-                            <h3 class="account-points-log-title">{{ t(`account.points.logs.${log.titleKey}`) }}</h3>
-                            <p class="account-points-log-date">{{ log.date }}</p>
-                        </div>
-                        <strong :class="{ plus: log.positive, minus: !log.positive }">{{ log.value }}</strong>
-                    </article>
-                </div>
-            </div>
-        </AccountShell>
-    </section>
+	<section class="account-page" data-testid="account-points-page">
+		<AccountShell active-tab="points">
+			<div class="account-content" data-testid="account-points-content">
+				<h1 class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</h1>
+				<div class="account-points-hero" data-testid="account-points-hero">
+					<div>
+						<h2 class="account-points-tier">{{ t('account.points.tierName') }}</h2>
+						<p class="account-points-meta">{{ t('account.points.lastTierUpgrade') }}: {{ lastTierUpgradeDate }}</p>
+					</div>
+					<p class="account-points-balance" data-testid="account-points-balance">{{ balance }} {{ t('account.points.pointsUnit') }}</p>
+				</div>
+				<div class="account-points-logs" data-testid="account-points-logs">
+					<article
+						v-for="log in logs"
+						:key="log.titleKey"
+						class="account-points-log-row"
+						:data-testid="`account-points-log-${log.titleKey}`"
+					>
+						<div>
+							<h3 class="account-points-log-title">{{ t(`account.points.logs.${log.titleKey}`) }}</h3>
+							<p class="account-points-log-date">{{ log.date }}</p>
+						</div>
+						<strong :class="{ plus: log.positive, minus: !log.positive }">{{ log.value }}</strong>
+					</article>
+				</div>
+			</div>
+		</AccountShell>
+	</section>
 </template>
 
 <style scoped lang="scss">
@@ -123,4 +123,3 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
     }
 }
 </style>
-

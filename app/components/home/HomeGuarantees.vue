@@ -6,53 +6,53 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
 const items = [
-    {
-        image: resolveFileUrl('/home/guarantees/best-value-guarantee.png'),
-        titleKey: 'quality.title',
-        textKey: 'quality.text',
-    },
-    {
-        image: resolveFileUrl('/home/guarantees/fast-air-delivery.png'),
-        titleKey: 'shipping.title',
-        textKey: 'shipping.text',
-    },
-    {
-        image: resolveFileUrl('/home/guarantees/rush-delivery-truck.png'),
-        titleKey: 'freeDelivery.title',
-        textKey: 'freeDelivery.text',
-    },
+	{
+		image: resolveFileUrl('/home/guarantees/best-value-guarantee.png'),
+		titleKey: 'quality.title',
+		textKey: 'quality.text',
+	},
+	{
+		image: resolveFileUrl('/home/guarantees/fast-air-delivery.png'),
+		titleKey: 'shipping.title',
+		textKey: 'shipping.text',
+	},
+	{
+		image: resolveFileUrl('/home/guarantees/rush-delivery-truck.png'),
+		titleKey: 'freeDelivery.title',
+		textKey: 'freeDelivery.text',
+	},
 ];
 </script>
 
 <template>
-    <section class="home-guarantees" data-testid="home-guarantees-section">
-        <div class="home-guarantees-container">
-            <article
-                v-for="item in items"
-                :key="item.titleKey"
-                class="home-guarantees-item"
-                :data-testid="`home-guarantee-${item.titleKey.replace('.title', '')}`"
-            >
-                <div class="home-guarantees-icon">
-                    <img :src="item.image" :alt="t(`home.guarantees.${item.titleKey}`)" class="home-guarantees-icon-image">
-                </div>
-                <div class="home-guarantees-copy">
-                    <h3 class="home-guarantees-title">
-                        {{ t(`home.guarantees.${item.titleKey}`) }}
-                    </h3>
-                    <p class="home-guarantees-text">
-                        {{ t(`home.guarantees.${item.textKey}`) }}
-                    </p>
-                </div>
-            </article>
-        </div>
-    </section>
+	<section class="home-guarantees" data-testid="home-guarantees-section">
+		<div class="home-guarantees-container">
+			<article
+				v-for="item in items"
+				:key="item.titleKey"
+				class="home-guarantees-item"
+				:data-testid="`home-guarantee-${item.titleKey.replace('.title', '')}`"
+			>
+				<div class="home-guarantees-icon">
+					<img :src="item.image" :alt="t(`home.guarantees.${item.titleKey}`)" class="home-guarantees-icon-image">
+				</div>
+				<div class="home-guarantees-copy">
+					<h3 class="home-guarantees-title">
+						{{ t(`home.guarantees.${item.titleKey}`) }}
+					</h3>
+					<p class="home-guarantees-text">
+						{{ t(`home.guarantees.${item.textKey}`) }}
+					</p>
+				</div>
+			</article>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">
 .home-guarantees {
     margin-bottom: 64px;
-    
+
     .home-guarantees-container {
         max-width: 1200px;
         margin: 0 auto;

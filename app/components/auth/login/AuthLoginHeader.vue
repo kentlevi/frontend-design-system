@@ -6,19 +6,19 @@ const { withCountry } = useCountry();
 </script>
 
 <template>
-    <div class="auth-login-header" data-testid="auth-login-header">
-        <h1 class="auth-login-title">{{ t('auth.login.title') }}</h1>
-        <p class="auth-login-subtitle">
-            {{ t('auth.login.subtitle') }}
-            <NuxtLink
-                :to="withCountry('/auth/register')"
-                class="auth-login-create-account-link"
-                data-testid="auth-login-create-account-link"
-            >
-                {{ t('auth.login.createAccount') }}
-            </NuxtLink>
-        </p>
-    </div>
+	<div class="auth-login-header" data-testid="auth-login-header">
+		<h1 class="auth-login-title">{{ t('auth.login.title') }}</h1>
+		<p class="auth-login-subtitle">
+			{{ t('auth.login.subtitle') }}
+			<NuxtLink
+				:to="withCountry('/auth/register')"
+				class="auth-login-create-account-link"
+				data-testid="auth-login-create-account-link"
+			>
+				{{ t('auth.login.createAccount') }}
+			</NuxtLink>
+		</p>
+	</div>
 </template>
 
 <style lang="scss">

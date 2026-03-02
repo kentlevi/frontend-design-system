@@ -5,257 +5,257 @@ import { useCountry } from '@/composables/app/useCountry';
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
-    firstName,
-    lastName,
-    email,
-    currentPassword,
-    newPassword,
-    confirmPassword,
-    promotions,
-    reviews,
-    confirmations,
-    unit,
-    photoUrl,
-    fileInput,
-    initials,
-    openFilePicker,
-    onFilePicked,
-    removePhoto,
-    saveProfile,
-    signOut,
+	firstName,
+	lastName,
+	email,
+	currentPassword,
+	newPassword,
+	confirmPassword,
+	promotions,
+	reviews,
+	confirmations,
+	unit,
+	photoUrl,
+	fileInput,
+	initials,
+	openFilePicker,
+	onFilePicked,
+	removePhoto,
+	saveProfile,
+	signOut,
 } = useAccountProfile();
 </script>
 
 <template>
-    <section class="account-page" data-testid="account-profile-page">
-        <AccountShell active-tab="profile">
-            <div class="account-content account-profile" data-testid="account-profile-content">
-                <h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
+	<section class="account-page" data-testid="account-profile-page">
+		<AccountShell active-tab="profile">
+			<div class="account-content account-profile" data-testid="account-profile-content">
+				<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
 
-                <div class="account-profile-section" data-testid="account-profile-personal-section">
-                    <div>
-                        <h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
-                        <p class="account-profile-section-description">
-                            {{ t('account.profile.personalDetailsDesc') }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="account-profile-label">{{ t('account.profile.profilePhoto') }}</label>
-                        <div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-                            <div class="account-profile-avatar">
-                                <img
-                                    v-if="photoUrl"
-                                    :src="photoUrl"
-                                    :alt="t('account.profile.profilePhoto')"
-                                    class="account-profile-avatar-image"
-                                >
-                                <span v-else class="account-profile-avatar-text">{{ initials }}</span>
-                            </div>
-                            <div>
-                                <p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
-                                <p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
-                                <div class="account-profile-photo-actions">
-                                    <input
-                                        ref="fileInput"
-                                        type="file"
-                                        class="account-profile-file-input"
-                                        accept=".jpg,.jpeg,.png"
-                                        data-testid="account-profile-photo-input"
-                                        @change="onFilePicked"
-                                    >
-                                    <button
-                                        type="button"
-                                        class="account-profile-outline-button"
-                                        data-testid="account-profile-photo-upload-button"
-                                        @click="openFilePicker"
-                                    >
-                                        {{ t('account.profile.uploadNewPhoto') }}
-                                    </button>
-                                    <button
-                                        v-if="photoUrl"
-                                        type="button"
-                                        class="account-profile-delete-button"
-                                        data-testid="account-profile-photo-delete-button"
-                                        @click="removePhoto"
-                                    >
-                                        {{ t('account.profile.delete') }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="account-profile-grid" data-testid="account-profile-form">
-                            <UiFormField :label="t('account.profile.firstName')" :required="true">
-                                <template #default="{ inputId, describedBy }">
-                                    <UiInput
-                                        :id="inputId"
-                                        v-model="firstName"
-                                        type="text"
-                                        :aria-describedby="describedBy || undefined"
-                                        data-testid="account-profile-first-name"
-                                    />
-                                </template>
-                            </UiFormField>
-                            <UiFormField
-                                :label="`${t('account.profile.lastName')} (${t('account.profile.optional')})`"
-                            >
-                                <template #default="{ inputId, describedBy }">
-                                    <UiInput
-                                        :id="inputId"
-                                        v-model="lastName"
-                                        type="text"
-                                        :aria-describedby="describedBy || undefined"
-                                        data-testid="account-profile-last-name"
-                                    />
-                                </template>
-                            </UiFormField>
-                            <UiFormField
-                                class="account-profile-grid-full"
-                                :label="t('account.profile.emailAddress')"
-                                :required="true"
-                            >
-                                <template #default="{ inputId, describedBy }">
-                                    <UiInput
-                                        :id="inputId"
-                                        v-model="email"
-                                        type="email"
-                                        :aria-describedby="describedBy || undefined"
-                                        data-testid="account-profile-email"
-                                    />
-                                </template>
-                            </UiFormField>
-                        </div>
-                        <div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-                            <UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="saveProfile">
-                                {{ t('account.profile.saveChanges') }}
-                            </UiButton>
-                        </div>
-                    </div>
-                </div>
+				<div class="account-profile-section" data-testid="account-profile-personal-section">
+					<div>
+						<h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
+						<p class="account-profile-section-description">
+							{{ t('account.profile.personalDetailsDesc') }}
+						</p>
+					</div>
+					<div>
+						<label class="account-profile-label">{{ t('account.profile.profilePhoto') }}</label>
+						<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
+							<div class="account-profile-avatar">
+								<img
+									v-if="photoUrl"
+									:src="photoUrl"
+									:alt="t('account.profile.profilePhoto')"
+									class="account-profile-avatar-image"
+								>
+								<span v-else class="account-profile-avatar-text">{{ initials }}</span>
+							</div>
+							<div>
+								<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
+								<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
+								<div class="account-profile-photo-actions">
+									<input
+										ref="fileInput"
+										type="file"
+										class="account-profile-file-input"
+										accept=".jpg,.jpeg,.png"
+										data-testid="account-profile-photo-input"
+										@change="onFilePicked"
+									>
+									<button
+										type="button"
+										class="account-profile-outline-button"
+										data-testid="account-profile-photo-upload-button"
+										@click="openFilePicker"
+									>
+										{{ t('account.profile.uploadNewPhoto') }}
+									</button>
+									<button
+										v-if="photoUrl"
+										type="button"
+										class="account-profile-delete-button"
+										data-testid="account-profile-photo-delete-button"
+										@click="removePhoto"
+									>
+										{{ t('account.profile.delete') }}
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="account-profile-grid" data-testid="account-profile-form">
+							<UiFormField :label="t('account.profile.firstName')" :required="true">
+								<template #default="{ inputId, describedBy }">
+									<UiInput
+										:id="inputId"
+										v-model="firstName"
+										type="text"
+										:aria-describedby="describedBy || undefined"
+										data-testid="account-profile-first-name"
+									/>
+								</template>
+							</UiFormField>
+							<UiFormField
+								:label="`${t('account.profile.lastName')} (${t('account.profile.optional')})`"
+							>
+								<template #default="{ inputId, describedBy }">
+									<UiInput
+										:id="inputId"
+										v-model="lastName"
+										type="text"
+										:aria-describedby="describedBy || undefined"
+										data-testid="account-profile-last-name"
+									/>
+								</template>
+							</UiFormField>
+							<UiFormField
+								class="account-profile-grid-full"
+								:label="t('account.profile.emailAddress')"
+								:required="true"
+							>
+								<template #default="{ inputId, describedBy }">
+									<UiInput
+										:id="inputId"
+										v-model="email"
+										type="email"
+										:aria-describedby="describedBy || undefined"
+										data-testid="account-profile-email"
+									/>
+								</template>
+							</UiFormField>
+						</div>
+						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
+							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="saveProfile">
+								{{ t('account.profile.saveChanges') }}
+							</UiButton>
+						</div>
+					</div>
+				</div>
 
-                <div class="account-profile-section" data-testid="account-profile-password-section">
-                    <div>
-                        <h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
-                        <p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
-                    </div>
-                    <div class="account-profile-stack" data-testid="account-profile-password-form">
-                        <UiFormField :label="t('account.profile.currentPassword')" :required="true">
-                            <template #default="{ inputId, describedBy }">
-                                <UiInput
-                                    :id="inputId"
-                                    v-model="currentPassword"
-                                    type="password"
-                                    :aria-describedby="describedBy || undefined"
-                                    :placeholder="t('account.profile.currentPasswordPlaceholder')"
-                                    data-testid="account-profile-current-password"
-                                />
-                            </template>
-                        </UiFormField>
-                        <p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
-                        <UiFormField :label="t('account.profile.newPassword')" :required="true">
-                            <template #default="{ inputId, describedBy }">
-                                <UiInput
-                                    :id="inputId"
-                                    v-model="newPassword"
-                                    type="password"
-                                    :aria-describedby="describedBy || undefined"
-                                    :placeholder="t('account.profile.newPasswordPlaceholder')"
-                                    data-testid="account-profile-new-password"
-                                />
-                            </template>
-                        </UiFormField>
-                        <UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
-                            <template #default="{ inputId, describedBy }">
-                                <UiInput
-                                    :id="inputId"
-                                    v-model="confirmPassword"
-                                    type="password"
-                                    :aria-describedby="describedBy || undefined"
-                                    :placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
-                                    data-testid="account-profile-confirm-password"
-                                />
-                            </template>
-                        </UiFormField>
-                        <div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
-                            <UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
-                                {{ t('account.profile.changePassword') }}
-                            </UiButton>
-                            <NuxtLink :to="withCountry('/auth/login')" data-testid="account-profile-forgot-password">
-                                {{ t('account.profile.forgotPassword') }}
-                            </NuxtLink>
-                        </div>
-                    </div>
-                </div>
+				<div class="account-profile-section" data-testid="account-profile-password-section">
+					<div>
+						<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
+						<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
+					</div>
+					<div class="account-profile-stack" data-testid="account-profile-password-form">
+						<UiFormField :label="t('account.profile.currentPassword')" :required="true">
+							<template #default="{ inputId, describedBy }">
+								<UiInput
+									:id="inputId"
+									v-model="currentPassword"
+									type="password"
+									:aria-describedby="describedBy || undefined"
+									:placeholder="t('account.profile.currentPasswordPlaceholder')"
+									data-testid="account-profile-current-password"
+								/>
+							</template>
+						</UiFormField>
+						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
+						<UiFormField :label="t('account.profile.newPassword')" :required="true">
+							<template #default="{ inputId, describedBy }">
+								<UiInput
+									:id="inputId"
+									v-model="newPassword"
+									type="password"
+									:aria-describedby="describedBy || undefined"
+									:placeholder="t('account.profile.newPasswordPlaceholder')"
+									data-testid="account-profile-new-password"
+								/>
+							</template>
+						</UiFormField>
+						<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
+							<template #default="{ inputId, describedBy }">
+								<UiInput
+									:id="inputId"
+									v-model="confirmPassword"
+									type="password"
+									:aria-describedby="describedBy || undefined"
+									:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
+									data-testid="account-profile-confirm-password"
+								/>
+							</template>
+						</UiFormField>
+						<div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
+							<UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
+								{{ t('account.profile.changePassword') }}
+							</UiButton>
+							<NuxtLink :to="withCountry('/auth/login')" data-testid="account-profile-forgot-password">
+								{{ t('account.profile.forgotPassword') }}
+							</NuxtLink>
+						</div>
+					</div>
+				</div>
 
-                <div class="account-profile-section" data-testid="account-profile-settings-section">
-                    <div>
-                        <h2 class="account-profile-section-title">{{ t('account.profile.settings') }}</h2>
-                        <p class="account-profile-section-description">{{ t('account.profile.settingsDesc') }}</p>
-                    </div>
-                    <div class="account-profile-settings" data-testid="account-profile-settings">
-                        <div class="account-profile-setting-row" data-testid="account-profile-setting-promotions">
-                            <div>
-                                <h3 class="account-profile-setting-title">{{ t('account.profile.promotions') }}</h3>
-                                <p class="account-profile-muted">{{ t('account.profile.promotionsDesc') }}</p>
-                            </div>
-                            <label class="account-profile-switch">
-                                <input v-model="promotions" type="checkbox" data-testid="account-profile-toggle-promotions" >
-                                <span />
-                            </label>
-                        </div>
-                        <div class="account-profile-setting-row" data-testid="account-profile-setting-reviews">
-                            <div>
-                                <h3 class="account-profile-setting-title">{{ t('account.profile.reviews') }}</h3>
-                                <p class="account-profile-muted">{{ t('account.profile.reviewsDesc') }}</p>
-                            </div>
-                            <label class="account-profile-switch">
-                                <input v-model="reviews" type="checkbox" data-testid="account-profile-toggle-reviews" >
-                                <span />
-                            </label>
-                        </div>
-                        <div class="account-profile-setting-row" data-testid="account-profile-setting-confirmations">
-                            <div>
-                                <h3 class="account-profile-setting-title">{{ t('account.profile.confirmations') }}</h3>
-                                <p class="account-profile-muted">{{ t('account.profile.confirmationsDesc') }}</p>
-                            </div>
-                            <label class="account-profile-switch">
-                                <input v-model="confirmations" type="checkbox" data-testid="account-profile-toggle-confirmations" >
-                                <span />
-                            </label>
-                        </div>
-                        <div class="account-profile-setting-row" data-testid="account-profile-setting-unit">
-                            <div>
-                                <h3 class="account-profile-setting-title">{{ t('account.profile.unit') }}</h3>
-                                <p class="account-profile-muted">{{ t('account.profile.unitDesc') }}</p>
-                            </div>
-                            <div class="account-profile-unit-segment">
-                                <button
-                                    type="button"
-                                    :class="{ active: unit === 'millimeter' }"
-                                    data-testid="account-profile-unit-millimeter-button"
-                                    @click="unit = 'millimeter'"
-                                >
-                                    {{ t('account.profile.millimeter') }}
-                                </button>
-                                <button
-                                    type="button"
-                                    :class="{ active: unit === 'inch' }"
-                                    data-testid="account-profile-unit-inch-button"
-                                    @click="unit = 'inch'"
-                                >
-                                    {{ t('account.profile.inch') }}
-                                </button>
-                            </div>
-                        </div>
-                        <div class="account-profile-actions-right" data-testid="account-profile-signout-wrap">
-                            <UiButton variant="outline" tone="neutral" size="md" data-testid="account-profile-signout-button" @click="signOut">
-                                {{ t('account.profile.signOut') }}
-                            </UiButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </AccountShell>
-    </section>
+				<div class="account-profile-section" data-testid="account-profile-settings-section">
+					<div>
+						<h2 class="account-profile-section-title">{{ t('account.profile.settings') }}</h2>
+						<p class="account-profile-section-description">{{ t('account.profile.settingsDesc') }}</p>
+					</div>
+					<div class="account-profile-settings" data-testid="account-profile-settings">
+						<div class="account-profile-setting-row" data-testid="account-profile-setting-promotions">
+							<div>
+								<h3 class="account-profile-setting-title">{{ t('account.profile.promotions') }}</h3>
+								<p class="account-profile-muted">{{ t('account.profile.promotionsDesc') }}</p>
+							</div>
+							<label class="account-profile-switch">
+								<input v-model="promotions" type="checkbox" data-testid="account-profile-toggle-promotions" >
+								<span />
+							</label>
+						</div>
+						<div class="account-profile-setting-row" data-testid="account-profile-setting-reviews">
+							<div>
+								<h3 class="account-profile-setting-title">{{ t('account.profile.reviews') }}</h3>
+								<p class="account-profile-muted">{{ t('account.profile.reviewsDesc') }}</p>
+							</div>
+							<label class="account-profile-switch">
+								<input v-model="reviews" type="checkbox" data-testid="account-profile-toggle-reviews" >
+								<span />
+							</label>
+						</div>
+						<div class="account-profile-setting-row" data-testid="account-profile-setting-confirmations">
+							<div>
+								<h3 class="account-profile-setting-title">{{ t('account.profile.confirmations') }}</h3>
+								<p class="account-profile-muted">{{ t('account.profile.confirmationsDesc') }}</p>
+							</div>
+							<label class="account-profile-switch">
+								<input v-model="confirmations" type="checkbox" data-testid="account-profile-toggle-confirmations" >
+								<span />
+							</label>
+						</div>
+						<div class="account-profile-setting-row" data-testid="account-profile-setting-unit">
+							<div>
+								<h3 class="account-profile-setting-title">{{ t('account.profile.unit') }}</h3>
+								<p class="account-profile-muted">{{ t('account.profile.unitDesc') }}</p>
+							</div>
+							<div class="account-profile-unit-segment">
+								<button
+									type="button"
+									:class="{ active: unit === 'millimeter' }"
+									data-testid="account-profile-unit-millimeter-button"
+									@click="unit = 'millimeter'"
+								>
+									{{ t('account.profile.millimeter') }}
+								</button>
+								<button
+									type="button"
+									:class="{ active: unit === 'inch' }"
+									data-testid="account-profile-unit-inch-button"
+									@click="unit = 'inch'"
+								>
+									{{ t('account.profile.inch') }}
+								</button>
+							</div>
+						</div>
+						<div class="account-profile-actions-right" data-testid="account-profile-signout-wrap">
+							<UiButton variant="outline" tone="neutral" size="md" data-testid="account-profile-signout-button" @click="signOut">
+								{{ t('account.profile.signOut') }}
+							</UiButton>
+						</div>
+					</div>
+				</div>
+			</div>
+		</AccountShell>
+	</section>
 </template>
 
 <style scoped lang="scss">
@@ -271,7 +271,7 @@ const {
             font-size: 28px;
             font-weight: 700;
             line-height: 40px;
-            
+
             color: var(--text-primary);
         }
 
@@ -286,7 +286,7 @@ const {
                 font-size: 18px;
                 font-weight: 600;
                 line-height: 32px;
-                
+
 
             }
 
@@ -296,7 +296,7 @@ const {
                 font-size: 14px;
                 font-weight: 400;
                 line-height: 24px;
-                
+
             }
 
             .account-profile-label {
@@ -533,4 +533,3 @@ const {
     }
 }
 </style>
-

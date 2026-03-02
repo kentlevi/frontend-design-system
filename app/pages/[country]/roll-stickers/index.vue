@@ -2,11 +2,10 @@
 import ProductCategoryExperience from '~/components/products/product-category/ProductCategoryExperience.vue';
 
 definePageMeta({
-    layout: 'home',
+	layout: 'home',
 });
 </script>
 
 <template>
-    <ProductCategoryExperience category="roll-stickers" />
+	<ProductCategoryExperience category="roll-stickers" />
 </template>
-

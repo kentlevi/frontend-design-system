@@ -6,5 +6,5 @@ await navigateTo(withCountry('/account/profile'), { redirectCode: 302 });
 </script>
 
 <template>
-    <div data-testid="account-index-redirect" />
+	<div data-testid="account-index-redirect" />
 </template>

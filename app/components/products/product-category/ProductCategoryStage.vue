@@ -2,216 +2,216 @@
 import type { ProductItem } from '~/data/products/catalog';
 
 type SizeOptionModel = {
-    key: string;
-    name: string;
-    dim: string;
+	key: string;
+	name: string;
+	dim: string;
 };
 
 type SizeFeatureCard = {
-    key: string;
-    image: string;
-    descriptionKey: string;
+	key: string;
+	image: string;
+	descriptionKey: string;
 };
 
 const props = defineProps<{
-    categoryProducts: ProductItem[];
-    hasPickedProduct: boolean;
-    selectedId: string | null;
-    selectedProduct: ProductItem | null;
-    sizeFeatureCards: readonly SizeFeatureCard[];
-    selectedSize: string;
-    sizeOptionModels: SizeOptionModel[];
-    quantityOptions: readonly number[];
-    selectedQty: number;
-    navigationInFlight: boolean;
-    subtotal: number;
-    discountRate: number;
-    total: number;
-    getProductName: (product: ProductItem) => string;
-    getProductBlurb: (product: ProductItem) => string;
-    formatPrice: (value: number) => string;
-    quantityPrice: (qty: number) => number;
+	categoryProducts: ProductItem[];
+	hasPickedProduct: boolean;
+	selectedId: string | null;
+	selectedProduct: ProductItem | null;
+	sizeFeatureCards: readonly SizeFeatureCard[];
+	selectedSize: string;
+	sizeOptionModels: SizeOptionModel[];
+	quantityOptions: readonly number[];
+	selectedQty: number;
+	navigationInFlight: boolean;
+	subtotal: number;
+	discountRate: number;
+	total: number;
+	getProductName: (product: ProductItem) => string;
+	getProductBlurb: (product: ProductItem) => string;
+	formatPrice: (value: number) => string;
+	quantityPrice: (qty: number) => number;
 }>();
 
 const emit = defineEmits<{
-    'select-product': [productId: string];
-    'update:selectedSize': [size: string];
-    'update:selectedQty': [qty: number];
-    'open-upload': [];
+	'select-product': [productId: string];
+	'update:selectedSize': [size: string];
+	'update:selectedQty': [qty: number];
+	'open-upload': [];
 }>();
 
 const { t } = useI18n();
 const unitPrice = computed(() =>
-    props.selectedQty > 0 ? props.total / props.selectedQty : 0
+	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
 </script>
 
 <template>
-    <section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
-        <section class="product-picker product-picker-layer" data-testid="product-category-picker">
-            <button
-                v-for="(product, index) in props.categoryProducts"
-                :key="product.id"
-                type="button"
-                class="product-picker-item"
-                :class="{ 'is-active': props.selectedId === product.id }"
-                :data-testid="`product-category-picker-item-${product.id}`"
-                @click="emit('select-product', product.id)"
-            >
-                <div class="product-picker-icon" :class="`is-${product.id}`">
-                    <img
-                        :src="product.image"
-                        :alt="`${props.getProductName(product)} preview`"
-                        :loading="index === 0 ? 'eager' : 'lazy'"
-                        :fetchpriority="index === 0 ? 'high' : undefined"
-                        :decoding="index === 0 ? 'sync' : 'async'"
-                        width="156"
-                        height="120"
-                        class="product-picker-image"
-                    >
-                </div>
-                <p class="product-picker-name">
-                    {{ props.getProductName(product) }}
-                </p>
-            </button>
-        </section>
+	<section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
+		<section class="product-picker product-picker-layer" data-testid="product-category-picker">
+			<button
+				v-for="(product, index) in props.categoryProducts"
+				:key="product.id"
+				type="button"
+				class="product-picker-item"
+				:class="{ 'is-active': props.selectedId === product.id }"
+				:data-testid="`product-category-picker-item-${product.id}`"
+				@click="emit('select-product', product.id)"
+			>
+				<div class="product-picker-icon" :class="`is-${product.id}`">
+					<img
+						:src="product.image"
+						:alt="`${props.getProductName(product)} preview`"
+						:loading="index === 0 ? 'eager' : 'lazy'"
+						:fetchpriority="index === 0 ? 'high' : undefined"
+						:decoding="index === 0 ? 'sync' : 'async'"
+						width="156"
+						height="120"
+						class="product-picker-image"
+					>
+				</div>
+				<p class="product-picker-name">
+					{{ props.getProductName(product) }}
+				</p>
+			</button>
+		</section>
 
-        <section v-show="props.hasPickedProduct" class="product-reveal product-reveal-layer" data-testid="product-category-reveal">
-            <section v-if="props.selectedProduct">
-                <section class="product-configurator" data-testid="product-category-configurator">
-                    <div class="product-preview" data-testid="product-category-preview">
-                        <h1 class="product-preview-title" data-testid="product-category-preview-title">{{ props.getProductName(props.selectedProduct) }}</h1>
-                        <p class="product-preview-blurb" data-testid="product-category-preview-blurb">{{ props.getProductBlurb(props.selectedProduct) }}</p>
-                        <div class="product-preview-media" data-testid="product-category-preview-media">
-                            <div class="preview-watermark">
-                                <UiLogo name="musticker" variant="mark" color="white" :size="120" />
-                            </div>
-                        </div>
+		<section v-show="props.hasPickedProduct" class="product-reveal product-reveal-layer" data-testid="product-category-reveal">
+			<section v-if="props.selectedProduct">
+				<section class="product-configurator" data-testid="product-category-configurator">
+					<div class="product-preview" data-testid="product-category-preview">
+						<h1 class="product-preview-title" data-testid="product-category-preview-title">{{ props.getProductName(props.selectedProduct) }}</h1>
+						<p class="product-preview-blurb" data-testid="product-category-preview-blurb">{{ props.getProductBlurb(props.selectedProduct) }}</p>
+						<div class="product-preview-media" data-testid="product-category-preview-media">
+							<div class="preview-watermark">
+								<UiLogo name="musticker" variant="mark" color="white" :size="120" />
+							</div>
+						</div>
 
-                        <div class="product-preview-features" data-testid="product-category-preview-features">
-                            <button
-                                v-for="feature in props.sizeFeatureCards"
-                                :key="feature.key"
-                                type="button"
-                                class="mini-feature"
-                                :class="{ 'is-active': props.selectedSize === feature.key }"
-                                :data-testid="`product-category-feature-card-${feature.key}`"
-                                @click="emit('update:selectedSize', feature.key)"
-                            >
-                                <h4 class="mini-feature-title">{{ t(`product.sizes.${feature.key}.label`) }}</h4>
-                                <img
-                                    :src="feature.image"
-                                    :alt="t(`product.sizes.${feature.key}.label`)"
-                                    loading="lazy" class="mini-feature-image" >
+						<div class="product-preview-features" data-testid="product-category-preview-features">
+							<button
+								v-for="feature in props.sizeFeatureCards"
+								:key="feature.key"
+								type="button"
+								class="mini-feature"
+								:class="{ 'is-active': props.selectedSize === feature.key }"
+								:data-testid="`product-category-feature-card-${feature.key}`"
+								@click="emit('update:selectedSize', feature.key)"
+							>
+								<h4 class="mini-feature-title">{{ t(`product.sizes.${feature.key}.label`) }}</h4>
+								<img
+									:src="feature.image"
+									:alt="t(`product.sizes.${feature.key}.label`)"
+									loading="lazy" class="mini-feature-image" >
 
-                                <p class="mini-feature-description">
-                                    {{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
-                                </p>
-                            </button>
-                        </div>
-                    </div>
+								<p class="mini-feature-description">
+									{{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
+								</p>
+							</button>
+						</div>
+					</div>
 
-                    <aside class="product-options" data-testid="product-category-options">
-                        <section>
-                            <div class="option-head" data-testid="product-category-size-head">
-                                <h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
-                                <small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
-                            </div>
-                            <div class="option-grid option-grid-size" data-testid="product-category-size-options">
-                                <button
-                                    v-for="size in props.sizeOptionModels"
-                                    :key="size.key"
-                                    type="button"
-                                    class="option-pill"
-                                    :class="{ 'is-active': props.selectedSize === size.key }"
-                                    :data-testid="`product-category-size-option-${size.key}`"
-                                    @click="emit('update:selectedSize', size.key)"
-                                >
-                                    <span class="size-pill-name">{{ size.name }}</span>
-                                    <span class="size-pill-dim">{{ size.dim }}</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    class="option-pill option-pill-wide is-disabled"
-                                    disabled
-                                    data-testid="product-category-size-option-custom-button"
-                                >
-                                    {{ t('product.options.customSize') }}
-                                </button>
-                            </div>
-                        </section>
+					<aside class="product-options" data-testid="product-category-options">
+						<section>
+							<div class="option-head" data-testid="product-category-size-head">
+								<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
+								<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+							</div>
+							<div class="option-grid option-grid-size" data-testid="product-category-size-options">
+								<button
+									v-for="size in props.sizeOptionModels"
+									:key="size.key"
+									type="button"
+									class="option-pill"
+									:class="{ 'is-active': props.selectedSize === size.key }"
+									:data-testid="`product-category-size-option-${size.key}`"
+									@click="emit('update:selectedSize', size.key)"
+								>
+									<span class="size-pill-name">{{ size.name }}</span>
+									<span class="size-pill-dim">{{ size.dim }}</span>
+								</button>
+								<button
+									type="button"
+									class="option-pill option-pill-wide is-disabled"
+									disabled
+									data-testid="product-category-size-option-custom-button"
+								>
+									{{ t('product.options.customSize') }}
+								</button>
+							</div>
+						</section>
 
-                        <section>
-                            <h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
-                            <div class="option-grid" data-testid="product-category-quantity-options">
-                                <button
-                                    v-for="qty in props.quantityOptions"
-                                    :key="qty"
-                                    type="button"
-                                    class="option-pill"
-                                    :class="{ 'is-active': props.selectedQty === qty }"
-                                    :data-testid="`product-category-quantity-option-${qty}`"
-                                    @click="emit('update:selectedQty', qty)"
-                                >
-                                    <span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
-                                    <strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
-                                </button>
-                                <button
-                                    type="button"
-                                    class="option-pill option-pill-wide is-disabled"
-                                    disabled
-                                    data-testid="product-category-quantity-option-custom-button"
-                                >
-                                    {{ t('product.options.customQuantity') }}
-                                </button>
-                            </div>
-                        </section>
+						<section>
+							<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
+							<div class="option-grid" data-testid="product-category-quantity-options">
+								<button
+									v-for="qty in props.quantityOptions"
+									:key="qty"
+									type="button"
+									class="option-pill"
+									:class="{ 'is-active': props.selectedQty === qty }"
+									:data-testid="`product-category-quantity-option-${qty}`"
+									@click="emit('update:selectedQty', qty)"
+								>
+									<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
+									<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
+								</button>
+								<button
+									type="button"
+									class="option-pill option-pill-wide is-disabled"
+									disabled
+									data-testid="product-category-quantity-option-custom-button"
+								>
+									{{ t('product.options.customQuantity') }}
+								</button>
+							</div>
+						</section>
 
-                        <section class="price-summary" data-testid="product-category-price-summary">
-                            <p class="price-summary-row price-summary-row-hidden" data-testid="product-category-price-subtotal-row">
-                                <span class="price-summary-label">{{ t('product.price.subtotal') }}</span>
-                                <strong class="price-summary-value">{{ props.formatPrice(props.subtotal) }}</strong>
-                            </p>
+						<section class="price-summary" data-testid="product-category-price-summary">
+							<p class="price-summary-row price-summary-row-hidden" data-testid="product-category-price-subtotal-row">
+								<span class="price-summary-label">{{ t('product.price.subtotal') }}</span>
+								<strong class="price-summary-value">{{ props.formatPrice(props.subtotal) }}</strong>
+							</p>
 
-                            <div class="price-summary-top">
-                                <ul class="price-benefits" data-testid="product-category-price-benefits">
-                                    <li data-testid="product-category-price-benefit-shipping">{{ t('product.price.benefitShipping') }}</li>
-                                    <li data-testid="product-category-price-benefit-ships-tomorrow">{{ t('product.price.benefitShipsTomorrow') }}</li>
-                                </ul>
+							<div class="price-summary-top">
+								<ul class="price-benefits" data-testid="product-category-price-benefits">
+									<li data-testid="product-category-price-benefit-shipping">{{ t('product.price.benefitShipping') }}</li>
+									<li data-testid="product-category-price-benefit-ships-tomorrow">{{ t('product.price.benefitShipsTomorrow') }}</li>
+								</ul>
 
-                                <div class="price-summary-stack">
-                                    <p class="price-summary-row discount" data-testid="product-category-price-discount-row">
-                                        <strong class="price-discount-rate">-{{ Math.round(props.discountRate * 100) }}%</strong>
-                                        <span class="price-summary-strike">{{ props.formatPrice(props.subtotal) }}</span>
-                                    </p>
-                                    <p class="price-summary-row total" data-testid="product-category-price-total-row">
-                                        <strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
-                                    </p>
-                                    <p class="price-summary-unit">
-                                        ({{ props.formatPrice(unitPrice) }} per piece)
-                                    </p>
-                                </div>
-                            </div>
+								<div class="price-summary-stack">
+									<p class="price-summary-row discount" data-testid="product-category-price-discount-row">
+										<strong class="price-discount-rate">-{{ Math.round(props.discountRate * 100) }}%</strong>
+										<span class="price-summary-strike">{{ props.formatPrice(props.subtotal) }}</span>
+									</p>
+									<p class="price-summary-row total" data-testid="product-category-price-total-row">
+										<strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
+									</p>
+									<p class="price-summary-unit">
+										({{ props.formatPrice(unitPrice) }} per piece)
+									</p>
+								</div>
+							</div>
 
-                            <UiButton
-                                type="button"
-                                variant="filled"
-                                tone="default"
-                                size="md"
-                                height="48px"
-                                class="next-step-btn"
-                                :disabled="props.navigationInFlight"
-                                data-testid="product-category-next-step-button"
-                                @click="emit('open-upload')"
-                            >
-                                {{ t('product.price.nextStep') }}
-                            </UiButton>
-                        </section>
-                    </aside>
-                </section>
-            </section>
-        </section>
-    </section>
+							<UiButton
+								type="button"
+								variant="filled"
+								tone="default"
+								size="md"
+								height="48px"
+								class="next-step-btn"
+								:disabled="props.navigationInFlight"
+								data-testid="product-category-next-step-button"
+								@click="emit('open-upload')"
+							>
+								{{ t('product.price.nextStep') }}
+							</UiButton>
+						</section>
+					</aside>
+				</section>
+			</section>
+		</section>
+	</section>
 </template>
 
 <style scoped lang="scss">

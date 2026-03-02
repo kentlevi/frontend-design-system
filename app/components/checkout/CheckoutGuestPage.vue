@@ -3,356 +3,356 @@ import { computed, ref } from 'vue';
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
 import { useCountry } from '@/composables/app/useCountry';
 import {
-    checkoutFieldValidation,
-    checkoutPaymentBrands,
-    checkoutPaymentMethods,
-    checkoutShippingMethods,
-    type CheckoutPaymentMethodKey,
-    type CheckoutShippingMethodKey,
+	checkoutFieldValidation,
+	checkoutPaymentBrands,
+	checkoutPaymentMethods,
+	checkoutShippingMethods,
+	type CheckoutPaymentMethodKey,
+	type CheckoutShippingMethodKey,
 } from '~/data/checkout/options';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
 
 const {
-    provinceOptions,
-    email,
-    fullName,
-    company,
-    address1,
-    address2,
-    province,
-    city,
-    postalCode,
-    phone,
-    cardNumber,
-    expiry,
-    cvv,
-    useShippingAsBilling,
-    selectedCheckoutItems,
-    orderTotal,
-    orderDiscount,
-    orderShippingFee,
-    orderSubtotal,
-    formatPrice,
-    sizeDimOnly,
+	provinceOptions,
+	email,
+	fullName,
+	company,
+	address1,
+	address2,
+	province,
+	city,
+	postalCode,
+	phone,
+	cardNumber,
+	expiry,
+	cvv,
+	useShippingAsBilling,
+	selectedCheckoutItems,
+	orderTotal,
+	orderDiscount,
+	orderShippingFee,
+	orderSubtotal,
+	formatPrice,
+	sizeDimOnly,
 } = useCheckoutGuest();
 
 const activeShippingMethods = computed(() =>
-    checkoutShippingMethods
-        .filter((method) => method.enabled !== false)
-        .map((method) => ({ ...method }))
+	checkoutShippingMethods
+		.filter((method) => method.enabled !== false)
+		.map((method) => ({ ...method }))
 );
 const activePaymentMethods = computed(() =>
-    checkoutPaymentMethods
-        .filter((method) => method.enabled !== false)
-        .map((method) => ({ ...method }))
+	checkoutPaymentMethods
+		.filter((method) => method.enabled !== false)
+		.map((method) => ({ ...method }))
 );
 
 const selectedShippingMethod = ref<CheckoutShippingMethodKey>(
-    activeShippingMethods.value.find((method) => method.defaultSelected)?.key || 'express'
+	activeShippingMethods.value.find((method) => method.defaultSelected)?.key || 'express'
 );
 const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
-    activePaymentMethods.value.find((method) => method.defaultSelected)?.key || 'credit-card'
+	activePaymentMethods.value.find((method) => method.defaultSelected)?.key || 'credit-card'
 );
 
 const fieldValidationByKey = computed(() =>
-    Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
+	Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
 );
 </script>
 
 <template>
-    <main class="checkout-page" data-testid="checkout-page">
-        <section class="checkout-page-shell">
-            <section class="checkout-form-column">
-                <section class="checkout-section checkout-panel">
-                    <div class="checkout-section-title">{{ t('checkout.guest.contactInformation') }}</div>
-                    <div class="checkout-contact-head">
-                        <span class="checkout-label">{{ t('checkout.guest.fields.email.label') }}</span>
-                        <div class="checkout-login-link">
-                            <span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
-                            <NuxtLink :to="withCountry('/auth/login')" class="checkout-login-link-action">{{ t('checkout.guest.login') }}</NuxtLink>
-                        </div>
-                    </div>
-                    <UiInput
-                        v-model="email"
-                        type="email"
-                        size="lg"
-                        class="checkout-input"
-                        :maxlength="fieldValidationByKey.email?.maxLength"
-                        :placeholder="t('checkout.guest.fields.email.placeholder')"
-                    />
-                </section>
+	<main class="checkout-page" data-testid="checkout-page">
+		<section class="checkout-page-shell">
+			<section class="checkout-form-column">
+				<section class="checkout-section checkout-panel">
+					<div class="checkout-section-title">{{ t('checkout.guest.contactInformation') }}</div>
+					<div class="checkout-contact-head">
+						<span class="checkout-label">{{ t('checkout.guest.fields.email.label') }}</span>
+						<div class="checkout-login-link">
+							<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
+							<NuxtLink :to="withCountry('/auth/login')" class="checkout-login-link-action">{{ t('checkout.guest.login') }}</NuxtLink>
+						</div>
+					</div>
+					<UiInput
+						v-model="email"
+						type="email"
+						size="lg"
+						class="checkout-input"
+						:maxlength="fieldValidationByKey.email?.maxLength"
+						:placeholder="t('checkout.guest.fields.email.placeholder')"
+					/>
+				</section>
 
-                <section class="checkout-section checkout-panel">
-                    <div class="checkout-section-title">{{ t('checkout.guest.shippingInformation') }}</div>
-                    <div class="checkout-grid checkout-grid-2">
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.fullName.label')">
-                            <UiInput
-                                v-model="fullName"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.fullName?.maxLength"
-                                :placeholder="t('checkout.guest.fields.fullName.placeholder')"
-                            />
-                        </UiFormField>
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.company.label')">
-                            <UiInput
-                                v-model="company"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.company?.maxLength"
-                                :placeholder="t('checkout.guest.fields.company.placeholder')"
-                            />
-                        </UiFormField>
-                    </div>
+				<section class="checkout-section checkout-panel">
+					<div class="checkout-section-title">{{ t('checkout.guest.shippingInformation') }}</div>
+					<div class="checkout-grid checkout-grid-2">
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.fullName.label')">
+							<UiInput
+								v-model="fullName"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.fullName?.maxLength"
+								:placeholder="t('checkout.guest.fields.fullName.placeholder')"
+							/>
+						</UiFormField>
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.company.label')">
+							<UiInput
+								v-model="company"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.company?.maxLength"
+								:placeholder="t('checkout.guest.fields.company.placeholder')"
+							/>
+						</UiFormField>
+					</div>
 
-                    <UiFormField class="checkout-field" :label="t('checkout.guest.fields.streetAddress.label')">
-                        <UiInput
-                            v-model="address1"
-                            type="text"
-                            size="lg"
-                            class="checkout-input"
-                            :maxlength="fieldValidationByKey.streetAddress?.maxLength"
-                            :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')"
-                        />
-                        <UiInput
-                            v-model="address2"
-                            type="text"
-                            size="lg"
-                            class="checkout-input"
-                            :maxlength="fieldValidationByKey.streetAddress?.maxLength"
-                            :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')"
-                        />
-                    </UiFormField>
+					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.streetAddress.label')">
+						<UiInput
+							v-model="address1"
+							type="text"
+							size="lg"
+							class="checkout-input"
+							:maxlength="fieldValidationByKey.streetAddress?.maxLength"
+							:placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')"
+						/>
+						<UiInput
+							v-model="address2"
+							type="text"
+							size="lg"
+							class="checkout-input"
+							:maxlength="fieldValidationByKey.streetAddress?.maxLength"
+							:placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')"
+						/>
+					</UiFormField>
 
-                    <div class="checkout-grid checkout-grid-2">
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.province.label')">
-                            <UiSelect
-                                :model-value="province"
-                                :options="provinceOptions"
-                                :placeholder="t('checkout.guest.fields.province.placeholder')"
-                                class="checkout-select"
-                                @update:model-value="province = String($event)"
-                            />
-                        </UiFormField>
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.city.label')">
-                            <UiInput
-                                v-model="city"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.city?.maxLength"
-                                :placeholder="t('checkout.guest.fields.city.placeholder')"
-                            />
-                        </UiFormField>
-                    </div>
+					<div class="checkout-grid checkout-grid-2">
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.province.label')">
+							<UiSelect
+								:model-value="province"
+								:options="provinceOptions"
+								:placeholder="t('checkout.guest.fields.province.placeholder')"
+								class="checkout-select"
+								@update:model-value="province = String($event)"
+							/>
+						</UiFormField>
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.city.label')">
+							<UiInput
+								v-model="city"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.city?.maxLength"
+								:placeholder="t('checkout.guest.fields.city.placeholder')"
+							/>
+						</UiFormField>
+					</div>
 
-                    <div class="checkout-grid checkout-grid-2">
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.postalCode.label')">
-                            <UiInput
-                                v-model="postalCode"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.postalCode?.maxLength"
-                                :placeholder="t('checkout.guest.fields.postalCode.placeholder')"
-                            />
-                        </UiFormField>
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.phone.label')">
-                            <UiInput
-                                v-model="phone"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.phone?.maxLength"
-                                :placeholder="t('checkout.guest.fields.phone.placeholder')"
-                            />
-                        </UiFormField>
-                    </div>
+					<div class="checkout-grid checkout-grid-2">
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.postalCode.label')">
+							<UiInput
+								v-model="postalCode"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.postalCode?.maxLength"
+								:placeholder="t('checkout.guest.fields.postalCode.placeholder')"
+							/>
+						</UiFormField>
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.phone.label')">
+							<UiInput
+								v-model="phone"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.phone?.maxLength"
+								:placeholder="t('checkout.guest.fields.phone.placeholder')"
+							/>
+						</UiFormField>
+					</div>
 
-                    <div class="checkout-shipping-method-wrap">
-                        <div class="checkout-shipping-method-head">
-                            <div class="checkout-label">{{ t('checkout.guest.shippingMethod') }}</div>
-                            <div class="checkout-shipping-note">
-                                {{ t('checkout.guest.shippingNote') }}
-                            </div>
-                        </div>
-                        <div class="checkout-grid checkout-grid-2">
-                            <button
-                                v-for="method in activeShippingMethods"
-                                :key="method.key"
-                                type="button"
-                                class="checkout-shipping-method-card"
-                                :class="{ 'is-active': selectedShippingMethod === method.key }"
-                                :aria-pressed="selectedShippingMethod === method.key"
-                                @click="selectedShippingMethod = method.key"
-                            >
-                                <img
-                                    :src="method.icon"
-                                    :alt="t(`${method.i18nKey}.alt`)"
-                                    class="checkout-shipping-method-icon"
-                                >
-                                <div class="checkout-shipping-method-content">
-                                    <div class="checkout-shipping-method-main">
-                                        <div class="checkout-shipping-method-name">{{ t(`${method.i18nKey}.name`) }}</div>
-                                        <div class="checkout-shipping-method-date">{{ t(`${method.i18nKey}.date`) }}</div>
-                                    </div>
-                                    <div class="checkout-shipping-method-price">{{ t(`${method.i18nKey}.price`) }}</div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </section>
+					<div class="checkout-shipping-method-wrap">
+						<div class="checkout-shipping-method-head">
+							<div class="checkout-label">{{ t('checkout.guest.shippingMethod') }}</div>
+							<div class="checkout-shipping-note">
+								{{ t('checkout.guest.shippingNote') }}
+							</div>
+						</div>
+						<div class="checkout-grid checkout-grid-2">
+							<button
+								v-for="method in activeShippingMethods"
+								:key="method.key"
+								type="button"
+								class="checkout-shipping-method-card"
+								:class="{ 'is-active': selectedShippingMethod === method.key }"
+								:aria-pressed="selectedShippingMethod === method.key"
+								@click="selectedShippingMethod = method.key"
+							>
+								<img
+									:src="method.icon"
+									:alt="t(`${method.i18nKey}.alt`)"
+									class="checkout-shipping-method-icon"
+								>
+								<div class="checkout-shipping-method-content">
+									<div class="checkout-shipping-method-main">
+										<div class="checkout-shipping-method-name">{{ t(`${method.i18nKey}.name`) }}</div>
+										<div class="checkout-shipping-method-date">{{ t(`${method.i18nKey}.date`) }}</div>
+									</div>
+									<div class="checkout-shipping-method-price">{{ t(`${method.i18nKey}.price`) }}</div>
+								</div>
+							</button>
+						</div>
+					</div>
+				</section>
 
-                <section class="checkout-section checkout-panel">
-                    <div class="checkout-section-title">{{ t('checkout.guest.payment') }}</div>
-                    <div class="checkout-grid checkout-grid-3">
-                        <button
-                            v-for="method in activePaymentMethods"
-                            :key="method.key"
-                            type="button"
-                            class="checkout-pay-btn"
-                            :class="{ 'is-active': selectedPaymentMethod === method.key }"
-                            :aria-pressed="selectedPaymentMethod === method.key"
-                            @click="selectedPaymentMethod = method.key"
-                        >
-                            <img
-                                :src="method.icon"
-                                :alt="t(`checkout.guest.paymentMethods.${method.i18nKey}.alt`)"
-                                class="checkout-pay-btn-icon"
-                            >
-                            <span class="checkout-pay-btn-label">{{ t(`checkout.guest.paymentMethods.${method.i18nKey}.label`) }}</span>
-                        </button>
-                    </div>
-                    <div class="checkout-subnote">{{ t('checkout.guest.paymentSubnote') }}</div>
-                    <div class="checkout-payment-brands">
-                        <span
-                            v-for="brand in checkoutPaymentBrands"
-                            :key="brand"
-                            class="checkout-payment-brand"
-                        >
-                            {{ brand }}
-                        </span>
-                    </div>
+				<section class="checkout-section checkout-panel">
+					<div class="checkout-section-title">{{ t('checkout.guest.payment') }}</div>
+					<div class="checkout-grid checkout-grid-3">
+						<button
+							v-for="method in activePaymentMethods"
+							:key="method.key"
+							type="button"
+							class="checkout-pay-btn"
+							:class="{ 'is-active': selectedPaymentMethod === method.key }"
+							:aria-pressed="selectedPaymentMethod === method.key"
+							@click="selectedPaymentMethod = method.key"
+						>
+							<img
+								:src="method.icon"
+								:alt="t(`checkout.guest.paymentMethods.${method.i18nKey}.alt`)"
+								class="checkout-pay-btn-icon"
+							>
+							<span class="checkout-pay-btn-label">{{ t(`checkout.guest.paymentMethods.${method.i18nKey}.label`) }}</span>
+						</button>
+					</div>
+					<div class="checkout-subnote">{{ t('checkout.guest.paymentSubnote') }}</div>
+					<div class="checkout-payment-brands">
+						<span
+							v-for="brand in checkoutPaymentBrands"
+							:key="brand"
+							class="checkout-payment-brand"
+						>
+							{{ brand }}
+						</span>
+					</div>
 
-                    <div class="checkout-grid checkout-grid-2">
-                        <UiFormField
-                            class="checkout-field checkout-field-full"
-                            :label="t('checkout.guest.fields.cardNumber.label')"
-                        >
-                            <UiInput
-                                v-model="cardNumber"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.cardNumber?.maxLength"
-                                :placeholder="t('checkout.guest.fields.cardNumber.placeholder')"
-                            />
-                        </UiFormField>
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.expiration.label')">
-                            <UiInput
-                                v-model="expiry"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.expiration?.maxLength"
-                                :placeholder="t('checkout.guest.fields.expiration.placeholder')"
-                            />
-                        </UiFormField>
-                        <UiFormField class="checkout-field" :label="t('checkout.guest.fields.cvv.label')">
-                            <UiInput
-                                v-model="cvv"
-                                type="text"
-                                size="lg"
-                                class="checkout-input"
-                                :maxlength="fieldValidationByKey.cvv?.maxLength"
-                                :placeholder="t('checkout.guest.fields.cvv.placeholder')"
-                            />
-                        </UiFormField>
-                    </div>
+					<div class="checkout-grid checkout-grid-2">
+						<UiFormField
+							class="checkout-field checkout-field-full"
+							:label="t('checkout.guest.fields.cardNumber.label')"
+						>
+							<UiInput
+								v-model="cardNumber"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.cardNumber?.maxLength"
+								:placeholder="t('checkout.guest.fields.cardNumber.placeholder')"
+							/>
+						</UiFormField>
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.expiration.label')">
+							<UiInput
+								v-model="expiry"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.expiration?.maxLength"
+								:placeholder="t('checkout.guest.fields.expiration.placeholder')"
+							/>
+						</UiFormField>
+						<UiFormField class="checkout-field" :label="t('checkout.guest.fields.cvv.label')">
+							<UiInput
+								v-model="cvv"
+								type="text"
+								size="lg"
+								class="checkout-input"
+								:maxlength="fieldValidationByKey.cvv?.maxLength"
+								:placeholder="t('checkout.guest.fields.cvv.placeholder')"
+							/>
+						</UiFormField>
+					</div>
 
-                    <UiCheckbox v-model="useShippingAsBilling" class="checkout-checkbox">
-                        {{ t('checkout.guest.useShippingAsBilling') }}
-                    </UiCheckbox>
-                    <button type="button" class="checkout-billing-link">
-                        {{ t('checkout.guest.viewBillingAddresses') }}
-                    </button>
-                </section>
-            </section>
+					<UiCheckbox v-model="useShippingAsBilling" class="checkout-checkbox">
+						{{ t('checkout.guest.useShippingAsBilling') }}
+					</UiCheckbox>
+					<button type="button" class="checkout-billing-link">
+						{{ t('checkout.guest.viewBillingAddresses') }}
+					</button>
+				</section>
+			</section>
 
-            <aside class="checkout-summary-column">
-                <section class="checkout-summary-card">
-                    <div class="checkout-summary-title">{{ t('checkout.guest.orderSummary') }}</div>
-                    <div class="checkout-summary-list">
-                        <div
-                            v-for="item in selectedCheckoutItems"
-                            :key="item.id"
-                            class="checkout-summary-item"
-                        >
-                            <div class="checkout-summary-thumb">
-                                <img
-                                    :src="item.artworkPreviewUrl || item.product.image"
-                                    :alt="item.product.name"
-                                    class="checkout-summary-thumb-image"
-                                >
-                            </div>
-                            <div class="checkout-summary-info">
-                                <div class="checkout-summary-name">{{ item.product.name }}</div>
-                                <div class="checkout-summary-meta">
-                                    {{ t('checkout.guest.summary.itemMeta', { size: sizeDimOnly(item.sizeLabel), qty: item.qty.toLocaleString() }) }}
-                                </div>
-                            </div>
-                            <div class="checkout-summary-price">{{ formatPrice(item.total) }}</div>
-                        </div>
-                        <div v-if="selectedCheckoutItems.length === 0" class="checkout-summary-empty">
-                            {{ t('checkout.guest.noItemsSelected') }}
-                        </div>
-                    </div>
+			<aside class="checkout-summary-column">
+				<section class="checkout-summary-card">
+					<div class="checkout-summary-title">{{ t('checkout.guest.orderSummary') }}</div>
+					<div class="checkout-summary-list">
+						<div
+							v-for="item in selectedCheckoutItems"
+							:key="item.id"
+							class="checkout-summary-item"
+						>
+							<div class="checkout-summary-thumb">
+								<img
+									:src="item.artworkPreviewUrl || item.product.image"
+									:alt="item.product.name"
+									class="checkout-summary-thumb-image"
+								>
+							</div>
+							<div class="checkout-summary-info">
+								<div class="checkout-summary-name">{{ item.product.name }}</div>
+								<div class="checkout-summary-meta">
+									{{ t('checkout.guest.summary.itemMeta', { size: sizeDimOnly(item.sizeLabel), qty: item.qty.toLocaleString() }) }}
+								</div>
+							</div>
+							<div class="checkout-summary-price">{{ formatPrice(item.total) }}</div>
+						</div>
+						<div v-if="selectedCheckoutItems.length === 0" class="checkout-summary-empty">
+							{{ t('checkout.guest.noItemsSelected') }}
+						</div>
+					</div>
 
-                    <div class="checkout-summary-lines">
-                        <div class="checkout-summary-line">
-                            <div class="checkout-summary-line-label">{{ t('checkout.guest.summary.subtotal') }}</div>
-                            <div class="checkout-summary-line-value">{{ formatPrice(orderSubtotal) }}</div>
-                        </div>
-                        <div class="checkout-summary-line">
-                            <div class="checkout-summary-line-label">{{ t('checkout.guest.summary.shippingFee') }}</div>
-                            <div class="checkout-summary-line-value">{{ formatPrice(orderShippingFee) }}</div>
-                        </div>
-                        <div class="checkout-summary-line">
-                            <div class="checkout-summary-line-label">{{ t('checkout.guest.summary.discounts') }}</div>
-                            <div class="checkout-summary-line-value is-discount">-{{ formatPrice(orderDiscount) }}</div>
-                        </div>
-                        <div class="checkout-summary-line is-total">
-                            <div class="checkout-summary-line-label">{{ t('checkout.guest.summary.total') }}</div>
-                            <div class="checkout-summary-line-value">{{ formatPrice(orderTotal) }}</div>
-                        </div>
-                    </div>
+					<div class="checkout-summary-lines">
+						<div class="checkout-summary-line">
+							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.subtotal') }}</div>
+							<div class="checkout-summary-line-value">{{ formatPrice(orderSubtotal) }}</div>
+						</div>
+						<div class="checkout-summary-line">
+							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.shippingFee') }}</div>
+							<div class="checkout-summary-line-value">{{ formatPrice(orderShippingFee) }}</div>
+						</div>
+						<div class="checkout-summary-line">
+							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.discounts') }}</div>
+							<div class="checkout-summary-line-value is-discount">-{{ formatPrice(orderDiscount) }}</div>
+						</div>
+						<div class="checkout-summary-line is-total">
+							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.total') }}</div>
+							<div class="checkout-summary-line-value">{{ formatPrice(orderTotal) }}</div>
+						</div>
+					</div>
 
-                    <UiButton
-                        variant="filled"
-                        tone="neutral"
-                        size="lg"
-                        class="checkout-submit-btn"
-                        :disabled="selectedCheckoutItems.length === 0"
-                    >
-                        {{ t('checkout.guest.completeCheckout') }}
-                    </UiButton>
-                    <div class="checkout-summary-agreement">
-                        <span class="checkout-summary-agreement-text">
-                            {{ t('checkout.guest.agreement.prefix') }}
-                        </span>
-                        <a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</a>
-                        <span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.and') }}</span>
-                        <a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</a>
-                        <span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.suffix') }}</span>
-                    </div>
-                </section>
-            </aside>
-        </section>
-    </main>
+					<UiButton
+						variant="filled"
+						tone="neutral"
+						size="lg"
+						class="checkout-submit-btn"
+						:disabled="selectedCheckoutItems.length === 0"
+					>
+						{{ t('checkout.guest.completeCheckout') }}
+					</UiButton>
+					<div class="checkout-summary-agreement">
+						<span class="checkout-summary-agreement-text">
+							{{ t('checkout.guest.agreement.prefix') }}
+						</span>
+						<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</a>
+						<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.and') }}</span>
+						<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</a>
+						<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.suffix') }}</span>
+					</div>
+				</section>
+			</aside>
+		</section>
+	</main>
 </template>
 
 <style scoped lang="scss">

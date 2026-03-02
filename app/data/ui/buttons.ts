@@ -16,11 +16,11 @@ export type ButtonSize = (typeof buttonSizes)[number];
 ========================================================= */
 
 export const buttonVariants = [
-    'filled',
-    'subtle',
-    'outline',
-    'tonal',
-    'ghost',
+	'filled',
+	'subtle',
+	'outline',
+	'tonal',
+	'ghost',
 ] as const;
 
 /** Union type of all variants */
@@ -33,36 +33,36 @@ export type ButtonVariant = (typeof buttonVariants)[number];
 ========================================================= */
 
 export const buttonTones = [
-    {
-        label: 'Primary',
-        value: 'default',
-        description:
+	{
+		label: 'Primary',
+		value: 'default',
+		description:
             'Primary buttons use the brand’s main color to create strong visual recognition.',
-    },
-    {
-        label: 'Accent',
-        value: 'accent',
-        description:
+	},
+	{
+		label: 'Accent',
+		value: 'accent',
+		description:
             'Accent buttons provide secondary emphasis using accent brand colors.',
-    },
-    {
-        label: 'Neutral',
-        value: 'neutral',
-        description:
+	},
+	{
+		label: 'Neutral',
+		value: 'neutral',
+		description:
             'Neutral buttons are grayscale and suitable for low-emphasis actions.',
-    },
-    {
-        label: 'Success',
-        value: 'success',
-        description:
+	},
+	{
+		label: 'Success',
+		value: 'success',
+		description:
             'Success buttons communicate confirmation or positive completion.',
-    },
-    {
-        label: 'Danger',
-        value: 'danger',
-        description:
+	},
+	{
+		label: 'Danger',
+		value: 'danger',
+		description:
             'Danger buttons indicate destructive or irreversible actions.',
-    },
+	},
 ] as const;
 
 /** Union type of tone values */
@@ -75,12 +75,12 @@ export type ButtonTone = (typeof buttonTones)[number]['value'];
 ========================================================= */
 
 export interface ButtonOptions {
-    size?: ButtonSize;
-    variant?: ButtonVariant;
-    tone?: ButtonTone;
-    iconLeft?: string;
-    iconRight?: string;
-    iconOnly?: boolean;
+	size?: ButtonSize;
+	variant?: ButtonVariant;
+	tone?: ButtonTone;
+	iconLeft?: string;
+	iconRight?: string;
+	iconOnly?: boolean;
 }
 
 /* =========================================================
@@ -90,7 +90,7 @@ export interface ButtonOptions {
 ========================================================= */
 
 export const buttonConfig = {
-    sizes: buttonSizes,
-    variants: buttonVariants,
-    tones: buttonTones,
+	sizes: buttonSizes,
+	variants: buttonVariants,
+	tones: buttonTones,
 } as const;

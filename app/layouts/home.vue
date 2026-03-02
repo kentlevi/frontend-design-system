@@ -6,13 +6,13 @@ const route = useRoute();
 </script>
 
 <template>
-    <div class="home-layout">
-        <AppHeaderRoot v-if="!route.meta.hideHeader" />
-        <main class="home-layout-main">
-            <slot />
-        </main>
-        <AppFooterRoot />
-    </div>
+	<div class="home-layout">
+		<AppHeaderRoot v-if="!route.meta.hideHeader" />
+		<main class="home-layout-main">
+			<slot />
+		</main>
+		<AppFooterRoot />
+	</div>
 </template>
 
 <style scoped lang="scss">

@@ -10,92 +10,92 @@ const route = useRoute();
 const { withCountry, apiCountry } = useCountry();
 
 function getRedirectCandidate() {
-    const queryRedirect = Array.isArray(route.query.redirect)
-        ? route.query.redirect[0]
-        : route.query.redirect;
-    if (queryRedirect) return queryRedirect;
-    if (!import.meta.client) return null;
-    return window.history.state?.back ?? null;
+	const queryRedirect = Array.isArray(route.query.redirect)
+		? route.query.redirect[0]
+		: route.query.redirect;
+	if (queryRedirect) return queryRedirect;
+	if (!import.meta.client) return null;
+	return window.history.state?.back ?? null;
 }
 
 interface SocialLogin {
-    data: {
-        url: string
-    }
+	data: {
+		url: string
+	}
 }
 
 /* @desc social login popup */
 async function handleSocial(provider: string) {
-    try {
-        const response = await api<SocialLogin>(`/${apiCountry.value}/auth/social/redirect`, {
-            method: 'POST',
-            body: {
-                provider
-            }
-        })
+	try {
+		const response = await api<SocialLogin>(`/${apiCountry.value}/auth/social/redirect`, {
+			method: 'POST',
+			body: {
+				provider
+			}
+		})
 
-        const url = response.data?.url
+		const url = response.data?.url
 
-        if (!url) return 
+		if (!url) return
 
-        const width = 500
-        const height = 600
-        const left = (window.screen.width - width) / 2
-        const top = (window.screen.height - height) / 2
+		const width = 500
+		const height = 600
+		const left = (window.screen.width - width) / 2
+		const top = (window.screen.height - height) / 2
 
-        const popup = window.open(
-            url,
-            'SocialLogin',
-            `width=${width},height=${height},top=${top},left=${left}`
-        )
+		const popup = window.open(
+			url,
+			'SocialLogin',
+			`width=${width},height=${height},top=${top},left=${left}`
+		)
 
-        if (!popup) return console.error('Pop up blocked');
+		if (!popup) return console.error('Pop up blocked');
 
-        const pollTimer = setInterval(() => {
-            if (popup.closed) {
-                clearInterval(pollTimer)
+		const pollTimer = setInterval(() => {
+			if (popup.closed) {
+				clearInterval(pollTimer)
 
-                const token = useCookie('auth_token').value
+				const token = useCookie('auth_token').value
 
-                if (!token) {
-                    return
-                }
+				if (!token) {
+					return
+				}
 
-                router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
-            }
-        }, 500)
-    } catch (error: any) {
-        console.error(error)
-    }
+				router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
+			}
+		}, 500)
+	} catch (error: unknown) {
+		console.error(error)
+	}
 }
 </script>
 
 <template>
-    <div class="auth-login-social-stack" data-testid="auth-login-social-stack">
-        <div class="auth-login-divider">
-            <span class="auth-login-social-label">{{ t('auth.login.socialLabel') }}</span>
-        </div>
+	<div class="auth-login-social-stack" data-testid="auth-login-social-stack">
+		<div class="auth-login-divider">
+			<span class="auth-login-social-label">{{ t('auth.login.socialLabel') }}</span>
+		</div>
 
-        <div class="auth-login-social-buttons">
-            <UiButton
-variant="outline" tone="neutral" size="md" class="auth-login-social"
-                data-testid="auth-login-social-facebook" @click="handleSocial('facebook')">
-                <span class="auth-login-social-content">
-                    <UiSocialIcon name="facebook" :size="24" variant="colored" />
-                    <span class="auth-login-social-text">{{ t('auth.login.signInFacebook') }}</span>
-                </span>
-            </UiButton>
+		<div class="auth-login-social-buttons">
+			<UiButton
+				variant="outline" tone="neutral" size="md" class="auth-login-social"
+				data-testid="auth-login-social-facebook" @click="handleSocial('facebook')">
+				<span class="auth-login-social-content">
+					<UiSocialIcon name="facebook" :size="24" variant="colored" />
+					<span class="auth-login-social-text">{{ t('auth.login.signInFacebook') }}</span>
+				</span>
+			</UiButton>
 
-            <UiButton
-variant="outline" tone="neutral" size="md" class="auth-login-social"
-                data-testid="auth-login-social-google" @click="handleSocial('google')">
-                <span class="auth-login-social-content">
-                    <UiSocialIcon name="google" :size="24" variant="colored" />
-                    <span class="auth-login-social-text">{{ t('auth.login.signInGoogle') }}</span>
-                </span>
-            </UiButton>
-        </div>
-    </div>
+			<UiButton
+				variant="outline" tone="neutral" size="md" class="auth-login-social"
+				data-testid="auth-login-social-google" @click="handleSocial('google')">
+				<span class="auth-login-social-content">
+					<UiSocialIcon name="google" :size="24" variant="colored" />
+					<span class="auth-login-social-text">{{ t('auth.login.signInGoogle') }}</span>
+				</span>
+			</UiButton>
+		</div>
+	</div>
 </template>
 
 <style lang="scss">

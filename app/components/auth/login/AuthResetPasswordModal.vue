@@ -6,20 +6,20 @@ import type { UserFieldValue, UserIdentity, UserProfile } from '@/stores/user';
 import { useCountry } from '@/composables/app/useCountry';
 
 const props = withDefaults(
-    defineProps<{
-        modelValue: boolean;
-        email?: string;
-        token?: string;
-    }>(),
-    {
-        email: '',
-        token: '',
-    }
+	defineProps<{
+		modelValue: boolean;
+		email?: string;
+		token?: string;
+	}>(),
+	{
+		email: '',
+		token: '',
+	}
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean): void;
-    (e: 'updated'): void;
+	(e: 'update:modelValue', value: boolean): void;
+	(e: 'updated'): void;
 }>();
 
 const api = useApi();
@@ -36,255 +36,256 @@ const loading = ref(false);
 const error = ref('');
 
 watch(
-    () => props.modelValue,
-    (open) => {
-        if (!open) return;
-        password.value = '';
-        confirmPassword.value = '';
-        passwordVisible.value = false;
-        confirmVisible.value = false;
-        error.value = '';
-    },
-    { immediate: true }
+	() => props.modelValue,
+	(open) => {
+		if (!open) return;
+		password.value = '';
+		confirmPassword.value = '';
+		passwordVisible.value = false;
+		confirmVisible.value = false;
+		error.value = '';
+	},
+	{ immediate: true }
 );
 
 function isStrongPassword(value: string) {
-    return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/.test(value);
+	return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/.test(value);
 }
 
 async function submitChangePassword() {
-    error.value = '';
+	error.value = '';
 
-    const email = props.email?.trim() || '';
-    const token = props.token?.trim() || '';
-    const newPassword = password.value.trim();
-    const confirmNewPassword = confirmPassword.value.trim();
+	const email = props.email?.trim() || '';
+	const token = props.token?.trim() || '';
+	const newPassword = password.value.trim();
+	const confirmNewPassword = confirmPassword.value.trim();
 
-    if (!email || !token) {
-        error.value = t('auth.reset.errors.missingLink');
-        return;
-    }
+	if (!email || !token) {
+		error.value = t('auth.reset.errors.missingLink');
+		return;
+	}
 
-    if (!newPassword || !confirmNewPassword) {
-        error.value = t('auth.reset.errors.fillBoth');
-        return;
-    }
+	if (!newPassword || !confirmNewPassword) {
+		error.value = t('auth.reset.errors.fillBoth');
+		return;
+	}
 
-    if (!isStrongPassword(newPassword)) {
-        error.value = t('auth.reset.description');
-        return;
-    }
+	if (!isStrongPassword(newPassword)) {
+		error.value = t('auth.reset.description');
+		return;
+	}
 
-    if (newPassword !== confirmNewPassword) {
-        error.value = t('auth.reset.errors.mismatch');
-        return;
-    }
+	if (newPassword !== confirmNewPassword) {
+		error.value = t('auth.reset.errors.mismatch');
+		return;
+	}
 
-    loading.value = true;
+	loading.value = true;
 
-    try {
-        const response = await api<{ success: boolean; message: string }>(
-            `/${apiCountry.value}/auth/password/reset`,
-            {
-                method: 'POST',
-                body: {
-                    email,
-                    token,
-                    password: newPassword,
-                    password_confirmation: confirmNewPassword,
-                },
-            }
-        );
+	try {
+		const response = await api<{ success: boolean; message: string }>(
+			`/${apiCountry.value}/auth/password/reset`,
+			{
+				method: 'POST',
+				body: {
+					email,
+					token,
+					password: newPassword,
+					password_confirmation: confirmNewPassword,
+				},
+			}
+		);
 
-        if (!response?.success) {
-            error.value = response?.message || t('auth.reset.errors.unable');
-            return;
-        }
+		if (!response?.success) {
+			error.value = response?.message || t('auth.reset.errors.unable');
+			return;
+		}
 
-        const loginResponse = await api<{
-            success: boolean;
-            message: string;
-            data: {
-                auth_token?: string;
-                user?: UserIdentity & {
-                    profile?: Pick<UserProfile, 'user_field_values'> | null;
-                };
-            };
-        }>(`/${apiCountry.value}/auth/login`, {
-            method: 'POST',
-            body: {
-                email,
-                password: newPassword,
-                remember_me: false,
-            },
-        });
+		const loginResponse = await api<{
+			success: boolean;
+			message: string;
+			data: {
+				auth_token?: string;
+				user?: UserIdentity & {
+					profile?: Pick<UserProfile, 'user_field_values'> | null;
+				};
+			};
+		}>(`/${apiCountry.value}/auth/login`, {
+			method: 'POST',
+			body: {
+				email,
+				password: newPassword,
+				remember_me: false,
+			},
+		});
 
-        if (!loginResponse?.success || !loginResponse?.data?.auth_token) {
-            error.value =
-                loginResponse?.message ||
+		if (!loginResponse?.success || !loginResponse?.data?.auth_token) {
+			error.value =
+				loginResponse?.message ||
                 t('auth.reset.errors.autoLoginFailed');
-            return;
-        }
+			return;
+		}
 
-        const authToken = useCookie('auth_token', {
-            maxAge: 60 * 60 * 24 * 3,
-            sameSite: 'lax',
-            path: '/',
-        });
+		const authToken = useCookie('auth_token', {
+			maxAge: 60 * 60 * 24 * 3,
+			sameSite: 'lax',
+			path: '/',
+		});
 
-        authToken.value = loginResponse.data.auth_token;
+		authToken.value = loginResponse.data.auth_token;
 
-        if (loginResponse.data.user) {
-            userStore.setUser(loginResponse.data.user);
+		if (loginResponse.data.user) {
+			userStore.setUser(loginResponse.data.user);
 
-            const mockUser = useCookie<{
-                firstName: string;
-                lastName: string;
-                email: string;
-            } | null>('mock_user', {
-                sameSite: 'lax',
-                path: '/',
-            });
+			const mockUser = useCookie<{
+				firstName: string;
+				lastName: string;
+				email: string;
+			} | null>('mock_user', {
+				sameSite: 'lax',
+				path: '/',
+			});
 
-            const fields =
-                loginResponse.data.user.profile?.user_field_values ?? [];
-            const firstName =
-                fields.find(
-                    (field: UserFieldValue) =>
-                        field.country_field?.field_key === 'first_name' ||
+			const fields =
+				loginResponse.data.user.profile?.user_field_values ?? [];
+			const firstName =
+				fields.find(
+					(field: UserFieldValue) =>
+						field.country_field?.field_key === 'first_name' ||
                         (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) ===
                         1
-                )?.value?.trim() || '';
-            const lastName =
-                fields.find(
-                    (field: UserFieldValue) =>
-                        field.country_field?.field_key === 'last_name' ||
+				)?.value?.trim() || '';
+			const lastName =
+				fields.find(
+					(field: UserFieldValue) =>
+						field.country_field?.field_key === 'last_name' ||
                         (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) ===
                         2
-                )?.value?.trim() || '';
-            const fallbackRows = [...fields]
-                .filter((field) => typeof field.value === 'string' && field.value.trim())
-                .sort(
-                    (a, b) =>
-                        (a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
+				)?.value?.trim() || '';
+			const fallbackRows = [...fields]
+				.filter((field) => typeof field.value === 'string' && field.value.trim())
+				.sort(
+					(a, b) =>
+						(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
                         (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-                )
-                .slice(0, 2);
+				)
+				.slice(0, 2);
 
-            mockUser.value = {
-                firstName: firstName || fallbackRows[0]?.value?.trim() || '',
-                lastName: lastName || fallbackRows[1]?.value?.trim() || '',
-                email: loginResponse.data.user.email || email,
-            };
-        }
+			mockUser.value = {
+				firstName: firstName || fallbackRows[0]?.value?.trim() || '',
+				lastName: lastName || fallbackRows[1]?.value?.trim() || '',
+				email: loginResponse.data.user.email || email,
+			};
+		}
 
-        emit('update:modelValue', false);
-        emit('updated');
-        router.push(withCountry('/'));
-    } catch (err: any) {
-        error.value =
-            err?.data?.message || err?.message || t('auth.reset.errors.unable');
-    } finally {
-        loading.value = false;
-    }
+		emit('update:modelValue', false);
+		emit('updated');
+		router.push(withCountry('/'));
+	} catch (err: unknown) {
+		const errorPayload = err as { data?: { message?: string }; message?: string };
+		error.value =
+			errorPayload?.data?.message || errorPayload?.message || t('auth.reset.errors.unable');
+	} finally {
+		loading.value = false;
+	}
 }
 </script>
 
 <template>
-    <UiModal
-        :model-value="modelValue"
-        width="640px"
-        padding="36px"
-        gap="22px"
-        data-testid="auth-reset-password-modal"
-        @update:model-value="emit('update:modelValue', $event)"
-    >
-        <template #header>
-            <div class="auth-reset-header">
-                <UiLogo name="musticker" variant="mark" color="colored" :size="34" />
-                <h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
-                <p class="auth-reset-description">
-                    {{ t('auth.reset.description') }}
-                </p>
-            </div>
-        </template>
+	<UiModal
+		:model-value="modelValue"
+		width="640px"
+		padding="36px"
+		gap="22px"
+		data-testid="auth-reset-password-modal"
+		@update:model-value="emit('update:modelValue', $event)"
+	>
+		<template #header>
+			<div class="auth-reset-header">
+				<UiLogo name="musticker" variant="mark" color="colored" :size="34" />
+				<h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
+				<p class="auth-reset-description">
+					{{ t('auth.reset.description') }}
+				</p>
+			</div>
+		</template>
 
-        <div class="auth-reset-body">
-            <div class="auth-reset-field">
-                <label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
-                <UiInput
-                    :model-value="password"
-                    :type="passwordVisible ? 'text' : 'password'"
-                    size="md"
-                    :state="error ? 'error' : 'default'"
-                    :placeholder="t('auth.reset.enterNewPassword')"
-                    data-testid="auth-reset-password-input"
-                    @update:model-value="password = $event"
-                >
-                    <template #icon-right>
-                        <button
-                            type="button"
-                            class="auth-reset-toggle"
-                            :aria-label="t('auth.reset.togglePassword')"
-                            @click="passwordVisible = !passwordVisible"
-                        >
-                            <UiIcon
-                                :name="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
-                                :size="20"
-                            />
-                        </button>
-                    </template>
-                </UiInput>
-            </div>
+		<div class="auth-reset-body">
+			<div class="auth-reset-field">
+				<label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
+				<UiInput
+					:model-value="password"
+					:type="passwordVisible ? 'text' : 'password'"
+					size="md"
+					:state="error ? 'error' : 'default'"
+					:placeholder="t('auth.reset.enterNewPassword')"
+					data-testid="auth-reset-password-input"
+					@update:model-value="password = $event"
+				>
+					<template #icon-right>
+						<button
+							type="button"
+							class="auth-reset-toggle"
+							:aria-label="t('auth.reset.togglePassword')"
+							@click="passwordVisible = !passwordVisible"
+						>
+							<UiIcon
+								:name="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:size="20"
+							/>
+						</button>
+					</template>
+				</UiInput>
+			</div>
 
-            <div class="auth-reset-field">
-                <label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
-                <UiInput
-                    :model-value="confirmPassword"
-                    :type="confirmVisible ? 'text' : 'password'"
-                    size="md"
-                    :state="error ? 'error' : 'default'"
-                    :placeholder="t('auth.reset.enterConfirmPassword')"
-                    data-testid="auth-reset-password-confirm-input"
-                    @update:model-value="confirmPassword = $event"
-                >
-                    <template #icon-right>
-                        <button
-                            type="button"
-                            class="auth-reset-toggle"
-                            :aria-label="t('auth.reset.toggleConfirmPassword')"
-                            @click="confirmVisible = !confirmVisible"
-                        >
-                            <UiIcon
-                                :name="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
-                                :size="20"
-                            />
-                        </button>
-                    </template>
-                </UiInput>
-            </div>
+			<div class="auth-reset-field">
+				<label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
+				<UiInput
+					:model-value="confirmPassword"
+					:type="confirmVisible ? 'text' : 'password'"
+					size="md"
+					:state="error ? 'error' : 'default'"
+					:placeholder="t('auth.reset.enterConfirmPassword')"
+					data-testid="auth-reset-password-confirm-input"
+					@update:model-value="confirmPassword = $event"
+				>
+					<template #icon-right>
+						<button
+							type="button"
+							class="auth-reset-toggle"
+							:aria-label="t('auth.reset.toggleConfirmPassword')"
+							@click="confirmVisible = !confirmVisible"
+						>
+							<UiIcon
+								:name="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:size="20"
+							/>
+						</button>
+					</template>
+				</UiInput>
+			</div>
 
-            <p
-                v-if="error"
-                class="auth-reset-error"
-                data-testid="auth-reset-error"
-            >
-                {{ error }}
-            </p>
+			<p
+				v-if="error"
+				class="auth-reset-error"
+				data-testid="auth-reset-error"
+			>
+				{{ error }}
+			</p>
 
-            <UiButton
-                variant="filled"
-                tone="neutral"
-                size="lg"
-                class="auth-reset-submit"
-                :disabled="loading"
-                data-testid="auth-reset-password-submit-button"
-                @click="submitChangePassword"
-            >
-                {{ loading ? t('auth.reset.changing') : t('auth.reset.submit') }}
-            </UiButton>
-        </div>
-    </UiModal>
+			<UiButton
+				variant="filled"
+				tone="neutral"
+				size="lg"
+				class="auth-reset-submit"
+				:disabled="loading"
+				data-testid="auth-reset-password-submit-button"
+				@click="submitChangePassword"
+			>
+				{{ loading ? t('auth.reset.changing') : t('auth.reset.submit') }}
+			</UiButton>
+		</div>
+	</UiModal>
 </template>
 
 <style scoped lang="scss">

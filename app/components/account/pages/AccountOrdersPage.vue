@@ -6,66 +6,66 @@ const { orders, activeOrder } = useAccountOrders();
 </script>
 
 <template>
-    <section class="account-page" data-testid="account-orders-page">
-        <AccountShell active-tab="orders">
-            <div class="account-content" data-testid="account-orders-content">
-                <header class="account-orders-header" data-testid="account-orders-header">
-                    <h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
-                    <div class="account-orders-actions" data-testid="account-orders-actions">
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-select-date-button">
-                            {{ t('account.orders.selectDate') }}
-                        </UiButton>
-                        <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-filters-button">
-                            {{ t('account.orders.filters') }}
-                        </UiButton>
-                    </div>
-                </header>
+	<section class="account-page" data-testid="account-orders-page">
+		<AccountShell active-tab="orders">
+			<div class="account-content" data-testid="account-orders-content">
+				<header class="account-orders-header" data-testid="account-orders-header">
+					<h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
+					<div class="account-orders-actions" data-testid="account-orders-actions">
+						<UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-select-date-button">
+							{{ t('account.orders.selectDate') }}
+						</UiButton>
+						<UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-filters-button">
+							{{ t('account.orders.filters') }}
+						</UiButton>
+					</div>
+				</header>
 
-                <div class="account-orders-layout" data-testid="account-orders-layout">
-                    <aside class="account-orders-list" data-testid="account-orders-list">
-                        <article
-                            v-for="(order, index) in orders"
-                            :key="order.id"
-                            class="account-orders-card"
-                            :class="{ active: index === 0 }"
-                            :data-testid="`account-orders-item-${index}`"
-                        >
-                            <h3 class="account-orders-card-title">{{ t('account.orders.orderLabel') }} {{ order.id }}</h3>
-                            <p class="account-orders-card-meta">
-                                {{ t('account.orders.meta', { count: order.itemCount, date: order.date }) }}
-                            </p>
-                        </article>
-                    </aside>
+				<div class="account-orders-layout" data-testid="account-orders-layout">
+					<aside class="account-orders-list" data-testid="account-orders-list">
+						<article
+							v-for="(order, index) in orders"
+							:key="order.id"
+							class="account-orders-card"
+							:class="{ active: index === 0 }"
+							:data-testid="`account-orders-item-${index}`"
+						>
+							<h3 class="account-orders-card-title">{{ t('account.orders.orderLabel') }} {{ order.id }}</h3>
+							<p class="account-orders-card-meta">
+								{{ t('account.orders.meta', { count: order.itemCount, date: order.date }) }}
+							</p>
+						</article>
+					</aside>
 
-                    <section class="account-orders-detail" data-testid="account-orders-detail">
-                        <header class="account-orders-detail-header" data-testid="account-orders-detail-header">
-                            <h2 class="account-orders-detail-title">
-                                {{ t('account.orders.orderLabel') }} {{ activeOrder?.id }}
-                            </h2>
-                            <span class="account-orders-status">
-                                {{ t(`account.orders.status.${activeOrder?.statusKey || 'beforeProduction'}`) }}
-                            </span>
-                        </header>
-                        <div class="account-orders-block" data-testid="account-orders-summary-block">
-                            <h3 class="account-orders-block-title">{{ t('account.orders.orderSummary') }}</h3>
-                            <p class="account-orders-block-copy">{{ t('account.orders.summaryText') }}</p>
-                        </div>
-                        <div class="account-orders-block" data-testid="account-orders-actions-block">
-                            <h3 class="account-orders-block-title">{{ t('account.orders.actions') }}</h3>
-                            <div class="account-orders-button-row" data-testid="account-orders-action-buttons">
-                                <UiButton variant="filled" tone="neutral" size="md" data-testid="account-orders-upload-artwork-button">
-                                    {{ t('account.orders.uploadArtwork') }}
-                                </UiButton>
-                                <UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-cancel-button">
-                                    {{ t('account.orders.cancelOrder') }}
-                                </UiButton>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </AccountShell>
-    </section>
+					<section class="account-orders-detail" data-testid="account-orders-detail">
+						<header class="account-orders-detail-header" data-testid="account-orders-detail-header">
+							<h2 class="account-orders-detail-title">
+								{{ t('account.orders.orderLabel') }} {{ activeOrder?.id }}
+							</h2>
+							<span class="account-orders-status">
+								{{ t(`account.orders.status.${activeOrder?.statusKey || 'beforeProduction'}`) }}
+							</span>
+						</header>
+						<div class="account-orders-block" data-testid="account-orders-summary-block">
+							<h3 class="account-orders-block-title">{{ t('account.orders.orderSummary') }}</h3>
+							<p class="account-orders-block-copy">{{ t('account.orders.summaryText') }}</p>
+						</div>
+						<div class="account-orders-block" data-testid="account-orders-actions-block">
+							<h3 class="account-orders-block-title">{{ t('account.orders.actions') }}</h3>
+							<div class="account-orders-button-row" data-testid="account-orders-action-buttons">
+								<UiButton variant="filled" tone="neutral" size="md" data-testid="account-orders-upload-artwork-button">
+									{{ t('account.orders.uploadArtwork') }}
+								</UiButton>
+								<UiButton variant="outline" tone="neutral" size="md" data-testid="account-orders-cancel-button">
+									{{ t('account.orders.cancelOrder') }}
+								</UiButton>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</AccountShell>
+	</section>
 </template>
 
 <style scoped lang="scss">
@@ -88,7 +88,7 @@ const { orders, activeOrder } = useAccountOrders();
                 font-size: 28px;
                 font-weight: 700;
                 line-height: 40px;
-                
+
             }
         }
 
@@ -194,4 +194,3 @@ const { orders, activeOrder } = useAccountOrders();
     }
 }
 </style>
-

@@ -1,61 +1,61 @@
 <script setup lang="ts">
 withDefaults(
-    defineProps<{
-        visible?: boolean;
-        message?: string;
-        tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
-        dismissible?: boolean;
-        variant?: 'default' | 'outlined';
-    }>(),
-    {
-        visible: false,
-        message: '',
-        tone: 'primary',
-        dismissible: true,
-        variant: 'default',
-    }
+	defineProps<{
+		visible?: boolean;
+		message?: string;
+		tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
+		dismissible?: boolean;
+		variant?: 'default' | 'outlined';
+	}>(),
+	{
+		visible: false,
+		message: '',
+		tone: 'primary',
+		dismissible: true,
+		variant: 'default',
+	}
 );
 
 const emit = defineEmits<{
-    (event: 'close'): void;
+	(event: 'close'): void;
 }>();
 
 const iconByTone = {
-    primary: 'strong-check-circle',
-    success: 'strong-check-circle',
-    warning: 'strong-exclamation-triangle',
-    error: 'strong-exclamation-circle',
-    info: 'strong-info-circle',
+	primary: 'strong-check-circle',
+	success: 'strong-check-circle',
+	warning: 'strong-exclamation-triangle',
+	error: 'strong-exclamation-circle',
+	info: 'strong-info-circle',
 } as const;
 </script>
 
 <template>
-    <Transition name="ui-toast">
-        <div
-            v-if="visible"
-            class="ui-toast"
-            :data-tone="tone"
-            :data-variant="variant"
-            role="status"
-            aria-live="polite"
-            data-testid="ui-toast"
-        >
-            <UiIcon :name="iconByTone[tone]" :size="18" />
-            <span class="ui-toast-text">
-                <slot>{{ message }}</slot>
-            </span>
-            <button
-                v-if="dismissible"
-                type="button"
-                class="ui-toast-close"
-                aria-label="Close"
-                data-testid="ui-toast-close-button"
-                @click="emit('close')"
-            >
-                <UiIcon name="strong-times" :size="14" />
-            </button>
-        </div>
-    </Transition>
+	<Transition name="ui-toast">
+		<div
+			v-if="visible"
+			class="ui-toast"
+			:data-tone="tone"
+			:data-variant="variant"
+			role="status"
+			aria-live="polite"
+			data-testid="ui-toast"
+		>
+			<UiIcon :name="iconByTone[tone]" :size="18" />
+			<span class="ui-toast-text">
+				<slot>{{ message }}</slot>
+			</span>
+			<button
+				v-if="dismissible"
+				type="button"
+				class="ui-toast-close"
+				aria-label="Close"
+				data-testid="ui-toast-close-button"
+				@click="emit('close')"
+			>
+				<UiIcon name="strong-times" :size="14" />
+			</button>
+		</div>
+	</Transition>
 </template>
 
 <style lang="scss">

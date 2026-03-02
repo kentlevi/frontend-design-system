@@ -1,327 +1,327 @@
 <script setup lang="ts">
 type SearchResultItem = {
-    id: string;
-    name: string;
-    blurb: string;
-    image: string;
+	id: string;
+	name: string;
+	blurb: string;
+	image: string;
 };
 
 type SearchResultGroup = {
-    key: string;
-    label: string;
-    items: SearchResultItem[];
+	key: string;
+	label: string;
+	items: SearchResultItem[];
 };
 
 type RecentSearchEntry = {
-    term: string;
-    matchedItem: {
-        name: string;
-        blurb: string;
-        image: string;
-    } | null;
+	term: string;
+	matchedItem: {
+		name: string;
+		blurb: string;
+		image: string;
+	} | null;
 };
 
 const props = defineProps<{
-    open: boolean;
-    searchQuery: string;
-    searchLoading: boolean;
-    showSearchRecent: boolean;
-    showSearchNoRecent: boolean;
-    showSearchNoResult: boolean;
-    showSearchResults: boolean;
-    recentSearchEntries: RecentSearchEntry[];
-    activeSearchNavIndex: number;
-    searchResultGroups: SearchResultGroup[];
-    searchNavIndexByResultId: Record<string, number>;
-    searchEmptySuggestedTerm: string;
-    highlightSearchMatch: (value: string) => string;
-    setModalRef: (el: HTMLElement | null) => void;
-    setInputRef: (el: HTMLInputElement | null) => void;
+	open: boolean;
+	searchQuery: string;
+	searchLoading: boolean;
+	showSearchRecent: boolean;
+	showSearchNoRecent: boolean;
+	showSearchNoResult: boolean;
+	showSearchResults: boolean;
+	recentSearchEntries: RecentSearchEntry[];
+	activeSearchNavIndex: number;
+	searchResultGroups: SearchResultGroup[];
+	searchNavIndexByResultId: Record<string, number>;
+	searchEmptySuggestedTerm: string;
+	highlightSearchMatch: (value: string) => string;
+	setModalRef: (el: HTMLElement | null) => void;
+	setInputRef: (el: HTMLInputElement | null) => void;
 }>();
 
 const emit = defineEmits<{
-    close: [];
-    'update:searchQuery': [value: string];
-    'focus-input': [];
-    'clear-recent': [];
-    'apply-recent': [term: string];
-    'remove-recent': [term: string];
-    'apply-suggested': [];
-    'select-result': [item: SearchResultItem];
+	close: [];
+	'update:searchQuery': [value: string];
+	'focus-input': [];
+	'clear-recent': [];
+	'apply-recent': [term: string];
+	'remove-recent': [term: string];
+	'apply-suggested': [];
+	'select-result': [item: SearchResultItem];
 }>();
 
 const { t } = useI18n();
 
 function stripHtml(value: string) {
-    return value.replace(/<[^>]*>/g, '');
+	return value.replace(/<[^>]*>/g, '');
 }
 </script>
 
 <template>
-    <Transition name="search-modal">
-        <div v-if="props.open" class="home-search-overlay" data-testid="app-header-search-overlay">
-            <section
-                :ref="props.setModalRef"
-                class="home-search-modal"
-                role="dialog"
-                aria-modal="true"
-                :aria-label="t('layout.header.search.modal.title')"
-                data-testid="app-header-search-dialog"
-            >
-                <div class="home-search-head" data-testid="app-header-search-head">
-                    <div class="home-search-input-group" data-testid="app-header-search-input-group">
-                        <button
-                            type="button"
-                            class="home-search-head-action"
-                            :aria-label="t('layout.header.search')"
-                            data-testid="app-header-search-focus-button"
-                            @click="emit('focus-input')"
-                        >
-                            <UiIcon
-                                name="strong-search"
-                                :size="24"
-                                color="var(--abyss-base)"
-                                class="home-search-head-icon"
-                            />
-                        </button>
-                        <input
-                            :ref="props.setInputRef"
-                            :value="props.searchQuery"
-                            type="search"
-                            :placeholder="t('layout.header.search.modal.placeholder')"
-                            class="home-search-input"
-                            autocomplete="off"
-                            data-testid="app-header-search-input"
-                            @input="
-                                emit(
-                                    'update:searchQuery',
-                                    ($event.target as HTMLInputElement).value
-                                )
-                            "
-                        >
-                    </div>
-                </div>
+	<Transition name="search-modal">
+		<div v-if="props.open" class="home-search-overlay" data-testid="app-header-search-overlay">
+			<section
+				:ref="props.setModalRef"
+				class="home-search-modal"
+				role="dialog"
+				aria-modal="true"
+				:aria-label="t('layout.header.search.modal.title')"
+				data-testid="app-header-search-dialog"
+			>
+				<div class="home-search-head" data-testid="app-header-search-head">
+					<div class="home-search-input-group" data-testid="app-header-search-input-group">
+						<button
+							type="button"
+							class="home-search-head-action"
+							:aria-label="t('layout.header.search')"
+							data-testid="app-header-search-focus-button"
+							@click="emit('focus-input')"
+						>
+							<UiIcon
+								name="strong-search"
+								:size="24"
+								color="var(--abyss-base)"
+								class="home-search-head-icon"
+							/>
+						</button>
+						<input
+							:ref="props.setInputRef"
+							:value="props.searchQuery"
+							type="search"
+							:placeholder="t('layout.header.search.modal.placeholder')"
+							class="home-search-input"
+							autocomplete="off"
+							data-testid="app-header-search-input"
+							@input="
+								emit(
+									'update:searchQuery',
+									($event.target as HTMLInputElement).value
+								)
+							"
+						>
+					</div>
+				</div>
 
-                <div class="home-search-body" data-testid="app-header-search-body">
-                    <div v-if="props.searchLoading" class="home-search-skeleton" data-testid="app-header-search-loading">
-                        <div
-                            v-for="index in 3"
-                            :key="index"
-                            class="home-search-skeleton-item"
-                            :data-testid="`app-header-search-loading-item-${index}`"
-                        >
-                            <div class="home-search-skeleton-thumb" />
-                            <div class="home-search-skeleton-copy">
-                                <div class="home-search-skeleton-title" />
-                                <div class="home-search-skeleton-line" />
-                            </div>
-                        </div>
-                    </div>
+				<div class="home-search-body" data-testid="app-header-search-body">
+					<div v-if="props.searchLoading" class="home-search-skeleton" data-testid="app-header-search-loading">
+						<div
+							v-for="index in 3"
+							:key="index"
+							class="home-search-skeleton-item"
+							:data-testid="`app-header-search-loading-item-${index}`"
+						>
+							<div class="home-search-skeleton-thumb" />
+							<div class="home-search-skeleton-copy">
+								<div class="home-search-skeleton-title" />
+								<div class="home-search-skeleton-line" />
+							</div>
+						</div>
+					</div>
 
-                    <div v-else-if="props.showSearchRecent" class="home-search-recent" data-testid="app-header-search-recent">
-                        <div class="home-search-recent-head" data-testid="app-header-search-recent-head">
-                            <h4 class="home-search-heading">{{ t('layout.header.search.modal.recent.title') }}</h4>
-                            <UiButton
-                                variant="ghost"
-                                tone="default"
-                                size="sm"
-                                class="home-search-recent-clear"
-                                data-testid="app-header-search-recent-clear-button"
-                                @click="emit('clear-recent')"
-                            >
-                                {{ t('layout.header.search.modal.recent.clearAll') }}
-                            </UiButton>
-                        </div>
-                        <ul class="home-search-recent-list" data-testid="app-header-search-recent-list">
-                            <li
-                                v-for="(entry, index) in props.recentSearchEntries"
-                                :key="entry.term"
-                                class="home-search-recent-item"
-                                :class="{ 'is-active': props.activeSearchNavIndex === index }"
-                                :data-testid="`app-header-search-recent-item-${index}`"
-                            >
-                                <button
-                                    type="button"
-                                    class="home-search-recent-term"
-                                    :data-search-nav-index="index"
-                                    :data-testid="`app-header-search-recent-apply-${index}-button`"
-                                    @click="emit('apply-recent', entry.term)"
-                                >
-                                    <div class="home-search-recent-icon">
-                                        <img
-                                            v-if="entry.matchedItem"
-                                            :src="entry.matchedItem.image"
-                                            :alt="entry.matchedItem.name"
-                                            loading="lazy" class="home-search-image" >
-                                        <UiIcon
-                                            v-else
-                                            name="strong-search"
-                                            :size="18"
-                                            color="var(--text-primary)"
-                                        />
-                                    </div>
-                                    <div class="home-search-recent-copy">
-                                        <p class="home-search-recent-title">
-                                            {{ entry.matchedItem?.name || entry.term }}
-                                        </p>
-                                        <p
-                                            v-if="entry.matchedItem?.blurb"
-                                            class="home-search-recent-blurb"
-                                        >
-                                            {{ entry.matchedItem.blurb }}
-                                        </p>
-                                    </div>
-                                </button>
-                                <button
-                                    type="button"
-                                    class="home-search-recent-remove"
-                                    :aria-label="t('layout.header.search.modal.recent.remove')"
-                                    :data-testid="`app-header-search-recent-remove-${index}-button`"
-                                    @click="emit('remove-recent', entry.term)"
-                                >
-                                    <UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+					<div v-else-if="props.showSearchRecent" class="home-search-recent" data-testid="app-header-search-recent">
+						<div class="home-search-recent-head" data-testid="app-header-search-recent-head">
+							<h4 class="home-search-heading">{{ t('layout.header.search.modal.recent.title') }}</h4>
+							<UiButton
+								variant="ghost"
+								tone="default"
+								size="sm"
+								class="home-search-recent-clear"
+								data-testid="app-header-search-recent-clear-button"
+								@click="emit('clear-recent')"
+							>
+								{{ t('layout.header.search.modal.recent.clearAll') }}
+							</UiButton>
+						</div>
+						<ul class="home-search-recent-list" data-testid="app-header-search-recent-list">
+							<li
+								v-for="(entry, index) in props.recentSearchEntries"
+								:key="entry.term"
+								class="home-search-recent-item"
+								:class="{ 'is-active': props.activeSearchNavIndex === index }"
+								:data-testid="`app-header-search-recent-item-${index}`"
+							>
+								<button
+									type="button"
+									class="home-search-recent-term"
+									:data-search-nav-index="index"
+									:data-testid="`app-header-search-recent-apply-${index}-button`"
+									@click="emit('apply-recent', entry.term)"
+								>
+									<div class="home-search-recent-icon">
+										<img
+											v-if="entry.matchedItem"
+											:src="entry.matchedItem.image"
+											:alt="entry.matchedItem.name"
+											loading="lazy" class="home-search-image" >
+										<UiIcon
+											v-else
+											name="strong-search"
+											:size="18"
+											color="var(--text-primary)"
+										/>
+									</div>
+									<div class="home-search-recent-copy">
+										<p class="home-search-recent-title">
+											{{ entry.matchedItem?.name || entry.term }}
+										</p>
+										<p
+											v-if="entry.matchedItem?.blurb"
+											class="home-search-recent-blurb"
+										>
+											{{ entry.matchedItem.blurb }}
+										</p>
+									</div>
+								</button>
+								<button
+									type="button"
+									class="home-search-recent-remove"
+									:aria-label="t('layout.header.search.modal.recent.remove')"
+									:data-testid="`app-header-search-recent-remove-${index}-button`"
+									@click="emit('remove-recent', entry.term)"
+								>
+									<UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
+								</button>
+							</li>
+						</ul>
+					</div>
 
-                    <div v-else-if="props.showSearchNoRecent" class="home-search-empty" data-testid="app-header-search-empty-recent">
-                        <div class="home-search-empty-icon home-search-empty-icon--no-recent">
-                            <img
-                                src="/icons/custom/search/no-recent-searches.svg"
-                                :alt="t('layout.header.search.modal.noRecent.title')"
-                                width="48"
-                                height="48" class="home-search-image" >
-                        </div>
-                        <div class="home-search-empty-copy">
-                            <h4 class="home-search-heading">{{ t('layout.header.search.modal.noRecent.title') }}</h4>
-                            <p class="home-search-empty-text">
-                                {{ t('layout.header.search.modal.noRecent.textPrefix') }}
-                                <UiButton
-                                    variant="ghost"
-                                    tone="default"
-                                    size="sm"
-                                    class="home-search-suggest"
-                                    data-testid="app-header-search-suggest-empty-recent-button"
-                                    @click="emit('apply-suggested')"
-                                >
-                                    "{{ props.searchEmptySuggestedTerm }}"
-                                </UiButton>
-                            </p>
-                        </div>
-                    </div>
+					<div v-else-if="props.showSearchNoRecent" class="home-search-empty" data-testid="app-header-search-empty-recent">
+						<div class="home-search-empty-icon home-search-empty-icon--no-recent">
+							<img
+								src="/icons/custom/search/no-recent-searches.svg"
+								:alt="t('layout.header.search.modal.noRecent.title')"
+								width="48"
+								height="48" class="home-search-image" >
+						</div>
+						<div class="home-search-empty-copy">
+							<h4 class="home-search-heading">{{ t('layout.header.search.modal.noRecent.title') }}</h4>
+							<p class="home-search-empty-text">
+								{{ t('layout.header.search.modal.noRecent.textPrefix') }}
+								<UiButton
+									variant="ghost"
+									tone="default"
+									size="sm"
+									class="home-search-suggest"
+									data-testid="app-header-search-suggest-empty-recent-button"
+									@click="emit('apply-suggested')"
+								>
+									"{{ props.searchEmptySuggestedTerm }}"
+								</UiButton>
+							</p>
+						</div>
+					</div>
 
-                    <div v-else-if="props.showSearchNoResult" class="home-search-empty" data-testid="app-header-search-empty-result">
-                        <div class="home-search-empty-icon home-search-empty-icon--no-recent">
-                            <img
-                                src="/icons/custom/search/no-recent-searches.svg"
-                                :alt="t('layout.header.search.modal.noResult.title')"
-                                width="48"
-                                height="48" class="home-search-image" >
-                        </div>
-                        <div class="home-search-empty-copy">
-                            <h4 class="home-search-heading">{{ t('layout.header.search.modal.noResult.title') }}</h4>
-                            <p class="home-search-empty-text">
-                                {{ t('layout.header.search.modal.noResult.textPrefix') }}
-                                <UiButton
-                                    variant="ghost"
-                                    tone="default"
-                                    size="sm"
-                                    class="home-search-suggest"
-                                    data-testid="app-header-search-suggest-empty-result-button"
-                                    @click="emit('apply-suggested')"
-                                >
-                                    "{{ props.searchEmptySuggestedTerm }}"
-                                </UiButton>
-                            </p>
-                        </div>
-                    </div>
+					<div v-else-if="props.showSearchNoResult" class="home-search-empty" data-testid="app-header-search-empty-result">
+						<div class="home-search-empty-icon home-search-empty-icon--no-recent">
+							<img
+								src="/icons/custom/search/no-recent-searches.svg"
+								:alt="t('layout.header.search.modal.noResult.title')"
+								width="48"
+								height="48" class="home-search-image" >
+						</div>
+						<div class="home-search-empty-copy">
+							<h4 class="home-search-heading">{{ t('layout.header.search.modal.noResult.title') }}</h4>
+							<p class="home-search-empty-text">
+								{{ t('layout.header.search.modal.noResult.textPrefix') }}
+								<UiButton
+									variant="ghost"
+									tone="default"
+									size="sm"
+									class="home-search-suggest"
+									data-testid="app-header-search-suggest-empty-result-button"
+									@click="emit('apply-suggested')"
+								>
+									"{{ props.searchEmptySuggestedTerm }}"
+								</UiButton>
+							</p>
+						</div>
+					</div>
 
-                    <div v-else-if="props.showSearchResults" class="home-search-results" data-testid="app-header-search-results">
-                        <section
-                            v-for="group in props.searchResultGroups"
-                            :key="group.key"
-                            class="home-search-group"
-                            :data-testid="`app-header-search-group-${group.key}`"
-                        >
-                            <h4 class="home-search-heading">{{ group.label }}</h4>
-                            <button
-                                v-for="item in group.items"
-                                :key="item.id"
-                                type="button"
-                                class="home-search-result-item"
-                                :class="{
-                                    'is-active':
-                                        props.activeSearchNavIndex ===
-                                        props.searchNavIndexByResultId[item.id],
-                                }"
-                                :data-search-nav-index="props.searchNavIndexByResultId[item.id]"
-                                :data-testid="`app-header-search-result-${item.id}-button`"
-                                @click="emit('select-result', item)"
-                            >
-                                <div class="home-search-result-icon">
-                                    <img :src="item.image" :alt="item.name" loading="lazy" class="home-search-image" >
-                                </div>
-                                <div class="home-search-result-copy">
-                                    <p class="home-search-result-title">
-                                        {{ stripHtml(props.highlightSearchMatch(item.name)) }}
-                                    </p>
-                                    <p class="home-search-result-blurb">
-                                        {{ stripHtml(props.highlightSearchMatch(item.blurb)) }}
-                                    </p>
-                                </div>
-                            </button>
-                        </section>
-                    </div>
-                </div>
+					<div v-else-if="props.showSearchResults" class="home-search-results" data-testid="app-header-search-results">
+						<section
+							v-for="group in props.searchResultGroups"
+							:key="group.key"
+							class="home-search-group"
+							:data-testid="`app-header-search-group-${group.key}`"
+						>
+							<h4 class="home-search-heading">{{ group.label }}</h4>
+							<button
+								v-for="item in group.items"
+								:key="item.id"
+								type="button"
+								class="home-search-result-item"
+								:class="{
+									'is-active':
+										props.activeSearchNavIndex ===
+										props.searchNavIndexByResultId[item.id],
+								}"
+								:data-search-nav-index="props.searchNavIndexByResultId[item.id]"
+								:data-testid="`app-header-search-result-${item.id}-button`"
+								@click="emit('select-result', item)"
+							>
+								<div class="home-search-result-icon">
+									<img :src="item.image" :alt="item.name" loading="lazy" class="home-search-image" >
+								</div>
+								<div class="home-search-result-copy">
+									<p class="home-search-result-title">
+										{{ stripHtml(props.highlightSearchMatch(item.name)) }}
+									</p>
+									<p class="home-search-result-blurb">
+										{{ stripHtml(props.highlightSearchMatch(item.blurb)) }}
+									</p>
+								</div>
+							</button>
+						</section>
+					</div>
+				</div>
 
-                <footer class="home-search-footer" data-testid="app-header-search-footer">
-                    <div class="home-search-foot-actions" data-testid="app-header-search-footer-actions">
-                        <div class="home-search-foot-hint" data-testid="app-header-search-footer-navigate">
-                            <span class="home-search-key">
-                                <UiIcon
-                                    name="light-long-arrow-up"
-                                    :size="20"
-                                    color="var(--text-muted)"
-                                />
-                            </span>
-                            <span class="home-search-key">
-                                <UiIcon
-                                    name="light-long-arrow-down"
-                                    :size="20"
-                                    color="var(--text-muted)"
-                                />
-                            </span>
-                            <span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.navigate') }}</span>
-                        </div>
-                        <div class="home-search-foot-hint" data-testid="app-header-search-footer-select">
-                            <span class="home-search-key">
-                                <UiIcon
-                                    name="light-arrow-level-left"
-                                    :size="20"
-                                    color="var(--text-muted)"
-                                />
-                            </span>
-                            <span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.select') }}</span>
-                        </div>
-                    </div>
-                    <div class="home-search-foot-hint" data-testid="app-header-search-footer-close-wrap">
-                        <span class="home-search-key home-search-key-esc">{{ t('layout.header.search.modal.footer.escKeyLabel') }}</span>
-                        <UiButton
-                            variant="ghost"
-                            tone="default"
-                            size="sm"
-                            class="home-search-close-text"
-                            data-testid="app-header-search-close-button"
-                            @click="emit('close')"
-                        >
-                            {{ t('layout.header.search.modal.footer.close') }}
-                        </UiButton>
-                    </div>
-                </footer>
-            </section>
-        </div>
-    </Transition>
+				<footer class="home-search-footer" data-testid="app-header-search-footer">
+					<div class="home-search-foot-actions" data-testid="app-header-search-footer-actions">
+						<div class="home-search-foot-hint" data-testid="app-header-search-footer-navigate">
+							<span class="home-search-key">
+								<UiIcon
+									name="light-long-arrow-up"
+									:size="20"
+									color="var(--text-muted)"
+								/>
+							</span>
+							<span class="home-search-key">
+								<UiIcon
+									name="light-long-arrow-down"
+									:size="20"
+									color="var(--text-muted)"
+								/>
+							</span>
+							<span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.navigate') }}</span>
+						</div>
+						<div class="home-search-foot-hint" data-testid="app-header-search-footer-select">
+							<span class="home-search-key">
+								<UiIcon
+									name="light-arrow-level-left"
+									:size="20"
+									color="var(--text-muted)"
+								/>
+							</span>
+							<span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.select') }}</span>
+						</div>
+					</div>
+					<div class="home-search-foot-hint" data-testid="app-header-search-footer-close-wrap">
+						<span class="home-search-key home-search-key-esc">{{ t('layout.header.search.modal.footer.escKeyLabel') }}</span>
+						<UiButton
+							variant="ghost"
+							tone="default"
+							size="sm"
+							class="home-search-close-text"
+							data-testid="app-header-search-close-button"
+							@click="emit('close')"
+						>
+							{{ t('layout.header.search.modal.footer.close') }}
+						</UiButton>
+					</div>
+				</footer>
+			</section>
+		</div>
+	</Transition>
 </template>
 
 <style scoped lang="scss">

@@ -2,22 +2,21 @@
 import ProductCategoryExperience from '~/components/products/product-category/ProductCategoryExperience.vue';
 
 definePageMeta({
-    layout: 'home',
+	layout: 'home',
 });
 
 useHead({
-    link: [
-        {
-            rel: 'preload',
-            as: 'image',
-            href: '/illustrations/products/stickers/die-cut.svg',
-            fetchpriority: 'high',
-        },
-    ],
+	link: [
+		{
+			rel: 'preload',
+			as: 'image',
+			href: '/illustrations/products/stickers/die-cut.svg',
+			fetchpriority: 'high',
+		},
+	],
 });
 </script>
 
 <template>
-    <ProductCategoryExperience category="stickers" />
+	<ProductCategoryExperience category="stickers" />
 </template>
-

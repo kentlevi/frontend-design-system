@@ -1,58 +1,58 @@
 <script setup lang="ts">
 withDefaults(
-    defineProps<{
-        visible?: boolean;
-    }>(),
-    {
-        visible: false,
-    }
+	defineProps<{
+		visible?: boolean;
+	}>(),
+	{
+		visible: false,
+	}
 );
 
 const emit = defineEmits<{
-    (event: 'close'): void;
+	(event: 'close'): void;
 }>();
 </script>
 
 <template>
-    <Transition name="home-guide-done-popover">
-        <aside
-            v-if="visible"
-            class="home-guide-done-popover"
-            role="dialog"
-            aria-live="polite"
-            data-testid="home-guide-done-popover"
-        >
-            <button
-                type="button"
-                class="home-guide-done-popover-close"
-                :aria-label="$t('home.toast.tour.close')"
-                data-testid="home-guide-done-popover-close"
-                @click="emit('close')"
-            >
-                <UiIcon name="strong-times" :size="20" />
-            </button>
+	<Transition name="home-guide-done-popover">
+		<aside
+			v-if="visible"
+			class="home-guide-done-popover"
+			role="dialog"
+			aria-live="polite"
+			data-testid="home-guide-done-popover"
+		>
+			<button
+				type="button"
+				class="home-guide-done-popover-close"
+				:aria-label="$t('home.toast.tour.close')"
+				data-testid="home-guide-done-popover-close"
+				@click="emit('close')"
+			>
+				<UiIcon name="strong-times" :size="20" />
+			</button>
 
-            <h3 class="home-guide-done-popover-title">
-                {{ $t('home.toast.tour.step4.title') }}
-            </h3>
-            <p class="home-guide-done-popover-text">
-                {{ $t('home.toast.tour.step4.body') }}
-            </p>
+			<h3 class="home-guide-done-popover-title">
+				{{ $t('home.toast.tour.step4.title') }}
+			</h3>
+			<p class="home-guide-done-popover-text">
+				{{ $t('home.toast.tour.step4.body') }}
+			</p>
 
-            <div class="home-guide-done-popover-actions">
-                <UiButton
-                    variant="filled"
-                    tone="neutral"
-                    size="md"
-                    class="home-guide-done-popover-done"
-                    data-testid="home-guide-done-popover-done"
-                    @click="emit('close')"
-                >
-                    {{ $t('home.toast.tour.done') }}
-                </UiButton>
-            </div>
-        </aside>
-    </Transition>
+			<div class="home-guide-done-popover-actions">
+				<UiButton
+					variant="filled"
+					tone="neutral"
+					size="md"
+					class="home-guide-done-popover-done"
+					data-testid="home-guide-done-popover-done"
+					@click="emit('close')"
+				>
+					{{ $t('home.toast.tour.done') }}
+				</UiButton>
+			</div>
+		</aside>
+	</Transition>
 </template>
 
 <style scoped lang="scss">

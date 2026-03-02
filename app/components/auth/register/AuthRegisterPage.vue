@@ -6,35 +6,35 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <section class="auth-register" data-testid="auth-register-page">
-        <div class="auth-register-top">
-            <div
-                class="auth-register-illustration auth-register-illustration-left auth-illustration-enter auth-illustration-enter-left"
-            >
-                <img
-                    class="auth-register-kid-falling"
-                    src="/illustrations/products/sticker-kids/kid-falling-sticker.svg"
-                    :alt="t('auth.register.title')"
-                    loading="lazy"
-                >
-            </div>
+	<section class="auth-register" data-testid="auth-register-page">
+		<div class="auth-register-top">
+			<div
+				class="auth-register-illustration auth-register-illustration-left auth-illustration-enter auth-illustration-enter-left"
+			>
+				<img
+					class="auth-register-kid-falling"
+					src="/illustrations/products/sticker-kids/kid-falling-sticker.svg"
+					:alt="t('auth.register.title')"
+					loading="lazy"
+				>
+			</div>
 
-            <div class="auth-register-shell auth-shell-enter" data-testid="auth-register-shell">
-                <AuthRegisterCard />
-            </div>
+			<div class="auth-register-shell auth-shell-enter" data-testid="auth-register-shell">
+				<AuthRegisterCard />
+			</div>
 
-            <div
-                class="auth-register-illustration auth-register-illustration-right auth-illustration-enter auth-illustration-enter-right"
-            >
-                <img
-                    class="auth-register-kid-standing"
-                    src="/illustrations/products/sticker-kids/kid-standing-sticker.svg"
-                    :alt="t('auth.register.title')"
-                    loading="lazy"
-                >
-            </div>
-        </div>
-    </section>
+			<div
+				class="auth-register-illustration auth-register-illustration-right auth-illustration-enter auth-illustration-enter-right"
+			>
+				<img
+					class="auth-register-kid-standing"
+					src="/illustrations/products/sticker-kids/kid-standing-sticker.svg"
+					:alt="t('auth.register.title')"
+					loading="lazy"
+				>
+			</div>
+		</div>
+	</section>
 </template>
 
 <style lang="scss">

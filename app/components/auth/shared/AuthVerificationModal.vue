@@ -7,184 +7,184 @@ import { authVerificationConfig, type AuthVerificationI18nBase } from '@/data/au
 const { t } = useI18n();
 
 const props = withDefaults(
-    defineProps<{
-        modelValue: boolean;
-        email?: string;
-        code?: string;
-        error?: string;
-        verifying?: boolean;
-        submitLabel?: string;
-        busyLabel?: string;
-        translationBase?: AuthVerificationI18nBase;
-        orderNumber?: string;
-        otpLength?: number;
-        testIdPrefix?: string;
-        showCloseButton?: boolean;
-        align?: 'start' | 'center';
-        width?: string;
-        modalClass?: string;
-    }>(),
-    {
-        email: '',
-        code: '',
-        error: '',
-        verifying: false,
-        submitLabel: '',
-        busyLabel: '',
-        translationBase: 'auth.verification',
-        orderNumber: '',
-        otpLength: authVerificationConfig.otpLength,
-        testIdPrefix: 'auth-verification',
-        showCloseButton: false,
-        align: 'center',
-        width: '504px',
-        modalClass: '',
-    }
+	defineProps<{
+		modelValue: boolean;
+		email?: string;
+		code?: string;
+		error?: string;
+		verifying?: boolean;
+		submitLabel?: string;
+		busyLabel?: string;
+		translationBase?: AuthVerificationI18nBase;
+		orderNumber?: string;
+		otpLength?: number;
+		testIdPrefix?: string;
+		showCloseButton?: boolean;
+		align?: 'start' | 'center';
+		width?: string;
+		modalClass?: string;
+	}>(),
+	{
+		email: '',
+		code: '',
+		error: '',
+		verifying: false,
+		submitLabel: '',
+		busyLabel: '',
+		translationBase: 'auth.verification',
+		orderNumber: '',
+		otpLength: authVerificationConfig.otpLength,
+		testIdPrefix: 'auth-verification',
+		showCloseButton: false,
+		align: 'center',
+		width: '504px',
+		modalClass: '',
+	}
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean): void;
-    (e: 'update:code', value: string): void;
-    (e: 'verify'): void;
-    (e: 'resend'): void;
+	(e: 'update:modelValue', value: boolean): void;
+	(e: 'update:code', value: string): void;
+	(e: 'verify'): void;
+	(e: 'resend'): void;
 }>();
 
 const { codeInputs, inputRefs, setCode, getCode, handleInput, handleKeyDown, handlePaste } =
-    useVerificationCodeInput(props.otpLength);
+	useVerificationCodeInput(props.otpLength);
 
 const key = computed(() => props.translationBase);
 
 watch(
-    () => props.code,
-    (value) => {
-        setCode(value ?? '');
-    },
-    { immediate: true }
+	() => props.code,
+	(value) => {
+		setCode(value ?? '');
+	},
+	{ immediate: true }
 );
 
 const computedSubmitLabel = computed(() =>
-    props.verifying
-        ? props.busyLabel || t(`${key.value}.verifying`)
-        : props.submitLabel || t(`${key.value}.verify`)
+	props.verifying
+		? props.busyLabel || t(`${key.value}.verifying`)
+		: props.submitLabel || t(`${key.value}.verify`)
 );
 
 function closeModal() {
-    emit('update:modelValue', false);
+	emit('update:modelValue', false);
 }
 
 function emitCode() {
-    emit('update:code', getCode());
+	emit('update:code', getCode());
 }
 
 function onInput(index: number, event: Event) {
-    handleInput(index, event);
-    emitCode();
+	handleInput(index, event);
+	emitCode();
 }
 
 function onPaste(event: ClipboardEvent) {
-    handlePaste(event);
-    emitCode();
+	handlePaste(event);
+	emitCode();
 }
 </script>
 
 <template>
-    <UiModal
-        :model-value="modelValue"
-        :width="width"
-        :align="align"
-        :modal-class="modalClass"
-        :data-testid="`${testIdPrefix}-modal`"
-        @update:model-value="emit('update:modelValue', $event)"
-    >
-        <div class="auth-verification-modal">
-            <button
-                v-if="showCloseButton"
-                type="button"
-                class="auth-verification-close"
-                :aria-label="t(`${key}.closeModal`)"
-                @click="closeModal"
-            >
-                <UiIcon name="regular-times" :size="24" color="#2a2f3d" />
-            </button>
+	<UiModal
+		:model-value="modelValue"
+		:width="width"
+		:align="align"
+		:modal-class="modalClass"
+		:data-testid="`${testIdPrefix}-modal`"
+		@update:model-value="emit('update:modelValue', $event)"
+	>
+		<div class="auth-verification-modal">
+			<button
+				v-if="showCloseButton"
+				type="button"
+				class="auth-verification-close"
+				:aria-label="t(`${key}.closeModal`)"
+				@click="closeModal"
+			>
+				<UiIcon name="regular-times" :size="24" color="#2a2f3d" />
+			</button>
 
-            <div class="auth-verification-head">
-                <slot name="icon">
-                    <UiIcon name="strong-shield" :size="46" color="var(--brand-primary)" />
-                </slot>
-                <div class="auth-verification-copy">
-                    <h3 class="auth-verification-title">
-                        {{ t(`${key}.title`) }}
-                    </h3>
-                    <p class="auth-verification-text">
-                        {{ t(`${key}.messagePrefix`) }}
-                        <strong class="auth-verification-email">{{ email }}</strong>
-                        {{ t(`${key}.messageSuffix`) }}
-                    </p>
-                    <p v-if="orderNumber" class="auth-verification-order-number">
-                        {{ t(`${key}.orderNumberLabel`) }}: {{ orderNumber }}
-                    </p>
-                </div>
-            </div>
+			<div class="auth-verification-head">
+				<slot name="icon">
+					<UiIcon name="strong-shield" :size="46" color="var(--brand-primary)" />
+				</slot>
+				<div class="auth-verification-copy">
+					<h3 class="auth-verification-title">
+						{{ t(`${key}.title`) }}
+					</h3>
+					<p class="auth-verification-text">
+						{{ t(`${key}.messagePrefix`) }}
+						<strong class="auth-verification-email">{{ email }}</strong>
+						{{ t(`${key}.messageSuffix`) }}
+					</p>
+					<p v-if="orderNumber" class="auth-verification-order-number">
+						{{ t(`${key}.orderNumberLabel`) }}: {{ orderNumber }}
+					</p>
+				</div>
+			</div>
 
-            <div class="auth-verification-code-group">
-                <label class="auth-verification-label" :for="`${testIdPrefix}-code-0`">
-                    {{ t(`${key}.enterCode`) }}
-                </label>
-                <div class="auth-verification-grid">
-                    <input
-                        v-for="(value, index) in codeInputs"
-                        :id="`${testIdPrefix}-code-${index}`"
-                        :key="`${testIdPrefix}-code-${index}`"
-                        :ref="el => { if (el) inputRefs[index] = el as HTMLInputElement }"
-                        :class="['auth-verification-input', { 'auth-verification-input--error': !!error }]"
-                        type="text"
-                        inputmode="numeric"
-                        maxlength="1"
-                        autocomplete="one-time-code"
-                        :value="value"
-                        :data-testid="`${testIdPrefix}-code-${index + 1}`"
-                        @input="onInput(index, $event)"
-                        @keydown="handleKeyDown(index, $event)"
-                        @paste="onPaste"
-                    >
-                </div>
-                <p
-                    v-if="error"
-                    class="auth-verification-error"
-                    data-testid="auth-verification-error"
-                >
-                    {{ error }}
-                </p>
-            </div>
+			<div class="auth-verification-code-group">
+				<label class="auth-verification-label" :for="`${testIdPrefix}-code-0`">
+					{{ t(`${key}.enterCode`) }}
+				</label>
+				<div class="auth-verification-grid">
+					<input
+						v-for="(value, index) in codeInputs"
+						:id="`${testIdPrefix}-code-${index}`"
+						:key="`${testIdPrefix}-code-${index}`"
+						:ref="el => { if (el) inputRefs[index] = el as HTMLInputElement }"
+						:class="['auth-verification-input', { 'auth-verification-input--error': !!error }]"
+						type="text"
+						inputmode="numeric"
+						maxlength="1"
+						autocomplete="one-time-code"
+						:value="value"
+						:data-testid="`${testIdPrefix}-code-${index + 1}`"
+						@input="onInput(index, $event)"
+						@keydown="handleKeyDown(index, $event)"
+						@paste="onPaste"
+					>
+				</div>
+				<p
+					v-if="error"
+					class="auth-verification-error"
+					data-testid="auth-verification-error"
+				>
+					{{ error }}
+				</p>
+			</div>
 
-            <div class="auth-verification-actions">
-                <UiButton
-                    variant="filled"
-                    tone="neutral"
-                    size="lg"
-                    class="auth-verification-submit"
-                    :disabled="verifying"
-                    :data-testid="`${testIdPrefix}-submit`"
-                    @click="emit('verify')"
-                >
-                    {{ computedSubmitLabel }}
-                </UiButton>
+			<div class="auth-verification-actions">
+				<UiButton
+					variant="filled"
+					tone="neutral"
+					size="lg"
+					class="auth-verification-submit"
+					:disabled="verifying"
+					:data-testid="`${testIdPrefix}-submit`"
+					@click="emit('verify')"
+				>
+					{{ computedSubmitLabel }}
+				</UiButton>
 
-                <p class="auth-verification-resend">
-                    {{ t(`${key}.resendPrefix`) }}
-                    <button
-                        type="button"
-                        class="auth-verification-resend-btn"
-                        :data-testid="`${testIdPrefix}-resend`"
-                        @click="emit('resend')"
-                    >
-                        {{ t(`${key}.resendCta`) }}
-                    </button>
-                    {{ t(`${key}.resendSuffix`) }}
-                </p>
-            </div>
-        </div>
-    </UiModal>
+				<p class="auth-verification-resend">
+					{{ t(`${key}.resendPrefix`) }}
+					<button
+						type="button"
+						class="auth-verification-resend-btn"
+						:data-testid="`${testIdPrefix}-resend`"
+						@click="emit('resend')"
+					>
+						{{ t(`${key}.resendCta`) }}
+					</button>
+					{{ t(`${key}.resendSuffix`) }}
+				</p>
+			</div>
+		</div>
+	</UiModal>
 </template>
 
 <style scoped lang="scss">

@@ -1,14 +1,14 @@
 export const logos = [
-    'allstickerprinting',
-    'glophics',
-    'musticker',
-    'ozstickerprinting',
-    'singaprinting',
-    'stickercanada',
-    'stickerdot',
-    'stickerjapan',
-    'stickermarket',
-    'stikchi',
+	'allstickerprinting',
+	'glophics',
+	'musticker',
+	'ozstickerprinting',
+	'singaprinting',
+	'stickercanada',
+	'stickerdot',
+	'stickerjapan',
+	'stickermarket',
+	'stikchi',
 ] as const;
 
 export const logoVariants = ['full', 'mark'] as const;

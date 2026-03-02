@@ -5,40 +5,40 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <section class="home-hero" data-testid="home-hero-section">
-        <div class="home-hero-container">
-            <div class="home-hero-art">
-                <img
-                    class="home-hero-art-image"
-                    src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
-                    :alt="t('home.hero.title')"
-                    loading="eager"
-                    fetchpriority="high"
-                    decoding="sync"
-                    width="280"
-                    height="274"
-                >
-            </div>
+	<section class="home-hero" data-testid="home-hero-section">
+		<div class="home-hero-container">
+			<div class="home-hero-art">
+				<img
+					class="home-hero-art-image"
+					src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
+					:alt="t('home.hero.title')"
+					loading="eager"
+					fetchpriority="high"
+					decoding="sync"
+					width="280"
+					height="274"
+				>
+			</div>
 
-            <div class="home-hero-content">
-                <div class="home-hero-copy">
-                    <h1 class="home-hero-title">
-                        {{ t('home.hero.title') }}
-                    </h1>
-                    <p class="home-hero-subtitle">{{ t('home.hero.subtitle') }}</p>
-                </div>
-                <UiButton
-                    variant="filled"
-                    tone="neutral"
-                    size="lg"
-                    class="home-hero-cta"
-                    data-testid="home-hero-cta-button"
-                >
-                    {{ t('home.hero.cta') }}
-                </UiButton>
-            </div>
-        </div>
-    </section>
+			<div class="home-hero-content">
+				<div class="home-hero-copy">
+					<h1 class="home-hero-title">
+						{{ t('home.hero.title') }}
+					</h1>
+					<p class="home-hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+				</div>
+				<UiButton
+					variant="filled"
+					tone="neutral"
+					size="lg"
+					class="home-hero-cta"
+					data-testid="home-hero-cta-button"
+				>
+					{{ t('home.hero.cta') }}
+				</UiButton>
+			</div>
+		</div>
+	</section>
 </template>
 
 <style scoped lang="scss">
