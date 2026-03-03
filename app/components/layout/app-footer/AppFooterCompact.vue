@@ -25,8 +25,7 @@ defineProps<{
     max-width: 1200px;
     margin: 0 auto;
     background: var(--footer-bg);
-    min-height: 102px;
-    padding: 0 24px;
+    padding: 24px 78px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -35,7 +34,7 @@ defineProps<{
     .home-footer-compact-left {
         display: flex;
         align-items: center;
-        gap: 28px;
+        gap: 24px;
         color: var(--footer-text-secondary);
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
@@ -57,11 +56,10 @@ defineProps<{
         .home-footer-compact-action-link {
             border: 1px solid var(--footer-border);
             color: var(--footer-text-secondary);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
+            font-size: 12px;
+            line-height: 20px;
             text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 3px;
+            padding: 2px 8px;
         }
     }
 }

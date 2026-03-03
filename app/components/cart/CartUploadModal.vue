@@ -47,16 +47,14 @@ const { t } = useI18n();
 					<div class="upload-modal-body" data-testid="product-category-upload-body">
 						<div class="upload-dropzone" data-testid="product-category-upload-dropzone">
 							<template v-if="!props.hasUploadedArtwork">
-								<div class="upload-dropzone-copy" data-testid="product-category-upload-empty-state">
-									<UiIcon name="strong-cloud-upload" :size="20" color="#2a2f3d" />
-									<div>
-										<p class="upload-dropzone-title">
-											{{ t('cart.uploadArtwork.dragDropTitle') }}
-										</p>
-										<p class="upload-dropzone-meta">
-											{{ t('cart.uploadArtwork.acceptedTypes') }}
-										</p>
-									</div>
+								<div class="upload-dropzone-copy upload-dropzone-copy--empty" data-testid="product-category-upload-empty-state">
+									<p class="upload-dropzone-title">
+										<UiIcon name="regular-upload" :size="24" color="#2a2f3d" />
+										<span>{{ t('cart.uploadArtwork.dragDropTitle') }}</span>
+									</p>
+									<p class="upload-dropzone-meta">
+										{{ t('cart.uploadArtwork.acceptedTypes') }}
+									</p>
 								</div>
 								<UiButton
 									type="button"
@@ -80,7 +78,7 @@ const { t } = useI18n();
 											:alt="props.cartArtworkName"
 											class="upload-artwork-image"
 										>
-										<UiIcon v-else name="strong-file-image" :size="22" color="#2a2f3d" />
+										<UiIcon v-else name="regular-file-image" :size="24" color="#2a2f3d" />
 									</div>
 									<div>
 										<p class="upload-dropzone-title">{{ props.cartArtworkName }}</p>
@@ -108,11 +106,11 @@ const { t } = useI18n();
 										tone="neutral"
 										size="md"
 										icon-only
-										icon="strong-trash"
-										icon-size="md"
+										icon="regular-trash"
+										icon-size="24"
 										sr-label="Remove uploaded artwork"
-										width="44px"
-										height="44px"
+										width="40px"
+										height="40px"
 										class="upload-icon-btn"
 										data-testid="product-category-upload-remove-image-button"
 										@click="emit('remove-artwork')"
@@ -122,7 +120,7 @@ const { t } = useI18n();
 						</div>
 
 						<label class="upload-notes" data-testid="product-category-upload-notes">
-							<span>{{ t('cart.uploadArtwork.specialInstructions') }}</span>
+							<span class="upload-notes-label">{{ t('cart.uploadArtwork.specialInstructions') }}</span>
 							<UiTextarea
 								class="upload-notes-textarea"
 								:model-value="props.specialInstructions"
@@ -145,7 +143,7 @@ const { t } = useI18n();
 							variant="ghost"
 							tone="neutral"
 							class="upload-skip-btn"
-							:disabled="props.hasUploadedArtwork"
+							:disabled="props.addToCartLoading"
 							data-testid="product-category-upload-skip-button"
 							@click="emit('skip-upload-later')"
 						>
@@ -158,13 +156,13 @@ const { t } = useI18n();
 							size="md"
 							height="44px"
 							class="upload-primary-btn"
-							:disabled="!props.hasUploadedArtwork || props.addToCartLoading"
+							:disabled="props.addToCartLoading"
 							data-testid="product-category-upload-proceed-button"
 							@click="emit('proceed-to-cart')"
 						>
 							<UiIcon
 								v-if="!props.addToCartLoading"
-								name="strong-shop-cart"
+								name="regular-shop-cart"
 								:size="18"
 								color="#ffffff"
 							/>
@@ -231,7 +229,7 @@ const { t } = useI18n();
                 border: 1px dashed var(--gray-40);
                 border-radius: 10px;
                 min-height: 140px;
-                padding: 20px;
+                padding: 24px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -242,6 +240,35 @@ const { t } = useI18n();
                 display: flex;
                 align-items: center;
                 gap: 16px;
+            }
+
+            .upload-dropzone-copy--empty {
+                display: grid;
+                align-items: start;
+                gap: 8px;
+            }
+
+            .upload-dropzone-title {
+                margin: 0;
+				font-size: var(--type-size-100);
+				font-weight: var(--font-weight-semibold);
+        		line-height: var(--type-line-100);
+            }
+
+            .upload-dropzone-copy--empty .upload-dropzone-title {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+				font-size: var(--type-size-100);
+				font-weight: var(--font-weight-semibold);
+        		line-height: var(--type-line-100);
+            }
+
+            .upload-dropzone-meta {
+                margin: 0;
+				font-size: var(--type-size-100);
+        		line-height: var(--type-line-100);
+				color: var(--gray-80);
             }
 
             .upload-artwork-thumb {
@@ -268,8 +295,6 @@ const { t } = useI18n();
 
             .upload-secondary-btn {
                 border: 1px solid var(--gray-60);
-                border-radius: 999px;
-                background: #ffffff;
                 padding: 0 20px;
                 box-shadow: none;
             }
@@ -290,6 +315,12 @@ const { t } = useI18n();
                 display: grid;
                 gap: 8px;
 
+                .upload-notes-label {
+					font-size: var(--type-size-100);
+					font-weight: var(--font-weight-semibold);
+        			line-height: var(--type-line-100);
+                }
+
                 .upload-notes-textarea {
                     width: 100%;
                     min-height: 130px;
@@ -300,18 +331,22 @@ const { t } = useI18n();
                     padding: 14px 16px;
                 }
             }
+
+			.upload-note {
+				color: var(--gray-80);
+			}
         }
 
         .upload-modal-footer {
-            padding: 0 28px 24px;
+            padding: 0 24px 24px;
             display: flex;
             justify-content: flex-end;
-            gap: 14px;
+            gap: 16px;
         }
 
         .upload-skip-btn {
             border-radius: 0;
-            padding: 0;
+            padding: 8px 16px;
             min-height: auto;
             --btn-soft: transparent;
 
