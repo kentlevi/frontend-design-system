@@ -7,12 +7,14 @@ export const sizeOptions = [
 	'extraLarge125',
 ] as const;
 
+export type SizeOptionKey = (typeof sizeOptions)[number];
+
 export const quantityOptions = [
 	10, 50, 100, 200, 300, 500, 1000, 2000, 5000, 10000,
 ] as const;
 
 export type SizeFeatureCard = {
-	key: (typeof sizeOptions)[number];
+	key: SizeOptionKey;
 	image: string;
 	descriptionKey: 'small' | 'medium' | 'large' | 'extraLarge';
 };

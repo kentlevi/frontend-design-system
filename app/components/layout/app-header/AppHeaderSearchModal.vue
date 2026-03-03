@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ComponentPublicInstance } from 'vue';
 import type { SearchItem } from '~/composables/layout/useAppHeaderSearch';
 
 type SearchResultGroup = {
@@ -46,13 +47,21 @@ const { t } = useI18n();
 function stripHtml(value: string) {
 	return value.replace(/<[^>]*>/g, '');
 }
+
+function bindModalRef(el: Element | ComponentPublicInstance | null) {
+	props.setModalRef(el instanceof HTMLElement ? el : null);
+}
+
+function bindInputRef(el: Element | ComponentPublicInstance | null) {
+	props.setInputRef(el instanceof HTMLInputElement ? el : null);
+}
 </script>
 
 <template>
 	<Transition name="search-modal">
 		<div v-if="props.open" class="home-search-overlay" data-testid="app-header-search-overlay">
 			<section
-				:ref="props.setModalRef"
+				:ref="bindModalRef"
 				class="home-search-modal"
 				role="dialog"
 				aria-modal="true"
@@ -76,7 +85,7 @@ function stripHtml(value: string) {
 							/>
 						</button>
 						<input
-							:ref="props.setInputRef"
+							:ref="bindInputRef"
 							:value="props.searchQuery"
 							type="search"
 							:placeholder="t('layout.header.search.modal.placeholder')"

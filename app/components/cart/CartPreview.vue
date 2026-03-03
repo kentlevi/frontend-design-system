@@ -25,7 +25,7 @@ const props = withDefaults(
 			name: string;
 			dim: string;
 		}>;
-		quantityOptions?: number[];
+		quantityOptions?: readonly number[];
 		grandTotal: number;
 		featuredOpen: boolean;
 		featuredItems: ProductItem[];

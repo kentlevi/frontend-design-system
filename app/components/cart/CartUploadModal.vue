@@ -126,7 +126,7 @@ const { t } = useI18n();
 							<UiTextarea
 								class="upload-notes-textarea"
 								:model-value="props.specialInstructions"
-								rows="4"
+								:rows="4"
 								resize="none"
 								:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
 								data-testid="product-category-upload-special-instructions"
@@ -200,8 +200,7 @@ const { t } = useI18n();
         transition: transform 0.18s ease;
 
         .upload-modal-header {
-            min-height: 68px;
-            padding: 0 28px;
+            padding: 12px 32px;
             border-bottom: 1px solid var(--gray-30);
             display: flex;
             align-items: center;
@@ -210,8 +209,8 @@ const { t } = useI18n();
 
         .upload-modal-title {
             margin: 0;
-            font-size: var(--type-size-500);
-            line-height: var(--type-line-500);
+            font-size: var(--type-size-300);
+            line-height: var(--type-line-300);
             color: var(--text-primary);
         }
 

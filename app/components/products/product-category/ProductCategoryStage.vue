@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { ProductItem } from '~/data/products/catalog';
+import type { SizeOptionKey } from '~/data/products/categoryExperience';
 
 type SizeOptionModel = {
-	key: string;
+	key: SizeOptionKey;
 	name: string;
 	dim: string;
 };
 
 type SizeFeatureCard = {
-	key: string;
+	key: SizeOptionKey;
 	image: string;
 	descriptionKey: string;
 };
@@ -19,7 +20,7 @@ const props = defineProps<{
 	selectedId: string | null;
 	selectedProduct: ProductItem | null;
 	sizeFeatureCards: readonly SizeFeatureCard[];
-	selectedSize: string;
+	selectedSize: SizeOptionKey;
 	sizeOptionModels: SizeOptionModel[];
 	quantityOptions: readonly number[];
 	selectedQty: number;
@@ -35,7 +36,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	'select-product': [productId: string];
-	'update:selectedSize': [size: string];
+	'update:selectedSize': [size: SizeOptionKey];
 	'update:selectedQty': [qty: number];
 	'open-upload': [];
 }>();
@@ -403,6 +404,7 @@ const unitPrice = computed(() =>
                     color: var(--text-primary);
                     flex: 0 0 24px;
                     display: -webkit-box;
+                    line-clamp: 2;
                     -webkit-line-clamp: 2;
                     -webkit-box-orient: vertical;
                     overflow: hidden;
