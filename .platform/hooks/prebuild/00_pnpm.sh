@@ -16,4 +16,4 @@ pnpm -v
 
 # 4. Run your optimized install
 # Using --unsafe-perm is sometimes necessary for EB root permissions
-pnpm install --frozen-lockfile --prod --unsafe-perm
+pnpm install --frozen-lockfile --prod --unsafe-perm --shamefully-hoist
