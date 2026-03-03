@@ -43,6 +43,7 @@ const {
 	localeOptions,
 	accountLinks,
 	isMockLoggedIn,
+	isGuestLoggedIn,
 	userInitial,
 	displayName,
 	displayEmail,
@@ -375,6 +376,7 @@ onBeforeUnmount(() => {
 			:is-nav-link-active="isNavLinkActive"
 			:selected-locale="selectedLocale"
 			:is-mock-logged-in="isMockLoggedIn"
+			:is-guest-logged-in="isGuestLoggedIn"
 			:account-open="accountOpen"
 			:user-initial="userInitial"
 			:display-name="displayName"

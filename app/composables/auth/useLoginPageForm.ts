@@ -159,6 +159,8 @@ export function useLoginPageForm() {
 		success: boolean;
 		message: string;
 		data?: {
+			user?: UserIdentity & { profile: UserProfile | null };
+			auth_token?: string;
 			order_lookup_token?: string;
 			order_number?: string;
 		};
@@ -207,8 +209,14 @@ export function useLoginPageForm() {
 				sameSite: 'lax',
 				path: '/',
 			});
+			const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+				maxAge: tokenDuration,
+				sameSite: 'lax',
+				path: '/',
+			});
 
 			authToken.value = response?.data?.auth_token ?? '';
+			guestLoginMode.value = 0;
 
 			// store user in Pinia
 			const userStore = useUserStore();
@@ -348,13 +356,52 @@ export function useLoginPageForm() {
 				return;
 			}
 
+			const authToken = useCookie<string | null>('auth_token', {
+				maxAge: 60 * 60 * 24 * 3,
+				sameSite: 'lax',
+				path: '/',
+			});
+			const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+				maxAge: 60 * 60 * 24 * 3,
+				sameSite: 'lax',
+				path: '/',
+			});
+			const mockUser = useCookie<{
+				firstName: string;
+				lastName: string;
+				email: string;
+			} | null>('mock_user', {
+				sameSite: 'lax',
+				path: '/',
+			});
+			const userStore = useUserStore();
+			const resolvedEmail = guestVerificationEmail.value.trim();
+			const emailLocalPart = resolvedEmail.includes('@')
+				? (resolvedEmail.split('@')[0] || '').trim()
+				: '';
+			const userName = emailLocalPart || 'Guest';
+
+			if (response.data?.auth_token) {
+				authToken.value = response.data.auth_token;
+			}
+			if (response.data?.user) {
+				userStore.setUser(response.data.user);
+			}
+			mockUser.value = {
+				firstName: userName,
+				lastName: '',
+				email: resolvedEmail,
+			};
+			guestLoginMode.value = 1;
+
 			const resolvedOrderNumber =
 				response.data?.order_number || guestVerificationOrderNumber.value;
 
 			isVerificationModalOpen.value = false;
-			await router.push(
-				withCountry(`/account/orders?order_number=${encodeURIComponent(resolvedOrderNumber)}`)
-			);
+			if (resolvedOrderNumber) {
+				guestVerificationOrderNumber.value = resolvedOrderNumber;
+			}
+			await router.push(withCountry('/'));
 		} catch (error: unknown) {
 			const errorPayload = error as { data?: { message?: string }; message?: string };
 			guestVerificationError.value =

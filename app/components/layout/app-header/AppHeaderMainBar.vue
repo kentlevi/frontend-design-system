@@ -24,6 +24,7 @@ const props = defineProps<{
 	isNavLinkActive: (path: string) => boolean;
 	selectedLocale: FlagCode;
 	isMockLoggedIn: boolean;
+	isGuestLoggedIn: boolean;
 	accountOpen: boolean;
 	userInitial: string;
 	displayName: string;
@@ -137,6 +138,7 @@ const emit = defineEmits<{
 			<AppHeaderAccountMenu
 				:account-open="props.accountOpen"
 				:is-mock-logged-in="props.isMockLoggedIn"
+				:is-guest-logged-in="props.isGuestLoggedIn"
 				:user-initial="props.userInitial"
 				:display-name="props.displayName"
 				:display-email="props.displayEmail"

@@ -20,6 +20,7 @@ type AccountLink = {
 const props = defineProps<{
 	accountOpen: boolean;
 	isMockLoggedIn: boolean;
+	isGuestLoggedIn: boolean;
 	userInitial: string;
 	displayName: string;
 	displayEmail: string;
@@ -58,6 +59,10 @@ const primaryAccountLinks = computed(() =>
 const gettingStartedLink = computed(
 	() => props.accountLinks.find((link) => link.to === '/auth/profile') ?? null
 );
+const guestOrderLink = computed(
+	() => props.accountLinks.find((link) => link.to === '/account/orders') ?? null
+);
+const guestOrderTarget = computed(() => withCountry('/'));
 
 function normalizePath(path: string) {
 	return path.replace(/\/+$/, '') || '/';
@@ -140,7 +145,7 @@ const guestLoginTarget = computed(() => {
 			type="button"
 			class="home-header-icon home-header-account"
 			:class="{
-				'is-open': accountOpen,
+				'is-open': accountOpen && isMockLoggedIn,
 				'is-open-guest': accountOpen && !isMockLoggedIn,
 			}"
 			:aria-label="t('layout.header.account')"
@@ -149,8 +154,11 @@ const guestLoginTarget = computed(() => {
 			data-testid="app-header-account-toggle-button"
 			@click.stop="emit('toggle')"
 		>
-			<span v-if="isMockLoggedIn" class="home-header-avatar">
+			<span v-if="isMockLoggedIn && !isGuestLoggedIn" class="home-header-avatar">
 				{{ userInitial }}
+			</span>
+			<span v-else-if="isGuestLoggedIn" class="home-header-avatar home-header-avatar--guest">
+				<UiIcon name="strong-user" :size="16" color="var(--text-primary)" />
 			</span>
 			<UiIcon
 				v-else
@@ -159,7 +167,7 @@ const guestLoginTarget = computed(() => {
 				color="var(--text-primary)"
 			/>
 			<UiIcon
-				v-if="isMockLoggedIn"
+				v-if="isMockLoggedIn || isGuestLoggedIn"
 				name="strong-caret-down"
 				:size="16"
 				color="var(--text-primary)"
@@ -168,7 +176,7 @@ const guestLoginTarget = computed(() => {
 
 		<Transition :name="accountTransitionName">
 			<div
-				v-if="accountOpen && isMockLoggedIn"
+				v-if="accountOpen && isMockLoggedIn && !isGuestLoggedIn"
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
 				:aria-label="t('layout.header.accountMenu')"
@@ -234,6 +242,59 @@ const guestLoginTarget = computed(() => {
 						<UiIcon
 							name="strong-sign-out"
 							:size="24"
+							color="var(--text-primary)"
+						/>
+						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
+					</UiButton>
+				</div>
+			</div>
+			<div
+				v-else-if="accountOpen && isGuestLoggedIn"
+				class="home-account-dropdown home-account-dropdown--member"
+				role="menu"
+				:aria-label="t('layout.header.accountMenu')"
+				data-testid="app-header-account-dropdown-member"
+			>
+				<div class="home-account-summary" data-testid="app-header-account-summary">
+					<span class="home-account-summary-avatar">
+						<UiIcon name="strong-user" :size="18" color="var(--text-primary)" />
+					</span>
+					<div>
+						<p class="home-account-summary-email">{{ displayEmail }}</p>
+					</div>
+				</div>
+
+				<div class="home-account-link-group home-account-link-group--primary">
+					<NuxtLink
+						v-if="guestOrderLink"
+						:to="guestOrderTarget"
+						class="home-account-link"
+						role="menuitem"
+						data-testid="app-header-account-link-account-orders"
+						@click="emit('close')"
+					>
+						<UiIcon
+							:name="guestOrderLink.icon"
+							:size="22"
+							color="var(--text-primary)"
+						/>
+						<span class="home-account-link-label">{{ guestOrderLink.label }}</span>
+					</NuxtLink>
+				</div>
+
+				<div class="home-account-link-group home-account-link-group--secondary">
+					<UiButton
+						variant="ghost"
+						tone="default"
+						size="sm"
+						class="home-account-link home-account-link-button"
+						role="menuitem"
+						data-testid="app-header-account-logout-button"
+						@click="emit('logout')"
+					>
+						<UiIcon
+							name="strong-sign-out"
+							:size="22"
 							color="var(--text-primary)"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
@@ -350,6 +411,10 @@ const guestLoginTarget = computed(() => {
             font-weight: var(--font-weight-bold);
             display: grid;
             place-items: center;
+        }
+
+        .home-header-avatar--guest {
+            background: var(--gray-30);
         }
     }
 

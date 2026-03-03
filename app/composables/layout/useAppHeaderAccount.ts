@@ -19,6 +19,11 @@ export function useAppHeaderAccount() {
 	const api = useApi();
 	const userStore = useUserStore();
 	const authToken = useCookie<string | null>('auth_token');
+	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
 	const mockUser = useCookie<{
 		firstName: string;
 		lastName: string;
@@ -134,6 +139,10 @@ export function useAppHeaderAccount() {
 		() => userStore.email || mockUser.value?.email || ''
 	);
 	const isMockLoggedIn = computed(() => Boolean(userStore.email || mockUser.value?.email));
+	const isGuestLoggedIn = computed(() => {
+		if (!isMockLoggedIn.value) return false;
+		return String(guestLoginMode.value ?? '') === '1';
+	});
 	const userInitial = computed(() => {
 		const first = resolvedFirstName.value.trim().charAt(0).toUpperCase();
 		const last = resolvedLastName.value.trim().charAt(0).toUpperCase();
@@ -222,6 +231,7 @@ export function useAppHeaderAccount() {
 		} finally {
 			mockUser.value = null;
 			authToken.value = null;
+			guestLoginMode.value = null;
 			userStore.clearUser();
 			userStore.clearOnboardingProfile();
 			await navigateTo(withCountry('/'));
@@ -293,6 +303,7 @@ export function useAppHeaderAccount() {
 		localeOptions,
 		accountLinks,
 		isMockLoggedIn,
+		isGuestLoggedIn,
 		userInitial,
 		displayName,
 		displayEmail,
