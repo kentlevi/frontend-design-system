@@ -14,18 +14,18 @@ const { withCountry } = useCountry();
 				</NuxtLink>
 				<span class="checkout-header-divider" aria-hidden="true" />
 				<p class="checkout-header-title">
-					<UiIcon name="strong-shield" :size="32" color="var(--text-primary)" />
+					<UiIcon name="regular-shield" :size="32" color="var(--text-primary)" />
 					{{ headerCheckoutConfig.title }}
 				</p>
 			</div>
 
 			<div class="checkout-header-contact">
 				<a :href="`tel:${headerCheckoutConfig.phone.replace(/\\s+/g, '')}`" class="checkout-header-link">
-					<UiIcon name="strong-phone" :size="24" color="var(--text-primary)" />
+					<UiIcon name="regular-phone" :size="24" color="var(--text-primary)" />
 					{{ headerCheckoutConfig.phone }}
 				</a>
 				<a :href="`mailto:${headerCheckoutConfig.email}`" class="checkout-header-link">
-					<UiIcon name="strong-envelope" :size="24" color="var(--text-primary)" />
+					<UiIcon name="regular-envelope" :size="24" color="var(--text-primary)" />
 					{{ headerCheckoutConfig.email }}
 				</a>
 			</div>
@@ -35,14 +35,14 @@ const { withCountry } = useCountry();
 
 <style scoped lang="scss">
 .checkout-header {
-    border-bottom: 1px solid var(--gray-40);
+    border-bottom: 1px solid var(--gray-30);
     background: var(--bg-page);
 
     .checkout-header-inner {
         max-width: 1200px;
         margin: 0 auto;
         min-height: 74px;
-        padding: 0 24px;
+        padding: 20px 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -53,10 +53,14 @@ const { withCountry } = useCountry();
             align-items: center;
             gap: 14px;
 
+            .checkout-header-logo {
+                height: fit-content;
+            }
+
             .checkout-header-divider {
                 width: 1px;
-                height: 24px;
-                background: var(--gray-40);
+                height: 34px;
+                background: var(--gray-50);
             }
 
             .checkout-header-title {
@@ -74,17 +78,17 @@ const { withCountry } = useCountry();
         .checkout-header-contact {
             display: inline-flex;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
 
             .checkout-header-link {
                 display: inline-flex;
                 align-items: center;
-                gap: 6px;
+                gap: 8px;
                 color: var(--text-primary);
                 text-decoration: none;
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
-                font-weight: var(--font-weight-medium);
+                font-weight: var(--font-weight-semibold);
             }
         }
     }

@@ -158,10 +158,9 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .home-header-container {
-    max-width: 1280px;
+    max-width: 1200px;
     margin: 0 auto;
-    height: 96px;
-    padding: 0 24px;
+    padding: 20px 0;
     display: grid;
     grid-template-columns: 200px 1fr 260px;
     align-items: center;
