@@ -20,7 +20,7 @@ const props = withDefaults(
 		otpLength?: number;
 		testIdPrefix?: string;
 		showCloseButton?: boolean;
-		align?: 'start' | 'center';
+		align?: 'start' | 'top' | 'center' | 'bottom';
 		width?: string;
 		modalClass?: string;
 	}>(),
@@ -36,7 +36,7 @@ const props = withDefaults(
 		otpLength: authVerificationConfig.otpLength,
 		testIdPrefix: 'auth-verification',
 		showCloseButton: false,
-		align: 'center',
+		align: 'top',
 		width: '504px',
 		modalClass: '',
 	}
@@ -67,6 +67,9 @@ const computedSubmitLabel = computed(() =>
 		? props.busyLabel || t(`${key.value}.verifying`)
 		: props.submitLabel || t(`${key.value}.verify`)
 );
+const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
+	props.align === 'start' ? 'top' : props.align
+);
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -91,7 +94,7 @@ function onPaste(event: ClipboardEvent) {
 	<UiModal
 		:model-value="modelValue"
 		:width="width"
-		:align="align"
+		:align="modalAlign"
 		:modal-class="modalClass"
 		:data-testid="`${testIdPrefix}-modal`"
 		@update:model-value="emit('update:modelValue', $event)"

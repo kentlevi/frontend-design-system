@@ -1,4 +1,11 @@
-import { computed, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import {
+	computed,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	type ComponentPublicInstance,
+	type Ref,
+} from 'vue';
 
 type UseHomeReviewsCarouselOptions = {
 	gap?: number;
@@ -65,8 +72,12 @@ export function useHomeReviewsCarousel(
 		autoTimer.value = null;
 	}
 
-	function setCardRef(el: Element | null) {
-		cardRef.value = (el as HTMLElement | null) ?? null;
+	function setCardRef(el: Element | ComponentPublicInstance | null) {
+		const resolved =
+			el && '$el' in el
+				? (el.$el as Element | null)
+				: (el as Element | null);
+		cardRef.value = (resolved as HTMLElement | null) ?? null;
 	}
 
 	onMounted(() => {

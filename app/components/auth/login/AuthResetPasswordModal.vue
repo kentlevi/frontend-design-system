@@ -135,7 +135,11 @@ async function submitChangePassword() {
 		authToken.value = loginResponse.data.auth_token;
 
 		if (loginResponse.data.user) {
-			userStore.setUser(loginResponse.data.user);
+			const normalizedUser: UserIdentity & { profile: UserProfile | null } = {
+				...loginResponse.data.user,
+				profile: (loginResponse.data.user.profile as UserProfile | null) ?? null,
+			};
+			userStore.setUser(normalizedUser);
 
 			const mockUser = useCookie<{
 				firstName: string;
@@ -147,7 +151,7 @@ async function submitChangePassword() {
 			});
 
 			const fields =
-				loginResponse.data.user.profile?.user_field_values ?? [];
+				normalizedUser.profile?.user_field_values ?? [];
 			const firstName =
 				fields.find(
 					(field: UserFieldValue) =>
@@ -174,7 +178,7 @@ async function submitChangePassword() {
 			mockUser.value = {
 				firstName: firstName || fallbackRows[0]?.value?.trim() || '',
 				lastName: lastName || fallbackRows[1]?.value?.trim() || '',
-				email: loginResponse.data.user.email || email,
+				email: normalizedUser.email || email,
 			};
 		}
 

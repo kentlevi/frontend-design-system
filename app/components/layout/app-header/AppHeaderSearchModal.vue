@@ -1,24 +1,15 @@
 <script setup lang="ts">
-type SearchResultItem = {
-	id: string;
-	name: string;
-	blurb: string;
-	image: string;
-};
+import type { SearchItem } from '~/composables/layout/useAppHeaderSearch';
 
 type SearchResultGroup = {
 	key: string;
 	label: string;
-	items: SearchResultItem[];
+	items: SearchItem[];
 };
 
 type RecentSearchEntry = {
 	term: string;
-	matchedItem: {
-		name: string;
-		blurb: string;
-		image: string;
-	} | null;
+	matchedItem: SearchItem | null;
 };
 
 const props = defineProps<{
@@ -47,7 +38,7 @@ const emit = defineEmits<{
 	'apply-recent': [term: string];
 	'remove-recent': [term: string];
 	'apply-suggested': [];
-	'select-result': [item: SearchResultItem];
+	'select-result': [item: SearchItem];
 }>();
 
 const { t } = useI18n();

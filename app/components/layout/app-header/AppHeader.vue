@@ -34,6 +34,22 @@ type StoredCartState = {
 	artworkPreviewUrl?: string;
 };
 
+function isStoredCartState(value: unknown): value is StoredCartState {
+	if (!value || typeof value !== 'object') return false;
+	const candidate = value as Partial<StoredCartState>;
+	return (
+		typeof candidate.id === 'string' &&
+		typeof candidate.category === 'string' &&
+		typeof candidate.productId === 'string' &&
+		typeof candidate.sizeKey === 'string' &&
+		typeof candidate.qty === 'number' &&
+		typeof candidate.total === 'number' &&
+		typeof candidate.artworkName === 'string' &&
+		(candidate.artworkPreviewUrl === undefined ||
+			typeof candidate.artworkPreviewUrl === 'string')
+	);
+}
+
 const {
 	accountOpen,
 	accountMenuRef,
@@ -125,11 +141,12 @@ const cartSizeOptionModels = computed(() =>
 		const [name, ...rest] = label.split(' ');
 		return {
 			key: size,
-			name,
+			name: name || '',
 			dim: rest.join(' '),
 		};
 	})
 );
+const cartQuantityOptions = computed<number[]>(() => [...quantityOptions]);
 let idlePrefetchTimer: ReturnType<typeof setTimeout> | null = null;
 let idlePrefetchHandle: number | null = null;
 const prefetchedHeaderOverlays = ref(false);
@@ -232,6 +249,7 @@ function mergePlainCartItems(items: StoredCartState[]) {
 		}
 
 		const existing = merged[existingIndex];
+		if (!existing) continue;
 		merged[existingIndex] = {
 			...existing,
 			qty: existing.qty + item.qty,
@@ -250,14 +268,14 @@ function syncCartFromStorage() {
 			cartState.value = [];
 			return;
 		}
-		const parsed = JSON.parse(raw) as StoredCartState | StoredCartState[];
+		const parsed = JSON.parse(raw) as unknown;
 		if (Array.isArray(parsed)) {
-			cartState.value = mergePlainCartItems(
-				parsed.filter((item) => Boolean(item?.productId))
-			);
+			cartState.value = mergePlainCartItems(parsed.filter(isStoredCartState));
 			return;
 		}
-		cartState.value = parsed?.productId ? mergePlainCartItems([parsed]) : [];
+		cartState.value = isStoredCartState(parsed)
+			? mergePlainCartItems([parsed])
+			: [];
 	} catch {
 		cartState.value = [];
 	}
@@ -442,7 +460,7 @@ onBeforeUnmount(() => {
 			:cart-item-count="cartItemCount"
 			:cart-items="cartItems"
 			:size-option-models="cartSizeOptionModels"
-			:quantity-options="quantityOptions"
+			:quantity-options="cartQuantityOptions"
 			:grand-total="cartGrandTotal"
 			:featured-open="cartFeaturedOpen"
 			:featured-items="cartFeaturedItems"
