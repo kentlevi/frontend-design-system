@@ -421,7 +421,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	}
 
 	async function proceedToCart() {
-		if (!hasUploadedArtwork.value || addToCartLoading.value) return;
+		if (addToCartLoading.value) return;
 		addToCartLoading.value = true;
 		try {
 			// Simulate add-to-cart processing so UI state is visible and double-submits are blocked.
@@ -522,7 +522,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	}
 
 	function skipAndUploadLater() {
-		if (hasUploadedArtwork.value) return;
 		const appended = appendCurrentSelectionToCart('', '', editingCartItemId.value);
 		if (appended) {
 			editingCartItemId.value = null;

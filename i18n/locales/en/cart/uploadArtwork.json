@@ -8,7 +8,7 @@
             "replaceImage": "Replace Image",
             "specialInstructions": "Special Instructions",
             "specialInstructionsPlaceholder": "Enter special instruction here...",
-            "note": "If you skip artwork uploading, you can upload your artwork anytime in your cart page, or in your Dashboard after successful checkout.",
+            "note": "*If you skip artwork uploading, you can upload your artwork anytime in your cart page, or in your Dashboard after successful checkout.",
             "skipUploadLater": "Skip \u0026 Upload artwork later",
             "addToCart": "Add to Cart"
         }

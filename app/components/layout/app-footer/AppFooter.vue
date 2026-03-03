@@ -24,18 +24,19 @@ const isProductRoute = computed(() =>
 <style scoped lang="scss">
 .home-footer {
     --footer-bg: #232737;
-    --footer-text-primary: #ffffff;
+    --footer-text-primary: var(--white-base);
     --footer-text-secondary: #f5f6fb;
     --footer-text-muted: #d6d8de;
     --footer-text-subtle: #c6c9d4;
     --footer-text-soft: #b9bdca;
-    --footer-border: #70758b;
+    --footer-border: var(--white-base);
 
     background: var(--bg-page);
     padding: 0 24px 0;
 
     &.is-product {
         padding: 0;
+        background: var(--footer-bg);
     }
 
     .home-footer-compact,
