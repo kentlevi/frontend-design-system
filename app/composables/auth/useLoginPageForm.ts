@@ -150,7 +150,7 @@ export function useLoginPageForm() {
 		success: boolean;
 		message: string;
 		data?: {
-			verification_token?: string;
+			token?: string;
 			expires_in?: number;
 		};
 	}
@@ -307,7 +307,7 @@ export function useLoginPageForm() {
 
 			guestVerificationEmail.value = email;
 			guestVerificationOrderNumber.value = orderNumber;
-			guestVerificationToken.value = response.data?.verification_token || '';
+			guestVerificationToken.value = response.data?.token || '';
 			guestVerificationCode.value = '';
 			isVerificationModalOpen.value = true;
 		} catch (error: unknown) {
@@ -330,13 +330,13 @@ export function useLoginPageForm() {
 
 		try {
 			const response = await api<GuestOtpVerifyResponse>(
-				`/${apiCountry.value}/auth/login/guest/verify`,
+				`/${apiCountry.value}/auth/login/guest`,
 				{
 					method: 'POST',
 					body: {
 						email: guestVerificationEmail.value,
 						order_number: guestVerificationOrderNumber.value,
-						verification_token: guestVerificationToken.value || undefined,
+						login_token: guestVerificationToken.value || undefined,
 						otp: guestVerificationCode.value.trim(),
 					},
 				}
@@ -382,7 +382,7 @@ export function useLoginPageForm() {
 			);
 
 			if (response.success) {
-				guestVerificationToken.value = response.data?.verification_token || '';
+				guestVerificationToken.value = response.data?.token || '';
 			}
 		} catch {
 			// Keep UX non-blocking for resend tap failures.
