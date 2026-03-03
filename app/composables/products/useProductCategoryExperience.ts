@@ -123,7 +123,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	const cartArtworkExtension = computed(() => {
 		const fileName = artworkFile.value?.name || '';
 		const parts = fileName.split('.');
-		return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : 'file';
+		const extension = parts.at(-1);
+		return parts.length > 1 && extension ? extension.toLowerCase() : 'file';
 	});
 
 	let selectionNavigationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -248,6 +249,11 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 			}
 
 			const existing = merged[existingIndex];
+			if (!existing) {
+				merged.push(item);
+				plainIndexByKey.set(key, merged.length - 1);
+				continue;
+			}
 			merged[existingIndex] = {
 				...existing,
 				qty: existing.qty + item.qty,
@@ -568,7 +574,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 
 	function sizeLabelParts(sizeKey: string) {
 		const label = t(`product.sizes.${sizeKey}.label`);
-		const [name, ...rest] = label.split(' ');
+		const [name = '', ...rest] = label.split(' ');
 		return {
 			name,
 			dim: rest.join(' '),
