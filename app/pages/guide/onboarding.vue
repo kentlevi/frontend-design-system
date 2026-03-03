@@ -550,16 +550,18 @@ resetTrackState();
 
 .guide-onboarding-kicker {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-secondary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-onboarding-meta {
     margin: 4px 0 0;
-    font-size: 13px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
 }
 
@@ -570,7 +572,8 @@ resetTrackState();
 .guide-onboarding-label {
     margin: 0 0 6px;
     display: inline-block;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -585,7 +588,8 @@ resetTrackState();
         padding: 8px 12px;
         background: var(--bg-surface);
         color: var(--text-primary);
-        font-size: 15px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
     }
 
     :deep(.ui-select-menu) {
@@ -648,34 +652,37 @@ resetTrackState();
     height: 22px;
     border-radius: 999px;
     border: 1px solid var(--border-default);
-    font-size: 12px;
-    font-weight: 700;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-bold);
     color: var(--text-secondary);
     flex-shrink: 0;
 }
 
 .guide-onboarding-ref-kicker {
     margin: 0;
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
 }
 
 .guide-onboarding-welcome-kicker {
     margin: 0;
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
 }
 
 .guide-onboarding-welcome-title {
     margin: 0;
-    font-size: 24px;
-    line-height: 32px;
+    font-size: var(--type-size-400);
+    line-height: var(--type-line-400);
     letter-spacing: -0.02em;
     color: var(--text-primary);
 }
@@ -697,16 +704,17 @@ resetTrackState();
 
 .guide-onboarding-welcome-step-index {
     margin: 0;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-bold);
     color: var(--text-secondary);
 }
 
 .guide-onboarding-welcome-step-copy {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
-    line-height: 1.4;
 }
 
 .guide-onboarding-progress-row {
@@ -718,11 +726,12 @@ resetTrackState();
 
 .guide-onboarding-step {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-onboarding-progress-track {
@@ -743,16 +752,16 @@ resetTrackState();
 
 .guide-onboarding-title {
     margin: 4px 0 0;
-    font-size: 24px;
-    line-height: 32px;
+    font-size: var(--type-size-400);
+    line-height: var(--type-line-400);
     letter-spacing: -0.02em;
     color: var(--text-primary);
 }
 
 .guide-onboarding-summary {
     margin: 0;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
@@ -776,7 +785,8 @@ resetTrackState();
 .guide-onboarding-claim-text {
     margin: 0;
     color: var(--text-primary);
-    font-size: 15px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
 }
 
 .guide-onboarding-source-btn {
@@ -799,21 +809,24 @@ resetTrackState();
 }
 
 .guide-onboarding-source-label {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
 }
 
 .guide-onboarding-source-path {
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     word-break: break-all;
 }
 
 .guide-onboarding-source-copied {
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--success);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-onboarding-code {
@@ -824,7 +837,8 @@ resetTrackState();
     background: #0b1020;
     color: #e5ecff;
     overflow-x: auto;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-onboarding-nav,
@@ -841,8 +855,9 @@ resetTrackState();
     padding: 9px 13px;
     background: var(--text-primary);
     color: var(--bg-surface);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-semibold);
     cursor: pointer;
     transition: transform 120ms ease, filter 120ms ease;
 }
@@ -869,8 +884,8 @@ resetTrackState();
 
 .guide-onboarding-section-title {
     margin: 0;
-    font-size: 24px;
-    line-height: 32px;
+    font-size: var(--type-size-400);
+    line-height: var(--type-line-400);
     letter-spacing: -0.02em;
     color: var(--text-primary);
 }
@@ -898,14 +913,16 @@ resetTrackState();
 
 .guide-onboarding-quiz-prompt {
     margin: 0;
-    font-size: 15px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-onboarding-quiz-result {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 

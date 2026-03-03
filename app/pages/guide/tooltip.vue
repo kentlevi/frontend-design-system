@@ -535,8 +535,8 @@ const slideDistanceModel = computed<string>({
     border-radius: 999px;
     min-height: 34px;
     padding: 6px 12px;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
     background: var(--bg-surface);
     transition: border-color 150ms ease, background-color 150ms ease;
@@ -548,7 +548,7 @@ const slideDistanceModel = computed<string>({
 }
 
 .guide-tooltip-variant-pill-label {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 .guide-tooltip-variant-pill-swatch {
@@ -606,29 +606,29 @@ const slideDistanceModel = computed<string>({
 
 .guide-tooltip-variant-note {
     margin: 4px 0 10px;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
 .guide-tooltip-variant-title {
     margin: 0;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
 }
 
 .guide-tooltip-variant-side {
     margin: 0;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
 .guide-tooltip-interaction-hint {
     margin: 10px 0 0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
@@ -694,8 +694,8 @@ const slideDistanceModel = computed<string>({
     overflow-wrap: normal;
     border-radius: 14px;
     padding: 10px 12px;
-    font-size: 13px;
-    line-height: 1.35;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     letter-spacing: 0;
 }
 
@@ -745,8 +745,8 @@ const slideDistanceModel = computed<string>({
     border: 1px solid var(--border-default);
     border-radius: 8px;
     padding: 8px 12px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
     background: var(--bg-surface);
     cursor: pointer;
@@ -783,8 +783,8 @@ const slideDistanceModel = computed<string>({
 
 .guide-tooltip-toolbar-copy {
     margin: 0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
@@ -799,8 +799,8 @@ const slideDistanceModel = computed<string>({
     border-radius: 8px;
     min-height: 32px;
     padding: 6px 10px;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
     background: var(--bg-page);
     transition: border-color 150ms ease, background-color 150ms ease;
@@ -825,8 +825,8 @@ const slideDistanceModel = computed<string>({
     border-radius: 10px;
     min-height: 44px;
     padding: 6px 10px;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
     background: var(--bg-page);
     transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
@@ -844,12 +844,12 @@ const slideDistanceModel = computed<string>({
 }
 
 .guide-tooltip-preset-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-tooltip-preset-meta {
-    font-size: 11px;
-    line-height: 14px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
 }
 
@@ -863,8 +863,8 @@ const slideDistanceModel = computed<string>({
     display: grid;
     gap: 6px;
     align-content: start;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     border: 1px solid var(--border-default);
     border-radius: 10px;

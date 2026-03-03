@@ -232,9 +232,9 @@ function formatPrice(value: number) {
         transition: border-color 0.16s ease, transform 0.16s ease;
 
         span {
-            font-size: 13px;
-            line-height: 20px;
-            font-weight: 600;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-semibold);
         }
 
         &.is-active {
@@ -261,9 +261,9 @@ function formatPrice(value: number) {
     .config-label {
         margin: 0;
         color: var(--text-primary);
-        font-size: 14px;
-        line-height: 22px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
     }
 
     .config-pills {
@@ -278,12 +278,12 @@ function formatPrice(value: number) {
         align-items: center;
         gap: 12px;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 22px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         strong {
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: var(--font-weight-bold);
         }
 
         &.is-total {
@@ -297,8 +297,8 @@ function formatPrice(value: number) {
         align-items: center;
         gap: 8px;
         color: var(--text-secondary);
-        font-size: 13px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .config-list {
@@ -307,8 +307,8 @@ function formatPrice(value: number) {
         display: grid;
         gap: 6px;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     @media (max-width: 820px) {

@@ -55,8 +55,8 @@ const spacingScale = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64];
 
     .space-token {
         margin: 0;
-        font-size: 12px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-muted);
     }
 
@@ -84,15 +84,15 @@ const spacingScale = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64];
 
         h3 {
             margin: 0 0 12px;
-            font-size: 20px;
-            line-height: 32px;
+            font-size: var(--type-size-300);
+            line-height: var(--type-line-300);
             color: var(--text-primary);
         }
 
         p {
             margin: 0 0 24px;
-            font-size: 16px;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
             color: var(--text-secondary);
         }
     }

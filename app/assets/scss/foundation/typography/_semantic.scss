@@ -1,6 +1,10 @@
 @use '../../brand/typography' as brand;
 
 $font-base: brand.$font-primary;
+$font-weight-regular: brand.$fw-regular;
+$font-weight-medium: brand.$fw-medium;
+$font-weight-semibold: brand.$fw-semibold;
+$font-weight-bold: brand.$fw-bold;
 
 $font-size-xs: brand.$body-xs;
 $font-size-sm: brand.$body-sm;
@@ -25,3 +29,8 @@ $body-base: brand.$body-md;
 $body-large: brand.$body-lg;
 $body-small: brand.$body-sm;
 $body-xs: brand.$body-xs;
+
+$body-base-line: 24px;
+$body-large-line: 28px;
+$body-small-line: 24px;
+$body-xs-line: 24px;

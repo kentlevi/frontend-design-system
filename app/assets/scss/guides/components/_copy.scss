@@ -52,9 +52,9 @@
 
     padding: 8px 12px;
 
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-semibold);
 
     background: f.$bg-inverse;
     color: f.$text-inverse;
@@ -76,7 +76,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     opacity: 0.9;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
 }
 
 .guide-copy-toast-enter-active,

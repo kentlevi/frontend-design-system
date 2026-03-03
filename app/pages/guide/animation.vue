@@ -210,30 +210,30 @@ function replayStagger() {
     .animation-reference-title {
         margin: 0;
         color: var(--text-primary);
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
     }
 
     .animation-reference-source {
         margin: 2px 0 0;
         color: var(--text-muted);
-        font-size: 12px;
-        line-height: 18px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .animation-reference-transition {
         margin: 8px 0 0;
         color: var(--text-primary);
-        font-size: 13px;
-        line-height: 20px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
     }
 
     .animation-reference-detail {
         margin: 6px 0 0;
         color: var(--text-secondary);
-        font-size: 13px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .animation-reference-meta {
@@ -246,8 +246,8 @@ function replayStagger() {
     .animation-reference-chip {
         border-radius: 999px;
         padding: 4px 10px;
-        font-size: 11px;
-        line-height: 16px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--contrast-light);
         background: var(--text-primary);
     }

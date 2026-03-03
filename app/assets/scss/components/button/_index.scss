@@ -24,8 +24,8 @@
 
     font-family: t.$font-base;
     font-size: t.$body-base;
-    font-weight: 600;
-    line-height: 24px;
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--type-line-100);
 
     cursor: pointer;
     user-select: none;
@@ -50,6 +50,7 @@
     place-items: center;
 
     font-size: t.$body-small;
+    line-height: t.$body-small-line;
 }
 
 .ui-button-label {

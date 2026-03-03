@@ -216,23 +216,23 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 
 .guide-docs-title {
 	margin: 0 0 8px;
-	font-size: 34px;
-	line-height: 42px;
+	font-size: var(--type-size-550);
+	line-height: var(--type-line-550);
 	color: var(--text-primary);
 }
 
 .guide-docs-summary {
 	margin: 0;
-	font-size: 14px;
-	line-height: 22px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 }
 
 .guide-docs-meta {
 	margin: 8px 0 0;
 	color: var(--text-muted);
-	font-size: 12px;
-	line-height: 18px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 }
 
 .guide-docs-status-chip {
@@ -240,8 +240,8 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 	align-items: center;
 	border-radius: 999px;
 	padding: 2px 8px;
-	font-size: 11px;
-	line-height: 16px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: var(--text-primary);
 	background: color-mix(in srgb, #16a34a 18%, var(--contrast-light));
 }
@@ -255,8 +255,8 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 
 .guide-docs-section-title {
 	margin: 0 0 8px;
-	font-size: 20px;
-	line-height: 28px;
+	font-size: var(--type-size-300);
+	line-height: var(--type-line-300);
 	color: var(--text-primary);
 }
 
@@ -267,8 +267,8 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 
 .guide-docs-list-item {
 	color: var(--text-secondary);
-	font-size: 14px;
-	line-height: 24px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 }
 
 .guide-docs-section-dual {
@@ -311,8 +311,8 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 
 .guide-docs-example-title {
 	margin: 0 0 8px;
-	font-size: 14px;
-	line-height: 22px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: var(--text-primary);
 }
 
@@ -323,8 +323,8 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 	border: 1px solid var(--border-default);
 	background: #0f172a;
 	color: #e2e8f0;
-	font-size: 12px;
-	line-height: 18px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	overflow-x: auto;
 }
 
@@ -337,9 +337,9 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 .guide-docs-changelog-date {
 	margin: 0 0 8px;
 	color: var(--text-primary);
-	font-size: 13px;
-	line-height: 20px;
-	font-weight: 600;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
+	font-weight: var(--font-weight-semibold);
 }
 
 .guide-docs-related-links {
@@ -371,8 +371,8 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 	}
 
 	.guide-docs-title {
-		font-size: 30px;
-		line-height: 38px;
+		font-size: var(--type-size-500);
+		line-height: var(--type-line-500);
 	}
 }
 </style>

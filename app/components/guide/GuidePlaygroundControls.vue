@@ -79,7 +79,8 @@ const updateValue = (key: 'size' | 'tone' | 'state', value: string) => {
 .guide-playground-field {
     display: grid;
     gap: 4px;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
 
     select {

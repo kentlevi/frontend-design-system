@@ -399,15 +399,15 @@ function submitSupportRequest() {
 .guide-modal-status {
     margin: 0;
     color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-modal-copy {
     margin: 0;
     color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 24px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-modal-form {

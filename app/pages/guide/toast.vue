@@ -197,8 +197,8 @@ onBeforeUnmount(() => {
 .guide-toast-control {
     display: grid;
     gap: 6px;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 

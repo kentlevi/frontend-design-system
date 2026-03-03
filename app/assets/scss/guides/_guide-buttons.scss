@@ -61,8 +61,9 @@
     }
 
     .guide-control-label {
-        font-size: 12px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         color: f.$text-muted;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -100,7 +101,8 @@
         color: f.$text-secondary;
         border-radius: 8px;
         padding: 6px 12px;
-        font-size: 12px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         cursor: pointer;
         transition: all 0.15s ease;
 
@@ -148,7 +150,8 @@
         border-radius: 8px;
         cursor: pointer;
         text-align: left;
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         &:hover {
             background: var(--bg-muted);
@@ -201,6 +204,7 @@
     }
 
     .guide-color-name {
-        font-size: 12px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 }

@@ -2,6 +2,15 @@
 
 :root {
     --font-base: #{sem.$font-base};
+    --font-weight-regular: #{sem.$font-weight-regular};
+    --font-weight-medium: #{sem.$font-weight-medium};
+    --font-weight-semibold: #{sem.$font-weight-semibold};
+    --font-weight-bold: #{sem.$font-weight-bold};
+
+    --font-weight-400: #{sem.$font-weight-regular};
+    --font-weight-500: #{sem.$font-weight-medium};
+    --font-weight-600: #{sem.$font-weight-semibold};
+    --font-weight-700: #{sem.$font-weight-bold};
 
     --font-size-xs: #{sem.$font-size-xs};
     --font-size-sm: #{sem.$font-size-sm};
@@ -25,4 +34,8 @@
     --body-large: #{sem.$body-large};
     --body-small: #{sem.$body-small};
     --body-xs: #{sem.$body-xs};
+    --body-base-line: #{sem.$body-base-line};
+    --body-large-line: #{sem.$body-large-line};
+    --body-small-line: #{sem.$body-small-line};
+    --body-xs-line: #{sem.$body-xs-line};
 }

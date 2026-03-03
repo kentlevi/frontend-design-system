@@ -208,8 +208,9 @@ const previewCopyText = computed(() => {
 }
 
 .guide-badge-builder-control-label {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -222,8 +223,8 @@ const previewCopyText = computed(() => {
     background: var(--bg-page);
     color: var(--text-primary);
     padding: 8px 10px;
-    font-size: 13px;
-    line-height: 1.4;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-badge-builder-input:disabled {
@@ -244,7 +245,8 @@ const previewCopyText = computed(() => {
     color: var(--text-secondary);
     border-radius: 8px;
     padding: 6px 12px;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -264,7 +266,8 @@ const previewCopyText = computed(() => {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
 }
 

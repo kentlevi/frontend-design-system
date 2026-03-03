@@ -25,7 +25,7 @@
     padding: sp.$space-3;
     font-family: t.$font-base;
     font-size: t.$body-base;
-    line-height: 1.5;
+    line-height: t.$body-base-line;
     color: c.$text-primary;
 
     &::placeholder {

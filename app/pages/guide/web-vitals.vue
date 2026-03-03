@@ -291,7 +291,8 @@ function routeBudgetLabel(row: RouteVitals): string {
     .web-vitals-filter {
         display: grid;
         gap: 6px;
-        font-size: 12px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 
@@ -320,15 +321,15 @@ function routeBudgetLabel(row: RouteVitals): string {
 
     .web-vitals-panel h2 {
         margin: 0 0 8px;
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
         color: var(--text-primary);
     }
 
     .web-vitals-panel p {
         margin: 0;
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 
@@ -371,20 +372,21 @@ function routeBudgetLabel(row: RouteVitals): string {
         padding: 12px;
         border-bottom: 1px solid var(--border-default);
         text-align: left;
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
         vertical-align: middle;
     }
 
     .web-vitals-table th {
         color: var(--text-primary);
-        font-weight: 700;
+        font-weight: var(--font-weight-bold);
         background: color-mix(in srgb, var(--gray-20) 55%, var(--contrast-light));
     }
 
     .web-vitals-table td.route {
         color: var(--text-primary);
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
     }
 
     @media (max-width: 900px) {

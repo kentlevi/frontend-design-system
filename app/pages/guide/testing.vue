@@ -152,8 +152,8 @@ const generatedTestId = computed(
     .testing-copy {
         margin: 0;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .testing-grid {
@@ -165,12 +165,12 @@ const generatedTestId = computed(
     .testing-output {
         margin: 0;
         color: var(--text-secondary);
-        font-size: 13px;
-        line-height: 22px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         strong {
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: var(--font-weight-bold);
         }
     }
 
@@ -180,8 +180,8 @@ const generatedTestId = computed(
         display: grid;
         gap: 6px;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .testing-chip-row {

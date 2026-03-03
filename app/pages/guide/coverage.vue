@@ -209,8 +209,8 @@ const guideQualityRows = computed(() =>
         text-align: left;
         padding: 10px 12px;
         border-bottom: 1px solid var(--border-default);
-        font-size: 13px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 }
 

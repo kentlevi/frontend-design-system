@@ -42,7 +42,8 @@
             background: transparent;
             padding: 6px 16px;
             border-radius: 999px;
-            font-size: 13px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             cursor: pointer;
             transition: color 0.2s ease;
             color: f.$text-secondary;
@@ -69,7 +70,8 @@
         border: 1px solid var(--border-default);
         background: var(--contrast-light);
         color: var(--text-primary);
-        font-size: 14px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         outline: none;
         width: 240px;
 
@@ -94,8 +96,9 @@
     }
 
     .guide-section-title {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         color: f.$text-primary;
         text-transform: capitalize;
         margin: 0;

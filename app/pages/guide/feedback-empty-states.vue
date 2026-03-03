@@ -60,15 +60,15 @@
 
         h3 {
             margin: 0 0 6px;
-            font-size: 16px;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
             color: var(--text-primary);
         }
 
         p {
             margin: 0;
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--text-secondary);
         }
     }
@@ -101,16 +101,16 @@
 
         h3 {
             margin: 0;
-            font-size: 28px;
-            line-height: 40px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
             color: var(--text-primary);
         }
 
         p {
             margin: 0;
             max-width: 640px;
-            font-size: 16px;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
             color: var(--text-secondary);
         }
     }

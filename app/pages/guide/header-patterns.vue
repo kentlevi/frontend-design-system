@@ -157,8 +157,8 @@ const demoQuery = ref('');
     .header-pattern-card-title {
         margin: 0;
         color: var(--text-primary);
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
     }
 
     .header-pattern-list {
@@ -167,8 +167,8 @@ const demoQuery = ref('');
         display: grid;
         gap: 6px;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .header-demo-bar {
@@ -196,8 +196,8 @@ const demoQuery = ref('');
         a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 14px;
-            line-height: 22px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
 
             &:hover {
                 color: var(--text-primary);
@@ -227,15 +227,15 @@ const demoQuery = ref('');
         h4 {
             margin: 0;
             color: var(--text-primary);
-            font-size: 15px;
-            line-height: 24px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
         }
 
         p {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 13px;
-            line-height: 21px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -244,7 +244,8 @@ const demoQuery = ref('');
         align-items: center;
         gap: 8px;
         color: var(--text-secondary);
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .header-demo-account-actions {

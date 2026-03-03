@@ -33,8 +33,8 @@ defineProps<{
 
 .guide-command-title {
     margin: 0;
-    font-size: 14px;
-    line-height: 22px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
 }
 
@@ -51,8 +51,8 @@ defineProps<{
     border-radius: 8px;
     background: var(--contrast-light);
     padding: 8px 10px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
 }
 </style>

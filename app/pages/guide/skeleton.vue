@@ -247,15 +247,15 @@ const toggleLoading = () => {
 
     h3 {
         margin: 0;
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
         color: var(--text-primary);
     }
 
     p {
         margin: 0;
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 }
@@ -294,15 +294,15 @@ const toggleLoading = () => {
     gap: 4px;
 
     strong {
-        font-size: 14px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-primary);
     }
 
     p {
         margin: 0;
-        font-size: 13px;
-        line-height: 18px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 }
@@ -385,15 +385,15 @@ const toggleLoading = () => {
     gap: 8px;
 
     strong {
-        font-size: 16px;
-        line-height: 24px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
         color: var(--text-primary);
     }
 
     p {
         margin: 0;
-        font-size: 14px;
-        line-height: 22px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 }

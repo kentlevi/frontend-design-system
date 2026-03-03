@@ -102,16 +102,16 @@ const shadowScale = [
 
 .shadow-token {
     margin: 12px 0 4px;
-    font-size: 13px;
-    line-height: 20px;
-    font-weight: 700;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-bold);
     color: var(--text-primary);
 }
 
 .shadow-css {
     margin: 0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
         'Courier New', monospace;
@@ -119,8 +119,8 @@ const shadowScale = [
 
 .shadow-use {
     margin: 8px 0 0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
 }
 
@@ -142,15 +142,15 @@ const shadowScale = [
 
     h3 {
         margin: 0 0 6px;
-        font-size: 16px;
-        line-height: 24px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
         color: var(--text-primary);
     }
 
     p {
         margin: 0;
-        font-size: 13px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 }

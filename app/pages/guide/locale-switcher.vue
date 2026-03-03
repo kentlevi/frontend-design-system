@@ -99,36 +99,36 @@ async function changeLocale(code: string) {
 .guide-locale-demo-locale {
     margin: 0 0 10px;
     color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-locale-demo-title {
     margin: 0;
     color: var(--text-primary);
-    font-size: 24px;
-    line-height: 34px;
+    font-size: var(--type-size-400);
+    line-height: var(--type-line-400);
 }
 
 .guide-locale-demo-subtitle {
     margin: 8px 0 14px;
     color: var(--text-secondary);
-    font-size: 15px;
-    line-height: 24px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
 }
 
 .guide-locale-demo-cart-title {
     margin: 0;
     color: var(--text-primary);
-    font-size: 16px;
-    line-height: 28px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
 }
 
 .guide-locale-demo-cart-description {
     margin: 6px 0 14px;
     color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 24px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-locale-demo-actions {
@@ -144,8 +144,8 @@ async function changeLocale(code: string) {
     background: var(--contrast-light);
     color: var(--text-secondary);
     padding: 7px 12px;
-    font-size: 13px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     cursor: pointer;
     transition:
         border-color 0.15s ease,
@@ -168,7 +168,7 @@ async function changeLocale(code: string) {
     margin: 0;
     padding-left: 18px;
     color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 22px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 </style>

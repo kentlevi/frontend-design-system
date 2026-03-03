@@ -346,15 +346,15 @@ const cardMarkup = {
 .guide-card-sample-title {
     margin: 0;
     color: var(--text-primary);
-    font-size: 16px;
-    line-height: 28px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
 }
 
 .guide-card-sample-kicker {
     margin: 0 0 4px;
     color: var(--text-muted);
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
@@ -362,15 +362,15 @@ const cardMarkup = {
 .guide-card-sample-meta {
     margin: 8px 0 0;
     color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-card-sample-body {
     margin: 8px 0 0;
     color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 24px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-card-sample-footer {

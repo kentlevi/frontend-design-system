@@ -1473,7 +1473,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 }
 
 .guide-sidebar-search-label {
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -1484,8 +1485,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     border: 1px solid var(--border-default);
     border-radius: 10px;
     padding: 8px 10px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     background: var(--contrast-light);
     color: var(--text-primary);
 
@@ -1505,8 +1506,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     flex-shrink: 0;
     border-radius: 999px;
     padding: 2px 8px;
-    font-size: 11px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
     background: color-mix(in srgb, var(--gray-20) 70%, var(--contrast-light));
 
@@ -1526,8 +1527,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 .guide-nav-empty {
     margin: 0;
     padding: 6px 12px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
 }
 
@@ -1553,8 +1554,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     color: var(--text-secondary);
     border-radius: 999px;
     padding: 8px 14px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     cursor: pointer;
 
     &:disabled {
@@ -1585,24 +1586,24 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-docs-title {
     margin: 0 0 12px;
-    font-size: 32px;
-    line-height: 44px;
+    font-size: var(--type-size-500);
+    line-height: var(--type-line-500);
     color: var(--text-primary);
     letter-spacing: -0.02em;
 }
 
 .guide-docs-summary {
     margin: 0;
-    font-size: 16px;
-    line-height: 28px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
     color: var(--text-secondary);
 }
 
 .guide-docs-meta {
     margin: 10px 0 0;
     color: var(--text-muted);
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-docs-governance-meta {
@@ -1640,8 +1641,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     border-radius: 999px;
     padding: 2px 8px;
     margin-left: 6px;
-    font-size: 11px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
     background: color-mix(in srgb, var(--gray-20) 70%, var(--contrast-light));
 
@@ -1683,8 +1684,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     background: var(--contrast-light);
     color: var(--text-secondary);
     padding: 6px 12px;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     cursor: pointer;
     transition:
         background-color 0.2s ease,
@@ -1844,16 +1845,16 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-checklist-card-title {
     margin: 0;
-    font-size: 14px;
-    line-height: 22px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-checklist-card-description {
     margin: 8px 0 12px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
@@ -1864,7 +1865,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     flex-wrap: wrap;
     margin: 0;
     margin-top: auto;
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
 }
 
@@ -1957,8 +1959,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     border-radius: 8px;
     padding: 10px;
     margin-bottom: 10px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 
     &.is-do {
         background: color-mix(in srgb, #16a34a 14%, var(--contrast-light));
@@ -1970,7 +1972,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 }
 
 .guide-docs-language {
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
     margin-left: 6px;
 }
@@ -2015,8 +2018,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 .guide-overview-metric-label {
     margin: 0;
     margin-top: auto;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -2024,17 +2027,17 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-overview-metric-value {
     margin: 6px 0 2px;
-    font-size: 28px;
-    line-height: 36px;
+    font-size: var(--type-size-500);
+    line-height: var(--type-line-500);
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
 }
 
 .guide-overview-metric-meta {
     margin: 0;
     margin-top: auto;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
@@ -2062,10 +2065,10 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-overview-phase-title {
     margin: 0;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-overview-phase-bar {
@@ -2098,8 +2101,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-overview-phase-meta {
     margin: 8px 0 0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }
 
@@ -2119,8 +2122,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-docs-section-title {
     margin: 0 0 12px;
-    font-size: 16px;
-    line-height: 28px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
     color: var(--text-primary);
 }
 
@@ -2130,8 +2133,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     border: 1px solid var(--border-default);
     border-radius: 999px;
     padding: 2px 8px;
-    font-size: 11px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     background: color-mix(in srgb, #16a34a 12%, var(--contrast-light));
 }
@@ -2143,8 +2146,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-docs-list-item {
     color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 26px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-docs-section-dual {
@@ -2194,8 +2197,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
 .guide-docs-example-title {
     margin: 0 0 12px;
-    font-size: 14px;
-    line-height: 22px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
 }
 
@@ -2206,8 +2209,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
     border: 1px solid var(--border-default);
     background: #0f172a;
     color: #e2e8f0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     overflow-x: auto;
 }
 
@@ -2228,9 +2231,9 @@ watch([guidePath, viewMode, previewFrame], async () => {
 .guide-docs-changelog-date {
     margin: 0 0 10px;
     color: var(--text-primary);
-    font-size: 13px;
-    line-height: 20px;
-    font-weight: 600;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-semibold);
 }
 
 .guide-docs-related-links {

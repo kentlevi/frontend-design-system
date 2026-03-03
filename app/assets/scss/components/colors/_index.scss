@@ -23,7 +23,8 @@
 }
 
 .ui-color-label {
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     font-family: monospace;
     text-align: center;
     opacity: 0.7;
@@ -31,12 +32,13 @@
 
 .ui-color-var,
 .ui-color-hex {
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     font-family: monospace;
     text-align: center;
 }
 
 .ui-color-var,
 .ui-color-hex {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }

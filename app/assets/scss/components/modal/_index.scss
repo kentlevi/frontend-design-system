@@ -46,8 +46,8 @@
 
 .ui-modal-title {
     margin: 0;
-    font-size: 32px;
-    line-height: 1.15;
+    font-size: var(--type-size-500);
+    line-height: var(--type-line-500);
     letter-spacing: -0.02em;
 }
 

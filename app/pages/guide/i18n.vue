@@ -88,29 +88,29 @@ cart.cartPreview.emptyDescription</code></pre>
 .guide-i18n-locale {
     margin: 0 0 10px;
     color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .guide-i18n-title {
     margin: 0;
     color: var(--text-primary);
-    font-size: 24px;
-    line-height: 34px;
+    font-size: var(--type-size-400);
+    line-height: var(--type-line-400);
 }
 
 .guide-i18n-subtitle {
     margin: 8px 0;
     color: var(--text-secondary);
-    font-size: 15px;
-    line-height: 24px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
 }
 
 .guide-i18n-preview {
     margin: 0 0 14px;
     color: var(--text-primary);
-    font-size: 15px;
-    line-height: 24px;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
 }
 
 .guide-i18n-actions {
@@ -125,8 +125,8 @@ cart.cartPreview.emptyDescription</code></pre>
     background: var(--contrast-light);
     color: var(--text-secondary);
     padding: 7px 12px;
-    font-size: 13px;
-    line-height: 18px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     cursor: pointer;
 
     &.is-active {
@@ -144,7 +144,7 @@ cart.cartPreview.emptyDescription</code></pre>
     border: 1px solid var(--border-default);
     background: #0f172a;
     color: #e2e8f0;
-    font-size: 12px;
-    line-height: 20px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 </style>

@@ -166,8 +166,8 @@ function submitDemo() {
     .auth-flow-card-title {
         margin: 0;
         color: var(--text-primary);
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
     }
 
     .auth-flow-list {
@@ -176,8 +176,8 @@ function submitDemo() {
         display: grid;
         gap: 6px;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .auth-flow-form-grid {
@@ -192,8 +192,8 @@ function submitDemo() {
 
     .auth-flow-helper {
         margin: 0;
-        font-size: 12px;
-        line-height: 18px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
 
         &.is-error {
@@ -211,8 +211,8 @@ function submitDemo() {
     .auth-flow-modal-copy {
         margin: 0;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .auth-flow-modal-actions {

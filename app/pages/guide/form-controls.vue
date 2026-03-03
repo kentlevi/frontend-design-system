@@ -397,8 +397,8 @@ const tokenOptions = [
 
     .guide-form-controls-helper {
         margin: 0;
-        font-size: 12px;
-        line-height: 1.4;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 
@@ -458,9 +458,9 @@ const tokenOptions = [
         border-radius: 999px;
         background: transparent;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 1;
-        font-weight: 500;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-medium);
         cursor: pointer;
         transition:
             background 0.2s ease,
@@ -469,7 +469,7 @@ const tokenOptions = [
 
         &.is-active {
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: var(--font-weight-semibold);
         }
     }
 

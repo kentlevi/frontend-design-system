@@ -26,15 +26,17 @@
 }
 
 .guide-eyebrow {
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     letter-spacing: 0.08em;
     color: #6b7280;
     text-transform: uppercase;
 }
 
 .guide-heading {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: var(--type-size-300);
+    line-height: var(--type-line-300);
+    font-weight: var(--font-weight-bold);
     color: var(--text-primary);
 }
 
@@ -51,7 +53,8 @@
 }
 
 .guide-nav-label {
-    font-size: 11px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -62,7 +65,8 @@
     position: relative;
     padding: 10px 12px;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
     text-decoration: none;
     transition:

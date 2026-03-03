@@ -55,8 +55,8 @@
 
     .type-token {
         margin: 0 0 8px;
-        font-size: 12px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-muted);
     }
 
@@ -66,39 +66,39 @@
     }
 
     .type-display {
-        font-size: 48px;
-        line-height: 68px;
-        font-weight: 700;
+        font-size: var(--type-size-600);
+        line-height: var(--type-line-600);
+        font-weight: var(--font-weight-bold);
     }
 
     .type-h1 {
-        font-size: 32px;
-        line-height: 44px;
-        font-weight: 700;
+        font-size: var(--type-size-500);
+        line-height: var(--type-line-500);
+        font-weight: var(--font-weight-bold);
     }
 
     .type-h2 {
-        font-size: 24px;
-        line-height: 36px;
-        font-weight: 600;
+        font-size: var(--type-size-400);
+        line-height: var(--type-line-400);
+        font-weight: var(--font-weight-semibold);
     }
 
     .type-body {
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        font-weight: var(--font-weight-regular);
+        line-height: var(--type-line-200);
     }
 
     .type-caption {
-        font-size: 14px;
-        line-height: 24px;
-        font-weight: 400;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-regular);
     }
 
     .type-micro {
-        font-size: 12px;
-        line-height: 20px;
-        font-weight: 500;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-medium);
     }
 }
 </style>

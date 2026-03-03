@@ -15,8 +15,9 @@
         align-items: center;
         gap: 10px;
         color: var(--text-primary);
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
     }
 }
 
@@ -64,13 +65,13 @@
 }
 
 .guide-locale-item-label {
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 28px;
+    font-size: var(--type-size-200);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--type-line-200);
 }
 
 .guide-locale-item-note {
-    font-size: 13px;
-    line-height: 1.2;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-secondary);
 }

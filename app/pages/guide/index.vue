@@ -89,8 +89,8 @@ const localePath = useLocalePath();
     margin-left: 8px;
     border-radius: 999px;
     padding: 2px 8px;
-    font-size: 11px;
-    line-height: 16px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     text-transform: capitalize;
     background: color-mix(in srgb, var(--gray-20) 70%, var(--contrast-light));
 

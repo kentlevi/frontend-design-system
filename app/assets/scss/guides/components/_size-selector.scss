@@ -6,10 +6,11 @@
 }
 
 .size-label {
-    font-size: 12px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     letter-spacing: 0.08em;
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .size-pills {
@@ -24,8 +25,9 @@
     border-radius: 8px;
     border: 1.5px solid var(--border-default);
     background: transparent;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-medium);
     color: var(--text-muted);
     cursor: pointer;
     transition: all 0.2s ease;
