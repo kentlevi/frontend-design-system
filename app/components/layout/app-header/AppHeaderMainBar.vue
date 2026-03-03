@@ -177,9 +177,9 @@ const emit = defineEmits<{
         gap: 40px;
 
         .home-header-link {
-            font-size: 16px;
-            font-weight: 600;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-200);
             text-decoration: none;
             color: var(--text-primary);
             position: relative;
@@ -262,9 +262,9 @@ const emit = defineEmits<{
             padding: 0 7px;
             background: var(--blood-base);
             color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            line-height: 20px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--type-line-100);
             text-align: center;
             pointer-events: none;
         }

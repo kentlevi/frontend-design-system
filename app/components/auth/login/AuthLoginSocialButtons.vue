@@ -110,7 +110,8 @@ async function handleSocial(provider: string) {
         align-items: center;
         gap: 12px;
         color: var(--text-muted);
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .auth-login-social-label {
             padding: 0 40px;
@@ -134,9 +135,9 @@ async function handleSocial(provider: string) {
             width: 100%;
             border-radius: 16px;
             color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-semibold);
             box-shadow: none;
             display: flex;
             align-items: center;
@@ -162,7 +163,6 @@ async function handleSocial(provider: string) {
             .auth-login-social-text {
                 display: inline-flex;
                 align-items: center;
-                line-height: 1;
             }
         }
     }

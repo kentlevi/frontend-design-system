@@ -58,22 +58,22 @@ defineProps<{
 
         .home-footer-brand {
             margin: 0 0 18px;
-            font-size: 34px;
-            line-height: 1;
+            font-size: var(--type-size-550);
+            line-height: var(--type-line-550);
             color: var(--footer-text-primary);
-            letter-spacing: 0.01em;
         }
 
         .home-footer-meta {
             margin: 6px 0;
-            font-size: 12px;
-            line-height: 1.55;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--footer-text-subtle);
         }
 
         .home-footer-copy {
             margin: 18px 0 0;
-            font-size: 12px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--footer-text-soft);
             display: flex;
             gap: 14px;
@@ -91,20 +91,22 @@ defineProps<{
 
         .home-footer-phone {
             margin: 0;
-            font-size: 38px;
+            font-size: var(--type-size-550);
+            line-height: var(--type-line-550);
             color: var(--footer-text-primary);
-            line-height: 1;
         }
 
         .home-footer-hours {
             margin: 10px 0 0;
-            font-size: 13px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--footer-text-primary);
         }
 
         .home-footer-note {
             margin: 8px 0 18px;
-            font-size: 12px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--footer-text-soft);
         }
 
@@ -116,7 +118,8 @@ defineProps<{
             .home-footer-action-link {
                 border: 1px solid var(--footer-border);
                 color: var(--footer-text-secondary);
-                font-size: 11px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 text-decoration: none;
                 padding: 5px 10px;
                 border-radius: 3px;

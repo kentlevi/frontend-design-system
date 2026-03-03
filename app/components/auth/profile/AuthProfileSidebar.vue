@@ -90,9 +90,9 @@ withDefaults(
             gap: 32px;
 
             .auth-profile-sidebar-head {
-                font-size: 16px;
-                font-weight: 700;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                font-weight: var(--font-weight-bold);
+                line-height: var(--type-line-200);
                 color: var(--text-primary);
             }
 
@@ -153,16 +153,16 @@ withDefaults(
 
                     .auth-profile-step-title {
                         margin: 0;
-                        font-size: 16px;
-                        font-weight: 700;
-                        line-height: 28px;
+                        font-size: var(--type-size-200);
+                        font-weight: var(--font-weight-bold);
+                        line-height: var(--type-line-200);
                         color: var(--text-muted);
                     }
 
                     .auth-profile-step-text {
                         color: var(--text-muted);
-                        font-size: 14px;
-                        line-height: 1.5;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                     }
 
                     .auth-profile-step-body {

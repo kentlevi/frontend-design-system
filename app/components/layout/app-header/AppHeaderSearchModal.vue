@@ -379,8 +379,8 @@ function stripHtml(value: string) {
                 outline: none;
                 flex: 1;
                 min-width: 0;
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--abyss-base);
                 background: transparent;
 
@@ -473,9 +473,9 @@ function stripHtml(value: string) {
 
                 .home-search-heading {
                     margin: 0;
-                    font-size: 14px;
-                    font-weight: 500;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    font-weight: var(--font-weight-medium);
+                    line-height: var(--type-line-100);
                     color: var(--gray-80);
                 }
             }
@@ -490,8 +490,8 @@ function stripHtml(value: string) {
                 padding: 0;
                 min-height: auto;
                 height: auto;
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--abyss-base);
                 text-decoration: underline;
                 cursor: pointer;
@@ -529,7 +529,8 @@ function stripHtml(value: string) {
                 background: transparent;
                 text-align: left;
                 color: var(--text-primary);
-                font-size: 15px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 cursor: pointer;
                 display: grid;
                 grid-template-columns: 52px 1fr;
@@ -558,16 +559,16 @@ function stripHtml(value: string) {
 
             .home-search-recent-title {
                 margin: 0;
-                font-size: 16px;
-                line-height: 28px;
-                font-weight: 500;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
+                font-weight: var(--font-weight-medium);
                 color: var(--abyss-base);
             }
 
             .home-search-recent-blurb {
                 margin: 0;
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--gray-80);
                 white-space: nowrap;
                 overflow: hidden;
@@ -611,14 +612,14 @@ function stripHtml(value: string) {
 
             .home-search-empty-copy {
                 .home-search-heading {
-                    font-size: 16px;
-                    line-height: 28px;
+                    font-size: var(--type-size-200);
+                    line-height: var(--type-line-200);
                     color: var(--abyss-base);
                 }
 
                 .home-search-empty-text {
-                    font-size: 14px;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--gray-80);
                 }
             }
@@ -636,7 +637,7 @@ function stripHtml(value: string) {
                 background: transparent;
                 color: var(--abyss-base);
                 font: inherit;
-                font-weight: 600;
+                font-weight: var(--font-weight-semibold);
                 text-decoration: underline;
                 cursor: pointer;
                 box-shadow: none;
@@ -654,9 +655,9 @@ function stripHtml(value: string) {
 
                 .home-search-heading {
                     margin: 0;
-                    font-size: 14px;
-                    font-weight: 500;
-                    line-height: 28px;
+                    font-size: var(--type-size-100);
+                    font-weight: var(--font-weight-medium);
+                    line-height: var(--type-line-200);
                     color: var(--gray-80);
                     padding: 0 2px;
                 }
@@ -701,14 +702,14 @@ function stripHtml(value: string) {
 
             .home-search-result-title {
                 margin: 0;
-                font-size: 16px;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
                 color: var(--text-primary);
 
                 :deep(mark) {
                     background: transparent;
                     color: var(--gold-70);
-                    font-weight: 700;
+                    font-weight: var(--font-weight-bold);
                     text-decoration: underline;
                     text-decoration-thickness: 1.5px;
                     text-underline-offset: 1px;
@@ -717,14 +718,14 @@ function stripHtml(value: string) {
 
             .home-search-result-blurb {
                 margin: 0;
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--text-secondary);
 
                 :deep(mark) {
                     background: transparent;
                     color: var(--gold-70);
-                    font-weight: 700;
+                    font-weight: var(--font-weight-bold);
                     text-decoration: underline;
                     text-decoration-thickness: 1.5px;
                     text-underline-offset: 1px;
@@ -753,8 +754,8 @@ function stripHtml(value: string) {
             align-items: center;
             gap: 8px;
             color: var(--text-muted);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             padding: 4px 0;
         }
 
@@ -767,7 +768,8 @@ function stripHtml(value: string) {
             align-items: center;
             justify-content: center;
             color: var(--gray-70);
-            font-size: 14px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             text-transform: lowercase;
         }
 
@@ -775,9 +777,9 @@ function stripHtml(value: string) {
             height: 24px;
             padding-top: 0;
             padding-bottom: 0;
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 20;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-semibold);
             border: 1px solid var(--gray-50);
         }
 
@@ -792,9 +794,9 @@ function stripHtml(value: string) {
             min-height: auto;
             height: auto;
             color: var(--gray-80);
-            font-size: 14px;
-            line-height: 24px;
-            font-weight: 500;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-medium);
             cursor: pointer;
             box-shadow: none;
         }
@@ -829,8 +831,8 @@ function stripHtml(value: string) {
         .home-search-modal {
             .home-search-head {
                 .home-search-input {
-                    font-size: 16px;
-                    line-height: 28px;
+                    font-size: var(--type-size-200);
+                    line-height: var(--type-line-200);
                 }
             }
 
@@ -838,11 +840,13 @@ function stripHtml(value: string) {
                 .home-search-empty {
                     .home-search-empty-copy {
                         .home-search-heading {
-                            font-size: 24px;
+                            font-size: var(--type-size-400);
+                            line-height: var(--type-line-400);
                         }
 
                         .home-search-empty-text {
-                            font-size: 14px;
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
                         }
                     }
                 }
@@ -850,38 +854,39 @@ function stripHtml(value: string) {
                 .home-search-recent {
                     .home-search-recent-head {
                         .home-search-heading {
-                            font-size: 16px;
-                            line-height: 28px;
+                            font-size: var(--type-size-200);
+                            line-height: var(--type-line-200);
                         }
                     }
 
                     .home-search-recent-term {
-                        font-size: 14px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                     }
                 }
 
                 .home-search-results {
                     .home-search-group .home-search-heading {
-                        font-size: 16px;
-                        line-height: 28px;
+                        font-size: var(--type-size-200);
+                        line-height: var(--type-line-200);
                     }
 
                     .home-search-result-title {
-                        font-size: 16px;
-                        line-height: 28px;
+                        font-size: var(--type-size-200);
+                        line-height: var(--type-line-200);
                     }
 
                     .home-search-result-blurb {
-                        font-size: 14px;
-                        line-height: 24px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                     }
                 }
             }
 
             .home-search-footer {
                 .home-search-foot-hint {
-                    font-size: 14px;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                 }
             }
         }

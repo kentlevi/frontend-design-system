@@ -224,9 +224,9 @@ const carouselLabel = 'Client reviews carousel';
 
             .home-reviews-title {
                 margin: 0;
-                font-size: 36px;
-                font-weight: 700;
-                line-height: 52px;
+                font-size: var(--type-size-550);
+                font-weight: var(--font-weight-bold);
+                line-height: var(--type-line-550);
                 color: var(--text-primary);
             }
 
@@ -294,9 +294,8 @@ const carouselLabel = 'Client reviews carousel';
                             .home-reviews-item-title {
                                 margin: 0;
                                 font-size: var(--heading-6);
-                                font-weight: 700;
+                                font-weight: var(--font-weight-bold);
                                 line-height: 1.4;
-                                letter-spacing: -0.02em;
                                 color: var(--text-primary);
                                 overflow-wrap: anywhere;
                             }
@@ -331,6 +330,7 @@ const carouselLabel = 'Client reviews carousel';
         :deep(.badge) {
             height: 24px;
             font-size: var(--body-small);
+            line-height: var(--type-line-100);
             border-radius: 999px;
             padding-inline: 10px;
         }
@@ -355,6 +355,7 @@ const carouselLabel = 'Client reviews carousel';
             .home-reviews-head {
                 .home-reviews-title {
                     font-size: var(--heading-3);
+                    line-height: var(--type-line-100);
                 }
 
                 .home-reviews-controls {
@@ -382,16 +383,19 @@ const carouselLabel = 'Client reviews carousel';
                             .home-reviews-item-head {
                                 .home-reviews-item-title {
                                     font-size: var(--heading-6);
+                                    line-height: var(--type-line-100);
                                 }
                             }
 
                             .home-reviews-item-text {
                                 font-size: var(--body-base);
+                                line-height: var(--type-line-100);
                             }
 
                             .home-reviews-stars {
                                 .home-reviews-author {
                                     font-size: var(--body-base);
+                                    line-height: var(--type-line-100);
                                 }
                             }
                         }

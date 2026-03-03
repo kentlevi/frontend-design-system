@@ -105,8 +105,8 @@ const { t } = useI18n();
 
         .home-locale-title {
             margin: 0 0 14px;
-            font-size: 38px;
-            line-height: 1.3;
+            font-size: var(--type-size-550);
+            line-height: var(--type-line-550);
             color: var(--text-primary);
         }
 
@@ -128,7 +128,8 @@ const { t } = useI18n();
                 text-align: left;
                 cursor: pointer;
                 color: var(--text-primary);
-                font-size: 14px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
 
                 &:first-child {
                     border-top: 0;

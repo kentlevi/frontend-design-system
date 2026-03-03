@@ -2,28 +2,35 @@
 
 h1 {
     font-size: type.$heading-1;
+    line-height: type.$heading-1-line;
 }
 
 h2 {
     font-size: type.$heading-2;
+    line-height: type.$heading-2-line;
 }
 
 h3 {
     font-size: type.$heading-3;
+    line-height: type.$heading-3-line;
 }
 
 h4 {
     font-size: type.$heading-4;
+    line-height: type.$heading-4-line;
 }
 
 h5 {
     font-size: type.$heading-5;
+    line-height: type.$heading-5-line;
 }
 
 h6 {
     font-size: type.$heading-6;
+    line-height: type.$heading-6-line;
 }
 
 p {
     font-size: type.$body-base;
+    line-height: type.$body-base-line;
 }

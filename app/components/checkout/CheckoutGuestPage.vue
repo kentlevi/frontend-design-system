@@ -387,9 +387,9 @@ const fieldValidationByKey = computed(() =>
 
     .checkout-section-title {
         margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-        line-height: 28px;
+        font-size: var(--type-size-300);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--type-line-200);
         color: var(--text-primary);
     }
 
@@ -406,13 +406,13 @@ const fieldValidationByKey = computed(() =>
         gap: 0;
         margin: 0;
         color: var(--text-primary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .checkout-login-link-action {
             margin-left: 4px;
             color: var(--gold-60);
-            font-weight: 600;
+            font-weight: var(--font-weight-semibold);
             text-decoration: underline;
             text-underline-offset: 3px;
             text-decoration-thickness: 2px;
@@ -438,9 +438,9 @@ const fieldValidationByKey = computed(() =>
         gap: 6px;
 
         :deep(.ui-form-field-label) {
-            font-size: 14px;
-            line-height: 24px;
-            font-weight: 600;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-semibold);
             color: var(--text-primary);
         }
     }
@@ -450,9 +450,9 @@ const fieldValidationByKey = computed(() =>
     }
 
     .checkout-label {
-        font-size: 14px;
-        line-height: 24px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
     }
 
@@ -494,8 +494,9 @@ const fieldValidationByKey = computed(() =>
         background: var(--contrast-light);
         min-height: 80px;
         border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
         cursor: pointer;
         transition: border-color 0.16s ease, background-color 0.16s ease;
@@ -518,17 +519,17 @@ const fieldValidationByKey = computed(() =>
     }
 
     .checkout-pay-btn-label {
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         color: inherit;
     }
 
     .checkout-subnote {
         margin: 0;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .checkout-shipping-method-wrap {
@@ -546,8 +547,8 @@ const fieldValidationByKey = computed(() =>
 
     .checkout-shipping-note {
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         text-align: right;
     }
 
@@ -593,22 +594,22 @@ const fieldValidationByKey = computed(() =>
 
     .checkout-shipping-method-name {
         color: var(--text-primary);
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
     }
 
     .checkout-shipping-method-date {
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .checkout-shipping-method-price {
         color: var(--text-primary);
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
     }
 
     .checkout-payment-brands {
@@ -620,15 +621,16 @@ const fieldValidationByKey = computed(() =>
 
     .checkout-payment-brand {
         color: var(--text-primary);
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 700;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-bold);
     }
 
     .checkout-checkbox {
         margin-top: 2px;
         color: var(--text-primary);
-        font-size: 14px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 
     .checkout-billing-link {
@@ -636,9 +638,9 @@ const fieldValidationByKey = computed(() =>
         background: transparent;
         margin-left: auto;
         color: var(--gold-60);
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         cursor: pointer;
     }
 
@@ -659,9 +661,9 @@ const fieldValidationByKey = computed(() =>
             margin: 0;
             padding: 12px 24px;
             border-bottom: 1px solid var(--gray-40);
-            font-size: 14px;
-            line-height: 24px;
-            font-weight: 700;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-bold);
             color: var(--text-primary);
         }
 
@@ -682,8 +684,8 @@ const fieldValidationByKey = computed(() =>
         .checkout-summary-empty {
             padding: 14px 18px;
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 20px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             border-bottom: 1px solid var(--gray-40);
         }
 
@@ -706,22 +708,22 @@ const fieldValidationByKey = computed(() =>
         .checkout-summary-name {
             margin: 0;
             color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 700;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--type-line-100);
         }
 
         .checkout-summary-meta {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
         .checkout-summary-price {
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--type-line-200);
             color: var(--text-primary);
         }
 
@@ -737,12 +739,12 @@ const fieldValidationByKey = computed(() =>
                 align-items: center;
                 justify-content: space-between;
                 color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
 
                 .checkout-summary-line-value {
                     color: var(--text-primary);
-                    font-weight: 600;
+                    font-weight: var(--font-weight-semibold);
 
                     &.is-discount {
                         color: var(--error);
@@ -752,12 +754,12 @@ const fieldValidationByKey = computed(() =>
                 &.is-total {
                     margin-top: 6px;
                     color: var(--text-primary);
-                    font-weight: 700;
+                    font-weight: var(--font-weight-bold);
 
                     .checkout-summary-line-value {
-                        font-size: 24px;
-                        line-height: 36px;
-                        font-weight: 700;
+                        font-size: var(--type-size-400);
+                        line-height: var(--type-line-400);
+                        font-weight: var(--font-weight-bold);
                     }
                 }
             }
@@ -769,20 +771,20 @@ const fieldValidationByKey = computed(() =>
             border-radius: 16px;
             min-height: 56px;
             box-shadow: none;
-            font-size: 16px;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
         }
 
         .checkout-summary-agreement {
             margin: 12px 18px 18px;
             text-align: center;
-            font-size: 12px;
-            line-height: 18px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--text-secondary);
 
             .checkout-summary-agreement-link {
                 color: var(--text-primary);
-                font-weight: 600;
+                font-weight: var(--font-weight-semibold);
                 text-decoration: underline;
                 margin-inline: 2px;
             }
@@ -807,12 +809,14 @@ const fieldValidationByKey = computed(() =>
         padding: 20px 16px 56px;
 
         .checkout-section-title {
-            font-size: 28px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
 
         .checkout-summary-card {
             .checkout-summary-title {
-                font-size: 28px;
+                font-size: var(--type-size-500);
+                line-height: var(--type-line-500);
                 padding: 14px 16px;
             }
         }

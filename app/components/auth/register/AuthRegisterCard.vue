@@ -327,16 +327,16 @@ onBeforeUnmount(() => {
 
         .auth-register-title {
             margin: 0;
-            font-size: 28px;
-            line-height: 40px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
             color: var(--text-primary);
         }
 
         .auth-register-subtitle {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -359,22 +359,22 @@ onBeforeUnmount(() => {
 
         :deep(.ui-form-field-label),
         .auth-register-label {
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-100);
             color: var(--text-primary);
 
             .auth-register-optional {
                 color: var(--text-muted);
-                font-weight: 400;
+                font-weight: var(--font-weight-regular);
             }
         }
 
         :deep(.ui-form-field-error) {
             color: var(--error);
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-100);
         }
 
         .auth-register-input {
@@ -395,9 +395,9 @@ onBeforeUnmount(() => {
         .auth-register-hint {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-regular);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -406,12 +406,12 @@ onBeforeUnmount(() => {
         align-items: center;
         gap: 10px;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .auth-register-check-link {
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: var(--font-weight-bold);
         }
     }
 
@@ -431,8 +431,8 @@ onBeforeUnmount(() => {
         align-items: center;
         gap: 6px;
         color: var(--error);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         text-align: right;
         max-width: 220px;
         position: relative;
@@ -494,8 +494,8 @@ onBeforeUnmount(() => {
 
         .auth-register-terms-error-tooltip {
             :deep(.ui-tooltip-content) {
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
     }
@@ -505,19 +505,20 @@ onBeforeUnmount(() => {
         width: 100%;
         border-radius: 16px;
         box-shadow: none;
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
     }
 
     .auth-register-login {
         margin: 0;
         text-align: center;
         color: var(--text-secondary);
-        font-size: 14px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .auth-register-login-link {
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: var(--font-weight-bold);
             text-decoration: underline;
         }
     }
@@ -528,8 +529,8 @@ onBeforeUnmount(() => {
 
         .auth-register-head {
             .auth-register-title {
-                font-size: 28px;
-                line-height: 40px;
+                font-size: var(--type-size-500);
+                line-height: var(--type-line-500);
             }
         }
 

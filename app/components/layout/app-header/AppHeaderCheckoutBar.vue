@@ -64,9 +64,9 @@ const { withCountry } = useCountry();
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                font-size: 20px;
-                font-weight: 600;
-                line-height: 28px;
+                font-size: var(--type-size-300);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-200);
                 color: var(--text-primary);
             }
         }
@@ -82,9 +82,9 @@ const { withCountry } = useCountry();
                 gap: 6px;
                 color: var(--text-primary);
                 text-decoration: none;
-                font-size: 14px;
-                line-height: 24px;
-                font-weight: 500;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                font-weight: var(--font-weight-medium);
             }
         }
     }
@@ -101,8 +101,8 @@ const { withCountry } = useCountry();
 
             .checkout-header-left {
                 .checkout-header-title {
-                    font-size: 16px;
-                    line-height: 28px;
+                    font-size: var(--type-size-200);
+                    line-height: var(--type-line-200);
                 }
             }
 

@@ -171,31 +171,33 @@ const tabs = [
         color: var(--black-base);
         display: grid;
         place-items: center;
-        font-weight: 700;
-        font-size: 22px;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--type-size-400);
+        line-height: var(--type-line-400);
     }
 
     .account-shell-name {
         margin: 0;
-        font-size: 20px;
-        line-height: 28px;
-        font-weight: 700;
+        font-size: var(--type-size-300);
+        line-height: var(--type-line-300);
+        font-weight: var(--font-weight-bold);
 
         color: var(--text-primary);
     }
 
     .account-shell-level {
         margin: 4px 0 0;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        font-weight: var(--font-weight-regular);
+        line-height: var(--type-line-100);
 
         color: var(--text-secondary);
     }
 
     .account-shell-email {
         margin: 2px 0 0;
-        font-size: 12px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-muted);
     }
 
@@ -211,13 +213,14 @@ const tabs = [
     }
 
     .account-shell-stat-label {
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 
     .account-shell-stat-value {
-        font-size: 20px;
-        line-height: 1.2;
+        font-size: var(--type-size-300);
+        line-height: var(--type-line-300);
     }
 
     .account-shell-tabs {
@@ -239,8 +242,9 @@ const tabs = [
         gap: 6px;
         text-decoration: none;
         color: var(--text-primary);
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         border: 1px solid transparent;
 
         &.is-active {
@@ -261,7 +265,8 @@ const tabs = [
         }
 
         .account-shell-name {
-            font-size: 30px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
     }
 }

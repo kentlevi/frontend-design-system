@@ -85,9 +85,9 @@ const { orders, activeOrder } = useAccountOrders();
 
             .account-orders-title {
                 margin: 0;
-                font-size: 28px;
-                font-weight: 700;
-                line-height: 40px;
+                font-size: var(--type-size-500);
+                font-weight: var(--font-weight-bold);
+                line-height: var(--type-line-500);
 
             }
         }
@@ -119,12 +119,14 @@ const { orders, activeOrder } = useAccountOrders();
 
                     .account-orders-card-title {
                         margin: 0;
-                        font-size: 24px;
+                        font-size: var(--type-size-400);
+                        line-height: var(--type-line-400);
                     }
 
                     .account-orders-card-meta {
                         margin: 8px 0 0;
-                        font-size: 13px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                         color: var(--text-secondary);
                     }
                 }
@@ -145,7 +147,8 @@ const { orders, activeOrder } = useAccountOrders();
 
                     .account-orders-detail-title {
                         margin: 0;
-                        font-size: 34px;
+                        font-size: var(--type-size-550);
+                        line-height: var(--type-line-550);
                     }
 
                     .account-orders-status {
@@ -154,8 +157,9 @@ const { orders, activeOrder } = useAccountOrders();
                         padding: 0 12px;
                         display: inline-flex;
                         align-items: center;
-                        font-size: 12px;
-                        font-weight: 700;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
+                        font-weight: var(--font-weight-bold);
                         color: var(--text-primary);
                         background: var(--brand-primary);
                     }
@@ -167,12 +171,14 @@ const { orders, activeOrder } = useAccountOrders();
 
                     .account-orders-block-title {
                         margin: 0 0 8px;
-                        font-size: 24px;
+                        font-size: var(--type-size-400);
+                        line-height: var(--type-line-400);
                     }
 
                     .account-orders-block-copy {
                         margin: 0;
-                        font-size: 14px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                         color: var(--text-secondary);
                     }
 

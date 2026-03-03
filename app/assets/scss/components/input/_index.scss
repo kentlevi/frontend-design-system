@@ -34,7 +34,7 @@
 
     font-family: t.$font-base;
     font-size: t.$body-base;
-    line-height: 24px;
+    line-height: var(--type-line-100);
     color: c.$text-primary;
 
     &::placeholder {

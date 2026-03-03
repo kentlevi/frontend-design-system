@@ -88,16 +88,16 @@ defineProps<{
 
             .product-reviews-card-title {
                 margin: 0;
-                font-size: 16px;
-                line-height: 28px;
-                font-weight: 500;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
+                font-weight: var(--font-weight-medium);
                 color: var(--text-primary);
             }
 
             .product-reviews-card-text {
                 margin: 0;
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--text-secondary);
             }
         }
@@ -125,15 +125,15 @@ defineProps<{
             .product-reviews-card-author-details {
                 .product-reviews-card-author-name {
                     display: block;
-                    font-size: 14px;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--text-primary);
                 }
 
                 .product-reviews-card-date {
                     display: block;
-                    font-size: 12px;
-                    line-height: 20px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--text-secondary);
                 }
             }

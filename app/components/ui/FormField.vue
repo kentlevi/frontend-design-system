@@ -106,15 +106,15 @@ const describedBy = computed(() => {
     display: block;
     overflow: visible;
     color: var(--error);
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 24px;
+    font-size: var(--type-size-100);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--type-line-100);
 }
 
 .ui-form-field-hint {
     margin: 0;
     color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 24px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 </style>

@@ -90,8 +90,8 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 
             .account-quote-title {
                 margin: 0;
-                font-size: 52px;
-                line-height: 1.05;
+                font-size: var(--type-size-600);
+                line-height: var(--type-line-600);
             }
 
             .account-quote-tools {
@@ -123,12 +123,14 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 
                     .account-quote-item-title {
                         margin: 0;
-                        font-size: 24px;
+                        font-size: var(--type-size-400);
+                        line-height: var(--type-line-400);
                     }
 
                     .account-quote-item-meta {
                         margin: 8px 0 0;
-                        font-size: 13px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                         color: var(--text-secondary);
                     }
                 }
@@ -152,7 +154,8 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 
                     .account-quote-chat-title {
                         margin: 0;
-                        font-size: 34px;
+                        font-size: var(--type-size-550);
+                        line-height: var(--type-line-550);
                     }
 
                     .account-quote-chat-status {
@@ -163,8 +166,9 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                         display: inline-flex;
                         align-items: center;
                         padding: 0 10px;
-                        font-size: 12px;
-                        font-weight: 700;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
+                        font-weight: var(--font-weight-bold);
                     }
                 }
 
@@ -210,7 +214,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                         border-radius: 10px;
                         background: var(--text-primary);
                         color: var(--contrast-light);
-                        font-weight: 700;
+                        font-weight: var(--font-weight-bold);
                         cursor: pointer;
                     }
                 }

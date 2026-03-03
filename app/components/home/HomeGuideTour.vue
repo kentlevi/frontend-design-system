@@ -240,17 +240,17 @@ onMounted(() => {
 
 .home-guide-tour-title {
     margin: 0;
-    font-size: 16px;
-    line-height: 28px;
-    font-weight: 700;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
+    font-weight: var(--font-weight-bold);
     color: var(--text-primary);
     max-width: 100%;
 }
 
 .home-guide-tour-text {
     margin: 0;
-    font-size: 14px;
-    line-height: 24px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
     color: var(--text-primary);
 }
 
@@ -269,9 +269,9 @@ onMounted(() => {
 
 .home-guide-tour-step {
     margin: 0;
-    font-size: 14px;
-    line-height: 24px;
-    font-weight: 700;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    font-weight: var(--font-weight-bold);
     color: var(--text-primary);
 }
 
@@ -312,8 +312,8 @@ onMounted(() => {
     }
 
     .home-guide-tour-title {
-        font-size: 28px;
-        line-height: 40px;
+        font-size: var(--type-size-500);
+        line-height: var(--type-line-500);
     }
 }
 </style>

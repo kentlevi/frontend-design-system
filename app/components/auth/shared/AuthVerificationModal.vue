@@ -222,29 +222,28 @@ function onPaste(event: ClipboardEvent) {
             .auth-verification-title {
                 margin: 0;
                 color: var(--text-primary);
-                font-size: 24px;
-                font-weight: 600;
-                line-height: 36px;
-                letter-spacing: -0.02em;
+                font-size: var(--type-size-400);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-400);
             }
 
             .auth-verification-text {
                 margin: 0;
                 color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
 
                 .auth-verification-email {
                     color: #c3a700;
-                    font-weight: 700;
+                    font-weight: var(--font-weight-bold);
                 }
             }
 
             .auth-verification-order-number {
                 margin: 0;
                 color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
     }
@@ -257,9 +256,9 @@ function onPaste(event: ClipboardEvent) {
         .auth-verification-label {
             margin: 0;
             color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-100);
         }
 
         .auth-verification-grid {
@@ -273,8 +272,9 @@ function onPaste(event: ClipboardEvent) {
                 border-radius: 8px;
                 padding: 0;
                 color: var(--text-primary);
-                font-size: 28px;
-                font-weight: 700;
+                font-size: var(--type-size-500);
+                line-height: var(--type-line-500);
+                font-weight: var(--font-weight-bold);
                 text-align: center;
                 transition: border-color 0.2s ease;
 
@@ -296,8 +296,8 @@ function onPaste(event: ClipboardEvent) {
         .auth-verification-error {
             margin: 0;
             color: var(--error);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -309,16 +309,16 @@ function onPaste(event: ClipboardEvent) {
         .auth-verification-submit {
             width: 100%;
             border-radius: 16px;
-            font-size: 16px;
-            line-height: 26px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
             box-shadow: none;
         }
 
         .auth-verification-resend {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
 
             .auth-verification-resend-btn {
                 border: 0;
@@ -326,7 +326,8 @@ function onPaste(event: ClipboardEvent) {
                 color: var(--text-primary);
                 text-decoration: underline;
                 font-size: inherit;
-                font-weight: 700;
+                line-height: inherit;
+                font-weight: var(--font-weight-bold);
                 padding: 0;
             }
         }

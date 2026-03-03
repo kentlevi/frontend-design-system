@@ -3,6 +3,8 @@
 
 body {
     font-family: t.$font-base;
+    font-size: t.$body-base;
+    line-height: t.$body-base-line;
     background: var(--bg-page);
     color: var(--text-primary);
 }

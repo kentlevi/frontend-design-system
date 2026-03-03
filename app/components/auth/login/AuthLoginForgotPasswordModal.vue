@@ -202,9 +202,8 @@ async function submitReset() {
 
     .auth-forgot-title {
         margin: 0;
-        font-size: 32px;
-        line-height: 48px;
-        letter-spacing: -0.02em;
+        font-size: var(--type-size-500);
+        line-height: var(--type-line-500);
         color: var(--text-primary);
     }
 }
@@ -216,24 +215,24 @@ async function submitReset() {
 
     .auth-forgot-description {
         margin: 0;
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--text-secondary);
     }
 
     .auth-forgot-field {
         :deep(.ui-form-field-label) {
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-100);
             color: var(--text-primary);
         }
 
         :deep(.ui-form-field-error) {
             margin: 0;
-            font-size: 14px;
-            line-height: 24px;
-            font-weight: 600;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-semibold);
             color: var(--error);
         }
     }
@@ -244,7 +243,8 @@ async function submitReset() {
 
     .auth-forgot-success {
         margin: 0;
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--success);
     }
 
@@ -257,8 +257,8 @@ async function submitReset() {
             width: 100%;
             border-radius: 16px;
             box-shadow: none;
-            font-size: 16px;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
         }
 
         .auth-forgot-return {
@@ -269,7 +269,8 @@ async function submitReset() {
             width: fit-content;
             align-self: center;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             background: transparent;
             border-color: transparent;
             border-radius: 0;
@@ -298,8 +299,8 @@ async function submitReset() {
 @media (max-width: 768px) {
     .auth-forgot-header {
         .auth-forgot-title {
-            font-size: 32px;
-            line-height: 48px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
     }
 }

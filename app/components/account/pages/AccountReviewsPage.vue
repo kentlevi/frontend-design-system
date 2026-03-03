@@ -40,8 +40,8 @@ const { reviews } = useAccountReviews();
 
         .account-reviews-title {
             margin: 0 0 20px;
-            font-size: 52px;
-            line-height: 1.05;
+            font-size: var(--type-size-600);
+            line-height: var(--type-line-600);
         }
 
         .account-reviews-list {
@@ -62,27 +62,29 @@ const { reviews } = useAccountReviews();
 
                     .account-reviews-card-title {
                         margin: 0;
-                        font-size: 30px;
+                        font-size: var(--type-size-500);
+                        line-height: var(--type-line-500);
                     }
 
                     .account-reviews-card-date {
                         margin: 0;
-                        font-size: 13px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                         color: var(--text-secondary);
                     }
                 }
 
                 .account-reviews-card-rating {
                     margin: 8px 0 0;
-                    font-weight: 700;
+                    font-weight: var(--font-weight-bold);
                     color: var(--brand-primary);
                 }
 
                 .account-reviews-card-body {
                     margin: 8px 0 0;
-                    font-size: 14px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--text-secondary);
-                    line-height: 1.6;
                 }
             }
         }

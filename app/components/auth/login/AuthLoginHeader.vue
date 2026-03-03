@@ -31,20 +31,20 @@ const { withCountry } = useCountry();
         margin: 0;
         text-align: center;
         color: var(--text-primary);
-        font-size: 28px;
-        line-height: 40px;
+        font-size: var(--type-size-500);
+        line-height: var(--type-line-500);
     }
 
     .auth-login-subtitle {
         margin: 0;
         text-align: center;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .auth-login-create-account-link {
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: var(--font-weight-bold);
             text-decoration: underline;
         }
     }

@@ -90,16 +90,16 @@ const { t } = useI18n();
             .home-hero-title {
                 margin: 0;
                 font-family: var(--font-base);
-                font-size: 48px;
-                font-weight: 700;
-                line-height: 68px;
+                font-size: var(--type-size-600);
+                font-weight: var(--font-weight-bold);
+                line-height: var(--type-line-600);
                 color: var(--abyss-base);
             }
 
             .home-hero-subtitle {
                 margin: 0;
-                font-size: 18px;
-                line-height: 32px;
+                font-size: var(--type-size-300);
+                line-height: var(--type-line-300);
                 color: var(--abyss-base);
             }
 
@@ -109,9 +109,9 @@ const { t } = useI18n();
                 --btn-border: transparent;
                 border: 0;
                 box-shadow: none;
-                font-size: 16px;
-                font-weight: 600;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-200);
             }
         }
     }

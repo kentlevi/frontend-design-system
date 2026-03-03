@@ -80,8 +80,9 @@ const emit = defineEmits<{
             color: var(--contrast-light);
             border-radius: 999px;
             padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-bold);
         }
 
         .rating-stars {
@@ -90,23 +91,23 @@ const emit = defineEmits<{
         }
 
         .rating-score {
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--text-primary);
         }
     }
 
     .product-reviews-headline {
         margin: 16px 0 10px;
-        font-size: 36px;
-        line-height: 52px;
+        font-size: var(--type-size-550);
+        line-height: var(--type-line-550);
         color: var(--text-primary);
     }
 
     .product-reviews-description {
         margin: 0;
-        font-size: 16px;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
         color: var(--text-secondary);
     }
 
@@ -145,8 +146,8 @@ const emit = defineEmits<{
         padding-right: 0;
 
         .product-reviews-headline {
-            font-size: 30px;
-            line-height: 44px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
 
         .product-reviews-controls {

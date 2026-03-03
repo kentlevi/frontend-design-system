@@ -232,8 +232,8 @@ const {
                     width: 100%;
                     border-radius: 16px;
                     box-shadow: none;
-                    font-size: 16px;
-                    line-height: 28px;
+                    font-size: var(--type-size-200);
+                    line-height: var(--type-line-200);
                 }
             }
         }

@@ -37,14 +37,15 @@ defineProps<{
         align-items: center;
         gap: 28px;
         color: var(--footer-text-secondary);
-        font-size: 12px;
-        line-height: 1;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .home-footer-compact-policy-link {
             color: var(--footer-text-primary);
             text-decoration: none;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-semibold);
         }
     }
 
@@ -56,11 +57,11 @@ defineProps<{
         .home-footer-compact-action-link {
             border: 1px solid var(--footer-border);
             color: var(--footer-text-secondary);
-            font-size: 11px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             text-decoration: none;
             padding: 6px 12px;
             border-radius: 3px;
-            line-height: 1;
         }
     }
 }
@@ -74,16 +75,19 @@ defineProps<{
         .home-footer-compact-left {
             flex-wrap: wrap;
             gap: 12px;
-            font-size: 12px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
 
             .home-footer-compact-policy-link {
-                font-size: 12px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
 
         .home-footer-compact-links {
             .home-footer-compact-action-link {
-                font-size: 11px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
     }

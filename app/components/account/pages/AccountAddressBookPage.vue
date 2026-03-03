@@ -92,9 +92,9 @@ const { items } = useAccountAddressBook();
 
         .account-address-book-title {
             margin: 0;
-            font-size: 28px;
-            font-weight: 700;
-            line-height: 40px;
+            font-size: var(--type-size-500);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--type-line-500);
 
             color: var(--text-primary);
         }
@@ -106,15 +106,15 @@ const { items } = useAccountAddressBook();
         gap: 126px;
     }
     .account-address-book-info h2{
-        font-size: 18px;
-        font-weight: 600;
-        line-height: 32px;
+        font-size: var(--type-size-300);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--type-line-300);
 
     }
     .account-address-book-info p{
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        font-weight: var(--font-weight-regular);
+        line-height: var(--type-line-100);
 
     }
 
@@ -138,14 +138,16 @@ const { items } = useAccountAddressBook();
 
         .account-address-book-card-name {
             margin: 0;
-            font-size: 24px;
+            font-size: var(--type-size-400);
+            line-height: var(--type-line-400);
         }
 
         .account-address-book-menu-button {
             margin-left: auto;
             border: 0;
             background: transparent;
-            font-size: 20px;
+            font-size: var(--type-size-300);
+            line-height: var(--type-line-300);
             cursor: pointer;
             color: var(--text-secondary);
         }
@@ -157,9 +159,9 @@ const { items } = useAccountAddressBook();
 
         .account-address-book-card-address {
             margin-top: 6px;
-            font-size: 14px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--text-secondary);
-            line-height: 1.6;
         }
 
         .account-address-book-card-footer {
@@ -177,8 +179,9 @@ const { items } = useAccountAddressBook();
         padding: 0 10px;
         display: inline-flex;
         align-items: center;
-        font-size: 12px;
-        font-weight: 700;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-bold);
         background: color-mix(in srgb, var(--brand-primary) 16%, var(--contrast-light));
         color: var(--text-primary);
     }

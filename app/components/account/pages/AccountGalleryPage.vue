@@ -62,8 +62,8 @@ const { items } = useAccountGallery();
 
         .account-gallery-title {
             margin: 0;
-            font-size: 52px;
-            line-height: 1.05;
+            font-size: var(--type-size-600);
+            line-height: var(--type-line-600);
         }
 
         .account-gallery-actions {
@@ -79,7 +79,8 @@ const { items } = useAccountGallery();
             border-radius: 10px;
             background: var(--contrast-light);
             padding: 0 12px;
-            font-size: 14px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -103,12 +104,14 @@ const { items } = useAccountGallery();
 
             .account-gallery-name {
                 margin: 0;
-                font-size: 20px;
+                font-size: var(--type-size-300);
+                line-height: var(--type-line-300);
             }
 
             .account-gallery-size {
                 margin: 6px 0 0;
-                font-size: 13px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--text-secondary);
             }
 
@@ -121,8 +124,9 @@ const { items } = useAccountGallery();
                 align-items: center;
                 background: color-mix(in srgb, var(--brand-primary) 16%, var(--contrast-light));
                 color: var(--text-primary);
-                font-size: 12px;
-                font-weight: 700;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                font-weight: var(--font-weight-bold);
             }
         }
     }

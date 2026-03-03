@@ -82,16 +82,16 @@ const emit = defineEmits<{
 .home-guide-done-popover-title {
     margin: 0;
     color: var(--text-primary);
-    font-size: 16px;
-    line-height: 28px;
-    font-weight: 700;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
+    font-weight: var(--font-weight-bold);
 }
 
 .home-guide-done-popover-text {
     margin: 8px 0 0;
     color: var(--text-primary);
-    font-size: 14px;
-    line-height: 28px;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 }
 
 .home-guide-done-popover-actions {

@@ -345,8 +345,9 @@ const guestLoginTarget = computed(() => {
             border-radius: 50%;
             background: var(--gray-40);
             color: var(--black-base);
-            font-size: 13px;
-            font-weight: 700;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-bold);
             display: grid;
             place-items: center;
         }
@@ -393,22 +394,22 @@ const guestLoginTarget = computed(() => {
                 color: var(--black-base);
                 display: grid;
                 place-items: center;
-                font-weight: 700;
+                font-weight: var(--font-weight-bold);
             }
 
             .home-account-summary-name {
                 margin: 0;
-                font-size: 16px;
-                font-weight: 700;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                font-weight: var(--font-weight-bold);
+                line-height: var(--type-line-200);
                 color: var(--text-primary);
             }
 
             .home-account-summary-email {
                 margin: 2px 0 0;
-                font-size: 12px;
+                font-size: var(--type-size-100);
                 color: var(--text-secondary);
-                line-height: 1.2;
+                line-height: var(--type-line-100);
             }
         }
         .home-account-link-group {
@@ -425,9 +426,9 @@ const guestLoginTarget = computed(() => {
             gap: 10px;
             height: 40px;
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.2;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-medium);
             color: var(--text-primary);
             padding: 0 20px;
 

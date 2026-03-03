@@ -221,16 +221,16 @@ function updateEmail(value: string) {
 
             .auth-profile-head-title {
                 margin: 0;
-                font-size: 24px;
-                line-height: 36px;
-                font-weight: 600;
+                font-size: var(--type-size-400);
+                line-height: var(--type-line-400);
+                font-weight: var(--font-weight-semibold);
                 color: var(--text-primary);
             }
 
             .auth-profile-head-subtitle {
                 color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
 
@@ -243,8 +243,9 @@ function updateEmail(value: string) {
 
                 .auth-profile-label {
                     display: block;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-semibold);
                     color: var(--text-primary);
                 }
 
@@ -262,8 +263,9 @@ function updateEmail(value: string) {
                         display: grid;
                         place-items: center;
                         color: var(--black-base);
-                        font-size: 40px;
-                        font-weight: 700;
+                        font-size: var(--type-size-550);
+                        line-height: var(--type-line-550);
+                        font-weight: var(--font-weight-bold);
                         overflow: hidden;
 
                         .auth-profile-avatar-image {
@@ -288,8 +290,8 @@ function updateEmail(value: string) {
                         .auth-profile-photo-meta-text {
                             margin: 0;
                             color: var(--text-secondary);
-                            font-size: 14px;
-                            line-height: 1.5;
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
                         }
 
                         .auth-profile-photo-actions {
@@ -304,9 +306,9 @@ function updateEmail(value: string) {
                                 border: 1px solid var(--text-primary);
                                 background: transparent;
                                 color: var(--text-primary);
-                                font-size: 16px;
-                                font-weight: 600;
-                                line-height: 28px;
+                                font-size: var(--type-size-200);
+                                font-weight: var(--font-weight-semibold);
+                                line-height: var(--type-line-200);
                                 cursor: pointer;
                             }
 
@@ -314,8 +316,8 @@ function updateEmail(value: string) {
                                 border: 0;
                                 background: transparent;
                                 color: var(--error);
-                                font-size: 16px;
-                                line-height: 28px;
+                                font-size: var(--type-size-200);
+                                line-height: var(--type-line-200);
                                 cursor: pointer;
                             }
                         }
@@ -335,14 +337,14 @@ function updateEmail(value: string) {
                     gap: 8px;
 
                     .auth-profile-field-label {
-                        font-size: 14px;
-                        line-height: 24px;
-                        font-weight: 600;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
+                        font-weight: var(--font-weight-semibold);
                         color: var(--text-primary);
 
                         .auth-profile-field-label-optional {
                             color: var(--text-secondary);
-                            font-weight: 400;
+                            font-weight: var(--font-weight-regular);
                         }
                     }
 
@@ -366,8 +368,8 @@ function updateEmail(value: string) {
         gap: 16px;
 
         .auth-profile-link-btn {
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             cursor: pointer;
             padding: 8px 24px;
         }
@@ -385,7 +387,8 @@ function updateEmail(value: string) {
         .auth-profile-details-main {
             .auth-profile-head {
                 .auth-profile-head-title {
-                    font-size: 34px;
+                    font-size: var(--type-size-550);
+                    line-height: var(--type-line-550);
                 }
             }
 
@@ -413,16 +416,16 @@ function updateEmail(value: string) {
 
             .auth-profile-link-btn {
                 order: 2;
-                font-size: 16px;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
                 text-align: center;
             }
 
             .ui-button {
                 width: 100%;
                 min-width: 0;
-                font-size: 16px;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
             }
         }
     }

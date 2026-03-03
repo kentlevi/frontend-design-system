@@ -268,9 +268,9 @@ const {
 
         .account-profile-title {
             margin: 0 0 26px;
-            font-size: 28px;
-            font-weight: 700;
-            line-height: 40px;
+            font-size: var(--type-size-500);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--type-line-500);
 
             color: var(--text-primary);
         }
@@ -283,9 +283,9 @@ const {
 
             .account-profile-section-title {
                 margin: 0 0 0px;
-                font-size: 18px;
-                font-weight: 600;
-                line-height: 32px;
+                font-size: var(--type-size-300);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-300);
 
 
             }
@@ -293,16 +293,17 @@ const {
             .account-profile-section-description {
                 margin: 0;
                 color: var(--text-secondary);
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                font-weight: var(--font-weight-regular);
+                line-height: var(--type-line-100);
 
             }
 
             .account-profile-label {
                 display: block;
-                font-size: 14px;
-                font-weight: 600;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                font-weight: var(--font-weight-semibold);
                 margin-bottom: 10px;
             }
 
@@ -322,8 +323,9 @@ const {
                     display: grid;
                     place-items: center;
                     overflow: hidden;
-                    font-size: 34px;
-                    font-weight: 700;
+                    font-size: var(--type-size-550);
+                    line-height: var(--type-line-550);
+                    font-weight: var(--font-weight-bold);
 
                     .account-profile-avatar-image {
                         width: 100%;
@@ -335,8 +337,8 @@ const {
 
             .account-profile-muted {
                 color: var(--text-secondary);
-                font-size: 13px;
-                line-height: 1.5;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 margin: 0;
             }
 
@@ -356,7 +358,8 @@ const {
                     border-radius: 999px;
                     border: 1px solid var(--text-primary);
                     background: transparent;
-                    font-size: 14px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     cursor: pointer;
                 }
 
@@ -364,7 +367,8 @@ const {
                     border: 0;
                     background: transparent;
                     color: var(--error);
-                    font-size: 14px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     cursor: pointer;
                 }
             }
@@ -380,8 +384,9 @@ const {
 
                 label {
                     display: block;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-semibold);
                     margin-bottom: 6px;
                 }
 
@@ -392,12 +397,13 @@ const {
                     border-radius: 10px;
                     background: var(--contrast-light);
                     padding: 0 12px;
-                    font-size: 14px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                 }
 
                 .account-profile-optional {
                     color: var(--text-muted);
-                    font-weight: 400;
+                    font-weight: var(--font-weight-regular);
                 }
             }
 
@@ -408,8 +414,9 @@ const {
 
                 label {
                     display: block;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-semibold);
                     margin-bottom: 6px;
                 }
 
@@ -420,7 +427,8 @@ const {
                     border-radius: 10px;
                     background: var(--contrast-light);
                     padding: 0 12px;
-                    font-size: 14px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                 }
 
                 .account-profile-inline-actions {
@@ -432,7 +440,8 @@ const {
 
                     a {
                         color: var(--text-primary);
-                        font-size: 14px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                         text-decoration: underline;
                     }
                 }
@@ -451,7 +460,8 @@ const {
 
                     .account-profile-setting-title {
                         margin: 0 0 4px;
-                        font-size: 16px;
+                        font-size: var(--type-size-200);
+                        line-height: var(--type-line-200);
                     }
 
                     .account-profile-switch {
@@ -502,8 +512,9 @@ const {
                             background: var(--contrast-light);
                             min-width: 112px;
                             height: 40px;
-                            font-size: 13px;
-                            font-weight: 700;
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
+                            font-weight: var(--font-weight-bold);
                             cursor: pointer;
 
                             &.active {

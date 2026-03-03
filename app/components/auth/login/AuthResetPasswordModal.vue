@@ -296,17 +296,16 @@ async function submitChangePassword() {
 
     .auth-reset-title {
         margin: 6px 0 0;
-        font-size: 52px;
-        line-height: 1.04;
-        letter-spacing: -0.02em;
+        font-size: var(--type-size-600);
+        line-height: var(--type-line-600);
         color: var(--text-primary);
     }
 
     .auth-reset-description {
         margin: 0;
         color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 1.7;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
     }
 }
 
@@ -322,8 +321,9 @@ async function submitChangePassword() {
     }
 
     .auth-reset-label {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
     }
 
@@ -338,7 +338,8 @@ async function submitChangePassword() {
 
     .auth-reset-error {
         margin: 0;
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         color: var(--error);
     }
 
@@ -353,7 +354,8 @@ async function submitChangePassword() {
 @media (max-width: 900px) {
     .auth-reset-header {
         .auth-reset-title {
-            font-size: 34px;
+            font-size: var(--type-size-550);
+            line-height: var(--type-line-550);
         }
     }
 }

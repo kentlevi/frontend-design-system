@@ -72,17 +72,17 @@ const featureHighlightImage = resolveFileUrl('/home/feature/home-feature-highlig
             .home-feature-title {
                 margin: 0;
                 font-family: var(--font-base);
-                font-size: 36px;
-                line-height: 52px;
+                font-size: var(--type-size-550);
+                line-height: var(--type-line-550);
 
                 color: #252b3a;
-                font-weight: 700;
+                font-weight: var(--font-weight-bold);
             }
 
             .home-feature-text {
                 margin: 0;
-                font-size: 14px;
-                line-height: 1.7;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: #4c5261;
                 max-width: 560px;
             }

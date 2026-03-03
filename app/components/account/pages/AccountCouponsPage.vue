@@ -64,8 +64,8 @@ const { coupons } = useAccountCoupons();
 
         .account-coupons-title {
             margin: 0;
-            font-size: 52px;
-            line-height: 1.05;
+            font-size: var(--type-size-600);
+            line-height: var(--type-line-600);
         }
     }
 
@@ -81,7 +81,8 @@ const { coupons } = useAccountCoupons();
             border-radius: 10px;
             background: var(--contrast-light);
             padding: 0 12px;
-            font-size: 14px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -104,19 +105,21 @@ const { coupons } = useAccountCoupons();
 
             .account-coupons-card-title {
                 margin: 0;
-                font-size: 22px;
+                font-size: var(--type-size-400);
+                line-height: var(--type-line-400);
             }
 
             .account-coupons-code {
                 margin: 4px 0 0;
-                font-size: 40px;
-                line-height: 1.05;
+                font-size: var(--type-size-550);
+                line-height: var(--type-line-550);
             }
 
             .account-coupons-note {
                 margin: 8px 0 0;
                 color: var(--text-secondary);
-                font-size: 14px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
 
             .account-coupons-right {
@@ -127,8 +130,9 @@ const { coupons } = useAccountCoupons();
 
                 .account-coupons-expiry {
                     margin: 0;
-                    font-size: 28px;
-                    font-weight: 700;
+                    font-size: var(--type-size-500);
+                    line-height: var(--type-line-500);
+                    font-weight: var(--font-weight-bold);
                     color: var(--text-primary);
                 }
 
@@ -141,8 +145,9 @@ const { coupons } = useAccountCoupons();
                     align-items: center;
                     background: color-mix(in srgb, var(--brand-primary) 16%, var(--contrast-light));
                     color: var(--text-primary);
-                    font-size: 12px;
-                    font-weight: 700;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-bold);
                 }
             }
         }

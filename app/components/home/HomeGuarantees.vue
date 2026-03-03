@@ -85,15 +85,15 @@ const items = [
 
             .home-guarantees-title {
                 margin: 0;
-                font-size: 18px;
-                line-height: 32px;
+                font-size: var(--type-size-300);
+                line-height: var(--type-line-300);
                 color: var(--text-primary);
             }
 
             .home-guarantees-text {
                 margin: 0;
-                font-size: 16px;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
                 color: var(--text-secondary);
             }
 

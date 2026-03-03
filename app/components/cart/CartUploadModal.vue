@@ -210,8 +210,8 @@ const { t } = useI18n();
 
         .upload-modal-title {
             margin: 0;
-            font-size: 28px;
-            line-height: 1.15;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
             color: var(--text-primary);
         }
 

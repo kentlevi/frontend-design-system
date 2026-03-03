@@ -137,16 +137,16 @@ const emit = defineEmits<{
                 :deep(.ui-form-field-label) {
                     display: block;
                     margin: 0;
-                    font-size: 14px;
-                    font-weight: 600;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    font-weight: var(--font-weight-semibold);
+                    line-height: var(--type-line-100);
                     color: var(--text-primary);
                 }
 
                 :deep(.ui-form-field-error) {
                     margin: 0;
-                    font-size: 14px;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--error);
                 }
 
@@ -171,7 +171,8 @@ const emit = defineEmits<{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 13px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
 
         .auth-login-checkbox-control {
             color: var(--text-secondary);
@@ -187,7 +188,7 @@ const emit = defineEmits<{
             --btn-bg: var(--text-primary);
 
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: var(--font-weight-semibold);
             background: transparent;
             border-color: transparent;
             border-radius: 0;
@@ -213,7 +214,8 @@ const emit = defineEmits<{
             .auth-login-field {
                 .auth-login-label-row {
                     .auth-login-error {
-                        font-size: 13px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                     }
                 }
             }

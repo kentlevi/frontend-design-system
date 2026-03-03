@@ -215,17 +215,17 @@ function updateUnit(value: ProfileUnit) {
 
             .auth-profile-head-title {
                 margin: 0;
-                font-size: 24px;
-                line-height: 36px;
-                font-weight: 600;
+                font-size: var(--type-size-400);
+                line-height: var(--type-line-400);
+                font-weight: var(--font-weight-semibold);
                 color: var(--text-primary);
             }
 
             .auth-profile-head-subtitle {
                 margin: 0;
                 color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
 
@@ -248,16 +248,16 @@ function updateUnit(value: ProfileUnit) {
 
                 .auth-profile-setting-title {
                     margin: 0;
-                    font-size: 14px;
-                    line-height: 24px;
-                    font-weight: 700;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-bold);
                     color: var(--text-primary);
                 }
 
                 .auth-profile-setting-text {
-                    font-size: 14px;
-                    font-weight: 400;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    font-weight: var(--font-weight-regular);
+                    line-height: var(--type-line-100);
                     color: var(--text-secondary);
                 }
             }
@@ -318,9 +318,9 @@ function updateUnit(value: ProfileUnit) {
                     border: 0;
                     background: var(--contrast-light);
                     color: var(--text-primary);
-                    font-size: 14px;
-                    font-weight: 700;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    font-weight: var(--font-weight-bold);
+                    line-height: var(--type-line-100);
                     cursor: pointer;
 
                     &.is-active {
@@ -341,14 +341,14 @@ function updateUnit(value: ProfileUnit) {
 
         .auth-profile-back-btn {
             padding: 8px 24px;
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
         .auth-profile-complete-btn {
             padding: 8px 32px;
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -364,7 +364,8 @@ function updateUnit(value: ProfileUnit) {
         .auth-profile-settings-main {
             .auth-profile-head {
                 .auth-profile-head-title {
-                    font-size: 34px;
+                    font-size: var(--type-size-550);
+                    line-height: var(--type-line-550);
                 }
             }
         }
@@ -380,8 +381,8 @@ function updateUnit(value: ProfileUnit) {
             .ui-button {
                 width: 100%;
                 min-width: 0;
-                font-size: 16px;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                line-height: var(--type-line-200);
             }
         }
     }

@@ -273,9 +273,9 @@ const unitPrice = computed(() =>
     .product-picker-name {
         margin: 0;
         text-align: center;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 28px;
+        font-size: var(--type-size-200);
+        font-weight: var(--font-weight-medium);
+        line-height: var(--type-line-200);
         color: var(--text-primary);
         padding-bottom: 24px;
     }
@@ -331,15 +331,15 @@ const unitPrice = computed(() =>
 
         .product-preview-title {
             margin: 0;
-            font-size: 48px;
-            line-height: 68px;
+            font-size: var(--type-size-600);
+            line-height: var(--type-line-600);
             color: var(--text-primary);
         }
 
         .product-preview-blurb {
             margin: 0;
-            font-size: 16px;
-            line-height: 28px;
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
             color: var(--text-secondary);
         }
         .product-preview-media {
@@ -397,9 +397,9 @@ const unitPrice = computed(() =>
                     max-width: 100%;
                     height: 24px;
                     margin: 0;
-                    font-size: 14px;
-                    line-height: 24px;
-                    font-weight: 600;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-semibold);
                     color: var(--text-primary);
                     flex: 0 0 24px;
                     display: -webkit-box;
@@ -410,8 +410,8 @@ const unitPrice = computed(() =>
 
                 .mini-feature-description {
                     margin: 0;
-                    font-size: 14px;
-                    line-height: 24px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--text-secondary);
                     max-width: 232px;
                     flex: 1 0 auto;
@@ -445,8 +445,8 @@ const unitPrice = computed(() =>
 
         .option-title {
             margin: 0;
-            font-size: 18px;
-            line-height: 32px;
+            font-size: var(--type-size-300);
+            line-height: var(--type-line-300);
             color: var(--text-primary);
         }
 
@@ -458,8 +458,8 @@ const unitPrice = computed(() =>
 
             .option-head-unit {
                 color: var(--text-muted);
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
             }
         }
 
@@ -471,7 +471,7 @@ const unitPrice = computed(() =>
 
             &:not(.option-grid-size) {
                 .qty-pill-count {
-                    font-weight: 600;
+                    font-weight: var(--font-weight-semibold);
                 }
             }
 
@@ -479,8 +479,8 @@ const unitPrice = computed(() =>
                 border: 1px solid var(--border-default);
                 border-radius: 999px;
                 min-height: 44px;
-                font-size: 14px;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
                 color: var(--text-primary);
                 cursor: pointer;
                 padding: 8px 14px;
@@ -491,7 +491,8 @@ const unitPrice = computed(() =>
 
                 .qty-pill-price {
                     font-size: inherit;
-                    font-weight: 400;
+                    line-height: inherit;
+                    font-weight: var(--font-weight-regular);
                     color: var(--text-secondary);
                 }
 
@@ -508,19 +509,19 @@ const unitPrice = computed(() =>
 
             .option-pill-wide {
                 grid-column: 1 / -1;
-                font-weight: 500;
+                font-weight: var(--font-weight-medium);
             }
 
             .size-pill-name {
-                font-size: 14px;
-                font-weight: 600;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-100);
             }
 
             .size-pill-dim {
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 24px;
+                font-size: var(--type-size-100);
+                font-weight: var(--font-weight-regular);
+                line-height: var(--type-line-100);
             }
         }
 
@@ -537,7 +538,8 @@ const unitPrice = computed(() =>
             margin: 0;
             display: flex;
             align-items: baseline;
-            font-size: 13px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             color: var(--text-secondary);
         }
 
@@ -569,15 +571,15 @@ const unitPrice = computed(() =>
 
         .price-discount-rate {
             color: var(--error);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
         .price-summary-strike {
             color: var(--text-muted);
             text-decoration: line-through;
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
         .total {
@@ -586,14 +588,14 @@ const unitPrice = computed(() =>
         }
 
         .total .price-summary-value {
-            font-size: 28px;
-            line-height: 40px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
 
         .price-summary-unit {
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 24px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
     }
@@ -603,8 +605,8 @@ const unitPrice = computed(() =>
         color: var(--text-secondary);
         display: grid;
         gap: 4px;
-        font-size: 12px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
         list-style: disc;
         max-width: 174.5px;
     }
@@ -615,9 +617,9 @@ const unitPrice = computed(() =>
         border-radius: 999px;
         background: var(--gold-base);
         color: var(--text-primary);
-        font-size: 16px;
-        line-height: 28px;
-        font-weight: 700;
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
+        font-weight: var(--font-weight-bold);
         box-shadow: none;
         --btn-border: transparent;
     }
@@ -634,7 +636,8 @@ const unitPrice = computed(() =>
         }
 
         .product-preview .product-preview-title {
-            font-size: 36px;
+            font-size: var(--type-size-550);
+            line-height: var(--type-line-550);
         }
 
         .product-preview-features {
@@ -642,12 +645,13 @@ const unitPrice = computed(() =>
         }
 
         .price-summary .price-discount-rate {
-            font-size: 28px;
-            line-height: 36px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
 
         .price-summary .total .price-summary-value {
             font-size: clamp(34px, 7vw, 44px);
+            line-height: var(--type-line-400);
         }
     }
 }
@@ -667,7 +671,8 @@ const unitPrice = computed(() =>
         .option-pill {
             min-height: 40px;
             padding: 6px 10px;
-            font-size: 13px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
         .price-summary .price-summary-top {
@@ -685,13 +690,13 @@ const unitPrice = computed(() =>
         }
 
         .price-benefits {
-            font-size: 12px;
-            line-height: 20px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
 
         .next-step-btn {
-            font-size: 28px;
-            line-height: 36px;
+            font-size: var(--type-size-500);
+            line-height: var(--type-line-500);
         }
     }
 }

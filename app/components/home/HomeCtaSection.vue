@@ -70,9 +70,9 @@ const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
                 margin: 0;
                 font-family: var(--font-base);
                 color: var(--contrast-light);
-                font-size: 48px;
-                line-height: 68px;
-                font-weight: 700;
+                font-size: var(--type-size-600);
+                line-height: var(--type-line-600);
+                font-weight: var(--font-weight-bold);
             }
 
             .home-cta-actions {
@@ -86,9 +86,9 @@ const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
                     border: 0;
                     background: var(--contrast-light);
                     color: #4747FF;
-                    font-size: 18px;
-                    font-weight: 700;
-                    line-height: 32px;
+                    font-size: var(--type-size-300);
+                    font-weight: var(--font-weight-bold);
+                    line-height: var(--type-line-300);
                     box-shadow: none;
                 }
 
@@ -100,9 +100,9 @@ const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
                     --btn-soft: color-mix(in srgb, var(--contrast-light) 22%, transparent);
                     border-color: color-mix(in srgb, var(--contrast-light) 80%, transparent);
                     color: var(--contrast-light);
-                    font-size: 18px;
-                    font-weight: 700;
-                    line-height: 32px;
+                    font-size: var(--type-size-300);
+                    font-weight: var(--font-weight-bold);
+                    line-height: var(--type-line-300);
                     background: #4747FF;
                 }
             }

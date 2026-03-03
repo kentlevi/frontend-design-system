@@ -87,15 +87,16 @@ const emit = defineEmits<{
                 :deep(.ui-form-field-label) {
                     display: block;
                     margin: 0;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-semibold);
                     color: var(--text-primary);
                 }
 
                 :deep(.ui-form-field-error) {
                     margin: 0;
-                    font-size: 14px;
-                    line-height: 1.2;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
                     color: var(--error);
                 }
 
@@ -110,7 +111,8 @@ const emit = defineEmits<{
             .auth-login-field {
                 .auth-login-label-row {
                     .auth-login-error {
-                        font-size: 13px;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                     }
                 }
             }

@@ -109,9 +109,9 @@ const types = [
 
             .home-types-label {
                 padding-bottom: 12px;
-                font-size: 16px;
-                font-weight: 500;
-                line-height: 28px;
+                font-size: var(--type-size-200);
+                font-weight: var(--font-weight-medium);
+                line-height: var(--type-line-200);
                 text-align: center;
                 color: #232735;
             }

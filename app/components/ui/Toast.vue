@@ -110,9 +110,9 @@ const iconByTone = {
 
     .ui-toast-text {
         flex: 0 1 auto;
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 1.3;
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        font-weight: var(--font-weight-semibold);
     }
 
     .ui-toast-close {

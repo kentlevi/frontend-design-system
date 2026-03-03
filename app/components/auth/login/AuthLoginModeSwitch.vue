@@ -58,9 +58,9 @@ const emit = defineEmits<{
         padding-bottom: 8px;
         border: 0;
         background: transparent;
-        font-size: 14px;
-        font-weight: 700;
-        line-height: 24px;
+        font-size: var(--type-size-100);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--type-line-100);
         color: var(--text-primary);
         cursor: pointer;
 
