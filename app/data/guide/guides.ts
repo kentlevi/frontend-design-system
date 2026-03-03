@@ -4,6 +4,11 @@ export type GuideItem = {
     path: string;
     category?: 'base' | 'core';
     status?: 'draft' | 'stable' | 'deprecated';
+    owner?: {
+        name: string;
+        team?: string;
+    };
+    reviewDueAt?: string;
     tags?: string[];
     usedIn?: Array<{
         label: string;
@@ -20,6 +25,8 @@ export const guides: GuideItem[] = [
             'Browse all foundational components and design system resources.',
         path: '/guide',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['foundations', 'navigation', 'governance'],
     },
     {
@@ -28,6 +35,8 @@ export const guides: GuideItem[] = [
         path: '/guide/colors',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['tokens', 'color', 'semantics', 'theme'],
         usedIn: [
             { label: 'Button', path: 'frontend/app/components/ui/Button.vue' },
@@ -42,6 +51,8 @@ export const guides: GuideItem[] = [
         path: '/guide/icons',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['icons', 'assets', 'accessibility'],
         usedIn: [
             { label: 'Header Actions', path: 'frontend/app/components/layout/app-header/AppHeader.vue' },
@@ -55,10 +66,12 @@ export const guides: GuideItem[] = [
         path: '/guide/buttons',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['actions', 'states', 'inputs'],
         usedIn: [
             { label: 'Button Component', path: 'frontend/app/components/ui/Button.vue' },
-            { label: 'Auth Login', path: 'frontend/app/pages/auth/login/index.vue' },
+            { label: 'Auth Login', path: 'frontend/app/pages/[country]/auth/login/index.vue' },
         ],
         related: ['/guide/icons', '/guide/form-controls', '/guide/testing'],
     },
@@ -69,9 +82,11 @@ export const guides: GuideItem[] = [
         path: '/guide/cards',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['layout', 'cards', 'media'],
         usedIn: [
-            { label: 'Product List', path: 'frontend/app/pages/stickers/index.vue' },
+            { label: 'Product List', path: 'frontend/app/pages/[country]/stickers/index.vue' },
         ],
         related: ['/guide/carousel', '/guide/spacing'],
     },
@@ -84,7 +99,7 @@ export const guides: GuideItem[] = [
         status: 'draft',
         tags: ['motion', 'slider', 'reviews'],
         usedIn: [
-            { label: 'Guide Carousel Demo', path: 'frontend/app/pages/guide/carousel.vue' },
+            { label: 'Guide Carousel Demo', path: 'frontend-documentation/app/pages/guide/carousel.vue' },
         ],
         related: ['/guide/cards', '/guide/animation', '/guide/testing'],
     },
@@ -95,9 +110,11 @@ export const guides: GuideItem[] = [
         path: '/guide/form-controls',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['forms', 'validation', 'input'],
         usedIn: [
-            { label: 'Auth Flow Guide', path: 'frontend/app/pages/guide/auth-flow.vue' },
+            { label: 'Auth Flow Guide', path: 'frontend-documentation/app/pages/guide/auth-flow.vue' },
             { label: 'Form Controls UI', path: 'frontend/app/components/ui/Input.vue' },
         ],
         related: ['/guide/buttons', '/guide/auth-flow'],
@@ -109,6 +126,8 @@ export const guides: GuideItem[] = [
         path: '/guide/tooltip',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['tooltip', 'validation', 'feedback'],
         usedIn: [
             { label: 'Tooltip UI', path: 'frontend/app/components/ui/Tooltip.vue' },
@@ -123,6 +142,8 @@ export const guides: GuideItem[] = [
         path: '/guide/toast',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['toast', 'feedback', 'status'],
         usedIn: [
             { label: 'Toast UI', path: 'frontend/app/components/ui/Toast.vue' },
@@ -137,6 +158,8 @@ export const guides: GuideItem[] = [
         path: '/guide/typography',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['type', 'content', 'readability'],
         related: ['/guide/spacing', '/guide/i18n'],
     },
@@ -147,6 +170,8 @@ export const guides: GuideItem[] = [
         path: '/guide/spacing',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['layout', 'spacing', 'rhythm'],
         related: ['/guide/typography', '/guide/cards'],
     },
@@ -157,6 +182,8 @@ export const guides: GuideItem[] = [
         path: '/guide/shadows',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['elevation', 'shadow', 'surface'],
         usedIn: [
             { label: 'Button UI', path: 'frontend/app/components/ui/Button.vue' },
@@ -173,7 +200,7 @@ export const guides: GuideItem[] = [
         status: 'draft',
         tags: ['motion', 'transitions', 'reduced-motion'],
         usedIn: [
-            { label: 'Animation Guide Page', path: 'frontend/app/pages/guide/animation.vue' },
+            { label: 'Animation Guide Page', path: 'frontend-documentation/app/pages/guide/animation.vue' },
             { label: 'Cart Drawer', path: 'frontend/app/components/cart/CartPreview.vue' },
         ],
         related: ['/guide/carousel', '/guide/modals', '/guide/header-patterns'],
@@ -185,6 +212,8 @@ export const guides: GuideItem[] = [
         path: '/guide/feedback-empty-states',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['feedback', 'loading', 'empty-state'],
         related: ['/guide/modals', '/guide/testing', '/guide/skeleton'],
     },
@@ -224,6 +253,8 @@ export const guides: GuideItem[] = [
         path: '/guide/header-patterns',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['header', 'search', 'navigation'],
         usedIn: [
             { label: 'App Header', path: 'frontend/app/components/layout/app-header/AppHeader.vue' },
@@ -237,9 +268,11 @@ export const guides: GuideItem[] = [
         path: '/guide/product-configurator',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['product', 'configurator', 'pricing'],
         usedIn: [
-            { label: 'Stickers Page', path: 'frontend/app/pages/stickers/index.vue' },
+            { label: 'Stickers Page', path: 'frontend/app/pages/[country]/stickers/index.vue' },
         ],
         related: ['/guide/cart-patterns', '/guide/testing'],
     },
@@ -250,9 +283,11 @@ export const guides: GuideItem[] = [
         path: '/guide/auth-flow',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['auth', 'verification', 'forms'],
         usedIn: [
-            { label: 'Login Page', path: 'frontend/app/pages/auth/login/index.vue' },
+            { label: 'Login Page', path: 'frontend/app/pages/[country]/auth/login/index.vue' },
         ],
         related: ['/guide/form-controls', '/guide/modals', '/guide/testing'],
     },
@@ -263,9 +298,11 @@ export const guides: GuideItem[] = [
         path: '/guide/testing',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['qa', 'e2e', 'testid'],
         usedIn: [
-            { label: 'Smoke Spec', path: 'frontend/tests/e2e/smoke.spec.ts' },
+            { label: 'Smoke Spec', path: 'playwright-shared/tests/smoke.spec.ts' },
         ],
         related: ['/guide/web-vitals', '/guide/buttons', '/guide/carousel'],
     },
@@ -278,7 +315,7 @@ export const guides: GuideItem[] = [
         status: 'draft',
         tags: ['performance', 'lcp', 'cls', 'inp'],
         usedIn: [
-            { label: 'Web Vitals Page', path: 'frontend/app/pages/guide/web-vitals.vue' },
+            { label: 'Web Vitals Page', path: 'frontend-documentation/app/pages/guide/web-vitals.vue' },
         ],
         related: ['/guide/testing', '/guide/product-configurator'],
     },
@@ -289,6 +326,8 @@ export const guides: GuideItem[] = [
         path: '/guide/locale-switcher',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['locale', 'i18n', 'header'],
         usedIn: [
             { label: 'Locale Modal', path: 'frontend/app/components/layout/app-header/AppHeaderLocaleModal.vue' },
@@ -302,6 +341,8 @@ export const guides: GuideItem[] = [
         path: '/guide/i18n',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['i18n', 'translations', 'content'],
         related: ['/guide/locale-switcher', '/guide/typography', '/guide/testing'],
     },
@@ -312,6 +353,8 @@ export const guides: GuideItem[] = [
         path: '/guide/color-swatches',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['tokens', 'swatches', 'palette'],
         related: ['/guide/colors'],
     },
@@ -322,6 +365,8 @@ export const guides: GuideItem[] = [
         path: '/guide/modals',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['overlay', 'dialog', 'focus'],
         usedIn: [
             { label: 'UI Modal', path: 'frontend/app/components/ui/Modal.vue' },
@@ -335,6 +380,8 @@ export const guides: GuideItem[] = [
         path: '/guide/badges',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['badge', 'status', 'metadata'],
         usedIn: [
             { label: 'Badge UI', path: 'frontend/app/components/ui/Badge.vue' },
@@ -348,6 +395,8 @@ export const guides: GuideItem[] = [
         path: '/guide/flags',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['assets', 'flags', 'locale'],
         related: ['/guide/locale-switcher'],
     },
@@ -357,6 +406,8 @@ export const guides: GuideItem[] = [
         path: '/guide/social-icons',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['icons', 'brand', 'social'],
         related: ['/guide/icons'],
     },
@@ -367,8 +418,41 @@ export const guides: GuideItem[] = [
         path: '/guide/logos',
         category: 'base',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['brand', 'logo', 'assets'],
         related: ['/guide/colors', '/guide/spacing'],
+    },
+    {
+        title: 'Coverage',
+        description:
+            'Coverage matrix for shared UI components and guide ownership gaps.',
+        path: '/guide/coverage',
+        category: 'core',
+        status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
+        tags: ['governance', 'coverage', 'ownership'],
+        usedIn: [
+            { label: 'Coverage Page', path: 'frontend-documentation/app/pages/guide/coverage.vue' },
+        ],
+        related: ['/guide/testing', '/guide/standards'],
+    },
+    {
+        title: 'Onboarding',
+        description:
+            'Role-based guide onboarding with source-backed checks and quiz gate.',
+        path: '/guide/onboarding',
+        category: 'core',
+        status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
+        tags: ['onboarding', 'governance', 'qa', 'guide-flow'],
+        usedIn: [
+            { label: 'Onboarding Page', path: 'frontend-documentation/app/pages/guide/onboarding.vue' },
+            { label: 'Onboarding Middleware', path: 'frontend-documentation/app/middleware/guide-onboarding.global.ts' },
+        ],
+        related: ['/guide/standards', '/guide/testing', '/guide/auth-flow'],
     },
     {
         title: 'Standards',
@@ -377,6 +461,8 @@ export const guides: GuideItem[] = [
         path: '/guide/standards',
         category: 'core',
         status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
         tags: ['governance', 'onboarding', 'enforcement', 'linting', 'review-policy'],
         related: ['/guide/onboarding', '/guide/testing'],
     },

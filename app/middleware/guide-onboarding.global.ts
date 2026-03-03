@@ -1,4 +1,9 @@
-const GUIDE_ONBOARDING_COOKIE = 'guide_onboarding_completed_v1';
+import {
+    GUIDE_ONBOARDING_ACK_COOKIE,
+    GUIDE_ONBOARDING_DONE_COOKIE,
+    GUIDE_ONBOARDING_VERSION,
+} from '@/constants/guide-onboarding';
+
 const GUIDE_STANDARDS_VERSION = 'v2';
 const GUIDE_STANDARDS_COOKIE = `guide_standards_read_${GUIDE_STANDARDS_VERSION}`;
 
@@ -23,7 +28,11 @@ export default defineNuxtRouteMiddleware((to) => {
     const isOnboardingRoute = path.toLowerCase() === onboardingPath.toLowerCase();
     const isStandardsRoute = path.toLowerCase() === standardsPath.toLowerCase();
 
-    const onboardingCookie = useCookie<string | null>(GUIDE_ONBOARDING_COOKIE, {
+    const onboardingDoneCookie = useCookie<string | null>(GUIDE_ONBOARDING_DONE_COOKIE, {
+        path: '/',
+        sameSite: 'lax',
+    });
+    const onboardingAckCookie = useCookie<string | null>(GUIDE_ONBOARDING_ACK_COOKIE, {
         path: '/',
         sameSite: 'lax',
     });
@@ -32,14 +41,21 @@ export default defineNuxtRouteMiddleware((to) => {
         sameSite: 'lax',
     });
 
-    if (!onboardingCookie.value && !isOnboardingRoute) {
+    const doneValue = String(onboardingDoneCookie.value ?? '').trim().toLowerCase();
+    const ackValueRaw = String(onboardingAckCookie.value ?? '').trim();
+    const ackValue = decodeURIComponent(ackValueRaw);
+    const hasOnboardingAck =
+        (doneValue === '1' || doneValue === 'true') &&
+        ackValue === GUIDE_ONBOARDING_VERSION;
+
+    if (!hasOnboardingAck && !isOnboardingRoute) {
         return navigateTo({
             path: onboardingPath,
             query: { redirect: to.fullPath },
         });
     }
 
-    if (onboardingCookie.value && !standardsCookie.value && !isOnboardingRoute && !isStandardsRoute) {
+    if (hasOnboardingAck && !standardsCookie.value && !isOnboardingRoute && !isStandardsRoute) {
         return navigateTo({
             path: standardsPath,
             query: { redirect: to.fullPath },

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import GuideCommandList from '@/components/guide/GuideCommandList.vue';
+
 type MetricName = 'LCP' | 'INP' | 'CLS';
 type StatusTone = 'success' | 'warning' | 'danger' | 'default';
 type PageType =
@@ -195,7 +197,13 @@ function routeBudgetLabel(row: RouteVitals): string {
                             <UiBadge variant="tonal" tone="warning">Secondary Warn {{ labData.totals.secondaryWarn }}</UiBadge>
                         </p>
                     </template>
-                    <p v-else>No lab summary found. Run <code>npm run perf:ci</code>.</p>
+                    <div v-else class="web-vitals-command-fallback">
+                        <p>No lab summary found. Run:</p>
+                        <GuideCommandList
+                            :commands="['pnpm run perf:ci']"
+                            testid-prefix="guide-web-vitals-command"
+                        />
+                    </div>
                 </article>
             </div>
 
@@ -322,6 +330,11 @@ function routeBudgetLabel(row: RouteVitals): string {
         font-size: 14px;
         line-height: 24px;
         color: var(--text-secondary);
+    }
+
+    .web-vitals-command-fallback {
+        display: grid;
+        gap: 8px;
     }
 
     .budget-inline {

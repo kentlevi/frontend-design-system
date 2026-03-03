@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { guides } from '@/data/guide/guides';
+import { guideDocs } from '@/data/guide/docs';
 const localePath = useLocalePath();
 
 const uiComponentFiles = Object.keys(
@@ -45,6 +46,37 @@ const summary = computed(() => ({
     partial: coverageRows.value.filter((row) => row.status === 'partial').length,
     missing: coverageRows.value.filter((row) => row.status === 'missing').length,
 }));
+
+const guideQualityRows = computed(() =>
+    guides
+        .filter((guide) => guide.path.startsWith('/guide') && guide.path !== '/guide')
+        .map((guide) => {
+            const doc = guideDocs[guide.path];
+            const checks = [
+                Boolean(doc?.summary),
+                Boolean(doc?.sections?.length),
+                Boolean(doc?.qaChecklist?.length),
+                Boolean(doc?.changelog?.length),
+                Boolean(guide.usedIn?.length),
+                Boolean(doc?.testHooks?.length),
+            ];
+            const score = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+            const hasOwner = Boolean(guide.owner?.name);
+            const hasReviewDueAt = Boolean(guide.reviewDueAt);
+            const isOverdue = guide.reviewDueAt ? new Date(guide.reviewDueAt) < new Date() : false;
+
+            return {
+                title: guide.title,
+                path: guide.path,
+                score,
+                hasOwner,
+                hasReviewDueAt,
+                reviewDueAt: guide.reviewDueAt ?? '-',
+                isOverdue,
+            };
+        })
+        .sort((a, b) => a.score - b.score)
+);
 </script>
 
 <template>
@@ -101,6 +133,51 @@ const summary = computed(() => ({
                                 <span v-else>-</span>
                             </td>
                             <td><code>{{ row.path }}</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="guide-section">
+            <h2 class="guide-section-title">Guide Quality and Governance</h2>
+            <div class="guide-coverage-table-wrap">
+                <table class="guide-coverage-table">
+                    <thead>
+                        <tr>
+                            <th>Guide</th>
+                            <th>Quality Score</th>
+                            <th>Owner</th>
+                            <th>Review Due</th>
+                            <th>Staleness</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="row in guideQualityRows" :key="row.path">
+                            <td>
+                                <NuxtLink :to="localePath(row.path)" class="guide-coverage-link">
+                                    {{ row.title }}
+                                </NuxtLink>
+                            </td>
+                            <td>
+                                <UiBadge variant="tonal" :tone="row.score >= 80 ? 'success' : row.score >= 60 ? 'warning' : 'danger'">
+                                    {{ row.score }}%
+                                </UiBadge>
+                            </td>
+                            <td>
+                                <UiBadge variant="tonal" :tone="row.hasOwner ? 'success' : 'danger'">
+                                    {{ row.hasOwner ? 'Assigned' : 'Missing' }}
+                                </UiBadge>
+                            </td>
+                            <td><code>{{ row.reviewDueAt }}</code></td>
+                            <td>
+                                <UiBadge
+                                    variant="tonal"
+                                    :tone="row.isOverdue ? 'danger' : row.hasReviewDueAt ? 'success' : 'warning'"
+                                >
+                                    {{ row.isOverdue ? 'Overdue' : row.hasReviewDueAt ? 'Current' : 'Missing Date' }}
+                                </UiBadge>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

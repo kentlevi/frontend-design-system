@@ -1,6 +1,11 @@
 export type GuideDocSection = {
     title: string;
     points: string[];
+    sources?: Array<{
+        label: string;
+        path: string;
+        line?: number;
+    }>;
 };
 
 export type GuideDocDoDont = {
@@ -67,6 +72,7 @@ export type GuideDoc = {
         target?: string;
     }>;
     performanceNotes?: string[];
+    runCommands?: string[];
     playground?: {
         supportsSize: boolean;
         supportsTone: boolean;
@@ -260,8 +266,8 @@ export const guideDocs: Record<string, GuideDoc> = {
                     'Expanded engineering guidance for accessibility and QA decisions.',
                 ],
                 diffLinks: [
-                    { label: 'Guide Layout', path: 'frontend/app/layouts/guide.vue' },
-                    { label: 'Guide Docs', path: 'frontend/app/data/guide/docs.ts' },
+                    { label: 'Guide Layout', path: 'frontend-documentation/app/layouts/guide.vue' },
+                    { label: 'Guide Docs', path: 'frontend-documentation/app/data/guide/docs.ts' },
                 ],
             },
         ],
@@ -862,7 +868,7 @@ export const guideDocs: Record<string, GuideDoc> = {
                 date: '2026-02-25',
                 changes: ['Added tooltip guide page and metadata coverage entry.'],
                 diffLinks: [
-                    { label: 'Tooltip Guide Page', path: 'frontend/app/pages/guide/tooltip.vue' },
+                    { label: 'Tooltip Guide Page', path: 'frontend-documentation/app/pages/guide/tooltip.vue' },
                     { label: 'Tooltip Component', path: 'frontend/app/components/ui/Tooltip.vue' },
                 ],
             },
@@ -1487,7 +1493,7 @@ cart.cartPreview.emptyDescription`,
                 date: '2026-02-26',
                 changes: ['Added dedicated Toast guide with tones, playground behavior, and QA/a11y checks.'],
                 diffLinks: [
-                    { label: 'Toast Guide Page', path: 'frontend/app/pages/guide/toast.vue' },
+                    { label: 'Toast Guide Page', path: 'frontend-documentation/app/pages/guide/toast.vue' },
                     { label: 'Toast Component', path: 'frontend/app/components/ui/Toast.vue' },
                 ],
             },
@@ -1903,7 +1909,7 @@ cart.cartPreview.emptyDescription`,
     },
     '/guide/auth-flow': {
         summary:
-            'Patterns for login, register, verification modal handling, and profile setup progression.',
+            'Patterns for login, register verification, country-aware routing, and profile setup handoff.',
         sections: [
             {
                 title: 'Entry States',
@@ -1918,15 +1924,23 @@ cart.cartPreview.emptyDescription`,
                 points: [
                     'Verification modal should open only after valid primary submit.',
                     'Preserve user-entered values when verification is interrupted.',
-                    'Provide resend behavior with explicit timer and disabled state.',
+                    'Resend should request a new verification token and clear entered OTP.',
                 ],
             },
             {
                 title: 'Profile Completion',
                 points: [
                     'Use ordered steps with explicit active and completed states.',
-                    'Persist completion progress across route changes when possible.',
+                    'Prefill names/email from onboarding profile, user profile fields, or mock-user fallback.',
                     'Use success feedback (toast/banner) after final profile completion.',
+                ],
+            },
+            {
+                title: 'Implementation Mapping',
+                points: [
+                    '`useRegisterForm` handles register verification request, OTP verification, auto-login, and `/auth/profile` redirect.',
+                    '`AuthVerificationModal` is shared for login/register/order verification and emits `verify` + `resend` events.',
+                    '`useAuthProfileSetup` controls two-step profile setup and final handoff to country home route.',
                 ],
             },
         ],
@@ -1948,6 +1962,7 @@ cart.cartPreview.emptyDescription`,
         qaChecklist: [
             'Validation states are consistent across login, register, and profile flows.',
             'Verification modal open/close behavior is stable in preview and production.',
+            'Resend refreshes verification token and resets OTP input without closing the modal.',
             'Auth i18n keys render without overflow in long locale strings.',
         ],
         responsiveNotes: [
@@ -1960,9 +1975,9 @@ cart.cartPreview.emptyDescription`,
         ],
         changelog: [
             {
-                date: '2026-02-20',
+                date: '2026-03-02',
                 changes: [
-                    'Added dedicated auth-flow guidance with validation and verification checklists.',
+                    'Updated onboarding/auth-flow docs to match current resend, profile prefill, and composable ownership behavior.',
                 ],
             },
         ],
@@ -2118,6 +2133,12 @@ cart.cartPreview.emptyDescription`,
             'Prefer explicit action labels over generic terms like Submit Form.',
             'Keep error and helper messaging short and actionable.',
         ],
+        runCommands: [
+            'pnpm --dir playwright-shared run test:smoke',
+            'pnpm --dir playwright-shared run test:guide',
+            'pnpm --dir playwright-shared run test:guide-onboarding',
+            'pnpm run quality:ci',
+        ],
         testHooks: [
             {
                 hook: 'component-state-action',
@@ -2198,6 +2219,10 @@ cart.cartPreview.emptyDescription`,
         responsiveNotes: [
             'Status and metric cards stack cleanly on narrow breakpoints.',
             'Route table remains horizontally scrollable without clipping column labels.',
+        ],
+        runCommands: [
+            'pnpm run perf:ci',
+            'pnpm run quality:ci',
         ],
         examples: [
             {
@@ -2380,8 +2405,8 @@ cart.cartPreview.emptyDescription`,
                 date: '2026-02-20',
                 changes: ['Added skeleton loading guide with layout, accessibility, and QA guardrails.'],
                 diffLinks: [
-                    { label: 'Skeleton Guide Page', path: 'frontend/app/pages/guide/skeleton.vue' },
-                    { label: 'Guide Metadata', path: 'frontend/app/data/guide/guides.ts' },
+                    { label: 'Skeleton Guide Page', path: 'frontend-documentation/app/pages/guide/skeleton.vue' },
+                    { label: 'Guide Metadata', path: 'frontend-documentation/app/data/guide/guides.ts' },
                 ],
             },
         ],
@@ -2423,7 +2448,64 @@ cart.cartPreview.emptyDescription`,
                 date: '2026-02-20',
                 changes: ['Added guide coverage dashboard baseline and scoring model.'],
                 diffLinks: [
-                    { label: 'Coverage Page', path: 'frontend/app/pages/guide/coverage.vue' },
+                    { label: 'Coverage Page', path: 'frontend-documentation/app/pages/guide/coverage.vue' },
+                ],
+            },
+        ],
+    },
+    '/guide/onboarding': {
+        summary:
+            'Role-based onboarding flow for guide access, using source-backed claims, checks, and quiz validation.',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        lastUpdatedAt: '2026-03-03',
+        lastUpdatedBy: 'Codex',
+        sections: [
+            {
+                title: 'What It Covers',
+                points: [
+                    'Role-specific onboarding tracks for Frontend, QA, and Design.',
+                    'Implementation reference claims mapped to exact source file paths.',
+                    'Definition-of-done checklist and quiz gate before standards access.',
+                ],
+            },
+            {
+                title: 'Behavioral Guarantees',
+                points: [
+                    'Onboarding checks document shipped behavior only; roadmap items are informational.',
+                    'Completion requires checklist and quiz pass for the selected role.',
+                    'Onboarding acknowledgment is versioned and re-enforced in dev when content changes.',
+                ],
+            },
+            {
+                title: 'Verification',
+                points: [
+                    'Run `pnpm run quality:onboarding-docs` to detect onboarding doc drift.',
+                    'Run `pnpm run guide:validate-used-in` to verify source path references.',
+                ],
+            },
+        ],
+        qaChecklist: [
+            'Proceed action writes onboarding completion and acknowledgment version cookies.',
+            'Stale acknowledgment version in dev redirects user back to onboarding.',
+            'Each required claim includes at least one copyable source file reference.',
+        ],
+        runCommands: [
+            'pnpm run quality:onboarding-docs',
+            'pnpm run guide:validate-used-in',
+        ],
+        changelog: [
+            {
+                version: 'v3.0.0',
+                date: '2026-03-03',
+                changes: [
+                    'Aligned onboarding with shipped behavior and separated roadmap items.',
+                    'Added role-track specific required checks and quiz gates.',
+                    'Added onboarding version acknowledgment enforcement in middleware.',
+                ],
+                diffLinks: [
+                    { label: 'Onboarding Page', path: 'frontend-documentation/app/pages/guide/onboarding.vue' },
+                    { label: 'Onboarding Middleware', path: 'frontend-documentation/app/middleware/guide-onboarding.global.ts' },
+                    { label: 'Onboarding Constants', path: 'frontend-documentation/app/constants/guide-onboarding.ts' },
                 ],
             },
         ],
@@ -2481,16 +2563,16 @@ cart.cartPreview.emptyDescription`,
             {
                 title: 'API Naming Standards (Required)',
                 points: [
-                    'Variables use `snake_case`.',
+                    'Variables and functions use `camelCase`.',
                     'Constants use `UPPER_CASE`.',
-                    'Functions use `KebabCase`.',
+                    'Vue components use `PascalCase`.',
                 ],
             },
             {
                 title: 'Recommended Practices',
                 points: [
                     'Use ESLint, Prettier, and EditorConfig in your editor.',
-                    'Run `npm run lint` before commit/push.',
+                    'Run `pnpm run lint` before commit/push.',
                     'Attach screenshots when UI is changed.',
                     'Keep SCSS nesting shallow and use clear state class names.',
                 ],
@@ -2511,8 +2593,8 @@ cart.cartPreview.emptyDescription`,
             {
                 title: 'Onboarding First Tasks',
                 points: [
-                    'Run app locally: `npm install`, `npm run dev`.',
-                    'Run lint: `npm run lint`.',
+                    'Run app locally: `pnpm install`, `pnpm dev`.',
+                    'Run lint: `pnpm run lint`.',
                     'Implement using existing tokens/components first.',
                     'Update guide docs if shared behavior changed.',
                     'Attach screenshot proof for UI changes.',
@@ -2542,6 +2624,12 @@ cart.cartPreview.emptyDescription`,
             'Keep rules limited to currently implemented standards.',
             'Avoid policy statements that are not enforced yet.',
         ],
+        runCommands: [
+            'pnpm run lint',
+            'pnpm run guide:validate-used-in',
+            'pnpm run quality:onboarding-docs',
+            'pnpm run quality:ci',
+        ],
         changelog: [
             {
                 version: 'v2.1.0',
@@ -2552,9 +2640,9 @@ cart.cartPreview.emptyDescription`,
                     'Retained standards versioned acknowledgment flow (v2).',
                 ],
                 diffLinks: [
-                    { label: 'Standards Page', path: 'frontend/app/pages/guide/standards.vue' },
-                    { label: 'Guide Middleware', path: 'frontend/app/middleware/guide-onboarding.global.ts' },
-                    { label: 'Guide Docs', path: 'frontend/app/data/guide/docs.ts' },
+                    { label: 'Standards Page', path: 'frontend-documentation/app/pages/guide/standards.vue' },
+                    { label: 'Guide Middleware', path: 'frontend-documentation/app/middleware/guide-onboarding.global.ts' },
+                    { label: 'Guide Docs', path: 'frontend-documentation/app/data/guide/docs.ts' },
                 ],
             },
         ],

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import GuideCommandList from '@/components/guide/GuideCommandList.vue';
+
 const componentName = ref('UiButton');
 const stateName = ref('default');
 const actionName = ref('click');
@@ -109,12 +111,16 @@ const generatedTestId = computed(
         <section class="guide-section">
             <h2 class="guide-section-title">Release Gate Commands</h2>
             <article class="testing-card">
-                <ul class="testing-list">
-                    <li>`npm run test:e2e` for smoke and interaction baseline checks.</li>
-                    <li>`npm run test:e2e:a11y` for axe serious/critical violation checks.</li>
-                    <li>`npm run perf:ci` for desktop preview Lighthouse budgets.</li>
-                    <li>`npm run quality:ci` to run the full merge gate locally.</li>
-                </ul>
+                <GuideCommandList
+                    title="Use these commands as release gate baseline."
+                    :commands="[
+                        'pnpm --dir playwright-shared run test:smoke',
+                        'pnpm --dir playwright-shared run test:guide',
+                        'pnpm --dir playwright-shared run test:guide-onboarding',
+                        'pnpm run quality:ci',
+                    ]"
+                    testid-prefix="guide-testing-command"
+                />
             </article>
         </section>
 

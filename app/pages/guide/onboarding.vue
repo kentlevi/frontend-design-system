@@ -1,350 +1,234 @@
 <script setup lang="ts">
 import { copyTextToClipboard } from '@/utils/clipboard';
+import {
+    GUIDE_ONBOARDING_ACK_COOKIE,
+    GUIDE_ONBOARDING_DONE_COOKIE,
+    GUIDE_ONBOARDING_VERSION,
+} from '@/constants/guide-onboarding';
 
 type RoleTrack = 'fe' | 'qa' | 'design';
-
-type FileLink = {
-    label: string;
-    path: string;
-};
-
+type SourceLink = { label: string; path: string };
+type OnboardingClaim = { text: string; sources: SourceLink[] };
 type OnboardingSlide = {
     id: string;
     title: string;
     summary: string;
-    roles: RoleTrack[];
-    points: string[];
-    code?: string;
-    fileLinks?: FileLink[];
+    claims: OnboardingClaim[];
     commands?: string[];
+    code?: string;
+};
+type QuizQuestion = { id: string; prompt: string; options: string[]; correctIndex: number };
+type RoleTrackConfig = {
+    slides: OnboardingSlide[];
+    checklist: { id: string; label: string }[];
+    quiz: QuizQuestion[];
 };
 
-type QuizQuestion = {
-    id: string;
-    prompt: string;
-    options: string[];
-    correctIndex: number;
-    roles?: RoleTrack[];
+const ONBOARDING_LAST_UPDATED = '2026-03-02';
+const ROADMAP_ITEMS = [
+    'Optional resend cooldown UX (not implemented).',
+    'Partial onboarding resume checkpoints (not implemented).',
+    'Cross-role analytics panel for onboarding completion.',
+];
+const roleLabels: Record<RoleTrack, string> = {
+    fe: 'Frontend',
+    qa: 'QA',
+    design: 'Design',
+};
+const roleOptions = [
+    { label: 'Frontend', value: 'fe' },
+    { label: 'QA', value: 'qa' },
+    { label: 'Design', value: 'design' },
+];
+
+const roleTrackConfig: Record<RoleTrack, RoleTrackConfig> = {
+    fe: {
+        slides: [
+            {
+                id: 'fe-auth',
+                title: 'Auth Flow Implementation',
+                summary: 'Validate register, OTP, resend, and profile handoff behavior from source.',
+                claims: [
+                    {
+                        text: 'Register submit requests verification and opens OTP modal on success.',
+                        sources: [
+                            { label: 'Register flow', path: 'frontend/app/composables/auth/useRegisterForm.ts' },
+                            { label: 'Register UI', path: 'frontend/app/components/auth/register/AuthRegisterCard.vue' },
+                        ],
+                    },
+                    {
+                        text: 'Successful OTP verification redirects to `/auth/profile` in the auth flow.',
+                        sources: [{ label: 'Verification submit', path: 'frontend/app/composables/auth/useRegisterForm.ts' }],
+                    },
+                    {
+                        text: 'Resend refreshes token and clears OTP while modal remains open.',
+                        sources: [
+                            { label: 'Verification modal', path: 'frontend/app/components/auth/shared/AuthVerificationModal.vue' },
+                            { label: 'Resend logic', path: 'frontend/app/composables/auth/useRegisterForm.ts' },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: 'fe-country',
+                title: 'Country Route Handoff',
+                summary: 'Confirm route prefixing and completion handoff behavior.',
+                claims: [
+                    {
+                        text: '`withCountry()` prefixes paths using resolved country route params.',
+                        sources: [{ label: 'Country composable', path: 'frontend/app/composables/app/useCountry.ts' }],
+                    },
+                    {
+                        text: 'Profile setup completion navigates using `withCountry(\'/\')`.',
+                        sources: [{ label: 'Profile setup', path: 'frontend/app/composables/auth/useAuthProfileSetup.ts' }],
+                    },
+                ],
+            },
+        ],
+        checklist: [
+            { id: 'fe-register-otp-profile', label: 'Verified register -> OTP -> /auth/profile redirect.' },
+            { id: 'fe-resend-modal', label: 'Verified resend resets OTP and keeps modal open.' },
+            { id: 'fe-country-route', label: 'Verified country route handoff works (/${country}).' },
+        ],
+        quiz: [
+            {
+                id: 'fe-q1',
+                prompt: 'After successful OTP in register flow, where does the user go?',
+                options: ['`/auth/profile` via auth flow handoff.', '`/guide/standards`.', '`/auth/login` only.'],
+                correctIndex: 0,
+            },
+            {
+                id: 'fe-q2',
+                prompt: 'What is expected resend behavior?',
+                options: ['Token refresh + OTP reset while modal stays open.', 'Mandatory timer and modal close.', 'No resend support.'],
+                correctIndex: 0,
+            },
+        ],
+    },
+    qa: {
+        slides: [
+            {
+                id: 'qa-assertions',
+                title: 'QA Assertions',
+                summary: 'Validate selectors, modal behavior, and guide redirects in dev.',
+                claims: [
+                    {
+                        text: 'Register and verification controls expose stable selector hooks.',
+                        sources: [
+                            { label: 'Register selectors', path: 'frontend/app/components/auth/register/AuthRegisterCard.vue' },
+                            { label: 'Verification selectors', path: 'frontend/app/components/auth/shared/AuthVerificationModal.vue' },
+                        ],
+                    },
+                    {
+                        text: 'Guide middleware enforces onboarding and standards redirect order in dev.',
+                        sources: [{ label: 'Guide middleware', path: 'frontend-documentation/app/middleware/guide-onboarding.global.ts' }],
+                    },
+                ],
+            },
+        ],
+        checklist: [
+            { id: 'qa-selectors', label: 'Verified stable selectors for register/verification actions.' },
+            { id: 'qa-resend', label: 'Verified OTP error and resend behavior.' },
+            { id: 'qa-gates', label: 'Verified onboarding/standards redirect conditions in dev.' },
+        ],
+        quiz: [
+            {
+                id: 'qa-q1',
+                prompt: 'When onboarding ack is stale in dev, where should `/guide` route go?',
+                options: ['`/guide/onboarding`.', '`/guide/standards`.', 'No redirect.'],
+                correctIndex: 0,
+            },
+        ],
+    },
+    design: {
+        slides: [
+            {
+                id: 'design-traceability',
+                title: 'Design Documentation Traceability',
+                summary: 'Ensure onboarding claims and auth UI states map to implementation files.',
+                claims: [
+                    {
+                        text: 'Auth states and copy are validated from implemented register/verification/profile components.',
+                        sources: [
+                            { label: 'Register view', path: 'frontend/app/components/auth/register/AuthRegisterCard.vue' },
+                            { label: 'Verification view', path: 'frontend/app/components/auth/register/AuthRegisterVerificationModal.vue' },
+                            { label: 'Profile view', path: 'frontend/app/components/auth/profile/AuthProfilePage.vue' },
+                        ],
+                    },
+                    {
+                        text: 'Doc drift checks block stale onboarding statements.',
+                        sources: [{ label: 'Doc drift script', path: 'frontend-documentation/scripts/check-onboarding-doc-drift.mjs' }],
+                    },
+                ],
+            },
+        ],
+        checklist: [
+            { id: 'design-states', label: 'Verified auth states match real implementation.' },
+            { id: 'design-modal', label: 'Verified modal/error copy matches implemented behavior.' },
+            { id: 'design-source', label: 'Verified onboarding claims map to source files.' },
+        ],
+        quiz: [
+            {
+                id: 'design-q1',
+                prompt: 'What is required for each onboarding claim?',
+                options: ['Direct source file references.', 'Screenshot only.', 'No references needed.'],
+                correctIndex: 0,
+            },
+        ],
+    },
 };
 
-const GUIDE_ONBOARDING_COOKIE = 'guide_onboarding_completed_v1';
-const ONBOARDING_VERSION = 'v2.0';
-const ONBOARDING_LAST_UPDATED = '2026-02-23';
 definePageMeta({ layout: false });
-
-const route = useRoute();
 const localePath = useLocalePath();
-
 const selectedRole = ref<RoleTrack>('fe');
 const currentSlide = ref(0);
-const isSubmitting = ref(false);
 const copiedPath = ref('');
+const isSubmitting = ref(false);
 const quizSubmitted = ref(false);
+const detailStartRef = ref<HTMLElement | null>(null);
+const checklistState = reactive<Record<string, boolean>>({});
+const quizAnswers = reactive<Record<string, number | null>>({});
 
-const slides: OnboardingSlide[] = [
-    {
-        id: 'site-structure',
-        title: 'Site Structure',
-        summary: 'Core project layout and where development work should live.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'Route pages live in app/pages and drive URL structure.',
-            'Shared wrappers live in app/layouts (default, home, guide, auth).',
-            'Reusable and feature UI live in app/components.',
-            'Behavior/state logic lives in app/composables.',
-            'Static/config content and guide mappings live in app/data.',
-            'SCSS/tokens are organized in app/assets/scss.',
-        ],
-        code: `app/
-  pages/
-  layouts/
-  components/
-  composables/
-  data/
-  assets/scss/`,
-        fileLinks: [
-            { label: 'UI components', path: 'app/components/ui' },
-            { label: 'Composables', path: 'app/composables' },
-            { label: 'Data sources', path: 'app/data' },
-            { label: 'SCSS foundation', path: 'app/assets/scss' },
-        ],
-    },
-    {
-        id: 'component-flow',
-        title: 'Components and Composables Flow',
-        summary: 'Keep rendering and behavior responsibilities separated.',
-        roles: ['fe', 'qa'],
-        points: [
-            'Use components for rendering and UX states.',
-            'Use composables for state, derived values, and actions.',
-            'Prefer typed props/emits and clear event names.',
-            'Keep shared patterns in app/components/ui.',
-        ],
-        code: `<UiInput v-model="email" />
-const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
-const { state, actions } = useFeatureFlow()`,
-        fileLinks: [
-            { label: 'Example UI primitives', path: 'app/components/ui' },
-            { label: 'Feature composables', path: 'app/composables' },
-        ],
-    },
-    {
-        id: 'scss-architecture',
-        title: 'SCSS and Token Architecture',
-        summary: 'Use existing token layers before introducing custom values.',
-        roles: ['fe', 'design'],
-        points: [
-            'Foundation defines semantic tokens and global scales.',
-            'Component styles should consume tokens, not hardcoded one-offs.',
-            'Layout styles belong under assets/scss/layouts.',
-            'Avoid duplicate spacing/color definitions across components.',
-        ],
-        code: `assets/scss/
-  foundation/
-  components/
-  layouts/
-  site.scss`,
-        fileLinks: [
-            { label: 'SCSS root', path: 'app/assets/scss' },
-            { label: 'Foundation tokens', path: 'app/assets/scss/foundation' },
-            { label: 'Component styles', path: 'app/assets/scss/components' },
-        ],
-    },
-    {
-        id: 'class-naming',
-        title: 'Class Naming Standards',
-        summary: 'Keep class names scoped, readable, and state-driven.',
-        roles: ['fe', 'design'],
-        points: [
-            'Use feature prefixes (`auth-login-*`, `guide-*`, `product-*`).',
-            'Use modifiers (`.is-active`, `.is-disabled`) for state.',
-            'Do not introduce unclear utility-like class names inside features.',
-            'Keep naming aligned with component boundaries.',
-        ],
-        code: `.auth-login-card {}
-.auth-login-card.is-loading {}
-.guide-preview-frame-wrap.is-mobile {}`,
-    },
-    {
-        id: 'quick-commands',
-        title: 'Quick Commands',
-        summary: 'Use these commands during standard development flow.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'Use dev for iteration, build for verification, and build:icons for icon updates.',
-        ],
-        commands: ['npm run dev', 'npm run build', 'npm run build:icons'],
-    },
-    {
-        id: 'web-vitals-playbook',
-        title: 'Web Vitals Playbook',
-        summary: 'Performance guardrails to keep before and after shipping.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'Primary targets: LCP <= 2.5s, CLS <= 0.10, INP <= 200ms (p75).',
-            'Track both lab (Lighthouse/CI) and field behavior (real usage).',
-            'Watch JS cost: bundle size, hydration cost, long tasks, third-party scripts.',
-            'Validate route-level behavior for home, listing, product, auth, and account screens.',
-            'Treat performance regressions as release blockers when budgets are exceeded.',
-        ],
-        code: `Perf gates:
-- LCP p75 <= 2.5s
-- CLS p75 <= 0.10
-- INP p75 <= 200ms
-- Block PR when budgets regress`,
-    },
-    {
-        id: 'common-mistakes',
-        title: 'Common Mistakes',
-        summary: 'Avoid these recurring quality regressions.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'Using one-off CSS values instead of existing tokens.',
-            'Missing `data-testid` on key interactive elements.',
-            'No visible `:focus-visible` styling for keyboard users.',
-            'Adding route-level behavior without updating guide docs.',
-        ],
-    },
-    {
-        id: 'guide-update-required',
-        title: 'Guide Update Required',
-        summary: 'When behavior or component API changes, update guide artifacts too.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'Update guide docs content and coverage map.',
-            'Update affected guide pages and examples.',
-            'Update feature components/composables references if behavior changed.',
-        ],
-        fileLinks: [
-            { label: 'Guide docs', path: 'app/data/guide/docs.ts' },
-            { label: 'Guide index map', path: 'app/data/guide/guides.ts' },
-            { label: 'Guide pages', path: 'app/pages/guide/*.vue' },
-            { label: 'Feature components', path: 'app/components/...' },
-            { label: 'Feature composables', path: 'app/composables/...' },
-        ],
-    },
-    {
-        id: 'branch-policy',
-        title: 'Branch Policy',
-        summary: 'Apply base changes in the correct branch order.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'Implement base/site-safe changes first on `site-only`.',
-            'Then merge or cherry-pick into `site-with-guide`.',
-            'Keep guide-library additions isolated to `site-with-guide`.',
-        ],
-        code: `flow:
-site-only -> merge/cherry-pick -> site-with-guide`,
-    },
-    {
-        id: 'definition-of-done',
-        title: 'Definition of Done Gate',
-        summary: 'Complete checklist + quiz before proceeding to guide work.',
-        roles: ['fe', 'qa', 'design'],
-        points: [
-            'All required checkboxes must be completed.',
-            'Quiz requires all correct answers.',
-        ],
-    },
-];
-
-const definitionOfDoneItems = ref([
-    {
-        id: 'dod-build',
-        label: 'Build and route behavior have been verified.',
-        checked: false,
-    },
-    {
-        id: 'dod-docs',
-        label: 'Guide docs/checklist updates are planned for UI behavior changes.',
-        checked: false,
-    },
-    {
-        id: 'dod-a11y',
-        label: 'A11y checks are covered (keyboard, focus, labels, contrast).',
-        checked: false,
-    },
-    {
-        id: 'dod-testid',
-        label: 'Test IDs are present for key interactive actions.',
-        checked: false,
-    },
+const activeConfig = computed(() => roleTrackConfig[selectedRole.value]);
+const activeSlides = computed(() => activeConfig.value.slides);
+const activeChecklist = computed(() => activeConfig.value.checklist);
+const activeQuiz = computed(() => activeConfig.value.quiz);
+const activeSlide = computed(() => activeSlides.value[currentSlide.value]);
+const isLastSlide = computed(() => currentSlide.value === activeSlides.value.length - 1);
+const quickStartItems = computed(() => [
+    `Select your role track (${roleLabels[selectedRole.value]}).`,
+    `Review ${activeSlides.value.length} implementation reference slide${activeSlides.value.length > 1 ? 's' : ''}.`,
+    `Complete ${activeChecklist.value.length} checklist item${activeChecklist.value.length > 1 ? 's' : ''}.`,
+    `Pass ${activeQuiz.value.length} quiz question${activeQuiz.value.length > 1 ? 's' : ''}, then proceed to guide standards.`,
 ]);
+const slideProgress = computed(() =>
+    activeSlides.value.length
+        ? Math.round(((currentSlide.value + 1) / activeSlides.value.length) * 100)
+        : 0
+);
+const allChecklistChecked = computed(() => activeChecklist.value.every((item) => checklistState[item.id]));
+const allQuizAnswered = computed(() => activeQuiz.value.every((q) => quizAnswers[q.id] !== null));
+const quizAllCorrect = computed(() => activeQuiz.value.every((q) => quizAnswers[q.id] === q.correctIndex));
+const canProceed = computed(() => allChecklistChecked.value && quizAllCorrect.value);
 
-const quizQuestions: QuizQuestion[] = [
-    {
-        id: 'q-branch-flow',
-        prompt: 'Which branch flow should be used for base changes?',
-        options: [
-            'Start in `site-only`, then merge/cherry-pick to `site-with-guide`.',
-            'Start in `site-with-guide`, then force-push to `site-only`.',
-            'Commit directly to both branches without merge flow.',
-        ],
-        correctIndex: 0,
-    },
-    {
-        id: 'q-tokens',
-        prompt: 'What should you do before adding one-off spacing/color values?',
-        options: [
-            'Check and use existing tokens first.',
-            'Add one-off values in each component as needed.',
-            'Store one-off values inside inline styles only.',
-        ],
-        correctIndex: 0,
-        roles: ['fe', 'design'],
-    },
-    {
-        id: 'q-testid',
-        prompt: 'For key interactive controls, what is required?',
-        options: [
-            'Stable `data-testid` hooks and deterministic selectors.',
-            'Only text selectors in tests.',
-            'No test hooks needed in guide-driven components.',
-        ],
-        correctIndex: 0,
-        roles: ['fe', 'qa'],
-    },
-    {
-        id: 'q-a11y',
-        prompt: 'Which focus behavior is expected?',
-        options: [
-            'Visible `:focus-visible` states for keyboard navigation.',
-            'No focus style to keep UI clean.',
-            'Mouse-only hover states are enough.',
-        ],
-        correctIndex: 0,
-    },
-    {
-        id: 'q-guide-update',
-        prompt: 'When component behavior changes, which files need guide updates?',
-        options: [
-            '`app/data/guide/docs.ts` and related guide pages/maps.',
-            'No guide files should be edited.',
-            'Only style files should be edited.',
-        ],
-        correctIndex: 0,
-    },
-];
+const onboardingDoneCookie = useCookie<string | null>(GUIDE_ONBOARDING_DONE_COOKIE, { path: '/', sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
+const onboardingAckCookie = useCookie<string | null>(GUIDE_ONBOARDING_ACK_COOKIE, { path: '/', sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
 
-const quizAnswers = ref<Record<string, number | null>>({});
+const redirectTarget = computed(() => localePath('/guide/standards'));
 
-const filteredSlides = computed(() =>
-    slides.filter((slide) => slide.roles.includes(selectedRole.value))
-);
-const filteredQuizQuestions = computed(() =>
-    quizQuestions.filter(
-        (question) =>
-            !question.roles || question.roles.includes(selectedRole.value)
-    )
-);
-const isLastSlide = computed(
-    () => currentSlide.value === filteredSlides.value.length - 1
-);
-const activeSlide = computed(() => filteredSlides.value[currentSlide.value]);
-const allChecklistChecked = computed(() =>
-    definitionOfDoneItems.value.every((item) => item.checked)
-);
-const allQuizAnswered = computed(() =>
-    filteredQuizQuestions.value.every(
-        (question) => quizAnswers.value[question.id] !== null
-    )
-);
-const quizAllCorrect = computed(() =>
-    filteredQuizQuestions.value.every(
-        (question) => quizAnswers.value[question.id] === question.correctIndex
-    )
-);
-const canProceed = computed(
-    () =>
-        isLastSlide.value &&
-        allChecklistChecked.value &&
-        quizSubmitted.value &&
-        quizAllCorrect.value
-);
-
-const onboardingCookie = useCookie<string | null>(GUIDE_ONBOARDING_COOKIE, {
-    path: '/',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 365,
-});
-
-const redirectTarget = computed(() => {
-    const redirect = route.query.redirect;
-    const redirectValue = Array.isArray(redirect) ? redirect[0] : redirect;
-
-    if (typeof redirectValue === 'string' && redirectValue.includes('/guide')) {
-        return redirectValue;
+function resetTrackState() {
+    for (const key of Object.keys(checklistState)) {
+        delete checklistState[key];
     }
-
-    return localePath('/guide/standards');
-});
-
-function initQuizAnswers() {
-    const next: Record<string, number | null> = {};
-    for (const question of filteredQuizQuestions.value) {
-        next[question.id] = null;
+    for (const item of activeChecklist.value) {
+        checklistState[item.id] = false;
     }
-    quizAnswers.value = next;
+    for (const key of Object.keys(quizAnswers)) {
+        delete quizAnswers[key];
+    }
+    for (const item of activeQuiz.value) {
+        quizAnswers[item.id] = null;
+    }
     quizSubmitted.value = false;
 }
 
@@ -353,21 +237,9 @@ async function copyPath(path: string) {
         await copyTextToClipboard(path);
         copiedPath.value = path;
         setTimeout(() => {
-            if (copiedPath.value === path) {
-                copiedPath.value = '';
-            }
+            if (copiedPath.value === path) copiedPath.value = '';
         }, 1200);
     } catch {}
-}
-
-function nextSlide() {
-    if (isLastSlide.value) return;
-    currentSlide.value += 1;
-}
-
-function previousSlide() {
-    if (currentSlide.value <= 0) return;
-    currentSlide.value -= 1;
 }
 
 function submitQuiz() {
@@ -375,214 +247,267 @@ function submitQuiz() {
     quizSubmitted.value = true;
 }
 
-function retryQuiz() {
-    initQuizAnswers();
+async function startTrack() {
+    await nextTick();
+    detailStartRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function resetOnboarding() {
-    onboardingCookie.value = null;
+    onboardingDoneCookie.value = null;
+    onboardingAckCookie.value = null;
     selectedRole.value = 'fe';
     currentSlide.value = 0;
-    copiedPath.value = '';
     isSubmitting.value = false;
-    for (const item of definitionOfDoneItems.value) {
-        item.checked = false;
-    }
-    initQuizAnswers();
+    copiedPath.value = '';
+    resetTrackState();
 }
 
-function proceedToGuide() {
-    if (!canProceed.value) return;
+async function proceedToGuide() {
+    if (!canProceed.value || isSubmitting.value) return;
     isSubmitting.value = true;
-    onboardingCookie.value = '1';
-    navigateTo(redirectTarget.value);
+    onboardingDoneCookie.value = '1';
+    onboardingAckCookie.value = GUIDE_ONBOARDING_VERSION;
+
+    if (import.meta.client) {
+        // Ensure cookies are written synchronously for middleware on hard navigation.
+        document.cookie = `${GUIDE_ONBOARDING_DONE_COOKIE}=1; Path=/; SameSite=Lax`;
+        document.cookie = `${GUIDE_ONBOARDING_ACK_COOKIE}=${encodeURIComponent(
+            GUIDE_ONBOARDING_VERSION
+        )}; Path=/; SameSite=Lax`;
+        await nextTick();
+
+        // Force a real navigation so middleware reads fresh cookies on next request.
+        window.location.assign(redirectTarget.value);
+        return;
+    }
+
+    navigateTo(redirectTarget.value).catch(() => {
+        isSubmitting.value = false;
+    });
 }
 
 watch(selectedRole, () => {
     currentSlide.value = 0;
-    initQuizAnswers();
+    copiedPath.value = '';
+    resetTrackState();
 });
-
-initQuizAnswers();
+resetTrackState();
 </script>
 
 <template>
-    <section class="guide-onboarding">
+    <section class="guide-onboarding" data-testid="guide-onboarding-page">
         <div class="guide-onboarding-card">
-            <div class="guide-onboarding-head">
-                <p class="guide-onboarding-kicker">Guide Onboarding</p>
-                <p v-if="currentSlide === 0" class="guide-onboarding-meta">
-                    {{ ONBOARDING_VERSION }} | Updated {{ ONBOARDING_LAST_UPDATED }}
+            <header class="guide-onboarding-head">
+                <div>
+                    <p class="guide-onboarding-kicker">Guide Onboarding</p>
+                    <p class="guide-onboarding-meta">
+                        {{ GUIDE_ONBOARDING_VERSION }} | Updated {{ ONBOARDING_LAST_UPDATED }}
+                    </p>
+                </div>
+
+                <div class="guide-onboarding-role-wrap">
+                    <p class="guide-onboarding-label">Role Track</p>
+                    <UiSelect
+                        v-model="selectedRole"
+                        class="guide-onboarding-role-select"
+                        :options="roleOptions"
+                        placeholder="Select role track"
+                        data-testid="guide-onboarding-role-select"
+                    />
+                </div>
+            </header>
+
+            <section class="guide-onboarding-welcome">
+                <p class="guide-onboarding-welcome-kicker">Welcome</p>
+                <h2 class="guide-onboarding-welcome-title">
+                    Start With A Guided {{ roleLabels[selectedRole] }} Track
+                </h2>
+                <p class="guide-onboarding-summary">
+                    This onboarding helps you verify real implementation behavior before you dive
+                    into the full guide. You will complete role-specific checks and a short quiz.
                 </p>
-            </div>
 
-            <div class="guide-onboarding-role">
-                <p class="guide-onboarding-label">Role Track</p>
-                <select
-                    v-model="selectedRole"
-                    class="guide-onboarding-role-select"
-                    aria-label="Role track"
+                <div class="guide-onboarding-welcome-steps">
+                    <article class="guide-onboarding-welcome-step">
+                        <p class="guide-onboarding-welcome-step-index">01</p>
+                        <p class="guide-onboarding-welcome-step-copy">Review implementation-backed claims.</p>
+                    </article>
+                    <article class="guide-onboarding-welcome-step">
+                        <p class="guide-onboarding-welcome-step-index">02</p>
+                        <p class="guide-onboarding-welcome-step-copy">Validate checklist items for your role.</p>
+                    </article>
+                    <article class="guide-onboarding-welcome-step">
+                        <p class="guide-onboarding-welcome-step-index">03</p>
+                        <p class="guide-onboarding-welcome-step-copy">Pass the quiz gate, then continue to standards.</p>
+                    </article>
+                </div>
+
+            </section>
+
+            <section class="guide-onboarding-quickstart">
+                <h2 class="guide-onboarding-section-title">Quick Start</h2>
+                <p class="guide-onboarding-summary">
+                    Complete these actions in order.
+                </p>
+                <ol class="guide-onboarding-quickstart-list">
+                    <li v-for="(item, index) in quickStartItems" :key="item" class="guide-onboarding-quickstart-item">
+                        <span class="guide-onboarding-quickstart-index">{{ index + 1 }}</span>
+                        <span>{{ item }}</span>
+                    </li>
+                </ol>
+                <button
+                    type="button"
+                    class="guide-onboarding-btn"
+                    data-testid="guide-onboarding-start-track"
+                    @click="startTrack"
                 >
-                    <option value="fe">Frontend</option>
-                    <option value="qa">QA</option>
-                    <option value="design">Design</option>
-                </select>
-            </div>
+                    Open {{ roleLabels[selectedRole] }} Implementation Reference
+                </button>
+            </section>
 
-            <p class="guide-onboarding-step">
-                Slide {{ currentSlide + 1 }} / {{ filteredSlides.length }}
-            </p>
-            <h1 class="guide-onboarding-title">{{ activeSlide.title }}</h1>
-            <p class="guide-onboarding-summary">{{ activeSlide.summary }}</p>
+            <section class="guide-onboarding-ref-head">
+                <p class="guide-onboarding-ref-kicker">Implementation Reference</p>
+                <h2 class="guide-onboarding-section-title">Source-Backed Claims and Validation</h2>
+            </section>
 
-            <ul class="guide-onboarding-list">
-                <li v-for="point in activeSlide.points" :key="point">
-                    {{ point }}
+            <section ref="detailStartRef" class="guide-onboarding-hero">
+                <div class="guide-onboarding-progress-row">
+                    <p class="guide-onboarding-step">Slide {{ currentSlide + 1 }} / {{ activeSlides.length }}</p>
+                    <p class="guide-onboarding-step">{{ slideProgress }}% complete</p>
+                </div>
+                <div class="guide-onboarding-progress-track" aria-hidden="true">
+                    <span class="guide-onboarding-progress-fill" :style="{ width: `${slideProgress}%` }" />
+                </div>
+                <h1 class="guide-onboarding-title">{{ activeSlide.title }}</h1>
+                <p class="guide-onboarding-summary">{{ activeSlide.summary }}</p>
+            </section>
+
+            <ul class="guide-onboarding-claims">
+                <li
+                    v-for="(claim, claimIndex) in activeSlide.claims"
+                    :key="`${activeSlide.id}-${claimIndex}`"
+                    class="guide-onboarding-claim"
+                >
+                    <p class="guide-onboarding-claim-text">{{ claim.text }}</p>
+                    <button
+                        v-for="source in claim.sources"
+                        :key="source.path"
+                        type="button"
+                        class="guide-onboarding-source-btn"
+                        :data-testid="`guide-onboarding-source-${claimIndex}`"
+                        @click="copyPath(source.path)"
+                    >
+                        <span class="guide-onboarding-source-label">{{ source.label }}</span>
+                        <code class="guide-onboarding-source-path">{{ source.path }}</code>
+                        <span v-if="copiedPath === source.path" class="guide-onboarding-source-copied">Copied</span>
+                    </button>
                 </li>
             </ul>
 
-            <div v-if="activeSlide.fileLinks?.length" class="guide-onboarding-links">
-                <p class="guide-onboarding-label">File References</p>
-                <button
-                    v-for="link in activeSlide.fileLinks"
-                    :key="link.path"
-                    type="button"
-                    class="guide-onboarding-link"
-                    @click="copyPath(link.path)"
-                >
-                    <span class="guide-onboarding-link-title">{{ link.label }}</span>
-                    <code class="guide-onboarding-link-path">{{ link.path }}</code>
-                    <span v-if="copiedPath === link.path" class="guide-onboarding-link-copied">
-                        Copied
-                    </span>
-                </button>
-            </div>
-
-            <div v-if="activeSlide.commands?.length" class="guide-onboarding-commands">
-                <p class="guide-onboarding-label">Quick Commands</p>
-                <pre class="guide-onboarding-code"><code>{{ activeSlide.commands.join('\n') }}</code></pre>
-            </div>
-
+            <pre v-if="activeSlide.commands?.length" class="guide-onboarding-code"><code>{{ activeSlide.commands.join('\n') }}</code></pre>
             <pre v-else-if="activeSlide.code" class="guide-onboarding-code"><code>{{ activeSlide.code }}</code></pre>
 
             <div class="guide-onboarding-nav">
                 <button
                     type="button"
-                    class="guide-onboarding-button guide-onboarding-button-secondary"
+                    class="guide-onboarding-btn guide-onboarding-btn-secondary"
                     :disabled="currentSlide === 0"
-                    @click="previousSlide"
+                    data-testid="guide-onboarding-prev"
+                    @click="currentSlide -= 1"
                 >
                     Previous
                 </button>
-
-                <div class="guide-onboarding-dots" aria-hidden="true">
-                    <span
-                        v-for="(_, index) in filteredSlides"
-                        :key="index"
-                        class="guide-onboarding-dot"
-                        :class="{ 'is-active': index === currentSlide }"
-                    />
-                </div>
-
                 <button
                     type="button"
-                    class="guide-onboarding-button"
+                    class="guide-onboarding-btn"
                     :disabled="isLastSlide"
-                    @click="nextSlide"
+                    data-testid="guide-onboarding-next"
+                    @click="currentSlide += 1"
                 >
                     Next
                 </button>
             </div>
 
-            <div v-if="isLastSlide" class="guide-onboarding-gate">
-                <section class="guide-onboarding-gate-section">
-                    <h2 class="guide-onboarding-gate-title">Definition of Done Checklist</h2>
+            <div class="guide-onboarding-gate">
+                <h2 class="guide-onboarding-section-title">Definition of Done Checklist</h2>
+                <label v-for="item in activeChecklist" :key="item.id" class="guide-onboarding-check">
+                    <input
+                        v-model="checklistState[item.id]"
+                        type="checkbox"
+                        :data-testid="`guide-onboarding-check-${item.id}`"
+                    >
+                    <span>{{ item.label }}</span>
+                </label>
+
+                <h2 class="guide-onboarding-section-title">Quiz Gate</h2>
+                <div
+                    v-for="question in activeQuiz"
+                    :key="question.id"
+                    class="guide-onboarding-quiz-item"
+                    :data-testid="`guide-onboarding-quiz-${question.id}`"
+                >
+                    <p class="guide-onboarding-quiz-prompt">{{ question.prompt }}</p>
                     <label
-                        v-for="item in definitionOfDoneItems"
-                        :key="item.id"
-                        class="guide-onboarding-check"
+                        v-for="(option, optionIndex) in question.options"
+                        :key="`${question.id}-${optionIndex}`"
+                        class="guide-onboarding-quiz-option"
                     >
-                        <input v-model="item.checked" type="checkbox" />
-                        <span>{{ item.label }}</span>
+                        <input
+                            v-model="quizAnswers[question.id]"
+                            type="radio"
+                            :name="question.id"
+                            :value="optionIndex"
+                            :data-testid="`guide-onboarding-quiz-${question.id}-option-${optionIndex}`"
+                        >
+                        <span>{{ option }}</span>
                     </label>
-                </section>
-
-                <section class="guide-onboarding-gate-section">
-                    <h2 class="guide-onboarding-gate-title">Quiz Gate</h2>
-                    <div
-                        v-for="question in filteredQuizQuestions"
-                        :key="question.id"
-                        class="guide-onboarding-quiz-item"
+                </div>
+                <div class="guide-onboarding-quiz-actions">
+                    <button
+                        type="button"
+                        class="guide-onboarding-btn guide-onboarding-btn-secondary"
+                        :disabled="!allQuizAnswered"
+                        data-testid="guide-onboarding-quiz-submit"
+                        @click="submitQuiz"
                     >
-                        <p class="guide-onboarding-quiz-prompt">{{ question.prompt }}</p>
-                        <label
-                            v-for="(option, optionIndex) in question.options"
-                            :key="`${question.id}-${optionIndex}`"
-                            class="guide-onboarding-quiz-option"
-                        >
-                            <input
-                                v-model="quizAnswers[question.id]"
-                                type="radio"
-                                :name="question.id"
-                                :value="optionIndex"
-                            />
-                            <span>{{ option }}</span>
-                        </label>
-                        <p
-                            v-if="quizSubmitted"
-                            class="guide-onboarding-quiz-feedback"
-                            :class="{
-                                'is-correct': quizAnswers[question.id] === question.correctIndex,
-                                'is-wrong': quizAnswers[question.id] !== question.correctIndex,
-                            }"
-                        >
-                            {{
-                                quizAnswers[question.id] === question.correctIndex
-                                    ? 'Correct'
-                                    : 'Incorrect'
-                            }}
-                        </p>
-                    </div>
-
-                    <div class="guide-onboarding-quiz-actions">
-                        <button
-                            type="button"
-                            class="guide-onboarding-button guide-onboarding-button-secondary"
-                            :disabled="!allQuizAnswered"
-                            @click="submitQuiz"
-                        >
-                            Submit Quiz
-                        </button>
-                        <button
-                            type="button"
-                            class="guide-onboarding-button guide-onboarding-button-secondary"
-                            @click="retryQuiz"
-                        >
-                            Retry Quiz
-                        </button>
-                        <p
-                            v-if="quizSubmitted"
-                            class="guide-onboarding-quiz-result"
-                            :class="{ 'is-pass': quizAllCorrect, 'is-fail': !quizAllCorrect }"
-                        >
-                            {{ quizAllCorrect ? 'Quiz passed.' : 'Quiz not passed.' }}
-                        </p>
-                    </div>
-                </section>
+                        Submit Quiz
+                    </button>
+                    <button
+                        type="button"
+                        class="guide-onboarding-btn guide-onboarding-btn-secondary"
+                        data-testid="guide-onboarding-quiz-retry"
+                        @click="resetTrackState"
+                    >
+                        Retry Quiz
+                    </button>
+                    <p v-if="quizSubmitted" class="guide-onboarding-quiz-result">
+                        {{ quizAllCorrect ? 'Quiz passed.' : 'Quiz not passed.' }}
+                    </p>
+                </div>
             </div>
+
+            <section class="guide-onboarding-roadmap">
+                <h2 class="guide-onboarding-section-title">Roadmap (Not Yet Shipped)</h2>
+                <p class="guide-onboarding-summary">Informational only. These do not block onboarding completion.</p>
+                <ul class="guide-onboarding-roadmap-list">
+                    <li v-for="item in ROADMAP_ITEMS" :key="item">{{ item }}</li>
+                </ul>
+            </section>
 
             <div class="guide-onboarding-actions">
                 <button
                     type="button"
-                    class="guide-onboarding-button"
+                    class="guide-onboarding-btn"
                     :disabled="!canProceed || isSubmitting"
+                    data-testid="guide-onboarding-proceed"
                     @click="proceedToGuide"
                 >
                     Proceed to Guide
                 </button>
                 <button
                     type="button"
-                    class="guide-onboarding-button guide-onboarding-button-secondary"
+                    class="guide-onboarding-btn guide-onboarding-btn-secondary"
+                    data-testid="guide-onboarding-reset"
                     @click="resetOnboarding"
                 >
                     Reset Onboarding
@@ -594,316 +519,422 @@ initQuizAnswers();
 
 <style scoped lang="scss">
 .guide-onboarding {
+    --onboarding-glass: color-mix(in srgb, var(--bg-surface) 90%, transparent);
     min-height: 100vh;
     display: grid;
     place-items: center;
-    padding: 32px 20px;
-    background:
-        radial-gradient(
-            circle at 8% 8%,
-            color-mix(in srgb, var(--brand-secondary) 14%, transparent),
-            transparent 44%
-        ),
-        radial-gradient(
-            circle at 92% 92%,
-            color-mix(in srgb, var(--brand-primary) 10%, transparent),
-            transparent 46%
-        ),
-        var(--bg-primary);
+    padding: 36px 18px;
+    background: var(--bg-primary);
 }
 
 .guide-onboarding-card {
-    width: min(860px, 100%);
-    border: 1px solid var(--border-default);
-    border-radius: 18px;
-    padding: 26px;
-    background: var(--bg-surface);
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.16);
+    width: min(920px, 100%);
+    border: 1px solid color-mix(in srgb, var(--border-default) 78%, var(--brand-primary));
+    border-radius: 22px;
+    padding: 28px;
+    background: var(--onboarding-glass);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 14px 42px color-mix(in srgb, var(--gray-100) 12%, transparent);
+    display: grid;
+    gap: 18px;
+    animation: onboarding-fade-in 220ms ease-out;
 }
 
 .guide-onboarding-head {
     display: flex;
-    align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
+    align-items: end;
 }
 
 .guide-onboarding-kicker {
     margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
     font-size: 12px;
-    line-height: 18px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--text-secondary);
+    font-weight: 600;
 }
 
 .guide-onboarding-meta {
-    margin: 0;
-    font-size: 12px;
-    line-height: 18px;
+    margin: 4px 0 0;
+    font-size: 13px;
     color: var(--text-muted);
 }
 
-.guide-onboarding-role {
-    margin-top: 14px;
+.guide-onboarding-role-wrap {
+    min-width: 220px;
 }
 
 .guide-onboarding-label {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
+    display: inline-block;
     font-size: 12px;
-    line-height: 18px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
 
 .guide-onboarding-role-select {
-    min-width: 180px;
+    :deep(.ui-select-trigger) {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid var(--border-default);
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: var(--bg-surface);
+        color: var(--text-primary);
+        font-size: 15px;
+    }
+
+    :deep(.ui-select-menu) {
+        margin-top: 6px;
+        border: 1px solid var(--border-default);
+        border-radius: 10px;
+        background: var(--bg-surface);
+    }
+}
+
+.guide-onboarding-hero {
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 16px;
+    background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+    display: grid;
+    gap: 10px;
+}
+
+.guide-onboarding-welcome {
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 16px;
+    background: color-mix(in srgb, var(--bg-surface) 78%, transparent);
+    display: grid;
+    gap: 12px;
+}
+
+.guide-onboarding-quickstart,
+.guide-onboarding-ref-head {
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 14px;
+    background: var(--bg-surface);
+    display: grid;
+    gap: 10px;
+}
+
+.guide-onboarding-quickstart-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.guide-onboarding-quickstart-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-primary);
+    line-height: 1.45;
+}
+
+.guide-onboarding-quickstart-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    border: 1px solid var(--border-default);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.guide-onboarding-ref-kicker {
+    margin: 0;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+.guide-onboarding-welcome-kicker {
+    margin: 0;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+.guide-onboarding-welcome-title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.guide-onboarding-welcome-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.guide-onboarding-welcome-step {
     border: 1px solid var(--border-default);
     border-radius: 10px;
+    padding: 10px;
     background: var(--bg-surface);
+    display: grid;
+    gap: 4px;
+}
+
+.guide-onboarding-welcome-step-index {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.guide-onboarding-welcome-step-copy {
+    margin: 0;
+    font-size: 14px;
     color: var(--text-primary);
-    padding: 8px 36px 8px 12px;
-    font-size: 13px;
-    line-height: 20px;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' fill='none' stroke='%23334155' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 12px 12px;
+    line-height: 1.4;
+}
+
+.guide-onboarding-progress-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .guide-onboarding-step {
-    margin: 14px 0 0;
+    margin: 0;
     font-size: 12px;
-    line-height: 18px;
-    color: var(--text-muted);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.guide-onboarding-progress-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--border-default) 75%, transparent);
+    overflow: hidden;
+}
+
+.guide-onboarding-progress-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--text-primary);
+    transition: width 180ms ease-out;
 }
 
 .guide-onboarding-title {
-    margin: 8px 0 10px;
-    font-size: 30px;
-    line-height: 38px;
+    margin: 4px 0 0;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.02em;
     color: var(--text-primary);
 }
 
 .guide-onboarding-summary {
     margin: 0;
-    font-size: 15px;
-    line-height: 24px;
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--text-secondary);
 }
 
-.guide-onboarding-list {
-    margin: 16px 0 0;
-    padding-left: 20px;
+.guide-onboarding-claims {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+}
+
+.guide-onboarding-claim {
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--bg-surface);
     display: grid;
     gap: 8px;
-    font-size: 14px;
-    line-height: 24px;
+}
+
+.guide-onboarding-claim-text {
+    margin: 0;
     color: var(--text-primary);
+    font-size: 15px;
 }
 
-.guide-onboarding-links {
-    margin-top: 14px;
-}
-
-.guide-onboarding-link {
+.guide-onboarding-source-btn {
     width: 100%;
     text-align: left;
     border: 1px solid var(--border-default);
-    border-radius: 10px;
-    background: var(--bg-surface);
+    border-radius: 8px;
     padding: 10px 12px;
+    background: color-mix(in srgb, var(--bg-surface) 84%, var(--gray-10));
     display: grid;
-    gap: 2px;
+    gap: 3px;
     cursor: pointer;
+    transition: border-color 140ms ease, transform 140ms ease, background-color 140ms ease;
 }
 
-.guide-onboarding-link + .guide-onboarding-link {
-    margin-top: 8px;
+.guide-onboarding-source-btn:hover {
+    border-color: color-mix(in srgb, var(--brand-primary) 40%, var(--border-default));
+    background: color-mix(in srgb, var(--bg-surface) 90%, var(--brand-primary) 8%);
+    transform: translateY(-1px);
 }
 
-.guide-onboarding-link-title {
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-.guide-onboarding-link-path {
-    font-size: 12px;
+.guide-onboarding-source-label {
+    font-size: 13px;
+    font-weight: 600;
     color: var(--text-primary);
 }
 
-.guide-onboarding-link-copied {
+.guide-onboarding-source-path {
+    font-size: 12px;
+    color: var(--text-secondary);
+    word-break: break-all;
+}
+
+.guide-onboarding-source-copied {
     font-size: 11px;
-    color: #16a34a;
+    color: var(--success);
+    font-weight: 600;
 }
 
 .guide-onboarding-code {
-    margin: 16px 0 0;
-    border: 1px solid var(--border-default);
+    margin: 0;
+    border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, var(--border-default));
     border-radius: 12px;
-    background: #0f172a;
-    color: #e2e8f0;
-    padding: 12px;
-    font-size: 12px;
-    line-height: 18px;
+    padding: 10px 12px;
+    background: #0b1020;
+    color: #e5ecff;
     overflow-x: auto;
+    font-size: 12px;
 }
 
-.guide-onboarding-nav {
-    margin-top: 18px;
+.guide-onboarding-nav,
+.guide-onboarding-actions,
+.guide-onboarding-quiz-actions {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.guide-onboarding-btn {
+    border: 1px solid var(--border-default);
+    border-radius: 9px;
+    padding: 9px 13px;
+    background: var(--text-primary);
+    color: var(--bg-surface);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 120ms ease, filter 120ms ease;
+}
+
+.guide-onboarding-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+.guide-onboarding-btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+.guide-onboarding-gate,
+.guide-onboarding-roadmap {
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 14px;
+    background: var(--bg-surface);
+    display: grid;
     gap: 10px;
 }
 
-.guide-onboarding-dots {
-    display: inline-flex;
-    align-items: center;
+.guide-onboarding-section-title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.guide-onboarding-check,
+.guide-onboarding-quiz-option {
+    display: flex;
+    align-items: start;
+    gap: 8px;
+    color: var(--text-primary);
+    line-height: 1.45;
+}
+
+.guide-onboarding-quiz-item {
+    border-top: 1px dashed color-mix(in srgb, var(--border-default) 80%, transparent);
+    padding-top: 10px;
+    display: grid;
     gap: 6px;
 }
 
-.guide-onboarding-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--text-muted) 34%, transparent);
-}
-
-.guide-onboarding-dot.is-active {
-    background: var(--brand-secondary);
-}
-
-.guide-onboarding-gate {
-    margin-top: 20px;
-    border-top: 1px solid var(--border-default);
-    padding-top: 16px;
-    display: grid;
-    gap: 16px;
-}
-
-.guide-onboarding-gate-section {
-    border: 1px solid var(--border-default);
-    border-radius: 12px;
-    padding: 12px;
-    background: color-mix(in srgb, var(--bg-surface) 94%, var(--gray-20));
-}
-
-.guide-onboarding-gate-title {
-    margin: 0 0 10px;
-    font-size: 16px;
-    line-height: 28px;
-    color: var(--text-primary);
-}
-
-.guide-onboarding-check {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 14px;
-    line-height: 22px;
-    color: var(--text-primary);
-}
-
-.guide-onboarding-check + .guide-onboarding-check {
-    margin-top: 8px;
-}
-
-.guide-onboarding-quiz-item + .guide-onboarding-quiz-item {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border-default);
+.guide-onboarding-quiz-item:first-of-type {
+    border-top: 0;
+    padding-top: 0;
 }
 
 .guide-onboarding-quiz-prompt {
-    margin: 0 0 8px;
-    font-size: 14px;
-    line-height: 22px;
+    margin: 0;
+    font-size: 15px;
     color: var(--text-primary);
     font-weight: 600;
-}
-
-.guide-onboarding-quiz-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    line-height: 20px;
-    color: var(--text-secondary);
-}
-
-.guide-onboarding-quiz-option + .guide-onboarding-quiz-option {
-    margin-top: 6px;
-}
-
-.guide-onboarding-quiz-feedback {
-    margin: 8px 0 0;
-    font-size: 12px;
-    line-height: 18px;
-}
-
-.guide-onboarding-quiz-feedback.is-correct {
-    color: #16a34a;
-}
-
-.guide-onboarding-quiz-feedback.is-wrong {
-    color: #dc2626;
-}
-
-.guide-onboarding-quiz-actions {
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
 }
 
 .guide-onboarding-quiz-result {
-    margin: 0 0 0 2px;
-    font-size: 12px;
-    line-height: 18px;
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
 }
 
-.guide-onboarding-quiz-result.is-pass {
-    color: #16a34a;
+.guide-onboarding-roadmap-list {
+    margin: 0;
+    padding-left: 16px;
+    display: grid;
+    gap: 4px;
 }
 
-.guide-onboarding-quiz-result.is-fail {
-    color: #dc2626;
-}
-
-.guide-onboarding-actions {
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.guide-onboarding-button {
-    border: 1px solid color-mix(in srgb, var(--brand-secondary) 40%, var(--border-default));
-    border-radius: 10px;
-    background: var(--brand-secondary);
-    color: var(--contrast-light);
-    padding: 10px 16px;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.guide-onboarding-button:disabled {
-    opacity: 0.45;
+button:disabled {
+    opacity: 0.46;
     cursor: not-allowed;
+    transform: none;
+    filter: none;
 }
 
-.guide-onboarding-button-secondary {
-    background: transparent;
-    color: var(--text-primary);
+@keyframes onboarding-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 820px) {
+    .guide-onboarding-card {
+        padding: 20px;
+    }
+
+    .guide-onboarding-welcome-steps {
+        grid-template-columns: 1fr;
+    }
 }
 </style>

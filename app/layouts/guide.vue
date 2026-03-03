@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { guides } from '@/data/guide/guides';
 import { guideDocs } from '@/data/guide/docs';
 import GuideCopy from '@/components/guide/GuideCopy.vue';
+import GuideCommandList from '@/components/guide/GuideCommandList.vue';
 import GuidePlaygroundControls from '@/components/guide/GuidePlaygroundControls.vue';
 
 const route = useRoute();
@@ -183,6 +184,52 @@ const snippetsForDoc = computed(() => {
     ];
 });
 const usedInReferences = computed(() => currentGuideItem.value?.usedIn ?? []);
+const orderedDocSections = computed(() => {
+    const sections = currentDoc.value?.sections ?? [];
+    const sectionOrder = [
+        'what it covers',
+        'what this covers',
+        'usage',
+        'system description',
+        'when to use',
+        'variants',
+        'tokens',
+        'guidelines',
+        'interaction',
+        'behavior',
+        'accessibility',
+        'accessibility baseline (required)',
+        'qa',
+        'qa assertions',
+        'test id naming',
+        'test hooks',
+        'verification',
+        'recommended practices',
+        'recommended conventions',
+        'contribution workflow',
+    ];
+    const rankByTitle = new Map(sectionOrder.map((title, index) => [title, index]));
+
+    return [...sections].sort((a, b) => {
+        const aRank = rankByTitle.get(a.title.toLowerCase()) ?? Number.MAX_SAFE_INTEGER;
+        const bRank = rankByTitle.get(b.title.toLowerCase()) ?? Number.MAX_SAFE_INTEGER;
+        if (aRank !== bRank) return aRank - bRank;
+        return a.title.localeCompare(b.title);
+    });
+});
+const defaultSectionSources = computed(() =>
+    usedInReferences.value.slice(0, 3).map((ref) => ({
+        label: ref.label,
+        path: toFileLink(ref.path, ref.line),
+    }))
+);
+const sectionSources = (section: { sources?: Array<{ label: string; path: string; line?: number }> }) =>
+    section.sources?.length
+        ? section.sources.map((source) => ({
+              label: source.label,
+              path: toFileLink(source.path, source.line),
+          }))
+        : defaultSectionSources.value;
 const changelogEntries = computed(() =>
     (currentDoc.value?.changelog ?? []).map((entry, index) => ({
         ...entry,
@@ -196,7 +243,24 @@ const changelogEntries = computed(() =>
                   })),
     }))
 );
+const defaultPlaygroundConfig = {
+    supportsSize: true,
+    supportsTone: true,
+    supportsState: true,
+    defaultSize: 'md',
+    defaultTone: 'neutral',
+    defaultState: 'default',
+};
 const currentPlaygroundConfig = computed(() => currentDoc.value?.playground ?? null);
+const resolvedPlaygroundConfig = computed(() => currentPlaygroundConfig.value ?? defaultPlaygroundConfig);
+const reviewDueState = computed(() => {
+    const reviewDueAt = currentGuideItem.value?.reviewDueAt;
+    if (!reviewDueAt) return 'missing';
+    const dueDate = new Date(reviewDueAt);
+    if (Number.isNaN(dueDate.getTime())) return 'missing';
+    return dueDate < new Date() ? 'overdue' : 'current';
+});
+const hasGuideOwner = computed(() => Boolean(currentGuideItem.value?.owner?.name));
 const previewFrameStyle = computed(() => {
     const sizeScale =
         playgroundState.value.size === 'sm'
@@ -493,13 +557,11 @@ watch(
 );
 
 onMounted(() => {
-    if (currentPlaygroundConfig.value) {
-        playgroundState.value = {
-            size: currentPlaygroundConfig.value.defaultSize ?? 'md',
-            tone: currentPlaygroundConfig.value.defaultTone ?? 'neutral',
-            state: currentPlaygroundConfig.value.defaultState ?? 'default',
-        };
-    }
+    playgroundState.value = {
+        size: resolvedPlaygroundConfig.value.defaultSize ?? 'md',
+        tone: resolvedPlaygroundConfig.value.defaultTone ?? 'neutral',
+        state: resolvedPlaygroundConfig.value.defaultState ?? 'default',
+    };
 
     document.addEventListener('keydown', onGuideShortcut);
     window.addEventListener('keydown', onGuideShortcut);
@@ -514,13 +576,11 @@ onBeforeUnmount(() => {
 watch([guidePath, viewMode, previewFrame], async () => {
     await nextTick();
     const config = currentPlaygroundConfig.value;
-    if (config) {
-        playgroundState.value = {
-            size: config.defaultSize ?? 'md',
-            tone: config.defaultTone ?? 'neutral',
-            state: config.defaultState ?? 'default',
-        };
-    }
+    playgroundState.value = {
+        size: (config?.defaultSize ?? resolvedPlaygroundConfig.value.defaultSize) ?? 'md',
+        tone: (config?.defaultTone ?? resolvedPlaygroundConfig.value.defaultTone) ?? 'neutral',
+        state: (config?.defaultState ?? resolvedPlaygroundConfig.value.defaultState) ?? 'default',
+    };
     runA11yQuickChecks();
 });
 </script>
@@ -709,15 +769,15 @@ watch([guidePath, viewMode, previewFrame], async () => {
                             type="button"
                             class="guide-preview-frame-toggle"
                             :class="{ 'is-active': previewFrame === frame }"
+                            :data-testid="`guide-preview-frame-${frame}`"
                             @click="previewFrame = frame"
                         >
                             {{ frame }}
                         </button>
                     </div>
                     <GuidePlaygroundControls
-                        v-if="currentPlaygroundConfig"
                         v-model="playgroundState"
-                        :config="currentPlaygroundConfig"
+                        :config="resolvedPlaygroundConfig"
                     />
                     <div class="guide-preview-checks">
                         <UiBadge
@@ -736,6 +796,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     :class="`is-${previewFrame}`"
                     :data-tone="playgroundState.tone"
                     :data-state="playgroundState.state"
+                    :data-testid="`guide-preview-frame-wrap-${guidePath.replace(/[^a-z0-9]+/gi, '-')}`"
                     :style="previewFrameStyle"
                 >
                     <NuxtPage />
@@ -783,6 +844,22 @@ watch([guidePath, viewMode, previewFrame], async () => {
                             </template>
                             <template v-if="currentDocLastUpdated">
                                 on {{ currentDocLastUpdated }}
+                            </template>
+                        </span>
+                    </p>
+                    <p class="guide-docs-meta guide-docs-governance-meta">
+                        <span class="guide-docs-governance-chip" :class="`is-${hasGuideOwner ? 'pass' : 'fail'}`">
+                            {{ hasGuideOwner ? 'Owner assigned' : 'Owner missing' }}
+                        </span>
+                        <span class="guide-docs-governance-chip" :class="`is-${reviewDueState}`">
+                            <template v-if="reviewDueState === 'current'">
+                                Review due {{ currentGuideItem?.reviewDueAt }}
+                            </template>
+                            <template v-else-if="reviewDueState === 'overdue'">
+                                Review overdue {{ currentGuideItem?.reviewDueAt }}
+                            </template>
+                            <template v-else>
+                                Review due date missing
                             </template>
                         </span>
                     </p>
@@ -917,12 +994,15 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-for="section in currentDoc.sections"
+                    v-for="section in orderedDocSections"
                     :key="section.title"
                     class="guide-docs-section"
                     :id="`doc-${toAnchorId(section.title)}`"
                 >
-                    <h2 class="guide-docs-section-title">{{ section.title }}</h2>
+                    <div class="guide-docs-section-head">
+                        <h2 class="guide-docs-section-title">{{ section.title }}</h2>
+                        <span class="guide-docs-verified-chip">Verified against source</span>
+                    </div>
                     <ul class="guide-docs-list">
                         <li
                             v-for="point in section.points"
@@ -932,6 +1012,18 @@ watch([guidePath, viewMode, previewFrame], async () => {
                             {{ point }}
                         </li>
                     </ul>
+                    <div v-if="sectionSources(section).length" class="guide-docs-section-sources">
+                        <div
+                            v-for="source in sectionSources(section)"
+                            :key="`${section.title}-${source.path}`"
+                            class="guide-docs-related-link"
+                        >
+                            <span>{{ source.label }}</span>
+                            <GuideCopy :text="source.path">
+                                <code>{{ source.path }}</code>
+                            </GuideCopy>
+                        </div>
+                    </div>
                 </section>
 
                 <section
@@ -1100,6 +1192,18 @@ watch([guidePath, viewMode, previewFrame], async () => {
                             </GuideCopy>
                         </div>
                     </div>
+                </section>
+
+                <section
+                    v-if="currentDoc.runCommands?.length"
+                    class="guide-docs-section"
+                    id="doc-run-commands"
+                >
+                    <h2 class="guide-docs-section-title">Run Commands</h2>
+                    <GuideCommandList
+                        :commands="currentDoc.runCommands"
+                        testid-prefix="guide-doc-command"
+                    />
                 </section>
 
                 <section
@@ -1499,6 +1603,35 @@ watch([guidePath, viewMode, previewFrame], async () => {
     color: var(--text-muted);
     font-size: 13px;
     line-height: 20px;
+}
+
+.guide-docs-governance-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.guide-docs-governance-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    border: 1px solid var(--border-default);
+    background: color-mix(in srgb, var(--gray-20) 70%, var(--contrast-light));
+
+    &.is-pass,
+    &.is-current {
+        background: color-mix(in srgb, #16a34a 14%, var(--contrast-light));
+    }
+
+    &.is-overdue,
+    &.is-fail {
+        background: color-mix(in srgb, #dc2626 14%, var(--contrast-light));
+    }
+
+    &.is-missing {
+        background: color-mix(in srgb, #f59e0b 18%, var(--contrast-light));
+    }
 }
 
 .guide-docs-status-chip {
@@ -1991,6 +2124,18 @@ watch([guidePath, viewMode, previewFrame], async () => {
     color: var(--text-primary);
 }
 
+.guide-docs-verified-chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--text-secondary);
+    background: color-mix(in srgb, #16a34a 12%, var(--contrast-light));
+}
+
 .guide-docs-list {
     margin: 0;
     padding-left: 18px;
@@ -2089,6 +2234,12 @@ watch([guidePath, viewMode, previewFrame], async () => {
 }
 
 .guide-docs-related-links {
+    display: grid;
+    gap: 10px;
+}
+
+.guide-docs-section-sources {
+    margin-top: 10px;
     display: grid;
     gap: 10px;
 }

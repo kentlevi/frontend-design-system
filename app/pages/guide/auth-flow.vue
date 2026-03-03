@@ -23,7 +23,7 @@ function submitDemo() {
             <h1 class="guide-title">Auth Flow</h1>
             <p class="guide-description">
                 Patterns for login, register, verification, and profile setup
-                progression.
+                progression in the current implementation.
             </p>
         </header>
 
@@ -43,7 +43,7 @@ function submitDemo() {
                     <h3 class="auth-flow-card-title">Verification</h3>
                     <ul class="auth-flow-list">
                         <li>OTP modal opens after valid submit intent.</li>
-                        <li>Resend action includes timer and disabled state.</li>
+                        <li>Resend requests a fresh token and clears entered code.</li>
                         <li>Close behavior keeps user progress when safe.</li>
                     </ul>
                 </article>
@@ -52,7 +52,7 @@ function submitDemo() {
                     <h3 class="auth-flow-card-title">Profile Setup</h3>
                     <ul class="auth-flow-list">
                         <li>Step order and completion state are explicit.</li>
-                        <li>Progress can continue after refresh/session restore.</li>
+                        <li>Profile fields prefill from onboarding/store or mock-user fallback.</li>
                         <li>Success toast confirms completion and next action.</li>
                     </ul>
                 </article>
@@ -116,10 +116,10 @@ function submitDemo() {
             <article class="auth-flow-card">
                 <ul class="auth-flow-list">
                     <li>All auth controls expose proper labels and focus states.</li>
-                    <li>Submit buttons remain disabled until required fields are valid.</li>
+                    <li>Validation errors appear inline after submit attempts for invalid fields.</li>
                     <li>Verification modal supports keyboard close and focus return.</li>
                     <li>Auth errors are field-specific and localized via i18n keys.</li>
-                    <li>Profile step completion persists across navigation changes.</li>
+                    <li>Profile completion hands off to country home with onboarding welcome state.</li>
                 </ul>
             </article>
         </section>

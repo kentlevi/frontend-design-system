@@ -31,6 +31,7 @@ const updateValue = (key: 'size' | 'tone' | 'state', value: string) => {
             Size
             <select
                 :value="modelValue.size"
+                data-testid="guide-playground-size-select"
                 @change="(event) => updateValue('size', (event.target as HTMLSelectElement).value)"
             >
                 <option v-for="option in sizeOptions" :key="option" :value="option">
@@ -43,6 +44,7 @@ const updateValue = (key: 'size' | 'tone' | 'state', value: string) => {
             Tone
             <select
                 :value="modelValue.tone"
+                data-testid="guide-playground-tone-select"
                 @change="(event) => updateValue('tone', (event.target as HTMLSelectElement).value)"
             >
                 <option v-for="option in toneOptions" :key="option" :value="option">
@@ -55,6 +57,7 @@ const updateValue = (key: 'size' | 'tone' | 'state', value: string) => {
             State
             <select
                 :value="modelValue.state"
+                data-testid="guide-playground-state-select"
                 @change="(event) => updateValue('state', (event.target as HTMLSelectElement).value)"
             >
                 <option v-for="option in stateOptions" :key="option" :value="option">
