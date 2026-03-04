@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs build",
+    "build": "bash build.sh",
+    "self-build": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs build",
     "dev": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs dev",
     "generate": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs generate",
     "preview": "node --disable-warning=DEP0155 ./node_modules/nuxt/bin/nuxt.mjs preview"
