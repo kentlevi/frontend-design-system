@@ -7,6 +7,8 @@ import { CART_STORAGE_KEY, CART_UPDATED_EVENT } from '~/data/cart/page';
 import { quantityOptions, sizeOptions } from '~/data/products/categoryExperience';
 import type { ProductItem } from '~/data/products/catalog';
 import { productCatalog } from '~/data/products/catalog';
+import { homeProductTypes } from '~/data/products/homeTypes';
+import { defaultStartPriceByProductId } from '~/data/products/pricing';
 import { useCountry } from '~/composables/app/useCountry';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
@@ -104,7 +106,12 @@ const {
 
 const cartPreviewOpen = ref(false);
 const cartFeaturedOpen = ref(true);
-const cartFeaturedItems = computed(() => productCatalog.stickers.products.slice(0, 3));
+const allCatalogProducts = Object.values(productCatalog).flatMap((category) => category.products);
+const cartFeaturedItems = computed(() =>
+	homeProductTypes
+		.map((typeItem) => allCatalogProducts.find((product) => product.id === typeItem.productId))
+		.filter((item): item is ProductItem => Boolean(item))
+);
 const cartState = ref<StoredCartState[]>([]);
 let bodyOverflowBeforeCartLock = '';
 let cartBodyScrollLocked = false;
@@ -159,8 +166,8 @@ function formatCartPrice(value: number) {
 	return formatCurrencyByCountry(value, country.value);
 }
 
-function cartFeaturedStartPrice() {
-	return formatCartPrice(29.74);
+function cartFeaturedStartPrice(product: ProductItem) {
+	return formatCartPrice(defaultStartPriceByProductId(product.id));
 }
 
 async function prefetchHeaderOverlayModules() {

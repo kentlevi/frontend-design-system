@@ -6,12 +6,14 @@ import {
 	type ProductCategoryKey,
 	type ProductItem,
 } from '~/data/products/catalog';
+import { homeProductTypes } from '~/data/products/homeTypes';
 import {
 	PRODUCT_SELECTION_NAV_DELAY_MS,
 	quantityOptions,
 	sizeFeatureCards,
 	sizeOptions,
 } from '~/data/products/categoryExperience';
+import { defaultStartPriceByProductId } from '~/data/products/pricing';
 import { formatCurrencyByCountry } from '~/utils/currency';
 
 export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) {
@@ -107,11 +109,15 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	const cartGrandTotal = computed(() =>
 		cartItems.value.reduce((sum, item) => sum + item.total, 0)
 	);
+	const allCatalogProducts = Object.values(productCatalog).flatMap((cat) => cat.products);
 	const featuredItems = computed(() => {
 		const activeId = selectedId.value;
-		return categoryData.value.products
-			.filter((item) => item.id !== activeId)
-			.slice(0, 3);
+		return homeProductTypes
+			.map((typeItem) =>
+				allCatalogProducts.find((product) => product.id === typeItem.productId)
+			)
+			.filter((item): item is ProductItem => Boolean(item))
+			.filter((item) => item.id !== activeId);
 	});
 	const cartItemCount = computed(() => cartItems.value.length);
 	const cartArtworkName = computed(
@@ -534,9 +540,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		featuredOpen.value = false;
 	}
 
-	function featuredStartPrice() {
-		const startingQty = quantityOptions[0];
-		return formatCurrencyByCountry(quantityPrice(startingQty), country.value);
+	function featuredStartPrice(product: ProductItem) {
+		return formatCurrencyByCountry(defaultStartPriceByProductId(product.id), country.value);
 	}
 
 	function formatFileSize(bytes: number) {

@@ -1,44 +1,17 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useCountry } from '@/composables/app/useCountry';
+import { homeProductTypes } from '~/data/products/homeTypes';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-
-const types = [
-	{
-		key: 'dieCut',
-		image: '/illustrations/products/stickers/die-cut.svg',
-		to: '/stickers/die-cut',
-	},
-	{
-		key: 'dieCutRoll',
-		image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
-		to: '/roll-stickers/die-cut-roll',
-	},
-	{
-		key: 'sheet',
-		image: '/illustrations/products/stickers/sheet.svg',
-		to: '/stickers/sticker-sheet',
-	},
-	{
-		key: 'hologram',
-		image: '/illustrations/products/stickers/hologram.svg',
-		to: '/stickers/hologram',
-	},
-	{
-		key: 'vinyl',
-		image: '/illustrations/products/stickers/vinyl-lettering.svg',
-		to: '/stickers/vinyl-lettering',
-	},
-];
 </script>
 
 <template>
 	<section class="home-types" data-testid="home-product-types-section">
 		<div class="home-types-container">
 			<NuxtLink
-				v-for="item in types"
+				v-for="item in homeProductTypes"
 				:key="item.key"
 				:to="withCountry(item.to)"
 				class="home-types-item"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
+import { useCountry } from '~/composables/app/useCountry';
 
 definePageMeta({
 	layout: 'home',
@@ -9,6 +10,7 @@ definePageMeta({
 });
 
 const route = useRoute();
+const { withCountry } = useCountry();
 const orderNo = computed(() => String(route.params.orderNo || ''));
 const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest();
 const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
@@ -19,7 +21,7 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 		<div class="order-details-card" data-testid="order-details-card">
 			<header class="order-details-head">
 				<div class="order-details-crumbs">
-					<NuxtLink to="#" class="order-details-crumb-link">Orders</NuxtLink>
+					<NuxtLink :to="withCountry('/under-construction')" class="order-details-crumb-link">Orders</NuxtLink>
 					<UiIcon
 						name="regular-chevron-right" :size="24" color="var(--text-primary)"
 						class="order-details-crumb-icon" />

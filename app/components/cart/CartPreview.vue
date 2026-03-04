@@ -4,6 +4,7 @@ import lottie from 'lottie-web';
 import type { ProductItem } from '~/data/products/catalog';
 import { useCountry } from '~/composables/app/useCountry';
 import { CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
+import { homeProductTypePathById } from '~/data/products/homeTypes';
 import { sizeDimOnly } from '~/utils/cart';
 
 const props = withDefaults(
@@ -31,7 +32,7 @@ const props = withDefaults(
 		featuredItems: ProductItem[];
 		getProductName: (product: ProductItem) => string;
 		formatPrice: (value: number) => string;
-		featuredStartPrice: () => string;
+		featuredStartPrice: (product: ProductItem) => string;
 	}>(),
 	{
 		sizeOptionModels: () => [],
@@ -142,6 +143,13 @@ async function goToCheckout() {
 	}
 	emit('close');
 	await router.push(withCountry('/checkout'));
+}
+
+async function customizeFeaturedProduct(productId: string) {
+	const targetPath = homeProductTypePathById[productId];
+	if (!targetPath) return;
+	emit('close');
+	await router.push(withCountry(targetPath));
 }
 
 onBeforeUnmount(() => {
@@ -378,9 +386,15 @@ onBeforeUnmount(() => {
 										<h5 class="cart-featured-item-title">{{ props.getProductName(item) }}</h5>
 										<p class="cart-featured-price">
 											<span class="cart-preview-label">{{ t('cart.cartPreview.startsAt') }}</span>
-											<strong class="cart-preview-value">{{ props.featuredStartPrice() }}</strong>
+											<strong class="cart-preview-value">{{ props.featuredStartPrice(item) }}</strong>
 										</p>
-										<UiButton type="button" variant="subtle" tone="neutral" class="cart-featured-customize-btn">
+										<UiButton
+											type="button"
+											variant="subtle"
+											tone="neutral"
+											class="cart-featured-customize-btn"
+											@click="customizeFeaturedProduct(item.id)"
+										>
 											{{ t('cart.cartPreview.customize') }}
 										</UiButton>
 									</div>
@@ -473,6 +487,7 @@ onBeforeUnmount(() => {
         height: 100dvh;
         display: grid;
         grid-template-rows: auto 1fr auto;
+        overflow-x: hidden;
     }
 
     .cart-preview-header {
@@ -514,6 +529,7 @@ onBeforeUnmount(() => {
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        overflow-x: hidden;
         padding: 0;
         min-height: 0;
 
@@ -654,6 +670,7 @@ onBeforeUnmount(() => {
             margin-top: 16px;
             padding: 16px 24px;
             border-top: 1px solid var(--gray-30);
+            min-width: 0;
         }
 
         .cart-featured--with-item {
@@ -693,10 +710,10 @@ onBeforeUnmount(() => {
 
         &.cart-preview-body--empty {
             display: grid;
-            grid-template-rows: minmax(420px, 1fr) auto;
+            grid-template-rows: minmax(0, 1fr) auto;
             align-items: stretch;
             padding-top: 0;
-            overflow: auto;
+            overflow: hidden;
 
             .cart-preview-empty {
                 height: 100%;
@@ -708,6 +725,7 @@ onBeforeUnmount(() => {
 
             .cart-featured {
                 margin-top: 0;
+                min-height: 0;
             }
         }
 
@@ -736,10 +754,15 @@ onBeforeUnmount(() => {
 
         .cart-featured-grid {
             display: flex;
+            flex-wrap: nowrap;
             gap: 10px;
             overflow-x: auto;
+            overflow-y: hidden;
             padding-bottom: 12px;
             scrollbar-width: thin;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
 
             &::-webkit-scrollbar {
                 height: 6px;
@@ -757,6 +780,7 @@ onBeforeUnmount(() => {
 
         .cart-featured-card {
             min-width: 184px;
+            flex: 0 0 184px;
             border: 1px solid var(--gray-30);
             border-radius: 10px;
             background: var(--contrast-light);

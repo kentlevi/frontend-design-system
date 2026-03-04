@@ -59,7 +59,38 @@ export const checkoutPaymentMethods: ReadonlyArray<{
 	},
 ];
 
-export const checkoutPaymentBrands = ['VISA', 'Mastercard', 'AMEX', 'JCB', 'UnionPay'] as const;
+export const checkoutPaymentBrands = [
+	{
+		key: 'visa',
+		label: 'VISA',
+		icon: '/icons/custom/payment-methods/visa.svg',
+	},
+	{
+		key: 'mastercard',
+		label: 'Mastercard',
+		icon: '/icons/custom/payment-methods/mastercard.svg',
+	},
+	{
+		key: 'american-express',
+		label: 'American Express',
+		icon: '/icons/custom/payment-methods/american-express.svg',
+	},
+	{
+		key: 'jcb',
+		label: 'JCB',
+		icon: '/icons/custom/payment-methods/jcb.svg',
+	},
+	{
+		key: 'unionpay',
+		label: 'UnionPay',
+		icon: '/icons/custom/payment-methods/unionpay.svg',
+	},
+	{
+		key: 'paypal',
+		label: 'PayPal',
+		icon: '/icons/custom/payment-methods/paypal.svg',
+	},
+] as const;
 
 export const checkoutProvinceOptions: ReadonlyArray<{
 	value: CheckoutProvinceKey;
