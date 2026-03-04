@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useCountry } from '~/composables/app/useCountry';
 
 const { t } = useI18n();
+const { withCountry } = useCountry();
+
+async function onOrderNowClick() {
+	await navigateTo(withCountry('/stickers/die-cut'));
+}
 </script>
 
 <template>
@@ -33,6 +39,7 @@ const { t } = useI18n();
 					size="lg"
 					class="home-hero-cta"
 					data-testid="home-hero-cta-button"
+					@click="onOrderNowClick"
 				>
 					{{ t('home.hero.cta') }}
 				</UiButton>

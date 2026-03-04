@@ -3,9 +3,34 @@ export const CHECKOUT_SELECTION_STORAGE_KEY = 'musticker-checkout-selection-v1';
 export const CART_UPDATED_EVENT = 'musticker:cart-updated';
 
 export const cartPaymentOptions = [
-	'PayPal',
-	'VISA',
-	'Mastercard',
-	'JCB',
-	'UnionPay',
+	{
+		key: 'paypal',
+		label: 'PayPal',
+		icon: '/icons/custom/payment-methods/paypal.svg',
+	},
+	{
+		key: 'visa',
+		label: 'VISA',
+		icon: '/icons/custom/payment-methods/visa.svg',
+	},
+	{
+		key: 'mastercard',
+		label: 'Mastercard',
+		icon: '/icons/custom/payment-methods/mastercard.svg',
+	},
+	{
+		key: 'american-express',
+		label: 'American Express',
+		icon: '/icons/custom/payment-methods/american-express.svg',
+	},
+	{
+		key: 'jcb',
+		label: 'JCB',
+		icon: '/icons/custom/payment-methods/jcb.svg',
+	},
+	{
+		key: 'unionpay',
+		label: 'UnionPay',
+		icon: '/icons/custom/payment-methods/unionpay.svg',
+	},
 ] as const;

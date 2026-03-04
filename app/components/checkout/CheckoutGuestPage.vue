@@ -294,10 +294,15 @@ onBeforeUnmount(() => {
 					<div class="checkout-payment-brands">
 						<span
 							v-for="brand in checkoutPaymentBrands"
-							:key="brand"
+							:key="brand.key"
 							class="checkout-payment-brand"
 						>
-							{{ brand }}
+							<img
+								:src="brand.icon"
+								:alt="brand.label"
+								class="checkout-payment-brand-icon"
+								loading="lazy"
+							>
 						</span>
 					</div>
 
@@ -428,9 +433,9 @@ onBeforeUnmount(() => {
 							<span class="checkout-summary-agreement-text">
 								{{ t('checkout.guest.agreement.prefix') }}
 							</span>
-							<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</a>
+							<NuxtLink :to="withCountry('/under-construction')" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</NuxtLink>
 							<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.and') }}</span>
-							<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</a>
+							<NuxtLink :to="withCountry('/under-construction')" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</NuxtLink>
 							<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.suffix') }}</span>
 						</div>
 					</div>
@@ -780,12 +785,6 @@ onBeforeUnmount(() => {
         :deep(.ui-input[data-size='sm']) {
             box-shadow: none !important;
         }
-
-        :deep(.ui-input-field) {
-            height: 48px;
-            border-radius: 8px;
-            box-shadow: none;
-        }
     }
 
     .checkout-select {
@@ -929,10 +928,21 @@ onBeforeUnmount(() => {
     }
 
     .checkout-payment-brand {
-        color: var(--text-primary);
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
-        font-weight: var(--font-weight-bold);
+        min-height: 36px;
+        min-width: 56px;
+        border: 1px solid var(--gray-40);
+        border-radius: 10px;
+        background: var(--contrast-light);
+        display: inline-grid;
+        place-items: center;
+        padding: 6px 8px;
+
+        .checkout-payment-brand-icon {
+            width: 40px;
+            height: 24px;
+            object-fit: contain;
+            display: block;
+        }
     }
 
     .checkout-checkbox {

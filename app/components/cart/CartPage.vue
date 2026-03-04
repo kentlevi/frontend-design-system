@@ -154,10 +154,15 @@ const {
 						<div class="cart-payment-grid">
 							<span
 								v-for="option in paymentOptions"
-								:key="option"
+								:key="option.key"
 								class="cart-payment-chip"
 							>
-								{{ option }}
+								<img
+									:src="option.icon"
+									:alt="option.label"
+									class="cart-payment-chip-icon"
+									loading="lazy"
+								>
 							</span>
 						</div>
 					</section>
@@ -511,10 +516,14 @@ const {
                             border-radius: 10px;
                             display: grid;
                             place-items: center;
-                            font-size: var(--type-size-100);
-                            line-height: var(--type-line-100);
-                            color: var(--text-primary);
                             background: var(--contrast-light);
+
+                            .cart-payment-chip-icon {
+                                width: 40px;
+                                height: 24px;
+                                object-fit: contain;
+                                display: block;
+                            }
                         }
                     }
                 }

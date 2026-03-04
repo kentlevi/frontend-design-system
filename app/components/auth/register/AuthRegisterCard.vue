@@ -198,9 +198,9 @@ onBeforeUnmount(() => {
 			>
 				<span class="auth-register-check-text">
 					{{ t('auth.register.agreePrefix') }}
-					<a href="#" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</a>
+					<NuxtLink :to="withCountry('/under-construction')" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</NuxtLink>
 					{{ t('auth.register.and') }}
-					<a href="#" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</a>
+					<NuxtLink :to="withCountry('/under-construction')" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</NuxtLink>
 					.
 				</span>
 			</UiCheckbox>

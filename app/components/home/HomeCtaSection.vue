@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useCountry } from '~/composables/app/useCountry';
 import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 
 const { t } = useI18n();
+const { withCountry } = useCountry();
 const { resolveFileUrl } = useFileBaseUrl();
 const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
+
+async function onOrderNowClick() {
+	await navigateTo(withCountry('/stickers/die-cut'));
+}
+
+async function onProductionInquiryClick() {
+	await navigateTo(withCountry('/under-construction'));
+}
 </script>
 
 <template>
@@ -23,6 +33,7 @@ const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
 						size="lg"
 						class="home-cta-btn"
 						data-testid="home-cta-primary-button"
+						@click="onOrderNowClick"
 					>
 						{{ t('home.cta.primary') }}
 					</UiButton>
@@ -32,6 +43,7 @@ const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
 						size="lg"
 						class="home-cta-btn-alt"
 						data-testid="home-cta-secondary-button"
+						@click="onProductionInquiryClick"
 					>
 						{{ t('home.cta.secondary') }}
 					</UiButton>

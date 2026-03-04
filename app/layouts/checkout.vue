@@ -22,8 +22,8 @@ const footerVariant = computed(() =>
 		<main class="checkout-layout-main">
 			<slot />
 		</main>
-		<AppFooterRoot v-if="footerVariant === 'full'" />
-		<footer v-else class="checkout-layout-footer">
+		<AppFooterRoot v-if="!route.meta.hideFooter && footerVariant === 'full'" />
+		<footer v-else-if="!route.meta.hideFooter" class="checkout-layout-footer">
 			<AppFooterCompact :year="year" />
 		</footer>
 	</div>

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useCountry } from '@/composables/app/useCountry';
+
 const { t } = useI18n();
+const { withCountry } = useCountry();
 
 defineProps<{
 	year: number;
@@ -19,8 +22,8 @@ defineProps<{
 			</p>
 			<p class="home-footer-copy">
 				&copy; GLOPHICS Corp. {{ year }}
-				<a href="#" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</a>
-				<a href="#" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</a>
+				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
 			</p>
 		</div>
 
@@ -29,8 +32,8 @@ defineProps<{
 			<p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
 			<p class="home-footer-note">{{ t('layout.footer.closed') }}</p>
 			<div class="home-footer-links">
-				<a href="#" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ t('layout.footer.inquiry') }}</a>
-				<a href="#" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ t('layout.footer.faq') }}</a>
+				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ t('layout.footer.inquiry') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ t('layout.footer.faq') }}</NuxtLink>
 			</div>
 		</div>
 	</div>
