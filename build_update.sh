@@ -73,9 +73,9 @@ echo
 
 
 # Update the version file
-echo "$CURRENT_BRANCH" > static/build.txt
-echo "Commit: [$COMMIT_HASH]" >> static/build.txt
-echo "Build: [$CURRENT_HOUR$CURRENT_MINUTE-$CURRENT_YEAR$CURRENT_MONTH$CURRENT_DAY]" >> static/build.txt
+echo "$CURRENT_BRANCH" > public/build.txt
+echo "Commit: [$COMMIT_HASH]" >> public/build.txt
+echo "Build: [$CURRENT_HOUR$CURRENT_MINUTE-$CURRENT_YEAR$CURRENT_MONTH$CURRENT_DAY]" >> public/build.txt
 
 echo "----------------------------------"
 echo "✔ Build.txt created successfully."

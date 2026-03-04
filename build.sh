@@ -18,9 +18,9 @@ source "$ENV_FILE"
 # --- Robots.txt modification ---
 echo "→ Updating robots.txt..."
 if [ "$ENV" = "production" ]; then
-    cp robots/production.txt static/robots.txt
+    cp robots/production.txt public/robots.txt
 else
-    cp robots/development.txt static/robots.txt
+    cp robots/development.txt public/robots.txt
 fi
 echo "✔ Updating robots.txt completed."
 # --- End of robots.txt modification ---
