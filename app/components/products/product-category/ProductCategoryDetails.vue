@@ -41,7 +41,7 @@ const { t } = useI18n();
 			<article class="story-row" data-testid="product-category-story-timeless">
 				<div class="story-image">
 					<img
-						src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
+						src="https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/01-skater-sticker-on-car-placeholder.png"
 						:alt="t('product.story.timeless.title')"
 						loading="lazy" class="product-details-image" >
 				</div>
@@ -53,7 +53,7 @@ const { t } = useI18n();
 			<article class="story-row reverse" data-testid="product-category-story-quick-stick">
 				<div class="story-image">
 					<img
-						src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
+						src="https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/02-watermelon-design-on-tablet-placeholder.png"
 						:alt="t('product.story.quickStick.title')"
 						loading="lazy" class="product-details-image" >
 				</div>
@@ -65,7 +65,7 @@ const { t } = useI18n();
 			<article class="story-row" data-testid="product-category-story-precise-cut">
 				<div class="story-image">
 					<img
-						src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
+						src="https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/03-multiple-diecut-stickers-in-hand-placeholder.png"
 						:alt="t('product.story.preciseCut.title')"
 						loading="lazy" class="product-details-image" >
 				</div>
@@ -152,8 +152,6 @@ const { t } = useI18n();
         .story-image {
             height: 352px;
             border-radius: 18px;
-            background: linear-gradient(140deg, var(--gray-40) 0%, var(--gray-10) 100%);
-            border: 1px solid var(--border-default);
             overflow: hidden;
             display: flex;
             align-items: center;

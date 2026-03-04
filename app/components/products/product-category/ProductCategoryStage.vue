@@ -42,6 +42,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const demoHeroImageUrl = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/hero/01-donut-sticker-in-hand-placeholder.png';
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
@@ -84,9 +85,11 @@ const unitPrice = computed(() =>
 						<h1 class="product-preview-title" data-testid="product-category-preview-title">{{ props.getProductName(props.selectedProduct) }}</h1>
 						<p class="product-preview-blurb" data-testid="product-category-preview-blurb">{{ props.getProductBlurb(props.selectedProduct) }}</p>
 						<div class="product-preview-media" data-testid="product-category-preview-media">
-							<div class="preview-watermark">
-								<UiLogo name="musticker" variant="mark" color="white" :size="120" />
-							</div>
+							<img
+								:src="demoHeroImageUrl"
+								:alt="`${props.getProductName(props.selectedProduct)} hero image`"
+								class="product-preview-media-image"
+							>
 						</div>
 
 						<div class="product-preview-features" data-testid="product-category-preview-features">
@@ -347,18 +350,14 @@ const unitPrice = computed(() =>
             margin-top: 0;
             height: 362px;
             border-radius: 24px;
-            border: 1px solid var(--border-default);
-            background:
-                radial-gradient(circle at 20% 15%, rgba(248, 248, 248, 0.4), transparent 40%),
-                linear-gradient(140deg, var(--gray-80) 0%, var(--gray-100) 100%);
             position: relative;
             overflow: hidden;
 
-            .preview-watermark {
-                position: absolute;
-                right: 20px;
-                bottom: 14px;
-                opacity: 0.18;
+            .product-preview-media-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
             }
         }
 

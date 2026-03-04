@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
+import lottie from 'lottie-web';
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
 import { useCountry } from '@/composables/app/useCountry';
 import {
@@ -13,6 +14,7 @@ import {
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const router = useRouter();
 
 const {
 	provinceOptions,
@@ -59,10 +61,71 @@ const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
 const fieldValidationByKey = computed(() =>
 	Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
 );
+
+const completingCheckout = ref(false);
+const completeLoaderRef = ref<HTMLElement | null>(null);
+const CHECKOUT_REDIRECT_DELAY_MS = 1000;
+let completeLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
+
+function destroyCompleteAnimation() {
+	if (!completeLoaderAnimation) return;
+	completeLoaderAnimation.destroy();
+	completeLoaderAnimation = null;
+}
+
+async function mountCompleteAnimation() {
+	if (typeof window === 'undefined' || !completeLoaderRef.value) return;
+	destroyCompleteAnimation();
+	const response = await fetch('/animations/musticker-loader.json');
+	if (!response.ok) return;
+	const animationData = await response.json();
+	completeLoaderAnimation = lottie.loadAnimation({
+		container: completeLoaderRef.value,
+		renderer: 'svg',
+		loop: true,
+		autoplay: true,
+		animationData,
+		rendererSettings: {
+			preserveAspectRatio: 'xMidYMid meet',
+		},
+	});
+}
+
+async function completeCheckout() {
+	if (completingCheckout.value || selectedCheckoutItems.value.length === 0) return;
+	completingCheckout.value = true;
+	await nextTick();
+	await mountCompleteAnimation();
+	await new Promise((resolve) => setTimeout(resolve, CHECKOUT_REDIRECT_DELAY_MS));
+	await router.push(withCountry('/checkout/confirmation'));
+	destroyCompleteAnimation();
+	completingCheckout.value = false;
+}
+
+onBeforeUnmount(() => {
+	destroyCompleteAnimation();
+});
 </script>
 
 <template>
 	<main class="checkout-page" data-testid="checkout-page">
+		<Transition name="checkout-complete-fade">
+			<div
+				v-if="completingCheckout"
+				class="checkout-complete-overlay"
+				data-testid="checkout-complete-loading-overlay"
+			>
+				<div
+					class="checkout-complete-loader"
+					role="status"
+					aria-live="polite"
+					:aria-label="t('checkout.guest.completeCheckout')"
+				>
+					<div ref="completeLoaderRef" class="checkout-complete-lottie" aria-hidden="true" />
+				</div>
+			</div>
+		</Transition>
+
 		<section class="checkout-page-shell">
 			<section class="checkout-form-column">
 				<section class="checkout-section checkout-panel">
@@ -285,69 +348,91 @@ const fieldValidationByKey = computed(() =>
 
 			<aside class="checkout-summary-column">
 				<section class="checkout-summary-card">
-					<div class="checkout-summary-title">{{ t('checkout.guest.orderSummary') }}</div>
+					<div class="checkout-summary-title">
+						<span>{{ t('checkout.guest.orderSummary') }}</span>
+						<div class="checkout-summary-title-actions">
+							<button type="button" class="checkout-summary-title-action" aria-label="Edit order summary">
+								<UiIcon name="regular-edit" :size="24" color="var(--text-primary)" />
+							</button>
+							<button type="button" class="checkout-summary-title-action" aria-label="Print order summary">
+								<UiIcon name="regular-print" :size="24" color="var(--text-primary)" />
+							</button>
+						</div>
+					</div>
 					<div class="checkout-summary-list">
-						<div
-							v-for="item in selectedCheckoutItems"
-							:key="item.id"
-							class="checkout-summary-item"
-						>
-							<div class="checkout-summary-thumb">
-								<img
-									:src="item.artworkPreviewUrl || item.product.image"
-									:alt="item.product.name"
-									class="checkout-summary-thumb-image"
-								>
-							</div>
-							<div class="checkout-summary-info">
-								<div class="checkout-summary-name">{{ item.product.name }}</div>
-								<div class="checkout-summary-meta">
-									{{ t('checkout.guest.summary.itemMeta', { size: sizeDimOnly(item.sizeLabel), qty: item.qty.toLocaleString() }) }}
+						<template v-if="selectedCheckoutItems.length > 0">
+							<div
+								v-for="item in selectedCheckoutItems"
+								:key="item.id"
+								class="checkout-summary-item"
+							>
+								<div class="checkout-summary-thumb">
+									<img
+										:src="item.artworkPreviewUrl || item.product.image"
+										:alt="item.product.name"
+										class="checkout-summary-thumb-image"
+									>
 								</div>
+								<div class="checkout-summary-info">
+									<div class="checkout-summary-name">{{ item.product.name }}</div>
+									<div class="checkout-summary-meta">
+										{{ t('checkout.guest.summary.itemMeta', { size: sizeDimOnly(item.sizeLabel), qty: item.qty.toLocaleString() }) }}
+									</div>
+								</div>
+								<div class="checkout-summary-price">{{ formatPrice(item.total) }}</div>
 							</div>
-							<div class="checkout-summary-price">{{ formatPrice(item.total) }}</div>
-						</div>
-						<div v-if="selectedCheckoutItems.length === 0" class="checkout-summary-empty">
-							{{ t('checkout.guest.noItemsSelected') }}
-						</div>
-					</div>
-
-					<div class="checkout-summary-lines">
-						<div class="checkout-summary-line">
-							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.subtotal') }}</div>
-							<div class="checkout-summary-line-value">{{ formatPrice(orderSubtotal) }}</div>
-						</div>
-						<div class="checkout-summary-line">
-							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.shippingFee') }}</div>
-							<div class="checkout-summary-line-value">{{ formatPrice(orderShippingFee) }}</div>
-						</div>
-						<div class="checkout-summary-line">
-							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.discounts') }}</div>
-							<div class="checkout-summary-line-value is-discount">-{{ formatPrice(orderDiscount) }}</div>
-						</div>
-						<div class="checkout-summary-line is-total">
-							<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.total') }}</div>
-							<div class="checkout-summary-line-value">{{ formatPrice(orderTotal) }}</div>
+						</template>
+						<div v-else class="checkout-summary-skeleton" aria-hidden="true">
+							<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
+								<div class="checkout-summary-thumb skeleton-block" />
+								<div class="checkout-summary-info">
+									<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line-name" />
+									<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line-meta" />
+								</div>
+								<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line-price" />
+							</div>
 						</div>
 					</div>
 
-					<UiButton
-						variant="filled"
-						tone="neutral"
-						size="lg"
-						class="checkout-submit-btn"
-						:disabled="selectedCheckoutItems.length === 0"
-					>
-						{{ t('checkout.guest.completeCheckout') }}
-					</UiButton>
-					<div class="checkout-summary-agreement">
-						<span class="checkout-summary-agreement-text">
-							{{ t('checkout.guest.agreement.prefix') }}
-						</span>
-						<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</a>
-						<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.and') }}</span>
-						<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</a>
-						<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.suffix') }}</span>
+					<div class="checkout-summary-footer">
+						<div class="checkout-summary-lines">
+							<div class="checkout-summary-line">
+								<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.subtotal') }}</div>
+								<div class="checkout-summary-line-value">{{ formatPrice(orderSubtotal) }}</div>
+							</div>
+							<div class="checkout-summary-line">
+								<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.shippingFee') }}</div>
+								<div class="checkout-summary-line-value">{{ formatPrice(orderShippingFee) }}</div>
+							</div>
+							<div class="checkout-summary-line">
+								<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.discounts') }}</div>
+								<div class="checkout-summary-line-value is-discount">-{{ formatPrice(orderDiscount) }}</div>
+							</div>
+							<div class="checkout-summary-line is-total">
+								<div class="checkout-summary-line-label">{{ t('checkout.guest.summary.total') }}</div>
+								<div class="checkout-summary-line-value">{{ formatPrice(orderTotal) }}</div>
+							</div>
+						</div>
+
+						<UiButton
+							variant="filled"
+							tone="neutral"
+							size="lg"
+							class="checkout-submit-btn"
+							:disabled="selectedCheckoutItems.length === 0 || completingCheckout"
+							@click="completeCheckout"
+						>
+							{{ t('checkout.guest.completeCheckout') }}
+						</UiButton>
+						<div class="checkout-summary-agreement">
+							<span class="checkout-summary-agreement-text">
+								{{ t('checkout.guest.agreement.prefix') }}
+							</span>
+							<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</a>
+							<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.and') }}</span>
+							<a href="#" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</a>
+							<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.suffix') }}</span>
+						</div>
 					</div>
 				</section>
 			</aside>
@@ -359,6 +444,34 @@ const fieldValidationByKey = computed(() =>
 .checkout-page {
     padding: 28px 24px 80px;
     background: var(--bg-page);
+    position: relative;
+
+    .checkout-complete-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(246, 246, 248, 0.72);
+        display: grid;
+        place-items: center;
+        z-index: 320;
+    }
+
+    .checkout-complete-loader {
+        width: 74px;
+        height: 74px;
+        display: grid;
+        place-items: center;
+    }
+
+    .checkout-complete-lottie {
+        width: 100%;
+        height: 100%;
+
+        :deep(svg) {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    }
 
     .checkout-page-shell {
         max-width: 1200px;
@@ -366,6 +479,202 @@ const fieldValidationByKey = computed(() =>
         display: grid;
         grid-template-columns: minmax(0, 1fr) 360px;
         gap: 36px;
+
+        .checkout-summary-column {
+            align-self: start;
+            position: sticky;
+            top: 24px;
+
+            .checkout-summary-card {
+                border: 1px solid var(--gray-50);
+                border-radius: 10px;
+                background: var(--contrast-light);
+                overflow: hidden;
+                box-shadow: none;
+
+                .checkout-summary-title {
+                    margin: 0;
+                    padding: 12px 24px;
+                    border-bottom: 1px solid var(--gray-50);
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--text-primary);
+
+                    .checkout-summary-title-actions {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 12px;
+                    }
+
+                    .checkout-summary-title-action {
+                        width: 24px;
+                        height: 24px;
+                        padding: 0;
+                        border: 0;
+                        background: transparent;
+                        color: var(--text-primary);
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                    }
+                }
+
+                .checkout-summary-list {
+                    max-height: 360px;
+                    overflow: auto;
+                }
+
+                .checkout-summary-item {
+                    display: grid;
+                    grid-template-columns: 46px 1fr auto;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 16px 18px;
+                    border-bottom: 1px solid var(--gray-50);
+                }
+
+                .checkout-summary-thumb {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 8px;
+                    background: var(--gray-20);
+                    overflow: hidden;
+                    display: grid;
+                    place-items: center;
+
+                    .checkout-summary-thumb-image {
+                        width: 26px;
+                        height: 26px;
+                        object-fit: cover;
+                    }
+                }
+
+                .checkout-summary-item.is-skeleton {
+                    .checkout-summary-info {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 8px;
+                    }
+                }
+
+                .checkout-summary-skeleton-line,
+                .checkout-summary-thumb.skeleton-block {
+                    border-radius: 8px;
+                    background: linear-gradient(90deg, var(--gray-20) 25%, var(--gray-40) 37%, var(--gray-20) 63%);
+                    background-size: 400% 100%;
+                    animation: checkout-summary-skeleton-shimmer 1.4s ease-in-out infinite;
+                }
+
+                .checkout-summary-skeleton-line-name {
+                    width: 132px;
+                    height: 24px;
+                }
+
+                .checkout-summary-skeleton-line-meta {
+                    width: 96px;
+                    height: 16px;
+                }
+
+                .checkout-summary-skeleton-line-price {
+                    width: 58px;
+                    height: 14px;
+                    justify-self: end;
+                }
+
+                .checkout-summary-name {
+                    margin: 0;
+                    color: var(--text-primary);
+                    font-size: var(--type-size-100);
+                    font-weight: var(--font-weight-bold);
+                    line-height: var(--type-line-100);
+                }
+
+                .checkout-summary-meta {
+                    margin: 0;
+                    color: var(--text-secondary);
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                }
+
+                .checkout-summary-price {
+                    font-size: var(--type-size-200);
+                    font-weight: var(--font-weight-bold);
+                    line-height: var(--type-line-200);
+                    color: var(--text-primary);
+                }
+
+                .checkout-summary-footer {
+                    padding: 24px;
+
+                    .checkout-summary-lines {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+
+                        .checkout-summary-line {
+                            margin: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            color: var(--text-secondary);
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
+
+                            .checkout-summary-line-value {
+                                color: var(--text-primary);
+                                font-weight: var(--font-weight-semibold);
+
+                                &.is-discount {
+                                    color: var(--error);
+                                }
+                            }
+
+                            &.is-total {
+                                margin-top: 6px;
+                                color: var(--text-primary);
+                                font-weight: var(--font-weight-bold);
+
+                                .checkout-summary-line-value {
+                                    font-size: var(--type-size-400);
+                                    line-height: var(--type-line-400);
+                                    font-weight: var(--font-weight-bold);
+                                }
+                            }
+                        }
+                    }
+
+                    .checkout-submit-btn {
+                        width: 100%;
+                        margin-top: 16px;
+                        border-radius: 16px;
+                        box-shadow: none;
+                        font-size: var(--type-size-200);
+                        line-height: var(--type-line-200);
+                    }
+
+                    .checkout-summary-agreement {
+                        margin-top: 10px;
+                        text-align: center;
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
+                        color: var(--text-secondary);
+
+                        .checkout-summary-agreement-link {
+                            color: var(--text-primary);
+                            font-weight: var(--font-weight-semibold);
+                            text-decoration: underline;
+                            margin-inline: 2px;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .checkout-form-column {
@@ -644,150 +953,13 @@ const fieldValidationByKey = computed(() =>
         cursor: pointer;
     }
 
-    .checkout-summary-column {
-        align-self: start;
-        position: sticky;
-        top: 24px;
-    }
-
-    .checkout-summary-card {
-        border: 1px solid var(--gray-40);
-        border-radius: 10px;
-        background: var(--contrast-light);
-        overflow: hidden;
-        box-shadow: none;
-
-        .checkout-summary-title {
-            margin: 0;
-            padding: 12px 24px;
-            border-bottom: 1px solid var(--gray-40);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            font-weight: var(--font-weight-bold);
-            color: var(--text-primary);
+    @keyframes checkout-summary-skeleton-shimmer {
+        0% {
+            background-position: 100% 0;
         }
 
-        .checkout-summary-list {
-            max-height: 360px;
-            overflow: auto;
-        }
-
-        .checkout-summary-item {
-            display: grid;
-            grid-template-columns: 46px 1fr auto;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 18px;
-            border-bottom: 1px solid var(--gray-40);
-        }
-
-        .checkout-summary-empty {
-            padding: 14px 18px;
-            color: var(--text-secondary);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            border-bottom: 1px solid var(--gray-40);
-        }
-
-        .checkout-summary-thumb {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--gray-20);
-            overflow: hidden;
-            display: grid;
-            place-items: center;
-
-            .checkout-summary-thumb-image {
-                width: 26px;
-                height: 26px;
-                object-fit: cover;
-            }
-        }
-
-        .checkout-summary-name {
-            margin: 0;
-            color: var(--text-primary);
-            font-size: var(--type-size-100);
-            font-weight: var(--font-weight-bold);
-            line-height: var(--type-line-100);
-        }
-
-        .checkout-summary-meta {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-        }
-
-        .checkout-summary-price {
-            font-size: var(--type-size-200);
-            font-weight: var(--font-weight-bold);
-            line-height: var(--type-line-200);
-            color: var(--text-primary);
-        }
-
-        .checkout-summary-lines {
-            padding: 16px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-
-            .checkout-summary-line {
-                margin: 0;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                color: var(--text-secondary);
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-
-                .checkout-summary-line-value {
-                    color: var(--text-primary);
-                    font-weight: var(--font-weight-semibold);
-
-                    &.is-discount {
-                        color: var(--error);
-                    }
-                }
-
-                &.is-total {
-                    margin-top: 6px;
-                    color: var(--text-primary);
-                    font-weight: var(--font-weight-bold);
-
-                    .checkout-summary-line-value {
-                        font-size: var(--type-size-400);
-                        line-height: var(--type-line-400);
-                        font-weight: var(--font-weight-bold);
-                    }
-                }
-            }
-        }
-
-        .checkout-submit-btn {
-            width: calc(100% - 36px);
-            margin: 8px 18px 0;
-            border-radius: 16px;
-            min-height: 56px;
-            box-shadow: none;
-            font-size: var(--type-size-200);
-            line-height: var(--type-line-200);
-        }
-
-        .checkout-summary-agreement {
-            margin: 12px 18px 18px;
-            text-align: center;
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            color: var(--text-secondary);
-
-            .checkout-summary-agreement-link {
-                color: var(--text-primary);
-                font-weight: var(--font-weight-semibold);
-                text-decoration: underline;
-                margin-inline: 2px;
-            }
+        100% {
+            background-position: 0 0;
         }
     }
 }
@@ -796,10 +968,10 @@ const fieldValidationByKey = computed(() =>
     .checkout-page {
         .checkout-page-shell {
             grid-template-columns: 1fr;
-        }
 
-        .checkout-summary-column {
-            position: static;
+            .checkout-summary-column {
+                position: static;
+            }
         }
     }
 }
@@ -808,17 +980,21 @@ const fieldValidationByKey = computed(() =>
     .checkout-page {
         padding: 20px 16px 56px;
 
+        .checkout-page-shell {
+            .checkout-summary-column {
+                .checkout-summary-card {
+                    .checkout-summary-title {
+                        font-size: var(--type-size-500);
+                        line-height: var(--type-line-500);
+                        padding: 14px 16px;
+                    }
+                }
+            }
+        }
+
         .checkout-section-title {
             font-size: var(--type-size-500);
             line-height: var(--type-line-500);
-        }
-
-        .checkout-summary-card {
-            .checkout-summary-title {
-                font-size: var(--type-size-500);
-                line-height: var(--type-line-500);
-                padding: 14px 16px;
-            }
         }
 
         .checkout-grid {
@@ -844,5 +1020,15 @@ const fieldValidationByKey = computed(() =>
             text-align: left;
         }
     }
+}
+
+.checkout-complete-fade-enter-active,
+.checkout-complete-fade-leave-active {
+    transition: opacity 0.18s ease;
+}
+
+.checkout-complete-fade-enter-from,
+.checkout-complete-fade-leave-to {
+    opacity: 0;
 }
 </style>

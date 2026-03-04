@@ -2,12 +2,15 @@
 import { useRouter } from 'vue-router';
 import { useCountry } from '@/composables/app/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
+import type { UserIdentity, UserProfile } from '~/stores/user';
+import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
 const route = useRoute();
 const { withCountry, apiCountry } = useCountry();
+const userStore = useUserStore();
 
 function getRedirectCandidate() {
 	const queryRedirect = Array.isArray(route.query.redirect)
@@ -21,6 +24,71 @@ function getRedirectCandidate() {
 interface SocialLogin {
 	data: {
 		url: string
+	}
+}
+
+interface MeResponse {
+	success: boolean;
+	message?: string;
+	data: {
+		user?: UserIdentity & { profile: UserProfile | null };
+	};
+}
+
+async function syncSocialLoginUserState() {
+	const token = useCookie<string | null>('auth_token');
+	if (!token.value) return;
+
+	try {
+		const response = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${token.value}`,
+			},
+		});
+
+		if (!response?.data?.user) return;
+
+		const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+			maxAge: 60 * 60 * 24 * 3,
+			sameSite: 'lax',
+			path: '/',
+		});
+		const mockUser = useCookie<{
+			firstName: string;
+			lastName: string;
+			email: string;
+		} | null>('mock_user', {
+			sameSite: 'lax',
+			path: '/',
+		});
+
+		userStore.setUser(response.data.user);
+		guestLoginMode.value = 0;
+
+		const fields = response.data.user.profile?.user_field_values ?? [];
+		const firstName =
+			fields.find((field) =>
+				field.country_field?.field_key === 'first_name' ||
+				(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === 1
+			)?.value?.trim() || '';
+		const lastName =
+			fields.find((field) =>
+				field.country_field?.field_key === 'last_name' ||
+				(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === 2
+			)?.value?.trim() || '';
+
+		mockUser.value = {
+			firstName,
+			lastName,
+			email: response.data.user.email || '',
+		};
+
+		if (import.meta.client) {
+			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+		}
+	} catch {
+		// Keep social login flow non-blocking if profile hydration fails.
 	}
 }
 
@@ -51,7 +119,7 @@ async function handleSocial(provider: string) {
 
 		if (!popup) return console.error('Pop up blocked');
 
-		const pollTimer = setInterval(() => {
+		const pollTimer = setInterval(async () => {
 			if (popup.closed) {
 				clearInterval(pollTimer)
 
@@ -61,6 +129,7 @@ async function handleSocial(provider: string) {
 					return
 				}
 
+				await syncSocialLoginUserState()
 				router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
 			}
 		}, 500)
