@@ -8,18 +8,19 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 const { t } = useI18n()
 
-/* @desc reactive token state shared with template */
+const route = useRoute()
 const token = ref<string | null>(null)
+
+// populate synchronously so there's no "cancelling" flash
+const received_token = (route.query.token as string) || null
+token.value = received_token
 
 /* @desc handle OAuth callback and notify opener */
 onMounted(() => {
-	const params = new URLSearchParams(window.location.search)
-	const received_token = params.get('token')
-
-	token.value = received_token
-
+	// no need to re‑parse; we already have `received_token`
 	if (!received_token) {
 		window.close()
 		return
