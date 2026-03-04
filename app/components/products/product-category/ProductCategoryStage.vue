@@ -42,7 +42,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const demoHeroImageUrl = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/hero/01-donut-sticker-in-hand-placeholder.png';
+const demoHeroVideoUrl = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4';
+const demoHeroPosterUrl = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png';
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
@@ -85,11 +86,17 @@ const unitPrice = computed(() =>
 						<h1 class="product-preview-title" data-testid="product-category-preview-title">{{ props.getProductName(props.selectedProduct) }}</h1>
 						<p class="product-preview-blurb" data-testid="product-category-preview-blurb">{{ props.getProductBlurb(props.selectedProduct) }}</p>
 						<div class="product-preview-media" data-testid="product-category-preview-media">
-							<img
-								:src="demoHeroImageUrl"
-								:alt="`${props.getProductName(props.selectedProduct)} hero image`"
+							<video
+								:poster="demoHeroPosterUrl"
 								class="product-preview-media-image"
+								autoplay
+								muted
+								loop
+								playsinline
+								preload="metadata"
 							>
+								<source :src="demoHeroVideoUrl" type="video/mp4">
+							</video>
 						</div>
 
 						<div class="product-preview-features" data-testid="product-category-preview-features">
@@ -498,7 +505,7 @@ const unitPrice = computed(() =>
                 }
 
                 &.is-active {
-                    border-color: var(--gold-base);
+                    border: 2px solid var(--gold-base);
                     background: var(--gold-10);
                 }
 

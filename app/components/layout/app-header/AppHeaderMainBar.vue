@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
 import type { FlagCode } from '~/data/ui/flags';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();

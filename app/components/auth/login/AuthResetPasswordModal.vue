@@ -201,7 +201,6 @@ async function submitChangePassword() {
 		width="640px"
 		padding="36px"
 		gap="22px"
-		data-testid="auth-reset-password-modal"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<template #header>

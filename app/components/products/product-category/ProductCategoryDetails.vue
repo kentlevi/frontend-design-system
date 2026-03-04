@@ -4,6 +4,10 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+const storyVideoOne = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/01-skater-sticker-on-car-video.mp4';
+const storyPosterOne = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/01-skater-sticker-on-car-poster.png';
+const storyVideoTwo = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/02-watermelon-design-on-tablet-video.mp4';
+const storyPosterTwo = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/02-watermelon-design-on-tablet-poster.png';
 </script>
 
 <template>
@@ -40,10 +44,17 @@ const { t } = useI18n();
 		<section class="product-story" data-testid="product-category-story">
 			<article class="story-row" data-testid="product-category-story-timeless">
 				<div class="story-image">
-					<img
-						src="https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/01-skater-sticker-on-car-placeholder.png"
-						:alt="t('product.story.timeless.title')"
-						loading="lazy" class="product-details-image" >
+					<video
+						:poster="storyPosterOne"
+						class="product-details-image"
+						autoplay
+						muted
+						loop
+						playsinline
+						preload="metadata"
+					>
+						<source :src="storyVideoOne" type="video/mp4">
+					</video>
 				</div>
 				<div class="story-copy">
 					<h3 class="product-story-title">{{ t('product.story.timeless.title') }}</h3>
@@ -52,10 +63,17 @@ const { t } = useI18n();
 			</article>
 			<article class="story-row reverse" data-testid="product-category-story-quick-stick">
 				<div class="story-image">
-					<img
-						src="https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/02-watermelon-design-on-tablet-placeholder.png"
-						:alt="t('product.story.quickStick.title')"
-						loading="lazy" class="product-details-image" >
+					<video
+						:poster="storyPosterTwo"
+						class="product-details-image"
+						autoplay
+						muted
+						loop
+						playsinline
+						preload="metadata"
+					>
+						<source :src="storyVideoTwo" type="video/mp4">
+					</video>
 				</div>
 				<div class="story-copy">
 					<h3 class="product-story-title">{{ t('product.story.quickStick.title') }}</h3>
@@ -160,7 +178,7 @@ const { t } = useI18n();
             .product-details-image {
                 width: 100%;
                 height: 100%;
-                object-fit: contain;
+                object-fit: cover;
                 display: block;
             }
         }

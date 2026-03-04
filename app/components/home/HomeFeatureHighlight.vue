@@ -4,19 +4,25 @@ import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
-const featureHighlightImage = resolveFileUrl('/home/feature/home-feature-highlight.png');
+const featureHighlightVideo = resolveFileUrl('/home/feature/home-feature-highlight-video.mp4');
+const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highlight-poster.png');
 </script>
 
 <template>
 	<section class="home-feature" data-testid="home-feature-highlight-section">
 		<div class="home-feature-card">
 			<div class="home-feature-media" aria-hidden="true">
-				<img
-					:src="featureHighlightImage"
-					:alt="t('home.feature.titleLine1')"
+				<video
+					:poster="featureHighlightPoster"
 					class="home-feature-media-image"
-					loading="lazy"
+					autoplay
+					muted
+					loop
+					playsinline
+					preload="metadata"
 				>
+					<source :src="featureHighlightVideo" type="video/mp4">
+				</video>
 			</div>
 
 			<div class="home-feature-copy">

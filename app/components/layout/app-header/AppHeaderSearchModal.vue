@@ -43,9 +43,26 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-function stripHtml(value: string) {
-	return value.replace(/<[^>]*>/g, '');
+type HighlightPart = {
+	text: string;
+	isMatch: boolean;
+};
+function escapeRegExp(value: string) {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function getHighlightParts(value: string): HighlightPart[] {
+	const term = props.searchQuery.trim();
+	if (!term) return [{ text: value, isMatch: false }];
+	const escapedTerm = escapeRegExp(term);
+	const splitMatcher = new RegExp(`(${escapedTerm})`, 'ig');
+	const exactMatcher = new RegExp(`^${escapedTerm}$`, 'i');
+	return value
+		.split(splitMatcher)
+		.filter((part) => part.length > 0)
+		.map((part) => ({
+			text: part,
+			isMatch: exactMatcher.test(part),
+		}));
 }
 
 function bindModalRef(el: Element | ComponentPublicInstance | null) {
@@ -59,7 +76,12 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 
 <template>
 	<Transition name="search-modal">
-		<div v-if="props.open" class="home-search-overlay" data-testid="app-header-search-overlay">
+		<div
+			v-if="props.open"
+			class="home-search-overlay"
+			data-testid="app-header-search-overlay"
+			@click.self="emit('close')"
+		>
 			<section
 				:ref="bindModalRef"
 				class="home-search-modal"
@@ -264,10 +286,18 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 								</div>
 								<div class="home-search-result-copy">
 									<p class="home-search-result-title">
-										{{ stripHtml(props.highlightSearchMatch(item.name)) }}
+										<span
+											v-for="(part, index) in getHighlightParts(item.name)"
+											:key="`${item.id}-name-${index}`"
+											:class="{ 'home-search-highlight': part.isMatch }"
+										>{{ part.text }}</span>
 									</p>
 									<p class="home-search-result-blurb">
-										{{ stripHtml(props.highlightSearchMatch(item.blurb)) }}
+										<span
+											v-for="(part, index) in getHighlightParts(item.blurb)"
+											:key="`${item.id}-blurb-${index}`"
+											:class="{ 'home-search-highlight': part.isMatch }"
+										>{{ part.text }}</span>
 									</p>
 								</div>
 							</button>
@@ -703,17 +733,9 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
             .home-search-result-title {
                 margin: 0;
                 font-size: var(--type-size-200);
+                font-weight: var(--font-weight-semibold);
                 line-height: var(--type-line-200);
                 color: var(--text-primary);
-
-                :deep(mark) {
-                    background: transparent;
-                    color: var(--gold-70);
-                    font-weight: var(--font-weight-bold);
-                    text-decoration: underline;
-                    text-decoration-thickness: 1.5px;
-                    text-underline-offset: 1px;
-                }
             }
 
             .home-search-result-blurb {
@@ -721,15 +743,15 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-secondary);
+            }
 
-                :deep(mark) {
-                    background: transparent;
-                    color: var(--gold-70);
-                    font-weight: var(--font-weight-bold);
-                    text-decoration: underline;
-                    text-decoration-thickness: 1.5px;
-                    text-underline-offset: 1px;
-                }
+            .home-search-highlight {
+                color: var(--gold-70);
+                font-weight: var(--font-weight-bold);
+                text-decoration-line: underline;
+                text-decoration-color: var(--text-primary);
+                text-decoration-thickness: 1px;
+                text-underline-offset: 2px;
             }
         }
     }
@@ -743,63 +765,63 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
             justify-content: space-between;
             padding: 0 18px;
 
-        .home-search-foot-actions {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
+            .home-search-foot-actions {
+                display: flex;
+                align-items: center;
+                gap: 24px;
+            }
 
-        .home-search-foot-hint {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            padding: 4px 0;
-        }
+            .home-search-foot-hint {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-muted);
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                padding: 4px 0;
+            }
 
-        .home-search-key {
-            min-width: 32px;
-            padding: 6px;
-            border-radius: 7px;
-            border: 1px solid var(--gray-30);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray-70);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            text-transform: lowercase;
-        }
+            .home-search-key {
+                min-width: 32px;
+                padding: 6px;
+                border-radius: 7px;
+                border: 1px solid var(--gray-30);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--gray-70);
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                text-transform: lowercase;
+            }
 
-        .home-search-key-esc {
-            height: 24px;
-            padding-top: 0;
-            padding-bottom: 0;
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            font-weight: var(--font-weight-semibold);
-            border: 1px solid var(--gray-50);
-        }
+            .home-search-key-esc {
+                height: 24px;
+                padding-top: 0;
+                padding-bottom: 0;
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                font-weight: var(--font-weight-semibold);
+                border: 1px solid var(--gray-50);
+            }
 
-        .home-search-close-text {
-            --btn-bg: var(--gray-80);
-            --btn-soft: transparent;
-            --btn-border: transparent;
+            .home-search-close-text {
+                --btn-bg: var(--gray-80);
+                --btn-soft: transparent;
+                --btn-border: transparent;
 
-            border: 0;
-            background: transparent;
-            padding: 0;
-            min-height: auto;
-            height: auto;
-            color: var(--gray-80);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            font-weight: var(--font-weight-medium);
-            cursor: pointer;
-            box-shadow: none;
-        }
+                border: 0;
+                background: transparent;
+                padding: 0;
+                min-height: auto;
+                height: auto;
+                color: var(--gray-80);
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                font-weight: var(--font-weight-medium);
+                cursor: pointer;
+                box-shadow: none;
+            }
         }
     }
 }

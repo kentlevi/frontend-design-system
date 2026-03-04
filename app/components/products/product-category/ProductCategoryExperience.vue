@@ -102,7 +102,6 @@ const {
 
 		<ProductCategoryDetails
 			:has-picked-product="hasPickedProduct"
-			data-testid="product-category-details"
 		/>
 
 		<input
@@ -141,7 +140,6 @@ const {
 			:get-product-name="getProductName"
 			:format-price="formatPrice"
 			:featured-start-price="featuredStartPrice"
-			data-testid="product-category-cart-preview"
 			@close="closeCartPreview"
 			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty)"
 			@remove-item="removeCartItem($event)"

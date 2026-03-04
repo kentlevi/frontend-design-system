@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useCountry } from '@/composables/app/useCountry';
+import { definePageMeta } from '#imports';
+import { useCountry } from '~/composables/app/useCountry';
 
 definePageMeta({
 	layout: 'home',

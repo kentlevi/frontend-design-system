@@ -294,7 +294,6 @@ onBeforeUnmount(() => {
 			:code="verificationCode"
 			:error="verificationError"
 			:verifying="isVerifying"
-			data-testid="auth-register-verification-modal"
 			@update:code="verificationCode = $event"
 			@verify="submitVerification"
 			@resend="resendVerification"

@@ -40,6 +40,7 @@ const emit = defineEmits<{
 				size="md"
 				icon-only
 				icon="strong-long-arrow-left"
+				icon-size="md"
 				:aria-label="t('product.reviews.controls.previous')"
 				:sr-label="t('product.reviews.controls.previous')"
 				class="product-reviews-control-button"
@@ -54,6 +55,7 @@ const emit = defineEmits<{
 				size="md"
 				icon-only
 				icon="strong-long-arrow-right"
+				icon-size="md"
 				:aria-label="t('product.reviews.controls.next')"
 				:sr-label="t('product.reviews.controls.next')"
 				class="product-reviews-control-button"
@@ -76,13 +78,24 @@ const emit = defineEmits<{
         gap: 10px;
 
         .rating-badge {
+            position: relative;
             background: var(--text-primary);
             color: var(--contrast-light);
             border-radius: 999px;
-            padding: 6px 12px;
+            padding: 4px 12px;
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
-            font-weight: var(--font-weight-bold);
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                bottom: -6px;
+                width: 10px;
+                height: 10px;
+                background: var(--text-primary);
+                transform: translateX(-50%) rotate(45deg);
+            }
         }
 
         .rating-stars {
@@ -119,8 +132,8 @@ const emit = defineEmits<{
         gap: 10px;
 
         .product-reviews-control-button {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             min-width: 44px;
             border: 1px solid var(--border-default);
             border-radius: 999px;

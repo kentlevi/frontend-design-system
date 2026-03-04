@@ -96,7 +96,6 @@ function onPaste(event: ClipboardEvent) {
 		:width="width"
 		:align="modalAlign"
 		:modal-class="modalClass"
-		:data-testid="`${testIdPrefix}-modal`"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<div class="auth-verification-modal">

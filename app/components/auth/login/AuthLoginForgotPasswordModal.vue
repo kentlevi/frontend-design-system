@@ -94,7 +94,6 @@ async function submitReset() {
 		width="504px"
 		padding="40px"
 		gap="24px"
-		data-testid="auth-login-forgot-password-modal"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<template #header>

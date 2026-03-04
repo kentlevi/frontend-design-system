@@ -412,7 +412,6 @@ useHead({
     z-index: 1000000 !important;
     background: #ffff;
     border-radius: 20px;
-    padding: 6px 10px;
 }
 
 :global(.ui-button.home-header-icon.home-guide-tour-target-active) {

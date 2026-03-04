@@ -100,7 +100,7 @@ export function useAppHeaderSearch() {
 		const term = trimmedDebouncedSearchQuery.value.toLowerCase();
 		if (!term || searchLoading.value) return [];
 		return searchItems.value.filter((item) => {
-			const haystack = `${item.name} ${item.blurb} ${item.categoryLabel}`.toLowerCase();
+			const haystack = `${item.name} ${item.blurb}`.toLowerCase();
 			return haystack.includes(term);
 		});
 	});

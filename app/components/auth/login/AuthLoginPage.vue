@@ -132,7 +132,6 @@ const {
 		<AuthLoginForgotPasswordModal
 			v-model="isForgotPasswordModalOpen"
 			:email="memberEmail"
-			data-testid="auth-login-forgot-password-modal"
 		/>
 		<AuthLoginVerificationModal
 			v-model="isVerificationModalOpen"
@@ -142,7 +141,6 @@ const {
 			:code="guestVerificationCode"
 			:error="guestVerificationError"
 			:verifying="isGuestVerifying"
-			data-testid="auth-login-verification-modal"
 			@update:code="guestVerificationCode = $event"
 			@verify="submitGuestVerification"
 			@resend="resendGuestVerification"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, type ComponentPublicInstance } from 'vue';
 import { useCountry } from '@/composables/app/useCountry';
 import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
@@ -36,6 +36,10 @@ const emit = defineEmits<{
 	(e: 'mouse-leave'): void;
 	(e: 'logout'): void;
 }>();
+
+function bindWrapRef(el: Element | ComponentPublicInstance | null) {
+	props.setWrapRef(el instanceof HTMLElement ? el : null);
+}
 
 function handleAccountLinkClick(event: MouseEvent, to: string) {
 	if (to === '/auth/profile') {
@@ -135,7 +139,7 @@ const guestLoginTarget = computed(() => {
 
 <template>
 	<div
-		:ref="setWrapRef"
+		:ref="bindWrapRef"
 		class="home-header-account-wrap"
 		data-testid="app-header-account-wrap"
 		@mouseenter="emit('mouse-enter')"

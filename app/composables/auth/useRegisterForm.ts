@@ -125,6 +125,21 @@ export function useRegisterForm() {
 		return message;
 	}
 
+	function getResponseMessage(payload: unknown): string {
+		if (!payload || typeof payload !== 'object') return '';
+		const response = payload as { message?: unknown };
+		return typeof response.message === 'string' ? response.message.trim() : '';
+	}
+
+	function getErrorMessage(payload: unknown): string {
+		if (!payload || typeof payload !== 'object') return '';
+		const error = payload as { data?: { message?: unknown }; message?: unknown };
+		if (typeof error.data?.message === 'string' && error.data.message.trim()) {
+			return error.data.message.trim();
+		}
+		return typeof error.message === 'string' ? error.message.trim() : '';
+	}
+
 	async function submitRegister() {
 		clearErrors();
 
@@ -263,7 +278,7 @@ export function useRegisterForm() {
 			});
 
 			if (response.success === false) {
-				verificationError.value = response.message || t('auth.verification.invalidCode');
+				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
 				return response;
 			}
 
@@ -362,8 +377,8 @@ export function useRegisterForm() {
 			isVerificationModalOpen.value = false;
 			await router.push(withCountry('/auth/profile'));
 			return response;
-		} catch {
-			verificationError.value = t('auth.verification.invalidCode');
+		} catch (error: unknown) {
+			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
 		} finally {
 			isVerifying.value = false;
 		}
@@ -387,7 +402,7 @@ export function useRegisterForm() {
 
 			const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
 			if (!isSuccess) {
-				verificationError.value = response?.message || t('auth.verification.invalidCode');
+				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
 				return;
 			}
 
@@ -400,17 +415,16 @@ export function useRegisterForm() {
 					: verificationEmail.value.trim() || email.value.trim();
 
 			if (!resolvedToken) {
-				verificationError.value = response?.message || t('auth.verification.invalidCode');
+				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
 				return;
 			}
 
 			verificationEmail.value = resolvedEmail;
 			verificationToken.value = resolvedToken;
 			verificationCode.value = '';
+			verificationError.value = '';
 		} catch (error: unknown) {
-			const errorPayload = error as { data?: { message?: string }; message?: string };
-			verificationError.value =
-				errorPayload?.data?.message || errorPayload?.message || t('auth.verification.invalidCode');
+			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
 		}
 	}
 
