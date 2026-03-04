@@ -16,6 +16,8 @@ const {
 	confirmations,
 	unit,
 	photoUrl,
+	avatarDisplayUrl,
+	photoError,
 	fileInput,
 	initials,
 	openFilePicker,
@@ -44,8 +46,8 @@ const {
 						<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
 							<div class="account-profile-avatar">
 								<img
-									v-if="photoUrl"
-									:src="photoUrl"
+									v-if="avatarDisplayUrl"
+									:src="avatarDisplayUrl"
 									:alt="t('account.profile.profilePhoto')"
 									class="account-profile-avatar-image"
 								>
@@ -54,6 +56,7 @@ const {
 							<div>
 								<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
 								<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
+								<p v-if="photoError" class="account-profile-photo-error">{{ photoError }}</p>
 								<div class="account-profile-photo-actions">
 									<input
 										ref="fileInput"
@@ -340,6 +343,13 @@ const {
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 margin: 0;
+            }
+
+            .account-profile-photo-error {
+                color: var(--error);
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                margin: 8px 0 0;
             }
 
             .account-profile-file-input {

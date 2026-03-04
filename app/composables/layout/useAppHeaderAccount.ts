@@ -12,10 +12,14 @@ import {
 import { useCountry } from '~/composables/app/useCountry';
 import { useUserStore } from '~/stores/user';
 
+const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
+const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+
 export function useAppHeaderAccount() {
 	const { t, locale, setLocale } = useI18n();
 	const route = useRoute();
 	const { withCountry, apiCountry } = useCountry();
+	const { resolveFileUrl } = useFileBaseUrl();
 	const api = useApi();
 	const userStore = useUserStore();
 	const authToken = useCookie<string | null>('auth_token');
@@ -37,6 +41,7 @@ export function useAppHeaderAccount() {
 	const accountOpen = ref(false);
 	const accountPinnedOpen = ref(false);
 	const accountMenuRef = ref<HTMLElement | null>(null);
+	const localAvatarDataUrl = ref<string | null>(null);
 	const localeModalOpen = ref(false);
 	const navigationCategories = ref<
 		Array<{
@@ -152,6 +157,14 @@ export function useAppHeaderAccount() {
 		[resolvedFirstName.value, resolvedLastName.value].filter(Boolean).join(' ').trim() || 'User'
 	);
 	const displayEmail = computed(() => resolvedEmail.value);
+	const persistedAvatarUrl = computed(() => {
+		const fileName = String(userStore.profile?.file_name || '').trim();
+		if (!fileName) return null;
+		return resolveFileUrl(`uploads/profile/${fileName}`);
+	});
+	const userAvatarUrl = computed(
+		() => localAvatarDataUrl.value || persistedAvatarUrl.value
+	);
 	const accountTransitionName = computed(() =>
 		isMockLoggedIn.value ? 'account-dropdown' : 'account-dropdown-guest'
 	);
@@ -246,6 +259,21 @@ export function useAppHeaderAccount() {
 		}
 	}
 
+	function syncLocalAvatarFromStorage() {
+		if (!import.meta.client) return;
+		localAvatarDataUrl.value = window.localStorage.getItem(ACCOUNT_LOCAL_AVATAR_KEY);
+	}
+
+	function onAvatarUpdated(event: Event) {
+		const customEvent = event as CustomEvent<string | null>;
+		const nextValue = customEvent.detail;
+		if (typeof nextValue === 'string' || nextValue === null) {
+			localAvatarDataUrl.value = nextValue;
+			return;
+		}
+		syncLocalAvatarFromStorage();
+	}
+
 	async function fetchNavigationCategories() {
 		try {
 			const response = await api<{
@@ -288,10 +316,15 @@ export function useAppHeaderAccount() {
 
 	onMounted(() => {
 		document.addEventListener('click', onDocClick);
+		syncLocalAvatarFromStorage();
+		window.addEventListener('storage', syncLocalAvatarFromStorage);
+		window.addEventListener(ACCOUNT_AVATAR_UPDATED_EVENT, onAvatarUpdated as EventListener);
 	});
 
 	onBeforeUnmount(() => {
 		document.removeEventListener('click', onDocClick);
+		window.removeEventListener('storage', syncLocalAvatarFromStorage);
+		window.removeEventListener(ACCOUNT_AVATAR_UPDATED_EVENT, onAvatarUpdated as EventListener);
 	});
 
 	return {
@@ -305,6 +338,7 @@ export function useAppHeaderAccount() {
 		isMockLoggedIn,
 		isGuestLoggedIn,
 		userInitial,
+		userAvatarUrl,
 		displayName,
 		displayEmail,
 		accountTransitionName,

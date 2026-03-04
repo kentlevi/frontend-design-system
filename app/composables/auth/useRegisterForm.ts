@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/user';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 
 export function useRegisterForm() {
 	const router = useRouter();
@@ -29,10 +30,16 @@ export function useRegisterForm() {
 	const verificationToken = ref('');
 	const verificationCode = ref('');
 	const verificationError = ref('');
+	const verificationOtpRequired = ref(true);
 	const isVerifying = ref(false);
 
 	function isValidEmail(value: string) {
 		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+	}
+
+	function isValidRegisterPassword(value: string) {
+		if (value.length < 6) return false;
+		return /[A-Z]|\d|[^A-Za-z0-9]/.test(value);
 	}
 
 	function clearErrors() {
@@ -75,6 +82,7 @@ export function useRegisterForm() {
             | {
             	email: string;
             	token: string;
+            	otp_required?: boolean;
             }
             | Record<string, string[]>;
 		meta: Record<string, unknown>;
@@ -120,7 +128,15 @@ export function useRegisterForm() {
 	function normalizeEmailErrorMessage(message: string) {
 		if (!message) return message;
 		if (/already been taken/i.test(message)) {
-			return 'Email has already been taken.';
+			return 'Email has already been taken';
+		}
+		return message;
+	}
+
+	function normalizePasswordErrorMessage(message: string) {
+		if (!message) return message;
+		if (/at least|uppercase|numbers?|symbols?|mixed case|letters?|format|invalid/i.test(message)) {
+			return t('auth.register.validation.passwordRequirement');
 		}
 		return message;
 	}
@@ -140,6 +156,17 @@ export function useRegisterForm() {
 		return typeof error.message === 'string' ? error.message.trim() : '';
 	}
 
+	function normalizeVerificationErrorMessage(message: string) {
+		if (!message) return '';
+		if (/expired/i.test(message)) {
+			return t('auth.verification.expiredCode');
+		}
+		if (/incorrect|invalid/i.test(message)) {
+			return t('auth.verification.invalidCode');
+		}
+		return message;
+	}
+
 	async function submitRegister() {
 		clearErrors();
 
@@ -155,6 +182,8 @@ export function useRegisterForm() {
 
 		if (!password.value.trim()) {
 			passwordError.value = t('auth.register.validation.fieldBlank');
+		} else if (!isValidRegisterPassword(password.value.trim())) {
+			passwordError.value = t('auth.register.validation.passwordRequirement');
 		}
 
 		if (!agreeTerms.value) {
@@ -191,7 +220,9 @@ export function useRegisterForm() {
 				emailError.value = normalizeEmailErrorMessage(
 					getFirstError(response.data, 'email')
 				);
-				passwordError.value = getFirstError(response.data, 'password');
+				passwordError.value = normalizePasswordErrorMessage(
+					getFirstError(response.data, 'password')
+				);
 				termsError.value =
 					getFirstError(response.data, 'terms_of_service') ||
                     getFirstError(response.data, 'terms');
@@ -209,13 +240,14 @@ export function useRegisterForm() {
 				return response
 			}
 
-			const verificationData = response.data as { email?: string; token?: string } | undefined;
+			const verificationData = response.data as { email?: string; token?: string; otp_required?: boolean } | undefined;
 			const resolvedEmail =
 				typeof verificationData?.email === 'string' && verificationData.email.trim()
 					? verificationData.email.trim()
 					: email.value.trim();
 			const resolvedToken =
 				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
+			verificationOtpRequired.value = verificationData?.otp_required !== false;
 
 			if (!resolvedToken) {
 				emailError.value = resolveRegisterErrorMessage(
@@ -229,6 +261,10 @@ export function useRegisterForm() {
 			verificationToken.value = resolvedToken;
 			verificationCode.value = '';
 			verificationError.value = '';
+			if (!verificationOtpRequired.value) {
+				await submitVerification(true);
+				return response;
+			}
 			// Re-open explicitly in case state was previously left open/closed by a stale render cycle.
 			isVerificationModalOpen.value = false;
 			await nextTick();
@@ -244,7 +280,9 @@ export function useRegisterForm() {
 			emailError.value = normalizeEmailErrorMessage(
 				getFirstError(validation, 'email')
 			);
-			passwordError.value = getFirstError(validation, 'password');
+			passwordError.value = normalizePasswordErrorMessage(
+				getFirstError(validation, 'password')
+			);
 			termsError.value =
 				getFirstError(validation, 'terms_of_service') ||
                 getFirstError(validation, 'terms');
@@ -258,8 +296,9 @@ export function useRegisterForm() {
 		}
 	}
 
-	async function submitVerification() {
-		if (!verificationCode.value.trim()) {
+	async function submitVerification(forceBypass = false) {
+		const requiresOtp = verificationOtpRequired.value && !forceBypass;
+		if (requiresOtp && !verificationCode.value.trim()) {
 			verificationError.value = t('auth.verification.codeRequired');
 			return;
 		}
@@ -273,12 +312,14 @@ export function useRegisterForm() {
 				body: {
 					email: verificationEmail.value,
 					registration_token: verificationToken.value,
-					otp: verificationCode.value.trim(),
+					otp: requiresOtp ? verificationCode.value.trim() : undefined,
 				}
 			});
 
 			if (response.success === false) {
-				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
+				verificationError.value =
+					normalizeVerificationErrorMessage(getResponseMessage(response))
+					|| t('auth.verification.invalidCode');
 				return response;
 			}
 
@@ -373,12 +414,17 @@ export function useRegisterForm() {
 				email: email.value.trim(),
 				onboarding: true,
 			});
+			if (import.meta.client) {
+				window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
+			}
 
 			isVerificationModalOpen.value = false;
 			await router.push(withCountry('/auth/profile'));
 			return response;
 		} catch (error: unknown) {
-			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
+			verificationError.value =
+				normalizeVerificationErrorMessage(getErrorMessage(error))
+				|| t('auth.verification.invalidCode');
 		} finally {
 			isVerifying.value = false;
 		}
@@ -406,13 +452,14 @@ export function useRegisterForm() {
 				return;
 			}
 
-			const verificationData = response.data as { email?: string; token?: string } | undefined;
+			const verificationData = response.data as { email?: string; token?: string; otp_required?: boolean } | undefined;
 			const resolvedToken =
 				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
 			const resolvedEmail =
 				typeof verificationData?.email === 'string' && verificationData.email.trim()
 					? verificationData.email.trim()
 					: verificationEmail.value.trim() || email.value.trim();
+			verificationOtpRequired.value = verificationData?.otp_required !== false;
 
 			if (!resolvedToken) {
 				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
@@ -423,6 +470,9 @@ export function useRegisterForm() {
 			verificationToken.value = resolvedToken;
 			verificationCode.value = '';
 			verificationError.value = '';
+			if (!verificationOtpRequired.value) {
+				await submitVerification(true);
+			}
 		} catch (error: unknown) {
 			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
 		}

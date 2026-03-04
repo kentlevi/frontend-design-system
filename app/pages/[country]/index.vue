@@ -242,6 +242,10 @@ onMounted(() => {
 		if (shouldShowWelcomePopover) {
 			scheduleWelcomePopover(WELCOME_POPOVER_SHOW_DELAY_MS);
 		}
+		const tourQuery = Array.isArray(route.query.tour) ? route.query.tour[0] : route.query.tour;
+		if (tourQuery === '1' || tourQuery === 'true') {
+			scheduleWelcomePopover(0);
+		}
 		const shouldShowLoginSuccessToast =
 			window.localStorage.getItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY) === '1';
 		if (shouldShowLoginSuccessToast) {

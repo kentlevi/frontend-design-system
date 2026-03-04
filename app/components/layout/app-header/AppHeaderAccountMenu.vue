@@ -22,6 +22,7 @@ const props = defineProps<{
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
 	userInitial: string;
+	userAvatarUrl?: string | null;
 	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
@@ -159,7 +160,13 @@ const guestLoginTarget = computed(() => {
 			@click.stop="emit('toggle')"
 		>
 			<span v-if="isMockLoggedIn && !isGuestLoggedIn" class="home-header-avatar">
-				{{ userInitial }}
+				<img
+					v-if="props.userAvatarUrl"
+					:src="props.userAvatarUrl"
+					:alt="displayName"
+					class="home-header-avatar-image"
+				>
+				<template v-else>{{ userInitial }}</template>
 			</span>
 			<span v-else-if="isGuestLoggedIn" class="home-header-avatar home-header-avatar--guest">
 				<UiIcon name="strong-user" :size="16" color="var(--text-primary)" />
@@ -187,7 +194,15 @@ const guestLoginTarget = computed(() => {
 				data-testid="app-header-account-dropdown-member"
 			>
 				<div class="home-account-summary" data-testid="app-header-account-summary">
-					<span class="home-account-summary-avatar">{{ userInitial }}</span>
+					<span class="home-account-summary-avatar">
+						<img
+							v-if="props.userAvatarUrl"
+							:src="props.userAvatarUrl"
+							:alt="displayName"
+							class="home-account-summary-avatar-image"
+						>
+						<template v-else>{{ userInitial }}</template>
+					</span>
 					<div>
 						<p class="home-account-summary-name">
 							{{ displayName }}
@@ -366,7 +381,7 @@ const guestLoginTarget = computed(() => {
         }
     }
 
-    .home-header-account {
+        .home-header-account {
         position: relative;
         z-index: 2;
         background: transparent;
@@ -415,6 +430,13 @@ const guestLoginTarget = computed(() => {
             font-weight: var(--font-weight-bold);
             display: grid;
             place-items: center;
+
+            .home-header-avatar-image {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
         }
 
         .home-header-avatar--guest {
@@ -464,6 +486,13 @@ const guestLoginTarget = computed(() => {
                 display: grid;
                 place-items: center;
                 font-weight: var(--font-weight-bold);
+
+                .home-account-summary-avatar-image {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
             }
 
             .home-account-summary-name {

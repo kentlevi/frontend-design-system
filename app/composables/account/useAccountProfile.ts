@@ -6,10 +6,24 @@ import {
 } from '~/data/account/profile';
 import { useCountry } from '~/composables/app/useCountry';
 
+const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
+const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+const ACCEPTED_IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/png']);
+const AVATAR_TARGET_SIZE_PX = 800;
+const AVATAR_JPEG_QUALITY = 0.82;
+
+interface ApiErrorPayload {
+	data?: {
+		message?: string;
+	};
+}
+
 export function useAccountProfile() {
 	const { withCountry, apiCountry } = useCountry();
+	const { resolveFileUrl } = useFileBaseUrl();
 	const api = useApi();
 	const userStore = useUserStore();
+	const { t } = useI18n();
 	const mockUser = useCookie<AccountMockUser | null>('mock_user');
 	const authToken = useCookie<string | null>('auth_token');
 
@@ -88,7 +102,17 @@ export function useAccountProfile() {
 	const unit = ref<AccountUnit>('millimeter');
 
 	const photoUrl = ref<string | null>(null);
+	const photoFile = ref<File | null>(null);
+	const photoError = ref('');
 	const fileInput = ref<HTMLInputElement | null>(null);
+	const localAvatarDataUrl = ref<string | null>(null);
+
+	const persistedPhotoUrl = computed(() => {
+		const fileName = String(userStore.profile?.file_name || '').trim();
+		if (!fileName) return null;
+		return resolveFileUrl(`uploads/profile/${fileName}`);
+	});
+	const avatarDisplayUrl = computed(() => photoUrl.value || localAvatarDataUrl.value || persistedPhotoUrl.value);
 
 	const initials = computed(() => {
 		const firstInitial = (firstName.value?.charAt(0) || 'U').toUpperCase();
@@ -100,33 +124,184 @@ export function useAccountProfile() {
 		fileInput.value?.click();
 	}
 
-	function onFilePicked(event: Event) {
+	function createImageElement(file: File): Promise<HTMLImageElement> {
+		return new Promise((resolve, reject) => {
+			const objectUrl = URL.createObjectURL(file);
+			const image = new Image();
+			image.onload = () => {
+				URL.revokeObjectURL(objectUrl);
+				resolve(image);
+			};
+			image.onerror = () => {
+				URL.revokeObjectURL(objectUrl);
+				reject(new Error('Failed to decode image file.'));
+			};
+			image.src = objectUrl;
+		});
+	}
+
+	function canvasToBlob(canvas: HTMLCanvasElement, outputType: string, quality?: number): Promise<Blob> {
+		return new Promise((resolve, reject) => {
+			canvas.toBlob(
+				(blob) => {
+					if (!blob) {
+						reject(new Error('Failed to encode image.'));
+						return;
+					}
+					resolve(blob);
+				},
+				outputType,
+				quality
+			);
+		});
+	}
+
+	async function processAvatarFile(file: File): Promise<File> {
+		const image = await createImageElement(file);
+		const width = image.naturalWidth;
+		const height = image.naturalHeight;
+		const hasLargeDimension = width > AVATAR_TARGET_SIZE_PX || height > AVATAR_TARGET_SIZE_PX;
+		const isSquare = width === height;
+
+		let sourceX = 0;
+		let sourceY = 0;
+		let sourceWidth = width;
+		let sourceHeight = height;
+		let targetWidth = width;
+		let targetHeight = height;
+
+		if (hasLargeDimension) {
+			if (!isSquare) {
+				const cropSize = Math.min(width, height);
+				sourceX = Math.floor((width - cropSize) / 2);
+				sourceY = Math.floor((height - cropSize) / 2);
+				sourceWidth = cropSize;
+				sourceHeight = cropSize;
+			}
+
+			targetWidth = AVATAR_TARGET_SIZE_PX;
+			targetHeight = AVATAR_TARGET_SIZE_PX;
+		}
+
+		const canvas = document.createElement('canvas');
+		canvas.width = targetWidth;
+		canvas.height = targetHeight;
+		const context = canvas.getContext('2d');
+		if (!context) {
+			throw new Error('Canvas context is unavailable.');
+		}
+
+		context.drawImage(
+			image,
+			sourceX,
+			sourceY,
+			sourceWidth,
+			sourceHeight,
+			0,
+			0,
+			targetWidth,
+			targetHeight
+		);
+
+		const inputType = file.type.toLowerCase();
+		const outputType = inputType === 'image/png' ? 'image/png' : 'image/jpeg';
+		const blob = await canvasToBlob(
+			canvas,
+			outputType,
+			outputType === 'image/jpeg' ? AVATAR_JPEG_QUALITY : undefined
+		);
+
+		const extension = outputType === 'image/png' ? 'png' : 'jpg';
+		return new File([blob], `avatar-${Date.now()}.${extension}`, {
+			type: outputType,
+			lastModified: Date.now(),
+		});
+	}
+
+	function revokePhotoUrl() {
+		if (photoUrl.value?.startsWith('blob:')) {
+			URL.revokeObjectURL(photoUrl.value);
+		}
+	}
+
+	function readFileAsDataUrl(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => {
+				if (typeof reader.result === 'string') {
+					resolve(reader.result);
+					return;
+				}
+				reject(new Error('Failed to read file as data URL.'));
+			};
+			reader.onerror = () => reject(new Error('Failed to read file.'));
+			reader.readAsDataURL(file);
+		});
+	}
+
+	async function onFilePicked(event: Event) {
+		photoError.value = '';
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
 		if (!file) return;
-		if (!['image/jpeg', 'image/png'].includes(file.type)) return;
-
-		if (photoUrl.value?.startsWith('blob:')) {
-			URL.revokeObjectURL(photoUrl.value);
+		if (!ACCEPTED_IMAGE_MIME_TYPES.has(file.type.toLowerCase())) {
+			photoError.value = t('auth.profile.details.photoInvalidType');
+			return;
 		}
 
-		photoUrl.value = URL.createObjectURL(file);
+		let processedFile: File;
+		try {
+			processedFile = await processAvatarFile(file);
+		} catch {
+			photoError.value = t('auth.profile.details.photoProcessFailed');
+			return;
+		}
+
+		revokePhotoUrl();
+		try {
+			photoUrl.value = await readFileAsDataUrl(processedFile);
+		} catch {
+			photoError.value = t('auth.profile.details.photoProcessFailed');
+			return;
+		}
+		photoFile.value = processedFile;
 	}
 
 	function removePhoto() {
-		if (photoUrl.value?.startsWith('blob:')) {
-			URL.revokeObjectURL(photoUrl.value);
-		}
-
+		revokePhotoUrl();
 		photoUrl.value = null;
+		localAvatarDataUrl.value = null;
+		photoFile.value = null;
+		photoError.value = '';
+		if (import.meta.client) {
+			window.localStorage.removeItem(ACCOUNT_LOCAL_AVATAR_KEY);
+			window.dispatchEvent(new CustomEvent(ACCOUNT_AVATAR_UPDATED_EVENT, { detail: null }));
+		}
 	}
 
-	function saveProfile() {
-		mockUser.value = {
-			firstName: firstName.value.trim() || accountProfileDefaults.firstName,
-			lastName: lastName.value.trim() || accountProfileDefaults.lastName,
-			email: email.value.trim() || accountProfileDefaults.email,
-		};
+	async function saveProfile() {
+		const trimmedFirstName = firstName.value.trim() || accountProfileDefaults.firstName;
+		const trimmedLastName = lastName.value.trim() || accountProfileDefaults.lastName;
+		const trimmedEmail = email.value.trim() || accountProfileDefaults.email;
+
+		try {
+			if (import.meta.client && photoUrl.value) {
+				window.localStorage.setItem(ACCOUNT_LOCAL_AVATAR_KEY, photoUrl.value);
+				localAvatarDataUrl.value = photoUrl.value;
+				window.dispatchEvent(
+					new CustomEvent(ACCOUNT_AVATAR_UPDATED_EVENT, { detail: photoUrl.value })
+				);
+			}
+
+			mockUser.value = {
+				firstName: trimmedFirstName,
+				lastName: trimmedLastName,
+				email: trimmedEmail,
+			};
+		} catch (error: unknown) {
+			const apiError = error as ApiErrorPayload;
+			photoError.value = apiError?.data?.message || 'Failed to save profile. Please try again.';
+		}
 	}
 
 	async function signOut() {
@@ -145,10 +320,15 @@ export function useAccountProfile() {
 		}
 	}
 
-	onBeforeUnmount(() => {
-		if (photoUrl.value?.startsWith('blob:')) {
-			URL.revokeObjectURL(photoUrl.value);
+	if (import.meta.client) {
+		const storedAvatar = window.localStorage.getItem(ACCOUNT_LOCAL_AVATAR_KEY);
+		if (storedAvatar) {
+			localAvatarDataUrl.value = storedAvatar;
 		}
+	}
+
+	onBeforeUnmount(() => {
+		revokePhotoUrl();
 	});
 
 	return {
@@ -163,6 +343,8 @@ export function useAccountProfile() {
 		confirmations,
 		unit,
 		photoUrl,
+		avatarDisplayUrl,
+		photoError,
 		fileInput,
 		initials,
 		openFilePicker,

@@ -22,9 +22,10 @@
             "alreadyMember": "Already a Member?",
             "signInHere": "Sign In Here",
             "validation": {
-                "fieldBlank": "Required.",
-                "emailInvalid": "Invalid email format.",
-                "mustAgree": "You must agree to the Terms of Service.",
+                "fieldBlank": "Required",
+                "emailInvalid": "Email Format Is Invalid",
+                "mustAgree": "Required",
+                "passwordRequirement": "Password does not meet the requirement.",
                 "requestFailed": "Unable to connect right now. Please try again."
             }
         }

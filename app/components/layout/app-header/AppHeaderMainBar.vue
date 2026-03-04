@@ -27,6 +27,7 @@ const props = defineProps<{
 	isGuestLoggedIn: boolean;
 	accountOpen: boolean;
 	userInitial: string;
+	userAvatarUrl?: string | null;
 	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
@@ -140,6 +141,7 @@ const emit = defineEmits<{
 				:is-mock-logged-in="props.isMockLoggedIn"
 				:is-guest-logged-in="props.isGuestLoggedIn"
 				:user-initial="props.userInitial"
+				:user-avatar-url="props.userAvatarUrl"
 				:display-name="props.displayName"
 				:display-email="props.displayEmail"
 				:account-transition-name="props.accountTransitionName"

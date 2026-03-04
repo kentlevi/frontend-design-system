@@ -1,20 +1,14 @@
 <script setup lang="ts">
-type ProfileUnit = 'millimeter' | 'inch';
-
 const props = withDefaults(
 	defineProps<{
 		promotions?: boolean;
 		reviews?: boolean;
 		confirmations?: boolean;
-		useShippingAsBilling?: boolean;
-		unit?: ProfileUnit;
 	}>(),
 	{
 		promotions: true,
 		reviews: true,
 		confirmations: true,
-		useShippingAsBilling: true,
-		unit: 'millimeter',
 	}
 );
 
@@ -22,15 +16,9 @@ const emit = defineEmits<{
 	(event: 'update:promotions', value: boolean): void;
 	(event: 'update:reviews', value: boolean): void;
 	(event: 'update:confirmations', value: boolean): void;
-	(event: 'update:useShippingAsBilling', value: boolean): void;
-	(event: 'update:unit', value: ProfileUnit): void;
 	(event: 'back'): void;
 	(event: 'complete'): void;
 }>();
-
-function updateUnit(value: ProfileUnit) {
-	emit('update:unit', value);
-}
 </script>
 
 <template>
@@ -111,60 +99,6 @@ function updateUnit(value: ProfileUnit) {
 					</div>
 				</div>
 
-				<div
-					class="auth-profile-setting-row auth-profile-setting-row-unit"
-					data-testid="auth-profile-setting-unit"
-				>
-					<div>
-						<p class="auth-profile-setting-title">
-							{{ $t('auth.profile.settings.unit') }}
-						</p>
-						<p class="auth-profile-setting-text">
-							{{ $t('auth.profile.settings.unitDesc') }}
-						</p>
-					</div>
-					<div class="auth-profile-segment">
-						<button
-							type="button"
-							class="auth-profile-segment-button"
-							:class="{ 'is-active': props.unit === 'millimeter' }"
-							data-testid="auth-profile-unit-millimeter-button"
-							@click="updateUnit('millimeter')"
-						>
-							millimeter
-						</button>
-						<button
-							type="button"
-							class="auth-profile-segment-button"
-							:class="{ 'is-active': props.unit === 'inch' }"
-							data-testid="auth-profile-unit-inch-button"
-							@click="updateUnit('inch')"
-						>
-							inch
-						</button>
-					</div>
-				</div>
-
-				<div class="auth-profile-setting-row" data-testid="auth-profile-setting-billing">
-					<div>
-						<p class="auth-profile-setting-title">
-							{{ $t('auth.profile.settings.billing') }}
-						</p>
-						<p class="auth-profile-setting-text">
-							{{ $t('auth.profile.settings.billingDesc') }}
-						</p>
-					</div>
-					<label class="auth-profile-switch">
-						<input
-							class="auth-profile-switch-input"
-							:checked="props.useShippingAsBilling"
-							type="checkbox"
-							data-testid="auth-profile-toggle-billing"
-							@change="emit('update:useShippingAsBilling', ($event.target as HTMLInputElement).checked)"
-						>
-						<span class="auth-profile-switch-track" />
-					</label>
-				</div>
 			</div>
 		</div>
 
@@ -305,30 +239,6 @@ function updateUnit(value: ProfileUnit) {
             }
             }
 
-            .auth-profile-segment {
-                display: inline-grid;
-                grid-template-columns: 1fr 1fr;
-                border: 1px solid var(--text-primary);
-                border-radius: 16px;
-                overflow: hidden;
-
-                .auth-profile-segment-button {
-                    min-width: 104px;
-                    height: 40px;
-                    border: 0;
-                    background: var(--contrast-light);
-                    color: var(--text-primary);
-                    font-size: var(--type-size-100);
-                    font-weight: var(--font-weight-bold);
-                    line-height: var(--type-line-100);
-                    cursor: pointer;
-
-                    &.is-active {
-                        background: var(--text-primary);
-                        color: var(--contrast-light);
-                    }
-                }
-            }
         }
     }
 

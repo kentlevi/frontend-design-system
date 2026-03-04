@@ -1,4 +1,4 @@
-{
+﻿{
     "auth": {
         "verification": {
             "title": "인증이 필요합니다",
@@ -14,7 +14,8 @@
             "closeModal": "모달 닫기",
             "resendPrefix": "문자를 받지 못하셨나요? 스팸함을 확인하거나 ",
             "resendCta": "코드 다시 보내기",
-            "resendSuffix": "."
+            "resendSuffix": ".",
+            "expiredCode":  "인증 코드가 만료되었습니다."
         }
     }
 }

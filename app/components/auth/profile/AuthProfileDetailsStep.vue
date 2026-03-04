@@ -8,6 +8,8 @@ const props = withDefaults(
 		email?: string;
 		initials?: string;
 		photoUrl?: string | null;
+		photoError?: string;
+		canContinue?: boolean;
 	}>(),
 	{
 		firstName: '',
@@ -15,13 +17,14 @@ const props = withDefaults(
 		email: '',
 		initials: '',
 		photoUrl: null,
+		photoError: '',
+		canContinue: false,
 	}
 );
 
 const emit = defineEmits<{
 	(event: 'update:firstName', value: string): void;
 	(event: 'update:lastName', value: string): void;
-	(event: 'update:email', value: string): void;
 	(event: 'next'): void;
 	(event: 'photo-file-picked', file: File): void;
 	(event: 'photo-remove'): void;
@@ -50,9 +53,6 @@ function updateLastName(value: string) {
 	emit('update:lastName', value);
 }
 
-function updateEmail(value: string) {
-	emit('update:email', value);
-}
 </script>
 
 <template>
@@ -125,6 +125,13 @@ function updateEmail(value: string) {
 									{{ $t('auth.profile.details.delete') }}
 								</UiButton>
 							</div>
+							<p
+								v-if="props.photoError"
+								class="auth-profile-photo-error"
+								data-testid="auth-profile-photo-error"
+							>
+								{{ props.photoError }}
+							</p>
 						</div>
 					</div>
 				</div>
@@ -167,8 +174,11 @@ function updateEmail(value: string) {
 							size="md"
 							class="auth-profile-field-input"
 							data-testid="auth-profile-email"
-							@update:model-value="updateEmail"
+							disabled
 						/>
+						<p class="auth-profile-field-help">
+							{{ $t('auth.profile.details.emailDisabledHint') }}
+						</p>
 					</div>
 				</div>
 			</div>
@@ -191,6 +201,7 @@ function updateEmail(value: string) {
 				size="md"
 				class="auth-profile-continue-btn"
 				data-testid="auth-profile-continue-button"
+				:disabled="!props.canContinue"
 				@click="emit('next')"
 			>
 				<UiIcon name="regular-long-arrow-right" :size="24" />
@@ -294,6 +305,13 @@ function updateEmail(value: string) {
                             line-height: var(--type-line-100);
                         }
 
+                        .auth-profile-photo-error {
+                            margin: 0;
+                            color: var(--error);
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
+                        }
+
                         .auth-profile-photo-actions {
 
                             .auth-profile-file-input {
@@ -351,6 +369,13 @@ function updateEmail(value: string) {
                     .auth-profile-field-input {
                         width: 100%;
                         box-shadow: none;
+                    }
+
+                    .auth-profile-field-help {
+                        margin: 0;
+                        color: var(--text-secondary);
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
                     }
                 }
 

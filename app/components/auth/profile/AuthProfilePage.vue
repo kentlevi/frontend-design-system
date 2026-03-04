@@ -12,12 +12,12 @@ const {
 	lastName,
 	email,
 	photoUrl,
+	photoError,
 	promotions,
 	reviews,
 	confirmations,
-	useShippingAsBilling,
-	unit,
 	initials,
+	canContinueProfileDetails,
 	dismissToast,
 	onPhotoFilePicked,
 	removePhoto,
@@ -40,9 +40,10 @@ const {
 					:email="email"
 					:initials="initials"
 					:photo-url="photoUrl"
+					:photo-error="photoError"
+					:can-continue="canContinueProfileDetails"
 					@update:first-name="firstName = $event"
 					@update:last-name="lastName = $event"
-					@update:email="email = $event"
 					@photo-file-picked="onPhotoFilePicked"
 					@photo-remove="removePhoto"
 					@next="goNext"
@@ -53,13 +54,9 @@ const {
 					:promotions="promotions"
 					:reviews="reviews"
 					:confirmations="confirmations"
-					:use-shipping-as-billing="useShippingAsBilling"
-					:unit="unit"
 					@update:promotions="promotions = $event"
 					@update:reviews="reviews = $event"
 					@update:confirmations="confirmations = $event"
-					@update:use-shipping-as-billing="useShippingAsBilling = $event"
-					@update:unit="unit = $event"
 					@back="goBack"
 					@complete="completeSetup"
 				/>

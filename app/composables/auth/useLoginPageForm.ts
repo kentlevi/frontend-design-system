@@ -46,6 +46,7 @@ export function useLoginPageForm() {
 	const guestVerificationToken = ref('');
 	const guestVerificationCode = ref('');
 	const guestVerificationError = ref('');
+	const guestVerificationOtpRequired = ref(true);
 	const isGuestVerifying = ref(false);
 
 	const memberEmail = ref('');
@@ -152,6 +153,7 @@ export function useLoginPageForm() {
 		data?: {
 			token?: string;
 			expires_in?: number;
+			otp_required?: boolean;
 		};
 	}
 
@@ -316,7 +318,12 @@ export function useLoginPageForm() {
 			guestVerificationEmail.value = email;
 			guestVerificationOrderNumber.value = orderNumber;
 			guestVerificationToken.value = response.data?.token || '';
+			guestVerificationOtpRequired.value = response.data?.otp_required !== false;
 			guestVerificationCode.value = '';
+			if (!guestVerificationOtpRequired.value) {
+				await submitGuestVerification(true);
+				return;
+			}
 			isVerificationModalOpen.value = true;
 		} catch (error: unknown) {
 			const errorPayload = error as { data?: { message?: string }; message?: string };
@@ -327,8 +334,9 @@ export function useLoginPageForm() {
 		}
 	}
 
-	async function submitGuestVerification() {
-		if (!guestVerificationCode.value.trim()) {
+	async function submitGuestVerification(forceBypass = false) {
+		const requiresOtp = guestVerificationOtpRequired.value && !forceBypass;
+		if (requiresOtp && !guestVerificationCode.value.trim()) {
 			guestVerificationError.value = t('auth.guestVerification.codeRequired');
 			return;
 		}
@@ -345,7 +353,7 @@ export function useLoginPageForm() {
 						email: guestVerificationEmail.value,
 						order_number: guestVerificationOrderNumber.value,
 						login_token: guestVerificationToken.value || undefined,
-						otp: guestVerificationCode.value.trim(),
+						otp: requiresOtp ? guestVerificationCode.value.trim() : undefined,
 					},
 				}
 			);
@@ -430,6 +438,10 @@ export function useLoginPageForm() {
 
 			if (response.success) {
 				guestVerificationToken.value = response.data?.token || '';
+				guestVerificationOtpRequired.value = response.data?.otp_required !== false;
+				if (!guestVerificationOtpRequired.value) {
+					await submitGuestVerification(true);
+				}
 			}
 		} catch {
 			// Keep UX non-blocking for resend tap failures.

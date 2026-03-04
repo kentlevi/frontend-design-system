@@ -15,12 +15,16 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const { resolveFileUrl } = useFileBaseUrl();
 const userStore = useUserStore();
 const mockUser = useCookie<{
 	firstName: string;
 	lastName: string;
 	email: string;
 } | null>('mock_user');
+const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
+const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+const localAvatarDataUrl = ref<string | null>(null);
 
 const profileFieldValues = computed(
 	() => userStore.profile?.user_field_values ?? []
@@ -81,6 +85,40 @@ const initials = computed(() => {
 		.toUpperCase();
 	return `${first || 'U'}${last || ''}`;
 });
+const persistedAvatarUrl = computed(() => {
+	const fileName = String(userStore.profile?.file_name || '').trim();
+	if (!fileName) return null;
+	return resolveFileUrl(`uploads/profile/${fileName}`);
+});
+const avatarDisplayUrl = computed(
+	() => localAvatarDataUrl.value || persistedAvatarUrl.value
+);
+
+function syncLocalAvatarFromStorage() {
+	if (!import.meta.client) return;
+	localAvatarDataUrl.value = window.localStorage.getItem(ACCOUNT_LOCAL_AVATAR_KEY);
+}
+
+function onAvatarUpdated(event: Event) {
+	const customEvent = event as CustomEvent<string | null>;
+	const nextValue = customEvent.detail;
+	if (typeof nextValue === 'string' || nextValue === null) {
+		localAvatarDataUrl.value = nextValue;
+		return;
+	}
+	syncLocalAvatarFromStorage();
+}
+
+onMounted(() => {
+	syncLocalAvatarFromStorage();
+	window.addEventListener('storage', syncLocalAvatarFromStorage);
+	window.addEventListener(ACCOUNT_AVATAR_UPDATED_EVENT, onAvatarUpdated as EventListener);
+});
+
+onBeforeUnmount(() => {
+	window.removeEventListener('storage', syncLocalAvatarFromStorage);
+	window.removeEventListener(ACCOUNT_AVATAR_UPDATED_EVENT, onAvatarUpdated as EventListener);
+});
 
 const tabs = [
 	{ key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
@@ -98,7 +136,15 @@ const tabs = [
 	<section class="account-shell" data-testid="account-shell">
 		<div class="account-shell-top" data-testid="account-shell-top">
 			<div class="account-shell-user" data-testid="account-shell-user">
-				<div class="account-shell-avatar">{{ initials }}</div>
+				<div class="account-shell-avatar">
+					<img
+						v-if="avatarDisplayUrl"
+						:src="avatarDisplayUrl"
+						:alt="fullName"
+						class="account-shell-avatar-image"
+					>
+					<template v-else>{{ initials }}</template>
+				</div>
 				<div>
 					<p class="account-shell-name">{{ fullName }}</p>
 					<p class="account-shell-level">{{ t('account.shell.level') }}</p>
@@ -174,6 +220,13 @@ const tabs = [
         font-weight: var(--font-weight-bold);
         font-size: var(--type-size-400);
         line-height: var(--type-line-400);
+
+        .account-shell-avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     }
 
     .account-shell-name {

@@ -9,7 +9,7 @@ const props = withDefaults(
 	}>(),
 	{
 		visible: false,
-		rewardPoints: 4,
+		rewardPoints: 500,
 	}
 );
 
