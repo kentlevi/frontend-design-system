@@ -26,6 +26,7 @@ const {
 	guestVerificationCode,
 	guestVerificationError,
 	isGuestVerifying,
+	guestResendCooldownRemaining,
 	isForgotPasswordModalOpen,
 	memberEmail,
 	memberPassword,
@@ -141,6 +142,7 @@ const {
 			:code="guestVerificationCode"
 			:error="guestVerificationError"
 			:verifying="isGuestVerifying"
+			:resend-cooldown-remaining="guestResendCooldownRemaining"
 			@update:code="guestVerificationCode = $event"
 			@verify="submitGuestVerification"
 			@resend="resendGuestVerification"

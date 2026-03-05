@@ -19,7 +19,6 @@ export function useAppHeaderAccount() {
 	const { t, locale, setLocale } = useI18n();
 	const route = useRoute();
 	const { withCountry, apiCountry } = useCountry();
-	const { resolveFileUrl } = useFileBaseUrl();
 	const api = useApi();
 	const userStore = useUserStore();
 	const authToken = useCookie<string | null>('auth_token');
@@ -157,13 +156,8 @@ export function useAppHeaderAccount() {
 		[resolvedFirstName.value, resolvedLastName.value].filter(Boolean).join(' ').trim() || 'User'
 	);
 	const displayEmail = computed(() => resolvedEmail.value);
-	const persistedAvatarUrl = computed(() => {
-		const fileName = String(userStore.profile?.file_name || '').trim();
-		if (!fileName) return null;
-		return resolveFileUrl(`uploads/profile/${fileName}`);
-	});
 	const userAvatarUrl = computed(
-		() => localAvatarDataUrl.value || persistedAvatarUrl.value
+		() => localAvatarDataUrl.value
 	);
 	const accountTransitionName = computed(() =>
 		isMockLoggedIn.value ? 'account-dropdown' : 'account-dropdown-guest'

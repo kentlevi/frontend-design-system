@@ -12,10 +12,12 @@ withDefaults(
 		code: string;
 		error?: string;
 		verifying?: boolean;
+		resendCooldownRemaining?: number;
 	}>(),
 	{
 		error: '',
 		verifying: false,
+		resendCooldownRemaining: 0,
 	}
 );
 
@@ -38,6 +40,7 @@ const emit = defineEmits<{
 		:submit-label="t('auth.verification.verifyEmailAddress')"
 		:busy-label="t('auth.verification.verifying')"
 		:otp-length="authVerificationConfig.otpLength"
+		:resend-cooldown-remaining="resendCooldownRemaining"
 		:show-close-button="true"
 		align="center"
 		modal-class="auth-register-verification-dialog"

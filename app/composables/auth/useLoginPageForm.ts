@@ -1,10 +1,11 @@
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
+import { authVerificationConfig } from '~/data/auth/verification';
 
 export function useLoginPageForm() {
 	const api = useApi();
@@ -48,6 +49,29 @@ export function useLoginPageForm() {
 	const guestVerificationError = ref('');
 	const guestVerificationOtpRequired = ref(true);
 	const isGuestVerifying = ref(false);
+	const guestResendCooldownRemaining = ref(0);
+	let guestResendCooldownTimer: ReturnType<typeof setInterval> | null = null;
+
+	function clearGuestResendCooldownTimer() {
+		if (!guestResendCooldownTimer) return;
+		clearInterval(guestResendCooldownTimer);
+		guestResendCooldownTimer = null;
+	}
+
+	function startGuestResendCooldown(seconds = authVerificationConfig.resendCooldownSeconds) {
+		clearGuestResendCooldownTimer();
+		guestResendCooldownRemaining.value = Math.max(0, Math.floor(seconds));
+		if (guestResendCooldownRemaining.value <= 0) return;
+
+		guestResendCooldownTimer = setInterval(() => {
+			if (guestResendCooldownRemaining.value <= 1) {
+				clearGuestResendCooldownTimer();
+				guestResendCooldownRemaining.value = 0;
+				return;
+			}
+			guestResendCooldownRemaining.value -= 1;
+		}, 1000);
+	}
 
 	const memberEmail = ref('');
 	const memberPassword = ref('');
@@ -422,6 +446,7 @@ export function useLoginPageForm() {
 	}
 
 	async function resendGuestVerification() {
+		if (guestResendCooldownRemaining.value > 0) return;
 		if (!guestVerificationEmail.value || !guestVerificationOrderNumber.value) return;
 
 		try {
@@ -439,6 +464,7 @@ export function useLoginPageForm() {
 			if (response.success) {
 				guestVerificationToken.value = response.data?.token || '';
 				guestVerificationOtpRequired.value = response.data?.otp_required !== false;
+				startGuestResendCooldown();
 				if (!guestVerificationOtpRequired.value) {
 					await submitGuestVerification(true);
 				}
@@ -449,10 +475,17 @@ export function useLoginPageForm() {
 	}
 
 	watch(isVerificationModalOpen, (open) => {
-		if (open) return;
+		if (open) {
+			if (guestResendCooldownRemaining.value <= 0) {
+				startGuestResendCooldown();
+			}
+			return;
+		}
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
 		isGuestVerifying.value = false;
+		clearGuestResendCooldownTimer();
+		guestResendCooldownRemaining.value = 0;
 	});
 
 	function openForgotPasswordModal() {
@@ -479,6 +512,10 @@ export function useLoginPageForm() {
 		isForgotPasswordModalOpen.value = true;
 	});
 
+	onBeforeUnmount(() => {
+		clearGuestResendCooldownTimer();
+	});
+
 	return {
 		memberType,
 		keepSignedIn,
@@ -498,6 +535,7 @@ export function useLoginPageForm() {
 		guestVerificationCode,
 		guestVerificationError,
 		isGuestVerifying,
+		guestResendCooldownRemaining,
 		nonMemberEmail,
 		nonMemberOrderNumber,
 		memberEmailError,

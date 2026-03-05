@@ -6,6 +6,7 @@ export function useProductReviewsCarousel(cardCount: number, gap = 18) {
 	const viewportRef = ref<HTMLElement | null>(null);
 	const cardRef = ref<HTMLElement | null>(null);
 	const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
+	const autoResumeTimer = ref<ReturnType<typeof setTimeout> | null>(null);
 
 	const trackStyle = computed(() => ({
 		transform: `translateX(-${currentSlide.value * (cardWidth.value + gap)}px)`,
@@ -34,7 +35,7 @@ export function useProductReviewsCarousel(cardCount: number, gap = 18) {
 		syncCardWidth();
 	}
 
-	function nextReview() {
+	function moveToNextReview() {
 		if (currentSlide.value >= maxSlide.value) {
 			currentSlide.value = 0;
 			return;
@@ -43,20 +44,47 @@ export function useProductReviewsCarousel(cardCount: number, gap = 18) {
 		currentSlide.value += 1;
 	}
 
-	function prevReview() {
+	function moveToPrevReview() {
 		if (currentSlide.value === 0) return;
 		currentSlide.value -= 1;
 	}
 
-	function startAuto() {
+	function nextReview() {
 		stopAuto();
-		autoTimer.value = setInterval(nextReview, 3200);
+		moveToNextReview();
+		scheduleAutoResume();
+	}
+
+	function prevReview() {
+		stopAuto();
+		moveToPrevReview();
+		scheduleAutoResume();
+	}
+
+	function startAuto() {
+		clearAutoResumeTimer();
+		stopAuto();
+		autoTimer.value = setInterval(moveToNextReview, 3200);
 	}
 
 	function stopAuto() {
 		if (!autoTimer.value) return;
 		clearInterval(autoTimer.value);
 		autoTimer.value = null;
+	}
+
+	function clearAutoResumeTimer() {
+		if (!autoResumeTimer.value) return;
+		clearTimeout(autoResumeTimer.value);
+		autoResumeTimer.value = null;
+	}
+
+	function scheduleAutoResume() {
+		clearAutoResumeTimer();
+		autoResumeTimer.value = setTimeout(() => {
+			autoResumeTimer.value = null;
+			startAuto();
+		}, 3200);
 	}
 
 	watch(maxSlide, (nextMax) => {
@@ -74,6 +102,7 @@ export function useProductReviewsCarousel(cardCount: number, gap = 18) {
 
 	onBeforeUnmount(() => {
 		stopAuto();
+		clearAutoResumeTimer();
 		window.removeEventListener('resize', syncCardWidth);
 	});
 

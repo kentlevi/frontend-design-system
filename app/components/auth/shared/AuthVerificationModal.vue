@@ -23,6 +23,7 @@ const props = withDefaults(
 		align?: 'start' | 'top' | 'center' | 'bottom';
 		width?: string;
 		modalClass?: string;
+		resendCooldownRemaining?: number;
 	}>(),
 	{
 		email: '',
@@ -39,6 +40,7 @@ const props = withDefaults(
 		align: 'top',
 		width: '504px',
 		modalClass: '',
+		resendCooldownRemaining: 0,
 	}
 );
 
@@ -67,6 +69,7 @@ const computedSubmitLabel = computed(() =>
 		? props.busyLabel || t(`${key.value}.verifying`)
 		: props.submitLabel || t(`${key.value}.verify`)
 );
+const canResend = computed(() => props.resendCooldownRemaining <= 0);
 const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
 	props.align === 'start' ? 'top' : props.align
 );
@@ -178,11 +181,19 @@ function onPaste(event: ClipboardEvent) {
 						type="button"
 						class="auth-verification-resend-btn"
 						:data-testid="`${testIdPrefix}-resend`"
+						:disabled="!canResend"
 						@click="emit('resend')"
 					>
 						{{ t(`${key}.resendCta`) }}
 					</button>
 					{{ t(`${key}.resendSuffix`) }}
+				</p>
+				<p
+					v-if="!canResend"
+					class="auth-verification-resend-cooldown"
+					:data-testid="`${testIdPrefix}-resend-cooldown`"
+				>
+					{{ t(`${key}.resendCooldown`, { seconds: resendCooldownRemaining }) }}
 				</p>
 			</div>
 		</div>
@@ -331,7 +342,21 @@ function onPaste(event: ClipboardEvent) {
                 line-height: inherit;
                 font-weight: var(--font-weight-bold);
                 padding: 0;
+
+                &:disabled {
+                    color: var(--text-muted);
+                    cursor: not-allowed;
+                    text-decoration: none;
+                }
             }
+        }
+
+        .auth-verification-resend-cooldown {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            font-weight: var(--font-weight-medium);
         }
     }
 }

@@ -73,7 +73,7 @@ const greetingName = computed(
         userStore.onboardingProfile?.firstName ||
         mockUser.value?.firstName ||
         emailLocalPart.value ||
-        t('home.toast.welcome.defaultName')
+        t('home.welcome.defaultName')
 );
 </script>
 
@@ -98,12 +98,12 @@ const greetingName = computed(
 
 			<div class="home-welcome-popover-content">
 				<h3 class="home-welcome-popover-title">
-					{{ $t('home.toast.welcome.title', { name: greetingName }) }}
+					{{ $t('home.welcome.title', { name: greetingName }) }}
 				</h3>
 				<p class="home-welcome-popover-text">
-					<span>{{ $t('home.toast.welcome.bodyPrefix') }}</span>
-					<strong>{{ $t('home.toast.welcome.bodyHighlight', { points: props.rewardPoints }) }}</strong>
-					<span>{{ $t('home.toast.welcome.bodySuffix') }}</span>
+					<span>{{ $t('home.welcome.bodyPrefix') }}</span>
+					<strong>{{ $t('home.welcome.bodyHighlight', { points: props.rewardPoints }) }}</strong>
+					<span>{{ $t('home.welcome.bodySuffix') }}</span>
 				</p>
 			</div>
 
@@ -114,7 +114,7 @@ const greetingName = computed(
 					data-testid="home-welcome-popover-skip"
 					@click="emit('close')"
 				>
-					{{ $t('home.toast.welcome.skip') }}
+					{{ $t('home.welcome.skip') }}
 				</button>
 				<UiButton
 					variant="filled"
@@ -125,7 +125,7 @@ const greetingName = computed(
 					@click="emit('start')"
 				>
 					<UiIcon name="regular-arrow-right" :size="18" />
-					{{ $t('home.toast.welcome.getStarted') }}
+					{{ $t('home.welcome.getStarted') }}
 				</UiButton>
 			</div>
 		</aside>

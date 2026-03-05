@@ -14,7 +14,8 @@
             "closeModal": "Close modal",
             "resendPrefix": "Didn't receive a code? ",
             "resendCta": "Resend code",
-            "resendSuffix": "."
+            "resendSuffix": ".",
+            "resendCooldown": "Please wait {seconds} seconds before requesting a new code."
         }
     }
 }

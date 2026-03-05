@@ -14,7 +14,8 @@
             "closeModal": "모달 닫기",
             "resendPrefix": "코드를 받지 못하셨나요? ",
             "resendCta": "코드 다시 보내기",
-            "resendSuffix": "."
+            "resendSuffix": ".",
+            "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요."
         }
     }
 }

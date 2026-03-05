@@ -15,6 +15,7 @@
             "resendPrefix": "문자를 받지 못하셨나요? 스팸함을 확인하거나 ",
             "resendCta": "코드 다시 보내기",
             "resendSuffix": ".",
+            "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요.",
             "expiredCode":  "인증 코드가 만료되었습니다."
         }
     }

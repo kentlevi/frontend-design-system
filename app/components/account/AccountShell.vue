@@ -15,7 +15,6 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const { resolveFileUrl } = useFileBaseUrl();
 const userStore = useUserStore();
 const mockUser = useCookie<{
 	firstName: string;
@@ -85,13 +84,8 @@ const initials = computed(() => {
 		.toUpperCase();
 	return `${first || 'U'}${last || ''}`;
 });
-const persistedAvatarUrl = computed(() => {
-	const fileName = String(userStore.profile?.file_name || '').trim();
-	if (!fileName) return null;
-	return resolveFileUrl(`uploads/profile/${fileName}`);
-});
 const avatarDisplayUrl = computed(
-	() => localAvatarDataUrl.value || persistedAvatarUrl.value
+	() => localAvatarDataUrl.value
 );
 
 function syncLocalAvatarFromStorage() {
