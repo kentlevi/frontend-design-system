@@ -26,6 +26,7 @@ export function useRegisterForm() {
 	const emailError = ref('');
 	const passwordError = ref('');
 	const termsError = ref('');
+	const isSubmitting = ref(false);
 
 	const verificationEmail = ref('');
 	const verificationToken = ref('');
@@ -195,6 +196,9 @@ export function useRegisterForm() {
 	function resolveRegisterErrorMessage(payloadMessage?: string, fallbackMessage?: string) {
 		const technicalMessagePattern = /(failed to fetch|\[post\]|network|fetch failed|load failed)/i;
 		const message = (payloadMessage || fallbackMessage || '').trim();
+		if (/request up to 5 codes per hour/i.test(message)) {
+			return '';
+		}
 		if (!message || technicalMessagePattern.test(message)) {
 			return t('auth.register.validation.requestFailed');
 		}
@@ -244,6 +248,7 @@ export function useRegisterForm() {
 	}
 
 	async function submitRegister() {
+		if (isSubmitting.value) return;
 		clearErrors();
 
 		if (!firstName.value.trim()) {
@@ -275,6 +280,7 @@ export function useRegisterForm() {
 			return;
 		}
 
+		isSubmitting.value = true;
 		try {
 			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
 				method: 'POST',
@@ -376,6 +382,8 @@ export function useRegisterForm() {
 					errorPayload?.message || 'Registration failed.'
 				);
 			}
+		} finally {
+			isSubmitting.value = false;
 		}
 	}
 
@@ -592,6 +600,7 @@ export function useRegisterForm() {
 		emailError,
 		passwordError,
 		termsError,
+		isSubmitting,
 		isVerificationModalOpen,
 		verificationEmail,
 		verificationToken,
