@@ -4,7 +4,7 @@
 if command -v corepack >/dev/null 2>&1; then
     echo "Corepack found. Enabling..."
     corepack enable
-    corepack prepare --activate
+    corepack prepare pnpm@latest --activate
 else
     echo "Corepack not found. Falling back to global npm install..."
     # Install pnpm globally using the pre-installed npm
