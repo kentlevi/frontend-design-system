@@ -419,6 +419,10 @@ const guestLoginTarget = computed(() => {
             background: var(--contrast-light);
         }
 
+        &.is-open-guest::after {
+            opacity: 1;
+        }
+
         .home-header-avatar {
             width: 28px;
             height: 28px;

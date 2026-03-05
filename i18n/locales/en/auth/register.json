@@ -2,7 +2,7 @@
     "auth": {
         "register": {
             "title": "Become a Member",
-            "subtitle": "Kickstart your journey by earning 2 points upon registering an account.",
+            "subtitle": "Kickstart your journey by earning {points} points upon registering an account.",
             "firstName": "First Name",
             "lastName": "Last Name",
             "optional": "Optional",
