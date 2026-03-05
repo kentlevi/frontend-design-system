@@ -5,6 +5,7 @@ import { useCountry } from '~/composables/app/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const route = useRoute();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type NavLink = {
@@ -49,6 +50,14 @@ const emit = defineEmits<{
 	(e: 'account-mouse-leave'): void;
 	(e: 'logout'): void;
 }>();
+
+function normalizePath(path: string) {
+	return path.replace(/\/+$/, '') || '/';
+}
+
+function isExactNavHeading(path: string) {
+	return normalizePath(route.path) === normalizePath(path);
+}
 </script>
 
 <template>
@@ -66,16 +75,27 @@ const emit = defineEmits<{
 		</NuxtLink>
 
 		<nav class="home-header-nav" :aria-label="t('layout.header.primaryNav')" data-testid="app-header-nav">
-			<NuxtLink
+			<template
 				v-for="link in props.navLinks"
 				:key="link.key"
-				:to="link.to"
-				class="home-header-link"
-				:class="{ 'is-active': props.isNavLinkActive(link.to) }"
-				:data-testid="`app-header-nav-link-${link.key}`"
 			>
-				{{ link.label }}
-			</NuxtLink>
+				<h1
+					v-if="isExactNavHeading(link.to)"
+					class="home-header-link home-header-link--heading is-active"
+					:data-testid="`app-header-nav-link-${link.key}`"
+				>
+					{{ link.label }}
+				</h1>
+				<NuxtLink
+					v-else
+					:to="link.to"
+					class="home-header-link"
+					:class="{ 'is-active': props.isNavLinkActive(link.to) }"
+					:data-testid="`app-header-nav-link-${link.key}`"
+				>
+					{{ link.label }}
+				</NuxtLink>
+			</template>
 		</nav>
 
 		<div class="home-header-tools" data-testid="app-header-tools">
@@ -183,6 +203,7 @@ const emit = defineEmits<{
         gap: 40px;
 
         .home-header-link {
+            margin: 0;
             font-size: var(--type-size-200);
             font-weight: var(--font-weight-semibold);
             line-height: var(--type-line-200);
@@ -192,6 +213,11 @@ const emit = defineEmits<{
             padding: 10px 24px;
             border-radius: 14px;
             transition: background-color 220ms ease, color 220ms ease;
+
+            &.home-header-link--heading {
+                cursor: default;
+                user-select: none;
+            }
 
             &:hover,
             &.is-active {
