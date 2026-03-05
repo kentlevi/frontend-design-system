@@ -15,7 +15,8 @@
             "closeModal": "Close modal",
             "resendPrefix": "Didn't receive any? Please check your spam or ",
             "resendCta": "Resend Code",
-            "resendSuffix": "."
+            "resendSuffix": ".",
+            "resendCooldown": "Please wait {seconds} seconds before requesting a new code."
         }
     }
 }

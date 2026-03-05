@@ -25,6 +25,7 @@ export function useHomeReviewsCarousel(
 	const cardRef = ref<HTMLElement | null>(null);
 	const sectionRef = ref<HTMLElement | null>(null);
 	const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
+	const autoResumeTimer = ref<ReturnType<typeof setTimeout> | null>(null);
 	const viewportObserver = ref<IntersectionObserver | null>(null);
 
 	const trackStyle = computed(() => ({
@@ -47,7 +48,7 @@ export function useHomeReviewsCarousel(
 		cardWidth.value = cardRef.value.getBoundingClientRect().width;
 	}
 
-	function nextSlide() {
+	function moveToNextSlide() {
 		if (currentSlide.value >= maxSlide.value) {
 			currentSlide.value = 0;
 			return;
@@ -56,20 +57,47 @@ export function useHomeReviewsCarousel(
 		currentSlide.value += 1;
 	}
 
-	function prevSlide() {
+	function moveToPrevSlide() {
 		if (currentSlide.value === 0) return;
 		currentSlide.value -= 1;
 	}
 
-	function startAuto() {
+	function nextSlide() {
 		stopAuto();
-		autoTimer.value = setInterval(nextSlide, intervalMs);
+		moveToNextSlide();
+		scheduleAutoResume();
+	}
+
+	function prevSlide() {
+		stopAuto();
+		moveToPrevSlide();
+		scheduleAutoResume();
+	}
+
+	function startAuto() {
+		clearAutoResumeTimer();
+		stopAuto();
+		autoTimer.value = setInterval(moveToNextSlide, intervalMs);
 	}
 
 	function stopAuto() {
 		if (!autoTimer.value) return;
 		clearInterval(autoTimer.value);
 		autoTimer.value = null;
+	}
+
+	function clearAutoResumeTimer() {
+		if (!autoResumeTimer.value) return;
+		clearTimeout(autoResumeTimer.value);
+		autoResumeTimer.value = null;
+	}
+
+	function scheduleAutoResume() {
+		clearAutoResumeTimer();
+		autoResumeTimer.value = setTimeout(() => {
+			autoResumeTimer.value = null;
+			startAuto();
+		}, intervalMs);
 	}
 
 	function setCardRef(el: Element | ComponentPublicInstance | null) {
@@ -109,6 +137,7 @@ export function useHomeReviewsCarousel(
 
 	onBeforeUnmount(() => {
 		stopAuto();
+		clearAutoResumeTimer();
 		viewportObserver.value?.disconnect();
 		window.removeEventListener('resize', syncCardWidth);
 	});

@@ -13,6 +13,7 @@ defineProps<{
 	code: string;
 	error?: string;
 	verifying?: boolean;
+	resendCooldownRemaining?: number;
 }>();
 
 const emit = defineEmits<{
@@ -35,6 +36,7 @@ const emit = defineEmits<{
 		:submit-label="t('auth.guestVerification.verify')"
 		:busy-label="t('auth.guestVerification.verifying')"
 		:otp-length="authVerificationConfig.otpLength"
+		:resend-cooldown-remaining="resendCooldownRemaining || 0"
 		test-id-prefix="auth-login-verification"
 		@update:model-value="emit('update:modelValue', $event)"
 		@update:code="emit('update:code', $event)"

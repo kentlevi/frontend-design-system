@@ -36,9 +36,9 @@ const safeStep = computed(() =>
 	Math.min(Math.max(props.step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS)
 );
 const panelClass = computed(() => `home-guide-tour-panel--step-${safeStep.value}`);
-const title = computed(() => t(`home.toast.tour.step${safeStep.value}.title`));
-const body = computed(() => t(`home.toast.tour.step${safeStep.value}.body`));
-const ctaLabel = computed(() => t('home.toast.tour.next'));
+const title = computed(() => t(`home.tour.step${safeStep.value}.title`));
+const body = computed(() => t(`home.tour.step${safeStep.value}.body`));
+const ctaLabel = computed(() => t('home.tour.next'));
 const headerImageByStep: Record<number, string> = {
 	1: '/home/guide-tour/step-1/profile-card.png',
 	2: '/home/guide-tour/step-2/categories-card.png',
@@ -130,7 +130,7 @@ onMounted(() => {
 				<button
 					type="button"
 					class="home-guide-tour-close"
-					:aria-label="t('home.toast.tour.close')"
+					:aria-label="t('home.tour.close')"
 					data-testid="home-guide-tour-close"
 					@click="emit('close')"
 				>
@@ -155,7 +155,7 @@ onMounted(() => {
 
 					<div class="home-guide-tour-actions">
 						<p class="home-guide-tour-step">
-							{{ t('home.toast.tour.stepLabel', { current: safeStep, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
+							{{ t('home.tour.stepLabel', { current: safeStep, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
 						</p>
 
 						<UiButton

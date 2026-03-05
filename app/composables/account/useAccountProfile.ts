@@ -20,7 +20,6 @@ interface ApiErrorPayload {
 
 export function useAccountProfile() {
 	const { withCountry, apiCountry } = useCountry();
-	const { resolveFileUrl } = useFileBaseUrl();
 	const api = useApi();
 	const userStore = useUserStore();
 	const { t } = useI18n();
@@ -107,12 +106,7 @@ export function useAccountProfile() {
 	const fileInput = ref<HTMLInputElement | null>(null);
 	const localAvatarDataUrl = ref<string | null>(null);
 
-	const persistedPhotoUrl = computed(() => {
-		const fileName = String(userStore.profile?.file_name || '').trim();
-		if (!fileName) return null;
-		return resolveFileUrl(`uploads/profile/${fileName}`);
-	});
-	const avatarDisplayUrl = computed(() => photoUrl.value || localAvatarDataUrl.value || persistedPhotoUrl.value);
+	const avatarDisplayUrl = computed(() => photoUrl.value || localAvatarDataUrl.value);
 
 	const initials = computed(() => {
 		const firstInitial = (firstName.value?.charAt(0) || 'U').toUpperCase();

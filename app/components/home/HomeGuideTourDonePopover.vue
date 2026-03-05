@@ -25,7 +25,7 @@ const emit = defineEmits<{
 			<button
 				type="button"
 				class="home-guide-done-popover-close"
-				:aria-label="$t('home.toast.tour.close')"
+				:aria-label="$t('home.tour.close')"
 				data-testid="home-guide-done-popover-close"
 				@click="emit('close')"
 			>
@@ -33,10 +33,10 @@ const emit = defineEmits<{
 			</button>
 
 			<h3 class="home-guide-done-popover-title">
-				{{ $t('home.toast.tour.step4.title') }}
+				{{ $t('home.tour.step4.title') }}
 			</h3>
 			<p class="home-guide-done-popover-text">
-				{{ $t('home.toast.tour.step4.body') }}
+				{{ $t('home.tour.step4.body') }}
 			</p>
 
 			<div class="home-guide-done-popover-actions">
@@ -48,7 +48,7 @@ const emit = defineEmits<{
 					data-testid="home-guide-done-popover-done"
 					@click="emit('close')"
 				>
-					{{ $t('home.toast.tour.done') }}
+					{{ $t('home.tour.done') }}
 				</UiButton>
 			</div>
 		</aside>

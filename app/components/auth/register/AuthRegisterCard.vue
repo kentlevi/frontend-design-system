@@ -30,6 +30,7 @@ const {
 	verificationEmail,
 	verificationCode,
 	verificationError,
+	resendCooldownRemaining,
 	isVerifying,
 	isVerificationModalOpen,
 	submitRegister,
@@ -294,6 +295,7 @@ onBeforeUnmount(() => {
 			:code="verificationCode"
 			:error="verificationError"
 			:verifying="isVerifying"
+			:resend-cooldown-remaining="resendCooldownRemaining"
 			@update:code="verificationCode = $event"
 			@verify="submitVerification"
 			@resend="resendVerification"

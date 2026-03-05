@@ -1,9 +1,10 @@
-import { nextTick, ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/user';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
+import { authVerificationConfig } from '~/data/auth/verification';
 
 export function useRegisterForm() {
 	const router = useRouter();
@@ -32,6 +33,79 @@ export function useRegisterForm() {
 	const verificationError = ref('');
 	const verificationOtpRequired = ref(true);
 	const isVerifying = ref(false);
+	const resendCooldownRemaining = ref(0);
+	let resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
+	const registerRequestCooldownRemaining = ref(0);
+	let registerRequestCooldownTimer: ReturnType<typeof setInterval> | null = null;
+
+	function clearResendCooldownTimer() {
+		if (!resendCooldownTimer) return;
+		clearInterval(resendCooldownTimer);
+		resendCooldownTimer = null;
+	}
+
+	function clearRegisterRequestCooldownTimer() {
+		if (!registerRequestCooldownTimer) return;
+		clearInterval(registerRequestCooldownTimer);
+		registerRequestCooldownTimer = null;
+	}
+
+	function extractCooldownSeconds(message: string) {
+		const match = message.match(/please wait\s+(\d+)\s*seconds?/i);
+		if (!match) return 0;
+		const seconds = Number(match[1] || 0);
+		return Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+	}
+
+	function updateRegisterCooldownErrorMessage() {
+		if (registerRequestCooldownRemaining.value <= 0) return;
+		emailError.value = t('auth.verification.resendCooldown', {
+			seconds: registerRequestCooldownRemaining.value,
+		});
+	}
+
+	function startRegisterRequestCooldown(seconds: number) {
+		clearRegisterRequestCooldownTimer();
+		registerRequestCooldownRemaining.value = Math.max(0, Math.floor(seconds));
+		if (registerRequestCooldownRemaining.value <= 0) return;
+		updateRegisterCooldownErrorMessage();
+
+		registerRequestCooldownTimer = setInterval(() => {
+			if (registerRequestCooldownRemaining.value <= 1) {
+				clearRegisterRequestCooldownTimer();
+				registerRequestCooldownRemaining.value = 0;
+				if (/before requesting a new code/i.test(emailError.value)) {
+					emailError.value = '';
+				}
+				return;
+			}
+
+			registerRequestCooldownRemaining.value -= 1;
+			updateRegisterCooldownErrorMessage();
+		}, 1000);
+	}
+
+	function applyRegisterCooldownFromMessage(message: string) {
+		const seconds = extractCooldownSeconds(message);
+		if (seconds <= 0) return false;
+		startRegisterRequestCooldown(seconds);
+		return true;
+	}
+
+	function startResendCooldown(seconds = authVerificationConfig.resendCooldownSeconds) {
+		clearResendCooldownTimer();
+		resendCooldownRemaining.value = Math.max(0, Math.floor(seconds));
+		if (resendCooldownRemaining.value <= 0) return;
+
+		resendCooldownTimer = setInterval(() => {
+			if (resendCooldownRemaining.value <= 1) {
+				clearResendCooldownTimer();
+				resendCooldownRemaining.value = 0;
+				return;
+			}
+			resendCooldownRemaining.value -= 1;
+		}, 1000);
+	}
 
 	function isValidEmail(value: string) {
 		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -59,7 +133,9 @@ export function useRegisterForm() {
 		const trimmed = value.trim();
 		if (!trimmed) return;
 		if (isValidEmail(trimmed)) {
-			emailError.value = '';
+			if (registerRequestCooldownRemaining.value <= 0) {
+				emailError.value = '';
+			}
 		}
 	});
 
@@ -232,6 +308,9 @@ export function useRegisterForm() {
                     !passwordError.value &&
                     !termsError.value
 				) {
+					if (applyRegisterCooldownFromMessage(response.message || '')) {
+						return response;
+					}
 					emailError.value = resolveRegisterErrorMessage(
 						response.message,
 						'Registration failed.'
@@ -288,6 +367,10 @@ export function useRegisterForm() {
                 getFirstError(validation, 'terms');
 
 			if (!firstNameError.value && !emailError.value && !passwordError.value && !termsError.value) {
+				const cooldownMessage = (payload?.message || errorPayload?.message || '').trim();
+				if (applyRegisterCooldownFromMessage(cooldownMessage)) {
+					return;
+				}
 				emailError.value = resolveRegisterErrorMessage(
 					payload?.message,
 					errorPayload?.message || 'Registration failed.'
@@ -431,6 +514,7 @@ export function useRegisterForm() {
 	}
 
 	async function resendVerification() {
+		if (resendCooldownRemaining.value > 0) return;
 		verificationError.value = '';
 
 		try {
@@ -470,6 +554,7 @@ export function useRegisterForm() {
 			verificationToken.value = resolvedToken;
 			verificationCode.value = '';
 			verificationError.value = '';
+			startResendCooldown();
 			if (!verificationOtpRequired.value) {
 				await submitVerification(true);
 			}
@@ -477,6 +562,23 @@ export function useRegisterForm() {
 			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
 		}
 	}
+
+	watch(isVerificationModalOpen, (open) => {
+		if (open) {
+			if (resendCooldownRemaining.value <= 0) {
+				startResendCooldown();
+			}
+			return;
+		}
+
+		clearResendCooldownTimer();
+		resendCooldownRemaining.value = 0;
+	});
+
+	onBeforeUnmount(() => {
+		clearResendCooldownTimer();
+		clearRegisterRequestCooldownTimer();
+	});
 
 	return {
 		firstName,
@@ -496,6 +598,7 @@ export function useRegisterForm() {
 		verificationCode,
 		verificationError,
 		isVerifying,
+		resendCooldownRemaining,
 		submitRegister,
 		submitVerification,
 		resendVerification,

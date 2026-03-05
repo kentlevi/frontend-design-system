@@ -4,6 +4,7 @@ import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
 import HomeGuideTour from '~/components/home/HomeGuideTour.vue';
 import HomeGuideTourDonePopover from '~/components/home/HomeGuideTourDonePopover.vue';
+import HomeGuideTourSkipModal from '~/components/home/HomeGuideTourSkipModal.vue';
 import HomeWelcomePopover from '~/components/home/HomeWelcomePopover.vue';
 import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import AuthResetPasswordModal from '~/components/auth/login/AuthResetPasswordModal.vue';
@@ -45,7 +46,9 @@ const isLoginSuccessToastVisible = ref(false);
 const isWelcomePopoverVisible = ref(false);
 const isGuideTourVisible = ref(false);
 const isGuideDonePopoverVisible = ref(false);
+const isGuideTourSkipModalVisible = ref(false);
 const guideTourStep = ref(1);
+const guideTourResumeStep = ref(1);
 const guideTourTargetRect = ref<{
 	top: number;
 	left: number;
@@ -136,6 +139,19 @@ function dismissWelcomePopover() {
 	isWelcomePopoverVisible.value = false;
 }
 
+function closeGuideTourOnly() {
+	isGuideTourVisible.value = false;
+	setGuideTourBodyState(false);
+	guideTourTargetRect.value = null;
+	currentGuideTargetEl?.classList.remove('home-guide-tour-target-active');
+	currentGuideTargetEl = null;
+}
+
+function openGuideTourSkipModal(resumeStep = 1) {
+	guideTourResumeStep.value = Math.min(Math.max(resumeStep, 1), HOME_GUIDE_TOUR_TOTAL_STEPS);
+	isGuideTourSkipModalVisible.value = true;
+}
+
 function showWelcomePopoverNow() {
 	isWelcomePopoverVisible.value = true;
 	clearWelcomePopoverAutoCloseTimer();
@@ -197,6 +213,7 @@ function syncGuideTourTargetRect() {
 
 async function openGuideTour(step = 1) {
 	dismissWelcomePopover();
+	isGuideTourSkipModalVisible.value = false;
 	clearGuideDonePopoverAutoCloseTimer();
 	isGuideDonePopoverVisible.value = false;
 	guideTourStep.value = Math.min(Math.max(step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS);
@@ -207,16 +224,27 @@ async function openGuideTour(step = 1) {
 }
 
 function closeGuideTour() {
-	isGuideTourVisible.value = false;
-	setGuideTourBodyState(false);
-	guideTourTargetRect.value = null;
-	currentGuideTargetEl?.classList.remove('home-guide-tour-target-active');
-	currentGuideTargetEl = null;
+	closeGuideTourOnly();
+	openGuideTourSkipModal(guideTourStep.value);
+}
+
+function closeWelcomePopoverWithSkipPrompt() {
+	dismissWelcomePopover();
+	openGuideTourSkipModal(1);
+}
+
+function skipGuideTourForNow() {
+	isGuideTourSkipModalVisible.value = false;
+}
+
+function continueGuideTourFromSkipModal() {
+	isGuideTourSkipModalVisible.value = false;
+	void openGuideTour(guideTourResumeStep.value);
 }
 
 async function goToNextGuideTourStep() {
 	if (guideTourStep.value >= HOME_GUIDE_TOUR_TOTAL_STEPS) {
-		closeGuideTour();
+		closeGuideTourOnly();
 		clearGuideDonePopoverAutoCloseTimer();
 		isGuideDonePopoverVisible.value = true;
 		guideDonePopoverAutoCloseTimer = setTimeout(() => {
@@ -361,21 +389,21 @@ useHead({
 		<UiToast
 			:visible="isResetSuccessToastVisible"
 			tone="success"
-			:message="t('home.toast.passwordUpdated')"
+			:message="t('home.passwordUpdated')"
 			data-testid="home-reset-password-success-toast"
 			@close="isResetSuccessToastVisible = false"
 		/>
 		<UiToast
 			:visible="isLoginSuccessToastVisible"
 			tone="primary"
-			:message="t('home.toast.loginSuccess')"
+			:message="t('home.loginSuccess')"
 			variant="outlined"
 			data-testid="home-login-success-toast"
 			@close="isLoginSuccessToastVisible = false"
 		/>
 		<HomeWelcomePopover
 			:visible="isWelcomePopoverVisible"
-			@close="dismissWelcomePopover"
+			@close="closeWelcomePopoverWithSkipPrompt"
 			@start="openGuideTour()"
 		/>
 		<HomeGuideTour
@@ -384,6 +412,11 @@ useHead({
 			:target-rect="guideTourTargetRect"
 			@close="closeGuideTour"
 			@next="goToNextGuideTourStep"
+		/>
+		<HomeGuideTourSkipModal
+			:visible="isGuideTourSkipModalVisible"
+			@continue-tour="continueGuideTourFromSkipModal"
+			@skip-for-now="skipGuideTourForNow"
 		/>
 		<HomeGuideTourDonePopover
 			:visible="isGuideDonePopoverVisible"

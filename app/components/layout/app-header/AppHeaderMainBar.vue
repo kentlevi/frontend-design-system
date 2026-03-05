@@ -160,6 +160,9 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .home-header-container {
+    --home-header-badge-font-size: 12px;
+    --home-header-badge-line-height: 20px;
+
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px 0;
@@ -265,9 +268,9 @@ const emit = defineEmits<{
             padding: 0 7px;
             background: var(--blood-base);
             color: #fff;
-            font-size: var(--type-size-100);
+            font-size: var(--home-header-badge-font-size);
             font-weight: var(--font-weight-bold);
-            line-height: var(--type-line-100);
+            line-height: var(--home-header-badge-line-height);
             text-align: center;
             pointer-events: none;
         }
