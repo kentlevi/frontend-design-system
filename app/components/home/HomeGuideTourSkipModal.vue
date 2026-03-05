@@ -15,17 +15,27 @@ const emit = defineEmits<{
 	(event: 'skip-for-now'): void;
 }>();
 
-const skipModalBodyHtml = computed(() =>
-	t('home.tour.skipModal.body')
-		.replace(
-			/"Getting Started"/g,
-			'<strong class="home-guide-tour-skip-modal-highlight">"Getting Started"</strong>'
-		)
-		.replace(
-			/"시작하기"/g,
-			'<strong class="home-guide-tour-skip-modal-highlight">"시작하기"</strong>'
-		)
-);
+const skipModalBodyParts = computed(() => {
+	const body = t('home.tour.skipModal.body');
+	const match = body.match(/"([^"]+)"/);
+	if (!match || match.index === undefined) {
+		return {
+			before: body,
+			highlighted: '',
+			after: '',
+		};
+	}
+
+	const highlighted = match[0];
+	const start = match.index;
+	const end = start + highlighted.length;
+
+	return {
+		before: body.slice(0, start),
+		highlighted,
+		after: body.slice(end),
+	};
+});
 </script>
 
 <template>
@@ -52,7 +62,16 @@ const skipModalBodyHtml = computed(() =>
 					<h3 class="home-guide-tour-skip-modal-title">
 						{{ $t('home.tour.skipModal.title') }}
 					</h3>
-					<p class="home-guide-tour-skip-modal-text" v-html="skipModalBodyHtml" />
+					<p class="home-guide-tour-skip-modal-text">
+						<span>{{ skipModalBodyParts.before }}</span>
+						<strong
+							v-if="skipModalBodyParts.highlighted"
+							class="home-guide-tour-skip-modal-highlight"
+						>
+							{{ skipModalBodyParts.highlighted }}
+						</strong>
+						<span>{{ skipModalBodyParts.after }}</span>
+					</p>
 				</div>
 			</div>
 
@@ -129,7 +148,7 @@ const skipModalBodyHtml = computed(() =>
         }
     }
 
-    :deep(.home-guide-tour-skip-modal-highlight) {
+    .home-guide-tour-skip-modal-highlight {
         font-weight: var(--font-weight-bold);
         color: var(--text-primary);
     }
@@ -189,6 +208,6 @@ const skipModalBodyHtml = computed(() =>
 :global(.home-guide-tour-skip-modal-shell) {
     border-radius: 16px;
     overflow: hidden;
-	max-width: 504px;
+    max-width: 504px;
 }
 </style>

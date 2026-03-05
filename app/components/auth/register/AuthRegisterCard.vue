@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import lottie from 'lottie-web';
 import UiTooltip from '@/components/ui/Tooltip.vue';
 import { useRegisterForm } from '@/composables/auth/useRegisterForm';
 import { useCountry } from '@/composables/app/useCountry';
+import { registerRewardPoints } from '~/data/auth/register';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -14,6 +16,8 @@ const termsErrorPopoverOpen = computed(
 );
 const termsErrorIconStrong = computed(() => termsErrorPopoverOpen.value);
 const termsErrorRef = ref<HTMLElement | null>(null);
+const submitLoaderRef = ref<HTMLElement | null>(null);
+let submitLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 const {
 	firstName,
@@ -27,6 +31,7 @@ const {
 	emailError,
 	passwordError,
 	termsError,
+	isSubmitting,
 	verificationEmail,
 	verificationCode,
 	verificationError,
@@ -89,10 +94,69 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	clearTermsErrorHoverCloseTimer();
 	document.removeEventListener('click', onDocumentClick);
+	if (typeof document !== 'undefined') {
+		document.body.classList.remove('has-auth-register-loading');
+	}
+	destroySubmitLoaderAnimation();
+});
+
+function destroySubmitLoaderAnimation() {
+	if (!submitLoaderAnimation) return;
+	submitLoaderAnimation.destroy();
+	submitLoaderAnimation = null;
+}
+
+async function mountSubmitLoaderAnimation() {
+	if (typeof window === 'undefined' || !submitLoaderRef.value) return;
+	destroySubmitLoaderAnimation();
+	const response = await fetch('/animations/musticker-loader.json');
+	if (!response.ok) return;
+	const animationData = await response.json();
+	submitLoaderAnimation = lottie.loadAnimation({
+		container: submitLoaderRef.value,
+		renderer: 'svg',
+		loop: true,
+		autoplay: true,
+		animationData,
+		rendererSettings: {
+			preserveAspectRatio: 'xMidYMid meet',
+		},
+	});
+}
+
+watch(isSubmitting, async (loading) => {
+	if (typeof document !== 'undefined') {
+		document.body.classList.toggle('has-auth-register-loading', Boolean(loading));
+	}
+	if (!loading) {
+		destroySubmitLoaderAnimation();
+		return;
+	}
+	await nextTick();
+	await mountSubmitLoaderAnimation();
 });
 </script>
 
 <template>
+	<Teleport to="body">
+		<Transition name="auth-register-loading-fade">
+			<div
+				v-if="isSubmitting"
+				class="auth-register-loading-overlay"
+				data-testid="auth-register-loading-overlay"
+			>
+				<div
+					class="auth-register-loading-loader"
+					role="status"
+					aria-live="polite"
+					:aria-label="t('auth.register.createAccount')"
+				>
+					<div ref="submitLoaderRef" class="auth-register-loading-lottie" aria-hidden="true" />
+				</div>
+			</div>
+		</Transition>
+	</Teleport>
+
 	<div class="auth-register-card" data-testid="auth-register-card">
 		<div class="auth-register-head">
 			<UiLogo
@@ -106,7 +170,7 @@ onBeforeUnmount(() => {
 				{{ t('auth.register.title') }}
 			</h1>
 			<p class="auth-register-subtitle">
-				{{ t('auth.register.subtitle') }}
+				{{ t('auth.register.subtitle', { points: registerRewardPoints }) }}
 			</p>
 		</div>
 
@@ -560,6 +624,33 @@ onBeforeUnmount(() => {
     }
 }
 
+.auth-register-loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(246, 246, 248, 0.72);
+    display: grid;
+    place-items: center;
+    z-index: 400;
+}
+
+.auth-register-loading-loader {
+    width: 74px;
+    height: 74px;
+    display: grid;
+    place-items: center;
+}
+
+.auth-register-loading-lottie {
+    width: 100%;
+    height: 100%;
+
+    :deep(svg) {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .auth-register-card {
         .auth-register-terms-error {
@@ -568,5 +659,19 @@ onBeforeUnmount(() => {
             }
         }
     }
+}
+
+.auth-register-loading-fade-enter-active,
+.auth-register-loading-fade-leave-active {
+    transition: opacity 0.16s ease;
+}
+
+.auth-register-loading-fade-enter-from,
+.auth-register-loading-fade-leave-to {
+    opacity: 0;
+}
+
+body.has-auth-register-loading {
+    overflow: hidden;
 }
 </style>
