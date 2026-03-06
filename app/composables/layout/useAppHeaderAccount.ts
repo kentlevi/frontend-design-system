@@ -23,6 +23,11 @@ export function useAppHeaderAccount() {
 	const { withCountry, apiCountry } = useCountry();
 	const api = useApi();
 	const userStore = useUserStore();
+	const preferredLocale = useCookie<SupportedCountry | null>('preferred_locale', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
 	const authToken = useCookie<string | null>('auth_token');
 	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 		default: () => null,
@@ -64,7 +69,12 @@ export function useAppHeaderAccount() {
 					to: withCountry(item.to),
 				}));
 		}
-		return [];
+
+		return headerNavLinkConfig.map((item) => ({
+			key: item.key,
+			label: t(item.labelKey),
+			to: withCountry(item.to),
+		}));
 	});
 
 	const selectedLocale = computed<FlagCode>(() =>
@@ -209,9 +219,28 @@ export function useAppHeaderAccount() {
 		localeModalOpen.value = false;
 	}
 
-	function selectLocale(code: SupportedCountry) {
-		setLocale(code);
+	async function selectLocale(code: SupportedCountry) {
+		preferredLocale.value = code;
+		await setLocale(code);
 		closeLocaleModal();
+
+		const currentPath = route.path || '/';
+		const normalizedPath = currentPath.startsWith('/') ? currentPath : `/${currentPath}`;
+		const segments = normalizedPath.split('/').filter(Boolean);
+		const nextPath = segments.length
+			? `/${[code, ...segments.slice(1)].join('/')}`
+			: `/${code}`;
+
+		if (nextPath !== normalizedPath) {
+			await navigateTo(
+				{
+					path: nextPath,
+					query: route.query,
+					hash: route.hash,
+				},
+				{ replace: true }
+			);
+		}
 	}
 
 	async function logoutMock() {

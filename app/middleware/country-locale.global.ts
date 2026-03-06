@@ -2,9 +2,19 @@ import { DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries'
 
 export default defineNuxtRouteMiddleware(async (to) => {
 	const { $i18n } = useNuxtApp()
+	const preferredLocale = useCookie<string | null>('preferred_locale', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	})
+	const preferredLocaleResolved =
+		resolveSupportedCountry(preferredLocale.value || '') || null
 	const currentLocaleRaw =
 		(typeof $i18n?.locale === 'string' ? $i18n.locale : $i18n?.locale?.value) || DEFAULT_COUNTRY
-	const currentLocale = resolveSupportedCountry(String(currentLocaleRaw)) || DEFAULT_COUNTRY
+	const currentLocale =
+		preferredLocaleResolved ||
+		resolveSupportedCountry(String(currentLocaleRaw)) ||
+		DEFAULT_COUNTRY
 	const path = to.path || '/'
 	const [_, firstSegment, secondSegment] = path.split('/')
 	const resolvedFirstSegment = resolveSupportedCountry(firstSegment)
@@ -25,6 +35,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	}
 
 	if (resolvedFirstSegment && secondSegment === 'guide') {
+		preferredLocale.value = resolvedFirstSegment
 		if (currentLocale !== resolvedFirstSegment && typeof $i18n?.setLocale === 'function') {
 			await $i18n.setLocale(resolvedFirstSegment)
 		}
@@ -67,6 +78,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	}
 
 	if (currentLocale !== resolvedFirstSegment && typeof $i18n?.setLocale === 'function') {
+		preferredLocale.value = resolvedFirstSegment
 		await $i18n.setLocale(resolvedFirstSegment)
+		return
 	}
+
+	preferredLocale.value = resolvedFirstSegment
 })

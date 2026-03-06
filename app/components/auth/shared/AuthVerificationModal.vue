@@ -242,6 +242,7 @@ onBeforeUnmount(() => {
 						inputmode="numeric"
 						maxlength="1"
 						autocomplete="one-time-code"
+						placeholder="0"
 						:value="value"
 						:data-testid="`${testIdPrefix}-code-${index + 1}`"
 						@input="onInput(index, $event)"
@@ -262,7 +263,7 @@ onBeforeUnmount(() => {
 				<UiButton
 					variant="filled"
 					tone="neutral"
-					size="md"
+					size="lg"
 					class="auth-verification-submit"
 					:data-testid="`${testIdPrefix}-submit`"
 					@click="emit('verify')"
@@ -293,7 +294,7 @@ onBeforeUnmount(() => {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
 
     .auth-verification-loading-overlay {
         position: absolute;
@@ -341,7 +342,7 @@ onBeforeUnmount(() => {
         display: grid;
         grid-template-columns: auto 1fr;
         align-items: start;
-        gap: 14px;
+        gap: 16px;
 
         .auth-verification-copy {
             display: flex;
@@ -401,11 +402,15 @@ onBeforeUnmount(() => {
                 border-radius: 8px;
                 padding: 0;
                 color: var(--text-primary);
-                font-size: var(--type-size-500);
-                line-height: var(--type-line-500);
+                font-size: var(--type-size-400);
+                line-height: var(--type-line-400);
                 font-weight: var(--font-weight-bold);
                 text-align: center;
                 transition: border-color 0.2s ease;
+
+                &::placeholder {
+                    color: var(--gray-60);
+                }
 
                 &:focus {
                     outline: none;

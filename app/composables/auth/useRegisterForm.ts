@@ -176,15 +176,6 @@ export function useRegisterForm() {
 		error: Record<string, unknown>;
 	}
 
-	interface LoginResponse {
-		success: boolean;
-		message: string;
-		data: {
-			user?: UserIdentity & { profile: UserProfile | null }
-			auth_token?: string
-		}
-	}
-
 	function getFirstError(
 		payload: RegisterVerificationResponse['data'] | undefined,
 		key: string
@@ -446,7 +437,7 @@ export function useRegisterForm() {
 					if (meResponse?.success && meResponse.data?.user) {
 						userStore.setUser({
 							...meResponse.data.user,
-							profile: meResponse.data.profile
+							profile: meResponse.data.profile ?? null
 						});
 
 						const mockUser = useCookie<{

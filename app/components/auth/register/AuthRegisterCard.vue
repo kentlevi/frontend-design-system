@@ -334,7 +334,7 @@ watch(isSubmitting, async (loading) => {
 		<UiButton
 			variant="filled"
 			tone="neutral"
-			size="md"
+			size="lg"
 			class="auth-register-submit"
 			data-testid="auth-register-submit"
 			@click="submitRegister"

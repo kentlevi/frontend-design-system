@@ -556,7 +556,7 @@ onBeforeUnmount(() => {
                     .checkout-summary-thumb-image {
                         width: 26px;
                         height: 26px;
-                        object-fit: cover;
+                        object-fit: contain;
                     }
                 }
 

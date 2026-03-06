@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserIdentity, UserProfile } from '~/stores/user';
+import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
@@ -190,14 +190,14 @@ export function useLoginPageForm() {
 		}
 	}
 
-	function getFieldValue(fields: any[], key: string, id: number) {
+	function getFieldValue(fields: UserFieldValue[], key: string, id: number) {
 		return fields.find((field) =>
 			field.country_field?.field_key === key ||
 			(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === id
 		)?.value?.trim() || '';
 	}
 
-	function getFieldId(field: any) {
+	function getFieldId(field: UserFieldValue) {
 		return field.country_field_id ?? field.country_field_ids ?? field.country_fields_id ?? Number.MAX_SAFE_INTEGER;
 	}
 
@@ -316,7 +316,7 @@ export function useLoginPageForm() {
 		nonMemberOrderError.value = '';
 	}
 
-// Interfaces
+	// Interfaces
 	interface LoginResponse {
 		success: boolean;
 		message: string;
