@@ -5,6 +5,7 @@ defineProps<{
 	email: string;
 	orderNumber: string;
 	emailError?: string;
+	emailHasError?: boolean;
 	orderError?: string;
 }>();
 
@@ -30,8 +31,8 @@ const emit = defineEmits<{
 						class="auth-login-input"
 						type="email"
 						size="md"
-						:state="emailError ? 'error' : 'default'"
-						:aria-invalid="emailError ? 'true' : 'false'"
+						:state="emailError || emailHasError ? 'error' : 'default'"
+						:aria-invalid="emailError || emailHasError ? 'true' : 'false'"
 						:aria-describedby="describedBy || undefined"
 						:placeholder="t('auth.login.enterEmail')"
 						:model-value="email"

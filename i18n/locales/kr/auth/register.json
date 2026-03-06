@@ -24,6 +24,7 @@
 			"validation": {
 				"fieldBlank": "필수 입력 항목입니다.",
 				"emailInvalid": "이메일 형식이 올바르지 않습니다.",
+				"emailTaken": "이미 사용 중인 이메일입니다.",
 				"mustAgree": "서비스 이용약관 및 개인정보처리방침에 동의해 주세요.",
 				"requestFailed": "지금은 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.",
 				"passwordRequirement": "비밀번호 요구 사항을 충족하지 않습니다."

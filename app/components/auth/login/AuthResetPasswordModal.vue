@@ -73,7 +73,7 @@ async function submitChangePassword() {
 	}
 
 	if (!isStrongPassword(newPassword)) {
-		error.value = t('auth.reset.description');
+		error.value = t('auth.reset.errors.passwordRequirements');
 		return;
 	}
 

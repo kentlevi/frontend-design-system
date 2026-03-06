@@ -74,6 +74,7 @@ export function useLoginPageForm() {
 	const memberPasswordError = ref('');
 	const memberInvalidCredentials = ref(false);
 	const nonMemberEmailError = ref('');
+	const nonMemberEmailHasError = ref(false);
 	const nonMemberOrderError = ref('');
 
 	// Computed
@@ -104,6 +105,7 @@ export function useLoginPageForm() {
 		memberPasswordError.value = '';
 		memberInvalidCredentials.value = false;
 		nonMemberEmailError.value = '';
+		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
 	}
 
@@ -271,12 +273,15 @@ export function useLoginPageForm() {
 
 	function validateNonMember() {
 		nonMemberEmailError.value = '';
+		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
 
 		if (!nonMemberEmail.value.trim()) {
 			nonMemberEmailError.value = t('auth.login.validation.fieldBlank');
+			nonMemberEmailHasError.value = true;
 		} else if (!isValidEmail(nonMemberEmail.value.trim())) {
 			nonMemberEmailError.value = t('auth.login.validation.emailInvalid');
+			nonMemberEmailHasError.value = true;
 		}
 
 		if (!nonMemberOrderNumber.value.trim()) {
@@ -303,6 +308,7 @@ export function useLoginPageForm() {
 	function onNonMemberEmailInput(value: string) {
 		nonMemberEmail.value = value;
 		nonMemberEmailError.value = '';
+		nonMemberEmailHasError.value = false;
 	}
 
 	function onNonMemberOrderInput(value: string) {
@@ -476,7 +482,10 @@ export function useLoginPageForm() {
 				);
 
 				if (!response.success) {
-					guestVerificationError.value = response.message || t('auth.guestVerification.requestFailed');
+					nonMemberEmailError.value = '';
+					nonMemberEmailHasError.value = true;
+					nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
+					guestVerificationError.value = '';
 					return;
 				}
 
@@ -491,8 +500,11 @@ export function useLoginPageForm() {
 					auth_token: response.data?.auth_token,
 					cached_at: Date.now(),
 				};
-			} catch (error: unknown) {
-				guestVerificationError.value = handleApiError(error, t('auth.guestVerification.requestFailed'));
+			} catch {
+				nonMemberEmailError.value = '';
+				nonMemberEmailHasError.value = true;
+				nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
+				guestVerificationError.value = '';
 				return;
 			}
 		}
@@ -669,6 +681,7 @@ export function useLoginPageForm() {
 		memberPasswordError,
 		memberInvalidCredentials,
 		nonMemberEmailError,
+		nonMemberEmailHasError,
 		nonMemberOrderError,
 		onMemberEmailInput,
 		onMemberPasswordInput,

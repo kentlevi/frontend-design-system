@@ -24,6 +24,7 @@
             "validation": {
                 "fieldBlank": "Required",
                 "emailInvalid": "Email Format Is Invalid",
+                "emailTaken": "Email has already been taken.",
                 "mustAgree": "Required",
                 "passwordRequirement": "Password does not meet the requirement.",
                 "requestFailed": "Unable to connect right now. Please try again."
