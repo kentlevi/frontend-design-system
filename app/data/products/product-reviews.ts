@@ -6,7 +6,7 @@ export type ReviewCard = {
 	avatarUrl?: string;
 };
 
-const reviewAssetsBase = 'https://static.musticker.com/dev/store-front/products/reviews';
+const reviewAssetsBase = 'products/reviews';
 
 export const reviewCards: ReviewCard[] = [
 	{

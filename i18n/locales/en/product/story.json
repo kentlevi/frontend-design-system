@@ -1,17 +1,63 @@
 {
     "product": {
         "story": {
-            "timeless": {
-                "title": "Timeless Perfection",
-                "text": "Vibrant colors from premium printing and thick material built to resist fading from sun and heat. Enjoy long-lasting quality from the moment you apply it."
+            "navigation": {
+                "stickers": {
+                    "row1": {
+                        "title": "Premium Quality",
+                        "text": "Crafted with rich colors and durable materials for a professional finish. Built to resist fading, cracking, and peeling so your sticker stays perfect longer."
+                    },
+                    "row2": {
+                        "title": "Long-Lasting Color",
+                        "text": "Experience bright, vivid prints on thick, high-quality material. Designed to endure sun, rain, and heat while keeping colors sharp and vibrant."
+                    },
+                    "row3": {
+                        "title": "Built to Last",
+                        "text": "Premium printing meets tough materials for stickers that stay vibrant over time. Resistant to weather, heat, and moisture—perfect for both indoor and outdoor use."
+                    }
+                },
+                "rollStickers": {
+                    "row1": {
+                        "title": "Efficient & Ready to Apply",
+                        "text": "Roll stickers are perfect for fast and easy application. Printed with vibrant colors on durable material, each sticker peels smoothly from the roll, making them ideal for packaging, labeling, and high-volume use."
+                    },
+                    "row2": {
+                        "title": "Smooth & Seamless",
+                        "text": "Keep your labeling process simple with roll stickers. Each piece is precisely cut and easy to peel, with vibrant colors and durable material that holds up during shipping and handling."
+                    },
+                    "row3": {
+                        "title": "Fast, Clean, Reliable",
+                        "text": "Built for efficiency, roll stickers deliver smooth peeling and consistent quality. Ideal for bulk use, they provide strong adhesion and vivid prints that keep your brand looking professional."
+                    }
+                },
+                "sheetStickers": {
+                    "row1": {
+                        "title": "More Stickers, More Creativity",
+                        "text": "Multiple designs printed on a single sheet for easy peeling and organized use. Enjoy vibrant colors, precise cuts, and durable material that keeps every sticker looking sharp and long-lasting."
+                    },
+                    "row2": {
+                        "title": "All-in-One Sheet",
+                        "text": "Keep your favorite designs together on one convenient sheet. Printed with rich colors on premium material, each sticker is cleanly cut and ready to peel whenever inspiration strikes."
+                    },
+                    "row3": {
+                        "title": "Organized and Ready to Peel",
+                        "text": "Sticker sheets keep all your designs neatly arranged and easy to use. With premium printing and durable material, every sticker stays vibrant and ready for any surface."
+                    }
+                }
             },
-            "quickStick": {
-                "title": "Quick to stick, easy to peel!",
-                "text": "Applies smoothly and peels cleanly without residue. Strong adhesive protects surfaces and removes with minimal effort."
-            },
-            "preciseCut": {
-                "title": "Precisely cut to match the design",
-                "text": "Upload your logo or artwork and we cut with precision around every shape, preserving small details and clean edges."
+            "productMode": {
+                "row1": {
+                    "title": "Timeless Perfection",
+                    "text": "Vibrant colors from premium printing and thick material. Built to last, resists fading from rain, sun, and heat. Enjoy long-lasting quality from the moment you apply it."
+                },
+                "row2": {
+                    "title": "Quick to stick, easy to peel!",
+                    "text": "Adheres smoothly and peels off cleanly without a trace. Strong yet safe, it protects surfaces and removes in one swift motion."
+                },
+                "row3": {
+                    "title": "Precisely cut to match the design",
+                    "text": "Upload your logo, illustration, or photo, and we’ll precisely cut it into a sticker along the outline. Even intricate designs are flawlessly rendered with Musticker’s unique cutting technology."
+                }
             }
         }
     }

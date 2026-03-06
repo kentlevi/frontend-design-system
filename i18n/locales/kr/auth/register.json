@@ -2,7 +2,7 @@
 	"auth": {
 		"register": {
 			"title": "회원가입",
-			"subtitle": "계정 등록 시 2포인트를 적립하고 여정을 시작하세요.",
+			"subtitle": "계정 등록 시 {points}포인트를 적립하고 여정을 시작하세요.",
 			"firstName": "이름",
 			"lastName": "성",
 			"optional": "선택",

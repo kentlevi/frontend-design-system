@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useCountry } from '@/composables/app/useCountry';
 import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
 import HomeGuideTour from '~/components/home/HomeGuideTour.vue';
@@ -36,11 +37,13 @@ definePageMeta({
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const { withCountry } = useCountry();
 const isForgotPasswordModalOpen = ref(false);
 const forgotEmail = ref('');
 const isResetPasswordModalOpen = ref(false);
 const resetEmail = ref('');
 const resetToken = ref('');
+const resetExpiry = ref('');
 const isResetSuccessToastVisible = ref(false);
 const isLoginSuccessToastVisible = ref(false);
 const isWelcomePopoverVisible = ref(false);
@@ -295,10 +298,23 @@ onMounted(() => {
 	const tokenQuery = Array.isArray(route.query.token)
 		? route.query.token[0]
 		: route.query.token;
+	const expiryQuery = Array.isArray(route.query.expiry)
+		? route.query.expiry[0]
+		: route.query.expiry;
 
 	if (modalQuery === 'reset-password') {
 		resetEmail.value = typeof emailQuery === 'string' ? emailQuery : '';
 		resetToken.value = typeof tokenQuery === 'string' ? tokenQuery : '';
+		resetExpiry.value = typeof expiryQuery === 'string' ? expiryQuery : '';
+
+		if (resetExpiry.value !== '') {
+			const expiry = parseInt(resetExpiry.value, 10);
+			const now = Math.floor(Date.now() / 1000);
+			if (now > expiry) {
+				navigateTo(withCountry('/auth/otp-expired'));
+				return;
+			}
+		}
 
 		if (resetEmail.value && resetToken.value) {
 			isResetPasswordModalOpen.value = true;
@@ -383,6 +399,7 @@ useHead({
 			v-model="isResetPasswordModalOpen"
 			:email="resetEmail"
 			:token="resetToken"
+			:expiry="resetExpiry"
 			data-testid="home-reset-password-modal"
 			@updated="showResetSuccessToast"
 		/>
