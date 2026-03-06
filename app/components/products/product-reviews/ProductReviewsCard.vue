@@ -2,13 +2,17 @@
 import type { ReviewCard } from '~/data/products/product-reviews';
 
 const { t } = useI18n();
-const defaultAvatarUrl = 'https://static.musticker.com/dev/store-front/products/reviews/client-avatar.png';
+const { resolveFileUrl } = useFileBaseUrl();
+const defaultAvatarUrl = resolveFileUrl('products/reviews/client-avatar.png');
 
 const props = defineProps<{
 	card: ReviewCard;
 }>();
 
-const avatarSrc = computed(() => props.card.avatarUrl || defaultAvatarUrl);
+const mediaSrc = computed(() => resolveFileUrl(props.card.mediaUrl));
+const avatarSrc = computed(() =>
+	resolveFileUrl(props.card.avatarUrl || defaultAvatarUrl)
+);
 
 const onAvatarError = (event: Event) => {
 	const image = event.target as HTMLImageElement | null;
@@ -22,7 +26,7 @@ const onAvatarError = (event: Event) => {
 		<div class="product-reviews-body" data-testid="product-reviews-card-body">
 			<div class="product-reviews-media" :data-testid="`product-reviews-card-media-${props.card.id}`">
 				<img
-					:src="props.card.mediaUrl"
+					:src="mediaSrc"
 					:alt="t(`product.reviews.cards.${props.card.id}.title`)"
 					loading="lazy"
 					class="product-reviews-media-image"

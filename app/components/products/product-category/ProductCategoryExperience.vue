@@ -101,7 +101,8 @@ const {
 		</div>
 
 		<ProductCategoryDetails
-			:has-picked-product="hasPickedProduct"
+			:category="props.category"
+			:selected-product-id="selectedId"
 		/>
 
 		<input
@@ -160,6 +161,7 @@ const {
     .product-experience-container {
         max-width: 1200px;
         margin: 0 auto;
+    	padding-bottom: 44px;
         position: relative;
     }
 
