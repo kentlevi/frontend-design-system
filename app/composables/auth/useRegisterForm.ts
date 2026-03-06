@@ -578,12 +578,7 @@ export function useRegisterForm() {
 	}
 
 	watch(isVerificationModalOpen, (open) => {
-		if (open) {
-			if (resendCooldownRemaining.value <= 0) {
-				startResendCooldown();
-			}
-			return;
-		}
+		if (open) return;
 
 		clearResendCooldownTimer();
 		resendCooldownRemaining.value = 0;

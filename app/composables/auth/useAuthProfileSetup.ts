@@ -322,11 +322,17 @@ export function useAuthProfileSetup() {
 				}
 
 				const body = new FormData();
-				body.append('first_name', firstName.value.trim());
-				body.append('last_name', lastName.value.trim());
+				body.append('given_name', firstName.value.trim());
+				body.append('family_name', lastName.value.trim());
+				body.append('offers_emails', promotions.value ? '1' : '0');
+				body.append('reviews_emails', reviews.value ? '1' : '0');
+				body.append('confirmations_emails', confirmations.value ? '1' : '0');
 
-				await api(`/${apiCountry.value}/profile/${userStore.id}/complete-onboarding`, {
+				await api(`/${apiCountry.value}/user/complete-onboarding`, {
 					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${authToken.value}`
+					},
 					body,
 				});
 

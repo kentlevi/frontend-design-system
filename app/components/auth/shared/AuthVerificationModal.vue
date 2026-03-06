@@ -70,7 +70,13 @@ const computedSubmitLabel = computed(() =>
 		? props.busyLabel || t(`${key.value}.verifying`)
 		: props.submitLabel || t(`${key.value}.verify`)
 );
-const canResend = computed(() => props.resendCooldownRemaining <= 0);
+const hasTriggeredResend = ref(false);
+const isResendLocked = ref(false);
+const canResend = computed(() => {
+	if (!hasTriggeredResend.value) return true;
+	if (isResendLocked.value) return false;
+	return props.resendCooldownRemaining <= 0;
+});
 const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
 	props.align === 'start' ? 'top' : props.align
 );
@@ -93,6 +99,13 @@ function onInput(index: number, event: Event) {
 function onPaste(event: ClipboardEvent) {
 	handlePaste(event);
 	emitCode();
+}
+
+function onResendClick() {
+	if (!canResend.value) return;
+	hasTriggeredResend.value = true;
+	isResendLocked.value = true;
+	emit('resend');
 }
 
 function destroyVerifyLoaderAnimation() {
@@ -128,6 +141,28 @@ watch(
 		}
 		await nextTick();
 		await mountVerifyLoaderAnimation();
+	}
+);
+
+watch(
+	() => props.resendCooldownRemaining,
+	(remaining) => {
+		if (!hasTriggeredResend.value) return;
+		if (remaining > 0) {
+			isResendLocked.value = true;
+			return;
+		}
+
+		isResendLocked.value = false;
+	}
+);
+
+watch(
+	() => props.modelValue,
+	(isOpen) => {
+		if (!isOpen) return;
+		hasTriggeredResend.value = false;
+		isResendLocked.value = false;
 	}
 );
 
@@ -242,7 +277,7 @@ onBeforeUnmount(() => {
 						class="auth-verification-resend-btn"
 						:data-testid="`${testIdPrefix}-resend`"
 						:disabled="!canResend"
-						@click="emit('resend')"
+						@click="onResendClick"
 					>
 						{{ t(`${key}.resendCta`) }}
 					</button>

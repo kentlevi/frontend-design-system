@@ -614,12 +614,7 @@ export function useLoginPageForm() {
 
 	// Modal and utility functions
 	watch(isVerificationModalOpen, (open) => {
-		if (open) {
-			if (guestResendCooldownRemaining.value <= 0) {
-				startGuestResendCooldown();
-			}
-			return;
-		}
+		if (open) return;
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
 		isGuestVerifying.value = false;
