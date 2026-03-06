@@ -210,7 +210,7 @@ export function useRegisterForm() {
 	function normalizeEmailErrorMessage(message: string) {
 		if (!message) return message;
 		if (/already been taken/i.test(message)) {
-			return 'Email has already been taken';
+			return t('auth.register.validation.emailTaken');
 		}
 		return message;
 	}

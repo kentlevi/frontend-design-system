@@ -36,6 +36,7 @@ const {
 	memberPasswordError,
 	memberInvalidCredentials,
 	nonMemberEmailError,
+	nonMemberEmailHasError,
 	nonMemberOrderError,
 	onMemberEmailInput,
 	onMemberPasswordInput,
@@ -94,6 +95,7 @@ const {
 						:email="nonMemberEmail"
 						:order-number="nonMemberOrderNumber"
 						:email-error="nonMemberEmailError"
+						:email-has-error="nonMemberEmailHasError"
 						:order-error="nonMemberOrderError"
 						@update:email="onNonMemberEmailInput"
 						@update:order-number="onNonMemberOrderInput"
