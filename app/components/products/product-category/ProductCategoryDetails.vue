@@ -1,17 +1,182 @@
 <script setup lang="ts">
+import type { ProductCategoryKey } from '~/data/products/catalog';
+
+type StoryMedia = {
+	type: 'image' | 'video';
+	src: string;
+	poster?: string;
+};
+
+type StoryRow = {
+	title: string;
+	text: string;
+	reverse?: boolean;
+	media: StoryMedia;
+};
+
+const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
+	{
+		type: 'video',
+		src: 'products/die-cut-sticker/features/01-skater-sticker-on-car-video.mp4',
+		poster: 'products/die-cut-sticker/features/01-skater-sticker-on-car-placeholder.png',
+	},
+	{
+		type: 'video',
+		src: 'products/die-cut-sticker/features/02-watermelon-design-on-tablet-video.mp4',
+		poster: 'products/die-cut-sticker/features/02-watermelon-design-on-tablet-placeholder.png',
+	},
+	{
+		type: 'image',
+		src: 'products/die-cut-sticker/features/03-multiple-diecut-stickers-in-hand-placeholder.png',
+	},
+];
+
 const props = defineProps<{
-	hasPickedProduct: boolean;
+	category: ProductCategoryKey;
+	selectedProductId?: string | null;
 }>();
 
 const { t } = useI18n();
-const storyVideoOne = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/01-skater-sticker-on-car-video.mp4';
-const storyPosterOne = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/01-skater-sticker-on-car-poster.png';
-const storyVideoTwo = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/02-watermelon-design-on-tablet-video.mp4';
-const storyPosterTwo = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/02-watermelon-design-on-tablet-poster.png';
+const { resolveFileUrl } = useFileBaseUrl();
+
+function resolveStoryMedia(media: StoryMedia): StoryMedia {
+	return {
+		...media,
+		src: resolveFileUrl(media.src),
+		poster: media.poster ? resolveFileUrl(media.poster) : undefined,
+	};
+}
+
+const navigationStoryRowsByCategory: Record<ProductCategoryKey, StoryRow[]> = {
+	stickers: [
+		{
+			title: t('product.story.navigation.stickers.row1.title'),
+			text: t('product.story.navigation.stickers.row1.text'),
+			media: {
+				type: 'image',
+				src: 'products/stickers/features/01-premium-quality.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.stickers.row2.title'),
+			text: t('product.story.navigation.stickers.row2.text'),
+			reverse: true,
+			media: {
+				type: 'image',
+				src: 'products/stickers/features/02-long-lasting-color.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.stickers.row3.title'),
+			text: t('product.story.navigation.stickers.row3.text'),
+			media: {
+				type: 'image',
+				src: 'products/stickers/features/03-built-to-last.png',
+			},
+		},
+	],
+	'roll-stickers': [
+		{
+			title: t('product.story.navigation.rollStickers.row1.title'),
+			text: t('product.story.navigation.rollStickers.row1.text'),
+			media: {
+				type: 'image',
+				src: 'products/roll-stickers/features/01-efficient-ready-apply.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.rollStickers.row2.title'),
+			text: t('product.story.navigation.rollStickers.row2.text'),
+			reverse: true,
+			media: {
+				type: 'image',
+				src: 'products/roll-stickers/features/02-smooth-seamless.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.rollStickers.row3.title'),
+			text: t('product.story.navigation.rollStickers.row3.text'),
+			media: {
+				type: 'image',
+				src: 'products/roll-stickers/features/03-fast-clean-reliable.png',
+			},
+		},
+	],
+	'sheet-stickers': [
+		{
+			title: t('product.story.navigation.sheetStickers.row1.title'),
+			text: t('product.story.navigation.sheetStickers.row1.text'),
+			media: {
+				type: 'image',
+				src: 'products/sheet-stickers/features/01-more-stickers-creativity.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.sheetStickers.row2.title'),
+			text: t('product.story.navigation.sheetStickers.row2.text'),
+			reverse: true,
+			media: {
+				type: 'image',
+				src: 'products/sheet-stickers/features/02-all-in-one-sheet.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.sheetStickers.row3.title'),
+			text: t('product.story.navigation.sheetStickers.row3.text'),
+			media: {
+				type: 'image',
+				src: 'products/sheet-stickers/features/03-organized-ready-peel.png',
+			},
+		},
+	],
+};
+
+function getDefaultProductStoryMedia(index: 0 | 1 | 2): StoryMedia {
+	return resolveStoryMedia(DEFAULT_PRODUCT_STORY_MEDIA[index]);
+}
+
+function selectedProductName() {
+	if (!props.selectedProductId) return '';
+	return t(`product.items.${props.selectedProductId}.name`);
+}
+
+function selectedProductBlurb() {
+	if (!props.selectedProductId) return '';
+	return t(`product.items.${props.selectedProductId}.blurb`);
+}
+
+const storyRows = computed<StoryRow[]>(() => {
+	const navigationRows = (navigationStoryRowsByCategory[props.category] || []).map((row) => ({
+		...row,
+		media: resolveStoryMedia(row.media),
+	}));
+	if (!props.selectedProductId) return navigationRows;
+
+	const name = selectedProductName();
+	const blurb = selectedProductBlurb();
+	return [
+		{
+			title: t('product.story.productMode.row1.title', { name }),
+			text: t('product.story.productMode.row1.text', { blurb }),
+			media: getDefaultProductStoryMedia(0),
+		},
+		{
+			title: t('product.story.productMode.row2.title', { name }),
+			text: t('product.story.productMode.row2.text', { blurb }),
+			reverse: true,
+			media: getDefaultProductStoryMedia(1),
+		},
+		{
+			title: t('product.story.productMode.row3.title', { name }),
+			text: t('product.story.productMode.row3.text', { blurb }),
+			media: getDefaultProductStoryMedia(2),
+		},
+	];
+});
 </script>
 
 <template>
-	<section v-show="props.hasPickedProduct" class="product-guarantees-band" data-testid="product-category-guarantees-band">
+	<section class="product-guarantees-band" data-testid="product-category-guarantees-band">
 		<div class="product-guarantees" data-testid="product-category-guarantees">
 			<article class="guarantee-card" data-testid="product-category-guarantee-made-today">
 				<img
@@ -42,10 +207,17 @@ const storyPosterTwo = 'https://static.musticker.com/dev/store-front/products/di
 
 	<div class="product-experience-container" data-testid="product-category-story-container">
 		<section class="product-story" data-testid="product-category-story">
-			<article class="story-row" data-testid="product-category-story-timeless">
+			<article
+				v-for="(row, index) in storyRows"
+				:key="`product-story-row-${index}`"
+				class="story-row"
+				:class="{ reverse: row.reverse }"
+				:data-testid="`product-category-story-row-${index + 1}`"
+			>
 				<div class="story-image">
 					<video
-						:poster="storyPosterOne"
+						v-if="row.media.type === 'video'"
+						:poster="row.media.poster"
 						class="product-details-image"
 						autoplay
 						muted
@@ -53,43 +225,19 @@ const storyPosterTwo = 'https://static.musticker.com/dev/store-front/products/di
 						playsinline
 						preload="metadata"
 					>
-						<source :src="storyVideoOne" type="video/mp4">
+						<source :src="row.media.src" type="video/mp4">
 					</video>
-				</div>
-				<div class="story-copy">
-					<h3 class="product-story-title">{{ t('product.story.timeless.title') }}</h3>
-					<p class="product-details-text">{{ t('product.story.timeless.text') }}</p>
-				</div>
-			</article>
-			<article class="story-row reverse" data-testid="product-category-story-quick-stick">
-				<div class="story-image">
-					<video
-						:poster="storyPosterTwo"
-						class="product-details-image"
-						autoplay
-						muted
-						loop
-						playsinline
-						preload="metadata"
-					>
-						<source :src="storyVideoTwo" type="video/mp4">
-					</video>
-				</div>
-				<div class="story-copy">
-					<h3 class="product-story-title">{{ t('product.story.quickStick.title') }}</h3>
-					<p class="product-details-text">{{ t('product.story.quickStick.text') }}</p>
-				</div>
-			</article>
-			<article class="story-row" data-testid="product-category-story-precise-cut">
-				<div class="story-image">
 					<img
-						src="https://static.musticker.com/dev/store-front/products/die-cut-sticker/features/03-multiple-diecut-stickers-in-hand-placeholder.png"
-						:alt="t('product.story.preciseCut.title')"
-						loading="lazy" class="product-details-image" >
+						v-else
+						:src="row.media.src"
+						:alt="row.title"
+						loading="lazy"
+						class="product-details-image"
+					>
 				</div>
 				<div class="story-copy">
-					<h3 class="product-story-title">{{ t('product.story.preciseCut.title') }}</h3>
-					<p class="product-details-text">{{ t('product.story.preciseCut.text') }}</p>
+					<h3 class="product-story-title">{{ row.title }}</h3>
+					<p class="product-details-text">{{ row.text }}</p>
 				</div>
 			</article>
 		</section>
@@ -154,7 +302,7 @@ const storyPosterTwo = 'https://static.musticker.com/dev/store-front/products/di
             display: grid;
             grid-template-columns: 1fr 1fr;
             align-items: center;
-            gap: 32px;
+            gap: 24px;
 
             &.reverse {
                 .story-image {

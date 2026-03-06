@@ -30,14 +30,61 @@ export const headerNavLinkConfig = [
 	},
 ] as const;
 
+export type CategoryData = {
+	id?: number | string;
+	name?: string;
+	url_slug?: string;
+	description?: string;
+	sort?: number;
+};
+
+export type NavLinkItem = {
+	key: string;
+	label: string;
+	to: string;
+};
+
+export function formatCategoryAsNavLink(category: CategoryData): NavLinkItem | null {
+	const key = (category.url_slug || '').trim();
+	const label = (category.name || '').trim();
+	const to = key ? `/${key}` : '';
+
+	if (!key || !label || !to) return null;
+
+	return { key, label, to };
+}
+
+interface ProductCategories {
+	success: boolean;
+	message: string;
+	data: {};
+}
+
+export async function fetchNavigationCategories(
+	api: (path: string, options?: any) => Promise<any>,
+	country: string
+): Promise<CategoryData[]> {
+	try {
+		const response = await api<ProductCategories>(`/${country}/navigation/categories`);
+
+		if (!response?.success || !Array.isArray(response.data)) {
+			return [];
+		}
+
+		return response.data;
+	} catch {
+		return [];
+	}
+}
+
 export const headerLocaleOptionConfig: Array<{
 	code: SupportedCountry;
 	flagCode: FlagCode;
 	labelKey: string;
 }> = [
-	{ code: 'us', flagCode: 'us', labelKey: 'layout.header.locale.en' },
-	{ code: 'kr', flagCode: 'kr', labelKey: 'layout.header.locale.kr' },
-];
+		{ code: 'us', flagCode: 'us', labelKey: 'layout.header.locale.en' },
+		{ code: 'kr', flagCode: 'kr', labelKey: 'layout.header.locale.kr' },
+	];
 
 export const headerAccountLinkConfig = [
 	{

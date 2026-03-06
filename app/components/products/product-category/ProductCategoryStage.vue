@@ -42,8 +42,9 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const demoHeroVideoUrl = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4';
-const demoHeroPosterUrl = 'https://static.musticker.com/dev/store-front/products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png';
+const { resolveFileUrl } = useFileBaseUrl();
+const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
+const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );

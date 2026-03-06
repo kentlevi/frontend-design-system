@@ -467,7 +467,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.home-account-dropdown--guest {
-            width: 206px;
+            width: 112px;
             right: auto;
             left: 50%;
             transform: translateX(-50%);

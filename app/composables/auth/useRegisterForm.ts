@@ -156,12 +156,12 @@ export function useRegisterForm() {
 		success: boolean | string | number;
 		message: string;
 		data:
-            | {
-            	email: string;
-            	token: string;
-            	otp_required?: boolean;
-            }
-            | Record<string, string[]>;
+		| {
+			email: string;
+			token: string;
+			otp_required?: boolean;
+		}
+		| Record<string, string[]>;
 		meta: Record<string, unknown>;
 		error: Record<string, unknown>;
 	}
@@ -169,7 +169,9 @@ export function useRegisterForm() {
 	interface RegisterResponse {
 		success: boolean;
 		message: string;
-		data: Record<string, unknown>;
+		data: {
+			auth_token?: string;
+		} & Record<string, unknown>;
 		meta: Record<string, unknown>;
 		error: Record<string, unknown>;
 	}
@@ -273,9 +275,9 @@ export function useRegisterForm() {
 
 		if (
 			firstNameError.value ||
-            emailError.value ||
-            passwordError.value ||
-            termsError.value
+			emailError.value ||
+			passwordError.value ||
+			termsError.value
 		) {
 			return;
 		}
@@ -298,7 +300,7 @@ export function useRegisterForm() {
 			if (!isSuccess) {
 				firstNameError.value =
 					getFirstError(response.data, 'given_name') ||
-                    getFirstError(response.data, 'first_name');
+					getFirstError(response.data, 'first_name');
 				emailError.value = normalizeEmailErrorMessage(
 					getFirstError(response.data, 'email')
 				);
@@ -307,12 +309,12 @@ export function useRegisterForm() {
 				);
 				termsError.value =
 					getFirstError(response.data, 'terms_of_service') ||
-                    getFirstError(response.data, 'terms');
+					getFirstError(response.data, 'terms');
 				if (
 					!firstNameError.value &&
-                    !emailError.value &&
-                    !passwordError.value &&
-                    !termsError.value
+					!emailError.value &&
+					!passwordError.value &&
+					!termsError.value
 				) {
 					if (applyRegisterCooldownFromMessage(response.message || '')) {
 						return response;
@@ -361,7 +363,7 @@ export function useRegisterForm() {
 			const validation = payload?.data;
 			firstNameError.value =
 				getFirstError(validation, 'given_name') ||
-                getFirstError(validation, 'first_name');
+				getFirstError(validation, 'first_name');
 			emailError.value = normalizeEmailErrorMessage(
 				getFirstError(validation, 'email')
 			);
@@ -370,7 +372,7 @@ export function useRegisterForm() {
 			);
 			termsError.value =
 				getFirstError(validation, 'terms_of_service') ||
-                getFirstError(validation, 'terms');
+				getFirstError(validation, 'terms');
 
 			if (!firstNameError.value && !emailError.value && !passwordError.value && !termsError.value) {
 				const cooldownMessage = (payload?.message || errorPayload?.message || '').trim();
@@ -414,27 +416,38 @@ export function useRegisterForm() {
 				return response;
 			}
 
-			try {
-				const loginResponse = await api<LoginResponse>(`/${apiCountry.value}/auth/login`, {
-					method: 'POST',
-					body: {
-						email: email.value.trim(),
-						password: password.value.trim(),
-						remember_me: true
-					}
+			// Set the auth token from registration response
+			const authTokenValue = (response.data as { auth_token?: string }).auth_token;
+			if (authTokenValue) {
+				const authToken = useCookie('auth_token', {
+					maxAge: 60 * 60 * 24 * 90,
+					sameSite: 'lax',
+					path: '/'
 				})
+				authToken.value = authTokenValue;
 
-				if (loginResponse?.success && loginResponse.data?.auth_token) {
-					const authToken = useCookie('auth_token', {
-						maxAge: 60 * 60 * 24 * 90,
-						sameSite: 'lax',
-						path: '/'
-					})
+				// Fetch user data using the token
+				try {
+					type MeResponse = {
+						success: boolean;
+						data: {
+							user?: UserIdentity;
+							profile?: UserProfile | null;
+						}
+					};
 
-					authToken.value = loginResponse.data.auth_token ?? ''
+					const meResponse = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
+						method: 'GET',
+						headers: {
+							Authorization: `Bearer ${authTokenValue}`
+						}
+					});
 
-					if (loginResponse.data.user) {
-						userStore.setUser(loginResponse.data.user)
+					if (meResponse?.success && meResponse.data?.user) {
+						userStore.setUser({
+							...meResponse.data.user,
+							profile: meResponse.data.profile
+						});
 
 						const mockUser = useCookie<{
 							firstName: string;
@@ -445,29 +458,29 @@ export function useRegisterForm() {
 							path: '/',
 						});
 
-						const fields = loginResponse.data.user.profile?.user_field_values ?? [];
+						const fields = meResponse.data.profile?.user_field_values ?? [];
 						const resolvedFirstName =
 							fields.find(
 								(field: UserFieldValue) =>
 									field.country_field?.field_key === 'first_name' ||
-                                    (field.country_field_id ??
-                                        field.country_field_ids ??
-                                        field.country_fields_id) === 1
+									(field.country_field_id ??
+										field.country_field_ids ??
+										field.country_fields_id) === 1
 							)?.value?.trim() || firstName.value.trim();
 						const resolvedLastName =
 							fields.find(
 								(field: UserFieldValue) =>
 									field.country_field?.field_key === 'last_name' ||
-                                    (field.country_field_id ??
-                                        field.country_field_ids ??
-                                        field.country_fields_id) === 2
+									(field.country_field_id ??
+										field.country_field_ids ??
+										field.country_fields_id) === 2
 							)?.value?.trim() || lastName.value.trim();
 						const fallbackRows = [...fields]
 							.filter((field) => typeof field.value === 'string' && field.value.trim())
 							.sort(
 								(a, b) =>
 									(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
-                                    (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
+									(b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
 							)
 							.slice(0, 2);
 						let normalizedFirstName = resolvedFirstName || 'User';
@@ -491,20 +504,13 @@ export function useRegisterForm() {
 						mockUser.value = {
 							firstName: normalizedFirstName,
 							lastName: normalizedLastName,
-							email: loginResponse.data.user.email || email.value.trim(),
+							email: meResponse.data.user.email || email.value.trim(),
 						};
 					}
+				} catch (error) {
+					console.warn('Failed to fetch user data after registration.', error);
 				}
-			} catch (error) {
-				console.warn('Auto-login after registration failed.', error)
 			}
-
-			userStore.setOnboardingProfile({
-				firstName: firstName.value.trim(),
-				lastName: lastName.value.trim(),
-				email: email.value.trim(),
-				onboarding: true,
-			});
 			if (import.meta.client) {
 				window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
 			}
