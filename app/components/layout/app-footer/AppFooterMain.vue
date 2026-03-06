@@ -22,8 +22,8 @@ defineProps<{
 			</p>
 			<p class="home-footer-copy">
 				&copy; GLOPHICS Corp. {{ year }}
-				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
-				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
 			</p>
 		</div>
 
@@ -85,6 +85,9 @@ defineProps<{
                 font-size: var(--type-size-100);
                 font-weight: var(--font-weight-bold);
                 line-height: var(--type-line-100);
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
     }

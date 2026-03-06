@@ -13,10 +13,13 @@ const headerVariant = computed(() =>
 const footerVariant = computed(() =>
 	route.meta.footerVariant === 'compact' ? 'compact' : 'full'
 );
+const backgroundVariant = computed(() =>
+	route.meta.layoutBackground === 'neutral' ? 'neutral' : 'brand'
+);
 </script>
 
 <template>
-	<div class="home-layout">
+	<div class="home-layout" :class="`home-layout--${backgroundVariant}`">
 		<AppHeaderRoot v-if="!route.meta.hideHeader && headerVariant === 'default'" />
 		<AppHeaderCheckoutBar v-else-if="!route.meta.hideHeader && headerVariant === 'checkout'" />
 		<main class="home-layout-main">
@@ -34,7 +37,6 @@ const footerVariant = computed(() =>
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--brand-primary);
 
     .home-layout-main {
         flex: 1;
@@ -57,6 +59,14 @@ const footerVariant = computed(() =>
             width: 100%;
         }
     }
+}
+
+.home-layout--brand {
+    background: var(--brand-primary);
+}
+
+.home-layout--neutral {
+    background: var(--bg-page);
 }
 </style>
 

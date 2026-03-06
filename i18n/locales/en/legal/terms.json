@@ -1,0 +1,230 @@
+{
+    "legal": {
+        "terms": {
+            "title": "Terms & Conditions",
+            "lastUpdatedLabel": "Last Updated:",
+            "lastUpdatedDate": "March 6, 2026",
+            "topicsLabel": "Topics",
+            "introduction": [
+                "These Terms & Conditions (\"Terms\") govern the use of the Musticker website and services operated by Glophics Corp. (\"Company,\" \"we,\" \"us,\" or \"our\").",
+                "Musticker is an online printing service legally based in the Republic of Korea. By accessing or using our website, you agree to these Terms. If you do not agree, please discontinue use of the service."
+            ],
+            "sections": [
+                {
+                    "id": "company-information",
+                    "title": "1. Company Information",
+                    "bullets": [
+                        "Company Name: Glophics Corp.",
+                        "Brand Name: Musticker",
+                        "Business Type: Online Printing Services",
+                        "Country: Republic of Korea (South Korea)",
+                        "Contact Email: support [at] musticker.com"
+                    ]
+                },
+                {
+                    "id": "scope-of-service",
+                    "title": "2. Scope of Service",
+                    "paragraphs": [
+                        "Musticker provides customized online printing services, including but not limited to sticker and label production.",
+                        "Services are provided in accordance with these Terms, the Privacy Policy, and applicable Korean laws."
+                    ],
+                    "bullets": [
+                        "Custom sticker and label printing",
+                        "Printed materials and related production support"
+                    ]
+                },
+                {
+                    "id": "user-eligibility",
+                    "title": "3. User Eligibility",
+                    "paragraphs": [
+                        "You confirm that:"
+                    ],
+                    "bullets": [
+                        "You are at least 14 years old or have legal parental or guardian consent.",
+                        "You can legally enter into binding agreements.",
+                        "All information you provide is accurate and truthful."
+                    ]
+                },
+                {
+                    "id": "membership-account",
+                    "title": "4. Membership & Account (If Applicable)",
+                    "bullets": [
+                        "Users may be required to create an account to place orders.",
+                        "You are responsible for maintaining account security.",
+                        "Musticker is not liable for damages caused by unauthorized account use due to user negligence."
+                    ]
+                },
+                {
+                    "id": "orders-contract-formation",
+                    "title": "5. Orders & Contract Formation",
+                    "groups": [
+                        {
+                            "title": "Order placement",
+                            "items": [
+                                "Orders are placed on the website by the user.",
+                                "A contract is formed only when payment is successfully completed and Musticker confirms the order."
+                            ]
+                        },
+                        {
+                            "title": "Order rejection or cancellation by Musticker",
+                            "items": [
+                                "Fraud detection or misuse",
+                                "Policy violations",
+                                "Incomplete, inaccurate, or misleading order information"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "pricing-payment",
+                    "title": "6. Pricing & Payment",
+                    "bullets": [
+                        "Prices are displayed in KRW unless otherwise stated.",
+                        "Prices may change without prior notice.",
+                        "Payment must be completed before production begins.",
+                        "Musticker is not responsible for delays caused by payment verification failures."
+                    ]
+                },
+                {
+                    "id": "artwork-customer-responsibility",
+                    "title": "7. Artwork, Content & Customer Responsibility",
+                    "groups": [
+                        {
+                            "title": "By submitting artwork or design files, you confirm that:",
+                            "items": [
+                                "You own the rights or have valid permission to use the content.",
+                                "The content does not infringe third-party intellectual property rights.",
+                                "The content complies with Korean laws and public order."
+                            ]
+                        },
+                        {
+                            "title": "Musticker is not responsible for:",
+                            "items": [
+                                "Typographical or design mistakes in user-submitted artwork",
+                                "Color variation due to screen or print limitations",
+                                "Low-quality results caused by improper file preparation"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "proofing-production",
+                    "title": "8. Proofing & Production",
+                    "bullets": [
+                        "Digital proofs should be reviewed carefully before approval.",
+                        "Approval of proofs constitutes final acceptance for production.",
+                        "Once production begins, orders cannot be modified or canceled except where required by law."
+                    ]
+                },
+                {
+                    "id": "delivery-turnaround",
+                    "title": "9. Delivery & Turnaround Time",
+                    "bullets": [
+                        "Production and delivery times are estimates.",
+                        "Delays may occur due to logistics, courier service, or force majeure.",
+                        "Musticker is not liable for delivery delays beyond reasonable control."
+                    ]
+                },
+                {
+                    "id": "cancellation-refunds-returns",
+                    "title": "10. Cancellation, Refunds & Returns",
+                    "paragraphs": [
+                        "In accordance with the Electronic Commerce Consumer Protection Act (Korea), customers may request cancellation or refund before production starts.",
+                        "Refunds or reprints may be granted only after review of the claim."
+                    ],
+                    "bullets": [
+                        "The product is defective.",
+                        "The product differs materially from the approved proof.",
+                        "Claims must be submitted within seven days of receipt."
+                    ]
+                },
+                {
+                    "id": "personal-information-protection",
+                    "title": "11. Personal Information Protection",
+                    "bullets": [
+                        "Personal information is collected and processed in accordance with the Personal Information Protection Act (PIPA).",
+                        "Details are provided in our Privacy Policy.",
+                        "Users may exercise their rights under PIPA at any time."
+                    ]
+                },
+                {
+                    "id": "intellectual-property-rights",
+                    "title": "12. Intellectual Property Rights",
+                    "bullets": [
+                        "All Musticker brand materials, including text, images, logos, software, and designs, remain the property of Glophics Corp. or licensed partners.",
+                        "Unauthorized reproduction, distribution, or modification is prohibited."
+                    ]
+                },
+                {
+                    "id": "prohibited-activities",
+                    "title": "13. Prohibited Activities",
+                    "paragraphs": [
+                        "Users must not:"
+                    ],
+                    "bullets": [
+                        "Use the site for unlawful purposes.",
+                        "Upload illegal, harmful, or infringing content.",
+                        "Attempt unauthorized access to systems or services.",
+                        "Abuse promotions or order workflows."
+                    ],
+                    "groups": [
+                        {
+                            "title": "Violations may result in service suspension or legal action.",
+                            "items": []
+                        }
+                    ]
+                },
+                {
+                    "id": "limitation-of-liability",
+                    "title": "14. Limitation of Liability",
+                    "paragraphs": [
+                        "To the extent permitted by Korean law:"
+                    ],
+                    "bullets": [
+                        "Musticker shall not be liable for indirect or consequential damages.",
+                        "Liability shall not exceed the amount paid for the relevant order."
+                    ]
+                },
+                {
+                    "id": "indemnification",
+                    "title": "15. Indemnification",
+                    "paragraphs": [
+                        "Users agree to indemnify Glophics Corp. against claims arising from:"
+                    ],
+                    "bullets": [
+                        "Submitted content or artwork",
+                        "Violation of these Terms",
+                        "Violation of applicable laws or third-party rights"
+                    ]
+                },
+                {
+                    "id": "governing-law-jurisdiction",
+                    "title": "16. Governing Law & Jurisdiction",
+                    "paragraphs": [
+                        "These Terms are governed by the laws of the Republic of Korea. Any dispute shall be subject to the exclusive jurisdiction of the competent Korean courts."
+                    ]
+                },
+                {
+                    "id": "changes-to-terms",
+                    "title": "17. Changes to Terms",
+                    "paragraphs": [
+                        "Musticker may revise these Terms from time to time for legal or service reasons. Updated terms will become effective upon publication on the website."
+                    ]
+                },
+                {
+                    "id": "contact-information",
+                    "title": "18. Contact Information",
+                    "paragraphs": [
+                        "For inquiries regarding these Terms, please contact us through the details below."
+                    ],
+                    "bullets": [
+                        "Company: Glophics Corp.",
+                        "Brand: Musticker",
+                        "Email: support [at] musticker.com",
+                        "Website: musticker.com"
+                    ]
+                }
+            ]
+        }
+    }
+}

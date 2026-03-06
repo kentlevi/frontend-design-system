@@ -1,0 +1,250 @@
+{
+    "legal": {
+        "privacy": {
+            "title": "Privacy Policy (Korean PIPA Compliant)",
+            "titlePrefix": "Privacy Policy",
+            "titleSuffix": "(Korean PIPA Compliant)",
+            "lastUpdatedLabel": "Last Updated:",
+            "lastUpdatedDate": "March 6, 2026",
+            "topicsLabel": "Topics",
+            "introduction": [
+                "Musticker, operated by Glophics Corp. (\"we,\" \"us,\" or \"our\"), complies with the Personal Information Protection Act of the Republic of Korea (PIPA) and related privacy laws. This Privacy Policy explains how we collect, use, store, and protect personal information when you use our website and online printing services."
+            ],
+            "sections": [
+                {
+                    "id": "personal-information-controller",
+                    "title": "1. Personal Information Controller",
+                    "bullets": [
+                        "Company Name: Glophics Corp.",
+                        "Brand Name: Musticker",
+                        "Address: Busan, Republic of Korea",
+                        "Contact Email: support [at] musticker.com",
+                        "Privacy Officer: Privacy Operations Team"
+                    ]
+                },
+                {
+                    "id": "purpose-of-collection-and-use",
+                    "title": "2. Purpose of Collection and Use of Personal Information",
+                    "paragraphs": [
+                        "We collect and use personal information strictly for the following purposes:",
+                        "Personal information will not be used for any other purpose without prior consent unless required by law."
+                    ],
+                    "bullets": [
+                        "User identification and account management",
+                        "Order processing, payment confirmation, and delivery",
+                        "Customer support and complaint handling",
+                        "Service improvement and website operation",
+                        "Compliance with legal obligations under Korean law"
+                    ]
+                },
+                {
+                    "id": "categories-of-personal-information-collected",
+                    "title": "3. Categories of Personal Information Collected",
+                    "groups": [
+                        {
+                            "title": "Required information",
+                            "items": [
+                                "Name",
+                                "Email address",
+                                "Contact number",
+                                "Shipping and billing address",
+                                "Order and transaction details"
+                            ]
+                        },
+                        {
+                            "title": "Optional information",
+                            "items": [
+                                "Design files or artwork uploaded by users",
+                                "Marketing preferences"
+                            ]
+                        },
+                        {
+                            "title": "Automatically collected information",
+                            "items": [
+                                "IP address",
+                                "Cookies and device information",
+                                "Website usage logs"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "retention-and-use-period",
+                    "title": "4. Retention and Use Period of Personal Information",
+                    "paragraphs": [
+                        "Personal information is retained only for the minimum period necessary:"
+                    ],
+                    "table": {
+                        "headers": [
+                            "Information Type",
+                            "Retention Period"
+                        ],
+                        "rows": [
+                            [
+                                "Contract & Order Records",
+                                "5 years (Electronic Commerce Act)"
+                            ],
+                            [
+                                "Payment & transaction records",
+                                "5 years"
+                            ],
+                            [
+                                "Consumer complaints",
+                                "3 years"
+                            ],
+                            [
+                                "Website access logs",
+                                "3 months"
+                            ]
+                        ],
+                        "note": "After the retention period, data is destroyed without delay."
+                    }
+                },
+                {
+                    "id": "procedure-and-method-of-destruction",
+                    "title": "5. Procedure and Method of Destruction",
+                    "paragraphs": [
+                        "Personal information is destroyed as follows:"
+                    ],
+                    "bullets": [
+                        "Electronic files: Permanently deleted using secure technical methods",
+                        "Printed documents: Shredded or incinerated"
+                    ],
+                    "groups": [
+                        {
+                            "title": "Destruction is carried out immediately once the purpose or legal retention period expires.",
+                            "items": []
+                        }
+                    ]
+                },
+                {
+                    "id": "provision-to-third-parties",
+                    "title": "6. Provision of Personal Information to Third Parties",
+                    "paragraphs": [
+                        "We do not provide personal information to third parties without user consent, except when required by law."
+                    ],
+                    "groups": [
+                        {
+                            "title": "Exceptions:",
+                            "items": [
+                                "Delivery partners for shipping purposes",
+                                "Payment processors for transaction handling",
+                                "Legal authorities when legally requested"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "outsourcing-of-processing",
+                    "title": "7. Outsourcing of Personal Information Processing",
+                    "paragraphs": [
+                        "We may outsource certain personal information processing tasks as permitted by PIPA."
+                    ],
+                    "table": {
+                        "headers": [
+                            "Outsourced Task",
+                            "Service Provider"
+                        ],
+                        "rows": [
+                            [
+                                "Payment processing",
+                                "Payment provider"
+                            ],
+                            [
+                                "Delivery services",
+                                "Courier company"
+                            ],
+                            [
+                                "Website hosting",
+                                "Hosting provider"
+                            ]
+                        ],
+                        "note": "Outsourced partners are contractually obligated to protect personal information and comply with PIPA."
+                    }
+                },
+                {
+                    "id": "user-rights-and-how-to-exercise",
+                    "title": "8. User Rights and How to Exercise Them",
+                    "paragraphs": [
+                        "Users may exercise the following rights at any time:"
+                    ],
+                    "bullets": [
+                        "Request access to personal information",
+                        "Request correction or deletion",
+                        "Request suspension of processing",
+                        "Withdraw consent"
+                    ],
+                    "groups": [
+                        {
+                            "title": "Requests can be made via email and will be processed without delay in accordance with PIPA.",
+                            "items": []
+                        }
+                    ]
+                },
+                {
+                    "id": "measures-to-ensure-safety",
+                    "title": "9. Measures to Ensure Safety of Personal Information",
+                    "paragraphs": [
+                        "We implement the following safeguards:"
+                    ],
+                    "bullets": [
+                        "Internal access control policies",
+                        "Encryption of sensitive data",
+                        "Security software and firewalls",
+                        "Regular staff training on privacy protection"
+                    ]
+                },
+                {
+                    "id": "cookies-and-automatic-collection-devices",
+                    "title": "10. Cookies and Automatic Collection Devices",
+                    "paragraphs": [
+                        "Cookies are used to:",
+                        "Users may refuse cookie storage via browser settings; however, some services may be limited."
+                    ],
+                    "bullets": [
+                        "Improve website functionality",
+                        "Analyze usage patterns"
+                    ]
+                },
+                {
+                    "id": "personal-information-protection-officer",
+                    "title": "11. Personal Information Protection Officer (PIPO)",
+                    "paragraphs": [
+                        "Under PIPA, we designate a Personal Information Protection Officer:"
+                    ],
+                    "bullets": [
+                        "Department: Privacy Operations Team",
+                        "Email: support [at] musticker.com",
+                        "Contact Number: 1588-5218"
+                    ],
+                    "groups": [
+                        {
+                            "title": "Users may contact the PIPO for privacy-related concerns.",
+                            "items": []
+                        }
+                    ]
+                },
+                {
+                    "id": "remedies-for-infringement-of-rights",
+                    "title": "12. Remedies for Infringement of Rights",
+                    "paragraphs": [
+                        "If you believe your privacy rights have been violated, you may contact:"
+                    ],
+                    "bullets": [
+                        "Personal Information Dispute Mediation Committee",
+                        "Korea Internet & Security Agency (KISA)",
+                        "Supreme Prosecutors' Office of Korea",
+                        "National Police Agency"
+                    ]
+                },
+                {
+                    "id": "changes-to-this-privacy-policy",
+                    "title": "13. Changes to This Privacy Policy",
+                    "paragraphs": [
+                        "This Privacy Policy may be updated to reflect changes in law or services. Any changes will be posted on this page and take effect upon publication."
+                    ]
+                }
+            ]
+        }
+    }
+}

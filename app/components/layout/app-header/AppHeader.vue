@@ -22,7 +22,7 @@ const AppHeaderSearchModal = defineAsyncComponent(
 const CartPreview = defineAsyncComponent(
 	() => import('~/components/cart/CartPreview.vue')
 );
-const { locale, t } = useI18n();
+const { t } = useI18n();
 const { country } = useCountry();
 
 type StoredCartState = {
@@ -429,7 +429,7 @@ onBeforeUnmount(() => {
 		<AppHeaderLocaleModal
 			v-if="localeModalOpen"
 			:open="localeModalOpen"
-			:locale-value="locale"
+			:locale-value="selectedLocale"
 			:locale-options="localeOptions"
 			data-testid="app-header-locale-modal"
 			@close="closeLocaleModal"

@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { FlagCode } from '~/data/ui/flags';
 import {
 	type SupportedCountry,
+	resolveSupportedCountry,
 	isSupportedCountry,
 } from '~/constants/countries';
 import {
@@ -20,7 +21,7 @@ const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 export function useAppHeaderAccount() {
 	const { t, locale, setLocale } = useI18n();
 	const route = useRoute();
-	const { withCountry, apiCountry } = useCountry();
+	const { withCountry, apiCountry, country } = useCountry();
 	const api = useApi();
 	const userStore = useUserStore();
 	const preferredLocale = useCookie<SupportedCountry | null>('preferred_locale', {
@@ -77,9 +78,12 @@ export function useAppHeaderAccount() {
 		}));
 	});
 
-	const selectedLocale = computed<FlagCode>(() =>
-		locale.value === 'kr' ? 'kr' : 'us'
-	);
+	const selectedLocale = computed<FlagCode>(() => {
+		const routeLocale = resolveSupportedCountry(country.value);
+		const preferred = resolveSupportedCountry(preferredLocale.value || '');
+		const activeLocale = resolveSupportedCountry(String(locale.value));
+		return routeLocale || preferred || activeLocale || 'us';
+	});
 	const localeOptions = computed(() =>
 		headerLocaleOptionConfig.map((option) => ({
 			code: option.code,
