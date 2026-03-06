@@ -1,3 +1,7 @@
+<template>
+	<ProductCategoryExperience category="stickers" />
+</template>
+
 <script setup lang="ts">
 import ProductCategoryExperience from '~/components/products/product-category/ProductCategoryExperience.vue';
 
@@ -16,7 +20,3 @@ useHead({
 	],
 });
 </script>
-
-<template>
-	<ProductCategoryExperience category="stickers" />
-</template>
