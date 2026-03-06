@@ -8,6 +8,8 @@ import {
 	headerAccountLinkConfig,
 	headerLocaleOptionConfig,
 	headerNavLinkConfig,
+	fetchNavigationCategories,
+	formatCategoryAsNavLink,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/useCountry';
 import { useUserStore } from '~/stores/user';
@@ -52,32 +54,18 @@ export function useAppHeaderAccount() {
 	>([]);
 	const navigationLoaded = ref(false);
 
-	function hasCoreNavigationSlugs() {
-		const slugs = new Set(
-			navigationCategories.value
-				.map((item) => (item.url_slug || '').trim().replace(/^\/+|\/+$/g, ''))
-				.filter(Boolean)
-		);
-		return (
-			slugs.has('stickers') &&
-			slugs.has('roll-stickers') &&
-			slugs.has('sheet-stickers')
-		);
-	}
-
-	const navLinks = computed(() =>
-		navigationLoaded.value && hasCoreNavigationSlugs()
-			? headerNavLinkConfig.map((item) => ({
-				key: item.key,
-				label: t(item.labelKey),
-				to: withCountry(item.to),
-			}))
-			: headerNavLinkConfig.map((item) => ({
-				key: item.key,
-				label: t(item.labelKey),
-				to: withCountry(item.to),
-			}))
-	);
+	const navLinks = computed(() => {
+		if (navigationLoaded.value && navigationCategories.value.length > 0) {
+			return navigationCategories.value
+				.map(formatCategoryAsNavLink)
+				.filter((item): item is NonNullable<typeof item> => Boolean(item))
+				.map((item) => ({
+					...item,
+					to: withCountry(item.to),
+				}));
+		}
+		return [];
+	});
 
 	const selectedLocale = computed<FlagCode>(() =>
 		locale.value === 'kr' ? 'kr' : 'us'
@@ -268,28 +256,10 @@ export function useAppHeaderAccount() {
 		syncLocalAvatarFromStorage();
 	}
 
-	async function fetchNavigationCategories() {
-		try {
-			const response = await api<{
-				success?: boolean;
-				data?: Array<{
-					id?: number | string;
-					name?: string;
-					url_slug?: string;
-					sort?: number;
-				}>;
-			}>(`/${apiCountry.value}/navigation/categories`);
-
-			if (!response?.success || !Array.isArray(response.data)) {
-				navigationLoaded.value = true;
-				return;
-			}
-
-			navigationCategories.value = response.data;
-			navigationLoaded.value = true;
-		} catch {
-			navigationLoaded.value = true;
-		}
+	async function fetchNavigationCategoriesData() {
+		const categories = await fetchNavigationCategories(api, apiCountry.value);
+		navigationCategories.value = categories;
+		navigationLoaded.value = true;
 	}
 
 	watch(
@@ -303,7 +273,7 @@ export function useAppHeaderAccount() {
 	watch(
 		() => apiCountry.value,
 		() => {
-			void fetchNavigationCategories();
+			void fetchNavigationCategoriesData();
 		},
 		{ immediate: true }
 	);
