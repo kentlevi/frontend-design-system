@@ -10,10 +10,12 @@ const props = withDefaults(
 		modelValue: boolean;
 		email?: string;
 		token?: string;
+		expiry?: string;
 	}>(),
 	{
 		email: '',
 		token: '',
+		expiry: '',
 	}
 );
 

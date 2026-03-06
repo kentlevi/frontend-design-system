@@ -749,7 +749,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
                 color: var(--gold-70);
                 font-weight: var(--font-weight-bold);
                 text-decoration-line: underline;
-                text-decoration-color: var(--text-primary);
+                text-decoration-color: var(--gold-70);
                 text-decoration-thickness: 1px;
                 text-underline-offset: 2px;
             }
