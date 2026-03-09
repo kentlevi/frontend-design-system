@@ -53,19 +53,21 @@ export function resolvePostLoginRedirect(
 	const segments = parsed.pathname.split('/').filter(Boolean);
 	if (segments.length === 0) return fallback;
 
-	const resolvedCountry = resolveSupportedCountry(segments[0]) || DEFAULT_COUNTRY;
-	if (!resolvedCountry) return fallback;
+	const currentCountryPath = normalizeAppPath(withCountry('/'));
+	const currentCountry = currentCountryPath.split('/').filter(Boolean)[0] || DEFAULT_COUNTRY;
+	const hasCountryPrefix = Boolean(resolveSupportedCountry(segments[0]));
+	const targetSegments = hasCountryPrefix ? segments.slice(1) : segments;
 
 	const normalizedPath =
-		segments.length > 1
-			? `/${resolvedCountry}/${segments.slice(1).join('/')}`
-			: `/${resolvedCountry}`;
+		targetSegments.length > 0
+			? `/${currentCountry}/${targetSegments.join('/')}`
+			: `/${currentCountry}`;
 
 	const normalizedTargetPath = normalizeAppPath(normalizedPath);
 	if (
 		normalizedTargetPath === homePath ||
-        normalizedTargetPath === loginPath ||
-        normalizedTargetPath === registerPath
+		normalizedTargetPath === loginPath ||
+		normalizedTargetPath === registerPath
 	) {
 		return fallback;
 	}
