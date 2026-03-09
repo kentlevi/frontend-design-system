@@ -64,7 +64,7 @@ const toggleFrom = (from: 'palette' | 'semantic') => {
                 type="text"
                 placeholder="Search token, group, or #hex..."
                 class="guide-search"
-            />
+            >
         </div>
 
         <section v-if="view === 'palette'" class="guide-block">

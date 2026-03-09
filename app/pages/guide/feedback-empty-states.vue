@@ -39,7 +39,7 @@
                     width="112"
                     height="112"
                     class="empty-state-image"
-                />
+                >
                 <h3>Your cart is currently empty.</h3>
                 <p>
                     Explore our menu to add items to your cart, or pick from the featured favorites below.

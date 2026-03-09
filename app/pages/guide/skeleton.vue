@@ -46,15 +46,15 @@ const toggleLoading = () => {
                         aria-hidden="true"
                         data-testid="skeleton-card-item"
                     >
-                        <div class="guide-skeleton-media"></div>
-                        <div class="guide-skeleton-line guide-skeleton-line-title"></div>
-                        <div class="guide-skeleton-line"></div>
-                        <div class="guide-skeleton-line guide-skeleton-line-short"></div>
+                        <div class="guide-skeleton-media"/>
+                        <div class="guide-skeleton-line guide-skeleton-line-title"/>
+                        <div class="guide-skeleton-line"/>
+                        <div class="guide-skeleton-line guide-skeleton-line-short"/>
                     </article>
                 </template>
                 <template v-else>
                     <article v-for="index in 3" :key="`loaded-${index}`" class="guide-loaded-card">
-                        <div class="guide-loaded-card-media" aria-hidden="true"></div>
+                        <div class="guide-loaded-card-media" aria-hidden="true"/>
                         <h3>Sticker Pack {{ index }}</h3>
                         <p>Durable premium print with water-resistant finish.</p>
                         <UiButton size="sm" tone="neutral">View</UiButton>
@@ -73,12 +73,12 @@ const toggleLoading = () => {
                         class="guide-skeleton-list-item"
                         aria-hidden="true"
                     >
-                        <div class="guide-skeleton-avatar"></div>
+                        <div class="guide-skeleton-avatar"/>
                         <div class="guide-skeleton-list-copy">
-                            <div class="guide-skeleton-line guide-skeleton-line-title"></div>
-                            <div class="guide-skeleton-line guide-skeleton-line-short"></div>
+                            <div class="guide-skeleton-line guide-skeleton-line-title"/>
+                            <div class="guide-skeleton-line guide-skeleton-line-short"/>
                         </div>
-                        <div class="guide-skeleton-pill"></div>
+                        <div class="guide-skeleton-pill"/>
                     </article>
                 </template>
                 <template v-else>
@@ -87,7 +87,7 @@ const toggleLoading = () => {
                         :key="`ready-row-${index}`"
                         class="guide-loaded-list-item"
                     >
-                        <div class="guide-loaded-avatar"></div>
+                        <div class="guide-loaded-avatar"/>
                         <div class="guide-loaded-list-copy">
                             <strong>Order #{{ 3100 + index }}</strong>
                             <p>Artwork approved and queued for print.</p>

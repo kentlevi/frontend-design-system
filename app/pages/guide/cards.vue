@@ -262,7 +262,7 @@ const cardMarkup = {
                     :ignore-interactive-click="true"
                 >
                     <article class="guide-card-sample">
-                    <div class="guide-card-sample-media" aria-hidden="true"></div>
+                    <div class="guide-card-sample-media" aria-hidden="true"/>
                     <h3 class="guide-card-sample-title">Matte Finish Pack</h3>
                     <p class="guide-card-sample-meta">
                         Starts at: $24.00
@@ -282,7 +282,7 @@ const cardMarkup = {
                     :ignore-interactive-click="true"
                 >
                     <article class="guide-card-sample">
-                        <div class="guide-card-sample-media" aria-hidden="true"></div>
+                        <div class="guide-card-sample-media" aria-hidden="true"/>
                         <h3 class="guide-card-sample-title">Starter Sample Pack</h3>
                         <p class="guide-card-sample-meta">Starts at: $16.00</p>
                         <p class="guide-card-sample-body">
@@ -299,7 +299,7 @@ const cardMarkup = {
                     :ignore-interactive-click="true"
                 >
                     <article class="guide-card-sample">
-                        <div class="guide-card-sample-media" aria-hidden="true"></div>
+                        <div class="guide-card-sample-media" aria-hidden="true"/>
                         <h3 class="guide-card-sample-title">Premium Outdoor Set</h3>
                         <p class="guide-card-sample-meta">Starts at: $29.00</p>
                         <p class="guide-card-sample-body">

@@ -62,11 +62,23 @@ const guidePath = computed(() => {
 const isOverviewPath = computed(
     () => guidePath.value === '/guide' || guidePath.value === '/'
 );
+const standardsRequiredToastVisible = ref(false);
+const standardsRequiredToastMessage = 'Please read and acknowledge the standards before continuing.';
+let standardsRequiredToastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 const currentDoc = computed(
     () => guideDocs[guidePath.value] ?? (isOverviewPath.value ? guideDocs['/guide'] : null)
 );
 const canShowDocs = computed(() => Boolean(currentDoc.value));
 const isDocumentationOnlyGuide = computed(() => guidePath.value === '/guide/standards');
+const shouldShowStandardsRequiredToast = computed(() => {
+    if (!isDocumentationOnlyGuide.value) return false;
+    const value = route.query.standardsRequired;
+    const normalized = Array.isArray(value) ? value[0] : value;
+    return normalized === '1';
+});
+const standardsRequiredToastTrigger = computed(() =>
+    shouldShowStandardsRequiredToast.value ? route.fullPath : ''
+);
 const currentGuideItem = computed(() =>
     guides.find((item) =>
         isOverviewPath.value ? item.path === '/guide' : item.path === guidePath.value
@@ -141,6 +153,27 @@ const guideStatusLabel = (status?: 'draft' | 'stable' | 'deprecated') => {
     if (status === 'deprecated') return 'Deprecated';
     return 'Stable';
 };
+
+const clearStandardsRequiredToast = () => {
+    standardsRequiredToastVisible.value = false;
+    if (standardsRequiredToastTimeoutId) {
+        clearTimeout(standardsRequiredToastTimeoutId);
+        standardsRequiredToastTimeoutId = null;
+    }
+};
+
+watch(
+    standardsRequiredToastTrigger,
+    (nextValue) => {
+        clearStandardsRequiredToast();
+        if (!nextValue) return;
+        standardsRequiredToastVisible.value = true;
+        standardsRequiredToastTimeoutId = setTimeout(() => {
+            clearStandardsRequiredToast();
+        }, 2600);
+    },
+    { immediate: true }
+);
 
 const checklistItems = computed(() => currentDoc.value?.guideChecklist ?? []);
 const filteredChecklistItems = computed(() =>
@@ -625,7 +658,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     class="guide-sidebar-search-input"
                     placeholder="Search by name or purpose"
                     data-testid="guide-sidebar-search-input"
-                />
+                >
             </label>
 
             <div class="guide-sidebar-nav-wrap">
@@ -692,9 +725,9 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     aria-label="Guide content view"
                 >
                     <button
+                        id="guide-tab-documentation-only"
                         type="button"
                         role="tab"
-                        id="guide-tab-documentation-only"
                         class="guide-view-toggle-button is-active"
                         aria-controls="guide-panel-documentation"
                         aria-selected="true"
@@ -711,9 +744,9 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     aria-label="Guide content view"
                 >
                     <button
+                        id="guide-tab-preview"
                         type="button"
                         role="tab"
-                        id="guide-tab-preview"
                         class="guide-view-toggle-button"
                         :class="{ 'is-active': viewMode === 'preview' }"
                         aria-controls="guide-panel-preview"
@@ -724,9 +757,9 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         Preview
                     </button>
                     <button
+                        id="guide-tab-documentation"
                         type="button"
                         role="tab"
-                        id="guide-tab-documentation"
                         class="guide-view-toggle-button"
                         :class="{ 'is-active': viewMode === 'documentation' }"
                         aria-controls="guide-panel-documentation"
@@ -867,8 +900,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="isOverviewPath && checklistItems.length"
-                    class="guide-docs-section guide-overview-snapshot"
                     id="doc-overview-snapshot"
+                    class="guide-docs-section guide-overview-snapshot"
                 >
                     <h2 class="guide-docs-section-title">Maturity Snapshot</h2>
                     <div class="guide-overview-metrics">
@@ -932,8 +965,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="checklistItems.length"
-                    class="guide-docs-section"
                     id="doc-guide-maturity-checklist"
+                    class="guide-docs-section"
                 >
                     <div class="guide-docs-section-head">
                         <h2 class="guide-docs-section-title">Guide Maturity Checklist</h2>
@@ -995,9 +1028,9 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-for="section in orderedDocSections"
+                    :id="`doc-${toAnchorId(section.title)}`"
                     :key="section.title"
                     class="guide-docs-section"
-                    :id="`doc-${toAnchorId(section.title)}`"
                 >
                     <div class="guide-docs-section-head">
                         <h2 class="guide-docs-section-title">{{ section.title }}</h2>
@@ -1028,8 +1061,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.doDont"
-                    class="guide-docs-section guide-docs-section-dual"
                     id="doc-do-dont"
+                    class="guide-docs-section guide-docs-section-dual"
                 >
                     <article class="guide-docs-card guide-docs-card-do">
                         <h2 class="guide-docs-section-title">Do</h2>
@@ -1066,8 +1099,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.accessibilityChecklist?.length"
-                    class="guide-docs-section"
                     id="doc-accessibility-checklist"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Accessibility Checklist</h2>
                     <ul class="guide-docs-list guide-docs-checklist">
@@ -1083,8 +1116,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.qaChecklist?.length"
-                    class="guide-docs-section"
                     id="doc-qa-checklist"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">QA Checklist</h2>
                     <ul class="guide-docs-list guide-docs-checklist">
@@ -1100,8 +1133,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.motionGuidelines?.length"
-                    class="guide-docs-section"
                     id="doc-motion"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Motion</h2>
                     <ul class="guide-docs-list">
@@ -1117,8 +1150,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.responsiveNotes?.length"
-                    class="guide-docs-section"
                     id="doc-responsive-notes"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Responsive Notes</h2>
                     <ul class="guide-docs-list">
@@ -1134,8 +1167,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.contentGuidelines?.length"
-                    class="guide-docs-section"
                     id="doc-content-guidelines"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Content Guidelines</h2>
                     <ul class="guide-docs-list">
@@ -1151,8 +1184,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.tokenGuardrails?.length"
-                    class="guide-docs-section"
                     id="doc-token-guardrails"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Token Guardrails</h2>
                     <ul class="guide-docs-list">
@@ -1168,8 +1201,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.tokenInspector"
-                    class="guide-docs-section"
                     id="doc-token-inspector"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Design Token Inspector</h2>
                     <ul class="guide-docs-list">
@@ -1196,8 +1229,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.runCommands?.length"
-                    class="guide-docs-section"
                     id="doc-run-commands"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Run Commands</h2>
                     <GuideCommandList
@@ -1208,8 +1241,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="snippetsForDoc.length"
-                    class="guide-docs-section"
                     id="doc-snippets"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Copyable Snippets</h2>
                     <article
@@ -1228,8 +1261,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="usedInReferences.length"
-                    class="guide-docs-section"
                     id="doc-used-in-production"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Used In Production</h2>
                     <div class="guide-docs-related-links">
@@ -1248,8 +1281,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.testHooks?.length"
-                    class="guide-docs-section"
                     id="doc-test-hooks"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Test Hooks</h2>
                     <div class="guide-token-mapping-grid">
@@ -1269,8 +1302,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.performanceNotes?.length"
-                    class="guide-docs-section"
                     id="doc-performance-notes"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Performance Notes</h2>
                     <ul class="guide-docs-list">
@@ -1286,8 +1319,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="currentDoc.examples?.length"
-                    class="guide-docs-section"
                     id="doc-code-examples"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Code Examples</h2>
                     <article
@@ -1304,8 +1337,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="changelogEntries.length"
-                    class="guide-docs-section"
                     id="doc-changelog"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Changelog</h2>
                     <article
@@ -1346,8 +1379,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="relatedGuides.length"
-                    class="guide-docs-section"
                     id="doc-related-guides"
+                    class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Related Guides</h2>
                     <div class="guide-docs-related-links">
@@ -1370,8 +1403,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                 <section
                     v-if="isDocumentationOnlyGuide"
-                    class="guide-docs-section"
                     id="doc-standards-acknowledgement"
+                    class="guide-docs-section"
                 >
                     <div class="guide-standards-actions">
                         <UiButton variant="filled" tone="neutral" size="md" @click="confirmStandardsRead">
@@ -1379,6 +1412,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         </UiButton>
                     </div>
                 </section>
+                <UiToast
+                    v-if="isDocumentationOnlyGuide"
+                    :visible="standardsRequiredToastVisible"
+                    tone="warning"
+                    :dismissible="true"
+                    :message="standardsRequiredToastMessage"
+                    @close="clearStandardsRequiredToast"
+                />
             </section>
         </main>
     </div>

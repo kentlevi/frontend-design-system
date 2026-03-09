@@ -62,7 +62,7 @@ function formatPrice(value: number) {
                         height="84"
                         loading="eager"
                         fetchpriority="high"
-                    />
+                    >
                     <span>Die-Cut</span>
                 </button>
                 <button
@@ -77,7 +77,7 @@ function formatPrice(value: number) {
                         width="84"
                         height="84"
                         loading="lazy"
-                    />
+                    >
                     <span>Roll</span>
                 </button>
                 <button
@@ -92,7 +92,7 @@ function formatPrice(value: number) {
                         width="84"
                         height="84"
                         loading="lazy"
-                    />
+                    >
                     <span>Sheet</span>
                 </button>
             </div>

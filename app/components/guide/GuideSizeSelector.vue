@@ -56,7 +56,7 @@ const onCustomInput = (event: Event) => {
                 :min="min"
                 class="size-custom-input"
                 @input="onCustomInput"
-            />
+            >
         </div>
     </div>
 </template>

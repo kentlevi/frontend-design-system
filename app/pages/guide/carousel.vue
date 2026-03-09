@@ -193,15 +193,15 @@ onBeforeUnmount(() => {
                             <article
                                 v-for="(item, idx) in reviewItems"
                                 :key="`${item.title}-${idx}`"
-                                class="guide-carousel-card"
-                                role="group"
-                                :aria-label="`Review ${idx + 1} of ${reviewItems.length}`"
                                 :ref="
                                     (el) => {
                                         if (idx === 0)
                                             firstCardRef = el as HTMLElement | null;
                                     }
                                 "
+                                class="guide-carousel-card"
+                                role="group"
+                                :aria-label="`Review ${idx + 1} of ${reviewItems.length}`"
                             >
                                 <img
                                     v-if="item.image"
@@ -210,7 +210,7 @@ onBeforeUnmount(() => {
                                     class="guide-carousel-card-image"
                                     loading="lazy"
                                     decoding="async"
-                                />
+                                >
                                 <h3 class="guide-carousel-card-title">{{ item.title }}</h3>
                                 <p class="guide-carousel-card-text">{{ item.text }}</p>
                                 <p class="guide-carousel-card-meta">

@@ -70,7 +70,7 @@ const previewCopyText = computed(() => {
                     v-model="builderLabel"
                     type="text"
                     class="guide-badge-builder-input"
-                />
+                >
             </div>
 
             <div class="guide-badge-builder-control">
@@ -125,7 +125,7 @@ const previewCopyText = computed(() => {
                 <input
                     v-model="customStyleEnabled"
                     type="checkbox"
-                />
+                >
                 Enable custom style
             </label>
 
@@ -138,7 +138,7 @@ const previewCopyText = computed(() => {
                         class="guide-badge-builder-input"
                         :disabled="!customStyleEnabled"
                         placeholder="var(--brand-primary)"
-                    />
+                    >
                 </div>
 
                 <div class="guide-badge-builder-control">
@@ -149,7 +149,7 @@ const previewCopyText = computed(() => {
                         class="guide-badge-builder-input"
                         :disabled="!customStyleEnabled"
                         placeholder="var(--text-inverse)"
-                    />
+                    >
                 </div>
 
                 <div class="guide-badge-builder-control">
@@ -160,7 +160,7 @@ const previewCopyText = computed(() => {
                         class="guide-badge-builder-input"
                         :disabled="!customStyleEnabled"
                         placeholder="var(--brand-primary)"
-                    />
+                    >
                 </div>
             </div>
 

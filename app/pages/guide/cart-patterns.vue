@@ -125,7 +125,7 @@ function toggleFeatured() {
                                 alt="Empty shopping basket"
                                 width="64"
                                 height="64"
-                            />
+                            >
                             <p>Your cart is currently empty.</p>
                         </section>
 

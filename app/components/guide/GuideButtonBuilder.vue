@@ -96,7 +96,7 @@ onBeforeUnmount(() =>
                 <input
                     v-model="builder.customLabel.value"
                     class="guide-input"
-                />
+                >
             </div>
 
             <div class="guide-control">
@@ -165,7 +165,7 @@ onBeforeUnmount(() =>
                         placeholder="var(--brand-primary) or #FFD826"
                         :disabled="builder.colorMode.value !== 'custom'"
                         @focus="showToneDropdown = true"
-                    />
+                    >
 
                     <div
                         v-if="
@@ -206,7 +206,7 @@ onBeforeUnmount(() =>
                         placeholder="var(--text-inverse) or #000000"
                         :disabled="builder.colorMode.value !== 'custom'"
                         @focus="showTextDropdown = true"
-                    />
+                    >
 
                     <div
                         v-if="
@@ -245,9 +245,9 @@ onBeforeUnmount(() =>
                 class="guide-checkbox"
             >
                 <input
-                    type="checkbox"
                     v-model="builder.iconOnly.value"
-                />
+                    type="checkbox"
+                >
                 Icon only
             </label>
 
@@ -262,7 +262,7 @@ onBeforeUnmount(() =>
                             placeholder="Search icon..."
                             :disabled="iconSearch.leftDisabled.value"
                             @focus="iconSearch.showLeft.value = true"
-                        />
+                        >
 
                         <div
                             v-if="iconSearch.showLeft.value"
@@ -291,7 +291,7 @@ onBeforeUnmount(() =>
                             placeholder="Search icon..."
                             :disabled="iconSearch.rightDisabled.value"
                             @focus="iconSearch.showRight.value = true"
-                        />
+                        >
 
                         <div
                             v-if="iconSearch.showRight.value"

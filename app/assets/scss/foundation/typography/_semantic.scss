@@ -6,31 +6,53 @@ $font-weight-medium: brand.$fw-medium;
 $font-weight-semibold: brand.$fw-semibold;
 $font-weight-bold: brand.$fw-bold;
 
-$font-size-xs: brand.$body-xs;
-$font-size-sm: brand.$body-sm;
-$font-size-base: brand.$body-md;
-$font-size-lg: brand.$body-lg;
-$font-size-xl: brand.$body-xl;
+$type-size-100: 14px;
+$type-size-200: 16px;
+$type-size-300: 18px;
+$type-size-400: 24px;
+$type-size-500: 32px;
+$type-size-550: 36px;
+$type-size-600: 48px;
 
-$font-size-2xl: brand.$h6-w;
-$font-size-3xl: brand.$h5-w;
-$font-size-4xl: brand.$h4-w;
-$font-size-5xl: brand.$h3-w;
-$font-size-6xl: brand.$h2-w;
+$type-line-100: 24px;
+$type-line-200: 28px;
+$type-line-300: 32px;
+$type-line-400: 36px;
+$type-line-500: 48px;
+$type-line-550: 52px;
+$type-line-600: 68px;
 
-$heading-1: brand.$h1-w;
-$heading-2: brand.$h2-w;
-$heading-3: brand.$h3-w;
-$heading-4: brand.$h4-w;
-$heading-5: brand.$h5-w;
-$heading-6: brand.$h6-w;
+$font-size-xs: $type-size-100;
+$font-size-sm: $type-size-100;
+$font-size-base: $type-size-100;
+$font-size-lg: $type-size-200;
+$font-size-xl: $type-size-300;
+$font-size-2xl: $type-size-400;
+$font-size-3xl: $type-size-400;
+$font-size-4xl: $type-size-400;
+$font-size-5xl: $type-size-500;
+$font-size-6xl: $type-size-600;
 
-$body-base: brand.$body-md;
-$body-large: brand.$body-lg;
-$body-small: brand.$body-sm;
-$body-xs: brand.$body-xs;
+$heading-1: $type-size-600;
+$heading-2: $type-size-500;
+$heading-3: $type-size-300;
+$heading-4: $type-size-200;
+$heading-5: $type-size-100;
+$heading-6: $type-size-100;
 
-$body-base-line: 24px;
-$body-large-line: 28px;
-$body-small-line: 24px;
-$body-xs-line: 24px;
+$heading-1-line: $type-line-600;
+$heading-2-line: $type-line-500;
+$heading-3-line: $type-line-300;
+$heading-4-line: $type-line-200;
+$heading-5-line: $type-line-100;
+$heading-6-line: $type-line-100;
+
+$body-base: $type-size-100;
+$body-large: $type-size-200;
+$body-small: $type-size-100;
+$body-xs: $type-size-100;
+
+$body-base-line: $type-line-100;
+$body-large-line: $type-line-200;
+$body-small-line: $type-line-100;
+$body-xs-line: $type-line-100;

@@ -58,7 +58,7 @@ export default defineNuxtRouteMiddleware((to) => {
     if (hasOnboardingAck && !standardsCookie.value && !isOnboardingRoute && !isStandardsRoute) {
         return navigateTo({
             path: standardsPath,
-            query: { redirect: to.fullPath },
+            query: { redirect: to.fullPath, standardsRequired: '1' },
         });
     }
 });

@@ -24,7 +24,8 @@ type RoleTrackConfig = {
     quiz: QuizQuestion[];
 };
 
-const ONBOARDING_LAST_UPDATED = '2026-03-02';
+const ONBOARDING_LAST_UPDATED = '2026-03-09';
+const ONBOARDING_LAST_UPDATED_BY = 'Kent Levi Cadungog';
 const ROADMAP_ITEMS = [
     'Optional resend cooldown UX (not implemented).',
     'Partial onboarding resume checkpoints (not implemented).',
@@ -182,18 +183,26 @@ definePageMeta({ layout: false });
 const localePath = useLocalePath();
 const selectedRole = ref<RoleTrack>('fe');
 const currentSlide = ref(0);
-const copiedPath = ref('');
+const copiedSourceId = ref('');
 const isSubmitting = ref(false);
 const quizSubmitted = ref(false);
+const quizToastVisible = ref(false);
+const quizToastTone = ref<'success' | 'error'>('success');
+const quizToastMessage = ref('');
 const detailStartRef = ref<HTMLElement | null>(null);
 const checklistState = reactive<Record<string, boolean>>({});
 const quizAnswers = reactive<Record<string, number | null>>({});
+let quizToastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 const activeConfig = computed(() => roleTrackConfig[selectedRole.value]);
 const activeSlides = computed(() => activeConfig.value.slides);
 const activeChecklist = computed(() => activeConfig.value.checklist);
 const activeQuiz = computed(() => activeConfig.value.quiz);
-const activeSlide = computed(() => activeSlides.value[currentSlide.value]);
+const activeSlide = computed<OnboardingSlide>(() =>
+    activeSlides.value[currentSlide.value] ??
+    activeSlides.value[0] ??
+    activeConfig.value.slides[0]!
+);
 const isLastSlide = computed(() => currentSlide.value === activeSlides.value.length - 1);
 const quickStartItems = computed(() => [
     `Select your role track (${roleLabels[selectedRole.value]}).`,
@@ -216,15 +225,23 @@ const onboardingAckCookie = useCookie<string | null>(GUIDE_ONBOARDING_ACK_COOKIE
 
 const redirectTarget = computed(() => localePath('/guide/standards'));
 
+function clearQuizToast() {
+    quizToastVisible.value = false;
+    if (quizToastTimeoutId) {
+        clearTimeout(quizToastTimeoutId);
+        quizToastTimeoutId = null;
+    }
+}
+
 function resetTrackState() {
     for (const key of Object.keys(checklistState)) {
-        delete checklistState[key];
+        checklistState[key] = false;
     }
     for (const item of activeChecklist.value) {
         checklistState[item.id] = false;
     }
     for (const key of Object.keys(quizAnswers)) {
-        delete quizAnswers[key];
+        quizAnswers[key] = null;
     }
     for (const item of activeQuiz.value) {
         quizAnswers[item.id] = null;
@@ -232,19 +249,32 @@ function resetTrackState() {
     quizSubmitted.value = false;
 }
 
-async function copyPath(path: string) {
+async function copyPath(sourceId: string, path: string) {
     try {
         await copyTextToClipboard(path);
-        copiedPath.value = path;
+        copiedSourceId.value = sourceId;
         setTimeout(() => {
-            if (copiedPath.value === path) copiedPath.value = '';
+            if (copiedSourceId.value === sourceId) copiedSourceId.value = '';
         }, 1200);
-    } catch {}
+    } catch {
+        copiedSourceId.value = '';
+    }
 }
 
 function submitQuiz() {
     if (!allQuizAnswered.value) return;
     quizSubmitted.value = true;
+    quizToastTone.value = quizAllCorrect.value ? 'success' : 'error';
+    quizToastMessage.value = quizAllCorrect.value
+        ? 'Quiz completed successfully.'
+        : 'Quiz not passed. Review your answers and try again.';
+    quizToastVisible.value = true;
+    if (quizToastTimeoutId) {
+        clearTimeout(quizToastTimeoutId);
+    }
+    quizToastTimeoutId = setTimeout(() => {
+        clearQuizToast();
+    }, 2200);
 }
 
 async function startTrack() {
@@ -258,13 +288,15 @@ function resetOnboarding() {
     selectedRole.value = 'fe';
     currentSlide.value = 0;
     isSubmitting.value = false;
-    copiedPath.value = '';
+    copiedSourceId.value = '';
     resetTrackState();
+    clearQuizToast();
 }
 
 async function proceedToGuide() {
     if (!canProceed.value || isSubmitting.value) return;
     isSubmitting.value = true;
+    clearQuizToast();
     onboardingDoneCookie.value = '1';
     onboardingAckCookie.value = GUIDE_ONBOARDING_VERSION;
 
@@ -281,15 +313,26 @@ async function proceedToGuide() {
         return;
     }
 
-    navigateTo(redirectTarget.value).catch(() => {
-        isSubmitting.value = false;
-    });
+    const navigationResult = navigateTo(redirectTarget.value);
+    if (navigationResult && typeof navigationResult === 'object' && 'catch' in navigationResult) {
+        navigationResult.catch(() => {
+            isSubmitting.value = false;
+        });
+        return;
+    }
+
+    isSubmitting.value = false;
 }
 
 watch(selectedRole, () => {
     currentSlide.value = 0;
-    copiedPath.value = '';
+    copiedSourceId.value = '';
     resetTrackState();
+    clearQuizToast();
+});
+
+onBeforeUnmount(() => {
+    clearQuizToast();
 });
 resetTrackState();
 </script>
@@ -301,7 +344,7 @@ resetTrackState();
                 <div>
                     <p class="guide-onboarding-kicker">Guide Onboarding</p>
                     <p class="guide-onboarding-meta">
-                        {{ GUIDE_ONBOARDING_VERSION }} | Updated {{ ONBOARDING_LAST_UPDATED }}
+                        {{ GUIDE_ONBOARDING_VERSION }} | Updated {{ ONBOARDING_LAST_UPDATED }} | By: {{ ONBOARDING_LAST_UPDATED_BY }}
                     </p>
                 </div>
 
@@ -390,16 +433,19 @@ resetTrackState();
                 >
                     <p class="guide-onboarding-claim-text">{{ claim.text }}</p>
                     <button
-                        v-for="source in claim.sources"
-                        :key="source.path"
+                        v-for="(source, sourceIndex) in claim.sources"
+                        :key="`${activeSlide.id}-${claimIndex}-${sourceIndex}-${source.path}`"
                         type="button"
                         class="guide-onboarding-source-btn"
-                        :data-testid="`guide-onboarding-source-${claimIndex}`"
-                        @click="copyPath(source.path)"
+                        :data-testid="`guide-onboarding-source-${claimIndex}-${sourceIndex}`"
+                        @click="copyPath(`${activeSlide.id}-${claimIndex}-${sourceIndex}`, source.path)"
                     >
                         <span class="guide-onboarding-source-label">{{ source.label }}</span>
                         <code class="guide-onboarding-source-path">{{ source.path }}</code>
-                        <span v-if="copiedPath === source.path" class="guide-onboarding-source-copied">Copied</span>
+                        <span
+                            v-if="copiedSourceId === `${activeSlide.id}-${claimIndex}-${sourceIndex}`"
+                            class="guide-onboarding-source-copied"
+                        >Copied</span>
                     </button>
                 </li>
             </ul>
@@ -480,9 +526,6 @@ resetTrackState();
                     >
                         Retry Quiz
                     </button>
-                    <p v-if="quizSubmitted" class="guide-onboarding-quiz-result">
-                        {{ quizAllCorrect ? 'Quiz passed.' : 'Quiz not passed.' }}
-                    </p>
                 </div>
             </div>
 
@@ -514,8 +557,19 @@ resetTrackState();
                 </button>
             </div>
         </div>
+        <UiToast
+            :visible="quizToastVisible"
+            :tone="quizToastTone"
+            :dismissible="true"
+            :message="quizToastMessage"
+            @close="quizToastVisible = false"
+        />
     </section>
 </template>
+
+<style lang="scss">
+@use '~/assets/scss/guide';
+</style>
 
 <style scoped lang="scss">
 .guide-onboarding {
@@ -529,7 +583,6 @@ resetTrackState();
 
 .guide-onboarding-card {
     width: min(920px, 100%);
-    border: 1px solid color-mix(in srgb, var(--border-default) 78%, var(--brand-primary));
     border-radius: 22px;
     padding: 28px;
     background: var(--onboarding-glass);
@@ -893,10 +946,16 @@ resetTrackState();
 .guide-onboarding-check,
 .guide-onboarding-quiz-option {
     display: flex;
-    align-items: start;
+    align-items: center;
     gap: 8px;
     color: var(--text-primary);
     line-height: 1.45;
+
+    input {
+        margin: 0;
+        flex-shrink: 0;
+        accent-color: #111111;
+    }
 }
 
 .guide-onboarding-quiz-item {
@@ -917,13 +976,6 @@ resetTrackState();
     line-height: var(--type-line-200);
     color: var(--text-primary);
     font-weight: var(--font-weight-semibold);
-}
-
-.guide-onboarding-quiz-result {
-    margin: 0;
-    font-size: var(--type-size-100);
-    line-height: var(--type-line-100);
-    color: var(--text-secondary);
 }
 
 .guide-onboarding-roadmap-list {

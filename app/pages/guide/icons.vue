@@ -64,7 +64,7 @@ onBeforeUnmount(() =>
                         type="color"
                         class="guide-color-picker"
                         @input="onHexInput"
-                    />
+                    >
 
                     <div class="guide-search-dropdown">
                         <input
@@ -77,7 +77,7 @@ onBeforeUnmount(() =>
                                 onTokenHexQueryInput();
                                 showTokenDropdown = true;
                             "
-                        />
+                        >
 
                         <div
                             v-if="showTokenDropdown"
@@ -172,7 +172,7 @@ onBeforeUnmount(() =>
                             type="number"
                             class="guide-size-input"
                             @input="onCustomSize"
-                        />
+                        >
                         <span class="guide-size-unit">px</span>
                     </div>
                 </div>
@@ -204,7 +204,7 @@ onBeforeUnmount(() =>
                             v-model="searchQuery"
                             class="guide-size-input"
                             placeholder="Search icons"
-                        />
+                        >
                     </div>
                 </div>
             </div>
