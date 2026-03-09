@@ -1,8 +1,16 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
+import {
+	isValidAuthEmail,
+	getAuthErrorMessage,
+} from '~/composables/auth/auth.helpers';
+import {
+	getProfileFieldValue,
+	normalizeAccountName,
+} from '~/composables/account/accountProfile.helpers';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
@@ -96,10 +104,6 @@ export function useLoginPageForm() {
 		return window.history.state?.back ?? null;
 	}
 
-	function isValidEmail(value: string) {
-		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-	}
-
 	function clearErrors() {
 		memberEmailError.value = '';
 		memberPasswordError.value = '';
@@ -161,44 +165,21 @@ export function useLoginPageForm() {
 			};
 		} else {
 			const fields = user.profile?.user_field_values ?? [];
-			const firstName = getFieldValue(fields, 'first_name', 1);
-			const lastName = getFieldValue(fields, 'last_name', 2);
+			const firstName = getProfileFieldValue(fields, 'first_name');
+			const lastName = getProfileFieldValue(fields, 'last_name');
 			const existing = mockUserCookie.value;
 			const emailValue = user.email || memberEmail.value.trim();
-
-			const fallbackRows = [...fields]
-				.filter((field) => typeof field.value === 'string' && field.value.trim())
-				.sort((a, b) => getFieldId(a) - getFieldId(b))
-				.slice(0, 2);
-
-			let resolvedFirstName = firstName || fallbackRows[0]?.value?.trim() || existing?.firstName || '';
-			let resolvedLastName = lastName || fallbackRows[1]?.value?.trim() || existing?.lastName || '';
-
-			if (!resolvedLastName && resolvedFirstName.includes(' ')) {
-				const parts = resolvedFirstName.split(/\s+/).filter(Boolean);
-				if (parts.length >= 2) {
-					resolvedFirstName = parts.slice(0, -1).join(' ');
-					resolvedLastName = parts[parts.length - 1] || '';
-				}
-			}
+			const normalizedName = normalizeAccountName(
+				firstName || existing?.firstName || '',
+				lastName || existing?.lastName || ''
+			);
 
 			mockUserCookie.value = {
-				firstName: resolvedFirstName,
-				lastName: resolvedLastName,
+				firstName: normalizedName.firstName,
+				lastName: normalizedName.lastName,
 				email: emailValue,
 			};
 		}
-	}
-
-	function getFieldValue(fields: UserFieldValue[], key: string, id: number) {
-		return fields.find((field) =>
-			field.country_field?.field_key === key ||
-			(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === id
-		)?.value?.trim() || '';
-	}
-
-	function getFieldId(field: UserFieldValue) {
-		return field.country_field_id ?? field.country_field_ids ?? field.country_fields_id ?? Number.MAX_SAFE_INTEGER;
 	}
 
 	function clearVerificationCache() {
@@ -247,8 +228,7 @@ export function useLoginPageForm() {
 	}
 
 	function handleApiError(error: unknown, fallbackMessage: string) {
-		const errorPayload = error as { data?: { message?: string }; message?: string };
-		return errorPayload?.data?.message || errorPayload?.message || fallbackMessage;
+		return getAuthErrorMessage(error) || fallbackMessage;
 	}
 
 	// Watchers
@@ -260,7 +240,7 @@ export function useLoginPageForm() {
 
 		if (!memberEmail.value.trim()) {
 			memberEmailError.value = t('auth.login.validation.fieldBlank');
-		} else if (!isValidEmail(memberEmail.value.trim())) {
+		} else if (!isValidAuthEmail(memberEmail.value.trim())) {
 			memberEmailError.value = t('auth.login.validation.emailInvalid');
 		}
 
@@ -279,7 +259,7 @@ export function useLoginPageForm() {
 		if (!nonMemberEmail.value.trim()) {
 			nonMemberEmailError.value = t('auth.login.validation.fieldBlank');
 			nonMemberEmailHasError.value = true;
-		} else if (!isValidEmail(nonMemberEmail.value.trim())) {
+		} else if (!isValidAuthEmail(nonMemberEmail.value.trim())) {
 			nonMemberEmailError.value = t('auth.login.validation.emailInvalid');
 			nonMemberEmailHasError.value = true;
 		}

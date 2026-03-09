@@ -17,6 +17,7 @@ export const i18nLocales = [
 			'en/home/reviews.json',
 			'en/home/guarantees.json',
 			'en/home/cta.json',
+			'en/home/underConstruction.json',
 			'en/layout/header/search.json',
 			'en/legal/terms.json',
 			'en/legal/privacy.json',
@@ -46,6 +47,8 @@ export const i18nLocales = [
 			'en/cart/cartPreview.json',
 			'en/cart/cartPage.json',
 			'en/checkout/guest.json',
+			'en/checkout/confirmation.json',
+			'en/checkout/orderDetails.json',
 		],
 	},
 	{
@@ -66,6 +69,7 @@ export const i18nLocales = [
 			'kr/home/reviews.json',
 			'kr/home/guarantees.json',
 			'kr/home/cta.json',
+			'kr/home/underConstruction.json',
 			'kr/layout/header/search.json',
 			'kr/legal/terms.json',
 			'kr/legal/privacy.json',
@@ -95,6 +99,8 @@ export const i18nLocales = [
 			'kr/cart/cartPreview.json',
 			'kr/cart/cartPage.json',
 			'kr/checkout/guest.json',
+			'kr/checkout/confirmation.json',
+			'kr/checkout/orderDetails.json',
 		],
 	},
 ];

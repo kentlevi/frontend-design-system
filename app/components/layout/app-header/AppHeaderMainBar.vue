@@ -2,6 +2,7 @@
 import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
 import type { FlagCode } from '~/data/ui/flags';
 import { useCountry } from '~/composables/app/useCountry';
+import { normalizeAppPath } from '~/utils/auth/redirect';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -51,12 +52,8 @@ const emit = defineEmits<{
 	(e: 'logout'): void;
 }>();
 
-function normalizePath(path: string) {
-	return path.replace(/\/+$/, '') || '/';
-}
-
 function isExactNavHeading(path: string) {
-	return normalizePath(route.path) === normalizePath(path);
+	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
 </script>
 

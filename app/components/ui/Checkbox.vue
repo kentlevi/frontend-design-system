@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import UiIcon from '~/components/ui/Icon.vue';
+import {
+	useControlAttrs,
+	useControlTestId,
+	useRootAttrs,
+} from '~/components/ui/uiControlAttrs.helpers';
 
 type Size = 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
@@ -30,22 +35,9 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
-	const { class: className, style, 'data-testid': _testId } = attrs;
-	return {
-		class: className,
-		style,
-		...(testId.value ? { 'data-testid': testId.value } : {}),
-	};
-});
-const inputAttrs = computed(() => {
-	const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
-	return {
-		...rest,
-		...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
-	};
-});
+const testId = useControlTestId(attrs);
+const rootAttrs = useRootAttrs(attrs, testId);
+const inputAttrs = useControlAttrs(attrs, testId);
 
 function onChange(event: Event) {
 	emit('update:modelValue', (event.target as HTMLInputElement).checked);

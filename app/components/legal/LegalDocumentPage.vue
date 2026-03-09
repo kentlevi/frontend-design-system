@@ -1,55 +1,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-
-type LegalSectionGroup = {
-	title?: string;
-	items: LegalBulletItem[];
-};
-
-type LegalBulletItem = {
-	text: string;
-	items?: string[];
-};
-
-type LegalSectionTable = {
-	headers: string[];
-	rows: string[][];
-	note?: string;
-};
-
-type LegalSection = {
-	id: string;
-	title: string;
-	paragraphs?: string[];
-	bullets?: LegalBulletItem[];
-	groups?: LegalSectionGroup[];
-	table?: LegalSectionTable;
-};
-
-type RawLegalSectionGroup = {
-	title?: unknown;
-	items?: unknown[];
-};
-
-type RawLegalSectionTable = {
-	headers?: unknown[];
-	rows?: unknown[][];
-	note?: unknown;
-};
-
-type RawLegalSection = {
-	id?: unknown;
-	title?: unknown;
-	paragraphs?: unknown[];
-	bullets?: unknown[];
-	groups?: RawLegalSectionGroup[];
-	table?: RawLegalSectionTable;
-};
-
-type RichTextSegment = {
-	text: string;
-	bold: boolean;
-};
+import {
+	getBulletContent,
+	normalizeLegalSections,
+	parseEmphasisSegments,
+	toMessageArray,
+	type LegalSection,
+	type RawLegalSection,
+} from '~/composables/legal/legalDocument.helpers';
 
 const props = defineProps<{
 	documentKey: 'terms' | 'privacy';
@@ -82,68 +40,12 @@ function resolveMessage(value: unknown) {
 	return rt(value as Parameters<typeof rt>[0]);
 }
 
-function toMessageArray(value: unknown) {
-	return Array.isArray(value) ? value : [];
-}
-
-function normalizeBulletItem(value: unknown): LegalBulletItem {
-	if (typeof value === 'string') {
-		return { text: value };
-	}
-
-	if (value && typeof value === 'object') {
-		const rawBullet = value as { text?: unknown; items?: unknown[] };
-		const hasNestedBulletShape =
-			Object.prototype.hasOwnProperty.call(rawBullet, 'text') ||
-			Object.prototype.hasOwnProperty.call(rawBullet, 'items');
-
-		if (!hasNestedBulletShape) {
-			return {
-				text: resolveMessage(value),
-			};
-		}
-
-		return {
-			text:
-				typeof rawBullet.text === 'undefined'
-					? ''
-					: resolveMessage(rawBullet.text),
-			items: Array.isArray(rawBullet.items)
-				? rawBullet.items.map(resolveMessage)
-				: undefined,
-		};
-	}
-
-	return {
-		text: typeof value === 'undefined' ? '' : resolveMessage(value),
-	};
-}
-
 const sections = computed(
 	() =>
-		(toMessageArray(tm(`${documentBaseKey.value}.sections`) as RawLegalSection[]) as RawLegalSection[]).map(
-			(section: RawLegalSection, index: number) => ({
-				id:
-					typeof section.id === 'string'
-						? section.id
-						: `${props.documentKey}-section-${index + 1}`,
-				title: resolveMessage(section.title),
-				paragraphs: ((section.paragraphs || []) as unknown[]).map(resolveMessage),
-				bullets: ((section.bullets || []) as unknown[]).map(normalizeBulletItem),
-				groups: ((section.groups || []) as RawLegalSectionGroup[]).map((group: RawLegalSectionGroup) => ({
-					title: group.title ? resolveMessage(group.title) : undefined,
-					items: ((group.items || []) as unknown[]).map(normalizeBulletItem),
-				})),
-				table: section.table
-					? {
-						headers: ((section.table.headers || []) as unknown[]).map(resolveMessage),
-						rows: ((section.table.rows || []) as unknown[][]).map((row: unknown[]) =>
-							row.map(resolveMessage)
-						),
-						note: section.table.note ? resolveMessage(section.table.note) : undefined,
-					}
-					: undefined,
-			})
+		normalizeLegalSections(
+			toMessageArray(tm(`${documentBaseKey.value}.sections`) as RawLegalSection[]) as RawLegalSection[],
+			props.documentKey,
+			resolveMessage
 		) as LegalSection[]
 );
 
@@ -168,78 +70,6 @@ function usePlainBulletText(sectionId: string) {
 
 function useSecondaryBulletMarkers(sectionId: string) {
 	return sectionId === 'procedure-and-method-of-destruction' || sectionId === 'privacy-section-5';
-}
-
-function splitLabelPrefix(value: string) {
-	if (value.includes('**')) {
-		return {
-			label: '',
-			content: value,
-		};
-	}
-
-	const match = value.match(/^([^:]+:\s*)(.+)$/);
-	if (!match) {
-		return {
-			label: '',
-			content: value,
-		};
-	}
-
-	return {
-		label: match[1] || '',
-		content: match[2] || value,
-	};
-}
-
-function parseEmphasisSegments(value: string) {
-	const segments: RichTextSegment[] = [];
-	const pattern = /\*\*(.+?)\*\*/g;
-	let lastIndex = 0;
-	let match: RegExpExecArray | null;
-
-	match = pattern.exec(value);
-	while (match) {
-		if (match.index > lastIndex) {
-			segments.push({
-				text: value.slice(lastIndex, match.index),
-				bold: false,
-			});
-		}
-
-		segments.push({
-			text: match[1] || '',
-			bold: true,
-		});
-
-		lastIndex = match.index + match[0].length;
-		match = pattern.exec(value);
-	}
-
-	if (lastIndex < value.length) {
-		segments.push({
-			text: value.slice(lastIndex),
-			bold: false,
-		});
-	}
-
-	return segments.length
-		? segments
-		: [
-			{
-				text: value,
-				bold: false,
-			},
-		];
-}
-
-function getBulletContent(value: string) {
-	const { label, content } = splitLabelPrefix(value);
-	return {
-		label,
-		content: label ? content : value,
-		segments: parseEmphasisSegments(label ? content : value),
-	};
 }
 
 function getRenderableBulletContent(sectionId: string, value: string) {
@@ -871,8 +701,6 @@ watch(activeTopicId, () => {
 
 					&.legal-section-list--nested {
 						padding-left: 20px;
-						gap: 8px;
-
 						.legal-section-list-item {
 							font-size: var(--type-size-200);
 						}

@@ -1,11 +1,11 @@
-import { computed } from 'vue';
 import { accountQuoteRequests } from '~/data/account/quoteRequests';
+import { useAccountCollectionWithActive } from '~/composables/account/useAccountCollection';
 
 export function useAccountQuoteRequests() {
-	const activeRequest = computed(() => accountQuoteRequests[0] ?? null);
+	const { items, activeItem } = useAccountCollectionWithActive(accountQuoteRequests);
 
 	return {
-		requests: accountQuoteRequests,
-		activeRequest,
+		requests: items,
+		activeRequest: activeItem,
 	};
 }

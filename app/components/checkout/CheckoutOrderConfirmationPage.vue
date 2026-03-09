@@ -3,8 +3,11 @@ import { computed } from 'vue';
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
 import { useCountry } from '@/composables/app/useCountry';
 
+const { t } = useI18n();
 const { withCountry } = useCountry();
-const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest();
+const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest({
+	labelCountry: 'us',
+});
 
 const orderNumber = computed(() => '12405070009');
 const orderDetailsPath = computed(() => withCountry(`/orders/${orderNumber.value}`));
@@ -32,28 +35,28 @@ const estimatedArrival = computed(() => {
 						aria-hidden="true"
 						class="checkout-confirmation-icon-image"
 					>
-					<h1 class="checkout-confirmation-title">Your Order is Confirmed</h1>
+					<h1 class="checkout-confirmation-title">{{ t('checkout.confirmation.title') }}</h1>
 				</div>
-				<NuxtLink :to="withCountry('/')" class="checkout-confirmation-home-link">Go to Homepage</NuxtLink>
+				<NuxtLink :to="withCountry('/')" class="checkout-confirmation-home-link">{{ t('checkout.confirmation.goHome') }}</NuxtLink>
 			</header>
 
 			<p class="checkout-confirmation-note">
-				Expect a Final Proof to be sent to you shortly. If you have urgent concerns, you may call at
+				{{ t('checkout.confirmation.notePrefix') }}
 				<a href="tel:+6531582800">+65 3158 2800</a> or email at
 				<a href="mailto:info@mustickers.com">info@mustickers.com</a>.
-				You will receive an email confirming your order submission, please verify your shipping address.
+				{{ t('checkout.confirmation.noteSuffix') }}
 			</p>
 
 			<section class="checkout-confirmation-delivery">
-				<div class="checkout-confirmation-delivery-label">Expected Delivery (Express)</div>
-				<div class="checkout-confirmation-delivery-value">Your order is estimated to arrive on: {{ estimatedArrival }}</div>
+				<div class="checkout-confirmation-delivery-label">{{ t('checkout.confirmation.expectedDelivery') }}</div>
+				<div class="checkout-confirmation-delivery-value">{{ t('checkout.confirmation.expectedArrival', { date: estimatedArrival }) }}</div>
 			</section>
 
 			<section class="checkout-confirmation-summary">
 				<header class="checkout-confirmation-summary-head">
-					<h2 class="checkout-confirmation-summary-title">Order Summary</h2>
+					<h2 class="checkout-confirmation-summary-title">{{ t('checkout.confirmation.orderSummary') }}</h2>
 					<NuxtLink :to="orderDetailsPath" class="checkout-confirmation-summary-order">
-						Order #: {{ orderNumber }}
+						{{ t('checkout.confirmation.orderNumber', { orderNumber }) }}
 					</NuxtLink>
 				</header>
 
@@ -79,19 +82,19 @@ const estimatedArrival = computed(() => {
 
 					<div class="checkout-confirmation-totals">
 						<div class="checkout-confirmation-total-line">
-							<span class="checkout-confirmation-total-label">Subtotal:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.subtotal') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderSubtotal) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line">
-							<span class="checkout-confirmation-total-label">Shipping Fee:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.shippingFee') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderShippingFee) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line is-discount">
-							<span class="checkout-confirmation-total-label">Discounts:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.discounts') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderDiscount) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line is-final">
-							<span class="checkout-confirmation-total-label">Total:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.total') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderTotal) }}</strong>
 						</div>
 					</div>
@@ -234,13 +237,13 @@ const estimatedArrival = computed(() => {
 			}
 
 			.checkout-confirmation-summary-body {
-				padding: 24px;
+				padding: 0 24px;
 
 				.checkout-confirmation-item {
 					display: grid;
 					grid-template-columns: 64px 1fr auto;
 					gap: 14px;
-					padding-bottom: 24px;
+					padding: 24px 0;
 					border-bottom: 1px solid var(--gray-50);
 
 					.checkout-confirmation-item-thumb {

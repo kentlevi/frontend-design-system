@@ -1,0 +1,31 @@
+{
+    "checkout": {
+        "orderDetails": {
+            "orders": "주문",
+            "title": "주문 상세",
+            "orderNumber": "주문번호: {orderNumber}",
+            "status": "제작 전",
+            "viewInvoice": "인보이스 보기",
+            "viewInvoiceText": "상세 인보이스 정보를 확인할 수 있습니다.",
+            "paymentProof": "결제 증빙",
+            "paymentProofText": "결제 완료를 위해 결제 증빙을 업로드해 주세요.",
+            "paid": "결제 완료",
+            "paymentMethod": "결제 수단: {method}",
+            "orderSummary": "주문 요약",
+            "orderItemAlt": "주문 상품",
+            "itemNumber": "상품 번호 {number}",
+            "lackingArtwork": "아트워크 미제출",
+            "size": "사이즈: {size}",
+            "quantity": "수량: {quantity}",
+            "uploadArtwork": "아트워크 업로드",
+            "summary": {
+                "subtotal": "소계:",
+                "shippingFee": "배송비: ({method})",
+                "discounts": "할인:",
+                "total": "합계:"
+            },
+            "shippingMethod": "빠른 배송",
+            "paymentMethodValue": "신용카드"
+        }
+    }
+}

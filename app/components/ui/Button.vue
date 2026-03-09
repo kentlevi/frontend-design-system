@@ -7,6 +7,7 @@ import type { ButtonVariant, ButtonSize, ButtonTone } from '~/data/ui/buttons';
 type IconPosition = 'left' | 'right';
 type IconName = keyof typeof icons;
 type IconSizeValue = ButtonSize | number | `${number}`;
+const buttonSizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
 
 const props = withDefaults(
 	defineProps<{
@@ -61,10 +62,13 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
 const normalizedIconSize = computed<ButtonSize | number>(() => {
 	if (typeof props.iconSize === 'number') return props.iconSize;
 	if (typeof props.iconSize === 'string') {
+		if (buttonSizes.has(props.iconSize as ButtonSize)) {
+			return props.iconSize as ButtonSize;
+		}
 		const parsed = Number(props.iconSize);
 		if (Number.isFinite(parsed)) return parsed;
 	}
-	return props.iconSize;
+	return 'sm';
 });
 </script>
 

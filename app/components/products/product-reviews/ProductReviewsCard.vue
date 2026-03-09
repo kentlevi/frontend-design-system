@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import type { ReviewCard } from '~/data/products/product-reviews';
+import {
+	getProductReviewCopyKey,
+	resolveProductReviewAvatarSrc,
+	resolveProductReviewMediaSrc,
+} from '~/composables/products/productReviews.helpers';
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
@@ -9,9 +14,13 @@ const props = defineProps<{
 	card: ReviewCard;
 }>();
 
-const mediaSrc = computed(() => resolveFileUrl(props.card.mediaUrl));
+const title = computed(() => t(getProductReviewCopyKey(props.card.id, 'title')));
+const text = computed(() => t(getProductReviewCopyKey(props.card.id, 'text')));
+const mediaSrc = computed(() =>
+	resolveProductReviewMediaSrc(props.card, resolveFileUrl)
+);
 const avatarSrc = computed(() =>
-	resolveFileUrl(props.card.avatarUrl || defaultAvatarUrl)
+	resolveProductReviewAvatarSrc(props.card, resolveFileUrl, defaultAvatarUrl)
 );
 
 const onAvatarError = (event: Event) => {
@@ -27,15 +36,15 @@ const onAvatarError = (event: Event) => {
 			<div class="product-reviews-media" :data-testid="`product-reviews-card-media-${props.card.id}`">
 				<img
 					:src="mediaSrc"
-					:alt="t(`product.reviews.cards.${props.card.id}.title`)"
+					:alt="title"
 					loading="lazy"
 					class="product-reviews-media-image"
 				>
 			</div>
 
 			<div class="product-reviews-content" data-testid="product-reviews-card-content">
-				<h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${props.card.id}`">{{ t(`product.reviews.cards.${props.card.id}.title`) }}</h3>
-				<p class="product-reviews-card-text" :data-testid="`product-reviews-card-text-${props.card.id}`">{{ t(`product.reviews.cards.${props.card.id}.text`) }}</p>
+				<h3 class="product-reviews-card-title" :data-testid="`product-reviews-card-title-${props.card.id}`">{{ title }}</h3>
+				<p class="product-reviews-card-text" :data-testid="`product-reviews-card-text-${props.card.id}`">{{ text }}</p>
 			</div>
 		</div>
 
