@@ -1,11 +1,11 @@
-import { computed } from 'vue';
 import { accountOrders } from '~/data/account/orders';
+import { useAccountCollectionWithActive } from '~/composables/account/useAccountCollection';
 
 export function useAccountOrders() {
-	const activeOrder = computed(() => accountOrders[0] ?? null);
+	const { items, activeItem } = useAccountCollectionWithActive(accountOrders);
 
 	return {
-		orders: accountOrders,
-		activeOrder,
+		orders: items,
+		activeOrder: activeItem,
 	};
 }

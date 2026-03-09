@@ -1,14 +1,48 @@
 import { DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries';
 
+export function normalizeAppPath(path: string) {
+	return path.replace(/\/+$/, '') || '/';
+}
+
+export function sanitizeRedirectSource(fullPath: string) {
+	const parsed = new URL(fullPath, 'http://localhost');
+	parsed.searchParams.delete('redirect');
+	const search = parsed.searchParams.toString();
+	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
+}
+
+export function sanitizeExistingRedirect(
+	rawRedirect: unknown,
+	withCountry: (path: string) => string
+) {
+	const homePath = normalizeAppPath(withCountry('/'));
+	const loginPath = normalizeAppPath(withCountry('/auth/login'));
+	const registerPath = normalizeAppPath(withCountry('/auth/register'));
+
+	if (typeof rawRedirect !== 'string') return '';
+
+	const candidate = rawRedirect.trim();
+	if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
+
+	const parsed = new URL(candidate, 'http://localhost');
+	const targetPath = normalizeAppPath(parsed.pathname);
+	if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) {
+		return '';
+	}
+
+	parsed.searchParams.delete('redirect');
+	const search = parsed.searchParams.toString();
+	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
+}
+
 export function resolvePostLoginRedirect(
 	rawRedirect: unknown,
 	withCountry: (path: string) => string
 ) {
 	const fallback = withCountry('/');
-	const normalizePath = (path: string) => path.replace(/\/+$/, '') || '/';
-	const homePath = normalizePath(withCountry('/'));
-	const loginPath = normalizePath(withCountry('/auth/login'));
-	const registerPath = normalizePath(withCountry('/auth/register'));
+	const homePath = normalizeAppPath(withCountry('/'));
+	const loginPath = normalizeAppPath(withCountry('/auth/login'));
+	const registerPath = normalizeAppPath(withCountry('/auth/register'));
 
 	if (typeof rawRedirect !== 'string') return fallback;
 
@@ -27,7 +61,7 @@ export function resolvePostLoginRedirect(
 			? `/${resolvedCountry}/${segments.slice(1).join('/')}`
 			: `/${resolvedCountry}`;
 
-	const normalizedTargetPath = normalizePath(normalizedPath);
+	const normalizedTargetPath = normalizeAppPath(normalizedPath);
 	if (
 		normalizedTargetPath === homePath ||
         normalizedTargetPath === loginPath ||

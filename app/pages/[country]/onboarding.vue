@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useCountry } from '~/composables/app/useCountry';
+import { redirectToCountryPath } from '~/composables/app/usePageRedirect';
 
-const { withCountry } = useCountry();
-await navigateTo(withCountry('/auth/profile'), { replace: true });
+await redirectToCountryPath('/auth/profile', { replace: true });
 </script>

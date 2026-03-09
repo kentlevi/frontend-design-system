@@ -56,6 +56,13 @@ type SearchNavItem =
     	item: SearchItem;
     };
 
+function createRecentSearchCookieEntry(
+	type: 'product' | 'term',
+	value: string
+): RecentSearchCookieEntry {
+	return { type, value };
+}
+
 export function useAppHeaderSearch() {
 	const { t } = useI18n();
 	const route = useRoute();
@@ -427,8 +434,8 @@ export function useAppHeaderSearch() {
 			(entry) => !(entry.type === 'product' && entry.value === item.id)
 		);
 		searchRecentTermsCookie.value = [
-			{ type: 'product', value: item.id },
-			...current.map((entry) => ({ type: entry.type, value: entry.value })),
+			createRecentSearchCookieEntry('product', item.id),
+			...current.map((entry) => createRecentSearchCookieEntry(entry.type, entry.value)),
 		].slice(0, HEADER_MAX_RECENT_SEARCHES);
 	}
 
@@ -454,7 +461,7 @@ export function useAppHeaderSearch() {
 	function removeRecentSearch(entryKey: string) {
 		searchRecentTermsCookie.value = recentSearchEntriesRaw.value
 			.filter((item) => item.key !== entryKey)
-			.map((item) => ({ type: item.type, value: item.value }));
+			.map((item) => createRecentSearchCookieEntry(item.type, item.value));
 	}
 
 	function clearRecentSearches() {

@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import {
+	getProfileFieldValue,
+	normalizeAccountName,
+} from '~/composables/account/accountProfile.helpers';
 import { useUserStore } from '~/stores/user';
 
 const props = withDefaults(
@@ -30,35 +34,8 @@ const mockUser = useCookie<{
 	path: '/',
 });
 
-function getFieldValueByKey(key: 'first_name' | 'last_name') {
-	const legacyId = key === 'first_name' ? 1 : 2;
-	const fieldValues = userStore.profile?.user_field_values ?? [];
-	const directMatch =
-		fieldValues
-			.find(
-				(field) =>
-					field.country_field?.field_key === key ||
-                    (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
-			)
-			?.value?.trim() || '';
-	if (directMatch) return directMatch;
-
-	const fallbackRows = [...fieldValues]
-		.filter((field) => typeof field.value === 'string' && field.value.trim())
-		.sort(
-			(a, b) =>
-				(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
-                (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-		)
-		.slice(0, 2);
-	if (fallbackRows.length < 2) return '';
-	return key === 'first_name'
-		? (fallbackRows[0]?.value?.trim() || '')
-		: (fallbackRows[1]?.value?.trim() || '');
-}
-
 const storeFirstName = computed(() =>
-	getFieldValueByKey('first_name')
+	getProfileFieldValue(userStore.profile?.user_field_values ?? [], 'first_name')
 );
 
 const emailLocalPart = computed(() => {
@@ -67,14 +44,18 @@ const emailLocalPart = computed(() => {
 	return source.split('@')[0] || '';
 });
 
-const greetingName = computed(
-	() =>
+const greetingName = computed(() => {
+	const normalizedName = normalizeAccountName(
 		storeFirstName.value ||
-        userStore.onboardingProfile?.firstName ||
-        mockUser.value?.firstName ||
-        emailLocalPart.value ||
-        t('home.welcome.defaultName')
-);
+			userStore.onboardingProfile?.firstName ||
+			mockUser.value?.firstName ||
+			emailLocalPart.value ||
+			t('home.welcome.defaultName'),
+		''
+	);
+
+	return normalizedName.firstName || t('home.welcome.defaultName');
+});
 </script>
 
 <template>

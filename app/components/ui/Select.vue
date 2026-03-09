@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import {
+	useControlTestId,
+	useRootAttrs,
+} from '~/components/ui/uiControlAttrs.helpers';
 
 type SelectValue = string | number;
 
@@ -71,15 +75,8 @@ const filteredOptions = computed(() => {
 const triggerIconName = computed(() =>
 	props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
-	const { class: className, style, 'data-testid': _testId } = attrs;
-	return {
-		class: className,
-		style,
-		...(testId.value ? { 'data-testid': testId.value } : {}),
-	};
-});
+const testId = useControlTestId(attrs);
+const rootAttrs = useRootAttrs(attrs, testId);
 
 function closeMenu() {
 	isOpen.value = false;

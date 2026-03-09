@@ -9,6 +9,7 @@ definePageMeta({
 	footerVariant: 'compact',
 });
 
+const { t } = useI18n();
 const route = useRoute();
 const { withCountry } = useCountry();
 const orderNo = computed(() => String(route.params.orderNo || ''));
@@ -21,16 +22,16 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 		<div class="order-details-card" data-testid="order-details-card">
 			<header class="order-details-head">
 				<div class="order-details-crumbs">
-					<NuxtLink :to="withCountry('/under-construction')" class="order-details-crumb-link">Orders</NuxtLink>
+					<NuxtLink :to="withCountry('/under-construction')" class="order-details-crumb-link">{{ t('checkout.orderDetails.orders') }}</NuxtLink>
 					<UiIcon
 						name="regular-chevron-right" :size="24" color="var(--text-primary)"
 						class="order-details-crumb-icon" />
-					<span class="order-details-crumb-current">Order Details</span>
+					<span class="order-details-crumb-current">{{ t('checkout.orderDetails.title') }}</span>
 				</div>
 
 				<div class="order-details-title-row">
-					<h1 class="order-details-title">Order #: {{ orderNo }}</h1>
-					<span class="order-details-chip">Before Production</span>
+					<h1 class="order-details-title">{{ t('checkout.orderDetails.orderNumber', { orderNumber: orderNo }) }}</h1>
+					<span class="order-details-chip">{{ t('checkout.orderDetails.status') }}</span>
 				</div>
 			</header>
 
@@ -40,8 +41,8 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 						<UiIcon name="regular-invoice-check" :size="24" color="var(--gold-70)" />
 					</div>
 					<div class="order-details-action-copy">
-						<h2 class="order-details-action-title">View Invoice</h2>
-						<p class="order-details-action-text">Access and review detailed invoice information.</p>
+						<h2 class="order-details-action-title">{{ t('checkout.orderDetails.viewInvoice') }}</h2>
+						<p class="order-details-action-text">{{ t('checkout.orderDetails.viewInvoiceText') }}</p>
 					</div>
 				</div>
 				<div class="order-details-action-divider" aria-hidden="true" />
@@ -51,47 +52,49 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 						<UiIcon name="regular-dollar-sign" :size="24" color="var(--gold-70)" />
 					</div>
 					<div class="order-details-action-copy">
-						<h2 class="order-details-action-title">Payment Proof</h2>
-						<p class="order-details-action-text">Upload proof of payment to complete payment process.</p>
+						<h2 class="order-details-action-title">{{ t('checkout.orderDetails.paymentProof') }}</h2>
+						<p class="order-details-action-text">{{ t('checkout.orderDetails.paymentProofText') }}</p>
 					</div>
 					<div class="order-details-payment-meta">
-						<span class="order-details-paid-chip">Paid</span>
-						<span class="order-details-method">Method: Credit Card</span>
+						<span class="order-details-paid-chip">{{ t('checkout.orderDetails.paid') }}</span>
+						<span class="order-details-method">{{ t('checkout.orderDetails.paymentMethod', { method: t('checkout.orderDetails.paymentMethodValue') }) }}</span>
 					</div>
 				</div>
 			</section>
 
 			<section class="order-details-summary">
 				<div class="order-details-summary-main">
-					<h2 class="order-details-summary-title">Order Summary</h2>
+					<h2 class="order-details-summary-title">{{ t('checkout.orderDetails.orderSummary') }}</h2>
 
 					<div class="order-details-item">
 						<div class="order-details-item-thumb">
 							<img
 								:src="primaryItem?.artworkPreviewUrl || primaryItem?.product.image || '/icons/custom/checkout/icon-box.svg'"
-								:alt="primaryItem?.product.name || 'Order item'" class="order-details-item-image">
+								:alt="primaryItem?.product.name || t('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
 						</div>
 						<div class="order-details-item-copy">
 							<div class="order-details-item-heading">
-								<span class="order-details-item-no">Item No. 001</span>
+								<span class="order-details-item-no">{{ t('checkout.orderDetails.itemNumber', { number: '001' }) }}</span>
 								<UiIcon name="regular-info-circle" :size="20" color="var(--text-secondary)" />
 								<span class="order-details-item-warning">
 									<UiIcon name="strong-exclamation-triangle" :size="16" color="var(--error-60)" />
-									Lacking Artwork
+									{{ t('checkout.orderDetails.lackingArtwork') }}
 								</span>
 							</div>
 							<div class="order-details-item-meta-group">
-								<p class="order-details-item-meta">Size: {{ primaryItem ?
-									sizeDimOnly(primaryItem.sizeLabel) : '100×100mm' }}</p>
-								<p class="order-details-item-meta">Quantity: {{ primaryItem ?
-									primaryItem.qty.toLocaleString() : '10,000' }}</p>
+								<p class="order-details-item-meta">{{ t('checkout.orderDetails.size', {
+									size: primaryItem ? sizeDimOnly(primaryItem.sizeLabel) : '100x100mm',
+								}) }}</p>
+								<p class="order-details-item-meta">{{ t('checkout.orderDetails.quantity', {
+									quantity: primaryItem ? primaryItem.qty.toLocaleString() : '10,000',
+								}) }}</p>
 							</div>
 						</div>
 						<div class="order-details-item-side">
 							<UiButton
 								type="button" variant="filled" tone="neutral" size="md" height="40px"
 								class="order-details-upload-btn">
-								Upload Artwork
+								{{ t('checkout.orderDetails.uploadArtwork') }}
 							</UiButton>
 							<strong class="order-details-item-price">{{ formatPrice(primaryItem?.total || orderTotal)
 							}}</strong>
@@ -101,19 +104,19 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 
 				<div class="order-details-totals">
 					<div class="order-details-total-line">
-						<span class="order-details-total-line-label">Subtotal:</span>
+						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.subtotal') }}</span>
 						<strong class="order-details-total-value">{{ formatPrice(orderSubtotal) }}</strong>
 					</div>
 					<div class="order-details-total-line">
-						<span class="order-details-total-line-label">Shipping Fee: (Express Shipping)</span>
+						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.shippingFee', { method: t('checkout.orderDetails.shippingMethod') }) }}</span>
 						<strong class="order-details-total-value">{{ formatPrice(orderShippingFee) }}</strong>
 					</div>
 					<div class="order-details-total-line is-discount">
-						<span class="order-details-total-line-label">Discounts:</span>
+						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.discounts') }}</span>
 						<strong class="order-details-total-value">-{{ formatPrice(orderDiscount) }}</strong>
 					</div>
 					<div class="order-details-total-line is-final">
-						<span class="order-details-total-line-label">Total:</span>
+						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.total') }}</span>
 						<strong class="order-details-total-value">{{ formatPrice(orderTotal) }}</strong>
 					</div>
 				</div>

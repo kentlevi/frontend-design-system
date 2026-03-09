@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { useCountry } from '@/composables/app/useCountry';
+import {
+	getAccountInitials,
+	getProfileFieldValue,
+	normalizeAccountName,
+} from '~/composables/account/accountProfile.helpers';
 
 const props = defineProps<{
 	activeTab:
@@ -28,61 +33,37 @@ const localAvatarDataUrl = ref<string | null>(null);
 const profileFieldValues = computed(
 	() => userStore.profile?.user_field_values ?? []
 );
-function getFieldValueByKey(key: 'first_name' | 'last_name') {
-	const legacyId = key === 'first_name' ? 1 : 2;
-	const directMatch =
-		profileFieldValues.value.find(
-			(field) =>
-				field.country_field?.field_key === key ||
-                (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === legacyId
-		)?.value?.trim() || '';
-	if (directMatch) return directMatch;
-
-	const fallbackRows = [...profileFieldValues.value]
-		.filter((field) => typeof field.value === 'string' && field.value.trim())
-		.sort(
-			(a, b) =>
-				(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
-                (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-		)
-		.slice(0, 2);
-	if (fallbackRows.length < 2) return '';
-	return key === 'first_name'
-		? (fallbackRows[0]?.value?.trim() || '')
-		: (fallbackRows[1]?.value?.trim() || '');
-}
 const storeFirstName = computed(
-	() => getFieldValueByKey('first_name')
+	() => getProfileFieldValue(profileFieldValues.value, 'first_name')
 );
 const storeLastName = computed(
-	() => getFieldValueByKey('last_name')
+	() => getProfileFieldValue(profileFieldValues.value, 'last_name')
 );
 const emailLocalPart = computed(() => {
 	const source = (userStore.email || mockUser.value?.email || '').trim();
 	if (!source.includes('@')) return '';
 	return source.split('@')[0] || '';
 });
+const normalizedName = computed(() =>
+	normalizeAccountName(
+		storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User',
+		storeLastName.value || mockUser.value?.lastName || ''
+	)
+);
 
 const fullName = computed(() => {
-	const first = storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User';
-	const last = storeLastName.value || mockUser.value?.lastName || '';
-	return [first, last].filter(Boolean).join(' ').trim();
+	return [normalizedName.value.firstName, normalizedName.value.lastName]
+		.filter(Boolean)
+		.join(' ')
+		.trim();
 });
 
 const userEmail = computed(() => userStore.email || mockUser.value?.email || '');
 const initials = computed(() => {
-	const first = (
-		storeFirstName.value ||
-        mockUser.value?.firstName ||
-        emailLocalPart.value ||
-        'U'
-	)
-		.charAt(0)
-		.toUpperCase();
-	const last = (storeLastName.value || mockUser.value?.lastName || '')
-		.charAt(0)
-		.toUpperCase();
-	return `${first || 'U'}${last || ''}`;
+	return getAccountInitials(
+		normalizedName.value.firstName || 'User',
+		normalizedName.value.lastName
+	);
 });
 const avatarDisplayUrl = computed(
 	() => localAvatarDataUrl.value

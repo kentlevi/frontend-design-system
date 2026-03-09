@@ -5,6 +5,11 @@ import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import {
+	normalizeAppPath,
+	sanitizeExistingRedirect,
+	sanitizeRedirectSource,
+} from '~/utils/auth/redirect';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -69,41 +74,11 @@ const guestOrderLink = computed(
 );
 const guestOrderTarget = computed(() => withCountry('/'));
 
-function normalizePath(path: string) {
-	return path.replace(/\/+$/, '') || '/';
-}
-
-function sanitizeRedirectSource(fullPath: string) {
-	const parsed = new URL(fullPath, 'http://localhost');
-	parsed.searchParams.delete('redirect');
-	const search = parsed.searchParams.toString();
-	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
-}
-
-function sanitizeExistingRedirect(
-	rawRedirect: unknown,
-	homePath: string,
-	loginPath: string,
-	registerPath: string
-) {
-	if (typeof rawRedirect !== 'string') return '';
-	const candidate = rawRedirect.trim();
-	if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
-
-	const parsed = new URL(candidate, 'http://localhost');
-	const targetPath = normalizePath(parsed.pathname);
-	if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) return '';
-
-	parsed.searchParams.delete('redirect');
-	const search = parsed.searchParams.toString();
-	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
-}
-
 const guestLoginTarget = computed(() => {
-	const loginPath = normalizePath(withCountry('/auth/login'));
-	const registerPath = normalizePath(withCountry('/auth/register'));
-	const homePath = normalizePath(withCountry('/'));
-	const currentPath = normalizePath(route.path);
+	const loginPath = normalizeAppPath(withCountry('/auth/login'));
+	const registerPath = normalizeAppPath(withCountry('/auth/register'));
+	const homePath = normalizeAppPath(withCountry('/'));
+	const currentPath = normalizeAppPath(route.path);
 
 	if (currentPath === homePath || currentPath === registerPath) {
 		return withCountry('/auth/login');
@@ -113,12 +88,7 @@ const guestLoginTarget = computed(() => {
 		const currentRedirect = Array.isArray(route.query.redirect)
 			? route.query.redirect[0]
 			: route.query.redirect;
-		const preservedRedirect = sanitizeExistingRedirect(
-			currentRedirect,
-			homePath,
-			loginPath,
-			registerPath
-		);
+		const preservedRedirect = sanitizeExistingRedirect(currentRedirect, withCountry);
 		if (!preservedRedirect) return withCountry('/auth/login');
 
 		return {

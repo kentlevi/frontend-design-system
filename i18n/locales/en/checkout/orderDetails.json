@@ -1,0 +1,31 @@
+{
+    "checkout": {
+        "orderDetails": {
+            "orders": "Orders",
+            "title": "Order Details",
+            "orderNumber": "Order #: {orderNumber}",
+            "status": "Before Production",
+            "viewInvoice": "View Invoice",
+            "viewInvoiceText": "Access and review detailed invoice information.",
+            "paymentProof": "Payment Proof",
+            "paymentProofText": "Upload proof of payment to complete payment process.",
+            "paid": "Paid",
+            "paymentMethod": "Method: {method}",
+            "orderSummary": "Order Summary",
+            "orderItemAlt": "Order item",
+            "itemNumber": "Item No. {number}",
+            "lackingArtwork": "Lacking Artwork",
+            "size": "Size: {size}",
+            "quantity": "Quantity: {quantity}",
+            "uploadArtwork": "Upload Artwork",
+            "summary": {
+                "subtotal": "Subtotal:",
+                "shippingFee": "Shipping Fee: ({method})",
+                "discounts": "Discounts:",
+                "total": "Total:"
+            },
+            "shippingMethod": "Express Shipping",
+            "paymentMethodValue": "Credit Card"
+        }
+    }
+}

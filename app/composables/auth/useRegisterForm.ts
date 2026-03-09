@@ -1,8 +1,17 @@
 import { nextTick, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import {
+	getAuthErrorMessage,
+	getAuthResponseMessage,
+	isValidAuthEmail,
+} from '~/composables/auth/auth.helpers';
 import { useUserStore } from '~/stores/user';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import type { UserIdentity, UserProfile } from '~/stores/user';
+import {
+	getProfileFieldValue,
+	normalizeAccountName,
+} from '~/composables/account/accountProfile.helpers';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { authVerificationConfig } from '~/data/auth/verification';
 
@@ -113,10 +122,6 @@ export function useRegisterForm() {
 		}, 1000);
 	}
 
-	function isValidEmail(value: string) {
-		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-	}
-
 	function isValidRegisterPassword(value: string) {
 		if (value.length < 6) return false;
 		return /[A-Z]|\d|[^A-Za-z0-9]/.test(value);
@@ -138,7 +143,7 @@ export function useRegisterForm() {
 	watch(email, (value) => {
 		const trimmed = value.trim();
 		if (!trimmed) return;
-		if (isValidEmail(trimmed)) {
+		if (isValidAuthEmail(trimmed)) {
 			if (registerRequestCooldownRemaining.value <= 0) {
 				emailError.value = '';
 			}
@@ -219,21 +224,6 @@ export function useRegisterForm() {
 		return message;
 	}
 
-	function getResponseMessage(payload: unknown): string {
-		if (!payload || typeof payload !== 'object') return '';
-		const response = payload as { message?: unknown };
-		return typeof response.message === 'string' ? response.message.trim() : '';
-	}
-
-	function getErrorMessage(payload: unknown): string {
-		if (!payload || typeof payload !== 'object') return '';
-		const error = payload as { data?: { message?: unknown }; message?: unknown };
-		if (typeof error.data?.message === 'string' && error.data.message.trim()) {
-			return error.data.message.trim();
-		}
-		return typeof error.message === 'string' ? error.message.trim() : '';
-	}
-
 	function normalizeVerificationErrorMessage(message: string) {
 		if (!message) return '';
 		if (/expired/i.test(message)) {
@@ -255,7 +245,7 @@ export function useRegisterForm() {
 
 		if (!email.value.trim()) {
 			emailError.value = t('auth.register.validation.fieldBlank');
-		} else if (!isValidEmail(email.value.trim())) {
+		} else if (!isValidAuthEmail(email.value.trim())) {
 			emailError.value = t('auth.register.validation.emailInvalid');
 		}
 
@@ -425,7 +415,7 @@ export function useRegisterForm() {
 
 			if (response.success === false) {
 				verificationError.value =
-					normalizeVerificationErrorMessage(getResponseMessage(response))
+					normalizeVerificationErrorMessage(getAuthResponseMessage(response))
 					|| t('auth.verification.invalidCode');
 				return response;
 			}
@@ -473,51 +463,14 @@ export function useRegisterForm() {
 						});
 
 						const fields = meResponse.data.profile?.user_field_values ?? [];
-						const resolvedFirstName =
-							fields.find(
-								(field: UserFieldValue) =>
-									field.country_field?.field_key === 'first_name' ||
-									(field.country_field_id ??
-										field.country_field_ids ??
-										field.country_fields_id) === 1
-							)?.value?.trim() || firstName.value.trim();
-						const resolvedLastName =
-							fields.find(
-								(field: UserFieldValue) =>
-									field.country_field?.field_key === 'last_name' ||
-									(field.country_field_id ??
-										field.country_field_ids ??
-										field.country_fields_id) === 2
-							)?.value?.trim() || lastName.value.trim();
-						const fallbackRows = [...fields]
-							.filter((field) => typeof field.value === 'string' && field.value.trim())
-							.sort(
-								(a, b) =>
-									(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
-									(b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-							)
-							.slice(0, 2);
-						let normalizedFirstName = resolvedFirstName || 'User';
-						let normalizedLastName = resolvedLastName || '';
-
-						if (!resolvedFirstName && fallbackRows[0]?.value) {
-							normalizedFirstName = fallbackRows[0].value.trim();
-						}
-						if (!resolvedLastName && fallbackRows[1]?.value) {
-							normalizedLastName = fallbackRows[1].value.trim();
-						}
-
-						if (!normalizedLastName && normalizedFirstName.includes(' ')) {
-							const parts = normalizedFirstName.split(/\s+/).filter(Boolean);
-							if (parts.length >= 2) {
-								normalizedFirstName = parts.slice(0, -1).join(' ');
-								normalizedLastName = parts[parts.length - 1] || '';
-							}
-						}
+						const normalizedName = normalizeAccountName(
+							getProfileFieldValue(fields, 'first_name') || firstName.value.trim() || 'User',
+							getProfileFieldValue(fields, 'last_name') || lastName.value.trim()
+						);
 
 						mockUser.value = {
-							firstName: normalizedFirstName,
-							lastName: normalizedLastName,
+							firstName: normalizedName.firstName,
+							lastName: normalizedName.lastName,
 							email: meResponse.data.user.email || email.value.trim(),
 						};
 					}
@@ -534,7 +487,7 @@ export function useRegisterForm() {
 			return response;
 		} catch (error: unknown) {
 			verificationError.value =
-				normalizeVerificationErrorMessage(getErrorMessage(error))
+				normalizeVerificationErrorMessage(getAuthErrorMessage(error))
 				|| t('auth.verification.invalidCode');
 		} finally {
 			isVerifying.value = false;
@@ -560,7 +513,7 @@ export function useRegisterForm() {
 
 			const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
 			if (!isSuccess) {
-				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
+				verificationError.value = getAuthResponseMessage(response) || t('auth.verification.invalidCode');
 				return;
 			}
 
@@ -574,7 +527,7 @@ export function useRegisterForm() {
 			verificationOtpRequired.value = verificationData?.otp_required !== false;
 
 			if (!resolvedToken) {
-				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
+				verificationError.value = getAuthResponseMessage(response) || t('auth.verification.invalidCode');
 				return;
 			}
 
@@ -587,7 +540,7 @@ export function useRegisterForm() {
 				await submitVerification(true);
 			}
 		} catch (error: unknown) {
-			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
+			verificationError.value = getAuthErrorMessage(error) || t('auth.verification.invalidCode');
 		}
 	}
 

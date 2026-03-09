@@ -46,6 +46,8 @@ export const i18nLocales = [
 			'en/cart/cartPreview.json',
 			'en/cart/cartPage.json',
 			'en/checkout/guest.json',
+			'en/checkout/confirmation.json',
+			'en/checkout/orderDetails.json',
 		],
 	},
 	{
@@ -95,6 +97,8 @@ export const i18nLocales = [
 			'kr/cart/cartPreview.json',
 			'kr/cart/cartPage.json',
 			'kr/checkout/guest.json',
+			'kr/checkout/confirmation.json',
+			'kr/checkout/orderDetails.json',
 		],
 	},
 ];

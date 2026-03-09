@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useCountry } from '~/composables/app/useCountry';
+import { redirectToCountryPath } from '~/composables/app/usePageRedirect';
 
-const { withCountry } = useCountry();
-await navigateTo(withCountry('/'));
+await redirectToCountryPath('/');
 </script>
 
 <template>

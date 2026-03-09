@@ -17,6 +17,11 @@ import { useUserStore } from '~/stores/user';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+const NAV_LABEL_KEY_BY_CATEGORY: Partial<Record<string, string>> = {
+	stickers: 'layout.header.nav.stickers',
+	'roll-stickers': 'layout.header.nav.rollStickers',
+	'sheet-stickers': 'layout.header.nav.sheetStickers',
+};
 
 export function useAppHeaderAccount() {
 	const { t, locale, setLocale } = useI18n();
@@ -67,6 +72,9 @@ export function useAppHeaderAccount() {
 				.filter((item): item is NonNullable<typeof item> => Boolean(item))
 				.map((item) => ({
 					...item,
+					label: NAV_LABEL_KEY_BY_CATEGORY[item.key]
+						? t(NAV_LABEL_KEY_BY_CATEGORY[item.key] as string)
+						: item.label,
 					to: withCountry(item.to),
 				}));
 		}
