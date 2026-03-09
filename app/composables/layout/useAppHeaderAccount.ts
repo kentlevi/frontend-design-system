@@ -9,10 +9,10 @@ import {
 	headerAccountLinkConfig,
 	headerLocaleOptionConfig,
 	headerNavLinkConfig,
-	fetchNavigationCategories,
 	formatCategoryAsNavLink,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/useCountry';
+import { useNavigationStore } from '~/stores/navigation';
 import { useUserStore } from '~/stores/user';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
@@ -28,6 +28,7 @@ export function useAppHeaderAccount() {
 	const route = useRoute();
 	const { withCountry, apiCountry, country } = useCountry();
 	const api = useApi();
+	const navigationStore = useNavigationStore();
 	const userStore = useUserStore();
 	const preferredLocale = useCookie<SupportedCountry | null>('preferred_locale', {
 		default: () => null,
@@ -55,19 +56,11 @@ export function useAppHeaderAccount() {
 	const accountMenuRef = ref<HTMLElement | null>(null);
 	const localAvatarDataUrl = ref<string | null>(null);
 	const localeModalOpen = ref(false);
-	const navigationCategories = ref<
-		Array<{
-			id?: number | string;
-			name?: string;
-			url_slug?: string;
-			sort?: number;
-		}>
-	>([]);
-	const navigationLoaded = ref(false);
 
 	const navLinks = computed(() => {
-		if (navigationLoaded.value && navigationCategories.value.length > 0) {
-			return navigationCategories.value
+		const categories = navigationStore.sortedCategories;
+		if (categories.length > 0) {
+			return categories
 				.map(formatCategoryAsNavLink)
 				.filter((item): item is NonNullable<typeof item> => Boolean(item))
 				.map((item) => ({
@@ -297,26 +290,12 @@ export function useAppHeaderAccount() {
 		syncLocalAvatarFromStorage();
 	}
 
-	async function fetchNavigationCategoriesData() {
-		const categories = await fetchNavigationCategories(api, apiCountry.value);
-		navigationCategories.value = categories;
-		navigationLoaded.value = true;
-	}
-
 	watch(
 		() => route.fullPath,
 		() => {
 			closeAccountMenu();
 			closeLocaleModal();
 		}
-	);
-
-	watch(
-		() => apiCountry.value,
-		() => {
-			void fetchNavigationCategoriesData();
-		},
-		{ immediate: true }
 	);
 
 	onMounted(() => {

@@ -3,6 +3,7 @@ import { toRef, defineAsyncComponent  } from 'vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
 import { useProductCategoryExperience } from '~/composables/products/useProductCategoryExperience';
 import type { ProductCategoryKey } from '~/data/products/catalog';
+import type { ProductByCategoryApiItem } from '~/composables/products/useProductByCategory';
 
 
 const ProductReviewsSection = defineAsyncComponent(
@@ -20,6 +21,7 @@ const CartPreview = defineAsyncComponent(
 
 const props = defineProps<{
 	category: ProductCategoryKey;
+	products?: ProductByCategoryApiItem[];
 }>();
 
 const {
@@ -68,7 +70,7 @@ const {
 	quantityPrice,
 	getProductName,
 	getProductBlurb,
-} = useProductCategoryExperience(toRef(props, 'category'));
+} = useProductCategoryExperience(toRef(props, 'category'), toRef(props, 'products'));
 </script>
 
 <template>
