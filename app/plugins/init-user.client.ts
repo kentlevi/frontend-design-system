@@ -5,8 +5,11 @@ import {
 	DEFAULT_COUNTRY,
 	resolveSupportedCountry,
 } from '~/constants/countries';
+import { useRoute } from 'vue-router'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
+	const route = useRoute();
+
 	type MeUser = {
 		id: number;
 		code: string;
@@ -28,14 +31,13 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	const userStore = useUserStore(nuxtApp.$pinia);
 
 	const token = useCookie<string | null>('auth_token');
-	const countryCookie = useCookie<string | null>('country');
 
 	if (!token.value) {
 		userStore.clearUser();
 		return;
 	}
 
-	const routeCountry = resolveSupportedCountry(countryCookie.value) || DEFAULT_COUNTRY;
+	const routeCountry = resolveSupportedCountry(route.params.country || '') || DEFAULT_COUNTRY;
 	const apiCountry = COUNTRY_TO_API_COUNTRY[routeCountry];
 
 	try {

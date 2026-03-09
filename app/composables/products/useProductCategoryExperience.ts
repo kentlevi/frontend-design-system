@@ -1,7 +1,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
 import { useCountry } from '~/composables/app/useCountry';
+import type { ProductByCategoryApiItem } from '~/composables/products/useProductByCategory';
 import {
 	productCatalog,
+	type ProductCategory,
 	type ProductCategoryKey,
 	type ProductItem,
 } from '~/data/products/catalog';
@@ -30,13 +32,33 @@ import {
 } from '~/composables/products/productCategory.helpers';
 import { formatCurrencyByCountry } from '~/utils/currency';
 
-export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) {
+export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, apiProducts?: Ref<ProductByCategoryApiItem[] | undefined>) {
 	const { t } = useI18n();
 	const route = useRoute();
 	const router = useRouter();
 	const { withCountry, country } = useCountry();
 
-	const categoryData = computed(() => productCatalog[category.value]);
+	const categoryData = computed<ProductCategory>(() => {
+		const catalogCategory = productCatalog[category.value];
+		const responseProducts = apiProducts?.value;
+
+		if (!responseProducts?.length) {
+			return catalogCategory;
+		}
+
+		const mappedProducts = responseProducts
+			.map((product) => resolveCatalogProductByApiSlug(product.url_slug, catalogCategory.products))
+			.filter((product): product is ProductItem => Boolean(product));
+
+		if (!mappedProducts.length) {
+			return catalogCategory;
+		}
+
+		return {
+			...catalogCategory,
+			products: dedupeProductsById(mappedProducts),
+		};
+	});
 	const selectedId = ref<string | null>(null);
 	const selectedSize = ref<(typeof sizeOptions)[number]>(sizeOptions[0]);
 	const selectedQty = ref<number>(quantityOptions[0]);
@@ -453,6 +475,30 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 
 	function productIdToSlug(productId: string) {
 		return getProductSlugByCategory(productId, category.value);
+	}
+
+	function resolveCatalogProductByApiSlug(slug: string, catalogProducts: ProductItem[]) {
+		if (!slug) return null;
+
+		const slugWithStickerSuffix =
+			category.value === 'stickers' && !slug.endsWith('-sticker')
+				? `${slug}-sticker`
+				: slug;
+
+		return (
+			catalogProducts.find((item) => item.id === slugWithStickerSuffix) ||
+			catalogProducts.find((item) => item.id === slug) ||
+			null
+		);
+	}
+
+	function dedupeProductsById(products: ProductItem[]) {
+		const seen = new Set<string>();
+		return products.filter((product) => {
+			if (seen.has(product.id)) return false;
+			seen.add(product.id);
+			return true;
+		});
 	}
 
 	function productSlugToId(slug: string) {
