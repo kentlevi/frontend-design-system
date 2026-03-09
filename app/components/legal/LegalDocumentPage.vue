@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 type LegalSectionGroup = {
 	title?: string;
-	items: string[];
+	items: LegalBulletItem[];
+};
+
+type LegalBulletItem = {
+	text: string;
+	items?: string[];
 };
 
 type LegalSectionTable = {
@@ -16,7 +21,7 @@ type LegalSection = {
 	id: string;
 	title: string;
 	paragraphs?: string[];
-	bullets?: string[];
+	bullets?: LegalBulletItem[];
 	groups?: LegalSectionGroup[];
 	table?: LegalSectionTable;
 };
@@ -41,6 +46,11 @@ type RawLegalSection = {
 	table?: RawLegalSectionTable;
 };
 
+type RichTextSegment = {
+	text: string;
+	bold: boolean;
+};
+
 const props = defineProps<{
 	documentKey: 'terms' | 'privacy';
 }>();
@@ -49,6 +59,13 @@ const { t, tm, rt } = useI18n();
 
 const activeTopicId = ref('');
 const manualActiveTopicId = ref('');
+const sidebarNavElement = ref<HTMLElement | null>(null);
+const activeIndicatorStyle = ref({
+	transform: 'translate3d(0, 0, 0)',
+	width: '0px',
+	height: '0px',
+	opacity: '0',
+});
 let scrollSpyRafId: number | null = null;
 
 const documentBaseKey = computed(() => `legal.${props.documentKey}`);
@@ -69,25 +86,60 @@ function toMessageArray(value: unknown) {
 	return Array.isArray(value) ? value : [];
 }
 
+function normalizeBulletItem(value: unknown): LegalBulletItem {
+	if (typeof value === 'string') {
+		return { text: value };
+	}
+
+	if (value && typeof value === 'object') {
+		const rawBullet = value as { text?: unknown; items?: unknown[] };
+		const hasNestedBulletShape =
+			Object.prototype.hasOwnProperty.call(rawBullet, 'text') ||
+			Object.prototype.hasOwnProperty.call(rawBullet, 'items');
+
+		if (!hasNestedBulletShape) {
+			return {
+				text: resolveMessage(value),
+			};
+		}
+
+		return {
+			text:
+				typeof rawBullet.text === 'undefined'
+					? ''
+					: resolveMessage(rawBullet.text),
+			items: Array.isArray(rawBullet.items)
+				? rawBullet.items.map(resolveMessage)
+				: undefined,
+		};
+	}
+
+	return {
+		text: typeof value === 'undefined' ? '' : resolveMessage(value),
+	};
+}
+
 const sections = computed(
 	() =>
-		toMessageArray(tm(`${documentBaseKey.value}.sections`) as RawLegalSection[]).map(
-			(section, index) => ({
+		(toMessageArray(tm(`${documentBaseKey.value}.sections`) as RawLegalSection[]) as RawLegalSection[]).map(
+			(section: RawLegalSection, index: number) => ({
 				id:
 					typeof section.id === 'string'
 						? section.id
 						: `${props.documentKey}-section-${index + 1}`,
 				title: resolveMessage(section.title),
-				paragraphs: (section.paragraphs || []).map(resolveMessage),
-				bullets: (section.bullets || []).map(resolveMessage),
-				groups: (section.groups || []).map((group) => ({
+				paragraphs: ((section.paragraphs || []) as unknown[]).map(resolveMessage),
+				bullets: ((section.bullets || []) as unknown[]).map(normalizeBulletItem),
+				groups: ((section.groups || []) as RawLegalSectionGroup[]).map((group: RawLegalSectionGroup) => ({
 					title: group.title ? resolveMessage(group.title) : undefined,
-					items: (group.items || []).map(resolveMessage),
+					items: ((group.items || []) as unknown[]).map(normalizeBulletItem),
 				})),
 				table: section.table
 					? {
-						headers: (section.table.headers || []).map(resolveMessage),
-						rows: (section.table.rows || []).map((row) => row.map(resolveMessage)),
+						headers: ((section.table.headers || []) as unknown[]).map(resolveMessage),
+						rows: ((section.table.rows || []) as unknown[][]).map((row: unknown[]) =>
+							row.map(resolveMessage)
+						),
 						note: section.table.note ? resolveMessage(section.table.note) : undefined,
 					}
 					: undefined,
@@ -110,9 +162,149 @@ function clearManualActiveTopic() {
 	manualActiveTopicId.value = '';
 }
 
-function handleTopicClick(topicId: string) {
+function usePlainBulletText(sectionId: string) {
+	return sectionId === 'procedure-and-method-of-destruction' || sectionId === 'privacy-section-5';
+}
+
+function useSecondaryBulletMarkers(sectionId: string) {
+	return sectionId === 'procedure-and-method-of-destruction' || sectionId === 'privacy-section-5';
+}
+
+function splitLabelPrefix(value: string) {
+	if (value.includes('**')) {
+		return {
+			label: '',
+			content: value,
+		};
+	}
+
+	const match = value.match(/^([^:]+:\s*)(.+)$/);
+	if (!match) {
+		return {
+			label: '',
+			content: value,
+		};
+	}
+
+	return {
+		label: match[1] || '',
+		content: match[2] || value,
+	};
+}
+
+function parseEmphasisSegments(value: string) {
+	const segments: RichTextSegment[] = [];
+	const pattern = /\*\*(.+?)\*\*/g;
+	let lastIndex = 0;
+	let match: RegExpExecArray | null;
+
+	match = pattern.exec(value);
+	while (match) {
+		if (match.index > lastIndex) {
+			segments.push({
+				text: value.slice(lastIndex, match.index),
+				bold: false,
+			});
+		}
+
+		segments.push({
+			text: match[1] || '',
+			bold: true,
+		});
+
+		lastIndex = match.index + match[0].length;
+		match = pattern.exec(value);
+	}
+
+	if (lastIndex < value.length) {
+		segments.push({
+			text: value.slice(lastIndex),
+			bold: false,
+		});
+	}
+
+	return segments.length
+		? segments
+		: [
+			{
+				text: value,
+				bold: false,
+			},
+		];
+}
+
+function getBulletContent(value: string) {
+	const { label, content } = splitLabelPrefix(value);
+	return {
+		label,
+		content: label ? content : value,
+		segments: parseEmphasisSegments(label ? content : value),
+	};
+}
+
+function getRenderableBulletContent(sectionId: string, value: string) {
+	if (usePlainBulletText(sectionId)) {
+		return {
+			label: '',
+			segments: parseEmphasisSegments(value),
+		};
+	}
+
+	return getBulletContent(value);
+}
+
+function hasRenderableBulletLabel(sectionId: string, value: string) {
+	return !usePlainBulletText(sectionId) && getBulletContent(value).label.length > 0;
+}
+
+function updateActiveIndicator() {
+	if (!import.meta.client) return;
+	const navElement = sidebarNavElement.value;
+	const activeLinkElement = activeTopicId.value
+		? navElement?.querySelector<HTMLElement>(`a[href="#${CSS.escape(activeTopicId.value)}"]`) || null
+		: null;
+
+	if (!navElement || !activeLinkElement) {
+		activeIndicatorStyle.value = {
+			transform: 'translate3d(0, 0, 0)',
+			width: '0px',
+			height: '0px',
+			opacity: '0',
+		};
+		return;
+	}
+
+	const navRect = navElement.getBoundingClientRect();
+	const linkRect = activeLinkElement.getBoundingClientRect();
+
+	activeIndicatorStyle.value = {
+		transform: `translate3d(0, ${linkRect.top - navRect.top}px, 0)`,
+		width: `${linkRect.width}px`,
+		height: `${linkRect.height}px`,
+		opacity: '1',
+	};
+}
+
+function scrollToTopicSection(topicId: string) {
+	if (!import.meta.client) return;
+	const sectionElement = document.getElementById(topicId);
+	if (!sectionElement) return;
+
+	const topOffset = 132;
+	const targetTop = sectionElement.getBoundingClientRect().top + window.scrollY - topOffset;
+
+	window.scrollTo({
+		top: Math.max(targetTop, 0),
+		behavior: 'smooth',
+	});
+}
+
+function handleTopicClick(event: MouseEvent, topicId: string) {
+	event.preventDefault();
 	manualActiveTopicId.value = topicId;
 	activeTopicId.value = topicId;
+	scrollToTopicSection(topicId);
+	window.history.replaceState(null, '', `#${topicId}`);
 }
 
 function syncActiveTopicFromScroll() {
@@ -130,7 +322,7 @@ function syncActiveTopicFromScroll() {
 		: null;
 	const lastSectionTop = lastSectionElement?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
 	const lastSectionVisibleAnchor = window.innerHeight * 0.6;
-	if (isAtPageBottom && lastSectionElement && lastSectionTop <= lastSectionVisibleAnchor) {
+	if (isAtPageBottom && lastSection?.id && lastSectionElement && lastSectionTop <= lastSectionVisibleAnchor) {
 		activeTopicId.value = lastSection.id;
 		return;
 	}
@@ -158,6 +350,7 @@ function queueScrollSpySync() {
 	scrollSpyRafId = window.requestAnimationFrame(() => {
 		scrollSpyRafId = null;
 		syncActiveTopicFromScroll();
+		updateActiveIndicator();
 	});
 }
 
@@ -165,6 +358,7 @@ onMounted(() => {
 	setInitialActiveTopic();
 	void nextTick(() => {
 		syncActiveTopicFromScroll();
+		updateActiveIndicator();
 		window.addEventListener('scroll', queueScrollSpySync, { passive: true });
 		window.addEventListener('resize', queueScrollSpySync);
 		window.addEventListener('wheel', clearManualActiveTopic, { passive: true });
@@ -193,9 +387,17 @@ watch(
 		if (!import.meta.client) return;
 		void nextTick(() => {
 			syncActiveTopicFromScroll();
+			updateActiveIndicator();
 		});
 	}
 );
+
+watch(activeTopicId, () => {
+	if (!import.meta.client) return;
+	void nextTick(() => {
+		updateActiveIndicator();
+	});
+});
 </script>
 
 <template>
@@ -224,7 +426,13 @@ watch(
 							:key="`${documentKey}-intro-${index}`"
 							class="legal-introduction-copy"
 						>
-							{{ resolveMessage(paragraph) }}
+							<template
+								v-for="(segment, segmentIndex) in parseEmphasisSegments(resolveMessage(paragraph))"
+								:key="`${documentKey}-intro-${index}-segment-${segmentIndex}`"
+							>
+								<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+								<template v-else>{{ segment.text }}</template>
+							</template>
 						</p>
 					</div>
 				</div>
@@ -236,14 +444,23 @@ watch(
 				<aside class="legal-sidebar" :data-testid="`${documentKey}-sidebar`">
 					<div class="legal-sidebar-card">
 						<p class="legal-sidebar-title">{{ t(`${documentBaseKey}.topicsLabel`) }}</p>
-						<nav class="legal-sidebar-nav" :aria-label="t(`${documentBaseKey}.topicsLabel`)">
+						<nav
+							ref="sidebarNavElement"
+							class="legal-sidebar-nav"
+							:aria-label="t(`${documentBaseKey}.topicsLabel`)"
+						>
+							<span
+								class="legal-sidebar-indicator"
+								:style="activeIndicatorStyle"
+								aria-hidden="true"
+							/>
 							<a
 								v-for="topic in topics"
 								:key="topic.id"
 								:href="`#${topic.id}`"
 								class="legal-sidebar-link"
 								:class="{ 'is-active': activeTopicId === topic.id }"
-								@click="handleTopicClick(topic.id)"
+								@click="handleTopicClick($event, topic.id)"
 							>
 								{{ topic.title }}
 							</a>
@@ -260,48 +477,143 @@ watch(
 					>
 						<h2 class="legal-section-title">{{ section.title }}</h2>
 
-						<div v-if="section.paragraphs?.length" class="legal-section-paragraphs">
-							<p
-								v-for="(paragraph, paragraphIndex) in section.paragraphs"
-								:key="`${section.id}-paragraph-${paragraphIndex}`"
-								class="legal-section-paragraph"
+						<div
+							v-if="section.paragraphs?.length || section.bullets?.length"
+							class="legal-section-block legal-section-block--content"
+							:class="{ 'legal-section-block--compact': section.id === 'contact-information' }"
+						>
+							<div
+								v-if="section.paragraphs?.length"
+								class="legal-section-block legal-section-block--paragraphs"
 							>
-								{{ paragraph }}
-							</p>
+								<p
+									v-for="(paragraph, paragraphIndex) in section.paragraphs"
+									:key="`${section.id}-paragraph-${paragraphIndex}`"
+									class="legal-section-paragraph"
+								>
+									<template v-if="getBulletContent(paragraph).label">
+										<strong class="legal-inline-label">{{ getBulletContent(paragraph).label }}</strong>
+									</template>
+									<template
+										v-for="(segment, segmentIndex) in getBulletContent(paragraph).segments"
+										:key="`${section.id}-paragraph-${paragraphIndex}-segment-${segmentIndex}`"
+									>
+										<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+										<template v-else>{{ segment.text }}</template>
+									</template>
+								</p>
+							</div>
+
+							<ul
+								v-if="section.bullets?.length"
+								class="legal-section-list"
+								:class="{ 'legal-section-list--secondary-markers': useSecondaryBulletMarkers(section.id) }"
+							>
+								<li
+									v-for="(bullet, bulletIndex) in section.bullets"
+									:key="`${section.id}-bullet-${bulletIndex}`"
+									class="legal-section-list-item"
+									:class="{ 'legal-section-list-item--labeled': hasRenderableBulletLabel(section.id, bullet.text) }"
+								>
+									<template v-if="usePlainBulletText(section.id)">
+										{{ bullet.text }}
+									</template>
+									<template v-else>
+										<template v-if="hasRenderableBulletLabel(section.id, bullet.text)">
+											<strong class="legal-inline-label">{{ getRenderableBulletContent(section.id, bullet.text).label }}</strong>
+										</template>
+										<template
+											v-for="(segment, segmentIndex) in getRenderableBulletContent(section.id, bullet.text).segments"
+											:key="`${section.id}-bullet-${bulletIndex}-segment-${segmentIndex}`"
+										>
+											<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+											<template v-else>{{ segment.text }}</template>
+										</template>
+									</template>
+									<ul v-if="bullet.items?.length" class="legal-section-list legal-section-list--nested">
+										<li
+											v-for="(item, itemIndex) in bullet.items"
+											:key="`${section.id}-bullet-${bulletIndex}-item-${itemIndex}`"
+											class="legal-section-list-item"
+										>
+											<template
+												v-for="(segment, segmentIndex) in parseEmphasisSegments(item)"
+												:key="`${section.id}-bullet-${bulletIndex}-item-${itemIndex}-segment-${segmentIndex}`"
+											>
+												<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+												<template v-else>{{ segment.text }}</template>
+											</template>
+										</li>
+									</ul>
+								</li>
+							</ul>
 						</div>
 
-						<ul v-if="section.bullets?.length" class="legal-section-list">
-							<li
-								v-for="(bullet, bulletIndex) in section.bullets"
-								:key="`${section.id}-bullet-${bulletIndex}`"
-								class="legal-section-list-item"
-							>
-								{{ bullet }}
-							</li>
-						</ul>
-
-						<div v-if="section.groups?.length" class="legal-section-groups">
+						<div v-if="section.groups?.length" class="legal-section-block legal-section-block--groups">
 							<div
 								v-for="(group, groupIndex) in section.groups"
 								:key="`${section.id}-group-${groupIndex}`"
 								class="legal-section-group"
 							>
-								<p v-if="group.title" class="legal-section-group-title">
-									{{ group.title }}
+								<p
+									v-if="group.title"
+									class="legal-section-group-title"
+								>
+									<template
+										v-for="(segment, segmentIndex) in parseEmphasisSegments(group.title)"
+										:key="`${section.id}-group-${groupIndex}-title-${segmentIndex}`"
+									>
+										<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+										<template v-else>{{ segment.text }}</template>
+									</template>
 								</p>
-								<ul v-if="group.items.length" class="legal-section-list legal-section-list--grouped">
+								<ul
+									v-if="group.items.length"
+									class="legal-section-list legal-section-list--grouped"
+									:class="{ 'legal-section-list--secondary-markers': useSecondaryBulletMarkers(section.id) }"
+								>
 									<li
 										v-for="(item, itemIndex) in group.items"
 										:key="`${section.id}-group-${groupIndex}-item-${itemIndex}`"
 										class="legal-section-list-item"
+										:class="{ 'legal-section-list-item--labeled': hasRenderableBulletLabel(section.id, item.text) }"
 									>
-										{{ item }}
+										<template v-if="usePlainBulletText(section.id)">
+											{{ item.text }}
+										</template>
+										<template v-else>
+											<template v-if="hasRenderableBulletLabel(section.id, item.text)">
+												<strong class="legal-inline-label">{{ getRenderableBulletContent(section.id, item.text).label }}</strong>
+											</template>
+											<template
+												v-for="(segment, segmentIndex) in getRenderableBulletContent(section.id, item.text).segments"
+												:key="`${section.id}-group-${groupIndex}-item-${itemIndex}-segment-${segmentIndex}`"
+											>
+												<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+												<template v-else>{{ segment.text }}</template>
+											</template>
+										</template>
+										<ul v-if="item.items?.length" class="legal-section-list legal-section-list--nested">
+											<li
+												v-for="(nestedItem, nestedItemIndex) in item.items"
+												:key="`${section.id}-group-${groupIndex}-item-${itemIndex}-nested-${nestedItemIndex}`"
+												class="legal-section-list-item"
+											>
+												<template
+													v-for="(segment, segmentIndex) in parseEmphasisSegments(nestedItem)"
+													:key="`${section.id}-group-${groupIndex}-item-${itemIndex}-nested-${nestedItemIndex}-segment-${segmentIndex}`"
+												>
+													<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+													<template v-else>{{ segment.text }}</template>
+												</template>
+											</li>
+										</ul>
 									</li>
 								</ul>
 							</div>
 						</div>
 
-						<div v-if="section.table" class="legal-section-table-wrap">
+						<template v-if="section.table">
 							<div class="legal-section-table-card">
 								<table class="legal-section-table">
 									<thead>
@@ -332,10 +644,19 @@ watch(
 									</tbody>
 								</table>
 							</div>
-							<p v-if="section.table.note" class="legal-section-table-note">
-								{{ section.table.note }}
+							<p
+								v-if="section.table.note"
+								class="legal-section-table-note"
+							>
+								<template
+									v-for="(segment, segmentIndex) in parseEmphasisSegments(section.table.note)"
+									:key="`${section.id}-table-note-${segmentIndex}`"
+								>
+									<strong v-if="segment.bold" class="legal-inline-emphasis">{{ segment.text }}</strong>
+									<template v-else>{{ segment.text }}</template>
+								</template>
 							</p>
-						</div>
+						</template>
 					</section>
 				</div>
 			</div>
@@ -346,283 +667,360 @@ watch(
 <style scoped lang="scss">
 .legal-page {
 	background: var(--bg-page);
-}
 
-.legal-hero {
-	background: var(--brand-primary);
-	padding: 72px 24px 56px;
-}
+	.legal-hero {
+		background: var(--brand-primary);
+		padding: 72px 24px 56px;
 
-.legal-hero-shell,
-.legal-content-shell {
-	width: min(1200px, 100%);
-	margin: 0 auto;
-}
+		.legal-hero-shell {
+			width: min(1200px, 100%);
+			margin: 0 auto;
+		}
 
-.legal-heading-group {
-	display: grid;
-	gap: 12px;
-}
+		.legal-heading-group {
+			display: grid;
+			gap: 12px;
+		}
 
-.legal-title {
-	margin: 0;
-	font-size: var(--type-size-650);
-	line-height: var(--type-line-650);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
+		.legal-title {
+			margin: 0;
+			font-size: var(--type-size-650);
+			line-height: var(--type-line-650);
+			font-weight: var(--font-weight-bold);
+			color: var(--text-primary);
+		}
 
-.legal-title-primary,
-.legal-title-secondary {
-	display: inline;
-}
+		.legal-title-primary,
+		.legal-title-secondary {
+			display: inline;
+		}
 
-.legal-title-secondary {
-	font-weight: var(--font-weight-regular);
-}
+		.legal-title-secondary {
+			font-weight: var(--font-weight-regular);
+		}
 
-.legal-updated {
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	color: var(--text-primary);
-	font-weight: var(--font-weight-bold);
-}
+		.legal-updated {
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			color: var(--text-primary);
+			font-weight: var(--font-weight-bold);
+		}
 
-.legal-updated-date {
-	color: var(--text-primary);
-	font-weight: var(--font-weight-regular);
-}
+		.legal-updated-date {
+			color: var(--text-primary);
+			font-weight: var(--font-weight-regular);
+		}
 
-.legal-introduction {
-	display: grid;
-	margin-top: 28px;
-}
+		.legal-introduction {
+			display: grid;
+			margin-top: 28px;
 
-.legal-introduction-copy {
-	margin: 0;
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	color: var(--text-primary);
-}
+			.legal-introduction-copy {
+				margin: 0;
+				font-size: var(--type-size-300);
+				line-height: var(--type-line-300);
+				color: var(--text-primary);
+			}
+		}
+	}
 
-.legal-content {
-	padding: 80px 24px 96px;
-}
+	.legal-content {
+		padding: 80px 24px 96px;
 
-.legal-content-shell {
-	display: grid;
-	grid-template-columns: 282px minmax(0, 1fr);
-	gap: 40px;
-	align-items: start;
-}
+		.legal-content-shell {
+			width: min(1200px, 100%);
+			margin: 0 auto;
+			display: grid;
+			grid-template-columns: 282px minmax(0, 1fr);
+			gap: 40px;
+			align-items: start;
+		}
 
-.legal-sidebar {
-	position: sticky;
-	top: 48px;
-}
+		.legal-sidebar {
+			position: sticky;
+			top: 48px;
 
-.legal-sidebar-card {
-	border: 1px solid var(--border-default);
-	border-radius: 12px;
-	background: var(--contrast-light);
-	overflow: hidden;
-}
+			.legal-sidebar-card {
+				border: 1px solid var(--border-default);
+				border-radius: 12px;
+				background: var(--contrast-light);
+				overflow: hidden;
+			}
 
-.legal-sidebar-title {
-	margin: 0;
-	padding: 16px 32px;
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-primary);
-}
+			.legal-sidebar-title {
+				margin: 0;
+				padding: 16px 32px;
+				font-size: var(--type-size-300);
+				line-height: var(--type-line-300);
+				font-weight: var(--font-weight-semibold);
+				color: var(--text-primary);
+			}
 
-.legal-sidebar-nav {
-	display: flex;
-	flex-direction: column;
-}
+			.legal-sidebar-nav {
+				position: relative;
+				display: flex;
+				flex-direction: column;
 
-.legal-sidebar-link {
-	padding: 8px 32px;
-	color: var(--text-secondary);
-	text-decoration: none;
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
-	transition: background-color 0.16s ease, color 0.16s ease;
-	overflow-wrap: anywhere;
-}
+				.legal-sidebar-indicator {
+					position: absolute;
+					top: 0;
+					left: 0;
+					background: var(--gray-20);
+					transition:
+						transform 0.24s ease,
+						width 0.24s ease,
+						height 0.24s ease,
+						opacity 0.2s ease;
+					pointer-events: none;
+				}
 
-.legal-sidebar-link.is-active {
-	background: var(--gray-20);
-	color: var(--text-primary);
-	font-weight: var(--font-weight-semibold);
-}
+				.legal-sidebar-link {
+					position: relative;
+					z-index: 1;
+					padding: 8px 32px;
+					color: var(--text-secondary);
+					text-decoration: none;
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
+					transition: background-color 0.16s ease, color 0.16s ease;
+					overflow-wrap: anywhere;
 
-.legal-sidebar-link:hover,
-.legal-sidebar-link:focus-visible {
-	background: var(--gray-20);
-	color: var(--text-primary);
-}
+					&.is-active,
+					&:hover,
+					&:focus-visible {
+						color: var(--text-primary);
+					}
 
-.legal-sections {
-	display: grid;
-}
+					&.is-active {
+						font-weight: var(--font-weight-semibold);
+					}
+				}
+			}
+		}
 
-.legal-section {
-	padding: 0 0 32px;
-	border-bottom: 1px solid var(--border-default);
-}
+		.legal-sections {
+			display: grid;
 
-.legal-section + .legal-section {
-	padding-top: 32px;
-}
+			.legal-section {
+				padding: 0 0 32px;
+				border-bottom: 1px solid var(--border-default);
+				display: grid;
+				gap: 16px;
 
-.legal-section-title {
-	margin: 0;
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
+				&:last-child {
+					border-bottom: 0;
+				}
 
-.legal-section-paragraphs {
-	display: grid;
-	gap: 12px;
-	margin-top: 16px;
-}
+				+ .legal-section {
+					padding-top: 32px;
+				}
 
-.legal-section-paragraph {
-	margin: 0;
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-200);
-	color: var(--text-primary);
-}
+				.legal-section-title {
+					margin: 0;
+					font-size: var(--type-size-400);
+					line-height: var(--type-line-400);
+					font-weight: var(--font-weight-bold);
+					color: var(--text-primary);
+				}
 
-.legal-section-list {
-	margin: 16px 0 0;
-	padding-left: 18px;
-	display: grid;
-	gap: 8px;
-}
+				.legal-section-block {
+					display: grid;
 
-.legal-section-list--grouped {
-	margin-top: 8px;
-}
+					&.legal-section-block--content {
+						gap: 0;
+					}
 
-.legal-section-list-item {
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-200);
-	color: var(--text-primary);
-}
+					&.legal-section-block--paragraphs {
+						gap: 0;
+					}
 
-.legal-section-groups {
-	display: grid;
-	gap: 16px;
-	margin-top: 16px;
-}
+					&.legal-section-block--compact {
+						gap: 0;
+					}
 
-.legal-section-group-title {
-	margin: 0;
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-primary);
-}
+					&.legal-section-block--groups {
+						gap: 0;
+					}
+				}
 
-.legal-section-table-wrap {
-	display: grid;
-	gap: 12px;
-	margin-top: 20px;
-}
+				.legal-section-paragraph {
+					margin: 0;
+					font-size: var(--type-size-200);
+					line-height: var(--type-line-200);
+					color: var(--text-primary);
+				}
 
-.legal-section-table-card {
-	border: 1px solid var(--border-default);
-	border-radius: 10px;
-	overflow: hidden;
-	background: var(--contrast-light);
-}
+				.legal-section-list {
+					margin: 0;
+					padding-left: 28px;
+					list-style: disc;
+					display: grid;
+					gap: 0;
 
-.legal-section-table {
-	width: 100%;
-	border-collapse: collapse;
-}
+					&.legal-section-list--grouped {
+						margin-top: 0;
+					}
 
-.legal-section-table-head {
-	padding: 14px 22px;
-	background: var(--gray-20);
-	border-right: 1px solid var(--border-default);
-	text-align: left;
-	font-size: var(--type-size-200);
-	line-height: var(--type-line-200);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-primary);
-}
+					&.legal-section-list--secondary-markers {
+						.legal-section-list-item::marker,
+						.legal-section-list-item.legal-section-list-item--labeled::marker {
+							color: var(--text-tertiary, var(--text-secondary));
+							font-size: 0.72em;
+						}
+					}
 
-.legal-section-table-head:last-child {
-	border-right: 0;
-}
+					&.legal-section-list--nested {
+						padding-left: 20px;
+						gap: 8px;
 
-.legal-section-table-cell {
-	padding: 14px 22px;
-	border-top: 1px solid var(--border-default);
-	border-right: 1px solid var(--border-default);
-	font-size: var(--type-size-200);
-	line-height: var(--type-line-200);
-	color: var(--text-primary);
-	vertical-align: top;
-}
+						.legal-section-list-item {
+							font-size: var(--type-size-200);
+						}
+					}
 
-.legal-section-table-cell:last-child {
-	border-right: 0;
-}
+					.legal-section-list-item {
+						font-size: var(--type-size-200);
+						line-height: var(--type-line-200);
+						color: var(--text-secondary);
+						margin: 0;
 
-.legal-section-table-note {
-	margin: 0;
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-primary);
+						&::marker {
+							color: var(--text-tertiary, var(--text-secondary));
+							font-size: 0.72em;
+						}
+
+						&.legal-section-list-item--labeled::marker {
+							color: var(--text-primary);
+							font-size: 1em;
+						}
+					}
+				}
+
+				.legal-inline-label,
+				.legal-inline-emphasis {
+					font-weight: var(--font-weight-bold);
+					color: var(--text-primary);
+				}
+
+				.legal-section-group {
+					display: grid;
+					gap: 0;
+
+					.legal-section-group-title {
+						margin: 0;
+						font-size: var(--type-size-200);
+						line-height: var(--type-line-200);
+						font-weight: var(--font-weight-bold);
+						color: var(--text-primary);
+					}
+				}
+
+				.legal-section-table-card {
+					border: 1px solid var(--border-default);
+					border-radius: 10px;
+					overflow: hidden;
+					background: var(--contrast-light);
+				}
+
+				.legal-section-table {
+					width: 100%;
+					border-collapse: collapse;
+
+					.legal-section-table-head {
+						padding: 12px 24px;
+						background: var(--gray-30);
+						border-right: 1px solid var(--border-default);
+						text-align: left;
+						font-size: var(--type-size-200);
+						line-height: var(--type-line-200);
+						font-weight: var(--font-weight-semibold);
+						color: var(--text-primary);
+
+						&:last-child {
+							border-right: 0;
+						}
+					}
+
+					.legal-section-table-cell {
+						padding: 10px 24px;
+						border-top: 1px solid var(--border-default);
+						border-right: 1px solid var(--border-default);
+						font-size: var(--type-size-200);
+						line-height: var(--type-line-200);
+						color: var(--text-primary);
+						vertical-align: top;
+
+						&:last-child {
+							border-right: 0;
+						}
+					}
+				}
+
+				.legal-section-table-note {
+					margin: 0;
+					font-size: var(--type-size-200);
+					line-height: var(--type-line-200);
+					font-weight: var(--font-weight-bold);
+					color: var(--text-primary);
+				}
+			}
+		}
+	}
 }
 
 @media (max-width: 980px) {
-	.legal-content-shell {
-		grid-template-columns: 1fr;
-		gap: 28px;
-	}
+	.legal-page {
+		.legal-content {
+			.legal-content-shell {
+				grid-template-columns: 1fr;
+				gap: 28px;
+			}
 
-	.legal-sidebar {
-		position: static;
-	}
+			.legal-sidebar {
+				position: static;
 
-	.legal-sidebar-nav {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+				.legal-sidebar-nav {
+					display: grid;
+					grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+				}
+			}
+		}
 	}
 }
 
 @media (max-width: 760px) {
-	.legal-hero {
-		padding: 48px 16px 32px;
-	}
+	.legal-page {
+		.legal-hero {
+			padding: 48px 16px 32px;
 
-	.legal-content {
-		padding: 24px 16px 56px;
-	}
+			.legal-title {
+				font-size: var(--type-size-500);
+				line-height: var(--type-line-500);
+			}
+		}
 
-	.legal-title {
-		font-size: var(--type-size-500);
-		line-height: var(--type-line-500);
-	}
+		.legal-content {
+			padding: 24px 16px 56px;
 
-	.legal-sidebar-nav {
-		grid-template-columns: 1fr;
-	}
+			.legal-sidebar {
+				.legal-sidebar-nav {
+					grid-template-columns: 1fr;
+				}
+			}
 
-	.legal-section-table-head,
-	.legal-section-table-cell {
-		padding: 12px 14px;
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
+			.legal-sections {
+				.legal-section {
+					.legal-section-table {
+						.legal-section-table-head,
+						.legal-section-table-cell {
+							padding: 12px 14px;
+							font-size: var(--type-size-100);
+							line-height: var(--type-line-100);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 </style>
