@@ -2,6 +2,7 @@
 import { definePageMeta } from '#imports';
 import StatusBackgroundWrapper from '~/components/common/StatusBackgroundWrapper.vue';
 import { useCountry } from '~/composables/app/useCountry';
+const { t } = useI18n();
 
 definePageMeta({
 	layout: 'home',
@@ -24,14 +25,14 @@ const { withCountry } = useCountry();
 			/>
 			<div class="under-construction-content-group">
 				<div class="under-construction-heading-group">
-					<h1 class="under-construction-title">Almost There!</h1>
+					<h1 class="under-construction-title">{{ t('underConstruction.title') }}</h1>
 					<p class="under-construction-copy">
-						We're busy putting things together to make this feature awesome for you. Check back soon!
+						{{ t('underConstruction.description') }}
 					</p>
 				</div>
 
 				<NuxtLink :to="withCountry('/')" class="under-construction-cta">
-					Return to Homepage
+					{{ t('underConstruction.returnHome') }}
 				</NuxtLink>
 			</div>
 
