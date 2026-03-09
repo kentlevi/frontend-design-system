@@ -35,6 +35,11 @@ export function useRegisterForm() {
 	const verificationOtpRequired = ref(true);
 	const isVerifying = ref(false);
 	const resendCooldownRemaining = ref(0);
+	const verificationExpiry = useCookie('verificaiton_expiry', {
+		maxAge: 60 * 10,
+		sameSite: 'lax',
+		path: '/'
+	});
 	let resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 	const registerRequestCooldownRemaining = ref(0);
 	let registerRequestCooldownTimer: ReturnType<typeof setInterval> | null = null;
@@ -159,7 +164,7 @@ export function useRegisterForm() {
 		| {
 			email: string;
 			token: string;
-			otp_required?: boolean;
+			expires_in: string;
 		}
 		| Record<string, string[]>;
 		meta: Record<string, unknown>;
@@ -273,7 +278,21 @@ export function useRegisterForm() {
 			return;
 		}
 
+		// When reading/checking
+		if (verificationExpiry.value && typeof verificationExpiry.value === 'object') {
+			const data = verificationExpiry.value as { email: string; expires_at: string };
+			const now = Date.now();
+			const expiryTime = new Date(data.expires_at).getTime();
+
+			// Only open modal if email matches and not expired
+			if (data.email === email.value.trim() && now < expiryTime) {
+				isVerificationModalOpen.value = true;
+				return;
+			}
+		}
+
 		isSubmitting.value = true;
+
 		try {
 			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
 				method: 'POST',
@@ -326,6 +345,10 @@ export function useRegisterForm() {
 			const resolvedToken =
 				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
 			verificationOtpRequired.value = verificationData?.otp_required !== false;
+			verificationExpiry.value = {
+				email: Array.isArray(response.data.email) ? response.data.email[0] : response.data.email,
+				expires_at: Array.isArray(response.data.expires_in) ? response.data.expires_in[0] : response.data.expires_in
+			};
 
 			if (!resolvedToken) {
 				emailError.value = resolveRegisterErrorMessage(
