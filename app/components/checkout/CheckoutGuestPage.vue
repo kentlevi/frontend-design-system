@@ -433,9 +433,9 @@ onBeforeUnmount(() => {
 							<span class="checkout-summary-agreement-text">
 								{{ t('checkout.guest.agreement.prefix') }}
 							</span>
-							<NuxtLink :to="withCountry('/under-construction')" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</NuxtLink>
+							<NuxtLink :to="withCountry('/terms-of-use')" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.terms') }}</NuxtLink>
 							<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.and') }}</span>
-							<NuxtLink :to="withCountry('/under-construction')" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</NuxtLink>
+							<NuxtLink :to="withCountry('/privacy-policy')" class="checkout-summary-agreement-link">{{ t('checkout.guest.agreement.privacy') }}</NuxtLink>
 							<span class="checkout-summary-agreement-text">{{ t('checkout.guest.agreement.suffix') }}</span>
 						</div>
 					</div>
@@ -556,7 +556,7 @@ onBeforeUnmount(() => {
                     .checkout-summary-thumb-image {
                         width: 26px;
                         height: 26px;
-                        object-fit: cover;
+                        object-fit: contain;
                     }
                 }
 

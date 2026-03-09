@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserIdentity, UserProfile } from '~/stores/user';
+import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
@@ -74,6 +74,7 @@ export function useLoginPageForm() {
 	const memberPasswordError = ref('');
 	const memberInvalidCredentials = ref(false);
 	const nonMemberEmailError = ref('');
+	const nonMemberEmailHasError = ref(false);
 	const nonMemberOrderError = ref('');
 
 	// Computed
@@ -104,6 +105,7 @@ export function useLoginPageForm() {
 		memberPasswordError.value = '';
 		memberInvalidCredentials.value = false;
 		nonMemberEmailError.value = '';
+		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
 	}
 
@@ -188,14 +190,14 @@ export function useLoginPageForm() {
 		}
 	}
 
-	function getFieldValue(fields: any[], key: string, id: number) {
+	function getFieldValue(fields: UserFieldValue[], key: string, id: number) {
 		return fields.find((field) =>
 			field.country_field?.field_key === key ||
 			(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === id
 		)?.value?.trim() || '';
 	}
 
-	function getFieldId(field: any) {
+	function getFieldId(field: UserFieldValue) {
 		return field.country_field_id ?? field.country_field_ids ?? field.country_fields_id ?? Number.MAX_SAFE_INTEGER;
 	}
 
@@ -271,12 +273,15 @@ export function useLoginPageForm() {
 
 	function validateNonMember() {
 		nonMemberEmailError.value = '';
+		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
 
 		if (!nonMemberEmail.value.trim()) {
 			nonMemberEmailError.value = t('auth.login.validation.fieldBlank');
+			nonMemberEmailHasError.value = true;
 		} else if (!isValidEmail(nonMemberEmail.value.trim())) {
 			nonMemberEmailError.value = t('auth.login.validation.emailInvalid');
+			nonMemberEmailHasError.value = true;
 		}
 
 		if (!nonMemberOrderNumber.value.trim()) {
@@ -303,6 +308,7 @@ export function useLoginPageForm() {
 	function onNonMemberEmailInput(value: string) {
 		nonMemberEmail.value = value;
 		nonMemberEmailError.value = '';
+		nonMemberEmailHasError.value = false;
 	}
 
 	function onNonMemberOrderInput(value: string) {
@@ -310,7 +316,7 @@ export function useLoginPageForm() {
 		nonMemberOrderError.value = '';
 	}
 
-// Interfaces
+	// Interfaces
 	interface LoginResponse {
 		success: boolean;
 		message: string;
@@ -476,7 +482,10 @@ export function useLoginPageForm() {
 				);
 
 				if (!response.success) {
-					guestVerificationError.value = response.message || t('auth.guestVerification.requestFailed');
+					nonMemberEmailError.value = '';
+					nonMemberEmailHasError.value = true;
+					nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
+					guestVerificationError.value = '';
 					return;
 				}
 
@@ -491,8 +500,11 @@ export function useLoginPageForm() {
 					auth_token: response.data?.auth_token,
 					cached_at: Date.now(),
 				};
-			} catch (error: unknown) {
-				guestVerificationError.value = handleApiError(error, t('auth.guestVerification.requestFailed'));
+			} catch {
+				nonMemberEmailError.value = '';
+				nonMemberEmailHasError.value = true;
+				nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
+				guestVerificationError.value = '';
 				return;
 			}
 		}
@@ -602,12 +614,7 @@ export function useLoginPageForm() {
 
 	// Modal and utility functions
 	watch(isVerificationModalOpen, (open) => {
-		if (open) {
-			if (guestResendCooldownRemaining.value <= 0) {
-				startGuestResendCooldown();
-			}
-			return;
-		}
+		if (open) return;
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
 		isGuestVerifying.value = false;
@@ -669,6 +676,7 @@ export function useLoginPageForm() {
 		memberPasswordError,
 		memberInvalidCredentials,
 		nonMemberEmailError,
+		nonMemberEmailHasError,
 		nonMemberOrderError,
 		onMemberEmailInput,
 		onMemberPasswordInput,

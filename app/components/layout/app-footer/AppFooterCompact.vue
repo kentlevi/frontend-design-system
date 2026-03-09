@@ -13,8 +13,8 @@ defineProps<{
 	<div class="home-footer-compact" data-testid="app-footer-compact-container">
 		<div class="home-footer-compact-left" data-testid="app-footer-compact-left">
 			<span class="home-footer-compact-copy">&copy; GLOPHICS Corp. {{ year }}</span>
-			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
-			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
+			<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
+			<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
 		</div>
 		<div class="home-footer-compact-links" data-testid="app-footer-compact-links">
 			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-action-link" data-testid="app-footer-compact-inquiry-link">{{ t('layout.footer.inquiry') }}</NuxtLink>

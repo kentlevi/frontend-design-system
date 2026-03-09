@@ -263,9 +263,9 @@ watch(isSubmitting, async (loading) => {
 			>
 				<span class="auth-register-check-text">
 					{{ t('auth.register.agreePrefix') }}
-					<NuxtLink :to="withCountry('/under-construction')" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</NuxtLink>
+					<NuxtLink :to="withCountry('/terms-of-use')" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</NuxtLink>
 					{{ t('auth.register.and') }}
-					<NuxtLink :to="withCountry('/under-construction')" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</NuxtLink>
+					<NuxtLink :to="withCountry('/privacy-policy')" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</NuxtLink>
 					.
 				</span>
 			</UiCheckbox>
@@ -334,7 +334,7 @@ watch(isSubmitting, async (loading) => {
 		<UiButton
 			variant="filled"
 			tone="neutral"
-			size="md"
+			size="lg"
 			class="auth-register-submit"
 			data-testid="auth-register-submit"
 			@click="submitRegister"

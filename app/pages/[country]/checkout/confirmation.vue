@@ -1,11 +1,9 @@
 <script setup lang="ts">
 definePageMeta({
-	layout: 'home',
+	layout: 'checkout',
 	headerVariant: 'default',
 	footerVariant: 'compact',
 });
-
-setPageLayout('home');
 </script>
 
 <template>

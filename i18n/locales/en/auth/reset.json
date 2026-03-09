@@ -14,7 +14,8 @@
             "errors": {
                 "missingLink": "Reset link is missing required information.",
                 "fillBoth": "Please fill in both password fields.",
-                "mismatch": "Passwords do not match.",
+                "passwordRequirements": "Password does not meet requirements.",
+                "mismatch": "Password does not match.",
                 "unable": "Unable to reset password.",
                 "autoLoginFailed": "Password changed, but automatic login failed."
             }

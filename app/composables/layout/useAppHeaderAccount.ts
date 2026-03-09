@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { FlagCode } from '~/data/ui/flags';
 import {
 	type SupportedCountry,
+	resolveSupportedCountry,
 	isSupportedCountry,
 } from '~/constants/countries';
 import {
@@ -20,9 +21,14 @@ const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 export function useAppHeaderAccount() {
 	const { t, locale, setLocale } = useI18n();
 	const route = useRoute();
-	const { withCountry, apiCountry } = useCountry();
+	const { withCountry, apiCountry, country } = useCountry();
 	const api = useApi();
 	const userStore = useUserStore();
+	const preferredLocale = useCookie<SupportedCountry | null>('preferred_locale', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
 	const authToken = useCookie<string | null>('auth_token');
 	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 		default: () => null,
@@ -64,12 +70,20 @@ export function useAppHeaderAccount() {
 					to: withCountry(item.to),
 				}));
 		}
-		return [];
+
+		return headerNavLinkConfig.map((item) => ({
+			key: item.key,
+			label: t(item.labelKey),
+			to: withCountry(item.to),
+		}));
 	});
 
-	const selectedLocale = computed<FlagCode>(() =>
-		locale.value === 'kr' ? 'kr' : 'us'
-	);
+	const selectedLocale = computed<FlagCode>(() => {
+		const routeLocale = resolveSupportedCountry(country.value);
+		const preferred = resolveSupportedCountry(preferredLocale.value || '');
+		const activeLocale = resolveSupportedCountry(String(locale.value));
+		return routeLocale || preferred || activeLocale || 'us';
+	});
 	const localeOptions = computed(() =>
 		headerLocaleOptionConfig.map((option) => ({
 			code: option.code,
@@ -209,9 +223,28 @@ export function useAppHeaderAccount() {
 		localeModalOpen.value = false;
 	}
 
-	function selectLocale(code: SupportedCountry) {
-		setLocale(code);
+	async function selectLocale(code: SupportedCountry) {
+		preferredLocale.value = code;
+		await setLocale(code);
 		closeLocaleModal();
+
+		const currentPath = route.path || '/';
+		const normalizedPath = currentPath.startsWith('/') ? currentPath : `/${currentPath}`;
+		const segments = normalizedPath.split('/').filter(Boolean);
+		const nextPath = segments.length
+			? `/${[code, ...segments.slice(1)].join('/')}`
+			: `/${code}`;
+
+		if (nextPath !== normalizedPath) {
+			await navigateTo(
+				{
+					path: nextPath,
+					query: route.query,
+					hash: route.hash,
+				},
+				{ replace: true }
+			);
+		}
 	}
 
 	async function logoutMock() {

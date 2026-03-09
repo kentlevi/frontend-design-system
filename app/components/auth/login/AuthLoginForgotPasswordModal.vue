@@ -93,7 +93,7 @@ async function submitReset() {
 		align="center"
 		width="504px"
 		padding="40px"
-		gap="24px"
+		gap="8px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<template #header>
@@ -111,7 +111,10 @@ async function submitReset() {
 			</div>
 		</template>
 
-		<div class="auth-forgot-body">
+		<div
+			class="auth-forgot-body"
+			:class="sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
+		>
 			<template v-if="!sent">
 				<p class="auth-forgot-description">
 					{{ t('auth.login.forgot.description') }}
@@ -175,7 +178,7 @@ async function submitReset() {
 					<UiButton
 						variant="filled"
 						tone="neutral"
-						size="md"
+						size="lg"
 						class="auth-forgot-submit"
 						data-testid="auth-login-forgot-password-return-button"
 						@click="closeModal"
@@ -210,7 +213,6 @@ async function submitReset() {
 .auth-forgot-body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
 
     .auth-forgot-description {
         margin: 0;
@@ -289,10 +291,14 @@ async function submitReset() {
             }
         }
     }
+}
 
-    .auth-forgot-actions-success {
-        margin-top: 8px;
-    }
+.auth-forgot-body-default {
+    gap: 24px;
+}
+
+.auth-forgot-body-success {
+    gap: 40px;
 }
 
 @media (max-width: 768px) {

@@ -79,6 +79,7 @@ const {
 								<img
 									:src="row.artworkPreviewUrl || row.product.image"
 									:alt="row.product.name"
+									class="cart-item-thumb-image"
 								>
 							</div>
 							<div class="cart-item-copy">
@@ -328,10 +329,10 @@ const {
                             place-items: center;
                             overflow: hidden;
 
-                            img {
+                            .cart-item-thumb-image {
                                 width: 62px;
                                 height: 62px;
-                                object-fit: cover;
+                                object-fit: contain;
                             }
                         }
 

@@ -73,7 +73,7 @@ async function submitChangePassword() {
 	}
 
 	if (!isStrongPassword(newPassword)) {
-		error.value = t('auth.reset.description');
+		error.value = t('auth.reset.errors.passwordRequirements');
 		return;
 	}
 
@@ -202,7 +202,7 @@ async function submitChangePassword() {
 		:model-value="modelValue"
 		width="640px"
 		padding="36px"
-		gap="22px"
+		gap="8px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<template #header>

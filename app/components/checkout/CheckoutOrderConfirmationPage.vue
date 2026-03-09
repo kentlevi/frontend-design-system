@@ -6,7 +6,6 @@ import { useCountry } from '@/composables/app/useCountry';
 const { withCountry } = useCountry();
 const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest();
 
-const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 const orderNumber = computed(() => '12405070009');
 const orderDetailsPath = computed(() => withCountry(`/orders/${orderNumber.value}`));
 const estimatedArrival = computed(() => {
@@ -59,19 +58,23 @@ const estimatedArrival = computed(() => {
 				</header>
 
 				<div class="checkout-confirmation-summary-body">
-					<div v-if="primaryItem" class="checkout-confirmation-item">
+					<div
+						v-for="item in selectedCheckoutItems"
+						:key="item.id"
+						class="checkout-confirmation-item"
+					>
 						<div class="checkout-confirmation-item-thumb">
 							<img
-								:src="primaryItem.artworkPreviewUrl || primaryItem.product.image"
-								:alt="primaryItem.product.name"
+								:src="item.artworkPreviewUrl || item.product.image"
+								:alt="item.product.name"
 								class="checkout-confirmation-item-image"
 							>
 						</div>
 						<div class="checkout-confirmation-item-copy">
-							<div class="checkout-confirmation-item-name">{{ primaryItem.product.name }}</div>
-							<div class="checkout-confirmation-item-meta">{{ sizeDimOnly(primaryItem.sizeLabel) }} / {{ primaryItem.qty.toLocaleString() }}</div>
+							<div class="checkout-confirmation-item-name">{{ item.product.name }}</div>
+							<div class="checkout-confirmation-item-meta">{{ sizeDimOnly(item.sizeLabel) }} / {{ item.qty.toLocaleString() }}</div>
 						</div>
-						<div class="checkout-confirmation-item-price">{{ formatPrice(primaryItem.total) }}</div>
+						<div class="checkout-confirmation-item-price">{{ formatPrice(item.total) }}</div>
 					</div>
 
 					<div class="checkout-confirmation-totals">
@@ -100,11 +103,24 @@ const estimatedArrival = computed(() => {
 
 <style scoped lang="scss">
 .checkout-confirmation-page {
+	position: relative;
 	min-height: calc(100vh - 320px);
 	padding: 56px 24px 120px;
-	background: linear-gradient(var(--brand-primary) 0 320px, var(--white-base) 320px 100%);
+	background: var(--white-base);
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto 0;
+		height: 320px;
+		background: var(--brand-primary);
+		z-index: 0;
+	}
 
 	.checkout-confirmation-card {
+		position: relative;
+		z-index: 1;
 		max-width: 792px;
 		margin: 0 auto;
 		background: var(--white-base);

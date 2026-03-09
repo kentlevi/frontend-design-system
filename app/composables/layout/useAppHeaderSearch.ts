@@ -7,6 +7,8 @@ import {
 	headerSearchCategories,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/useCountry';
+import enProductMessages from '../../../i18n/locales/en/product/products.json';
+import krProductMessages from '../../../i18n/locales/kr/product/products.json';
 
 export type SearchItem = {
 	id: string;
@@ -18,11 +20,35 @@ export type SearchItem = {
 	to: string;
 };
 
+type RecentSearchCookieEntry =
+	| string
+	| {
+		type?: 'product' | 'term';
+		value?: unknown;
+	};
+
+type RecentSearchRecord = {
+	key: string;
+	type: 'product' | 'term';
+	value: string;
+};
+
+type ProductLocaleMessages = {
+	product: {
+		items: Record<
+			string,
+			{
+				name: string;
+			}
+		>;
+	};
+};
+
 type SearchNavItem =
     | {
     	id: string;
     	type: 'recent';
-    	term: string;
+    	entryKey: string;
     }
     | {
     	id: string;
@@ -35,7 +61,7 @@ export function useAppHeaderSearch() {
 	const route = useRoute();
 	const router = useRouter();
 	const { withCountry } = useCountry();
-	const searchRecentTermsCookie = useCookie<string[]>('search_recent_terms', {
+	const searchRecentTermsCookie = useCookie<RecentSearchCookieEntry[]>('search_recent_terms', {
 		default: () => [],
 		sameSite: 'lax',
 		path: '/',
@@ -49,25 +75,75 @@ export function useAppHeaderSearch() {
 	const searchModalRef = ref<HTMLElement | null>(null);
 	const activeSearchNavIndex = ref(-1);
 
+	function toSafeTrimmedString(value: unknown) {
+		return typeof value === 'string' ? value.trim() : '';
+	}
+
+	function toNormalizedWhitespace(value: unknown) {
+		return toSafeTrimmedString(value).replace(/\s+/g, ' ');
+	}
+
 	const searchEmptySuggestedTerm = computed(() => t('layout.header.search.modal.suggestedTerm'));
-	const trimmedSearchQuery = computed(() => searchQuery.value.trim());
+	const trimmedSearchQuery = computed(() => toSafeTrimmedString(searchQuery.value));
 	const trimmedDebouncedSearchQuery = computed(() =>
-		debouncedSearchQuery.value.trim()
+		toSafeTrimmedString(debouncedSearchQuery.value)
 	);
 	const hasSettledSearchQuery = computed(
 		() =>
 			trimmedDebouncedSearchQuery.value.length > 0 &&
             trimmedDebouncedSearchQuery.value === trimmedSearchQuery.value
 	);
-	const recentSearchTerms = computed(() => {
-		const terms = Array.isArray(searchRecentTermsCookie.value)
+	const recentSearchEntriesRaw = computed<RecentSearchRecord[]>(() => {
+		const entries = Array.isArray(searchRecentTermsCookie.value)
 			? searchRecentTermsCookie.value
 			: [];
-		return terms
-			.filter(
-				(term): term is string =>
-					typeof term === 'string' && term.trim().length > 0
-			)
+		const seenKeys = new Set<string>();
+		return entries
+			.map((entry) => {
+				if (typeof entry === 'string') {
+					const normalized = toNormalizedWhitespace(entry);
+					if (!normalized) return null;
+					const inferredProductId = inferLegacyRecentProductId(normalized);
+
+					return inferredProductId
+						? {
+							key: `product:${inferredProductId}`,
+							type: 'product' as const,
+							value: inferredProductId,
+						}
+						: {
+							key: `term:${normalizeSearchValue(normalized)}`,
+							type: 'term' as const,
+							value: normalized,
+						};
+				}
+
+				if (!entry || typeof entry !== 'object') return null;
+				const value = toNormalizedWhitespace(entry.value);
+				if (!value) return null;
+
+				const inferredProductId =
+					entry.type === 'product' ? value : inferLegacyRecentProductId(value);
+				if (inferredProductId) {
+					return {
+						key: `product:${inferredProductId}`,
+						type: 'product' as const,
+						value: inferredProductId,
+					};
+				}
+
+				return {
+					key: `term:${normalizeSearchValue(value)}`,
+					type: 'term' as const,
+					value,
+				};
+			})
+			.filter((entry): entry is RecentSearchRecord => {
+				if (!entry) return false;
+				if (seenKeys.has(entry.key)) return false;
+				seenKeys.add(entry.key);
+				return true;
+			})
 			.slice(0, HEADER_MAX_RECENT_SEARCHES);
 	});
 
@@ -120,22 +196,25 @@ export function useAppHeaderSearch() {
 	});
 
 	const recentSearchEntries = computed(() =>
-		recentSearchTerms.value.map((term) => {
-			const matchedItem = matchSearchItemFromTerm(term);
-			return { term, matchedItem };
+		recentSearchEntriesRaw.value.map((entry) => {
+			const matchedItem =
+				entry.type === 'product'
+					? searchItems.value.find((item) => item.id === entry.value) || null
+					: matchSearchItemFromTerm(entry.value);
+			return { key: entry.key, term: entry.value, matchedItem };
 		})
 	);
 	const showSearchRecent = computed(
 		() =>
 			!searchLoading.value &&
             trimmedSearchQuery.value.length === 0 &&
-            recentSearchTerms.value.length > 0
+            recentSearchEntriesRaw.value.length > 0
 	);
 	const showSearchNoRecent = computed(
 		() =>
 			!searchLoading.value &&
             trimmedSearchQuery.value.length === 0 &&
-            recentSearchTerms.value.length === 0
+            recentSearchEntriesRaw.value.length === 0
 	);
 	const showSearchNoResult = computed(
 		() =>
@@ -152,10 +231,10 @@ export function useAppHeaderSearch() {
 
 	const searchNavItems = computed<SearchNavItem[]>(() => {
 		if (showSearchRecent.value) {
-			return recentSearchTerms.value.map((term) => ({
-				id: `recent:${term.toLowerCase()}`,
+			return recentSearchEntriesRaw.value.map((entry) => ({
+				id: `recent:${entry.key}`,
 				type: 'recent' as const,
-				term,
+				entryKey: entry.key,
 			}));
 		}
 
@@ -236,18 +315,23 @@ export function useAppHeaderSearch() {
 	}
 
 	function matchSearchItemFromTerm(term: string): SearchItem | null {
-		const normalizedTerm = term.toLowerCase();
+		const inferredProductId = inferLegacyRecentProductId(term);
+		if (inferredProductId) {
+			return searchItems.value.find((item) => item.id === inferredProductId) || null;
+		}
+
+		const normalizedTerm = normalizeSearchValue(term);
 		return (
 			searchItems.value.find(
 				(item) =>
-					item.name.toLowerCase() === normalizedTerm ||
-                    item.id.toLowerCase() === normalizedTerm
+					normalizeSearchValue(item.name) === normalizedTerm ||
+                    normalizeSearchValue(item.id) === normalizedTerm
 			) ||
             searchItems.value.find((item) =>
-            	item.name.toLowerCase().includes(normalizedTerm)
+            	normalizeSearchValue(item.name).includes(normalizedTerm)
             ) ||
             searchItems.value.find((item) =>
-            	normalizedTerm.includes(item.name.toLowerCase())
+            	normalizedTerm.includes(normalizeSearchValue(item.name))
             ) ||
             null
 		);
@@ -273,11 +357,52 @@ export function useAppHeaderSearch() {
 	}
 
 	function toSearchDisplayName(name: string) {
+		if (!/[A-Za-z]/.test(name)) return name;
 		if (/\bSticker$/i.test(name)) return name.replace(/\bSticker$/i, 'Stickers');
 		if (/\bRoll$/i.test(name)) return name.replace(/\bRoll$/i, 'Rolls');
 		if (/\bSheet$/i.test(name)) return name.replace(/\bSheet$/i, 'Sheets');
 		if (/\bLettering$/i.test(name)) return `${name}s`;
 		return name.endsWith('s') ? name : `${name}s`;
+	}
+
+	function normalizeSearchValue(value: unknown) {
+		return toSafeTrimmedString(value)
+			.toLowerCase()
+			.replace(/\s+/g, ' ')
+			.replace(/s$/, '');
+	}
+
+	function inferLegacyRecentProductId(term: unknown) {
+		const normalizedTerm = normalizeSearchValue(term);
+		if (!normalizedTerm) return null;
+
+		const localeMessages = [
+			enProductMessages as ProductLocaleMessages,
+			krProductMessages as ProductLocaleMessages,
+		];
+
+		for (const category of Object.values(productCatalog)) {
+			for (const product of category.products) {
+				const aliases = new Set<string>([
+					normalizeSearchValue(product.id),
+					normalizeSearchValue(product.name),
+					normalizeSearchValue(toSearchDisplayName(product.name)),
+				]);
+
+				for (const messages of localeMessages) {
+					const localizedName = messages.product.items[product.id]?.name;
+					if (!localizedName) continue;
+					aliases.add(normalizeSearchValue(localizedName));
+					aliases.add(normalizeSearchValue(toSearchDisplayName(localizedName)));
+				}
+
+				if (aliases.has(normalizedTerm)) {
+					return product.id;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	function openSearchModal() {
@@ -297,36 +422,39 @@ export function useAppHeaderSearch() {
 		searchQuery.value = searchEmptySuggestedTerm.value;
 	}
 
-	function addRecentSearch(term: string) {
-		const normalized = term.trim().replace(/\s+/g, ' ');
-		if (!normalized) return;
-
-		const current = recentSearchTerms.value.filter(
-			(item) => item.toLowerCase() !== normalized.toLowerCase()
+	function addRecentProductSearch(item: SearchItem) {
+		const current = recentSearchEntriesRaw.value.filter(
+			(entry) => !(entry.type === 'product' && entry.value === item.id)
 		);
-		searchRecentTermsCookie.value = [normalized, ...current].slice(
-			0,
-			HEADER_MAX_RECENT_SEARCHES
-		);
+		searchRecentTermsCookie.value = [
+			{ type: 'product', value: item.id },
+			...current.map((entry) => ({ type: entry.type, value: entry.value })),
+		].slice(0, HEADER_MAX_RECENT_SEARCHES);
 	}
 
-	function applyRecentSearch(term: string) {
-		const matchedItem = matchSearchItemFromTerm(term);
+	function applyRecentSearch(entryKey: string) {
+		const entry = recentSearchEntriesRaw.value.find((item) => item.key === entryKey);
+		if (!entry) return;
+
+		const matchedItem =
+			entry.type === 'product'
+				? searchItems.value.find((item) => item.id === entry.value) || null
+				: matchSearchItemFromTerm(entry.value);
 		if (matchedItem) {
 			selectSearchResult(matchedItem);
 			return;
 		}
 
-		searchQuery.value = term;
+		searchQuery.value = entry.value;
 		nextTick(() => {
 			searchInputRef.value?.focus();
 		});
 	}
 
-	function removeRecentSearch(term: string) {
-		searchRecentTermsCookie.value = recentSearchTerms.value.filter(
-			(item) => item.toLowerCase() !== term.toLowerCase()
-		);
+	function removeRecentSearch(entryKey: string) {
+		searchRecentTermsCookie.value = recentSearchEntriesRaw.value
+			.filter((item) => item.key !== entryKey)
+			.map((item) => ({ type: item.type, value: item.value }));
 	}
 
 	function clearRecentSearches() {
@@ -334,14 +462,14 @@ export function useAppHeaderSearch() {
 	}
 
 	function selectSearchResult(item: SearchItem) {
-		addRecentSearch(item.name);
+		addRecentProductSearch(item);
 		closeSearchModal();
 		void router.push(item.to);
 	}
 
 	function applySearchKeyboardSelection(item: SearchNavItem) {
 		if (item.type === 'recent') {
-			applyRecentSearch(item.term);
+			applyRecentSearch(item.entryKey);
 			return;
 		}
 		selectSearchResult(item.item);
