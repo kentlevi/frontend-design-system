@@ -108,9 +108,13 @@ onBeforeUnmount(() => {
 
 						<div class="ui-modal-header-actions">
 							<slot name="actions" />
-							<button
+							<UiButton
 								type="button"
+								variant="text"
+								tone="neutral"
+								size="sm"
 								class="ui-modal-close"
+								icon-only
 								aria-label="Close modal"
 								@click="closeModal"
 							>
@@ -119,7 +123,7 @@ onBeforeUnmount(() => {
 									:size="24"
 									color="#000000"
 								/>
-							</button>
+							</UiButton>
 						</div>
 					</header>
 

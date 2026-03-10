@@ -48,12 +48,28 @@ const emit = defineEmits<{
 		<div class="checkout-summary-title">
 			<span>{{ props.title }}</span>
 			<div class="checkout-summary-title-actions">
-				<button type="button" class="checkout-summary-title-action" aria-label="Edit order summary">
+				<UiButton
+					type="button"
+					variant="text"
+					tone="neutral"
+					size="sm"
+					class="checkout-summary-title-action"
+					icon-only
+					aria-label="Edit order summary"
+				>
 					<UiIcon name="regular-edit" size="24" color="var(--text-primary)" decorative />
-				</button>
-				<button type="button" class="checkout-summary-title-action" aria-label="Print order summary">
+				</UiButton>
+				<UiButton
+					type="button"
+					variant="text"
+					tone="neutral"
+					size="sm"
+					class="checkout-summary-title-action"
+					icon-only
+					aria-label="Print order summary"
+				>
 					<UiIcon name="regular-print" size="24" color="var(--text-primary)" decorative />
-				</button>
+				</UiButton>
 			</div>
 		</div>
 
@@ -156,25 +172,24 @@ const emit = defineEmits<{
 		font-weight: var(--font-weight-bold);
 		color: var(--text-primary);
 
-		.checkout-summary-title-actions {
-			display: inline-flex;
-			align-items: center;
-			gap: 12px;
-
-			.checkout-summary-title-action {
-				width: 24px;
-				height: 24px;
-				padding: 0;
-				border: 0;
-				background: transparent;
-				color: var(--text-primary);
+			.checkout-summary-title-actions {
 				display: inline-flex;
 				align-items: center;
-				justify-content: center;
-				cursor: pointer;
+				gap: 12px;
+
+				.checkout-summary-title-action {
+					width: 24px;
+					height: 24px;
+					padding: 0;
+					min-height: auto;
+					color: var(--text-primary);
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					box-shadow: none;
+				}
 			}
 		}
-	}
 
 	.checkout-summary-list {
 		max-height: 360px;

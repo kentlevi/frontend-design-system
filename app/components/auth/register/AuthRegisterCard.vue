@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import lottie from 'lottie-web';
 import UiTooltip from '@/components/ui/Tooltip.vue';
-import { useRegisterForm } from '@/composables/auth/useRegisterForm';
-import { useCountry } from '@/composables/app/useCountry';
+import { useRegisterForm } from '~/composables/auth/useRegisterForm';
+import { useCountry } from '~/composables/app/useCountry';
 import { registerRewardPoints } from '~/data/auth/register';
 
 const { t } = useI18n();
@@ -16,8 +15,6 @@ const termsErrorPopoverOpen = computed(
 );
 const termsErrorIconStrong = computed(() => termsErrorPopoverOpen.value);
 const termsErrorRef = ref<HTMLElement | null>(null);
-const submitLoaderRef = ref<HTMLElement | null>(null);
-let submitLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 const {
 	firstName,
@@ -94,68 +91,20 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	clearTermsErrorHoverCloseTimer();
 	document.removeEventListener('click', onDocumentClick);
-	if (typeof document !== 'undefined') {
-		document.body.classList.remove('has-auth-register-loading');
-	}
-	destroySubmitLoaderAnimation();
-});
-
-function destroySubmitLoaderAnimation() {
-	if (!submitLoaderAnimation) return;
-	submitLoaderAnimation.destroy();
-	submitLoaderAnimation = null;
-}
-
-async function mountSubmitLoaderAnimation() {
-	if (typeof window === 'undefined' || !submitLoaderRef.value) return;
-	destroySubmitLoaderAnimation();
-	const response = await fetch('/animations/musticker-loader.json');
-	if (!response.ok) return;
-	const animationData = await response.json();
-	submitLoaderAnimation = lottie.loadAnimation({
-		container: submitLoaderRef.value,
-		renderer: 'svg',
-		loop: true,
-		autoplay: true,
-		animationData,
-		rendererSettings: {
-			preserveAspectRatio: 'xMidYMid meet',
-		},
-	});
-}
-
-watch(isSubmitting, async (loading) => {
-	if (typeof document !== 'undefined') {
-		document.body.classList.toggle('has-auth-register-loading', Boolean(loading));
-	}
-	if (!loading) {
-		destroySubmitLoaderAnimation();
-		return;
-	}
-	await nextTick();
-	await mountSubmitLoaderAnimation();
 });
 </script>
 
 <template>
-	<Teleport to="body">
-		<Transition name="auth-register-loading-fade">
-			<div
-				v-if="isSubmitting"
-				class="auth-register-loading-overlay"
-				data-testid="auth-register-loading-overlay"
-			>
-				<div
-					class="auth-register-loading-loader"
-					role="status"
-					aria-live="polite"
-					:aria-label="t('auth.register.createAccount')"
-				>
-					<div ref="submitLoaderRef" class="auth-register-loading-lottie" aria-hidden="true" />
-				</div>
-			</div>
-		</Transition>
-	</Teleport>
+	<UiLoadingOverlay
+		:visible="isSubmitting"
+		:label="t('auth.register.createAccount')"
+		test-id="auth-register-loading-overlay"
+		position="fixed"
+		background="rgba(246, 246, 248, 0.72)"
+		:z-index="400"
+		loader-width="74px"
+		loader-height="74px"
+	/>
 
 	<div class="auth-register-card" data-testid="auth-register-card">
 		<div class="auth-register-head">
@@ -175,7 +124,15 @@ watch(isSubmitting, async (loading) => {
 		</div>
 
 		<div class="auth-register-grid">
-			<UiFormField class="auth-register-field" :label="t('auth.register.firstName')" :error="firstNameError">
+			<UiFormField
+				class="auth-register-field"
+				:label="t('auth.register.firstName')"
+				:error="firstNameError"
+				head-class="auth-register-field-head"
+				label-class="auth-register-field-label"
+				label-text-class="auth-register-field-label-text"
+				error-class="auth-register-field-error"
+			>
 				<UiInput
 					v-model="firstName"
 					type="text"
@@ -187,7 +144,14 @@ watch(isSubmitting, async (loading) => {
 				/>
 			</UiFormField>
 
-			<UiFormField class="auth-register-field" :label="t('auth.register.lastName')">
+			<UiFormField
+				class="auth-register-field"
+				:label="t('auth.register.lastName')"
+				head-class="auth-register-field-head"
+				label-class="auth-register-field-label"
+				label-text-class="auth-register-field-label-text"
+				error-class="auth-register-field-error"
+			>
 				<template #label>
 					<span class="auth-register-label">
 						{{ t('auth.register.lastName') }}
@@ -207,7 +171,15 @@ watch(isSubmitting, async (loading) => {
 			</UiFormField>
 		</div>
 
-		<UiFormField class="auth-register-field" :label="t('auth.register.email')" :error="emailError">
+		<UiFormField
+			class="auth-register-field"
+			:label="t('auth.register.email')"
+			:error="emailError"
+			head-class="auth-register-field-head"
+			label-class="auth-register-field-label"
+			label-text-class="auth-register-field-label-text"
+			error-class="auth-register-field-error"
+		>
 			<UiInput
 				v-model="email"
 				type="email"
@@ -219,7 +191,15 @@ watch(isSubmitting, async (loading) => {
 			/>
 		</UiFormField>
 
-		<UiFormField class="auth-register-field" :label="t('auth.register.password')" :error="passwordError">
+		<UiFormField
+			class="auth-register-field"
+			:label="t('auth.register.password')"
+			:error="passwordError"
+			head-class="auth-register-field-head"
+			label-class="auth-register-field-label"
+			label-text-class="auth-register-field-label-text"
+			error-class="auth-register-field-error"
+		>
 			<div class="auth-register-password-wrap">
 				<UiInput
 					v-model="password"
@@ -231,19 +211,19 @@ watch(isSubmitting, async (loading) => {
 					data-testid="auth-register-password-input"
 				>
 					<template #icon-right>
-						<button
-							type="button"
+						<UiButton
+							variant="ghost"
+							tone="neutral"
+							size="sm"
 							class="auth-register-password-toggle"
 							:aria-label="t('auth.login.togglePassword')"
 							data-testid="auth-register-password-toggle"
+							:sr-label="t('auth.login.togglePassword')"
+							icon-only
+							:icon="showPassword ? 'regular-eye' : 'regular-eye-slash'"
+							:icon-size="24"
 							@click="showPassword = !showPassword"
-						>
-							<UiIcon
-								:name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
-								:size="24"
-								color="var(--gray-90)"
-							/>
-						</button>
+						/>
 					</template>
 				</UiInput>
 			</div>
@@ -286,14 +266,19 @@ watch(isSubmitting, async (loading) => {
 					:slide-distance="36"
 					content-testid="auth-register-terms-error-popover"
 					class="auth-register-terms-error-tooltip"
+					content-class="auth-register-terms-error-tooltip-content"
 				>
 					<template #trigger>
-						<button
-							type="button"
+						<UiButton
+							variant="ghost"
+							tone="danger"
+							size="sm"
 							class="auth-register-terms-error-button"
 							:aria-expanded="termsErrorPopoverOpen"
 							aria-haspopup="dialog"
 							data-testid="auth-register-terms-error-button"
+							sr-label="Terms error information"
+							icon-only
 							@click="toggleTermsErrorPopover"
 							@focus="onTermsErrorHoverStart"
 						>
@@ -313,7 +298,7 @@ watch(isSubmitting, async (loading) => {
 									:class="{ 'is-visible': termsErrorIconStrong }"
 								/>
 							</span>
-						</button>
+						</UiButton>
 					</template>
 
 					<UiIcon
@@ -422,7 +407,12 @@ watch(isSubmitting, async (loading) => {
         flex-direction: column;
         gap: 8px;
 
-        :deep(.ui-form-field-label),
+        .auth-register-field-head {
+            min-height: 24px;
+            align-items: center;
+        }
+
+        .auth-register-field-label-text,
         .auth-register-label {
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-semibold);
@@ -435,7 +425,7 @@ watch(isSubmitting, async (loading) => {
             }
         }
 
-        :deep(.ui-form-field-error) {
+        .auth-register-field-error {
             color: var(--error);
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-semibold);
@@ -450,10 +440,14 @@ watch(isSubmitting, async (loading) => {
             position: relative;
 
             .auth-register-password-toggle {
-                border: 0;
-                background: transparent;
-                display: grid;
-                place-items: center;
+                --btn-soft: transparent;
+                --btn-border: transparent;
+                padding: 0;
+                min-height: auto;
+                width: 24px;
+                height: 24px;
+                border-radius: 0;
+                box-shadow: none;
             }
         }
 
@@ -541,15 +535,12 @@ watch(isSubmitting, async (loading) => {
         }
 
         .auth-register-terms-error-button {
-            border: 0;
-            background: transparent;
             padding: 0;
-            margin: 0;
-            color: var(--error);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            min-height: auto;
+            width: 24px;
+            height: 24px;
+            border-radius: 0;
+            box-shadow: none;
             color: var(--error);
         }
 
@@ -557,11 +548,9 @@ watch(isSubmitting, async (loading) => {
             flex-shrink: 0;
         }
 
-        .auth-register-terms-error-tooltip {
-            :deep(.ui-tooltip-content) {
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-            }
+        .auth-register-terms-error-tooltip-content {
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
         }
     }
 
@@ -614,40 +603,11 @@ watch(isSubmitting, async (loading) => {
             text-align: left;
             max-width: none;
 
-            .auth-register-terms-error-tooltip {
-                :deep(.ui-tooltip-content) {
-                    min-width: 220px;
-                }
+            .auth-register-terms-error-tooltip-content {
+                min-width: 220px;
             }
         }
 
-    }
-}
-
-.auth-register-loading-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(246, 246, 248, 0.72);
-    display: grid;
-    place-items: center;
-    z-index: 400;
-}
-
-.auth-register-loading-loader {
-    width: 74px;
-    height: 74px;
-    display: grid;
-    place-items: center;
-}
-
-.auth-register-loading-lottie {
-    width: 100%;
-    height: 100%;
-
-    :deep(svg) {
-        width: 100%;
-        height: 100%;
-        display: block;
     }
 }
 
@@ -661,17 +621,4 @@ watch(isSubmitting, async (loading) => {
     }
 }
 
-.auth-register-loading-fade-enter-active,
-.auth-register-loading-fade-leave-active {
-    transition: opacity 0.16s ease;
-}
-
-.auth-register-loading-fade-enter-from,
-.auth-register-loading-fade-leave-to {
-    opacity: 0;
-}
-
-body.has-auth-register-loading {
-    overflow: hidden;
-}
 </style>

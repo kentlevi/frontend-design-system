@@ -119,18 +119,19 @@ const { t } = useI18n();
 							</template>
 						</div>
 
-						<label class="upload-notes" data-testid="product-category-upload-notes">
+						<div class="upload-notes" data-testid="product-category-upload-notes">
 							<span class="upload-notes-label">{{ t('cart.uploadArtwork.specialInstructions') }}</span>
 							<UiTextarea
 								class="upload-notes-textarea"
 								:model-value="props.specialInstructions"
 								:rows="4"
 								resize="none"
+								field-class="upload-notes-textarea-field"
 								:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
 								data-testid="product-category-upload-special-instructions"
 								@update:model-value="emit('update:specialInstructions', $event)"
 							/>
-						</label>
+						</div>
 
 						<p class="upload-note" data-testid="product-category-upload-note">
 							{{ t('cart.uploadArtwork.note') }}
@@ -326,7 +327,7 @@ const { t } = useI18n();
                     min-height: 130px;
                 }
 
-                :deep(.upload-notes-textarea .ui-textarea-field) {
+                .upload-notes-textarea-field {
                     min-height: 130px;
                     padding: 14px 16px;
                 }

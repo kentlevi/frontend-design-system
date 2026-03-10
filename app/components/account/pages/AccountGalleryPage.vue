@@ -15,12 +15,13 @@ const { items } = useAccountGallery();
 						<UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters-button">
 							{{ t('account.gallery.filters') }}
 						</UiButton>
-						<input
+						<UiInput
+							model-value=""
 							class="account-gallery-search"
 							type="text"
 							:placeholder="t('account.gallery.searchPlaceholder')"
 							data-testid="account-gallery-search"
-						>
+						/>
 					</div>
 				</header>
 
@@ -70,17 +71,10 @@ const { items } = useAccountGallery();
             display: flex;
             gap: 10px;
             align-items: center;
-        }
 
-        .account-gallery-search {
-            width: 180px;
-            height: 42px;
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
-            background: var(--contrast-light);
-            padding: 0 12px;
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
+            .account-gallery-search {
+                width: 180px;
+            }
         }
     }
 

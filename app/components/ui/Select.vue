@@ -27,6 +27,10 @@ const props = withDefaults(
 		emptyText?: string;
 		iconSize?: number;
 		iconFamily?: 'strong' | 'regular';
+		triggerClass?: string;
+		menuClass?: string;
+		optionClass?: string;
+		searchInputClass?: string;
 	}>(),
 	{
 		modelValue: null,
@@ -37,6 +41,10 @@ const props = withDefaults(
 		emptyText: 'No results found.',
 		iconSize: 24,
 		iconFamily: 'regular',
+		triggerClass: '',
+		menuClass: '',
+		optionClass: '',
+		searchInputClass: '',
 	}
 );
 
@@ -145,7 +153,7 @@ onBeforeUnmount(() => {
 	>
 		<button
 			type="button"
-			class="ui-select-trigger"
+			:class="['ui-select-trigger', props.triggerClass]"
 			:disabled="props.disabled"
 			:data-testid="testId ? `${testId}-trigger` : undefined"
 			@click="toggleMenu"
@@ -161,14 +169,14 @@ onBeforeUnmount(() => {
 			<UiIcon
 				:name="triggerIconName"
 				:size="props.iconSize"
-				color="var(--text-secondary)"
+				color="var(--gray-90)"
 				class="ui-select-trigger-icon"
 				:class="{ 'is-open': isOpen }"
 			/>
 		</button>
 
 		<Transition name="ui-select-menu">
-			<div v-if="isOpen" class="ui-select-menu" role="listbox">
+			<div v-if="isOpen" :class="['ui-select-menu', props.menuClass]" role="listbox">
 				<div v-if="props.searchable" class="ui-select-search">
 					<UiIcon
 						name="strong-search"
@@ -179,7 +187,7 @@ onBeforeUnmount(() => {
 						ref="searchRef"
 						v-model="query"
 						type="text"
-						class="ui-select-search-input"
+						:class="['ui-select-search-input', props.searchInputClass]"
 						placeholder="Search..."
 						:data-testid="testId ? `${testId}-search` : undefined"
 					>
@@ -190,10 +198,9 @@ onBeforeUnmount(() => {
 						v-for="option in filteredOptions"
 						:key="option.value"
 						type="button"
-						class="ui-select-option"
-						:class="{
+						:class="['ui-select-option', props.optionClass, {
 							'is-selected': option.value === props.modelValue,
-						}"
+						}]"
 						@mousedown.prevent="selectOption(option)"
 					>
 						<div class="ui-select-option-copy">

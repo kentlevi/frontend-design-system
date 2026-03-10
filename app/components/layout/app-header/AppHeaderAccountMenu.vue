@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type ComponentPublicInstance } from 'vue';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
@@ -116,13 +116,17 @@ const guestLoginTarget = computed(() => {
 		@mouseenter="emit('mouse-enter')"
 		@mouseleave="emit('mouse-leave')"
 	>
-		<button
+		<UiButton
 			type="button"
+			variant="text"
+			tone="neutral"
+			size="sm"
 			class="home-header-icon home-header-account"
 			:class="{
 				'is-open': accountOpen && isMockLoggedIn,
 				'is-open-guest': accountOpen && !isMockLoggedIn,
 			}"
+			icon-only
 			:aria-label="t('layout.header.account')"
 			aria-haspopup="menu"
 			:aria-expanded="accountOpen"
@@ -153,7 +157,7 @@ const guestLoginTarget = computed(() => {
 				:size="16"
 				color="var(--text-primary)"
 			/>
-		</button>
+		</UiButton>
 
 		<Transition :name="accountTransitionName">
 			<div
@@ -197,6 +201,7 @@ const guestLoginTarget = computed(() => {
 							:name="link.icon"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ link.label }}</span>
 					</NuxtLink>
@@ -215,6 +220,7 @@ const guestLoginTarget = computed(() => {
 							:name="gettingStartedLink.icon"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
 					</NuxtLink>
@@ -232,6 +238,7 @@ const guestLoginTarget = computed(() => {
 							name="strong-sign-out"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
@@ -266,6 +273,7 @@ const guestLoginTarget = computed(() => {
 							:name="guestOrderLink.icon"
 							:size="22"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ guestOrderLink.label }}</span>
 					</NuxtLink>
@@ -285,6 +293,7 @@ const guestLoginTarget = computed(() => {
 							name="strong-sign-out"
 							:size="22"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
@@ -504,7 +513,7 @@ const guestLoginTarget = computed(() => {
             color: var(--text-primary);
             padding: 0 20px;
 
-            :deep(.ui-icon) {
+            .home-account-link-icon {
                 flex-shrink: 0;
             }
 

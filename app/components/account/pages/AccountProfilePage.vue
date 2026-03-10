@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -78,14 +78,14 @@ onBeforeUnmount(() => {
 				<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
 
 				<div class="account-profile-section" data-testid="account-profile-personal-section">
-					<div>
+					<div class="account-profile-section-copy">
 						<h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
 						<p class="account-profile-section-description">
 							{{ t('account.profile.personalDetailsDesc') }}
 						</p>
 					</div>
-					<div>
-						<label class="account-profile-label">{{ t('account.profile.profilePhoto') }}</label>
+					<div class="account-profile-section-main">
+						<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
 						<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
 							<div class="account-profile-avatar">
 								<img
@@ -96,7 +96,7 @@ onBeforeUnmount(() => {
 								>
 								<span v-else class="account-profile-avatar-text">{{ initials }}</span>
 							</div>
-							<div>
+							<div class="account-profile-photo-copy">
 								<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
 								<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
 								<p v-if="photoError" class="account-profile-photo-error">{{ photoError }}</p>
@@ -109,23 +109,27 @@ onBeforeUnmount(() => {
 										data-testid="account-profile-photo-input"
 										@change="onFilePicked"
 									>
-									<button
-										type="button"
+									<UiButton
+										variant="outline"
+										tone="neutral"
+										size="md"
 										class="account-profile-outline-button"
 										data-testid="account-profile-photo-upload-button"
 										@click="openFilePicker"
 									>
 										{{ t('account.profile.uploadNewPhoto') }}
-									</button>
-									<button
+									</UiButton>
+									<UiButton
 										v-if="photoUrl"
-										type="button"
+										variant="ghost"
+										tone="danger"
+										size="md"
 										class="account-profile-delete-button"
 										data-testid="account-profile-photo-delete-button"
 										@click="removePhoto"
 									>
 										{{ t('account.profile.delete') }}
-									</button>
+									</UiButton>
 								</div>
 							</div>
 						</div>
@@ -179,7 +183,7 @@ onBeforeUnmount(() => {
 				</div>
 
 				<div class="account-profile-section" data-testid="account-profile-password-section">
-					<div>
+					<div class="account-profile-section-copy">
 						<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
 						<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 					</div>
@@ -225,7 +229,7 @@ onBeforeUnmount(() => {
 							<UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
 								{{ t('account.profile.changePassword') }}
 							</UiButton>
-							<NuxtLink :to="withCountry('/auth/login')" data-testid="account-profile-forgot-password">
+							<NuxtLink :to="withCountry('/auth/login')" class="account-profile-forgot-password-link" data-testid="account-profile-forgot-password">
 								{{ t('account.profile.forgotPassword') }}
 							</NuxtLink>
 						</div>
@@ -233,63 +237,69 @@ onBeforeUnmount(() => {
 				</div>
 
 				<div class="account-profile-section" data-testid="account-profile-settings-section">
-					<div>
+					<div class="account-profile-section-copy">
 						<h2 class="account-profile-section-title">{{ t('account.profile.settings') }}</h2>
 						<p class="account-profile-section-description">{{ t('account.profile.settingsDesc') }}</p>
 					</div>
 					<div class="account-profile-settings" data-testid="account-profile-settings">
 						<div class="account-profile-setting-row" data-testid="account-profile-setting-promotions">
-							<div>
+							<div class="account-profile-setting-copy">
 								<h3 class="account-profile-setting-title">{{ t('account.profile.promotions') }}</h3>
 								<p class="account-profile-muted">{{ t('account.profile.promotionsDesc') }}</p>
 							</div>
 							<label class="account-profile-switch">
-								<input v-model="promotions" type="checkbox" data-testid="account-profile-toggle-promotions" >
-								<span />
+								<input v-model="promotions" type="checkbox" class="account-profile-switch-input" data-testid="account-profile-toggle-promotions" >
+								<span class="account-profile-switch-track" />
 							</label>
 						</div>
 						<div class="account-profile-setting-row" data-testid="account-profile-setting-reviews">
-							<div>
+							<div class="account-profile-setting-copy">
 								<h3 class="account-profile-setting-title">{{ t('account.profile.reviews') }}</h3>
 								<p class="account-profile-muted">{{ t('account.profile.reviewsDesc') }}</p>
 							</div>
 							<label class="account-profile-switch">
-								<input v-model="reviews" type="checkbox" data-testid="account-profile-toggle-reviews" >
-								<span />
+								<input v-model="reviews" type="checkbox" class="account-profile-switch-input" data-testid="account-profile-toggle-reviews" >
+								<span class="account-profile-switch-track" />
 							</label>
 						</div>
 						<div class="account-profile-setting-row" data-testid="account-profile-setting-confirmations">
-							<div>
+							<div class="account-profile-setting-copy">
 								<h3 class="account-profile-setting-title">{{ t('account.profile.confirmations') }}</h3>
 								<p class="account-profile-muted">{{ t('account.profile.confirmationsDesc') }}</p>
 							</div>
 							<label class="account-profile-switch">
-								<input v-model="confirmations" type="checkbox" data-testid="account-profile-toggle-confirmations" >
-								<span />
+								<input v-model="confirmations" type="checkbox" class="account-profile-switch-input" data-testid="account-profile-toggle-confirmations" >
+								<span class="account-profile-switch-track" />
 							</label>
 						</div>
 						<div class="account-profile-setting-row" data-testid="account-profile-setting-unit">
-							<div>
+							<div class="account-profile-setting-copy">
 								<h3 class="account-profile-setting-title">{{ t('account.profile.unit') }}</h3>
 								<p class="account-profile-muted">{{ t('account.profile.unitDesc') }}</p>
 							</div>
 							<div class="account-profile-unit-segment">
-								<button
-									type="button"
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="md"
+									class="account-profile-unit-button"
 									:class="{ active: unit === 'millimeter' }"
 									data-testid="account-profile-unit-millimeter-button"
 									@click="unit = 'millimeter'"
 								>
 									{{ t('account.profile.millimeter') }}
-								</button>
-								<button
-									type="button"
+								</UiButton>
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="md"
+									class="account-profile-unit-button"
 									:class="{ active: unit === 'inch' }"
 									data-testid="account-profile-unit-inch-button"
 									@click="unit = 'inch'"
 								>
 									{{ t('account.profile.inch') }}
-								</button>
+								</UiButton>
 							</div>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-signout-wrap">
@@ -328,6 +338,12 @@ onBeforeUnmount(() => {
             grid-template-columns: 300px 1fr;
             gap: 126px;
             padding: 26px 0;
+
+            .account-profile-section-copy,
+            .account-profile-section-main {
+                display: flex;
+                flex-direction: column;
+            }
 
             .account-profile-section-title {
                 margin: 0 0 0px;
@@ -383,6 +399,11 @@ onBeforeUnmount(() => {
                 }
             }
 
+            .account-profile-photo-copy {
+                display: flex;
+                flex-direction: column;
+            }
+
             .account-profile-muted {
                 color: var(--text-secondary);
                 font-size: var(--type-size-100);
@@ -408,23 +429,11 @@ onBeforeUnmount(() => {
                 align-items: center;
 
                 .account-profile-outline-button {
-                    height: 38px;
-                    padding: 0 16px;
-                    border-radius: 999px;
-                    border: 1px solid var(--text-primary);
-                    background: transparent;
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
-                    cursor: pointer;
+                    min-height: 38px;
                 }
 
                 .account-profile-delete-button {
-                    border: 0;
-                    background: transparent;
                     color: var(--error);
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
-                    cursor: pointer;
                 }
             }
 
@@ -435,25 +444,6 @@ onBeforeUnmount(() => {
 
                 .account-profile-grid-full {
                     grid-column: 1 / -1;
-                }
-
-                label {
-                    display: block;
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
-                    font-weight: var(--font-weight-semibold);
-                    margin-bottom: 6px;
-                }
-
-                input {
-                    width: 100%;
-                    height: 42px;
-                    border: 1px solid var(--border-default);
-                    border-radius: 10px;
-                    background: var(--contrast-light);
-                    padding: 0 12px;
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
                 }
 
                 .account-profile-optional {
@@ -467,25 +457,6 @@ onBeforeUnmount(() => {
                 flex-direction: column;
                 gap: 10px;
 
-                label {
-                    display: block;
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
-                    font-weight: var(--font-weight-semibold);
-                    margin-bottom: 6px;
-                }
-
-                input {
-                    width: 100%;
-                    height: 42px;
-                    border: 1px solid var(--border-default);
-                    border-radius: 10px;
-                    background: var(--contrast-light);
-                    padding: 0 12px;
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
-                }
-
                 .account-profile-inline-actions {
                     display: flex;
                     gap: 16px;
@@ -493,7 +464,7 @@ onBeforeUnmount(() => {
                     justify-content: flex-end;
                     margin-top: 6px;
 
-                    a {
+                    .account-profile-forgot-password-link {
                         color: var(--text-primary);
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);
@@ -513,6 +484,11 @@ onBeforeUnmount(() => {
                     gap: 16px;
                     align-items: center;
 
+                    .account-profile-setting-copy {
+                        display: flex;
+                        flex-direction: column;
+                    }
+
                     .account-profile-setting-title {
                         margin: 0 0 4px;
                         font-size: var(--type-size-200);
@@ -524,12 +500,12 @@ onBeforeUnmount(() => {
                         width: 42px;
                         height: 24px;
 
-                        input {
+                        .account-profile-switch-input {
                             position: absolute;
                             opacity: 0;
                         }
 
-                        span {
+                        .account-profile-switch-track {
                             display: block;
                             width: 100%;
                             height: 100%;
@@ -538,7 +514,7 @@ onBeforeUnmount(() => {
                             position: relative;
                         }
 
-                        span::after {
+                        .account-profile-switch-track::after {
                             content: '';
                             width: 16px;
                             height: 16px;
@@ -550,7 +526,7 @@ onBeforeUnmount(() => {
                             transition: transform 0.2s;
                         }
 
-                        input:checked + span::after {
+                        .account-profile-switch-input:checked + .account-profile-switch-track::after {
                             transform: translateX(18px);
                         }
                     }
@@ -562,15 +538,12 @@ onBeforeUnmount(() => {
                         border-radius: 14px;
                         overflow: hidden;
 
-                        button {
-                            border: 0;
-                            background: var(--contrast-light);
+                        .account-profile-unit-button {
                             min-width: 112px;
                             height: 40px;
                             font-size: var(--type-size-100);
                             line-height: var(--type-line-100);
                             font-weight: var(--font-weight-bold);
-                            cursor: pointer;
 
                             &.active {
                                 background: var(--text-primary);

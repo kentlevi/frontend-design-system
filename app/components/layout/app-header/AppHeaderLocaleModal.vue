@@ -49,10 +49,13 @@ const { t } = useI18n();
 				</h3>
 
 				<div class="home-locale-list" data-testid="app-header-locale-list">
-					<button
+					<UiButton
 						v-for="option in props.localeOptions"
 						:key="option.code"
 						type="button"
+						variant="text"
+						tone="neutral"
+						size="sm"
 						class="home-locale-item"
 						:class="{ 'is-active': props.localeValue === option.code }"
 						:data-testid="`app-header-locale-option-${option.code}-button`"
@@ -60,7 +63,7 @@ const { t } = useI18n();
 					>
 						<UiFlag :code="option.flagCode" :size="20" />
 						<span class="home-locale-item-label">{{ option.label }}</span>
-					</button>
+					</UiButton>
 				</div>
 			</div>
 		</div>
@@ -118,18 +121,18 @@ const { t } = useI18n();
             .home-locale-item {
                 width: 100%;
                 height: 44px;
-                border: 0;
                 border-top: 1px solid var(--border-default);
-                background: var(--contrast-light);
                 display: flex;
                 align-items: center;
                 gap: 10px;
                 padding: 0 12px;
                 text-align: left;
-                cursor: pointer;
                 color: var(--text-primary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
+                justify-content: flex-start;
+                border-radius: 0;
+                box-shadow: none;
 
                 &:first-child {
                     border-top: 0;

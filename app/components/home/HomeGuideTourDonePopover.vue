@@ -22,15 +22,19 @@ const emit = defineEmits<{
 			aria-live="polite"
 			data-testid="home-guide-done-popover"
 		>
-			<button
+			<UiButton
 				type="button"
+				variant="text"
+				tone="neutral"
+				size="sm"
 				class="home-guide-done-popover-close"
+				icon-only
 				:aria-label="$t('home.tour.close')"
 				data-testid="home-guide-done-popover-close"
 				@click="emit('close')"
 			>
 				<UiIcon name="strong-times" :size="20" />
-			</button>
+			</UiButton>
 
 			<h3 class="home-guide-done-popover-title">
 				{{ $t('home.tour.step4.title') }}
@@ -69,42 +73,42 @@ const emit = defineEmits<{
     padding: 24px 26px 20px;
 }
 
-.home-guide-done-popover-close {
-    position: absolute;
-    top: 18px;
-    right: 16px;
-    border: 0;
-    background: transparent;
-    color: var(--text-primary);
-    cursor: pointer;
-}
+    .home-guide-done-popover-close {
+        position: absolute;
+        top: 18px;
+        right: 16px;
+        min-height: auto;
+        padding: 0;
+        color: var(--text-primary);
+        box-shadow: none;
+    }
 
-.home-guide-done-popover-title {
-    margin: 0;
-    color: var(--text-primary);
-    font-size: var(--type-size-200);
-    line-height: var(--type-line-200);
-    font-weight: var(--font-weight-bold);
-}
+    .home-guide-done-popover-title {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: var(--type-size-200);
+        line-height: var(--type-line-200);
+        font-weight: var(--font-weight-bold);
+    }
 
-.home-guide-done-popover-text {
-    margin: 8px 0 0;
-    color: var(--text-primary);
-    font-size: var(--type-size-100);
-    line-height: var(--type-line-100);
-}
+    .home-guide-done-popover-text {
+        margin: 8px 0 0;
+        color: var(--text-primary);
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+    }
 
-.home-guide-done-popover-actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-}
+    .home-guide-done-popover-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
 
-.home-guide-done-popover-done {
-    min-width: 110px;
-    border-radius: 16px;
-    box-shadow: none;
-}
+        .home-guide-done-popover-done {
+            min-width: 110px;
+            border-radius: 16px;
+            box-shadow: none;
+        }
+    }
 
 .home-guide-done-popover-enter-active,
 .home-guide-done-popover-leave-active {

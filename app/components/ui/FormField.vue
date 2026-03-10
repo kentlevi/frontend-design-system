@@ -14,6 +14,8 @@ const props = withDefaults(
 		headClass?: string;
 		labelClass?: string;
 		labelTextClass?: string;
+		errorClass?: string;
+		hintClass?: string;
 	}>(),
 	{
 		label: '',
@@ -29,6 +31,8 @@ const props = withDefaults(
 		headClass: '',
 		labelClass: '',
 		labelTextClass: '',
+		errorClass: '',
+		hintClass: '',
 	}
 );
 
@@ -59,7 +63,7 @@ const describedBy = computed(() => {
 				<span
 					v-if="error"
 					:id="resolvedErrorId"
-					class="ui-form-field-error"
+					:class="['ui-form-field-error', props.errorClass]"
 					:data-testid="resolvedErrorTestId"
 				>
 					{{ error }}
@@ -74,7 +78,7 @@ const describedBy = computed(() => {
 			:required="required"
 		/>
 		<slot name="hint" :hint-id="resolvedHintId">
-			<p v-if="hint" :id="resolvedHintId" class="ui-form-field-hint">
+			<p v-if="hint" :id="resolvedHintId" :class="['ui-form-field-hint', props.hintClass]">
 				{{ hint }}
 			</p>
 		</slot>

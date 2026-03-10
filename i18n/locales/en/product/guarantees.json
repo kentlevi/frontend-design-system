@@ -3,15 +3,15 @@
         "guarantees": {
             "madeToday": {
                 "title": "Made today, shipped tomorrow",
-                "text": "Fast production after proof approval with predictable delivery."
+                "text": "Once your design is approved, we’ll start production right away. Most orders arrive in 1–2 days."
             },
             "proofReview": {
                 "title": "Online Proof Review",
-                "text": "Approve your digital proof before we run the job."
+                "text": "Receive your proof right after payment. Make revisions anytime until you approve."
             },
             "durability": {
-                "title": "Outstanding durability",
-                "text": "Water-resistant, long-lasting finish for daily use."
+                "title": "Outstanding durability and water resistance",
+                "text": "Made from thick, premium material. Long-lasting color and adhesive strength."
             }
         }
     }

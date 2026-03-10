@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
@@ -148,6 +148,7 @@ async function handleSocial(provider: string) {
 		<div class="auth-login-social-buttons">
 			<UiButton
 				variant="outline" tone="neutral" size="md" class="auth-login-social"
+				label-class="auth-login-social-label-wrap"
 				data-testid="auth-login-social-facebook" @click="handleSocial('facebook')">
 				<span class="auth-login-social-content">
 					<UiSocialIcon name="facebook" :size="24" variant="colored" />
@@ -157,6 +158,7 @@ async function handleSocial(provider: string) {
 
 			<UiButton
 				variant="outline" tone="neutral" size="md" class="auth-login-social"
+				label-class="auth-login-social-label-wrap"
 				data-testid="auth-login-social-google" @click="handleSocial('google')">
 				<span class="auth-login-social-content">
 					<UiSocialIcon name="google" :size="24" variant="colored" />
@@ -212,7 +214,7 @@ async function handleSocial(provider: string) {
             align-items: center;
             justify-content: center;
 
-            :deep(.ui-button-label) {
+            .auth-login-social-label-wrap {
                 width: 100%;
                 height: 100%;
                 display: flex;

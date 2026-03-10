@@ -148,6 +148,7 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
 									variant="outline"
 									:tone="review.badgeTone ?? 'success'"
 									size="sm"
+									badge-class="home-reviews-badge"
 								>
 									{{ review.badge }}
 								</UiBadge>
@@ -306,7 +307,7 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
             }
         }
 
-        :deep(.badge) {
+        .home-reviews-badge {
             height: 24px;
             font-size: var(--body-small);
             line-height: var(--type-line-100);

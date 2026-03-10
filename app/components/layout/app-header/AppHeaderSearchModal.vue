@@ -93,9 +93,13 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 			>
 				<div class="home-search-head" data-testid="app-header-search-head">
 					<div class="home-search-input-group" data-testid="app-header-search-input-group">
-						<button
+						<UiButton
 							type="button"
+							variant="text"
+							tone="neutral"
+							size="sm"
 							class="home-search-head-action"
+							icon-only
 							:aria-label="t('layout.header.search')"
 							data-testid="app-header-search-focus-button"
 							@click="emit('focus-input')"
@@ -106,7 +110,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 								color="var(--abyss-base)"
 								class="home-search-head-icon"
 							/>
-						</button>
+						</UiButton>
 						<input
 							:ref="bindInputRef"
 							:value="props.searchQuery"
@@ -163,8 +167,11 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 								:class="{ 'is-active': props.activeSearchNavIndex === index }"
 								:data-testid="`app-header-search-recent-item-${index}`"
 							>
-								<button
+								<UiButton
 									type="button"
+									variant="text"
+									tone="neutral"
+									size="sm"
 									class="home-search-recent-term"
 									:data-search-nav-index="index"
 									:data-testid="`app-header-search-recent-apply-${index}-button`"
@@ -194,16 +201,20 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 											{{ entry.matchedItem.blurb }}
 										</p>
 									</div>
-								</button>
-								<button
+								</UiButton>
+								<UiButton
 									type="button"
+									variant="text"
+									tone="neutral"
+									size="sm"
 									class="home-search-recent-remove"
+									icon-only
 									:aria-label="t('layout.header.search.modal.recent.remove')"
 									:data-testid="`app-header-search-recent-remove-${index}-button`"
 									@click="emit('remove-recent', entry.key)"
 								>
 									<UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
-								</button>
+								</UiButton>
 							</li>
 						</ul>
 					</div>
@@ -268,10 +279,13 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 							:data-testid="`app-header-search-group-${group.key}`"
 						>
 							<h4 class="home-search-heading">{{ group.label }}</h4>
-							<button
+							<UiButton
 								v-for="item in group.items"
 								:key="item.id"
 								type="button"
+								variant="text"
+								tone="neutral"
+								size="sm"
 								class="home-search-result-item"
 								:class="{
 									'is-active':
@@ -301,7 +315,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 										>{{ part.text }}</span>
 									</p>
 								</div>
-							</button>
+							</UiButton>
 						</section>
 					</div>
 				</div>
@@ -393,16 +407,14 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
             }
 
             .home-search-head-action {
-                border: 0;
-                background: transparent;
                 width: 40px;
                 height: 40px;
                 padding: 0;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                cursor: pointer;
                 flex-shrink: 0;
+                box-shadow: none;
             }
 
             .home-search-input {
@@ -556,18 +568,18 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
             }
 
             .home-search-recent-term {
-                border: 0;
-                background: transparent;
                 text-align: left;
                 color: var(--text-primary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
-                cursor: pointer;
                 display: grid;
                 grid-template-columns: 52px 1fr;
                 align-items: center;
                 gap: 12px;
                 min-width: 0;
+                justify-content: flex-start;
+                min-height: auto;
+                box-shadow: none;
             }
 
             .home-search-recent-icon {
@@ -607,12 +619,13 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
             }
 
             .home-search-recent-remove {
-                border: 0;
                 width: 40px;
                 height: 40px;
                 display: grid;
                 place-items: center;
-                cursor: pointer;
+                min-height: auto;
+                padding: 0;
+                box-shadow: none;
             }
         }
 
@@ -695,9 +708,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
             }
 
             .home-search-result-item {
-                border: 0;
                 border-radius: 12px;
-                background: var(--gray-10);
                 width: 100%;
                 padding: 12px 16px;
                 display: grid;
@@ -705,8 +716,10 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
                 align-items: center;
                 gap: 14px;
                 text-align: left;
-                cursor: pointer;
                 transition: background-color 0.18s ease;
+                justify-content: flex-start;
+                min-height: auto;
+                box-shadow: none;
 
                 &:hover,
                 &.is-active {

@@ -97,6 +97,38 @@ function editedGrandTotal() {
 	return props.grandTotal - editingItem.total + editedItemTotal(editingItem);
 }
 
+function getInlineSizeOptions(item: (typeof props.cartItems)[number]) {
+	if (props.sizeOptionModels.length === 0) {
+		return [
+			{
+				label: sizeDimOnly(item.sizeLabel),
+				value: item.sizeKey,
+			},
+		];
+	}
+
+	return props.sizeOptionModels.map((size) => ({
+		label: sizeDimOnly(`${size.name} ${size.dim}`),
+		value: size.key,
+	}));
+}
+
+function getInlineQtyOptions(item: (typeof props.cartItems)[number]) {
+	if (props.quantityOptions.length === 0) {
+		return [
+			{
+				label: item.qty.toLocaleString(),
+				value: item.qty,
+			},
+		];
+	}
+
+	return props.quantityOptions.map((qty) => ({
+		label: qty.toLocaleString(),
+		value: qty,
+	}));
+}
+
 function destroyRedirectAnimation() {
 	if (!redirectLoaderAnimation) return;
 	redirectLoaderAnimation.destroy();
@@ -234,47 +266,25 @@ onBeforeUnmount(() => {
 												<div class="cart-preview-inline-edit" data-testid="product-category-cart-item-inline-edit">
 													<p class="cart-preview-meta" data-testid="product-category-cart-item-size">
 														{{ t('cart.cartPreview.size') }}:
-														<select
-															v-model="draftSizeKey"
+														<UiSelect
+															:model-value="draftSizeKey"
 															class="cart-inline-select"
+															trigger-class="cart-inline-select-trigger"
+															:options="getInlineSizeOptions(item)"
 															data-testid="product-category-cart-item-size-select"
-														>
-															<option
-																v-if="props.sizeOptionModels.length === 0"
-																:value="item.sizeKey"
-															>
-																{{ sizeDimOnly(item.sizeLabel) }}
-															</option>
-															<option
-																v-for="size in props.sizeOptionModels"
-																:key="size.key"
-																:value="size.key"
-															>
-																{{ sizeDimOnly(`${size.name} ${size.dim}`) }}
-															</option>
-														</select>
+															@update:model-value="draftSizeKey = String($event)"
+														/>
 													</p>
 													<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
 														{{ t('cart.cartPreview.quantity') }}:
-														<select
-															v-model.number="draftQty"
+														<UiSelect
+															:model-value="draftQty"
 															class="cart-inline-select"
+															trigger-class="cart-inline-select-trigger"
+															:options="getInlineQtyOptions(item)"
 															data-testid="product-category-cart-item-qty-select"
-														>
-															<option
-																v-if="props.quantityOptions.length === 0"
-																:value="item.qty"
-															>
-																{{ item.qty.toLocaleString() }}
-															</option>
-															<option
-																v-for="qty in props.quantityOptions"
-																:key="qty"
-																:value="qty"
-															>
-																{{ qty.toLocaleString() }}
-															</option>
-														</select>
+															@update:model-value="draftQty = Number($event)"
+														/>
 													</p>
 												</div>
 											</template>
@@ -296,48 +306,60 @@ onBeforeUnmount(() => {
 											class="cart-preview-item-actions"
 											data-testid="product-category-cart-item-actions"
 										>
-											<button
-												type="button"
+											<UiButton
+												variant="ghost"
+												tone="neutral"
+												size="sm"
 												class="cart-item-icon-btn"
+												icon-only
+												icon="strong-save"
+												:icon-size="24"
+												:sr-label="t('cart.cartPreview.aria.saveItemChanges')"
 												data-testid="product-category-cart-item-save-button"
-												:aria-label="t('cart.cartPreview.aria.saveItemChanges')"
 												@click="saveInlineEdit(item.id)"
-											>
-												<UiIcon name="strong-save" :size="24" color="#2a2f3d" />
-											</button>
-											<button
-												type="button"
+											/>
+											<UiButton
+												variant="ghost"
+												tone="neutral"
+												size="sm"
 												class="cart-item-icon-btn"
+												icon-only
+												icon="strong-times"
+												:icon-size="24"
+												:sr-label="t('cart.cartPreview.aria.cancelItemChanges')"
 												data-testid="product-category-cart-item-cancel-button"
-												:aria-label="t('cart.cartPreview.aria.cancelItemChanges')"
 												@click="cancelInlineEdit"
-											>
-												<UiIcon name="strong-times" :size="24" color="#2a2f3d" />
-											</button>
+											/>
 										</div>
 										<div
 											v-else
 											class="cart-preview-item-actions"
 											data-testid="product-category-cart-item-actions"
 										>
-											<button
-												type="button"
+											<UiButton
+												variant="ghost"
+												tone="neutral"
+												size="sm"
 												class="cart-item-icon-btn"
+												icon-only
+												icon="strong-edit"
+												:icon-size="24"
+												:sr-label="t('cart.cartPreview.aria.editItem')"
 												data-testid="product-category-cart-item-edit-button"
-												:aria-label="t('cart.cartPreview.aria.editItem')"
 												@click="openInlineEdit(item)"
-											>
-												<UiIcon name="strong-edit" :size="24" color="#2a2f3d" />
-											</button>
-											<button
-												type="button"
+											/>
+											<UiButton
+												variant="ghost"
+												tone="neutral"
+												size="sm"
 												class="cart-item-icon-btn"
+												icon-only
+												icon="strong-trash"
+												:icon-size="24"
+												:sr-label="t('cart.cartPreview.aria.removeItem')"
 												data-testid="product-category-cart-item-delete-button"
-												:aria-label="t('cart.cartPreview.aria.removeItem')"
 												@click="emit('remove-item', item.id)"
-											>
-												<UiIcon name="strong-trash" :size="24" color="#2a2f3d" />
-											</button>
+											/>
 										</div>
 									</div>
 								</article>
@@ -573,19 +595,20 @@ onBeforeUnmount(() => {
                 display: grid;
                 gap: 0;
                 max-width: 320px;
+
                 .cart-inline-select {
+                    min-width: 132px;
+                }
+
+                .cart-inline-select-trigger {
                     height: 24px;
                     padding-right: 8px;
                     padding-bottom: 1px;
                     border-radius: 8px;
-                    background: #fff;
-                    color: #2a2f3d;
+                    background: var(--contrast-light);
+                    color: var(--text-primary);
                     vertical-align: middle;
-
-                    option {
-                        color: #2a2f3d;
-                        background: #fff;
-                    }
+                    box-shadow: none;
                 }
             }
         }
@@ -621,11 +644,9 @@ onBeforeUnmount(() => {
             min-width: 32px;
             border-radius: 6px;
             padding: 0;
-            border: 0;
-            background: transparent;
-            display: inline-grid;
-            place-items: center;
-            cursor: pointer;
+            box-shadow: none;
+            --btn-soft: transparent;
+            --btn-border: transparent;
 
             &:hover {
                 background: var(--gray-20);

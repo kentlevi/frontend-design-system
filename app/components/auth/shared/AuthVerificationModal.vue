@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import lottie from 'lottie-web';
+import { onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useVerificationCodeInput } from '@/composables/auth/useVerificationCodeInput';
-import { authVerificationConfig, type AuthVerificationI18nBase } from '@/data/auth/verification';
+import { useVerificationCodeInput } from '~/composables/auth/useVerificationCodeInput';
+import { authVerificationConfig, type AuthVerificationI18nBase } from '~/data/auth/verification';
 
 const { t } = useI18n();
 
@@ -92,8 +91,6 @@ const canResend = computed(() => props.resendCooldownRemaining <= 0 && !isResend
 const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
 	props.align === 'start' ? 'top' : props.align
 );
-const verifyLoaderRef = ref<HTMLElement | null>(null);
-let verifyLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -119,42 +116,6 @@ function onResendClick() {
 	emit('resend');
 }
 
-function destroyVerifyLoaderAnimation() {
-	if (!verifyLoaderAnimation) return;
-	verifyLoaderAnimation.destroy();
-	verifyLoaderAnimation = null;
-}
-
-async function mountVerifyLoaderAnimation() {
-	if (typeof window === 'undefined' || !verifyLoaderRef.value) return;
-	destroyVerifyLoaderAnimation();
-	const response = await fetch('/animations/musticker-loader.json');
-	if (!response.ok) return;
-	const animationData = await response.json();
-	verifyLoaderAnimation = lottie.loadAnimation({
-		container: verifyLoaderRef.value,
-		renderer: 'svg',
-		loop: true,
-		autoplay: true,
-		animationData,
-		rendererSettings: {
-			preserveAspectRatio: 'xMidYMid meet',
-		},
-	});
-}
-
-watch(
-	() => props.verifying,
-	async (loading) => {
-		if (!loading) {
-			destroyVerifyLoaderAnimation();
-			return;
-		}
-		await nextTick();
-		await mountVerifyLoaderAnimation();
-	}
-);
-
 watch(
 	() => props.resendCooldownRemaining,
 	(remaining) => {
@@ -176,7 +137,6 @@ watch(
 );
 
 onBeforeUnmount(() => {
-	destroyVerifyLoaderAnimation();
 	clearResendTapLockTimer();
 });
 </script>
@@ -191,32 +151,30 @@ onBeforeUnmount(() => {
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<div class="auth-verification-modal">
-			<Transition name="auth-verification-loading-fade">
-				<div
-					v-if="verifying"
-					class="auth-verification-loading-overlay"
-					data-testid="auth-verification-loading-overlay"
-				>
-					<div
-						class="auth-verification-loading-loader"
-						role="status"
-						aria-live="polite"
-						:aria-label="computedSubmitLabel"
-					>
-						<div ref="verifyLoaderRef" class="auth-verification-loading-lottie" aria-hidden="true" />
-					</div>
-				</div>
-			</Transition>
+			<UiLoadingOverlay
+				:visible="verifying"
+				:label="computedSubmitLabel"
+				test-id="auth-verification-loading-overlay"
+				position="absolute"
+				background="rgba(246, 246, 248, 0.72)"
+				:z-index="5"
+				loader-width="74px"
+				loader-height="74px"
+			/>
 
-			<button
+			<UiButton
 				v-if="showCloseButton"
-				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="sm"
 				class="auth-verification-close"
 				:aria-label="t(`${key}.closeModal`)"
+				:sr-label="t(`${key}.closeModal`)"
+				icon-only
+				icon="regular-times"
+				:icon-size="24"
 				@click="closeModal"
-			>
-				<UiIcon name="regular-times" :size="24" color="#2a2f3d" />
-			</button>
+			/>
 
 			<div class="auth-verification-head">
 				<slot name="icon">
@@ -280,15 +238,18 @@ onBeforeUnmount(() => {
 
 				<p class="auth-verification-resend">
 					{{ t(`${key}.resendPrefix`) }}
-					<button
-						type="button"
+					<UiButton
+						variant="ghost"
+						tone="neutral"
+						size="sm"
 						class="auth-verification-resend-btn"
+						label-class="auth-verification-resend-btn-label"
 						:data-testid="`${testIdPrefix}-resend`"
 						:disabled="!canResend"
 						@click="onResendClick"
 					>
 						{{ t(`${key}.resendCta`) }}
-					</button>
+					</UiButton>
 					{{ t(`${key}.resendSuffix`) }}
 				</p>
 			</div>
@@ -303,46 +264,16 @@ onBeforeUnmount(() => {
     flex-direction: column;
     gap: 32px;
 
-    .auth-verification-loading-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(246, 246, 248, 0.72);
-        display: grid;
-        place-items: center;
-        z-index: 5;
-        border-radius: 22px;
-    }
-
-    .auth-verification-loading-loader {
-        width: 74px;
-        height: 74px;
-        display: grid;
-        place-items: center;
-    }
-
-    .auth-verification-loading-lottie {
-        width: 100%;
-        height: 100%;
-
-        :deep(svg) {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-    }
-
     .auth-verification-close {
         position: absolute;
         top: -16px;
         right: -16px;
-        border: 0;
-        background: transparent;
         width: 24px;
         height: 24px;
         padding: 0;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
+        min-height: auto;
+        border-radius: 0;
+        box-shadow: none;
     }
 
     .auth-verification-head {
@@ -455,33 +386,33 @@ onBeforeUnmount(() => {
             line-height: var(--type-line-100);
 
             .auth-verification-resend-btn {
-                border: 0;
-                background: transparent;
-                color: var(--text-primary);
-                text-decoration: underline;
-                font-size: inherit;
-                line-height: inherit;
-                font-weight: var(--font-weight-bold);
                 padding: 0;
+                min-height: auto;
+                height: auto;
+                border-radius: 0;
+                box-shadow: none;
+                color: var(--text-primary);
 
                 &:disabled {
                     color: var(--text-muted);
-                    cursor: not-allowed;
-                    text-decoration: none;
+                }
+
+                .auth-verification-resend-btn-label {
+                    padding: 0;
+                    text-decoration: underline;
+                    font-size: inherit;
+                    line-height: inherit;
+                    font-weight: var(--font-weight-bold);
+                }
+
+                &[disabled] {
+                    .auth-verification-resend-btn-label {
+                        text-decoration: none;
+                    }
                 }
             }
         }
 
     }
-}
-
-.auth-verification-loading-fade-enter-active,
-.auth-verification-loading-fade-leave-active {
-    transition: opacity 0.16s ease;
-}
-
-.auth-verification-loading-fade-enter-from,
-.auth-verification-loading-fade-leave-to {
-    opacity: 0;
 }
 </style>

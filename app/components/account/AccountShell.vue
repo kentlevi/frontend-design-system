@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 import {
 	getAccountInitials,
 	getProfileFieldValue,
@@ -120,7 +120,7 @@ const tabs = [
 					>
 					<template v-else>{{ initials }}</template>
 				</div>
-				<div>
+				<div class="account-shell-user-copy">
 					<p class="account-shell-name">{{ fullName }}</p>
 					<p class="account-shell-level">{{ t('account.shell.level') }}</p>
 					<p class="account-shell-email">{{ userEmail }}</p>
@@ -167,7 +167,7 @@ const tabs = [
 
 <style scoped lang="scss">
 .account-shell {
-    max-width: 1120px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 22px 24px 72px;
 
@@ -178,11 +178,16 @@ const tabs = [
         align-items: center;
     }
 
-    .account-shell-user {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
+	.account-shell-user {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+
+		.account-shell-user-copy {
+			display: flex;
+			flex-direction: column;
+		}
+	}
 
     .account-shell-avatar {
         width: 56px;
@@ -204,30 +209,30 @@ const tabs = [
         }
     }
 
-    .account-shell-name {
-        margin: 0;
-        font-size: var(--type-size-300);
-        line-height: var(--type-line-300);
-        font-weight: var(--font-weight-bold);
+	.account-shell-user-copy {
+		.account-shell-name {
+			margin: 0;
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			font-weight: var(--font-weight-bold);
+			color: var(--text-primary);
+		}
 
-        color: var(--text-primary);
-    }
+		.account-shell-level {
+			margin: 4px 0 0;
+			font-size: var(--type-size-100);
+			font-weight: var(--font-weight-regular);
+			line-height: var(--type-line-100);
+			color: var(--text-secondary);
+		}
 
-    .account-shell-level {
-        margin: 4px 0 0;
-        font-size: var(--type-size-100);
-        font-weight: var(--font-weight-regular);
-        line-height: var(--type-line-100);
-
-        color: var(--text-secondary);
-    }
-
-    .account-shell-email {
-        margin: 2px 0 0;
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
-        color: var(--text-muted);
-    }
+		.account-shell-email {
+			margin: 2px 0 0;
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			color: var(--text-muted);
+		}
+	}
 
     .account-shell-stats {
         display: flex;

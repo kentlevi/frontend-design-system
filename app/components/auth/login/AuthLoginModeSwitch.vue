@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoginMemberType } from '@/composables/auth/useLoginForm';
+import type { LoginMemberType } from '~/composables/auth/useLoginForm';
 
 const { t } = useI18n();
 
@@ -14,8 +14,10 @@ const emit = defineEmits<{
 
 <template>
 	<div class="auth-login-segment" data-testid="auth-login-mode-switch">
-		<button
-			type="button"
+		<UiButton
+			variant="ghost"
+			tone="neutral"
+			size="sm"
 			class="auth-login-segment-button"
 			:class="{ 'auth-login-segment-button-active': memberType === 'member' }"
 			:data-testid="
@@ -26,9 +28,11 @@ const emit = defineEmits<{
 			@click="emit('update:member-type', 'member')"
 		>
 			{{ t('auth.login.member') }}
-		</button>
-		<button
-			type="button"
+		</UiButton>
+		<UiButton
+			variant="ghost"
+			tone="neutral"
+			size="sm"
 			class="auth-login-segment-button"
 			:class="{
 				'auth-login-segment-button-active': memberType === 'non-member',
@@ -41,7 +45,7 @@ const emit = defineEmits<{
 			@click="emit('update:member-type', 'non-member')"
 		>
 			{{ t('auth.login.nonMember') }}
-		</button>
+		</UiButton>
 	</div>
 </template>
 
@@ -54,15 +58,13 @@ const emit = defineEmits<{
     overflow: hidden;
 
     .auth-login-segment-button {
-        padding-top: 8px;
-        padding-bottom: 8px;
-        border: 0;
-        background: transparent;
+        min-height: 38px;
+        border-radius: 0;
+        box-shadow: none;
         font-size: var(--type-size-100);
         font-weight: var(--font-weight-bold);
         line-height: var(--type-line-100);
         color: var(--text-primary);
-        cursor: pointer;
 
         &.auth-login-segment-button-active {
             background: var(--brand-primary);

@@ -43,13 +43,15 @@ const { items } = useAccountAddressBook();
 								>
 									{{ t('account.addressBook.default') }}
 								</span>
-								<button
-									type="button"
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="sm"
 									class="account-address-book-menu-button"
 									:data-testid="`account-address-book-item-menu-${index}-button`"
 								>
 									...
-								</button>
+								</UiButton>
 							</header>
 							<p v-if="item.phone" class="account-address-book-card-phone">
 								{{ item.phone }}
@@ -105,17 +107,18 @@ const { items } = useAccountAddressBook();
         grid-template-columns: 340px 1fr;
         gap: 126px;
     }
-    .account-address-book-info h2{
-        font-size: var(--type-size-300);
-        font-weight: var(--font-weight-semibold);
-        line-height: var(--type-line-300);
+    .account-address-book-info {
+        .account-address-book-subtitle {
+            font-size: var(--type-size-300);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-300);
+        }
 
-    }
-    .account-address-book-info p{
-        font-size: var(--type-size-100);
-        font-weight: var(--font-weight-regular);
-        line-height: var(--type-line-100);
-
+        .account-address-book-description {
+            font-size: var(--type-size-100);
+            font-weight: var(--font-weight-regular);
+            line-height: var(--type-line-100);
+        }
     }
 
 
@@ -124,11 +127,11 @@ const { items } = useAccountAddressBook();
         gap: 12px;
     }
 
-    .account-address-book-card {
-        border: 1px solid var(--border-default);
-        border-radius: 10px;
-        background: var(--contrast-light);
-        padding: 16px;
+        .account-address-book-card {
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            background: var(--contrast-light);
+            padding: 16px;
 
         .account-address-book-card-header {
             display: flex;
@@ -142,15 +145,10 @@ const { items } = useAccountAddressBook();
             line-height: var(--type-line-400);
         }
 
-        .account-address-book-menu-button {
-            margin-left: auto;
-            border: 0;
-            background: transparent;
-            font-size: var(--type-size-300);
-            line-height: var(--type-line-300);
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
+            .account-address-book-menu-button {
+                margin-left: auto;
+                color: var(--text-secondary);
+            }
 
         .account-address-book-card-phone {
             margin-top: 10px;

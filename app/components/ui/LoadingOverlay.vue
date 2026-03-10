@@ -48,6 +48,16 @@ function destroyLoaderAnimation() {
 	loaderAnimation = null;
 }
 
+function normalizeLoaderSvg() {
+	const loaderElement = defaultLoaderRef.value;
+	if (!loaderElement) return;
+	const svgElement = loaderElement.querySelector('svg');
+	if (!(svgElement instanceof SVGElement)) return;
+	svgElement.style.width = '100%';
+	svgElement.style.height = '100%';
+	svgElement.style.display = 'block';
+}
+
 async function mountLoaderAnimation() {
 	if (typeof window === 'undefined' || !defaultLoaderRef.value || hasCustomLoader.value) return;
 	destroyLoaderAnimation();
@@ -64,6 +74,7 @@ async function mountLoaderAnimation() {
 			preserveAspectRatio: 'xMidYMid meet',
 		},
 	});
+	loaderAnimation.addEventListener('DOMLoaded', normalizeLoaderSvg);
 }
 
 watch(() => props.visible, async (visible) => {
@@ -118,12 +129,6 @@ onBeforeUnmount(() => {
 	.ui-loading-overlay-content {
 		width: 100%;
 		height: 100%;
-
-		:deep(svg) {
-			width: 100%;
-			height: 100%;
-			display: block;
-		}
 	}
 
 	.ui-loading-overlay-lottie {

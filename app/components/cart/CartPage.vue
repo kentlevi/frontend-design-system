@@ -38,6 +38,8 @@ const {
 						<UiCheckbox
 							class="cart-check-row"
 							:model-value="allSelected"
+							box-class="cart-check-row-box"
+							icon-class="cart-check-row-icon"
 							@update:model-value="allSelected = $event"
 						>
 							{{ t('cart.cartPage.selectAll', { count: rows.length }) }}
@@ -47,6 +49,7 @@ const {
 							variant="outline"
 							tone="default"
 							size="md"
+							label-class="cart-remove-btn-label"
 							:disabled="selectedIds.length === 0"
 							@click="removeByIds(selectedIds)"
 						>
@@ -71,6 +74,8 @@ const {
 						<UiCheckbox
 							class="cart-check-row cart-check-row--item"
 							:model-value="selectedIds.includes(row.id)"
+							box-class="cart-check-row-box"
+							icon-class="cart-check-row-icon"
 							@update:model-value="toggleRowSelection(row.id, $event)"
 						/>
 
@@ -101,6 +106,7 @@ const {
 								:options="qtySelectOptions"
 								icon-family="regular"
 								:icon-size="24"
+								trigger-class="cart-qty-select-trigger"
 								@update:model-value="updateQty(row.id, Number($event))"
 							/>
 						</div>
@@ -230,7 +236,7 @@ const {
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);
 
-                        :deep(.ui-checkbox-box) {
+                        .cart-check-row-box {
                             width: 20px;
                             height: 20px;
                             border-radius: 5px;
@@ -238,15 +244,10 @@ const {
                             background: var(--contrast-light);
                         }
 
-                        :deep(.ui-checkbox-icon) {
+                        .cart-check-row-icon {
                             width: 16px;
                             height: 16px;
                             display: block;
-                        }
-
-                        :deep(.ui-checkbox-input:checked + .ui-checkbox-box) {
-                            background: var(--text-primary);
-                            border-color: var(--text-primary);
                         }
                     }
 
@@ -265,7 +266,7 @@ const {
                         transition: background-color 0.16s ease, border-color 0.16s ease,
                             opacity 0.16s ease;
 
-                        :deep(.ui-button-label) {
+                        .cart-remove-btn-label {
                             display: inline-flex;
                             align-items: center;
                             justify-content: center;
@@ -382,20 +383,16 @@ const {
 
                         .cart-qty-select-control {
                             width: 129px;
+                            min-width: 129px;
+                        }
 
-                            :deep(.ui-select) {
-                                min-width: 129px;
-                                width: 129px;
-                            }
-
-                            :deep(.ui-select-trigger) {
-                                height: 40px;
-                                border-radius: 8px;
-                                border: 1px solid var(--gray-40);
-                                background: var(--contrast-light);
-                                padding: 8px 16px;
-                                box-shadow: none;
-                            }
+                        .cart-qty-select-trigger {
+                            height: 40px;
+                            border-radius: 8px;
+                            border: 1px solid var(--gray-40);
+                            background: var(--contrast-light);
+                            padding: 8px 16px;
+                            box-shadow: none;
                         }
                     }
 

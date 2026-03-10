@@ -24,6 +24,10 @@ const emit = defineEmits<{
 				:error="emailError"
 				error-test-id="auth-login-non-member-email-error"
 				:required="true"
+				head-class="auth-login-field-head"
+				label-class="auth-login-field-label"
+				label-text-class="auth-login-field-label-text"
+				error-class="auth-login-field-error"
 			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -48,6 +52,10 @@ const emit = defineEmits<{
 				:error="orderError"
 				error-test-id="auth-login-non-member-order-number-error"
 				:required="true"
+				head-class="auth-login-field-head"
+				label-class="auth-login-field-label"
+				label-text-class="auth-login-field-label-text"
+				error-class="auth-login-field-error"
 			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -85,7 +93,7 @@ const emit = defineEmits<{
                 flex-direction: column;
                 gap: 8px;
 
-                :deep(.ui-form-field-label) {
+                .auth-login-field-label {
                     display: block;
                     margin: 0;
                     font-size: var(--type-size-100);
@@ -94,7 +102,7 @@ const emit = defineEmits<{
                     color: var(--text-primary);
                 }
 
-                :deep(.ui-form-field-error) {
+                .auth-login-field-error {
                     margin: 0;
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);

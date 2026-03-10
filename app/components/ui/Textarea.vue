@@ -11,6 +11,7 @@ const props = withDefaults(
 		maxLength?: number;
 		rows?: number;
 		resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+		fieldClass?: string;
 	}>(),
 	{
 		modelValue: '',
@@ -21,6 +22,7 @@ const props = withDefaults(
 		maxLength: undefined,
 		rows: 4,
 		resize: 'vertical',
+		fieldClass: '',
 	}
 );
 
@@ -41,7 +43,7 @@ function onInput(event: Event) {
 		:data-disabled="props.disabled || null"
 	>
 		<textarea
-			class="ui-textarea-field"
+			:class="['ui-textarea-field', props.fieldClass]"
 			:value="props.modelValue"
 			:placeholder="props.placeholder"
 			:readonly="props.readonly"

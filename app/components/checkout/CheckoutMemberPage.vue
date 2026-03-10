@@ -74,7 +74,9 @@ function itemMeta(sizeLabel: string, qty: number) {
 			<section class="checkout-member-section">
 				<div class="checkout-member-section-head">
 					<h1 class="checkout-member-section-title">{{ t('checkout.member.shippingDetails') }}</h1>
-					<button type="button" class="checkout-member-link">{{ t('checkout.member.viewShippingAddresses') }}</button>
+					<UiButton variant="text" tone="neutral" size="sm" class="checkout-member-link">
+						{{ t('checkout.member.viewShippingAddresses') }}
+					</UiButton>
 				</div>
 
 				<div class="checkout-member-shipping-group">
@@ -137,7 +139,9 @@ function itemMeta(sizeLabel: string, qty: number) {
 
 					<div class="checkout-member-inline-row">
 						<UiCheckbox v-model="dropShippingEnabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
-						<button type="button" class="checkout-member-link is-muted">{{ t('checkout.member.viewDropShippingAddresses') }}</button>
+						<UiButton variant="text" tone="neutral" size="sm" class="checkout-member-link is-muted">
+							{{ t('checkout.member.viewDropShippingAddresses') }}
+						</UiButton>
 					</div>
 				</div>
 			</section>
@@ -207,7 +211,9 @@ function itemMeta(sizeLabel: string, qty: number) {
 
 				<div class="checkout-member-inline-row">
 					<UiCheckbox v-model="useShippingAsBilling">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
-					<button type="button" class="checkout-member-link is-muted">{{ t('checkout.member.viewBillingAddresses') }}</button>
+					<UiButton variant="text" tone="neutral" size="sm" class="checkout-member-link is-muted">
+						{{ t('checkout.member.viewBillingAddresses') }}
+					</UiButton>
 				</div>
 			</section>
 		</template>
@@ -257,7 +263,9 @@ function itemMeta(sizeLabel: string, qty: number) {
 								</div>
 								<div class="checkout-member-perk-control">
 									<UiInput v-model="pointsToUse" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
-									<button type="button" class="checkout-member-inline-button" @click="useAllPoints">{{ t('checkout.member.useAll') }}</button>
+									<UiButton variant="outlined" tone="neutral" size="md" class="checkout-member-inline-button" @click="useAllPoints">
+										{{ t('checkout.member.useAll') }}
+									</UiButton>
 								</div>
 							</div>
 
@@ -267,7 +275,9 @@ function itemMeta(sizeLabel: string, qty: number) {
 								</div>
 								<div class="checkout-member-perk-control">
 									<UiInput v-model="couponCode" size="md" :placeholder="t('checkout.member.couponPlaceholder')" />
-									<button type="button" class="checkout-member-inline-button">{{ t('checkout.member.applyCoupon') }}</button>
+									<UiButton variant="outlined" tone="neutral" size="md" class="checkout-member-inline-button">
+										{{ t('checkout.member.applyCoupon') }}
+									</UiButton>
 								</div>
 							</div>
 						</div>
@@ -318,14 +328,13 @@ function itemMeta(sizeLabel: string, qty: number) {
 			}
 
 			.checkout-member-link {
-				border: 0;
-				background: transparent;
 				padding: 0;
+				min-height: auto;
 				color: var(--gold-60);
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
 				font-weight: var(--font-weight-semibold);
-				cursor: pointer;
+				box-shadow: none;
 
 				&.is-muted {
 					opacity: 32%;
@@ -639,14 +648,8 @@ function itemMeta(sizeLabel: string, qty: number) {
 
 				.checkout-member-inline-button {
 					min-width: 98px;
-					padding: 0 18px;
-					border: 1px solid var(--gray-80);
+					padding-inline: 18px;
 					border-radius: 16px;
-					background: transparent;
-					font-size: var(--type-size-100);
-					line-height: var(--type-line-100);
-					font-weight: var(--font-weight-semibold);
-					cursor: pointer;
 				}
 			}
 		}
