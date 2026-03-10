@@ -255,6 +255,7 @@ function isExactNavHeading(path: string) {
 
             height: 40px;
             min-width: 40px;
+			padding: 0;
             border-radius: 16px;
             display: grid;
             place-items: center;

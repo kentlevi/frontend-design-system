@@ -344,8 +344,13 @@ const guestLoginTarget = computed(() => {
     }
 
     .home-header-icon {
+        --btn-bg: transparent;
+        --btn-soft: rgba(255, 255, 255, 0.3);
+        --btn-border: transparent;
+
         height: 40px;
         min-width: 40px;
+		padding: 0;
         border: 0;
         border-radius: 16px;
         background: transparent;
@@ -362,6 +367,7 @@ const guestLoginTarget = computed(() => {
         .home-header-account {
         position: relative;
         z-index: 2;
+        --btn-soft: rgba(255, 255, 255, 0.3);
         background: transparent;
         transition: background-color 0.2s ease;
         display: inline-flex;
@@ -386,6 +392,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.is-open {
+            --btn-soft: var(--gold-10);
             background: var(--gold-10);
         }
 
@@ -394,6 +401,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.is-open-guest {
+            --btn-soft: var(--contrast-light);
             background: var(--contrast-light);
         }
 
