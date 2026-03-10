@@ -70,13 +70,25 @@ const computedSubmitLabel = computed(() =>
 		? props.busyLabel || t(`${key.value}.verifying`)
 		: props.submitLabel || t(`${key.value}.verify`)
 );
-const hasTriggeredResend = ref(false);
-const isResendLocked = ref(false);
-const canResend = computed(() => {
-	if (!hasTriggeredResend.value) return true;
-	if (isResendLocked.value) return false;
-	return props.resendCooldownRemaining <= 0;
-});
+const isResendTapLocked = ref(false);
+let resendTapLockTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearResendTapLockTimer() {
+	if (!resendTapLockTimer) return;
+	clearTimeout(resendTapLockTimer);
+	resendTapLockTimer = null;
+}
+
+function lockResendTap(ms = 2000) {
+	clearResendTapLockTimer();
+	isResendTapLocked.value = true;
+	resendTapLockTimer = setTimeout(() => {
+		isResendTapLocked.value = false;
+		resendTapLockTimer = null;
+	}, ms);
+}
+
+const canResend = computed(() => props.resendCooldownRemaining <= 0 && !isResendTapLocked.value);
 const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
 	props.align === 'start' ? 'top' : props.align
 );
@@ -103,8 +115,7 @@ function onPaste(event: ClipboardEvent) {
 
 function onResendClick() {
 	if (!canResend.value) return;
-	hasTriggeredResend.value = true;
-	isResendLocked.value = true;
+	lockResendTap();
 	emit('resend');
 }
 
@@ -147,13 +158,11 @@ watch(
 watch(
 	() => props.resendCooldownRemaining,
 	(remaining) => {
-		if (!hasTriggeredResend.value) return;
 		if (remaining > 0) {
-			isResendLocked.value = true;
-			return;
+			// Cooldown now governs the disabled state; release tap-lock quickly.
+			isResendTapLocked.value = false;
+			clearResendTapLockTimer();
 		}
-
-		isResendLocked.value = false;
 	}
 );
 
@@ -161,13 +170,14 @@ watch(
 	() => props.modelValue,
 	(isOpen) => {
 		if (!isOpen) return;
-		hasTriggeredResend.value = false;
-		isResendLocked.value = false;
+		isResendTapLocked.value = false;
+		clearResendTapLockTimer();
 	}
 );
 
 onBeforeUnmount(() => {
 	destroyVerifyLoaderAnimation();
+	clearResendTapLockTimer();
 });
 </script>
 

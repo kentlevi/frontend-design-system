@@ -51,7 +51,7 @@ watch(
 );
 
 function isStrongPassword(value: string) {
-	return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/.test(value);
+	return /^(?=.{6,}$)(?![a-z]+$)(?![A-Z]+$).+$/.test(value);
 }
 
 async function submitChangePassword() {
