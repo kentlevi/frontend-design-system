@@ -8,7 +8,7 @@ import {
 import {
 	getProfileFieldValue,
 	normalizeAccountName,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';

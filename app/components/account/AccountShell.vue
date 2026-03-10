@@ -4,7 +4,7 @@ import {
 	getAccountInitials,
 	getProfileFieldValue,
 	normalizeAccountName,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 
 const props = defineProps<{
 	activeTab:

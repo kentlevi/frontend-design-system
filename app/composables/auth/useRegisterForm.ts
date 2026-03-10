@@ -11,7 +11,7 @@ import type { UserIdentity, UserProfile } from '~/stores/user';
 import {
 	getProfileFieldValue,
 	normalizeAccountName,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { authVerificationConfig } from '~/data/auth/verification';
 
