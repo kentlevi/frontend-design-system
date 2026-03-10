@@ -171,14 +171,35 @@ function itemMeta(sizeLabel: string, qty: number) {
 				</div>
 
 				<div class="checkout-member-field-stack">
-					<UiFormField :label="t('checkout.member.fields.cardNumber.label')">
+					<UiFormField
+						:label="t('checkout.member.fields.cardNumber.label')"
+						:required="true"
+						:show-required-mark="true"
+						head-class="checkout-form-field-head"
+						label-class="checkout-form-field-label"
+						label-text-class="checkout-form-field-label-text"
+					>
 						<UiInput v-model="cardNumber" size="lg" :placeholder="t('checkout.member.fields.cardNumber.placeholder')" />
 					</UiFormField>
 					<div class="checkout-member-field-grid">
-						<UiFormField :label="t('checkout.member.fields.expiration.label')">
+						<UiFormField
+							:label="t('checkout.member.fields.expiration.label')"
+							:required="true"
+							:show-required-mark="true"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
 							<UiInput v-model="expiry" size="lg" :placeholder="t('checkout.member.fields.expiration.placeholder')" />
 						</UiFormField>
-						<UiFormField :label="t('checkout.member.fields.cvv.label')">
+						<UiFormField
+							:label="t('checkout.member.fields.cvv.label')"
+							:required="true"
+							:show-required-mark="true"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
 							<UiInput v-model="cvv" size="lg" :placeholder="t('checkout.member.fields.cvv.placeholder')" />
 						</UiFormField>
 					</div>
@@ -535,6 +556,17 @@ function itemMeta(sizeLabel: string, qty: number) {
 			.checkout-member-field-grid {
 				display: grid;
 				gap: 14px;
+
+				.checkout-form-field-head {
+					.checkout-form-field-label {
+						.checkout-form-field-label-text {
+							font-size: var(--type-size-100);
+							line-height: var(--type-line-100);
+							font-weight: var(--font-weight-semibold);
+							color: var(--text-primary);
+						}
+					}
+				}
 			}
 
 			.checkout-member-field-grid {

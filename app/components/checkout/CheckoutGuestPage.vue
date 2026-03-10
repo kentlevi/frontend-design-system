@@ -56,6 +56,7 @@ const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
 const fieldValidationByKey = computed(() =>
 	Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
 );
+const emailLabelText = computed(() => t('checkout.guest.fields.email.label'));
 
 const { completingCheckout, completeLoaderRef, completeCheckout } = useCheckoutCompletion({
 	redirectPath: withCountry('/checkout/confirmation'),
@@ -87,87 +88,159 @@ function itemMeta(sizeLabel: string, qty: number) {
 		<template #main>
 			<section class="checkout-section checkout-panel">
 				<div class="checkout-section-title">{{ t('checkout.guest.contactInformation') }}</div>
-				<div class="checkout-contact-head">
-					<span class="checkout-label">{{ t('checkout.guest.fields.email.label') }}</span>
-					<div class="checkout-login-link">
-						<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
-						<NuxtLink :to="withCountry('/auth/login')" class="checkout-login-link-action">{{ t('checkout.guest.login') }}</NuxtLink>
+				<div class="checkout-contact-group">
+					<div class="checkout-contact-head">
+						<div class="checkout-contact-label-wrap">
+							<span class="checkout-label">
+								{{ emailLabelText }}
+								<span class="checkout-label-required" aria-hidden="true">*</span>
+							</span>
+							<UiIcon name="regular-question-circle" size="20" color="var(--text-secondary)" decorative />
+						</div>
+						<div class="checkout-login-link">
+							<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
+							<NuxtLink :to="withCountry('/auth/login')" class="checkout-login-link-action">{{ t('checkout.guest.login') }}</NuxtLink>
+						</div>
 					</div>
+					<UiInput
+						v-model="email"
+						type="email"
+						size="lg"
+						class="checkout-input"
+						:maxlength="fieldValidationByKey.email?.maxLength"
+						:placeholder="t('checkout.guest.fields.email.placeholder')"
+					/>
 				</div>
-				<UiInput
-					v-model="email"
-					type="email"
-					size="lg"
-					class="checkout-input"
-					:maxlength="fieldValidationByKey.email?.maxLength"
-					:placeholder="t('checkout.guest.fields.email.placeholder')"
-				/>
 			</section>
 
 			<section class="checkout-section checkout-panel">
 				<div class="checkout-section-title">{{ t('checkout.guest.shippingInformation') }}</div>
-				<div class="checkout-grid checkout-grid-2">
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.fullName.label')">
-						<UiInput v-model="fullName" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.fullName?.maxLength" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
-					</UiFormField>
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.company.label')">
-						<UiInput v-model="company" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.company?.maxLength" :placeholder="t('checkout.guest.fields.company.placeholder')" />
-					</UiFormField>
-				</div>
-
-				<UiFormField class="checkout-field" :label="t('checkout.guest.fields.streetAddress.label')">
-					<UiInput v-model="address1" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
-					<UiInput v-model="address2" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
-				</UiFormField>
-
-				<div class="checkout-grid checkout-grid-2">
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.province.label')">
-						<UiSelect
-							:model-value="province"
-							:options="provinceOptions"
-							:placeholder="t('checkout.guest.fields.province.placeholder')"
-							class="checkout-select"
-							@update:model-value="province = String($event)"
-						/>
-					</UiFormField>
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.city.label')">
-						<UiInput v-model="city" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.city?.maxLength" :placeholder="t('checkout.guest.fields.city.placeholder')" />
-					</UiFormField>
-				</div>
-
-				<div class="checkout-grid checkout-grid-2">
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.postalCode.label')">
-						<UiInput v-model="postalCode" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.postalCode?.maxLength" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
-					</UiFormField>
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.phone.label')">
-						<UiInput v-model="phone" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.phone?.maxLength" :placeholder="t('checkout.guest.fields.phone.placeholder')" />
-					</UiFormField>
-				</div>
-
-				<div class="checkout-shipping-method-wrap">
-					<div class="checkout-shipping-method-head">
-						<div class="checkout-label">{{ t('checkout.guest.shippingMethod') }}</div>
-						<div class="checkout-shipping-note">{{ t('checkout.guest.shippingNote') }}</div>
-					</div>
+				<div class="checkout-section-content-group">
 					<div class="checkout-grid checkout-grid-2">
-						<button
-							v-for="method in activeShippingMethods"
-							:key="method.key"
-							type="button"
-							class="checkout-shipping-method-card"
-							:class="{ 'is-active': selectedShippingMethod === method.key }"
-							:aria-pressed="selectedShippingMethod === method.key"
-							@click="selectedShippingMethod = method.key"
+						<UiFormField
+							class="checkout-field"
+							:label="t('checkout.guest.fields.fullName.label')"
+							:required="true"
+							:show-required-mark="true"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
 						>
-							<img :src="method.icon" :alt="t(`${method.i18nKey}.alt`)" class="checkout-shipping-method-icon">
-							<div class="checkout-shipping-method-content">
-								<div class="checkout-shipping-method-main">
-									<div class="checkout-shipping-method-name">{{ t(`${method.i18nKey}.name`) }}</div>
-									<div class="checkout-shipping-method-date">{{ t(`${method.i18nKey}.date`) }}</div>
-								</div>
-								<div class="checkout-shipping-method-price">{{ t(`${method.i18nKey}.price`) }}</div>
+							<UiInput v-model="fullName" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.fullName?.maxLength" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
+						</UiFormField>
+						<UiFormField
+							class="checkout-field"
+							:label="t('checkout.guest.fields.company.label')"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
+							<UiInput v-model="company" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.company?.maxLength" :placeholder="t('checkout.guest.fields.company.placeholder')" />
+						</UiFormField>
+					</div>
+
+					<UiFormField
+						class="checkout-field"
+						:label="t('checkout.guest.fields.streetAddress.label')"
+						:required="true"
+						:show-required-mark="true"
+						head-class="checkout-form-field-head"
+						label-class="checkout-form-field-label"
+						label-text-class="checkout-form-field-label-text"
+					>
+						<UiInput v-model="address1" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
+						<UiInput v-model="address2" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
+					</UiFormField>
+
+					<div class="checkout-grid checkout-grid-2">
+						<UiFormField
+							class="checkout-field"
+							:label="t('checkout.guest.fields.province.label')"
+							:required="true"
+							:show-required-mark="true"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
+							<UiSelect
+								:model-value="province"
+								:options="provinceOptions"
+								:placeholder="t('checkout.guest.fields.province.placeholder')"
+								class="checkout-select"
+								@update:model-value="province = String($event)"
+							/>
+						</UiFormField>
+						<UiFormField
+							class="checkout-field"
+							:label="t('checkout.guest.fields.city.label')"
+							:required="true"
+							:show-required-mark="true"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
+							<UiInput v-model="city" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.city?.maxLength" :placeholder="t('checkout.guest.fields.city.placeholder')" />
+						</UiFormField>
+					</div>
+
+					<div class="checkout-grid checkout-grid-2">
+						<UiFormField
+							class="checkout-field"
+							:label="t('checkout.guest.fields.postalCode.label')"
+							:required="true"
+							:show-required-mark="true"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
+							<UiInput v-model="postalCode" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.postalCode?.maxLength" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
+						</UiFormField>
+						<UiFormField
+							class="checkout-field"
+							:label="t('checkout.guest.fields.phone.label')"
+							head-class="checkout-form-field-head"
+							label-class="checkout-form-field-label"
+							label-text-class="checkout-form-field-label-text"
+						>
+							<div class="checkout-phone-field">
+								<div class="checkout-phone-prefix">+82</div>
+								<UiInput
+									v-model="phone"
+									type="text"
+									size="lg"
+									class="checkout-input checkout-phone-input"
+									:maxlength="fieldValidationByKey.phone?.maxLength"
+									:placeholder="t('checkout.guest.fields.phone.placeholder')"
+								/>
 							</div>
-						</button>
+						</UiFormField>
+					</div>
+
+					<div class="checkout-shipping-method-wrap">
+						<div class="checkout-shipping-method-head">
+							<div class="checkout-label">{{ t('checkout.guest.shippingMethod') }}</div>
+							<div class="checkout-shipping-note">{{ t('checkout.guest.shippingNote') }}</div>
+						</div>
+						<div class="checkout-grid checkout-grid-2">
+							<button
+								v-for="method in activeShippingMethods"
+								:key="method.key"
+								type="button"
+								class="checkout-shipping-method-card"
+								:class="{ 'is-active': selectedShippingMethod === method.key }"
+								:aria-pressed="selectedShippingMethod === method.key"
+								@click="selectedShippingMethod = method.key"
+							>
+								<img :src="method.icon" :alt="t(`${method.i18nKey}.alt`)" class="checkout-shipping-method-icon">
+								<div class="checkout-shipping-method-content">
+									<div class="checkout-shipping-method-main">
+										<div class="checkout-shipping-method-name">{{ t(`${method.i18nKey}.name`) }}</div>
+										<div class="checkout-shipping-method-date">{{ t(`${method.i18nKey}.date`) }}</div>
+									</div>
+									<div class="checkout-shipping-method-price">{{ t(`${method.i18nKey}.price`) }}</div>
+								</div>
+							</button>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -200,13 +273,37 @@ function itemMeta(sizeLabel: string, qty: number) {
 				</div>
 
 				<div class="checkout-grid checkout-grid-2">
-					<UiFormField class="checkout-field checkout-field-full" :label="t('checkout.guest.fields.cardNumber.label')">
+					<UiFormField
+						class="checkout-field checkout-field-full"
+						:label="t('checkout.guest.fields.cardNumber.label')"
+						:required="true"
+						:show-required-mark="true"
+						head-class="checkout-form-field-head"
+						label-class="checkout-form-field-label"
+						label-text-class="checkout-form-field-label-text"
+					>
 						<UiInput v-model="cardNumber" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.cardNumber?.maxLength" :placeholder="t('checkout.guest.fields.cardNumber.placeholder')" />
 					</UiFormField>
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.expiration.label')">
+					<UiFormField
+						class="checkout-field"
+						:label="t('checkout.guest.fields.expiration.label')"
+						:required="true"
+						:show-required-mark="true"
+						head-class="checkout-form-field-head"
+						label-class="checkout-form-field-label"
+						label-text-class="checkout-form-field-label-text"
+					>
 						<UiInput v-model="expiry" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.expiration?.maxLength" :placeholder="t('checkout.guest.fields.expiration.placeholder')" />
 					</UiFormField>
-					<UiFormField class="checkout-field" :label="t('checkout.guest.fields.cvv.label')">
+					<UiFormField
+						class="checkout-field"
+						:label="t('checkout.guest.fields.cvv.label')"
+						:required="true"
+						:show-required-mark="true"
+						head-class="checkout-form-field-head"
+						label-class="checkout-form-field-label"
+						label-text-class="checkout-form-field-label-text"
+					>
 						<UiInput v-model="cvv" type="text" size="lg" class="checkout-input" :maxlength="fieldValidationByKey.cvv?.maxLength" :placeholder="t('checkout.guest.fields.cvv.placeholder')" />
 					</UiFormField>
 				</div>
@@ -271,18 +368,24 @@ function itemMeta(sizeLabel: string, qty: number) {
 	.checkout-form-column {
 		display: flex;
 		flex-direction: column;
-		gap: 28px;
+		gap: 24px;
 		max-width: 690px;
 	}
 
 	.checkout-section {
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		gap: 12px;
 	}
 
 	.checkout-panel {
 		padding: 0;
+	}
+
+	.checkout-section-content-group {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	.checkout-section-title {
@@ -293,12 +396,27 @@ function itemMeta(sizeLabel: string, qty: number) {
 		color: var(--text-primary);
 	}
 
-	.checkout-contact-head,
-	.checkout-shipping-method-head {
+	.checkout-contact-group {
 		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		.checkout-contact-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+	}
+
+	.checkout-contact-label-wrap {
+		display: inline-flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
+		gap: 8px;
+	}
+
+	.checkout-label-required {
+		color: var(--error);
 	}
 
 	.checkout-login-link {
@@ -320,7 +438,7 @@ function itemMeta(sizeLabel: string, qty: number) {
 
 	.checkout-grid {
 		display: grid;
-		gap: 10px 12px;
+		gap: 10px 16px;
 
 		&.checkout-grid-2 {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -330,13 +448,17 @@ function itemMeta(sizeLabel: string, qty: number) {
 	.checkout-field {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		gap: 8px;
 
-		:deep(.ui-form-field-label) {
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-			font-weight: var(--font-weight-semibold);
-			color: var(--text-primary);
+		.checkout-form-field-head {
+			.checkout-form-field-label {
+				.checkout-form-field-label-text {
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
+					font-weight: var(--font-weight-semibold);
+					color: var(--text-primary);
+				}
+			}
 		}
 	}
 
@@ -354,6 +476,50 @@ function itemMeta(sizeLabel: string, qty: number) {
 	.checkout-input {
 		width: 100%;
 		box-shadow: none;
+	}
+
+	.checkout-phone-field {
+		display: grid;
+		grid-template-columns: 104px minmax(0, 1fr);
+		border: 1px solid var(--gray-40);
+		border-radius: 16px;
+		overflow: hidden;
+		background: var(--contrast-light);
+
+		.checkout-phone-prefix {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--gray-20);
+			border-right: 1px solid var(--gray-40);
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-200);
+			font-weight: var(--font-weight-regular);
+			color: var(--text-primary);
+			padding: 0 16px;
+			min-height: 86px;
+		}
+
+		.checkout-phone-input {
+			width: 100%;
+
+			:deep(.ui-input) {
+				border: 0;
+				border-radius: 0;
+				box-shadow: none;
+				background: transparent;
+				min-height: 86px;
+				height: 100%;
+			}
+
+			:deep(.ui-input-field) {
+				font-size: var(--type-size-300);
+				line-height: var(--type-line-200);
+				height: 100%;
+				min-height: 86px;
+				padding-left: 38px;
+			}
+		}
 	}
 
 	.checkout-select {
@@ -425,6 +591,13 @@ function itemMeta(sizeLabel: string, qty: number) {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+
+		.checkout-shipping-method-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
 
 		.checkout-shipping-note {
 			text-align: right;

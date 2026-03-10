@@ -18,6 +18,7 @@ const {
 	photoUrl,
 	avatarDisplayUrl,
 	photoError,
+	savingProfile,
 	fileInput,
 	initials,
 	openFilePicker,
@@ -26,10 +27,52 @@ const {
 	saveProfile,
 	signOut,
 } = useAccountProfile();
+
+const profileToastVisible = ref(false);
+let profileToastTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearProfileToastTimer() {
+	if (!profileToastTimer) return;
+	clearTimeout(profileToastTimer);
+	profileToastTimer = null;
+}
+
+function showProfileSavedToast() {
+	clearProfileToastTimer();
+	profileToastVisible.value = true;
+	profileToastTimer = setTimeout(() => {
+		profileToastVisible.value = false;
+		profileToastTimer = null;
+	}, 2400);
+}
+
+async function onSaveProfile() {
+	const saved = await saveProfile();
+	if (!saved) return;
+	showProfileSavedToast();
+}
+
+onBeforeUnmount(() => {
+	clearProfileToastTimer();
+});
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
+		<UiLoadingOverlay
+			:visible="savingProfile"
+			:label="t('account.profile.saveChanges')"
+			test-id="account-profile-saving-overlay"
+			position="fixed"
+		/>
+		<UiToast
+			:visible="profileToastVisible"
+			message="aby buang"
+			tone="primary"
+			variant="outlined"
+			data-testid="account-profile-save-toast"
+			@close="profileToastVisible = false"
+		/>
 		<AccountShell active-tab="profile">
 			<div class="account-content account-profile" data-testid="account-profile-content">
 				<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
@@ -128,7 +171,7 @@ const {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="saveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="onSaveProfile">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
@@ -265,9 +308,11 @@ const {
 .account-page {
     background: var(--bg-page);
     min-height: calc(100vh - 176px);
+    position: relative;
 
     .account-content {
         padding-top: 18px;
+        min-height: 100%;
 
         .account-profile-title {
             margin: 0 0 26px;

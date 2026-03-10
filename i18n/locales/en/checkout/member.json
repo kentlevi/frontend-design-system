@@ -25,15 +25,15 @@
       "completeCheckout": "Complete Checkout",
       "fields": {
         "cardNumber": {
-          "label": "Card Number*",
+          "label": "Card Number",
           "placeholder": "Enter Card Number"
         },
         "expiration": {
-          "label": "Expiration*",
+          "label": "Expiration",
           "placeholder": "MM/YY"
         },
         "cvv": {
-          "label": "CVV*",
+          "label": "CVV",
           "placeholder": "CVV"
         }
       },
