@@ -29,7 +29,7 @@ export async function updatePersonalForm(
 	const api = useApi()
 	const { apiCountry } = useCountry()
 
-	return await api(`/${apiCountry.value}/profile-fields`, {
+	return await api(`/${apiCountry.value}/profile/fields`, {
 		method: 'PUT',
 		body: payload,
 	})

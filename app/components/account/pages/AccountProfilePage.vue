@@ -22,7 +22,6 @@ const {
 	openFilePicker,
 	onFilePicked,
 	removePhoto,
-	saveProfile,
 	signOut,
 } = useAccountProfile();
 
@@ -30,6 +29,7 @@ const {
 	field_definitions,
 	form_state,
 	loadPersonalForm,
+	submitPersonalForm
 } = usePersonalForm();
 
 onMounted(() => {
@@ -136,7 +136,7 @@ onMounted(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="saveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="submitPersonalForm">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
