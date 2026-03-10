@@ -50,22 +50,20 @@ const emit = defineEmits<{
 			<div class="checkout-summary-title-actions">
 				<UiButton
 					type="button"
-					variant="text"
+					variant="ghost"
 					tone="neutral"
 					size="sm"
 					class="checkout-summary-title-action"
-					icon-only
 					aria-label="Edit order summary"
 				>
 					<UiIcon name="regular-edit" size="24" color="var(--text-primary)" decorative />
 				</UiButton>
 				<UiButton
 					type="button"
-					variant="text"
+					variant="ghost"
 					tone="neutral"
 					size="sm"
 					class="checkout-summary-title-action"
-					icon-only
 					aria-label="Print order summary"
 				>
 					<UiIcon name="regular-print" size="24" color="var(--text-primary)" decorative />

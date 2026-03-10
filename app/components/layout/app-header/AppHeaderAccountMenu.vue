@@ -118,7 +118,7 @@ const guestLoginTarget = computed(() => {
 	>
 		<UiButton
 			type="button"
-			variant="text"
+			variant="ghost"
 			tone="neutral"
 			size="sm"
 			class="home-header-icon home-header-account"
@@ -126,7 +126,6 @@ const guestLoginTarget = computed(() => {
 				'is-open': accountOpen && isMockLoggedIn,
 				'is-open-guest': accountOpen && !isMockLoggedIn,
 			}"
-			icon-only
 			:aria-label="t('layout.header.account')"
 			aria-haspopup="menu"
 			:aria-expanded="accountOpen"

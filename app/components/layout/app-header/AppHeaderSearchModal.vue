@@ -95,11 +95,10 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 					<div class="home-search-input-group" data-testid="app-header-search-input-group">
 						<UiButton
 							type="button"
-							variant="text"
+							variant="ghost"
 							tone="neutral"
 							size="sm"
 							class="home-search-head-action"
-							icon-only
 							:aria-label="t('layout.header.search')"
 							data-testid="app-header-search-focus-button"
 							@click="emit('focus-input')"
@@ -169,7 +168,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 							>
 								<UiButton
 									type="button"
-									variant="text"
+									variant="ghost"
 									tone="neutral"
 									size="sm"
 									class="home-search-recent-term"
@@ -204,11 +203,10 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 								</UiButton>
 								<UiButton
 									type="button"
-									variant="text"
+									variant="ghost"
 									tone="neutral"
 									size="sm"
 									class="home-search-recent-remove"
-									icon-only
 									:aria-label="t('layout.header.search.modal.recent.remove')"
 									:data-testid="`app-header-search-recent-remove-${index}-button`"
 									@click="emit('remove-recent', entry.key)"
@@ -283,7 +281,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 								v-for="item in group.items"
 								:key="item.id"
 								type="button"
-								variant="text"
+								variant="ghost"
 								tone="neutral"
 								size="sm"
 								class="home-search-result-item"

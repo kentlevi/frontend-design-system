@@ -69,11 +69,10 @@ const greetingName = computed(() => {
 		>
 			<UiButton
 				type="button"
-				variant="text"
+				variant="ghost"
 				tone="neutral"
 				size="sm"
 				class="home-welcome-popover-close"
-				icon-only
 				aria-label="Close welcome popover"
 				data-testid="home-welcome-popover-close"
 				@click="emit('close')"
@@ -95,7 +94,7 @@ const greetingName = computed(() => {
 			<div class="home-welcome-popover-actions">
 				<UiButton
 					type="button"
-					variant="text"
+					variant="ghost"
 					tone="neutral"
 					size="sm"
 					class="home-welcome-popover-skip"

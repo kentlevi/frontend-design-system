@@ -110,11 +110,10 @@ onBeforeUnmount(() => {
 							<slot name="actions" />
 							<UiButton
 								type="button"
-								variant="text"
+								variant="ghost"
 								tone="neutral"
 								size="sm"
 								class="ui-modal-close"
-								icon-only
 								aria-label="Close modal"
 								@click="closeModal"
 							>

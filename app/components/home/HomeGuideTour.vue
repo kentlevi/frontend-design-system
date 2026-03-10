@@ -129,11 +129,10 @@ onMounted(() => {
 			>
 				<UiButton
 					type="button"
-					variant="text"
+					variant="ghost"
 					tone="neutral"
 					size="sm"
 					class="home-guide-tour-close"
-					icon-only
 					:aria-label="t('home.tour.close')"
 					data-testid="home-guide-tour-close"
 					@click="emit('close')"

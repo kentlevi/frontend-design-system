@@ -57,7 +57,7 @@ const unitPrice = computed(() =>
 				v-for="(product, index) in props.categoryProducts"
 				:key="product.id"
 				type="button"
-				variant="text"
+				variant="ghost"
 				tone="neutral"
 				size="sm"
 				class="product-picker-item"
@@ -108,7 +108,7 @@ const unitPrice = computed(() =>
 								v-for="feature in props.sizeFeatureCards"
 								:key="feature.key"
 								type="button"
-								variant="text"
+								variant="ghost"
 								tone="neutral"
 								size="sm"
 								class="mini-feature"
@@ -140,7 +140,7 @@ const unitPrice = computed(() =>
 									v-for="size in props.sizeOptionModels"
 									:key="size.key"
 									type="button"
-									variant="text"
+									variant="ghost"
 									tone="neutral"
 									size="sm"
 									class="option-pill"
@@ -153,7 +153,7 @@ const unitPrice = computed(() =>
 								</UiButton>
 								<UiButton
 									type="button"
-									variant="text"
+									variant="ghost"
 									tone="neutral"
 									size="sm"
 									class="option-pill option-pill-wide is-disabled"
@@ -172,7 +172,7 @@ const unitPrice = computed(() =>
 									v-for="qty in props.quantityOptions"
 									:key="qty"
 									type="button"
-									variant="text"
+									variant="ghost"
 									tone="neutral"
 									size="sm"
 									class="option-pill"
@@ -185,7 +185,7 @@ const unitPrice = computed(() =>
 								</UiButton>
 								<UiButton
 									type="button"
-									variant="text"
+									variant="ghost"
 									tone="neutral"
 									size="sm"
 									class="option-pill option-pill-wide is-disabled"

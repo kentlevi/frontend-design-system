@@ -24,11 +24,10 @@ const emit = defineEmits<{
 		>
 			<UiButton
 				type="button"
-				variant="text"
+				variant="ghost"
 				tone="neutral"
 				size="sm"
 				class="home-guide-done-popover-close"
-				icon-only
 				:aria-label="$t('home.tour.close')"
 				data-testid="home-guide-done-popover-close"
 				@click="emit('close')"

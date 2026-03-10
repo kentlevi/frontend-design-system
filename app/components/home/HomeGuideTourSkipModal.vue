@@ -78,7 +78,7 @@ const skipModalBodyParts = computed(() => {
 			<footer class="home-guide-tour-skip-modal-actions">
 				<UiButton
 					type="button"
-					variant="text"
+					variant="ghost"
 					tone="neutral"
 					size="sm"
 					class="home-guide-tour-skip-modal-continue"

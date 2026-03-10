@@ -98,11 +98,10 @@ function isExactNavHeading(path: string) {
 		<div class="home-header-tools" data-testid="app-header-tools">
 			<UiButton
 				type="button"
-				variant="text"
+				variant="ghost"
 				tone="neutral"
 				size="md"
 				class="home-header-icon home-header-locale"
-				icon-only
 				:aria-label="t('layout.header.locale.aria')"
 				data-testid="app-header-locale-button"
 				@click="emit('open-locale')"
@@ -151,11 +150,10 @@ function isExactNavHeading(path: string) {
 			<UiButton
 				v-if="props.isMockLoggedIn"
 				type="button"
-				variant="text"
+				variant="ghost"
 				tone="neutral"
 				size="md"
 				class="home-header-icon home-header-bell"
-				icon-only
 				data-testid="app-header-notification-button"
 			>
 				<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />

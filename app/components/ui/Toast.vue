@@ -47,11 +47,10 @@ const iconByTone = {
 			<UiButton
 				v-if="dismissible"
 				type="button"
-				variant="text"
+				variant="ghost"
 				tone="neutral"
 				size="sm"
 				class="ui-toast-close"
-				icon-only
 				aria-label="Close"
 				data-testid="ui-toast-close-button"
 				@click="emit('close')"

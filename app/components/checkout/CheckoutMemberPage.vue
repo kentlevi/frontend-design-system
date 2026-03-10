@@ -74,7 +74,7 @@ function itemMeta(sizeLabel: string, qty: number) {
 			<section class="checkout-member-section">
 				<div class="checkout-member-section-head">
 					<h1 class="checkout-member-section-title">{{ t('checkout.member.shippingDetails') }}</h1>
-					<UiButton variant="text" tone="neutral" size="sm" class="checkout-member-link">
+					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link">
 						{{ t('checkout.member.viewShippingAddresses') }}
 					</UiButton>
 				</div>
@@ -139,7 +139,7 @@ function itemMeta(sizeLabel: string, qty: number) {
 
 					<div class="checkout-member-inline-row">
 						<UiCheckbox v-model="dropShippingEnabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
-						<UiButton variant="text" tone="neutral" size="sm" class="checkout-member-link is-muted">
+						<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted">
 							{{ t('checkout.member.viewDropShippingAddresses') }}
 						</UiButton>
 					</div>
@@ -211,7 +211,7 @@ function itemMeta(sizeLabel: string, qty: number) {
 
 				<div class="checkout-member-inline-row">
 					<UiCheckbox v-model="useShippingAsBilling">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
-					<UiButton variant="text" tone="neutral" size="sm" class="checkout-member-link is-muted">
+					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted">
 						{{ t('checkout.member.viewBillingAddresses') }}
 					</UiButton>
 				</div>
