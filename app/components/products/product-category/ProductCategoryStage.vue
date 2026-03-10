@@ -53,13 +53,10 @@ const unitPrice = computed(() =>
 <template>
 	<section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
 		<section class="product-picker product-picker-layer" data-testid="product-category-picker">
-			<UiButton
+			<button
 				v-for="(product, index) in props.categoryProducts"
 				:key="product.id"
 				type="button"
-				variant="ghost"
-				tone="neutral"
-				size="sm"
 				class="product-picker-item"
 				:class="{ 'is-active': props.selectedId === product.id }"
 				:data-testid="`product-category-picker-item-${product.id}`"
@@ -80,7 +77,7 @@ const unitPrice = computed(() =>
 				<p class="product-picker-name">
 					{{ props.getProductName(product) }}
 				</p>
-			</UiButton>
+			</button>
 		</section>
 
 		<section v-show="props.hasPickedProduct" class="product-reveal product-reveal-layer" data-testid="product-category-reveal">
@@ -104,13 +101,10 @@ const unitPrice = computed(() =>
 						</div>
 
 						<div class="product-preview-features" data-testid="product-category-preview-features">
-							<UiButton
+							<button
 								v-for="feature in props.sizeFeatureCards"
 								:key="feature.key"
 								type="button"
-								variant="ghost"
-								tone="neutral"
-								size="sm"
 								class="mini-feature"
 								:class="{ 'is-active': props.selectedSize === feature.key }"
 								:data-testid="`product-category-feature-card-${feature.key}`"
@@ -125,7 +119,7 @@ const unitPrice = computed(() =>
 								<p class="mini-feature-description">
 									{{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
 								</p>
-							</UiButton>
+							</button>
 						</div>
 					</div>
 
@@ -136,13 +130,10 @@ const unitPrice = computed(() =>
 								<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 							</div>
 							<div class="option-grid option-grid-size" data-testid="product-category-size-options">
-								<UiButton
+								<button
 									v-for="size in props.sizeOptionModels"
 									:key="size.key"
 									type="button"
-									variant="ghost"
-									tone="neutral"
-									size="sm"
 									class="option-pill"
 									:class="{ 'is-active': props.selectedSize === size.key }"
 									:data-testid="`product-category-size-option-${size.key}`"
@@ -150,31 +141,25 @@ const unitPrice = computed(() =>
 								>
 									<span class="size-pill-name">{{ size.name }}</span>
 									<span class="size-pill-dim">{{ size.dim }}</span>
-								</UiButton>
-								<UiButton
+								</button>
+								<button
 									type="button"
-									variant="ghost"
-									tone="neutral"
-									size="sm"
 									class="option-pill option-pill-wide is-disabled"
 									disabled
 									data-testid="product-category-size-option-custom-button"
 								>
 									{{ t('product.options.customSize') }}
-								</UiButton>
+								</button>
 							</div>
 						</section>
 
 						<section>
 							<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
 							<div class="option-grid" data-testid="product-category-quantity-options">
-								<UiButton
+								<button
 									v-for="qty in props.quantityOptions"
 									:key="qty"
 									type="button"
-									variant="ghost"
-									tone="neutral"
-									size="sm"
 									class="option-pill"
 									:class="{ 'is-active': props.selectedQty === qty }"
 									:data-testid="`product-category-quantity-option-${qty}`"
@@ -182,18 +167,15 @@ const unitPrice = computed(() =>
 								>
 									<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
 									<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
-								</UiButton>
-								<UiButton
+								</button>
+								<button
 									type="button"
-									variant="ghost"
-									tone="neutral"
-									size="sm"
 									class="option-pill option-pill-wide is-disabled"
 									disabled
 									data-testid="product-category-quantity-option-custom-button"
 								>
 									{{ t('product.options.customQuantity') }}
-								</UiButton>
+								</button>
 							</div>
 						</section>
 
@@ -262,10 +244,13 @@ const unitPrice = computed(() =>
     }
 
     .product-picker-item {
+        border: 0;
         border-radius: 16px;
+        background: transparent;
         display: flex;
         flex-direction: column;
         align-items: center;
+        cursor: pointer;
         min-height: auto;
         box-shadow: none;
         transition: background-color 0.2s ease;
@@ -395,11 +380,14 @@ const unitPrice = computed(() =>
             max-height: 200px;
 
             .mini-feature {
+                border: 0;
                 border-radius: 0;
+                background: transparent;
                 padding: 20px 11.5px;
                 text-align: center;
                 position: relative;
                 width: 100%;
+                cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -503,6 +491,7 @@ const unitPrice = computed(() =>
             .option-pill {
                 border: 1px solid var(--border-default);
                 border-radius: 999px;
+                background: transparent;
                 min-height: 44px;
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
@@ -513,6 +502,7 @@ const unitPrice = computed(() =>
                 justify-content: center;
                 gap: 8px;
                 box-shadow: none;
+                cursor: pointer;
 
                 .qty-pill-price {
                     font-size: inherit;
@@ -527,6 +517,7 @@ const unitPrice = computed(() =>
                 }
 
                 &.is-disabled {
+                    cursor: not-allowed;
                     opacity: 0.55;
                 }
             }
