@@ -547,8 +547,7 @@ export function useRegisterForm() {
 	watch(isVerificationModalOpen, (open) => {
 		if (open) return;
 
-		clearResendCooldownTimer();
-		resendCooldownRemaining.value = 0;
+		// Keep resend cooldown running even if the modal is closed/re-opened.
 	});
 
 	onBeforeUnmount(() => {

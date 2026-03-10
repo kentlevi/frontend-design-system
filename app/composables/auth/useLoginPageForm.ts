@@ -598,8 +598,6 @@ export function useLoginPageForm() {
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
 		isGuestVerifying.value = false;
-		clearGuestResendCooldownTimer();
-		guestResendCooldownRemaining.value = 0;
 	});
 
 	function openForgotPasswordModal() {
