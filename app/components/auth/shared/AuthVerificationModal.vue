@@ -221,9 +221,6 @@ onBeforeUnmount(() => {
 						<strong class="auth-verification-email">{{ email }}</strong>
 						{{ t(`${key}.messageSuffix`) }}
 					</p>
-					<p v-if="orderNumber" class="auth-verification-order-number">
-						{{ t(`${key}.orderNumberLabel`) }}: {{ orderNumber }}
-					</p>
 				</div>
 			</div>
 
@@ -367,13 +364,6 @@ onBeforeUnmount(() => {
                     color: #c3a700;
                     font-weight: var(--font-weight-bold);
                 }
-            }
-
-            .auth-verification-order-number {
-                margin: 0;
-                color: var(--text-secondary);
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
             }
         }
     }
