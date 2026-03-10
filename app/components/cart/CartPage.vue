@@ -203,9 +203,9 @@ const {
                 gap: 8px;
                 color: var(--text-primary);
                 text-decoration: none;
-                font-size: var(--type-size-100);
-                font-weight: var(--font-weight-medium);
-                line-height: var(--type-line-100);
+                font-size: var(--type-size-200);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-200);
             }
         }
 
@@ -227,8 +227,8 @@ const {
                         align-items: center;
                         gap: 10px;
                         color: var(--text-primary);
-                        font-size: var(--type-size-300);
-                        line-height: var(--type-line-300);
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
 
                         :deep(.ui-checkbox-box) {
                             width: 20px;
@@ -318,11 +318,11 @@ const {
                     .cart-item {
                         display: flex;
                         align-items: center;
-                        gap: 14px;
+                        gap: 16px;
 
                         .cart-item-thumb {
-                            width: 86px;
-                            height: 86px;
+                            width: 96px;
+                            height: 96px;
                             border-radius: 10px;
                             background: var(--gray-20);
                             display: grid;
@@ -367,7 +367,7 @@ const {
                     .cart-qty-wrap {
                         display: flex;
                         align-items: center;
-                        gap: 10px;
+                        gap: 32px;
 
                         .cart-link-btn {
                             border: 0;
@@ -500,28 +500,33 @@ const {
                     gap: 8px;
 
                     .cart-payment-label {
-                        color: var(--abyss-base);
+                        margin: 0;
+                        color: var(--text-primary);
                         font-size: var(--type-size-100);
                         font-weight: var(--font-weight-regular);
                         line-height: var(--type-line-100);
                     }
 
                     .cart-payment-grid {
-                        display: grid;
-                        grid-template-columns: repeat(3, minmax(0, 1fr));
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
                         gap: 8px;
+                        flex-wrap: nowrap;
 
                         .cart-payment-chip {
-                            min-height: 36px;
+                            flex: 1 1 0;
+                            min-width: 0;
+                            height: 40px;
+                            width: 50px;
                             border: 1px solid var(--gray-40);
-                            border-radius: 10px;
+                            border-radius: 8px;
                             display: grid;
                             place-items: center;
                             background: var(--contrast-light);
+                            box-sizing: border-box;
 
                             .cart-payment-chip-icon {
-                                width: 40px;
-                                height: 24px;
                                 object-fit: contain;
                                 display: block;
                             }

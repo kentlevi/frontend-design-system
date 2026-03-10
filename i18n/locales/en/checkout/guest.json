@@ -8,7 +8,7 @@
             "shippingMethod": "Shipping Method",
             "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
             "payment": "Payment",
-            "paymentSubnote": "Pay securely with your preferred payment method.",
+            "paymentSubnote": "Pay with your credit card:",
             "useShippingAsBilling": "Use shipping address as billing address",
             "viewBillingAddresses": "View Billing Addresses",
             "orderSummary": "Order Summary",

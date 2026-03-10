@@ -4,8 +4,8 @@ import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
-const featureHighlightVideo = resolveFileUrl('/home/feature/home-feature-highlight-video.mp4');
-const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highlight-poster.png');
+const featureHighlightVideo = resolveFileUrl('/home/feature/home-feature-highlight-video-initial.mp4');
+const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highlight-poster-initial.png');
 </script>
 
 <template>

@@ -122,6 +122,8 @@ const estimatedArrival = computed(() => {
 	}
 
 	.checkout-confirmation-card {
+		display: grid;
+		gap: 24px;
 		position: relative;
 		z-index: 1;
 		max-width: 792px;
@@ -170,7 +172,6 @@ const estimatedArrival = computed(() => {
 		}
 
 		.checkout-confirmation-note {
-			margin: 24px 0 0;
 			color: var(--text-secondary);
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);
@@ -182,7 +183,6 @@ const estimatedArrival = computed(() => {
 		}
 
 		.checkout-confirmation-delivery {
-			margin-top: 24px;
 			padding: 14px 18px;
 			border: 1px solid var(--gray-50);
 			border-radius: 10px;
@@ -206,7 +206,6 @@ const estimatedArrival = computed(() => {
 		}
 
 		.checkout-confirmation-summary {
-			margin-top: 24px;
 			border: 1px solid var(--gray-50);
 			border-radius: 10px;
 			overflow: hidden;
@@ -286,7 +285,7 @@ const estimatedArrival = computed(() => {
 				}
 
 				.checkout-confirmation-totals {
-					padding-top: 18px;
+					padding: 24px 0;
 					display: grid;
 					gap: 4px;
 
@@ -308,7 +307,6 @@ const estimatedArrival = computed(() => {
 						}
 
 						&.is-final {
-							margin-top: 4px;
 							color: var(--text-primary);
 							font-weight: var(--font-weight-semibold);
 

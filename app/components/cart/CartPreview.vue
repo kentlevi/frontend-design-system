@@ -161,22 +161,16 @@ onBeforeUnmount(() => {
 	<Teleport to="body">
 		<Transition name="cart-preview-slide">
 			<div v-if="props.open" class="cart-preview-shell" data-testid="product-category-cart-overlay" @click.self="emit('close')">
-				<Transition name="cart-redirect-fade">
-					<div
-						v-if="redirectingToCart"
-						class="cart-redirect-overlay"
-						data-testid="product-category-cart-redirect-loading"
-					>
-						<div
-							class="cart-redirect-loader"
-							role="status"
-							aria-live="polite"
-							:aria-label="t('cart.cartPreview.redirectingToCart')"
-						>
-							<div ref="redirectLoaderRef" class="cart-redirect-lottie" aria-hidden="true" />
-						</div>
-					</div>
-				</Transition>
+				<UiLoadingOverlay
+					:visible="redirectingToCart"
+					:label="t('cart.cartPreview.redirectingToCart')"
+					test-id="product-category-cart-redirect-loading"
+					transition-name="cart-redirect-fade"
+					position="absolute"
+					:z-index="2"
+				>
+					<div ref="redirectLoaderRef" aria-hidden="true" />
+				</UiLoadingOverlay>
 				<aside class="cart-preview-panel" role="dialog" aria-modal="true" data-testid="product-category-cart-dialog">
 					<header class="cart-preview-header" data-testid="product-category-cart-header">
 						<h3 class="cart-preview-title" data-testid="product-category-cart-title">{{ t('cart.cartPreview.previewTitle', { count: props.cartItemCount }) }}</h3>
@@ -449,34 +443,6 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: stretch;
     justify-content: flex-end;
-
-    .cart-redirect-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(246, 246, 248, 0.72);
-        display: grid;
-        place-items: center;
-        z-index: 2;
-    }
-
-    .cart-redirect-loader {
-        width: 74px;
-        height: 74px;
-        position: relative;
-        display: grid;
-        place-items: center;
-    }
-
-    .cart-redirect-lottie {
-        width: 100%;
-        height: 100%;
-
-        :deep(svg) {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-    }
 
     .cart-preview-panel {
         width: min(540px, 100vw);
