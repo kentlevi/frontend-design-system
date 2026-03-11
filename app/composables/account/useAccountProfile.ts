@@ -10,7 +10,7 @@ import {
 	normalizeAccountName,
 	processAccountAvatarFile,
 	readFileAsDataUrl,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/useCountry';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
@@ -44,14 +44,14 @@ export function useAccountProfile() {
 
 	const rawFirstName =
 		storeFirstName.value ||
-        userStore.onboardingProfile?.firstName ||
-        mockUser.value?.firstName ||
-        accountProfileDefaults.firstName;
+		userStore.onboardingProfile?.firstName ||
+		mockUser.value?.firstName ||
+		accountProfileDefaults.firstName;
 	const rawLastName =
 		storeLastName.value ||
-        userStore.onboardingProfile?.lastName ||
-        mockUser.value?.lastName ||
-        accountProfileDefaults.lastName;
+		userStore.onboardingProfile?.lastName ||
+		mockUser.value?.lastName ||
+		accountProfileDefaults.lastName;
 	const normalizedName = normalizeAccountName(rawFirstName, rawLastName);
 
 	const firstName = ref(normalizedName.firstName || accountProfileDefaults.firstName);

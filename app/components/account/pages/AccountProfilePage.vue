@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { useCountry } from '~/composables/app/useCountry';
+import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
-	firstName,
-	lastName,
 	email,
 	currentPassword,
 	newPassword,
@@ -24,9 +23,19 @@ const {
 	openFilePicker,
 	onFilePicked,
 	removePhoto,
-	saveProfile,
 	signOut,
 } = useAccountProfile();
+
+const {
+	field_definitions,
+	form_state,
+	loadPersonalForm,
+	submitPersonalForm
+} = usePersonalForm();
+
+onMounted(() => {
+	loadPersonalForm()
+})
 
 const profileToastVisible = ref(false);
 let profileToastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -37,20 +46,20 @@ function clearProfileToastTimer() {
 	profileToastTimer = null;
 }
 
-function showProfileSavedToast() {
-	clearProfileToastTimer();
-	profileToastVisible.value = true;
-	profileToastTimer = setTimeout(() => {
-		profileToastVisible.value = false;
-		profileToastTimer = null;
-	}, 2400);
-}
+// function showProfileSavedToast() {
+// 	clearProfileToastTimer();
+// 	profileToastVisible.value = true;
+// 	profileToastTimer = setTimeout(() => {
+// 		profileToastVisible.value = false;
+// 		profileToastTimer = null;
+// 	}, 2400);
+// }
 
-async function onSaveProfile() {
-	const saved = await saveProfile();
-	if (!saved) return;
-	showProfileSavedToast();
-}
+// async function onSaveProfile() {
+// 	const saved = await saveProfile();
+// 	if (!saved) return;
+// 	showProfileSavedToast();
+// }
 
 onBeforeUnmount(() => {
 	clearProfileToastTimer();
@@ -133,31 +142,30 @@ onBeforeUnmount(() => {
 								</div>
 							</div>
 						</div>
+
 						<div class="account-profile-grid" data-testid="account-profile-form">
-							<UiFormField :label="t('account.profile.firstName')" :required="true">
-								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="firstName"
-										type="text"
-										:aria-describedby="describedBy || undefined"
-										data-testid="account-profile-first-name"
-									/>
-								</template>
-							</UiFormField>
-							<UiFormField
-								:label="`${t('account.profile.lastName')} (${t('account.profile.optional')})`"
-							>
-								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="lastName"
-										type="text"
-										:aria-describedby="describedBy || undefined"
-										data-testid="account-profile-last-name"
-									/>
-								</template>
-							</UiFormField>
+
+							<!-- START OF DYNAMIC PROFILE FIELDS -->
+							<div v-for="field in field_definitions" :key="field.id">
+								<UiFormField
+									:label="field.is_required
+										? t(`account.profile.${field.field_key}`)
+										: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
+									:required="field.is_required"
+								>
+									<template #default="{ inputId, describedBy }">
+										<UiInput
+											:id="inputId"
+											v-model="form_state.fields[field.field_key]"
+											type="text"
+											:aria-describedby="describedBy || undefined"
+											:data-testid="`account-profile-${field.field_key}`"
+										/>
+									</template>
+								</UiFormField>
+							</div>
+							<!-- END OF DYNAMIC PROFILE FIELDS -->
+
 							<UiFormField
 								class="account-profile-grid-full"
 								:label="t('account.profile.emailAddress')"
@@ -175,7 +183,7 @@ onBeforeUnmount(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="onSaveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="submitPersonalForm">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>

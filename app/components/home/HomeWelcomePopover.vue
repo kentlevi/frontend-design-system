@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import {
 	getProfileFieldValue,
 	normalizeAccountName,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 import { useUserStore } from '~/stores/user';
 
 const props = withDefaults(
