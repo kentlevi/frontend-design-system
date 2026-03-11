@@ -58,6 +58,8 @@ const emit = defineEmits<{
     overflow: hidden;
 
     .auth-login-segment-button {
+        --btn-soft: transparent;
+
         min-height: 38px;
         border-radius: 0;
         box-shadow: none;
@@ -66,7 +68,12 @@ const emit = defineEmits<{
         line-height: var(--type-line-100);
         color: var(--text-primary);
 
-        &.auth-login-segment-button-active {
+        &:hover:not(:disabled) {
+            --btn-soft: var(--gold-10);
+        }
+
+        &.auth-login-segment-button-active,
+        &.auth-login-segment-button-active:hover:not(:disabled) {
             background: var(--brand-primary);
         }
     }
