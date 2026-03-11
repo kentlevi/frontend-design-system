@@ -1,6 +1,17 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/useLoginForm';
 import { useRoute, useRouter } from 'vue-router';
+import {
+	isValidAuthEmail,
+	getAuthErrorMessage,
+	getAuthResponseMessage,
+	getAuthResponseCode
+} from '~/composables/auth/auth.helpers';
+
+import {
+	getProfileFieldValue,
+	normalizeAccountName,
+} from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
@@ -39,9 +50,11 @@ export function useLoginPageForm() {
 	const guestVerificationToken = ref('');
 	const guestVerificationCode = ref('');
 	const guestVerificationError = ref('');
+	const resendLimitReached = ref('');
 	const guestVerificationOtpRequired = ref(true);
 	const isGuestVerifying = ref(false);
 	const guestResendCooldownRemaining = ref(0);
+	const guestVerificationTokenExpiresAt = ref(0);
 	let guestResendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
 	function clearGuestResendCooldownTimer() {
@@ -63,6 +76,19 @@ export function useLoginPageForm() {
 			}
 			guestResendCooldownRemaining.value -= 1;
 		}, 1000);
+	}
+
+	function coercePositiveInt(value: unknown) {
+		if (typeof value === 'number') {
+			if (!Number.isFinite(value) || value <= 0) return null;
+			return Math.floor(value);
+		}
+		if (typeof value === 'string') {
+			const parsed = Number(value);
+			if (!Number.isFinite(parsed) || parsed <= 0) return null;
+			return Math.floor(parsed);
+		}
+		return null;
 	}
 
 	const memberEmail = ref('');
@@ -96,10 +122,6 @@ export function useLoginPageForm() {
 		return window.history.state?.back ?? null;
 	}
 
-	function isValidEmail(value: string) {
-		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-	}
-
 	function clearErrors() {
 		memberEmailError.value = '';
 		memberPasswordError.value = '';
@@ -107,6 +129,7 @@ export function useLoginPageForm() {
 		nonMemberEmailError.value = '';
 		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
+		resendLimitReached.value = '';
 	}
 
 	function setAuthCookies(authToken: string, isGuest: boolean, keepSigned = false) {
@@ -161,44 +184,21 @@ export function useLoginPageForm() {
 			};
 		} else {
 			const fields = user.profile?.user_field_values ?? [];
-			const firstName = getFieldValue(fields, 'first_name', 1);
-			const lastName = getFieldValue(fields, 'last_name', 2);
+			const firstName = getProfileFieldValue(fields, 'first_name');
+			const lastName = getProfileFieldValue(fields, 'last_name');
 			const existing = mockUserCookie.value;
 			const emailValue = user.email || memberEmail.value.trim();
-
-			const fallbackRows = [...fields]
-				.filter((field) => typeof field.value === 'string' && field.value.trim())
-				.sort((a, b) => getFieldId(a) - getFieldId(b))
-				.slice(0, 2);
-
-			let resolvedFirstName = firstName || fallbackRows[0]?.value?.trim() || existing?.firstName || '';
-			let resolvedLastName = lastName || fallbackRows[1]?.value?.trim() || existing?.lastName || '';
-
-			if (!resolvedLastName && resolvedFirstName.includes(' ')) {
-				const parts = resolvedFirstName.split(/\s+/).filter(Boolean);
-				if (parts.length >= 2) {
-					resolvedFirstName = parts.slice(0, -1).join(' ');
-					resolvedLastName = parts[parts.length - 1] || '';
-				}
-			}
+			const normalizedName = normalizeAccountName(
+				firstName || existing?.firstName || '',
+				lastName || existing?.lastName || ''
+			);
 
 			mockUserCookie.value = {
-				firstName: resolvedFirstName,
-				lastName: resolvedLastName,
+				firstName: normalizedName.firstName,
+				lastName: normalizedName.lastName,
 				email: emailValue,
 			};
 		}
-	}
-
-	function getFieldValue(fields: any[], key: string, id: number) {
-		return fields.find((field) =>
-			field.country_field?.field_key === key ||
-			(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === id
-		)?.value?.trim() || '';
-	}
-
-	function getFieldId(field: any) {
-		return field.country_field_id ?? field.country_field_ids ?? field.country_fields_id ?? Number.MAX_SAFE_INTEGER;
 	}
 
 	function clearVerificationCache() {
@@ -247,8 +247,7 @@ export function useLoginPageForm() {
 	}
 
 	function handleApiError(error: unknown, fallbackMessage: string) {
-		const errorPayload = error as { data?: { message?: string }; message?: string };
-		return errorPayload?.data?.message || errorPayload?.message || fallbackMessage;
+		return getAuthErrorMessage(error) || fallbackMessage;
 	}
 
 	// Watchers
@@ -260,7 +259,7 @@ export function useLoginPageForm() {
 
 		if (!memberEmail.value.trim()) {
 			memberEmailError.value = t('auth.login.validation.fieldBlank');
-		} else if (!isValidEmail(memberEmail.value.trim())) {
+		} else if (!isValidAuthEmail(memberEmail.value.trim())) {
 			memberEmailError.value = t('auth.login.validation.emailInvalid');
 		}
 
@@ -279,7 +278,7 @@ export function useLoginPageForm() {
 		if (!nonMemberEmail.value.trim()) {
 			nonMemberEmailError.value = t('auth.login.validation.fieldBlank');
 			nonMemberEmailHasError.value = true;
-		} else if (!isValidEmail(nonMemberEmail.value.trim())) {
+		} else if (!isValidAuthEmail(nonMemberEmail.value.trim())) {
 			nonMemberEmailError.value = t('auth.login.validation.emailInvalid');
 			nonMemberEmailHasError.value = true;
 		}
@@ -316,7 +315,7 @@ export function useLoginPageForm() {
 		nonMemberOrderError.value = '';
 	}
 
-// Interfaces
+	// Interfaces
 	interface LoginResponse {
 		success: boolean;
 		message: string;
@@ -432,6 +431,7 @@ export function useLoginPageForm() {
 		const orderNumber = nonMemberOrderNumber.value.trim();
 
 		guestVerificationError.value = '';
+		resendLimitReached.value = '';
 
 		const guestVerificationCache = useCookie<GuestVerificationCache | null>('guest_verification_cache', {
 			maxAge: CACHE_DURATION,
@@ -449,11 +449,14 @@ export function useLoginPageForm() {
 
 			if (credentialsMatch) {
 				const now = Date.now();
-				const cacheAge = (now - cache.cached_at) / 1000;
-				const isExpired = cache.expires_in ? cacheAge >= cache.expires_in : false;
+				const cachedAt = typeof cache.cached_at === 'number' ? cache.cached_at : Number(cache.cached_at);
+				const expiresIn = coercePositiveInt(cache.expires_in);
+				const cacheAge = Number.isFinite(cachedAt) ? (now - cachedAt) / 1000 : Number.POSITIVE_INFINITY;
+				const isExpired = !expiresIn || cacheAge >= expiresIn;
 
 				if (!isExpired) {
 					shouldUseCache = true;
+					guestVerificationTokenExpiresAt.value = cachedAt + expiresIn * 1000;
 					response = {
 						success: true,
 						message: 'Using cached verification',
@@ -464,6 +467,9 @@ export function useLoginPageForm() {
 							auth_token: cache.auth_token,
 						},
 					};
+				}
+				if (isExpired) {
+					clearVerificationCache();
 				}
 			} else {
 				clearVerificationCache();
@@ -481,16 +487,22 @@ export function useLoginPageForm() {
 					}
 				);
 
-				if (!response.success) {
+				const isSuccess = response?.success === true;
+				if (!isSuccess) {
+					const message = getAuthResponseMessage(response);
+					const code = getAuthResponseCode(response);
+					resendLimitReached.value = code === 'max_resend_reached' ? message : '';
 					nonMemberEmailError.value = '';
 					nonMemberEmailHasError.value = true;
 					nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
-					guestVerificationError.value = '';
+					guestVerificationError.value = message;
 					return;
 				}
 
 				// Cache the response
-				const expiresIn = response.data?.expires_in || DEFAULT_EXPIRES_IN;
+				const expiresIn =
+					coercePositiveInt(response.data?.expires_in) ?? DEFAULT_EXPIRES_IN;
+				guestVerificationTokenExpiresAt.value = Date.now() + expiresIn * 1000;
 				guestVerificationCache.value = {
 					email,
 					order_number: orderNumber,
@@ -512,6 +524,7 @@ export function useLoginPageForm() {
 		if (response?.data?.auth_token) {
 			setAuthCookies(response.data.auth_token, true);
 			clearVerificationCache();
+			resendLimitReached.value = '';
 			await fetchUserProfile(response.data.auth_token);
 			await navigateTo(withCountry('/account/orders'));
 			return response;
@@ -522,6 +535,8 @@ export function useLoginPageForm() {
 		guestVerificationToken.value = response?.data?.token || '';
 		guestVerificationOtpRequired.value = response?.data?.otp_required !== false;
 		guestVerificationCode.value = '';
+		guestVerificationTokenExpiresAt.value =
+			Date.now() + (coercePositiveInt(response?.data?.expires_in) ?? DEFAULT_EXPIRES_IN) * 1000;
 
 		if (!guestVerificationOtpRequired.value) {
 			await submitGuestVerification(true);
@@ -535,6 +550,17 @@ export function useLoginPageForm() {
 		const requiresOtp = guestVerificationOtpRequired.value && !forceBypass;
 		if (requiresOtp && !guestVerificationCode.value.trim()) {
 			guestVerificationError.value = t('auth.guestVerification.codeRequired');
+			return;
+		}
+
+		if (
+			guestVerificationOtpRequired.value &&
+			(!guestVerificationToken.value ||
+				(guestVerificationTokenExpiresAt.value > 0 && Date.now() >= guestVerificationTokenExpiresAt.value))
+		) {
+			// Token/code window expired; request a new token/code via the verification endpoint.
+			guestVerificationCode.value = '';
+			await resendGuestVerification();
 			return;
 		}
 
@@ -570,6 +596,7 @@ export function useLoginPageForm() {
 
 			clearVerificationCache();
 			isVerificationModalOpen.value = false;
+			resendLimitReached.value = '';
 
 			if (resolvedOrderNumber) {
 				guestVerificationOrderNumber.value = resolvedOrderNumber;
@@ -599,14 +626,54 @@ export function useLoginPageForm() {
 				}
 			);
 
-			if (response.success) {
-				guestVerificationToken.value = response.data?.token || '';
-				guestVerificationOtpRequired.value = response.data?.otp_required !== false;
-				startGuestResendCooldown();
-				if (!guestVerificationOtpRequired.value) {
-					await submitGuestVerification(true);
-				}
+			const message = getAuthResponseMessage(response);
+			const isSuccess = response?.success === true;
+			if (!isSuccess) {
+				const code = getAuthResponseCode(response);
+				resendLimitReached.value = code === 'max_resend_reached' ? message : '';
+				guestVerificationError.value = resendLimitReached.value
+					? ''
+					: message || guestVerificationError.value;
+				return response;
 			}
+
+			resendLimitReached.value = '';
+
+			if (response.data?.auth_token) {
+				setAuthCookies(response.data.auth_token, true);
+				clearVerificationCache();
+				await fetchUserProfile(response.data.auth_token);
+				await navigateTo(withCountry('/account/orders'));
+				return response;
+			}
+
+			const expiresIn =
+				coercePositiveInt(response.data?.expires_in) ?? DEFAULT_EXPIRES_IN;
+			guestVerificationToken.value = response.data?.token || '';
+			guestVerificationOtpRequired.value = response.data?.otp_required !== false;
+			guestVerificationTokenExpiresAt.value = Date.now() + expiresIn * 1000;
+
+			const guestVerificationCache = useCookie<GuestVerificationCache | null>('guest_verification_cache', {
+				maxAge: CACHE_DURATION,
+				sameSite: 'lax',
+				path: '/',
+			});
+			guestVerificationCache.value = {
+				email: guestVerificationEmail.value,
+				order_number: guestVerificationOrderNumber.value,
+				token: response.data?.token,
+				expires_in: expiresIn,
+				otp_required: response.data?.otp_required,
+				auth_token: response.data?.auth_token,
+				cached_at: Date.now(),
+			};
+
+			startGuestResendCooldown();
+			if (!guestVerificationOtpRequired.value) {
+				await submitGuestVerification(true);
+			}
+
+			return response;
 		} catch {
 			// Keep UX non-blocking for resend tap failures.
 		}
@@ -614,17 +681,11 @@ export function useLoginPageForm() {
 
 	// Modal and utility functions
 	watch(isVerificationModalOpen, (open) => {
-		if (open) {
-			if (guestResendCooldownRemaining.value <= 0) {
-				startGuestResendCooldown();
-			}
-			return;
-		}
+		if (open) return;
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
+		resendLimitReached.value = '';
 		isGuestVerifying.value = false;
-		clearGuestResendCooldownTimer();
-		guestResendCooldownRemaining.value = 0;
 	});
 
 	function openForgotPasswordModal() {
@@ -673,6 +734,7 @@ export function useLoginPageForm() {
 		guestVerificationToken,
 		guestVerificationCode,
 		guestVerificationError,
+		resendLimitReached,
 		isGuestVerifying,
 		guestResendCooldownRemaining,
 		nonMemberEmail,

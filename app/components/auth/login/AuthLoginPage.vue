@@ -25,6 +25,7 @@ const {
 	guestVerificationToken,
 	guestVerificationCode,
 	guestVerificationError,
+	resendLimitReached,
 	isGuestVerifying,
 	guestResendCooldownRemaining,
 	isForgotPasswordModalOpen,
@@ -143,6 +144,7 @@ const {
 			:token="guestVerificationToken"
 			:code="guestVerificationCode"
 			:error="guestVerificationError"
+			:resend-limit-reached="resendLimitReached"
 			:verifying="isGuestVerifying"
 			:resend-cooldown-remaining="guestResendCooldownRemaining"
 			@update:code="guestVerificationCode = $event"

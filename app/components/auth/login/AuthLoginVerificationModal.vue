@@ -12,6 +12,7 @@ defineProps<{
 	token: string;
 	code: string;
 	error?: string;
+	resendLimitReached?: string;
 	verifying?: boolean;
 	resendCooldownRemaining?: number;
 }>();
@@ -31,12 +32,16 @@ const emit = defineEmits<{
 		:order-number="orderNumber"
 		:code="code"
 		:error="error"
+		:resend-limit-reached="resendLimitReached"
 		:verifying="verifying"
 		:translation-base="authVerificationConfig.i18n.guest"
 		:submit-label="t('auth.guestVerification.verify')"
-		:busy-label="t('auth.guestVerification.verifying')"
+		:busy-label="t('auth.verification.verifying')"
 		:otp-length="authVerificationConfig.otpLength"
 		:resend-cooldown-remaining="resendCooldownRemaining || 0"
+		:show-close-button="true"
+		align="center"
+		modal-class="auth-login-verification-dialog"
 		test-id-prefix="auth-login-verification"
 		@update:model-value="emit('update:modelValue', $event)"
 		@update:code="emit('update:code', $event)"
@@ -44,7 +49,27 @@ const emit = defineEmits<{
 		@resend="emit('resend')"
 	>
 		<template #icon>
-			<UiIcon name="strong-shield" :size="46" color="var(--brand-primary)" />
+			<img
+				src="/illustrations/icon-verification.svg"
+				:alt="t('auth.verification.iconAlt')"
+				class="auth-login-verification-icon"
+			>
 		</template>
 	</AuthVerificationModal>
 </template>
+
+<style scoped lang="scss">
+.auth-login-verification-icon {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .auth-login-verification-icon {
+        width: 46px;
+        height: 46px;
+    }
+}
+</style>

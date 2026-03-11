@@ -127,15 +127,18 @@ onMounted(() => {
 				:style="panelInlineStyle"
 				data-testid="home-guide-tour-panel"
 			>
-				<button
+				<UiButton
 					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="sm"
 					class="home-guide-tour-close"
 					:aria-label="t('home.tour.close')"
 					data-testid="home-guide-tour-close"
 					@click="emit('close')"
 				>
 					<UiIcon name="strong-times" :size="18" />
-				</button>
+				</UiButton>
 
 				<div
 					v-if="hasHeaderImage"
@@ -211,75 +214,75 @@ onMounted(() => {
     transform: translateX(-50%);
 }
 
-.home-guide-tour-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    border: 0;
-    background: transparent;
-    color: var(--text-primary);
-    cursor: pointer;
-    z-index: 2;
-}
+	.home-guide-tour-close {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		min-height: auto;
+		padding: 0;
+		color: var(--text-primary);
+		box-shadow: none;
+		z-index: 2;
+	}
 
-.home-guide-tour-header {
-    min-height: 200px;
-    background-color: var(--contrast-light);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
+	.home-guide-tour-header {
+		min-height: 200px;
+		background-color: var(--contrast-light);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+	}
 
-.home-guide-tour-body {
-    padding: 32px;
-    background: var(--brand-primary);
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-}
+	.home-guide-tour-body {
+		padding: 32px;
+		background: var(--brand-primary);
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
 
-.home-guide-tour-title {
-    margin: 0;
-    font-size: var(--type-size-200);
-    line-height: var(--type-line-200);
-    font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
-    max-width: 100%;
-}
+		.home-guide-tour-copy {
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
 
-.home-guide-tour-text {
-    margin: 0;
-    font-size: var(--type-size-100);
-    line-height: var(--type-line-100);
-    color: var(--text-primary);
-}
+			.home-guide-tour-title {
+				margin: 0;
+				font-size: var(--type-size-200);
+				line-height: var(--type-line-200);
+				font-weight: var(--font-weight-bold);
+				color: var(--text-primary);
+				max-width: 100%;
+			}
 
-.home-guide-tour-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
+			.home-guide-tour-text {
+				margin: 0;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-primary);
+			}
+		}
 
-.home-guide-tour-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
+		.home-guide-tour-actions {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
 
-.home-guide-tour-step {
-    margin: 0;
-    font-size: var(--type-size-100);
-    line-height: var(--type-line-100);
-    font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
-}
+			.home-guide-tour-step {
+				margin: 0;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-bold);
+				color: var(--text-primary);
+			}
 
-.home-guide-tour-next {
-    padding: 8px 24px;
-    border-radius: 18px;
-    box-shadow: none;
-}
+			.home-guide-tour-next {
+				padding: 8px 24px;
+				border-radius: 18px;
+				box-shadow: none;
+			}
+		}
+	}
 
 .home-guide-tour-fade-enter-active,
 .home-guide-tour-fade-leave-active {
@@ -303,17 +306,19 @@ onMounted(() => {
         width: auto;
     }
 
-    .home-guide-tour-header {
-        min-height: 140px;
-    }
+	.home-guide-tour-header {
+		min-height: 140px;
+	}
 
-    .home-guide-tour-body {
-        padding: 24px 18px 18px;
-    }
+	.home-guide-tour-body {
+		padding: 24px 18px 18px;
 
-    .home-guide-tour-title {
-        font-size: var(--type-size-500);
-        line-height: var(--type-line-500);
-    }
+		.home-guide-tour-copy {
+			.home-guide-tour-title {
+				font-size: var(--type-size-500);
+				line-height: var(--type-line-500);
+			}
+		}
+	}
 }
 </style>

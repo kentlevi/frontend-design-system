@@ -2,27 +2,39 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { FlagCode } from '~/data/ui/flags';
 import {
 	type SupportedCountry,
+	resolveSupportedCountry,
 	isSupportedCountry,
 } from '~/constants/countries';
 import {
 	headerAccountLinkConfig,
 	headerLocaleOptionConfig,
 	headerNavLinkConfig,
-	fetchNavigationCategories,
 	formatCategoryAsNavLink,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/useCountry';
+import { useNavigationStore } from '~/stores/navigation';
 import { useUserStore } from '~/stores/user';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+const NAV_LABEL_KEY_BY_CATEGORY: Partial<Record<string, string>> = {
+	stickers: 'layout.header.nav.stickers',
+	'roll-stickers': 'layout.header.nav.rollStickers',
+	'sheet-stickers': 'layout.header.nav.sheetStickers',
+};
 
 export function useAppHeaderAccount() {
 	const { t, locale, setLocale } = useI18n();
 	const route = useRoute();
-	const { withCountry, apiCountry } = useCountry();
+	const { withCountry, apiCountry, country } = useCountry();
 	const api = useApi();
+	const navigationStore = useNavigationStore();
 	const userStore = useUserStore();
+	const preferredLocale = useCookie<SupportedCountry | null>('preferred_locale', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
 	const authToken = useCookie<string | null>('auth_token');
 	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 		default: () => null,
@@ -44,32 +56,35 @@ export function useAppHeaderAccount() {
 	const accountMenuRef = ref<HTMLElement | null>(null);
 	const localAvatarDataUrl = ref<string | null>(null);
 	const localeModalOpen = ref(false);
-	const navigationCategories = ref<
-		Array<{
-			id?: number | string;
-			name?: string;
-			url_slug?: string;
-			sort?: number;
-		}>
-	>([]);
-	const navigationLoaded = ref(false);
 
 	const navLinks = computed(() => {
-		if (navigationLoaded.value && navigationCategories.value.length > 0) {
-			return navigationCategories.value
+		const categories = navigationStore.sortedCategories;
+		if (categories.length > 0) {
+			return categories
 				.map(formatCategoryAsNavLink)
 				.filter((item): item is NonNullable<typeof item> => Boolean(item))
 				.map((item) => ({
 					...item,
+					label: NAV_LABEL_KEY_BY_CATEGORY[item.key]
+						? t(NAV_LABEL_KEY_BY_CATEGORY[item.key] as string)
+						: item.label,
 					to: withCountry(item.to),
 				}));
 		}
-		return [];
+
+		return headerNavLinkConfig.map((item) => ({
+			key: item.key,
+			label: t(item.labelKey),
+			to: withCountry(item.to),
+		}));
 	});
 
-	const selectedLocale = computed<FlagCode>(() =>
-		locale.value === 'kr' ? 'kr' : 'us'
-	);
+	const selectedLocale = computed<FlagCode>(() => {
+		const routeLocale = resolveSupportedCountry(country.value);
+		const preferred = resolveSupportedCountry(preferredLocale.value || '');
+		const activeLocale = resolveSupportedCountry(String(locale.value));
+		return routeLocale || preferred || activeLocale || 'us';
+	});
 	const localeOptions = computed(() =>
 		headerLocaleOptionConfig.map((option) => ({
 			code: option.code,
@@ -209,9 +224,28 @@ export function useAppHeaderAccount() {
 		localeModalOpen.value = false;
 	}
 
-	function selectLocale(code: SupportedCountry) {
-		setLocale(code);
+	async function selectLocale(code: SupportedCountry) {
+		preferredLocale.value = code;
+		await setLocale(code);
 		closeLocaleModal();
+
+		const currentPath = route.path || '/';
+		const normalizedPath = currentPath.startsWith('/') ? currentPath : `/${currentPath}`;
+		const segments = normalizedPath.split('/').filter(Boolean);
+		const nextPath = segments.length
+			? `/${[code, ...segments.slice(1)].join('/')}`
+			: `/${code}`;
+
+		if (nextPath !== normalizedPath) {
+			await navigateTo(
+				{
+					path: nextPath,
+					query: route.query,
+					hash: route.hash,
+				},
+				{ replace: true }
+			);
+		}
 	}
 
 	async function logoutMock() {
@@ -256,26 +290,12 @@ export function useAppHeaderAccount() {
 		syncLocalAvatarFromStorage();
 	}
 
-	async function fetchNavigationCategoriesData() {
-		const categories = await fetchNavigationCategories(api, apiCountry.value);
-		navigationCategories.value = categories;
-		navigationLoaded.value = true;
-	}
-
 	watch(
 		() => route.fullPath,
 		() => {
 			closeAccountMenu();
 			closeLocaleModal();
 		}
-	);
-
-	watch(
-		() => apiCountry.value,
-		() => {
-			void fetchNavigationCategoriesData();
-		},
-		{ immediate: true }
 	);
 
 	onMounted(() => {

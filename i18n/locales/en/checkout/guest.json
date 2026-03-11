@@ -8,7 +8,7 @@
             "shippingMethod": "Shipping Method",
             "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
             "payment": "Payment",
-            "paymentSubnote": "Pay securely with your preferred payment method.",
+            "paymentSubnote": "Pay with your credit card:",
             "useShippingAsBilling": "Use shipping address as billing address",
             "viewBillingAddresses": "View Billing Addresses",
             "orderSummary": "Order Summary",
@@ -16,11 +16,11 @@
             "completeCheckout": "Complete Checkout",
             "fields": {
                 "email": {
-                    "label": "Email Address*",
+                    "label": "Email Address",
                     "placeholder": "Enter Email Address"
                 },
                 "fullName": {
-                    "label": "Full Name*",
+                    "label": "Full Name",
                     "placeholder": "Enter Full Name"
                 },
                 "company": {
@@ -28,20 +28,20 @@
                     "placeholder": "Enter Company Name"
                 },
                 "streetAddress": {
-                    "label": "Street Address*",
+                    "label": "Street Address",
                     "line1Placeholder": "Enter Address Line 1",
                     "line2Placeholder": "Enter Address Line 2"
                 },
                 "province": {
-                    "label": "Province/State*",
+                    "label": "Province/State",
                     "placeholder": "Select Province/State"
                 },
                 "city": {
-                    "label": "City/Town*",
+                    "label": "City/Town",
                     "placeholder": "Enter City/Town"
                 },
                 "postalCode": {
-                    "label": "Postal Code*",
+                    "label": "Postal Code",
                     "placeholder": "Enter Postal Code"
                 },
                 "phone": {
@@ -49,15 +49,15 @@
                     "placeholder": "(000) 000-0000"
                 },
                 "cardNumber": {
-                    "label": "Card Number*",
+                    "label": "Card Number",
                     "placeholder": "Enter Card Number"
                 },
                 "expiration": {
-                    "label": "Expiration*",
+                    "label": "Expiration",
                     "placeholder": "MM/YY"
                 },
                 "cvv": {
-                    "label": "CVV*",
+                    "label": "CVV",
                     "placeholder": "CVV"
                 }
             },

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { navigateTo } from '#imports';
+import { redirectToLocaleRoot } from '~/composables/app/usePageRedirect';
 
-const { locale } = useI18n();
-
-await navigateTo(`/${locale.value}`);
+await redirectToLocaleRoot();
 </script>

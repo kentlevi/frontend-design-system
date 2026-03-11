@@ -1,8 +1,18 @@
 import { nextTick, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import {
+	getAuthErrorMessage,
+	getAuthResponseCode,
+	getAuthResponseMessage,
+	isValidAuthEmail,
+} from '~/composables/auth/auth.helpers';
 import { useUserStore } from '~/stores/user';
 import { useCountry } from '~/composables/app/useCountry';
-import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import type { UserIdentity, UserProfile } from '~/stores/user';
+import {
+	getProfileFieldValue,
+	normalizeAccountName,
+} from '~/utils/account/accountProfile';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { authVerificationConfig } from '~/data/auth/verification';
 
@@ -32,9 +42,15 @@ export function useRegisterForm() {
 	const verificationToken = ref('');
 	const verificationCode = ref('');
 	const verificationError = ref('');
+	const resendLimitReached = ref('');
 	const verificationOtpRequired = ref(true);
 	const isVerifying = ref(false);
 	const resendCooldownRemaining = ref(0);
+	const verificationExpiry = useCookie('verificaiton_expiry', {
+		maxAge: 60 * 10,
+		sameSite: 'lax',
+		path: '/'
+	});
 	let resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 	const registerRequestCooldownRemaining = ref(0);
 	let registerRequestCooldownTimer: ReturnType<typeof setInterval> | null = null;
@@ -108,10 +124,6 @@ export function useRegisterForm() {
 		}, 1000);
 	}
 
-	function isValidEmail(value: string) {
-		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-	}
-
 	function isValidRegisterPassword(value: string) {
 		if (value.length < 6) return false;
 		return /[A-Z]|\d|[^A-Za-z0-9]/.test(value);
@@ -133,7 +145,7 @@ export function useRegisterForm() {
 	watch(email, (value) => {
 		const trimmed = value.trim();
 		if (!trimmed) return;
-		if (isValidEmail(trimmed)) {
+		if (isValidAuthEmail(trimmed)) {
 			if (registerRequestCooldownRemaining.value <= 0) {
 				emailError.value = '';
 			}
@@ -159,7 +171,7 @@ export function useRegisterForm() {
 		| {
 			email: string;
 			token: string;
-			otp_required?: boolean;
+			expires_in: string;
 		}
 		| Record<string, string[]>;
 		meta: Record<string, unknown>;
@@ -174,15 +186,6 @@ export function useRegisterForm() {
 		} & Record<string, unknown>;
 		meta: Record<string, unknown>;
 		error: Record<string, unknown>;
-	}
-
-	interface LoginResponse {
-		success: boolean;
-		message: string;
-		data: {
-			user?: UserIdentity & { profile: UserProfile | null }
-			auth_token?: string
-		}
 	}
 
 	function getFirstError(
@@ -223,21 +226,6 @@ export function useRegisterForm() {
 		return message;
 	}
 
-	function getResponseMessage(payload: unknown): string {
-		if (!payload || typeof payload !== 'object') return '';
-		const response = payload as { message?: unknown };
-		return typeof response.message === 'string' ? response.message.trim() : '';
-	}
-
-	function getErrorMessage(payload: unknown): string {
-		if (!payload || typeof payload !== 'object') return '';
-		const error = payload as { data?: { message?: unknown }; message?: unknown };
-		if (typeof error.data?.message === 'string' && error.data.message.trim()) {
-			return error.data.message.trim();
-		}
-		return typeof error.message === 'string' ? error.message.trim() : '';
-	}
-
 	function normalizeVerificationErrorMessage(message: string) {
 		if (!message) return '';
 		if (/expired/i.test(message)) {
@@ -259,7 +247,7 @@ export function useRegisterForm() {
 
 		if (!email.value.trim()) {
 			emailError.value = t('auth.register.validation.fieldBlank');
-		} else if (!isValidEmail(email.value.trim())) {
+		} else if (!isValidAuthEmail(email.value.trim())) {
 			emailError.value = t('auth.register.validation.emailInvalid');
 		}
 
@@ -282,7 +270,21 @@ export function useRegisterForm() {
 			return;
 		}
 
+		// When reading/checking
+		if (verificationExpiry.value && typeof verificationExpiry.value === 'object') {
+			const data = verificationExpiry.value as { email: string; expires_at: string };
+			const now = Date.now();
+			const expiryTime = new Date(data.expires_at).getTime();
+
+			// Only open modal if email matches and not expired
+			if (data.email === email.value.trim() && now < expiryTime) {
+				isVerificationModalOpen.value = true;
+				return;
+			}
+		}
+
 		isSubmitting.value = true;
+
 		try {
 			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
 				method: 'POST',
@@ -335,6 +337,10 @@ export function useRegisterForm() {
 			const resolvedToken =
 				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
 			verificationOtpRequired.value = verificationData?.otp_required !== false;
+			verificationExpiry.value = {
+				email: Array.isArray(response.data.email) ? response.data.email[0] : response.data.email,
+				expires_at: Array.isArray(response.data.expires_in) ? response.data.expires_in[0] : response.data.expires_in
+			};
 
 			if (!resolvedToken) {
 				emailError.value = resolveRegisterErrorMessage(
@@ -411,7 +417,7 @@ export function useRegisterForm() {
 
 			if (response.success === false) {
 				verificationError.value =
-					normalizeVerificationErrorMessage(getResponseMessage(response))
+					normalizeVerificationErrorMessage(getAuthResponseMessage(response))
 					|| t('auth.verification.invalidCode');
 				return response;
 			}
@@ -446,7 +452,7 @@ export function useRegisterForm() {
 					if (meResponse?.success && meResponse.data?.user) {
 						userStore.setUser({
 							...meResponse.data.user,
-							profile: meResponse.data.profile
+							profile: meResponse.data.profile ?? null
 						});
 
 						const mockUser = useCookie<{
@@ -459,51 +465,14 @@ export function useRegisterForm() {
 						});
 
 						const fields = meResponse.data.profile?.user_field_values ?? [];
-						const resolvedFirstName =
-							fields.find(
-								(field: UserFieldValue) =>
-									field.country_field?.field_key === 'first_name' ||
-									(field.country_field_id ??
-										field.country_field_ids ??
-										field.country_fields_id) === 1
-							)?.value?.trim() || firstName.value.trim();
-						const resolvedLastName =
-							fields.find(
-								(field: UserFieldValue) =>
-									field.country_field?.field_key === 'last_name' ||
-									(field.country_field_id ??
-										field.country_field_ids ??
-										field.country_fields_id) === 2
-							)?.value?.trim() || lastName.value.trim();
-						const fallbackRows = [...fields]
-							.filter((field) => typeof field.value === 'string' && field.value.trim())
-							.sort(
-								(a, b) =>
-									(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
-									(b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-							)
-							.slice(0, 2);
-						let normalizedFirstName = resolvedFirstName || 'User';
-						let normalizedLastName = resolvedLastName || '';
-
-						if (!resolvedFirstName && fallbackRows[0]?.value) {
-							normalizedFirstName = fallbackRows[0].value.trim();
-						}
-						if (!resolvedLastName && fallbackRows[1]?.value) {
-							normalizedLastName = fallbackRows[1].value.trim();
-						}
-
-						if (!normalizedLastName && normalizedFirstName.includes(' ')) {
-							const parts = normalizedFirstName.split(/\s+/).filter(Boolean);
-							if (parts.length >= 2) {
-								normalizedFirstName = parts.slice(0, -1).join(' ');
-								normalizedLastName = parts[parts.length - 1] || '';
-							}
-						}
+						const normalizedName = normalizeAccountName(
+							getProfileFieldValue(fields, 'first_name') || firstName.value.trim() || 'User',
+							getProfileFieldValue(fields, 'last_name') || lastName.value.trim()
+						);
 
 						mockUser.value = {
-							firstName: normalizedFirstName,
-							lastName: normalizedLastName,
+							firstName: normalizedName.firstName,
+							lastName: normalizedName.lastName,
 							email: meResponse.data.user.email || email.value.trim(),
 						};
 					}
@@ -520,7 +489,7 @@ export function useRegisterForm() {
 			return response;
 		} catch (error: unknown) {
 			verificationError.value =
-				normalizeVerificationErrorMessage(getErrorMessage(error))
+				normalizeVerificationErrorMessage(getAuthErrorMessage(error))
 				|| t('auth.verification.invalidCode');
 		} finally {
 			isVerifying.value = false;
@@ -530,6 +499,7 @@ export function useRegisterForm() {
 	async function resendVerification() {
 		if (resendCooldownRemaining.value > 0) return;
 		verificationError.value = '';
+		resendLimitReached.value = '';
 
 		try {
 			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
@@ -546,10 +516,18 @@ export function useRegisterForm() {
 
 			const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
 			if (!isSuccess) {
-				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
+				const code = getAuthResponseCode(response);
+				const message = getAuthResponseMessage(response);
+				if (code === 'max_resend_reached') {
+					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					verificationError.value = '';
+					return;
+				}
+				verificationError.value = message || t('auth.verification.invalidCode');
 				return;
 			}
 
+			resendLimitReached.value = '';
 			const verificationData = response.data as { email?: string; token?: string; otp_required?: boolean } | undefined;
 			const resolvedToken =
 				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
@@ -560,7 +538,7 @@ export function useRegisterForm() {
 			verificationOtpRequired.value = verificationData?.otp_required !== false;
 
 			if (!resolvedToken) {
-				verificationError.value = getResponseMessage(response) || t('auth.verification.invalidCode');
+				verificationError.value = getAuthResponseMessage(response) || t('auth.verification.invalidCode');
 				return;
 			}
 
@@ -573,20 +551,15 @@ export function useRegisterForm() {
 				await submitVerification(true);
 			}
 		} catch (error: unknown) {
-			verificationError.value = getErrorMessage(error) || t('auth.verification.invalidCode');
+			verificationError.value = getAuthErrorMessage(error) || t('auth.verification.invalidCode');
 		}
 	}
 
 	watch(isVerificationModalOpen, (open) => {
-		if (open) {
-			if (resendCooldownRemaining.value <= 0) {
-				startResendCooldown();
-			}
-			return;
-		}
+		if (open) return;
 
-		clearResendCooldownTimer();
-		resendCooldownRemaining.value = 0;
+		// Keep resend cooldown running even if the modal is closed/re-opened.
+		resendLimitReached.value = '';
 	});
 
 	onBeforeUnmount(() => {
@@ -612,6 +585,7 @@ export function useRegisterForm() {
 		verificationToken,
 		verificationCode,
 		verificationError,
+		resendLimitReached,
 		isVerifying,
 		resendCooldownRemaining,
 		submitRegister,

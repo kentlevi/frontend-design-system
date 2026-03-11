@@ -1,8 +1,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
 import { useCountry } from '~/composables/app/useCountry';
-import { CART_STORAGE_KEY, CART_UPDATED_EVENT } from '~/data/cart/page';
+import type { ProductByCategoryApiItem } from '~/composables/products/useProductByCategory';
 import {
 	productCatalog,
+	type ProductCategory,
 	type ProductCategoryKey,
 	type ProductItem,
 } from '~/data/products/catalog';
@@ -14,26 +15,50 @@ import {
 	sizeOptions,
 } from '~/data/products/categoryExperience';
 import { defaultStartPriceByProductId } from '~/data/products/pricing';
+import {
+	readStoredCartStateFromStorage,
+	writeStoredCartStateToStorage,
+	type StoredCartState,
+} from '~/composables/cart/cartState.helpers';
+import {
+	formatProductFileSize,
+	generateProductCartItemId,
+	getFeaturedProducts,
+	getProductIdFromSlug,
+	getProductSlugByCategory,
+	mergePlainProductCartItems,
+	normalizeProductCartState,
+	readProductArtworkAsDataUrl,
+} from '~/composables/products/productCategory.helpers';
 import { formatCurrencyByCountry } from '~/utils/currency';
 
-export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) {
-	type StoredCartState = {
-		id: string;
-		category: ProductCategoryKey;
-		productId: string;
-		sizeKey: string;
-		qty: number;
-		total: number;
-		artworkName: string;
-		artworkPreviewUrl?: string;
-	};
-
+export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, apiProducts?: Ref<ProductByCategoryApiItem[] | undefined>) {
 	const { t } = useI18n();
 	const route = useRoute();
 	const router = useRouter();
 	const { withCountry, country } = useCountry();
 
-	const categoryData = computed(() => productCatalog[category.value]);
+	const categoryData = computed<ProductCategory>(() => {
+		const catalogCategory = productCatalog[category.value];
+		const responseProducts = apiProducts?.value;
+
+		if (!responseProducts?.length) {
+			return catalogCategory;
+		}
+
+		const mappedProducts = responseProducts
+			.map((product) => resolveCatalogProductByApiSlug(product.url_slug, catalogCategory.products))
+			.filter((product): product is ProductItem => Boolean(product));
+
+		if (!mappedProducts.length) {
+			return catalogCategory;
+		}
+
+		return {
+			...catalogCategory,
+			products: dedupeProductsById(mappedProducts),
+		};
+	});
 	const selectedId = ref<string | null>(null);
 	const selectedSize = ref<(typeof sizeOptions)[number]>(sizeOptions[0]);
 	const selectedQty = ref<number>(quantityOptions[0]);
@@ -87,44 +112,39 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	const cartItems = computed(() =>
 		cartState.value
 			.map((entry) => {
-				for (const cat of Object.values(productCatalog)) {
-					const product = cat.products.find((item) => item.id === entry.productId);
-					if (product) {
-						return {
-							id: entry.id,
-							product,
-							sizeKey: entry.sizeKey,
-							sizeLabel: t(`product.sizes.${entry.sizeKey}.label`),
-							qty: entry.qty,
-							total: entry.total,
-							artworkName: entry.artworkName,
-							artworkPreviewUrl: entry.artworkPreviewUrl || '',
-						};
-					}
-				}
-				return null;
+				const product = productCatalog[entry.category]?.products.find(
+					(item) => item.id === entry.productId
+				);
+				if (!product) return null;
+
+				return {
+					id: entry.id,
+					product,
+					sizeKey: entry.sizeKey,
+					sizeLabel: t(`product.sizes.${entry.sizeKey}.label`),
+					qty: entry.qty,
+					total: entry.total,
+					artworkName: entry.artworkName,
+					artworkPreviewUrl: entry.artworkPreviewUrl || '',
+				};
 			})
 			.filter((item): item is NonNullable<typeof item> => Boolean(item))
 	);
 	const cartGrandTotal = computed(() =>
 		cartItems.value.reduce((sum, item) => sum + item.total, 0)
 	);
-	const allCatalogProducts = Object.values(productCatalog).flatMap((cat) => cat.products);
 	const featuredItems = computed(() => {
-		const activeId = selectedId.value;
-		return homeProductTypes
-			.map((typeItem) =>
-				allCatalogProducts.find((product) => product.id === typeItem.productId)
-			)
-			.filter((item): item is ProductItem => Boolean(item))
-			.filter((item) => item.id !== activeId);
+		return getFeaturedProducts(
+			homeProductTypes.map((item) => item.productId),
+			selectedId.value
+		);
 	});
 	const cartItemCount = computed(() => cartItems.value.length);
 	const cartArtworkName = computed(
 		() => cartItems.value[0]?.artworkName || artworkFile.value?.name || ''
 	);
 	const cartArtworkSize = computed(() =>
-		artworkFile.value ? formatFileSize(artworkFile.value.size) : ''
+		artworkFile.value ? formatProductFileSize(artworkFile.value.size) : ''
 	);
 	const cartArtworkExtension = computed(() => {
 		const fileName = artworkFile.value?.name || '';
@@ -173,110 +193,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		}
 	);
 
-	function normalizeCartState(payload: unknown): StoredCartState[] {
-		if (Array.isArray(payload)) {
-			return payload.filter(
-				(item): item is StoredCartState =>
-					Boolean(item) &&
-                    typeof item === 'object' &&
-                    typeof (item as StoredCartState).productId === 'string' &&
-                    typeof (item as StoredCartState).id === 'string'
-			).map((item) => ({
-				...item,
-				artworkPreviewUrl:
-                    typeof item.artworkPreviewUrl === 'string'
-                    	? item.artworkPreviewUrl
-                    	: '',
-			}));
-		}
-
-		if (
-			payload &&
-            typeof payload === 'object' &&
-            typeof (payload as StoredCartState).productId === 'string'
-		) {
-			const single = payload as StoredCartState;
-			return [
-				{
-					...single,
-					id: single.id || `${single.productId}-${Date.now()}`,
-					artworkPreviewUrl:
-                        typeof single.artworkPreviewUrl === 'string'
-                        	? single.artworkPreviewUrl
-                        	: '',
-				},
-			];
-		}
-
-		return [];
-	}
-
-	function readCartStateFromStorage(): StoredCartState[] {
-		if (typeof window === 'undefined') return [];
-		try {
-			const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-			if (!raw) return [];
-			return normalizeCartState(JSON.parse(raw));
-		} catch {
-			return [];
-		}
-	}
-
-	function writeCartStateToStorage(next: StoredCartState[]) {
-		if (typeof window === 'undefined') return;
-		if (next.length) {
-			window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-		} else {
-			window.localStorage.removeItem(CART_STORAGE_KEY);
-		}
-		window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
-	}
-
-	function isPlainItem(item: StoredCartState) {
-		return !item.artworkName && !item.artworkPreviewUrl;
-	}
-
-	function mergePlainCartItems(items: StoredCartState[]) {
-		const merged: StoredCartState[] = [];
-		const plainIndexByKey = new Map<string, number>();
-
-		for (const item of items) {
-			if (!isPlainItem(item)) {
-				merged.push(item);
-				continue;
-			}
-
-			const key = `${item.category}::${item.productId}::${item.sizeKey}`;
-			const existingIndex = plainIndexByKey.get(key);
-			if (existingIndex === undefined) {
-				plainIndexByKey.set(key, merged.length);
-				merged.push(item);
-				continue;
-			}
-
-			const existing = merged[existingIndex];
-			if (!existing) {
-				merged.push(item);
-				plainIndexByKey.set(key, merged.length - 1);
-				continue;
-			}
-			merged[existingIndex] = {
-				...existing,
-				qty: existing.qty + item.qty,
-				total: existing.total + item.total,
-			};
-		}
-
-		return merged;
-	}
-
-	function generateCartItemId(productId: string) {
-		if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-			return crypto.randomUUID();
-		}
-		return `${productId}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
-	}
-
 	function appendCurrentSelectionToCart(
 		artworkName = '',
 		artworkPreviewUrlValue = '',
@@ -289,7 +205,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		if (!selectedProduct.value) return false;
 
 		const nextItem: StoredCartState = {
-			id: generateCartItemId(selectedProduct.value.id),
+			id: generateProductCartItemId(selectedProduct.value.id),
 			category: category.value,
 			productId: selectedProduct.value.id,
 			sizeKey: selectedSize.value,
@@ -302,15 +218,17 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		const baseState = replaceItemId
 			? cartState.value.filter((item) => item.id !== replaceItemId)
 			: cartState.value;
-		const nextState = mergePlainCartItems([nextItem, ...baseState]);
+		const nextState = mergePlainProductCartItems([nextItem, ...baseState]);
 		cartState.value = nextState;
-		writeCartStateToStorage(nextState);
+		writeStoredCartStateToStorage(nextState);
 		return true;
 	}
 
 	onMounted(() => {
 		if (typeof window === 'undefined') return;
-		cartState.value = mergePlainCartItems(readCartStateFromStorage());
+		cartState.value = mergePlainProductCartItems(
+			normalizeProductCartState(readStoredCartStateFromStorage())
+		);
 	});
 
 	function selectProduct(productId: string) {
@@ -422,7 +340,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 
 		artworkFile.value = file;
 		artworkPreviewUrl.value = file.type.startsWith('image/')
-			? await readFileAsDataUrl(file)
+			? await readProductArtworkAsDataUrl(file)
 			: '';
 	}
 
@@ -450,7 +368,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	function removeCartItem(itemId: string) {
 		const nextState = cartState.value.filter((item) => item.id !== itemId);
 		cartState.value = nextState;
-		writeCartStateToStorage(nextState);
+		writeStoredCartStateToStorage(nextState);
 	}
 
 	function updateCartItem(itemId: string, nextSizeKey: string, nextQty: number) {
@@ -463,7 +381,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 			? nextSizeKey
 			: sizeOptions[0];
 
-		const nextState = mergePlainCartItems(
+		const nextState = mergePlainProductCartItems(
 			cartState.value.map((item) => {
 				if (item.id !== itemId) return item;
 				const unitPrice = item.qty > 0 ? item.total / item.qty : 0;
@@ -477,17 +395,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		);
 
 		cartState.value = nextState;
-		writeCartStateToStorage(nextState);
-	}
-
-	function productIdToSlugByCategory(
-		productId: string,
-		categoryKey: ProductCategoryKey
-	) {
-		if (categoryKey === 'stickers') {
-			return productId.replace(/-sticker$/, '');
-		}
-		return productId;
+		writeStoredCartStateToStorage(nextState);
 	}
 
 	async function editCartItem(itemId: string) {
@@ -502,7 +410,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		selectedId.value = entry.productId;
 		hasPickedProduct.value = true;
 
-		const targetSlug = productIdToSlugByCategory(entry.productId, entry.category);
+		const targetSlug = getProductSlugByCategory(entry.productId, entry.category);
 		const targetPath = withCountry(`/${entry.category}/${targetSlug}`);
 
 		if (route.path !== targetPath) {
@@ -544,26 +452,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 		return formatCurrencyByCountry(defaultStartPriceByProductId(product.id), country.value);
 	}
 
-	function formatFileSize(bytes: number) {
-		if (bytes <= 0) return '0 B';
-		const units = ['B', 'KB', 'MB', 'GB'];
-		const index = Math.min(
-			Math.floor(Math.log(bytes) / Math.log(1024)),
-			units.length - 1
-		);
-		const value = bytes / 1024 ** index;
-		return `${value >= 10 || index === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[index]}`;
-	}
-
-	function readFileAsDataUrl(file: File): Promise<string> {
-		return new Promise((resolve) => {
-			const reader = new FileReader();
-			reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
-			reader.onerror = () => resolve('');
-			reader.readAsDataURL(file);
-		});
-	}
-
 	function quantityPrice(qty: number) {
 		return unitPrice.value * qty;
 	}
@@ -586,24 +474,35 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>) 
 	}
 
 	function productIdToSlug(productId: string) {
-		if (category.value === 'stickers') {
-			return productId.replace(/-sticker$/, '');
-		}
-		return productId;
+		return getProductSlugByCategory(productId, category.value);
+	}
+
+	function resolveCatalogProductByApiSlug(slug: string, catalogProducts: ProductItem[]) {
+		if (!slug) return null;
+
+		const slugWithStickerSuffix =
+			category.value === 'stickers' && !slug.endsWith('-sticker')
+				? `${slug}-sticker`
+				: slug;
+
+		return (
+			catalogProducts.find((item) => item.id === slugWithStickerSuffix) ||
+			catalogProducts.find((item) => item.id === slug) ||
+			null
+		);
+	}
+
+	function dedupeProductsById(products: ProductItem[]) {
+		const seen = new Set<string>();
+		return products.filter((product) => {
+			if (seen.has(product.id)) return false;
+			seen.add(product.id);
+			return true;
+		});
 	}
 
 	function productSlugToId(slug: string) {
-		const directMatch = categoryData.value.products.find((item) => item.id === slug);
-		if (directMatch) return directMatch.id;
-
-		if (category.value === 'stickers') {
-			const stickerMatch = categoryData.value.products.find(
-				(item) => item.id === `${slug}-sticker`
-			);
-			if (stickerMatch) return stickerMatch.id;
-		}
-
-		return null;
+		return getProductIdFromSlug(slug, category.value);
 	}
 
 	function applySelectionFromRoute() {

@@ -1,78 +1,27 @@
 import { computed, onMounted, ref } from 'vue';
 import { quantityOptions } from '~/data/products/categoryExperience';
+import { cartPaymentOptions } from '~/data/cart/page';
 import {
-	productCatalog,
-	type ProductCategoryKey,
-	type ProductItem,
-} from '~/data/products/catalog';
-import {
-	CART_STORAGE_KEY,
-	CART_UPDATED_EVENT,
-	CHECKOUT_SELECTION_STORAGE_KEY,
-	cartPaymentOptions,
-} from '~/data/cart/page';
+	readStoredCartStateFromStorage,
+	resolveStoredCartProduct,
+	writeCheckoutSelectionIdsToStorage,
+	writeStoredCartStateToStorage,
+	type StoredCartState,
+	type LocalizedCatalogProduct,
+} from '~/composables/cart/cartState.helpers';
 import { useCountry } from '~/composables/app/useCountry';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { sizeDimOnly } from '~/utils/cart';
 
-export type StoredCartState = {
-	id: string;
-	category: ProductCategoryKey;
-	productId: string;
-	sizeKey: string;
-	qty: number;
-	total: number;
-	artworkName: string;
-	artworkPreviewUrl?: string;
-};
-
 export type CartRow = {
 	id: string;
-	category: ProductCategoryKey;
-	product: ProductItem;
+	category: StoredCartState['category'];
+	product: LocalizedCatalogProduct;
 	sizeLabel: string;
 	qty: number;
 	total: number;
 	artworkPreviewUrl: string;
 };
-
-function normalizeCartState(payload: unknown): StoredCartState[] {
-	if (!Array.isArray(payload)) return [];
-	return payload
-		.filter(
-			(item): item is StoredCartState =>
-				Boolean(item) &&
-                typeof item === 'object' &&
-                typeof (item as StoredCartState).id === 'string' &&
-                typeof (item as StoredCartState).productId === 'string'
-		)
-		.map((item) => ({
-			...item,
-			artworkPreviewUrl:
-                typeof item.artworkPreviewUrl === 'string' ? item.artworkPreviewUrl : '',
-		}));
-}
-
-function readCartStateFromStorage() {
-	if (typeof window === 'undefined') return [];
-	try {
-		const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-		if (!raw) return [];
-		return normalizeCartState(JSON.parse(raw));
-	} catch {
-		return [];
-	}
-}
-
-function writeCartStateToStorage(next: StoredCartState[]) {
-	if (typeof window === 'undefined') return;
-	if (next.length) {
-		window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-	} else {
-		window.localStorage.removeItem(CART_STORAGE_KEY);
-	}
-	window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
-}
 
 export function useCartPage() {
 	const { t } = useI18n();
@@ -85,8 +34,10 @@ export function useCartPage() {
 	const rows = computed<CartRow[]>(() =>
 		cartState.value
 			.map((entry) => {
-				const category = productCatalog[entry.category];
-				const product = category?.products.find((item) => item.id === entry.productId);
+				const product = resolveStoredCartProduct(
+					entry,
+					(productId) => t(`product.items.${productId}.name`)
+				);
 				if (!product) return null;
 
 				return {
@@ -149,31 +100,26 @@ export function useCartPage() {
 			};
 		});
 
-		writeCartStateToStorage(cartState.value);
+		writeStoredCartStateToStorage(cartState.value);
 	}
 
 	function removeByIds(ids: string[]) {
 		if (!ids.length) return;
 		cartState.value = cartState.value.filter((item) => !ids.includes(item.id));
 		selectedIds.value = selectedIds.value.filter((id) => !ids.includes(id));
-		writeCartStateToStorage(cartState.value);
+		writeStoredCartStateToStorage(cartState.value);
 	}
 
 	function goToCheckout() {
 		if (!selectedRows.value.length) return;
-		if (typeof window !== 'undefined') {
-			window.localStorage.setItem(
-				CHECKOUT_SELECTION_STORAGE_KEY,
-				JSON.stringify(selectedRows.value.map((row) => row.id))
-			);
-		}
+		writeCheckoutSelectionIdsToStorage(selectedRows.value.map((row) => row.id));
 		void router.push(withCountry('/checkout'));
 	}
 
-	const continueShoppingPath = computed(() => withCountry('/stickers'));
+	const continueShoppingPath = computed(() => withCountry('/'));
 
 	onMounted(() => {
-		cartState.value = readCartStateFromStorage();
+		cartState.value = readStoredCartStateFromStorage();
 		selectedIds.value = cartState.value.map((item) => item.id);
 	});
 

@@ -3,10 +3,12 @@ import { computed } from 'vue';
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
 import { useCountry } from '@/composables/app/useCountry';
 
+const { t } = useI18n();
 const { withCountry } = useCountry();
-const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest();
+const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest({
+	labelCountry: 'us',
+});
 
-const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 const orderNumber = computed(() => '12405070009');
 const orderDetailsPath = computed(() => withCountry(`/orders/${orderNumber.value}`));
 const estimatedArrival = computed(() => {
@@ -33,62 +35,66 @@ const estimatedArrival = computed(() => {
 						aria-hidden="true"
 						class="checkout-confirmation-icon-image"
 					>
-					<h1 class="checkout-confirmation-title">Your Order is Confirmed</h1>
+					<h1 class="checkout-confirmation-title">{{ t('checkout.confirmation.title') }}</h1>
 				</div>
-				<NuxtLink :to="withCountry('/')" class="checkout-confirmation-home-link">Go to Homepage</NuxtLink>
+				<NuxtLink :to="withCountry('/')" class="checkout-confirmation-home-link">{{ t('checkout.confirmation.goHome') }}</NuxtLink>
 			</header>
 
 			<p class="checkout-confirmation-note">
-				Expect a Final Proof to be sent to you shortly. If you have urgent concerns, you may call at
+				{{ t('checkout.confirmation.notePrefix') }}
 				<a href="tel:+6531582800">+65 3158 2800</a> or email at
 				<a href="mailto:info@mustickers.com">info@mustickers.com</a>.
-				You will receive an email confirming your order submission, please verify your shipping address.
+				{{ t('checkout.confirmation.noteSuffix') }}
 			</p>
 
 			<section class="checkout-confirmation-delivery">
-				<div class="checkout-confirmation-delivery-label">Expected Delivery (Express)</div>
-				<div class="checkout-confirmation-delivery-value">Your order is estimated to arrive on: {{ estimatedArrival }}</div>
+				<div class="checkout-confirmation-delivery-label">{{ t('checkout.confirmation.expectedDelivery') }}</div>
+				<div class="checkout-confirmation-delivery-value">{{ t('checkout.confirmation.expectedArrival', { date: estimatedArrival }) }}</div>
 			</section>
 
 			<section class="checkout-confirmation-summary">
 				<header class="checkout-confirmation-summary-head">
-					<h2 class="checkout-confirmation-summary-title">Order Summary</h2>
+					<h2 class="checkout-confirmation-summary-title">{{ t('checkout.confirmation.orderSummary') }}</h2>
 					<NuxtLink :to="orderDetailsPath" class="checkout-confirmation-summary-order">
-						Order #: {{ orderNumber }}
+						{{ t('checkout.confirmation.orderNumber', { orderNumber }) }}
 					</NuxtLink>
 				</header>
 
 				<div class="checkout-confirmation-summary-body">
-					<div v-if="primaryItem" class="checkout-confirmation-item">
+					<div
+						v-for="item in selectedCheckoutItems"
+						:key="item.id"
+						class="checkout-confirmation-item"
+					>
 						<div class="checkout-confirmation-item-thumb">
 							<img
-								:src="primaryItem.artworkPreviewUrl || primaryItem.product.image"
-								:alt="primaryItem.product.name"
+								:src="item.artworkPreviewUrl || item.product.image"
+								:alt="item.product.name"
 								class="checkout-confirmation-item-image"
 							>
 						</div>
 						<div class="checkout-confirmation-item-copy">
-							<div class="checkout-confirmation-item-name">{{ primaryItem.product.name }}</div>
-							<div class="checkout-confirmation-item-meta">{{ sizeDimOnly(primaryItem.sizeLabel) }} / {{ primaryItem.qty.toLocaleString() }}</div>
+							<div class="checkout-confirmation-item-name">{{ item.product.name }}</div>
+							<div class="checkout-confirmation-item-meta">{{ sizeDimOnly(item.sizeLabel) }} / {{ item.qty.toLocaleString() }}</div>
 						</div>
-						<div class="checkout-confirmation-item-price">{{ formatPrice(primaryItem.total) }}</div>
+						<div class="checkout-confirmation-item-price">{{ formatPrice(item.total) }}</div>
 					</div>
 
 					<div class="checkout-confirmation-totals">
 						<div class="checkout-confirmation-total-line">
-							<span class="checkout-confirmation-total-label">Subtotal:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.subtotal') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderSubtotal) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line">
-							<span class="checkout-confirmation-total-label">Shipping Fee:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.shippingFee') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderShippingFee) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line is-discount">
-							<span class="checkout-confirmation-total-label">Discounts:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.discounts') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderDiscount) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line is-final">
-							<span class="checkout-confirmation-total-label">Total:</span>
+							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.total') }}</span>
 							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderTotal) }}</strong>
 						</div>
 					</div>
@@ -100,11 +106,26 @@ const estimatedArrival = computed(() => {
 
 <style scoped lang="scss">
 .checkout-confirmation-page {
+	position: relative;
 	min-height: calc(100vh - 320px);
 	padding: 56px 24px 120px;
-	background: linear-gradient(var(--brand-primary) 0 320px, var(--white-base) 320px 100%);
+	background: var(--white-base);
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto 0;
+		height: 320px;
+		background: var(--brand-primary);
+		z-index: 0;
+	}
 
 	.checkout-confirmation-card {
+		display: grid;
+		gap: 24px;
+		position: relative;
+		z-index: 1;
 		max-width: 792px;
 		margin: 0 auto;
 		background: var(--white-base);
@@ -151,7 +172,6 @@ const estimatedArrival = computed(() => {
 		}
 
 		.checkout-confirmation-note {
-			margin: 24px 0 0;
 			color: var(--text-secondary);
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);
@@ -163,7 +183,6 @@ const estimatedArrival = computed(() => {
 		}
 
 		.checkout-confirmation-delivery {
-			margin-top: 24px;
 			padding: 14px 18px;
 			border: 1px solid var(--gray-50);
 			border-radius: 10px;
@@ -187,7 +206,6 @@ const estimatedArrival = computed(() => {
 		}
 
 		.checkout-confirmation-summary {
-			margin-top: 24px;
 			border: 1px solid var(--gray-50);
 			border-radius: 10px;
 			overflow: hidden;
@@ -218,13 +236,13 @@ const estimatedArrival = computed(() => {
 			}
 
 			.checkout-confirmation-summary-body {
-				padding: 24px;
+				padding: 0 24px;
 
 				.checkout-confirmation-item {
 					display: grid;
 					grid-template-columns: 64px 1fr auto;
 					gap: 14px;
-					padding-bottom: 24px;
+					padding: 24px 0;
 					border-bottom: 1px solid var(--gray-50);
 
 					.checkout-confirmation-item-thumb {
@@ -267,7 +285,7 @@ const estimatedArrival = computed(() => {
 				}
 
 				.checkout-confirmation-totals {
-					padding-top: 18px;
+					padding: 24px 0;
 					display: grid;
 					gap: 4px;
 
@@ -289,7 +307,6 @@ const estimatedArrival = computed(() => {
 						}
 
 						&.is-final {
-							margin-top: 4px;
 							color: var(--text-primary);
 							font-weight: var(--font-weight-semibold);
 

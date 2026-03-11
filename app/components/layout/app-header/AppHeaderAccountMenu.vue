@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, type ComponentPublicInstance } from 'vue';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import {
+	normalizeAppPath,
+	sanitizeExistingRedirect,
+	sanitizeRedirectSource,
+} from '~/utils/auth/redirect';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -69,41 +74,11 @@ const guestOrderLink = computed(
 );
 const guestOrderTarget = computed(() => withCountry('/'));
 
-function normalizePath(path: string) {
-	return path.replace(/\/+$/, '') || '/';
-}
-
-function sanitizeRedirectSource(fullPath: string) {
-	const parsed = new URL(fullPath, 'http://localhost');
-	parsed.searchParams.delete('redirect');
-	const search = parsed.searchParams.toString();
-	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
-}
-
-function sanitizeExistingRedirect(
-	rawRedirect: unknown,
-	homePath: string,
-	loginPath: string,
-	registerPath: string
-) {
-	if (typeof rawRedirect !== 'string') return '';
-	const candidate = rawRedirect.trim();
-	if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
-
-	const parsed = new URL(candidate, 'http://localhost');
-	const targetPath = normalizePath(parsed.pathname);
-	if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) return '';
-
-	parsed.searchParams.delete('redirect');
-	const search = parsed.searchParams.toString();
-	return `${parsed.pathname}${search ? `?${search}` : ''}${parsed.hash}`;
-}
-
 const guestLoginTarget = computed(() => {
-	const loginPath = normalizePath(withCountry('/auth/login'));
-	const registerPath = normalizePath(withCountry('/auth/register'));
-	const homePath = normalizePath(withCountry('/'));
-	const currentPath = normalizePath(route.path);
+	const loginPath = normalizeAppPath(withCountry('/auth/login'));
+	const registerPath = normalizeAppPath(withCountry('/auth/register'));
+	const homePath = normalizeAppPath(withCountry('/'));
+	const currentPath = normalizeAppPath(route.path);
 
 	if (currentPath === homePath || currentPath === registerPath) {
 		return withCountry('/auth/login');
@@ -113,12 +88,7 @@ const guestLoginTarget = computed(() => {
 		const currentRedirect = Array.isArray(route.query.redirect)
 			? route.query.redirect[0]
 			: route.query.redirect;
-		const preservedRedirect = sanitizeExistingRedirect(
-			currentRedirect,
-			homePath,
-			loginPath,
-			registerPath
-		);
+		const preservedRedirect = sanitizeExistingRedirect(currentRedirect, withCountry);
 		if (!preservedRedirect) return withCountry('/auth/login');
 
 		return {
@@ -146,8 +116,11 @@ const guestLoginTarget = computed(() => {
 		@mouseenter="emit('mouse-enter')"
 		@mouseleave="emit('mouse-leave')"
 	>
-		<button
+		<UiButton
 			type="button"
+			variant="ghost"
+			tone="neutral"
+			size="sm"
 			class="home-header-icon home-header-account"
 			:class="{
 				'is-open': accountOpen && isMockLoggedIn,
@@ -183,7 +156,7 @@ const guestLoginTarget = computed(() => {
 				:size="16"
 				color="var(--text-primary)"
 			/>
-		</button>
+		</UiButton>
 
 		<Transition :name="accountTransitionName">
 			<div
@@ -227,6 +200,7 @@ const guestLoginTarget = computed(() => {
 							:name="link.icon"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ link.label }}</span>
 					</NuxtLink>
@@ -245,6 +219,7 @@ const guestLoginTarget = computed(() => {
 							:name="gettingStartedLink.icon"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
 					</NuxtLink>
@@ -262,6 +237,7 @@ const guestLoginTarget = computed(() => {
 							name="strong-sign-out"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
@@ -296,6 +272,7 @@ const guestLoginTarget = computed(() => {
 							:name="guestOrderLink.icon"
 							:size="22"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ guestOrderLink.label }}</span>
 					</NuxtLink>
@@ -315,6 +292,7 @@ const guestLoginTarget = computed(() => {
 							name="strong-sign-out"
 							:size="22"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
@@ -366,8 +344,13 @@ const guestLoginTarget = computed(() => {
     }
 
     .home-header-icon {
+        --btn-bg: transparent;
+        --btn-soft: rgba(255, 255, 255, 0.3);
+        --btn-border: transparent;
+
         height: 40px;
         min-width: 40px;
+		padding: 0;
         border: 0;
         border-radius: 16px;
         background: transparent;
@@ -384,6 +367,7 @@ const guestLoginTarget = computed(() => {
         .home-header-account {
         position: relative;
         z-index: 2;
+        --btn-soft: rgba(255, 255, 255, 0.3);
         background: transparent;
         transition: background-color 0.2s ease;
         display: inline-flex;
@@ -408,6 +392,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.is-open {
+            --btn-soft: var(--gold-10);
             background: var(--gold-10);
         }
 
@@ -416,6 +401,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.is-open-guest {
+            --btn-soft: var(--contrast-light);
             background: var(--contrast-light);
         }
 
@@ -534,7 +520,7 @@ const guestLoginTarget = computed(() => {
             color: var(--text-primary);
             padding: 0 20px;
 
-            :deep(.ui-icon) {
+            .home-account-link-icon {
                 flex-shrink: 0;
             }
 

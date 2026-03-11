@@ -1,0 +1,56 @@
+{
+  "checkout": {
+    "member": {
+      "shippingDetails": "Shipping Details",
+      "viewShippingAddresses": "View Shipping Address",
+      "myShippingAddress": "My Shipping Address",
+      "defaultBadge": "Default",
+      "shipToAnotherAddress": "Ship to Another Address",
+      "shippingMethod": "Shipping Method",
+      "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
+      "enableDropShipping": "Enable Drop Shipping",
+      "viewDropShippingAddresses": "View Drop Shipping Addresses",
+      "payment": "Payment",
+      "paymentSubnote": "Pay with your credit card:",
+      "viewBillingAddresses": "View Billing Addresses",
+      "orderSummary": "Order Summary",
+      "pointsAndCoupons": "Points & Coupons",
+      "points": "Points",
+      "pointsAvailable": "{value} pts. available",
+      "pointsPlaceholder": "0 pts",
+      "useAll": "Use All",
+      "coupon": "Coupon",
+      "couponPlaceholder": "0 pts",
+      "applyCoupon": "Apply",
+      "completeCheckout": "Complete Checkout",
+      "fields": {
+        "cardNumber": {
+          "label": "Card Number",
+          "placeholder": "Enter Card Number"
+        },
+        "expiration": {
+          "label": "Expiration",
+          "placeholder": "MM/YY"
+        },
+        "cvv": {
+          "label": "CVV",
+          "placeholder": "CVV"
+        }
+      },
+      "useShippingAsBilling": "Use shipping address as billing address",
+      "agreement": {
+        "prefix": "By clicking \"Complete Checkout\", you agree with our",
+        "terms": "Terms of Service",
+        "and": "and",
+        "privacy": "Privacy Policy",
+        "suffix": "."
+      },
+      "summary": {
+        "subtotal": "Subtotal:",
+        "shippingFee": "Shipping Fee ({method})",
+        "discounts": "Discounts:",
+        "total": "Total:"
+      }
+    }
+  }
+}

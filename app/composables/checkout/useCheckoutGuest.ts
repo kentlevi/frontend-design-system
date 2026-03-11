@@ -1,68 +1,62 @@
 import { computed, onMounted, ref } from 'vue';
-import { CART_STORAGE_KEY, CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
 import { checkoutProvinceOptions } from '~/data/checkout/options';
+import type { ProductItem } from '~/data/products/catalog';
 import {
-	productCatalog,
-	type ProductCategoryKey,
-	type ProductItem,
-} from '~/data/products/catalog';
+	readCheckoutSelectionIdsFromStorage,
+	readStoredCartStateFromStorage,
+	resolveStoredCartProduct,
+	type LocalizedCatalogProduct,
+	type StoredCartState,
+} from '~/composables/cart/cartState.helpers';
 import { useCountry } from '~/composables/app/useCountry';
+import type { SupportedCountry } from '~/constants/countries';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { sizeDimOnly } from '~/utils/cart';
 
-type StoredCartState = {
-	id: string;
-	category: ProductCategoryKey;
-	productId: string;
-	sizeKey: string;
-	qty: number;
-	total: number;
-	artworkName: string;
-	artworkPreviewUrl?: string;
-};
-
 type CheckoutItem = {
 	id: string;
-	product: ProductItem;
+	product: ProductItem | LocalizedCatalogProduct;
 	sizeLabel: string;
 	qty: number;
 	total: number;
 	artworkPreviewUrl: string;
 };
 
-function normalizeCartState(payload: unknown): StoredCartState[] {
-	if (!Array.isArray(payload)) return [];
-	return payload
-		.filter(
-			(item): item is StoredCartState =>
-				Boolean(item) &&
-                typeof item === 'object' &&
-                typeof (item as StoredCartState).id === 'string' &&
-                typeof (item as StoredCartState).productId === 'string'
-		)
-		.map((item) => ({
-			...item,
-			artworkPreviewUrl:
-                typeof item.artworkPreviewUrl === 'string' ? item.artworkPreviewUrl : '',
-		}));
-}
+type UseCheckoutGuestOptions = {
+	labelCountry?: SupportedCountry;
+};
 
-function readSelectionIdsFromStorage() {
-	if (typeof window === 'undefined') return [];
-	try {
-		const raw = window.localStorage.getItem(CHECKOUT_SELECTION_STORAGE_KEY);
-		if (!raw) return [];
-		const parsed = JSON.parse(raw);
-		if (!Array.isArray(parsed)) return [];
-		return parsed.filter((item): item is string => typeof item === 'string');
-	} catch {
-		return [];
+function readNestedString(source: unknown, path: string[]) {
+	let current: unknown = source;
+	for (const segment of path) {
+		if (!current || typeof current !== 'object' || !(segment in current)) return null;
+		current = (current as Record<string, unknown>)[segment];
 	}
+	return typeof current === 'string' ? current : null;
 }
 
-export function useCheckoutGuest() {
+export function useCheckoutGuest(options: UseCheckoutGuestOptions = {}) {
 	const { t } = useI18n();
+	const { $i18n } = useNuxtApp();
 	const { country } = useCountry();
+
+	function resolveSizeLabel(sizeKey: string) {
+		if (!options.labelCountry) {
+			return t(`product.sizes.${sizeKey}.label`);
+		}
+
+		const localizedLabel =
+			typeof $i18n?.getLocaleMessage === 'function'
+				? readNestedString($i18n.getLocaleMessage(options.labelCountry), [
+					'product',
+					'sizes',
+					sizeKey,
+					'label',
+				])
+				: null;
+
+		return localizedLabel || t(`product.sizes.${sizeKey}.label`);
+	}
 
 	const email = ref('');
 	const fullName = ref('');
@@ -84,14 +78,16 @@ export function useCheckoutGuest() {
 	const checkoutItems = computed<CheckoutItem[]>(() =>
 		cartState.value
 			.map((entry) => {
-				const category = productCatalog[entry.category];
-				const product = category?.products.find((item) => item.id === entry.productId);
+				const product = resolveStoredCartProduct(
+					entry,
+					(productId) => t(`product.items.${productId}.name`)
+				);
 				if (!product) return null;
 
 				return {
 					id: entry.id,
 					product,
-					sizeLabel: t(`product.sizes.${entry.sizeKey}.label`),
+					sizeLabel: resolveSizeLabel(entry.sizeKey),
 					qty: entry.qty,
 					total: entry.total,
 					artworkPreviewUrl: entry.artworkPreviewUrl || '',
@@ -127,17 +123,8 @@ export function useCheckoutGuest() {
 	);
 
 	onMounted(() => {
-		if (typeof window === 'undefined') return;
-
-		try {
-			const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-			const parsed = raw ? JSON.parse(raw) : [];
-			cartState.value = normalizeCartState(parsed);
-		} catch {
-			cartState.value = [];
-		}
-
-		selectedItemIds.value = readSelectionIdsFromStorage();
+		cartState.value = readStoredCartStateFromStorage();
+		selectedItemIds.value = readCheckoutSelectionIdsFromStorage();
 	});
 
 	return {

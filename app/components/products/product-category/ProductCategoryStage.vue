@@ -251,6 +251,8 @@ const unitPrice = computed(() =>
         flex-direction: column;
         align-items: center;
         cursor: pointer;
+        min-height: auto;
+        box-shadow: none;
         transition: background-color 0.2s ease;
 
         &:hover,
@@ -378,8 +380,8 @@ const unitPrice = computed(() =>
             max-height: 200px;
 
             .mini-feature {
-                border-radius: 0;
                 border: 0;
+                border-radius: 0;
                 background: transparent;
                 padding: 20px 11.5px;
                 text-align: center;
@@ -390,6 +392,8 @@ const unitPrice = computed(() =>
                 flex-direction: column;
                 align-items: center;
                 gap: 8px;
+                min-height: auto;
+                box-shadow: none;
 
                 .mini-feature-image {
                     width: 72px;
@@ -487,16 +491,18 @@ const unitPrice = computed(() =>
             .option-pill {
                 border: 1px solid var(--border-default);
                 border-radius: 999px;
+                background: transparent;
                 min-height: 44px;
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-primary);
-                cursor: pointer;
                 padding: 8px 14px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
+                box-shadow: none;
+                cursor: pointer;
 
                 .qty-pill-price {
                     font-size: inherit;

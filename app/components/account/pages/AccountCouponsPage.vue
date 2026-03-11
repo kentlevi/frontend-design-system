@@ -12,11 +12,13 @@ const { coupons } = useAccountCoupons();
 				<header class="account-coupons-header" data-testid="account-coupons-header">
 					<h1 class="account-coupons-title" data-testid="account-coupons-title">{{ t('account.coupons.title') }}</h1>
 					<div class="account-coupons-add-row" data-testid="account-coupons-add-row">
-						<input
+						<UiInput
+							model-value=""
 							type="text"
+							class="account-coupons-code-input"
 							:placeholder="t('account.coupons.codePlaceholder')"
 							data-testid="account-coupons-code-input"
-						>
+						/>
 						<UiButton variant="filled" tone="neutral" size="md" data-testid="account-coupons-add-button">
 							{{ t('account.coupons.addCoupon') }}
 						</UiButton>
@@ -30,7 +32,7 @@ const { coupons } = useAccountCoupons();
 						class="account-coupons-card"
 						:data-testid="`account-coupons-item-${item.code}`"
 					>
-						<div>
+						<div class="account-coupons-card-copy">
 							<h2 class="account-coupons-card-title">{{ t(`account.coupons.items.${item.titleKey}.title`) }}</h2>
 							<h3 class="account-coupons-code">{{ item.code }}</h3>
 							<p class="account-coupons-note">{{ t(`account.coupons.items.${item.titleKey}.note`) }}</p>
@@ -74,15 +76,8 @@ const { coupons } = useAccountCoupons();
         gap: 8px;
         align-items: center;
 
-        input {
+        .account-coupons-code-input {
             width: 420px;
-            height: 42px;
-            border: 1px solid var(--border-default);
-            border-radius: 10px;
-            background: var(--contrast-light);
-            padding: 0 12px;
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
         }
     }
 
@@ -103,23 +98,25 @@ const { coupons } = useAccountCoupons();
                 border-top: 0;
             }
 
-            .account-coupons-card-title {
-                margin: 0;
-                font-size: var(--type-size-400);
-                line-height: var(--type-line-400);
-            }
+            .account-coupons-card-copy {
+                .account-coupons-card-title {
+                    margin: 0;
+                    font-size: var(--type-size-400);
+                    line-height: var(--type-line-400);
+                }
 
-            .account-coupons-code {
-                margin: 4px 0 0;
-                font-size: var(--type-size-550);
-                line-height: var(--type-line-550);
-            }
+                .account-coupons-code {
+                    margin: 4px 0 0;
+                    font-size: var(--type-size-550);
+                    line-height: var(--type-line-550);
+                }
 
-            .account-coupons-note {
-                margin: 8px 0 0;
-                color: var(--text-secondary);
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
+                .account-coupons-note {
+                    margin: 8px 0 0;
+                    color: var(--text-secondary);
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                }
             }
 
             .account-coupons-right {

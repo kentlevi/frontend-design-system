@@ -10,13 +10,8 @@ export interface OnboardingProfile {
 export interface UserFieldValue {
 	id: number
 	user_profile_id: number
-	country_field_id?: number
-	country_field_ids?: number
-	country_fields_id?: number
-	country_field?: {
-		field_key?: string
-	}
-	value: string
+	country_field_id: number
+	value?: string
 }
 
 export interface UserProfile {

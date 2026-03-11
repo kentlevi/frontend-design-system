@@ -2,6 +2,11 @@
 import { computed } from 'vue';
 import UiIcon from '@/components/ui/Icon.vue';
 import type { icons } from '~/data/ui/icons';
+import {
+	useControlAttrs,
+	useControlTestId,
+	useRootAttrs,
+} from '~/components/ui/uiControlAttrs.helpers';
 
 type Size = 'lg' | 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
@@ -23,6 +28,7 @@ const props = withDefaults(
 		iconRight?: Icon;
 		readonly?: boolean;
 		disabled?: boolean;
+		inputClass?: string;
 	}>(),
 	{
 		modelValue: '',
@@ -34,6 +40,7 @@ const props = withDefaults(
 		iconRight: null,
 		readonly: false,
 		disabled: false,
+		inputClass: '',
 	}
 );
 
@@ -57,22 +64,9 @@ const leftIcon = computed<IconName | null>(() =>
 const rightIcon = computed<IconName | null>(() =>
 	props.iconRight ? iconMap[props.iconRight] : null
 );
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
-	const { class: className, style, 'data-testid': _testId } = attrs;
-	return {
-		class: className,
-		style,
-		...(testId.value ? { 'data-testid': testId.value } : {}),
-	};
-});
-const inputAttrs = computed(() => {
-	const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
-	return {
-		...rest,
-		...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
-	};
-});
+const testId = useControlTestId(attrs);
+const rootAttrs = useRootAttrs(attrs, testId);
+const inputAttrs = useControlAttrs(attrs, testId);
 
 function onInput(event: Event) {
 	emit('update:modelValue', (event.target as HTMLInputElement).value);
@@ -96,14 +90,14 @@ function focusInput() {
 	>
 		<span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
 			<slot name="icon-left">
-				<UiIcon :name="leftIcon" :size="24" decorative />
+				<UiIcon v-if="leftIcon" :name="leftIcon" :size="24" decorative />
 			</slot>
 		</span>
 
 		<input
 			v-bind="inputAttrs"
 			ref="inputRef"
-			class="ui-input-field"
+			:class="['ui-input-field', props.inputClass]"
 			:type="type"
 			:value="modelValue"
 			:placeholder="placeholder"
@@ -114,7 +108,7 @@ function focusInput() {
 
 		<span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
 			<slot name="icon-right">
-				<UiIcon :name="rightIcon" :size="16" decorative />
+				<UiIcon v-if="rightIcon" :name="rightIcon" :size="16" decorative />
 			</slot>
 		</span>
 	</div>

@@ -3,23 +3,49 @@
         "reviews": {
             "titleLine1": "499 Client Reviews",
             "titleLine2": "Satisfaction Guaranteed.",
-            "badge": "1 Month Use",
+            "controls": {
+                "previous": "Go to previous review",
+                "next": "Go to next review"
+            },
+            "carouselLabel": "Client reviews carousel",
             "items": {
-                "excellent": {
-                    "title": "Excellent Service",
-                    "text": "From design to printing, it was fast, and the sticker quality is excellent. I will definitely order more in the small size."
-                },
                 "football": {
                     "title": "Football Stickers",
-                    "text": "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they buy more or recommend them to fellow football fans."
+                    "text": "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they'd buy more or recommend them to fellow football fans.",
+                    "author": "Hans",
+                    "badge": "1 Month Use",
+                    "badgeTone": "success"
                 },
-                "print": {
-                    "title": "Great Print Quality",
-                    "text": "Colors were sharp and the material feels durable. Turnaround was exactly as promised."
+                "service": {
+                    "title": "Great service, excellent products!",
+                    "text": "I had an amazing experience! The service was friendly and super responsive, and the products exceeded my expectations.",
+                    "author": "Elizabeth"
                 },
-                "delivery": {
-                    "title": "Fast Delivery",
-                    "text": "Production moved quickly after approval and shipping was on time. The final stickers looked exactly like the mockup."
+                "market": {
+                    "title": "Market Sticker",
+                    "text": "I love this Market Sticker! The design is vibrant, the material feels durable, and it stuck perfectly wherever I placed it.",
+                    "author": "Tricia"
+                },
+                "fastFlawlessA": {
+                    "title": "Fast and flawless.",
+                    "text": "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
+                    "author": "Katrina",
+                    "badge": "Repurchase",
+                    "badgeTone": "default"
+                },
+                "quality": {
+                    "title": "Top quality!",
+                    "text": "The durability and water resistance are excellent, and everything is great, but since there are 100 sheets, quite a few stickers are skewed to one side.",
+                    "author": "Michelle",
+                    "badge": "Repurchase",
+                    "badgeTone": "default"
+                },
+                "fastFlawlessB": {
+                    "title": "Fast and flawless.",
+                    "text": "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
+                    "author": "Katrina",
+                    "badge": "Repurchase",
+                    "badgeTone": "default"
                 }
             }
         }

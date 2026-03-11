@@ -76,14 +76,17 @@ const skipModalBodyParts = computed(() => {
 			</div>
 
 			<footer class="home-guide-tour-skip-modal-actions">
-				<button
+				<UiButton
 					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="sm"
 					class="home-guide-tour-skip-modal-continue"
 					data-testid="home-guide-tour-skip-modal-continue"
 					@click="emit('continue-tour')"
 				>
 					{{ $t('home.tour.skipModal.continue') }}
-				</button>
+				</UiButton>
 				<UiButton
 					variant="filled"
 					tone="neutral"
@@ -163,13 +166,12 @@ const skipModalBodyParts = computed(() => {
 
         .home-guide-tour-skip-modal-continue {
             padding: 8px 16px;
-            border: 0;
-            background: transparent;
+            min-height: auto;
             color: var(--text-primary);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
             font-weight: var(--font-weight-bold);
-            cursor: pointer;
+            box-shadow: none;
         }
 
         .home-guide-tour-skip-modal-skip {

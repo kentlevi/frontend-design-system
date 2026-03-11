@@ -9,6 +9,7 @@ type SearchResultGroup = {
 };
 
 type RecentSearchEntry = {
+	key: string;
 	term: string;
 	matchedItem: SearchItem | null;
 };
@@ -36,8 +37,8 @@ const emit = defineEmits<{
 	'update:searchQuery': [value: string];
 	'focus-input': [];
 	'clear-recent': [];
-	'apply-recent': [term: string];
-	'remove-recent': [term: string];
+	'apply-recent': [entryKey: string];
+	'remove-recent': [entryKey: string];
 	'apply-suggested': [];
 	'select-result': [item: SearchItem];
 }>();
@@ -51,7 +52,7 @@ function escapeRegExp(value: string) {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 function getHighlightParts(value: string): HighlightPart[] {
-	const term = props.searchQuery.trim();
+	const term = typeof props.searchQuery === 'string' ? props.searchQuery.trim() : '';
 	if (!term) return [{ text: value, isMatch: false }];
 	const escapedTerm = escapeRegExp(term);
 	const splitMatcher = new RegExp(`(${escapedTerm})`, 'ig');
@@ -157,7 +158,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 						<ul class="home-search-recent-list" data-testid="app-header-search-recent-list">
 							<li
 								v-for="(entry, index) in props.recentSearchEntries"
-								:key="entry.term"
+								:key="entry.key"
 								class="home-search-recent-item"
 								:class="{ 'is-active': props.activeSearchNavIndex === index }"
 								:data-testid="`app-header-search-recent-item-${index}`"
@@ -167,7 +168,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 									class="home-search-recent-term"
 									:data-search-nav-index="index"
 									:data-testid="`app-header-search-recent-apply-${index}-button`"
-									@click="emit('apply-recent', entry.term)"
+									@click="emit('apply-recent', entry.key)"
 								>
 									<div class="home-search-recent-icon">
 										<img
@@ -199,7 +200,7 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 									class="home-search-recent-remove"
 									:aria-label="t('layout.header.search.modal.recent.remove')"
 									:data-testid="`app-header-search-recent-remove-${index}-button`"
-									@click="emit('remove-recent', entry.term)"
+									@click="emit('remove-recent', entry.key)"
 								>
 									<UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
 								</button>

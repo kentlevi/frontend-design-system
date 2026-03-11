@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import UiIcon from '~/components/ui/Icon.vue';
+import {
+	useControlAttrs,
+	useControlTestId,
+	useRootAttrs,
+} from '~/components/ui/uiControlAttrs.helpers';
 
 type Size = 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
@@ -15,6 +20,9 @@ const props = withDefaults(
 		disabled?: boolean;
 		size?: Size;
 		state?: State;
+		boxClass?: string;
+		iconClass?: string;
+		labelClass?: string;
 	}>(),
 	{
 		modelValue: false,
@@ -22,6 +30,9 @@ const props = withDefaults(
 		disabled: false,
 		size: 'md',
 		state: 'default',
+		boxClass: '',
+		iconClass: '',
+		labelClass: '',
 	}
 );
 
@@ -30,22 +41,9 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
-	const { class: className, style, 'data-testid': _testId } = attrs;
-	return {
-		class: className,
-		style,
-		...(testId.value ? { 'data-testid': testId.value } : {}),
-	};
-});
-const inputAttrs = computed(() => {
-	const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
-	return {
-		...rest,
-		...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
-	};
-});
+const testId = useControlTestId(attrs);
+const rootAttrs = useRootAttrs(attrs, testId);
+const inputAttrs = useControlAttrs(attrs, testId);
 
 function onChange(event: Event) {
 	emit('update:modelValue', (event.target as HTMLInputElement).checked);
@@ -68,16 +66,16 @@ function onChange(event: Event) {
 			:disabled="props.disabled"
 			@change="onChange"
 		>
-		<span class="ui-checkbox-box" aria-hidden="true">
+		<span :class="['ui-checkbox-box', props.boxClass]" aria-hidden="true">
 			<UiIcon
 				name="strong-check"
 				:size="16"
 				color="var(--text-inverse)"
 				decorative
-				class="ui-checkbox-icon"
+				:class="['ui-checkbox-icon', props.iconClass]"
 			/>
 		</span>
-		<span v-if="$slots.default || props.label" class="ui-checkbox-label">
+		<span v-if="$slots.default || props.label" :class="['ui-checkbox-label', props.labelClass]">
 			<slot>{{ props.label }}</slot>
 		</span>
 	</label>

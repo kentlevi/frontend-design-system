@@ -38,6 +38,8 @@ const {
 						<UiCheckbox
 							class="cart-check-row"
 							:model-value="allSelected"
+							box-class="cart-check-row-box"
+							icon-class="cart-check-row-icon"
 							@update:model-value="allSelected = $event"
 						>
 							{{ t('cart.cartPage.selectAll', { count: rows.length }) }}
@@ -47,6 +49,7 @@ const {
 							variant="outline"
 							tone="default"
 							size="md"
+							label-class="cart-remove-btn-label"
 							:disabled="selectedIds.length === 0"
 							@click="removeByIds(selectedIds)"
 						>
@@ -71,6 +74,8 @@ const {
 						<UiCheckbox
 							class="cart-check-row cart-check-row--item"
 							:model-value="selectedIds.includes(row.id)"
+							box-class="cart-check-row-box"
+							icon-class="cart-check-row-icon"
 							@update:model-value="toggleRowSelection(row.id, $event)"
 						/>
 
@@ -79,6 +84,7 @@ const {
 								<img
 									:src="row.artworkPreviewUrl || row.product.image"
 									:alt="row.product.name"
+									class="cart-item-thumb-image"
 								>
 							</div>
 							<div class="cart-item-copy">
@@ -100,6 +106,7 @@ const {
 								:options="qtySelectOptions"
 								icon-family="regular"
 								:icon-size="24"
+								trigger-class="cart-qty-select-trigger"
 								@update:model-value="updateQty(row.id, Number($event))"
 							/>
 						</div>
@@ -202,9 +209,9 @@ const {
                 gap: 8px;
                 color: var(--text-primary);
                 text-decoration: none;
-                font-size: var(--type-size-100);
-                font-weight: var(--font-weight-medium);
-                line-height: var(--type-line-100);
+                font-size: var(--type-size-200);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-200);
             }
         }
 
@@ -226,10 +233,10 @@ const {
                         align-items: center;
                         gap: 10px;
                         color: var(--text-primary);
-                        font-size: var(--type-size-300);
-                        line-height: var(--type-line-300);
+                        font-size: var(--type-size-100);
+                        line-height: var(--type-line-100);
 
-                        :deep(.ui-checkbox-box) {
+                        .cart-check-row-box {
                             width: 20px;
                             height: 20px;
                             border-radius: 5px;
@@ -237,15 +244,10 @@ const {
                             background: var(--contrast-light);
                         }
 
-                        :deep(.ui-checkbox-icon) {
+                        .cart-check-row-icon {
                             width: 16px;
                             height: 16px;
                             display: block;
-                        }
-
-                        :deep(.ui-checkbox-input:checked + .ui-checkbox-box) {
-                            background: var(--text-primary);
-                            border-color: var(--text-primary);
                         }
                     }
 
@@ -264,7 +266,7 @@ const {
                         transition: background-color 0.16s ease, border-color 0.16s ease,
                             opacity 0.16s ease;
 
-                        :deep(.ui-button-label) {
+                        .cart-remove-btn-label {
                             display: inline-flex;
                             align-items: center;
                             justify-content: center;
@@ -317,21 +319,21 @@ const {
                     .cart-item {
                         display: flex;
                         align-items: center;
-                        gap: 14px;
+                        gap: 16px;
 
                         .cart-item-thumb {
-                            width: 86px;
-                            height: 86px;
+                            width: 96px;
+                            height: 96px;
                             border-radius: 10px;
                             background: var(--gray-20);
                             display: grid;
                             place-items: center;
                             overflow: hidden;
 
-                            img {
+                            .cart-item-thumb-image {
                                 width: 62px;
                                 height: 62px;
-                                object-fit: cover;
+                                object-fit: contain;
                             }
                         }
 
@@ -366,7 +368,7 @@ const {
                     .cart-qty-wrap {
                         display: flex;
                         align-items: center;
-                        gap: 10px;
+                        gap: 32px;
 
                         .cart-link-btn {
                             border: 0;
@@ -381,20 +383,16 @@ const {
 
                         .cart-qty-select-control {
                             width: 129px;
+                            min-width: 129px;
+                        }
 
-                            :deep(.ui-select) {
-                                min-width: 129px;
-                                width: 129px;
-                            }
-
-                            :deep(.ui-select-trigger) {
-                                height: 40px;
-                                border-radius: 8px;
-                                border: 1px solid var(--gray-40);
-                                background: var(--contrast-light);
-                                padding: 8px 16px;
-                                box-shadow: none;
-                            }
+                        .cart-qty-select-trigger {
+                            height: 40px;
+                            border-radius: 8px;
+                            border: 1px solid var(--gray-40);
+                            background: var(--contrast-light);
+                            padding: 8px 16px;
+                            box-shadow: none;
                         }
                     }
 
@@ -499,28 +497,33 @@ const {
                     gap: 8px;
 
                     .cart-payment-label {
-                        color: var(--abyss-base);
+                        margin: 0;
+                        color: var(--text-primary);
                         font-size: var(--type-size-100);
                         font-weight: var(--font-weight-regular);
                         line-height: var(--type-line-100);
                     }
 
                     .cart-payment-grid {
-                        display: grid;
-                        grid-template-columns: repeat(3, minmax(0, 1fr));
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
                         gap: 8px;
+                        flex-wrap: nowrap;
 
                         .cart-payment-chip {
-                            min-height: 36px;
+                            flex: 1 1 0;
+                            min-width: 0;
+                            height: 40px;
+                            width: 50px;
                             border: 1px solid var(--gray-40);
-                            border-radius: 10px;
+                            border-radius: 8px;
                             display: grid;
                             place-items: center;
                             background: var(--contrast-light);
+                            box-sizing: border-box;
 
                             .cart-payment-chip-icon {
-                                width: 40px;
-                                height: 24px;
                                 object-fit: contain;
                                 display: block;
                             }

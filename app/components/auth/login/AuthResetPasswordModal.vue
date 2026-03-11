@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user';
-import type { UserFieldValue, UserIdentity, UserProfile } from '@/stores/user';
-import { useCountry } from '@/composables/app/useCountry';
+import { useUserStore } from '~/stores/user';
+import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import { useCountry } from '~/composables/app/useCountry';
 
 const props = withDefaults(
 	defineProps<{
@@ -51,7 +51,7 @@ watch(
 );
 
 function isStrongPassword(value: string) {
-	return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/.test(value);
+	return /^(?=.{6,}$)(?![a-z]+$)(?![A-Z]+$).+$/.test(value);
 }
 
 async function submitChangePassword() {
@@ -202,7 +202,7 @@ async function submitChangePassword() {
 		:model-value="modelValue"
 		width="640px"
 		padding="36px"
-		gap="22px"
+		gap="8px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<template #header>
@@ -228,17 +228,18 @@ async function submitChangePassword() {
 					@update:model-value="password = $event"
 				>
 					<template #icon-right>
-						<button
-							type="button"
+						<UiButton
+							variant="ghost"
+							tone="neutral"
+							size="sm"
 							class="auth-reset-toggle"
 							:aria-label="t('auth.reset.togglePassword')"
+							:sr-label="t('auth.reset.togglePassword')"
+							icon-only
+							:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
+							:icon-size="20"
 							@click="passwordVisible = !passwordVisible"
-						>
-							<UiIcon
-								:name="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
-								:size="20"
-							/>
-						</button>
+						/>
 					</template>
 				</UiInput>
 			</div>
@@ -255,17 +256,18 @@ async function submitChangePassword() {
 					@update:model-value="confirmPassword = $event"
 				>
 					<template #icon-right>
-						<button
-							type="button"
+						<UiButton
+							variant="ghost"
+							tone="neutral"
+							size="sm"
 							class="auth-reset-toggle"
 							:aria-label="t('auth.reset.toggleConfirmPassword')"
+							:sr-label="t('auth.reset.toggleConfirmPassword')"
+							icon-only
+							:icon="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
+							:icon-size="20"
 							@click="confirmVisible = !confirmVisible"
-						>
-							<UiIcon
-								:name="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
-								:size="20"
-							/>
-						</button>
+						/>
 					</template>
 				</UiInput>
 			</div>
@@ -333,11 +335,14 @@ async function submitChangePassword() {
     }
 
     .auth-reset-toggle {
-        border: 0;
-        background: transparent;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
+        --btn-soft: transparent;
+        --btn-border: transparent;
+        padding: 0;
+        min-height: auto;
+        width: 20px;
+        height: 20px;
+        border-radius: 0;
+        box-shadow: none;
         color: var(--text-secondary);
     }
 

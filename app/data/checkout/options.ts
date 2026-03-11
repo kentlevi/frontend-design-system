@@ -50,7 +50,6 @@ export const checkoutPaymentMethods: ReadonlyArray<{
 		defaultSelected: true,
 		enabled: true,
 	},
-	{ key: 'paypal', icon: '/images/checkout/paypal.svg', i18nKey: 'paypal', enabled: true },
 	{
 		key: 'bank-transfer',
 		icon: '/images/checkout/bank-transfer.svg',
@@ -84,11 +83,6 @@ export const checkoutPaymentBrands = [
 		key: 'unionpay',
 		label: 'UnionPay',
 		icon: '/icons/custom/payment-methods/unionpay.svg',
-	},
-	{
-		key: 'paypal',
-		label: 'PayPal',
-		icon: '/icons/custom/payment-methods/paypal.svg',
 	},
 ] as const;
 

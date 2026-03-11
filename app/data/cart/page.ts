@@ -19,11 +19,6 @@ export const cartPaymentOptions = [
 		icon: '/icons/custom/payment-methods/mastercard.svg',
 	},
 	{
-		key: 'american-express',
-		label: 'American Express',
-		icon: '/icons/custom/payment-methods/american-express.svg',
-	},
-	{
 		key: 'jcb',
 		label: 'JCB',
 		icon: '/icons/custom/payment-methods/jcb.svg',

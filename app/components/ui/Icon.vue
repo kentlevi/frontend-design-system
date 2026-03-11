@@ -29,8 +29,8 @@ const iconSize = computed<string>(() => {
 
 const iconMeta = computed(() => icons[props.name] ?? null);
 
-const spriteHref = computed(() =>
-	iconMeta.value ? `/icons/sprite.svg?v=${iconSpriteVersion}#${iconMeta.value.id}` : null
+const spriteHref = computed<string | undefined>(() =>
+	iconMeta.value ? `/icons/sprite.svg?v=${iconSpriteVersion}#${iconMeta.value.id}` : undefined
 );
 </script>
 

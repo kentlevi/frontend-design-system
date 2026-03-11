@@ -250,12 +250,11 @@ const storyRows = computed<StoryRow[]>(() => {
     padding: 48px 0;
 
     .product-guarantees {
-        max-width: 1120px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0 22px;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
+        gap: 24px;
 
         .guarantee-card {
             text-align: center;
@@ -272,8 +271,9 @@ const storyRows = computed<StoryRow[]>(() => {
             }
 
             .product-guarantee-title {
-                font-size: var(--type-size-200);
-                line-height: var(--type-line-200);
+                font-size: var(--type-size-300);
+				font-weight: var(--font-weight-medium);
+                line-height: var(--type-line-300);
                 color: var(--text-primary);
             }
 

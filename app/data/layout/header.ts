@@ -44,6 +44,15 @@ export type NavLinkItem = {
 	to: string;
 };
 
+type ApiClient = <T>(
+	path: string,
+	options?: {
+		method?: string;
+		body?: unknown;
+		headers?: HeadersInit;
+	}
+) => Promise<T>;
+
 export function formatCategoryAsNavLink(category: CategoryData): NavLinkItem | null {
 	const key = (category.url_slug || '').trim();
 	const label = (category.name || '').trim();
@@ -54,18 +63,19 @@ export function formatCategoryAsNavLink(category: CategoryData): NavLinkItem | n
 	return { key, label, to };
 }
 
-interface ProductCategories {
+interface ProductCategoriesResponse {
 	success: boolean;
 	message: string;
-	data: {};
+	data: CategoryData[];
 }
 
 export async function fetchNavigationCategories(
-	api: (path: string, options?: any) => Promise<any>,
+	api: ApiClient,
 	country: string
 ): Promise<CategoryData[]> {
 	try {
-		const response = await api<ProductCategories>(`/${country}/navigation/categories`);
+		const endpoint = `/${String(country)}/navigation/categories`;
+		const response = await api<ProductCategoriesResponse>(endpoint);
 
 		if (!response?.success || !Array.isArray(response.data)) {
 			return [];
@@ -82,9 +92,9 @@ export const headerLocaleOptionConfig: Array<{
 	flagCode: FlagCode;
 	labelKey: string;
 }> = [
-		{ code: 'us', flagCode: 'us', labelKey: 'layout.header.locale.en' },
-		{ code: 'kr', flagCode: 'kr', labelKey: 'layout.header.locale.kr' },
-	];
+	{ code: 'us', flagCode: 'us', labelKey: 'layout.header.locale.en' },
+	{ code: 'kr', flagCode: 'kr', labelKey: 'layout.header.locale.kr' },
+];
 
 export const headerAccountLinkConfig = [
 	{

@@ -11,6 +11,11 @@ const props = withDefaults(
 		errorId?: string;
 		hintId?: string;
 		errorTestId?: string;
+		headClass?: string;
+		labelClass?: string;
+		labelTextClass?: string;
+		errorClass?: string;
+		hintClass?: string;
 	}>(),
 	{
 		label: '',
@@ -23,6 +28,11 @@ const props = withDefaults(
 		errorId: '',
 		hintId: '',
 		errorTestId: '',
+		headClass: '',
+		labelClass: '',
+		labelTextClass: '',
+		errorClass: '',
+		hintClass: '',
 	}
 );
 
@@ -41,24 +51,19 @@ const describedBy = computed(() => {
 
 <template>
 	<div class="ui-form-field">
-		<div class="ui-form-field-head">
-			<label v-if="label" :for="resolvedInputId" class="ui-form-field-label">
-				<slot name="label" :required="required">
-					{{ label }}
-					<span
-						v-if="required && showRequiredMark"
-						class="ui-form-field-required"
-						aria-hidden="true"
-					>
-						*
-					</span>
-				</slot>
+		<div :class="['ui-form-field-head', props.headClass]">
+			<label v-if="label" :for="resolvedInputId" :class="['ui-form-field-label', props.labelClass]">
+				<slot name="label" :required="required"><span :class="['ui-form-field-label-text', props.labelTextClass]">{{ label }}</span><span
+					v-if="required && showRequiredMark"
+					class="ui-form-field-required"
+					aria-hidden="true"
+				>*</span></slot>
 			</label>
 			<slot name="label-right">
 				<span
 					v-if="error"
 					:id="resolvedErrorId"
-					class="ui-form-field-error"
+					:class="['ui-form-field-error', props.errorClass]"
 					:data-testid="resolvedErrorTestId"
 				>
 					{{ error }}
@@ -73,7 +78,7 @@ const describedBy = computed(() => {
 			:required="required"
 		/>
 		<slot name="hint" :hint-id="resolvedHintId">
-			<p v-if="hint" :id="resolvedHintId" class="ui-form-field-hint">
+			<p v-if="hint" :id="resolvedHintId" :class="['ui-form-field-hint', props.hintClass]">
 				{{ hint }}
 			</p>
 		</slot>
@@ -96,10 +101,12 @@ const describedBy = computed(() => {
 
 .ui-form-field-label {
     margin: 0;
+    display: inline-flex;
+    align-items: center;
 }
 
 .ui-form-field-required {
-    margin-left: 2px;
+    color: var(--error);
 }
 
 .ui-form-field-error {

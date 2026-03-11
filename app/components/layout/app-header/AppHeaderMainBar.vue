@@ -2,6 +2,7 @@
 import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
 import type { FlagCode } from '~/data/ui/flags';
 import { useCountry } from '~/composables/app/useCountry';
+import { normalizeAppPath } from '~/utils/auth/redirect';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -51,12 +52,8 @@ const emit = defineEmits<{
 	(e: 'logout'): void;
 }>();
 
-function normalizePath(path: string) {
-	return path.replace(/\/+$/, '') || '/';
-}
-
 function isExactNavHeading(path: string) {
-	return normalizePath(route.path) === normalizePath(path);
+	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
 </script>
 
@@ -99,8 +96,11 @@ function isExactNavHeading(path: string) {
 		</nav>
 
 		<div class="home-header-tools" data-testid="app-header-tools">
-			<button
+			<UiButton
 				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="md"
 				class="home-header-icon home-header-locale"
 				:aria-label="t('layout.header.locale.aria')"
 				data-testid="app-header-locale-button"
@@ -109,7 +109,7 @@ function isExactNavHeading(path: string) {
 				@focus="emit('prefetch-locale')"
 			>
 				<UiFlag :code="props.selectedLocale" :size="24" />
-			</button>
+			</UiButton>
 			<UiButton
 				variant="ghost"
 				tone="default"
@@ -132,7 +132,7 @@ function isExactNavHeading(path: string) {
 					:icon-only="true"
 					icon="strong-shop-cart"
 					icon-size="md"
-					class="home-header-icon"
+					class="home-header-icon home-header-cart"
 					:aria-label="t('layout.header.cart')"
 					data-testid="app-header-cart-button"
 					@click="emit('open-cart')"
@@ -147,14 +147,17 @@ function isExactNavHeading(path: string) {
 					{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
 				</span>
 			</div>
-			<button
+			<UiButton
 				v-if="props.isMockLoggedIn"
 				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="md"
 				class="home-header-icon home-header-bell"
 				data-testid="app-header-notification-button"
 			>
 				<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
-			</button>
+			</UiButton>
 
 			<AppHeaderAccountMenu
 				:account-open="props.accountOpen"
@@ -252,12 +255,10 @@ function isExactNavHeading(path: string) {
 
             height: 40px;
             min-width: 40px;
-            border: 0;
+			padding: 0;
             border-radius: 16px;
-            background: transparent;
             display: grid;
             place-items: center;
-            cursor: pointer;
             box-shadow: none;
             transition: background-color 0.2s ease;
 

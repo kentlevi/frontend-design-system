@@ -44,16 +44,19 @@ const iconByTone = {
 			<span class="ui-toast-text">
 				<slot>{{ message }}</slot>
 			</span>
-			<button
+			<UiButton
 				v-if="dismissible"
 				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="sm"
 				class="ui-toast-close"
 				aria-label="Close"
 				data-testid="ui-toast-close-button"
 				@click="emit('close')"
 			>
 				<UiIcon name="strong-times" :size="14" />
-			</button>
+			</UiButton>
 		</div>
 	</Transition>
 </template>
@@ -116,12 +119,12 @@ const iconByTone = {
     }
 
     .ui-toast-close {
-        border: 0;
-        background: transparent;
         color: inherit;
         display: grid;
         place-items: center;
-        cursor: pointer;
+        min-height: auto;
+        padding: 0;
+        box-shadow: none;
     }
 }
 

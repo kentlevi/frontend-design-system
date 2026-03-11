@@ -37,7 +37,10 @@
             "unitDesc": "Choose your preferred/default unit of measurement.",
             "millimeter": "millimeter",
             "inch": "inch",
-            "signOut": "Sign Out"
+            "signOut": "Sign Out",
+            
+            "given_name": "Given Name",
+            "family_name": "Family Name"
         }
     }
 }

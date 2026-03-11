@@ -4,10 +4,11 @@ import { useI18n } from 'vue-i18n';
 import { useHomeReviewsCarousel } from '@/composables/home/useHomeReviewsCarousel';
 import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
 type ReviewItem = {
+	id: string;
 	title: string;
 	text: string;
 	author: string;
@@ -16,52 +17,30 @@ type ReviewItem = {
 	image: string;
 };
 
-const reviews = computed<ReviewItem[]>(() => [
-	{
-		title: 'Football Stickers',
-		text: "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they'd buy more or recommend them to fellow football fans.",
-		author: 'Hans',
-		badge: '1 Month Use',
-		badgeTone: 'success',
-		image: resolveFileUrl('/home/reviews/review-01.png'),
-	},
-	{
-		title: 'Great service, excellent products!',
-		text: 'I had an amazing experience! The service was friendly and super responsive, and the products exceeded my expectations.',
-		author: 'Elizabeth',
-		image: resolveFileUrl('/home/reviews/review-02.png'),
-	},
-	{
-		title: 'Market Sticker',
-		text: 'I love this Market Sticker! The design is vibrant, the material feels durable, and it stuck perfectly wherever I placed it.',
-		author: 'Tricia',
-		image: resolveFileUrl('/home/reviews/review-03.png'),
-	},
-	{
-		title: 'Fast and flawless.',
-		text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
-		author: 'Katrina',
-		badge: 'Repurchase',
-		badgeTone: 'default',
-		image: resolveFileUrl('/home/reviews/review-04.png'),
-	},
-	{
-		title: 'Top quality!',
-		text: 'The durability and water resistance are excellent, and everything is great, but since there are 100 sheets, quite a few stickers are skewed to one side.',
-		author: 'Michelle',
-		badge: 'Repurchase',
-		badgeTone: 'default',
-		image: resolveFileUrl('/home/reviews/review-05.png'),
-	},
-	{
-		title: 'Fast and flawless.',
-		text: "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
-		author: 'Katrina',
-		badge: 'Repurchase',
-		badgeTone: 'default',
-		image: resolveFileUrl('/home/reviews/review-06.png'),
-	},
-]);
+const reviewIds = [
+	'football',
+	'service',
+	'market',
+	'fastFlawlessA',
+	'quality',
+	'fastFlawlessB',
+] as const;
+
+const reviews = computed<ReviewItem[]>(() =>
+	reviewIds.map((id, index) => ({
+		id,
+		title: t(`home.reviews.items.${id}.title`),
+		text: t(`home.reviews.items.${id}.text`),
+		author: t(`home.reviews.items.${id}.author`),
+		badge: te(`home.reviews.items.${id}.badge`)
+			? t(`home.reviews.items.${id}.badge`)
+			: undefined,
+		badgeTone: te(`home.reviews.items.${id}.badgeTone`)
+			? (t(`home.reviews.items.${id}.badgeTone`) as ReviewItem['badgeTone'])
+			: undefined,
+		image: resolveFileUrl(`/home/reviews/review-0${index + 1}.png`),
+	}))
+);
 
 const {
 	sectionRef,
@@ -78,7 +57,7 @@ const {
 	gap: 24,
 	intervalMs: 3200,
 });
-const carouselLabel = 'Client reviews carousel';
+const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
 </script>
 
 <template>
@@ -86,7 +65,7 @@ const carouselLabel = 'Client reviews carousel';
 		ref="sectionRef"
 		class="home-reviews"
 		data-testid="home-reviews-section"
-		aria-label="Client reviews"
+		:aria-label="t('home.reviews.carouselLabel')"
 	>
 		<div class="home-reviews-card">
 			<div class="home-reviews-head">
@@ -103,8 +82,8 @@ const carouselLabel = 'Client reviews carousel';
 						:icon-only="true"
 						icon="strong-long-arrow-left"
 						icon-size="md"
-						sr-label="Go to previous review"
-						aria-label="Go to previous review"
+						:sr-label="t('home.reviews.controls.previous')"
+						:aria-label="t('home.reviews.controls.previous')"
 						class="home-reviews-arrow"
 						data-testid="home-reviews-prev-button"
 						:disabled="!canGoPrev"
@@ -117,8 +96,8 @@ const carouselLabel = 'Client reviews carousel';
 						:icon-only="true"
 						icon="strong-long-arrow-right"
 						icon-size="md"
-						sr-label="Go to next review"
-						aria-label="Go to next review"
+						:sr-label="t('home.reviews.controls.next')"
+						:aria-label="t('home.reviews.controls.next')"
 						class="home-reviews-arrow"
 						data-testid="home-reviews-next-button"
 						:disabled="!canGoNext"
@@ -169,6 +148,7 @@ const carouselLabel = 'Client reviews carousel';
 									variant="outline"
 									:tone="review.badgeTone ?? 'success'"
 									size="sm"
+									badge-class="home-reviews-badge"
 								>
 									{{ review.badge }}
 								</UiBadge>
@@ -327,7 +307,7 @@ const carouselLabel = 'Client reviews carousel';
             }
         }
 
-        :deep(.badge) {
+        .home-reviews-badge {
             height: 24px;
             font-size: var(--body-small);
             line-height: var(--type-line-100);

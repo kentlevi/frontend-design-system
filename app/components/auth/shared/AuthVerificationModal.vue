@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import lottie from 'lottie-web';
+import { onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useVerificationCodeInput } from '@/composables/auth/useVerificationCodeInput';
-import { authVerificationConfig, type AuthVerificationI18nBase } from '@/data/auth/verification';
+import { useVerificationCodeInput } from '~/composables/auth/useVerificationCodeInput';
+import { authVerificationConfig, type AuthVerificationI18nBase } from '~/data/auth/verification';
 
 const { t } = useI18n();
 
@@ -13,6 +12,7 @@ const props = withDefaults(
 		email?: string;
 		code?: string;
 		error?: string;
+		resendLimitReached?: string;
 		verifying?: boolean;
 		submitLabel?: string;
 		busyLabel?: string;
@@ -30,6 +30,7 @@ const props = withDefaults(
 		email: '',
 		code: '',
 		error: '',
+		resendLimitReached: '',
 		verifying: false,
 		submitLabel: '',
 		busyLabel: '',
@@ -70,12 +71,28 @@ const computedSubmitLabel = computed(() =>
 		? props.busyLabel || t(`${key.value}.verifying`)
 		: props.submitLabel || t(`${key.value}.verify`)
 );
-const canResend = computed(() => props.resendCooldownRemaining <= 0);
+const isResendTapLocked = ref(false);
+let resendTapLockTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearResendTapLockTimer() {
+	if (!resendTapLockTimer) return;
+	clearTimeout(resendTapLockTimer);
+	resendTapLockTimer = null;
+}
+
+function lockResendTap(ms = 2000) {
+	clearResendTapLockTimer();
+	isResendTapLocked.value = true;
+	resendTapLockTimer = setTimeout(() => {
+		isResendTapLocked.value = false;
+		resendTapLockTimer = null;
+	}, ms);
+}
+
+const canResend = computed(() => props.resendCooldownRemaining <= 0 && !isResendTapLocked.value);
 const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
 	props.align === 'start' ? 'top' : props.align
 );
-const verifyLoaderRef = ref<HTMLElement | null>(null);
-let verifyLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -95,44 +112,34 @@ function onPaste(event: ClipboardEvent) {
 	emitCode();
 }
 
-function destroyVerifyLoaderAnimation() {
-	if (!verifyLoaderAnimation) return;
-	verifyLoaderAnimation.destroy();
-	verifyLoaderAnimation = null;
-}
-
-async function mountVerifyLoaderAnimation() {
-	if (typeof window === 'undefined' || !verifyLoaderRef.value) return;
-	destroyVerifyLoaderAnimation();
-	const response = await fetch('/animations/musticker-loader.json');
-	if (!response.ok) return;
-	const animationData = await response.json();
-	verifyLoaderAnimation = lottie.loadAnimation({
-		container: verifyLoaderRef.value,
-		renderer: 'svg',
-		loop: true,
-		autoplay: true,
-		animationData,
-		rendererSettings: {
-			preserveAspectRatio: 'xMidYMid meet',
-		},
-	});
+function onResendClick() {
+	if (!canResend.value) return;
+	lockResendTap();
+	emit('resend');
 }
 
 watch(
-	() => props.verifying,
-	async (loading) => {
-		if (!loading) {
-			destroyVerifyLoaderAnimation();
-			return;
+	() => props.resendCooldownRemaining,
+	(remaining) => {
+		if (remaining > 0) {
+			// Cooldown now governs the disabled state; release tap-lock quickly.
+			isResendTapLocked.value = false;
+			clearResendTapLockTimer();
 		}
-		await nextTick();
-		await mountVerifyLoaderAnimation();
+	}
+);
+
+watch(
+	() => props.modelValue,
+	(isOpen) => {
+		if (!isOpen) return;
+		isResendTapLocked.value = false;
+		clearResendTapLockTimer();
 	}
 );
 
 onBeforeUnmount(() => {
-	destroyVerifyLoaderAnimation();
+	clearResendTapLockTimer();
 });
 </script>
 
@@ -146,32 +153,30 @@ onBeforeUnmount(() => {
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<div class="auth-verification-modal">
-			<Transition name="auth-verification-loading-fade">
-				<div
-					v-if="verifying"
-					class="auth-verification-loading-overlay"
-					data-testid="auth-verification-loading-overlay"
-				>
-					<div
-						class="auth-verification-loading-loader"
-						role="status"
-						aria-live="polite"
-						:aria-label="computedSubmitLabel"
-					>
-						<div ref="verifyLoaderRef" class="auth-verification-loading-lottie" aria-hidden="true" />
-					</div>
-				</div>
-			</Transition>
+			<UiLoadingOverlay
+				:visible="verifying"
+				:label="computedSubmitLabel"
+				test-id="auth-verification-loading-overlay"
+				position="absolute"
+				background="rgba(246, 246, 248, 0.72)"
+				:z-index="5"
+				loader-width="74px"
+				loader-height="74px"
+			/>
 
-			<button
+			<UiButton
 				v-if="showCloseButton"
-				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="sm"
 				class="auth-verification-close"
 				:aria-label="t(`${key}.closeModal`)"
+				:sr-label="t(`${key}.closeModal`)"
+				icon-only
+				icon="regular-times"
+				:icon-size="24"
 				@click="closeModal"
-			>
-				<UiIcon name="regular-times" :size="24" color="#2a2f3d" />
-			</button>
+			/>
 
 			<div class="auth-verification-head">
 				<slot name="icon">
@@ -185,9 +190,6 @@ onBeforeUnmount(() => {
 						{{ t(`${key}.messagePrefix`) }}
 						<strong class="auth-verification-email">{{ email }}</strong>
 						{{ t(`${key}.messageSuffix`) }}
-					</p>
-					<p v-if="orderNumber" class="auth-verification-order-number">
-						{{ t(`${key}.orderNumberLabel`) }}: {{ orderNumber }}
 					</p>
 				</div>
 			</div>
@@ -207,6 +209,7 @@ onBeforeUnmount(() => {
 						inputmode="numeric"
 						maxlength="1"
 						autocomplete="one-time-code"
+						placeholder="0"
 						:value="value"
 						:data-testid="`${testIdPrefix}-code-${index + 1}`"
 						@input="onInput(index, $event)"
@@ -227,7 +230,7 @@ onBeforeUnmount(() => {
 				<UiButton
 					variant="filled"
 					tone="neutral"
-					size="md"
+					size="lg"
 					class="auth-verification-submit"
 					:data-testid="`${testIdPrefix}-submit`"
 					@click="emit('verify')"
@@ -235,18 +238,24 @@ onBeforeUnmount(() => {
 					{{ computedSubmitLabel }}
 				</UiButton>
 
-				<p class="auth-verification-resend">
+				<p v-if="!resendLimitReached" class="auth-verification-resend">
 					{{ t(`${key}.resendPrefix`) }}
-					<button
-						type="button"
+					<UiButton
+						variant="ghost"
+						tone="neutral"
+						size="sm"
 						class="auth-verification-resend-btn"
+						label-class="auth-verification-resend-btn-label"
 						:data-testid="`${testIdPrefix}-resend`"
 						:disabled="!canResend"
-						@click="emit('resend')"
+						@click="onResendClick"
 					>
 						{{ t(`${key}.resendCta`) }}
-					</button>
+					</UiButton>
 					{{ t(`${key}.resendSuffix`) }}
+				</p>
+				<p v-else class="auth-verification-resend">
+					{{ t(`${key}.resendLimitReachedPrefix`) }} <b>{{ t(`${key}.resendLimitReachedMiddle`) }}</b>{{ t(`${key}.resendLimitReachedSuffix`) }}
 				</p>
 			</div>
 		</div>
@@ -258,55 +267,25 @@ onBeforeUnmount(() => {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-
-    .auth-verification-loading-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(246, 246, 248, 0.72);
-        display: grid;
-        place-items: center;
-        z-index: 5;
-        border-radius: 22px;
-    }
-
-    .auth-verification-loading-loader {
-        width: 74px;
-        height: 74px;
-        display: grid;
-        place-items: center;
-    }
-
-    .auth-verification-loading-lottie {
-        width: 100%;
-        height: 100%;
-
-        :deep(svg) {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-    }
+    gap: 32px;
 
     .auth-verification-close {
         position: absolute;
         top: -16px;
         right: -16px;
-        border: 0;
-        background: transparent;
         width: 24px;
         height: 24px;
         padding: 0;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
+        min-height: auto;
+        border-radius: 0;
+        box-shadow: none;
     }
 
     .auth-verification-head {
         display: grid;
         grid-template-columns: auto 1fr;
         align-items: start;
-        gap: 14px;
+        gap: 16px;
 
         .auth-verification-copy {
             display: flex;
@@ -331,13 +310,6 @@ onBeforeUnmount(() => {
                     color: #c3a700;
                     font-weight: var(--font-weight-bold);
                 }
-            }
-
-            .auth-verification-order-number {
-                margin: 0;
-                color: var(--text-secondary);
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
             }
         }
     }
@@ -366,11 +338,15 @@ onBeforeUnmount(() => {
                 border-radius: 8px;
                 padding: 0;
                 color: var(--text-primary);
-                font-size: var(--type-size-500);
-                line-height: var(--type-line-500);
+                font-size: var(--type-size-400);
+                line-height: var(--type-line-400);
                 font-weight: var(--font-weight-bold);
                 text-align: center;
                 transition: border-color 0.2s ease;
+
+                &::placeholder {
+                    color: var(--gray-60);
+                }
 
                 &:focus {
                     outline: none;
@@ -415,33 +391,33 @@ onBeforeUnmount(() => {
             line-height: var(--type-line-100);
 
             .auth-verification-resend-btn {
-                border: 0;
-                background: transparent;
-                color: var(--text-primary);
-                text-decoration: underline;
-                font-size: inherit;
-                line-height: inherit;
-                font-weight: var(--font-weight-bold);
                 padding: 0;
+                min-height: auto;
+                height: auto;
+                border-radius: 0;
+                box-shadow: none;
+                color: var(--text-primary);
 
                 &:disabled {
                     color: var(--text-muted);
-                    cursor: not-allowed;
-                    text-decoration: none;
+                }
+
+                .auth-verification-resend-btn-label {
+                    padding: 0;
+                    text-decoration: underline;
+                    font-size: inherit;
+                    line-height: inherit;
+                    font-weight: var(--font-weight-bold);
+                }
+
+                &[disabled] {
+                    .auth-verification-resend-btn-label {
+                        text-decoration: none;
+                    }
                 }
             }
         }
 
     }
-}
-
-.auth-verification-loading-fade-enter-active,
-.auth-verification-loading-fade-leave-active {
-    transition: opacity 0.16s ease;
-}
-
-.auth-verification-loading-fade-enter-from,
-.auth-verification-loading-fade-leave-to {
-    opacity: 0;
 }
 </style>

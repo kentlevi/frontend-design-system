@@ -93,7 +93,7 @@ async function onProductionInquiryClick() {
                 gap: 14px;
 
                 .home-cta-btn {
-                    width: 232px;
+                    min-width: 232px;
                     border-radius: 10px;
                     border: 0;
                     background: var(--contrast-light);
@@ -105,7 +105,7 @@ async function onProductionInquiryClick() {
                 }
 
                 .home-cta-btn-alt {
-                    width: 232px;
+                    min-width: 232px;
                     border-radius: 10px;
                     --btn-bg: var(--contrast-light);
                     --btn-border: color-mix(in srgb, var(--contrast-light) 80%, transparent);
