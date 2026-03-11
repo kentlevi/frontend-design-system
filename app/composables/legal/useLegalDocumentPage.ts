@@ -31,7 +31,7 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 			title_suffix.value !== `${document_base_key.value}.titleSuffix`
 	);
 
-	function resolve_message(value: unknown) {
+	function resolveMessage(value: unknown) {
 		if (typeof value === 'string') return value;
 		return rt(value as Parameters<typeof rt>[0]);
 	}
@@ -41,7 +41,7 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 			normalizeLegalSections(
 				toMessageArray(tm(`${document_base_key.value}.sections`) as RawLegalSection[]) as RawLegalSection[],
 				document_key,
-				resolve_message
+				resolveMessage
 			) as LegalSection[]
 	);
 
@@ -52,15 +52,15 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 		}))
 	);
 
-	function set_initial_active_topic() {
+	function setInitialActiveTopic() {
 		active_topic_id.value = sections.value[0]?.id || '';
 	}
 
-	function clear_manual_active_topic() {
+	function clearManualActiveTopic() {
 		manual_active_topic_id.value = '';
 	}
 
-	function update_active_indicator() {
+	function updateActiveIndicator() {
 		if (!import.meta.client) return;
 
 		const nav_element = sidebar_nav_element.value;
@@ -89,7 +89,7 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 		};
 	}
 
-	function scroll_to_topic_section(topic_id: string) {
+	function scrollToTopicSection(topic_id: string) {
 		if (!import.meta.client) return;
 
 		const section_element = document.getElementById(topic_id);
@@ -104,15 +104,15 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 		});
 	}
 
-	function handle_topic_click(event: MouseEvent, topic_id: string) {
+	function handleTopicClick(event: MouseEvent, topic_id: string) {
 		event.preventDefault();
 		manual_active_topic_id.value = topic_id;
 		active_topic_id.value = topic_id;
-		scroll_to_topic_section(topic_id);
+		scrollToTopicSection(topic_id);
 		window.history.replaceState(null, '', `#${topic_id}`);
 	}
 
-	function sync_active_topic_from_scroll() {
+	function syncActiveTopicFromScroll() {
 		if (!import.meta.client) return;
 
 		if (manual_active_topic_id.value) {
@@ -153,38 +153,38 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 		active_topic_id.value = next_active_id;
 	}
 
-	function queue_scroll_spy_sync() {
+	function queueScrollSpySync() {
 		if (!import.meta.client) return;
 		if (scroll_spy_raf_id !== null) return;
 
 		scroll_spy_raf_id = window.requestAnimationFrame(() => {
 			scroll_spy_raf_id = null;
-			sync_active_topic_from_scroll();
-			update_active_indicator();
+			syncActiveTopicFromScroll();
+			updateActiveIndicator();
 		});
 	}
 
 	onMounted(() => {
-		set_initial_active_topic();
+		setInitialActiveTopic();
 		void nextTick(() => {
-			sync_active_topic_from_scroll();
-			update_active_indicator();
-			window.addEventListener('scroll', queue_scroll_spy_sync, { passive: true });
-			window.addEventListener('resize', queue_scroll_spy_sync);
-			window.addEventListener('wheel', clear_manual_active_topic, { passive: true });
-			window.addEventListener('touchmove', clear_manual_active_topic, { passive: true });
-			window.addEventListener('keydown', clear_manual_active_topic);
+			syncActiveTopicFromScroll();
+			updateActiveIndicator();
+			window.addEventListener('scroll', queueScrollSpySync, { passive: true });
+			window.addEventListener('resize', queueScrollSpySync);
+			window.addEventListener('wheel', clearManualActiveTopic, { passive: true });
+			window.addEventListener('touchmove', clearManualActiveTopic, { passive: true });
+			window.addEventListener('keydown', clearManualActiveTopic);
 		});
 	});
 
 	onBeforeUnmount(() => {
 		if (!import.meta.client) return;
 
-		window.removeEventListener('scroll', queue_scroll_spy_sync);
-		window.removeEventListener('resize', queue_scroll_spy_sync);
-		window.removeEventListener('wheel', clear_manual_active_topic);
-		window.removeEventListener('touchmove', clear_manual_active_topic);
-		window.removeEventListener('keydown', clear_manual_active_topic);
+		window.removeEventListener('scroll', queueScrollSpySync);
+		window.removeEventListener('resize', queueScrollSpySync);
+		window.removeEventListener('wheel', clearManualActiveTopic);
+		window.removeEventListener('touchmove', clearManualActiveTopic);
+		window.removeEventListener('keydown', clearManualActiveTopic);
 
 		if (scroll_spy_raf_id !== null) {
 			window.cancelAnimationFrame(scroll_spy_raf_id);
@@ -195,12 +195,12 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 	watch(
 		() => `${document_key}:${sections.value.map((section) => section.id).join('|')}`,
 		() => {
-			set_initial_active_topic();
+			setInitialActiveTopic();
 			if (!import.meta.client) return;
 
 			void nextTick(() => {
-				sync_active_topic_from_scroll();
-				update_active_indicator();
+				syncActiveTopicFromScroll();
+				updateActiveIndicator();
 			});
 		}
 	);
@@ -209,7 +209,7 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 		if (!import.meta.client) return;
 
 		void nextTick(() => {
-			update_active_indicator();
+			updateActiveIndicator();
 		});
 	});
 
@@ -220,12 +220,12 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 		titlePrefix: title_prefix,
 		titleSuffix: title_suffix,
 		hasSplitTitle: has_split_title,
-		resolveMessage: resolve_message,
+		resolveMessage: resolveMessage,
 		sections,
 		topics,
 		activeTopicId: active_topic_id,
 		sidebarNavElement: sidebar_nav_element,
 		activeIndicatorStyle: active_indicator_style,
-		handleTopicClick: handle_topic_click,
+		handleTopicClick: handleTopicClick,
 	};
 }

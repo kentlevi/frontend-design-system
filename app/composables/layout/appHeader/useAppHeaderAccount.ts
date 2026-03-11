@@ -129,20 +129,20 @@ export function useAppHeaderAccount() {
 			: 'account-dropdown-guest'
 	);
 
-	function clear_account_close_timeout() {
+	function clearAccountCloseTimeout() {
 		if (!account_close_timeout) return;
 		clearTimeout(account_close_timeout);
 		account_close_timeout = null;
 	}
 
-	function close_account_menu() {
-		clear_account_close_timeout();
+	function closeAccountMenu() {
+		clearAccountCloseTimeout();
 		account_open.value = false;
 		account_opened_by_click.value = false;
 	}
 
-	function toggle_account_menu() {
-		clear_account_close_timeout();
+	function toggleAccountMenu() {
+		clearAccountCloseTimeout();
 
 		if (account_open.value && !account_opened_by_click.value) {
 			account_opened_by_click.value = true;
@@ -154,30 +154,30 @@ export function useAppHeaderAccount() {
 		account_opened_by_click.value = next_open;
 	}
 
-	function open_locale_modal() {
+	function openLocaleModal() {
 		locale_modal_open.value = true;
 	}
 
-	function close_locale_modal() {
+	function closeLocaleModal() {
 		locale_modal_open.value = false;
 	}
 
-	function on_account_mouse_enter() {
-		clear_account_close_timeout();
+	function onAccountMouseEnter() {
+		clearAccountCloseTimeout();
 		if (!account_opened_by_click.value) {
 			account_open.value = true;
 		}
 	}
 
-	function on_account_mouse_leave() {
+	function onAccountMouseLeave() {
 		if (account_opened_by_click.value) return;
-		clear_account_close_timeout();
+		clearAccountCloseTimeout();
 		account_close_timeout = setTimeout(() => {
 			account_open.value = false;
 		}, ACCOUNT_CLOSE_DELAY_MS);
 	}
 
-	function is_nav_link_active(path: string) {
+	function isNavLinkActive(path: string) {
 		const current_path = normalizeAppPath(route.path);
 		const target_path = normalizeAppPath(path);
 		if (target_path === withCountry('/')) {
@@ -187,7 +187,7 @@ export function useAppHeaderAccount() {
 		return current_path === target_path || current_path.startsWith(`${target_path}/`);
 	}
 
-	async function select_locale(next_locale: SupportedCountry) {
+	async function selectLocale(next_locale: SupportedCountry) {
 		if (!isSupportedCountry(next_locale)) return;
 
 		const current_full_path = route.fullPath || `/${country.value}`;
@@ -201,14 +201,14 @@ export function useAppHeaderAccount() {
 
 		preferred_locale.value = next_locale;
 		await setLocale(next_locale);
-		close_locale_modal();
+		closeLocaleModal();
 
 		if (next_locale !== country.value) {
 			await navigateTo(next_path);
 		}
 	}
 
-	async function logout_mock() {
+	async function logoutMock() {
 		void api(`/${apiCountry.value}/auth/logout`, {
 			method: 'POST',
 		}).catch(() => {
@@ -220,20 +220,20 @@ export function useAppHeaderAccount() {
 		mock_user.value = null;
 		user_store.clearUser();
 		user_store.clearOnboardingProfile();
-		close_account_menu();
+		closeAccountMenu();
 		await navigateTo(withCountry('/'));
 	}
 
-	function handle_avatar_updated(event: Event) {
+	function handleAvatarUpdated(event: Event) {
 		const custom_event = event as CustomEvent<string | null>;
 		user_avatar_url.value = custom_event.detail || null;
 	}
 
-	function handle_document_click(event: MouseEvent) {
+	function handleDocumentClick(event: MouseEvent) {
 		const target = event.target;
 		if (!(target instanceof Node)) return;
 		if (account_menu_ref.value?.contains(target)) return;
-		close_account_menu();
+		closeAccountMenu();
 	}
 
 	onMounted(() => {
@@ -242,27 +242,27 @@ export function useAppHeaderAccount() {
 		user_avatar_url.value = window.localStorage.getItem(ACCOUNT_LOCAL_AVATAR_KEY);
 		window.addEventListener(
 			ACCOUNT_AVATAR_UPDATED_EVENT,
-			handle_avatar_updated as EventListener
+			handleAvatarUpdated as EventListener
 		);
-		document.addEventListener('click', handle_document_click);
+		document.addEventListener('click', handleDocumentClick);
 	});
 
 	onBeforeUnmount(() => {
-		clear_account_close_timeout();
+		clearAccountCloseTimeout();
 		if (!import.meta.client) return;
 
 		window.removeEventListener(
 			ACCOUNT_AVATAR_UPDATED_EVENT,
-			handle_avatar_updated as EventListener
+			handleAvatarUpdated as EventListener
 		);
-		document.removeEventListener('click', handle_document_click);
+		document.removeEventListener('click', handleDocumentClick);
 	});
 
 	watch(
 		() => route.fullPath,
 		() => {
-			close_account_menu();
-			close_locale_modal();
+			closeAccountMenu();
+			closeLocaleModal();
 		}
 	);
 
@@ -281,14 +281,14 @@ export function useAppHeaderAccount() {
 		displayName: display_name,
 		displayEmail: display_email,
 		accountTransitionName: account_transition_name,
-		isNavLinkActive: is_nav_link_active,
-		toggleAccountMenu: toggle_account_menu,
-		closeAccountMenu: close_account_menu,
-		onAccountMouseEnter: on_account_mouse_enter,
-		onAccountMouseLeave: on_account_mouse_leave,
-		openLocaleModal: open_locale_modal,
-		closeLocaleModal: close_locale_modal,
-		selectLocale: select_locale,
-		logoutMock: logout_mock,
+		isNavLinkActive: isNavLinkActive,
+		toggleAccountMenu: toggleAccountMenu,
+		closeAccountMenu: closeAccountMenu,
+		onAccountMouseEnter: onAccountMouseEnter,
+		onAccountMouseLeave: onAccountMouseLeave,
+		openLocaleModal: openLocaleModal,
+		closeLocaleModal: closeLocaleModal,
+		selectLocale: selectLocale,
+		logoutMock: logoutMock,
 	};
 }

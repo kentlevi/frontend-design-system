@@ -28,19 +28,19 @@ export function useCartPreview(params: {
 	const CART_REDIRECT_DELAY_MS = 1000;
 	let redirect_loader_animation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
-	function open_inline_edit(item: CartPreviewItem) {
+	function openInlineEdit(item: CartPreviewItem) {
 		editing_item_id.value = item.id;
 		draft_size_key.value = item.sizeKey;
 		draft_qty.value = item.qty;
 	}
 
-	function cancel_inline_edit() {
+	function cancelInlineEdit() {
 		editing_item_id.value = null;
 		draft_size_key.value = '';
 		draft_qty.value = 0;
 	}
 
-	function save_inline_edit(item_id: string) {
+	function saveInlineEdit(item_id: string) {
 		if (!draft_size_key.value || draft_qty.value <= 0) return;
 
 		params.emitUpdateItem({
@@ -49,10 +49,10 @@ export function useCartPreview(params: {
 			qty: draft_qty.value,
 		});
 
-		cancel_inline_edit();
+		cancelInlineEdit();
 	}
 
-	function edited_item_total(item: CartPreviewItem) {
+	function editedItemTotal(item: CartPreviewItem) {
 		if (editing_item_id.value !== item.id) return item.total;
 		if (!Number.isFinite(draft_qty.value) || draft_qty.value <= 0 || item.qty <= 0) {
 			return item.total;
@@ -62,16 +62,16 @@ export function useCartPreview(params: {
 		return unit_price * draft_qty.value;
 	}
 
-	function edited_grand_total() {
+	function editedGrandTotal() {
 		if (!editing_item_id.value) return params.grandTotal.value;
 
 		const editing_item = params.cartItems.value.find((item) => item.id === editing_item_id.value);
 		if (!editing_item) return params.grandTotal.value;
 
-		return params.grandTotal.value - editing_item.total + edited_item_total(editing_item);
+		return params.grandTotal.value - editing_item.total + editedItemTotal(editing_item);
 	}
 
-	function get_inline_size_options(item: CartPreviewItem) {
+	function getInlineSizeOptions(item: CartPreviewItem) {
 		if (params.sizeOptionModels.value.length === 0) {
 			return [
 				{
@@ -87,7 +87,7 @@ export function useCartPreview(params: {
 		}));
 	}
 
-	function get_inline_qty_options(item: CartPreviewItem) {
+	function getInlineQtyOptions(item: CartPreviewItem) {
 		if (params.quantityOptions.value.length === 0) {
 			return [
 				{
@@ -103,16 +103,16 @@ export function useCartPreview(params: {
 		}));
 	}
 
-	function destroy_redirect_animation() {
+	function destroyRedirectAnimation() {
 		if (!redirect_loader_animation) return;
 		redirect_loader_animation.destroy();
 		redirect_loader_animation = null;
 	}
 
-	async function mount_redirect_animation() {
+	async function mountRedirectAnimation() {
 		if (typeof window === 'undefined' || !redirect_loader_ref.value) return;
 
-		destroy_redirect_animation();
+		destroyRedirectAnimation();
 		const response = await fetch('/animations/musticker-loader.json');
 		if (!response.ok) return;
 
@@ -129,20 +129,20 @@ export function useCartPreview(params: {
 		});
 	}
 
-	async function go_to_cart() {
+	async function goToCart() {
 		if (redirecting_to_cart.value) return;
 
 		redirecting_to_cart.value = true;
 		await nextTick();
-		await mount_redirect_animation();
+		await mountRedirectAnimation();
 		await new Promise((resolve) => setTimeout(resolve, CART_REDIRECT_DELAY_MS));
 		await router.push(withCountry('/cart'));
 		params.closePreview();
-		destroy_redirect_animation();
+		destroyRedirectAnimation();
 		redirecting_to_cart.value = false;
 	}
 
-	async function go_to_checkout() {
+	async function goToCheckout() {
 		if (redirecting_to_cart.value) return;
 
 		if (typeof window !== 'undefined') {
@@ -156,7 +156,7 @@ export function useCartPreview(params: {
 		await router.push(withCountry('/checkout'));
 	}
 
-	async function customize_featured_product(product_id: string) {
+	async function customizeFeaturedProduct(product_id: string) {
 		const target_path = homeProductTypePathById[product_id];
 		if (!target_path) return;
 
@@ -165,7 +165,7 @@ export function useCartPreview(params: {
 	}
 
 	onBeforeUnmount(() => {
-		destroy_redirect_animation();
+		destroyRedirectAnimation();
 	});
 
 	return {
@@ -174,15 +174,15 @@ export function useCartPreview(params: {
 		draftQty: draft_qty,
 		redirectingToCart: redirecting_to_cart,
 		redirectLoaderRef: redirect_loader_ref,
-		openInlineEdit: open_inline_edit,
-		cancelInlineEdit: cancel_inline_edit,
-		saveInlineEdit: save_inline_edit,
-		editedItemTotal: edited_item_total,
-		editedGrandTotal: edited_grand_total,
-		getInlineSizeOptions: get_inline_size_options,
-		getInlineQtyOptions: get_inline_qty_options,
-		goToCart: go_to_cart,
-		goToCheckout: go_to_checkout,
-		customizeFeaturedProduct: customize_featured_product,
+		openInlineEdit: openInlineEdit,
+		cancelInlineEdit: cancelInlineEdit,
+		saveInlineEdit: saveInlineEdit,
+		editedItemTotal: editedItemTotal,
+		editedGrandTotal: editedGrandTotal,
+		getInlineSizeOptions: getInlineSizeOptions,
+		getInlineQtyOptions: getInlineQtyOptions,
+		goToCart: goToCart,
+		goToCheckout: goToCheckout,
+		customizeFeaturedProduct: customizeFeaturedProduct,
 	};
 }

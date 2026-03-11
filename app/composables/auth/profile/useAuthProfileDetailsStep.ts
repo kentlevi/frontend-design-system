@@ -7,11 +7,11 @@ export function useAuthProfileDetailsStep(params: {
 }) {
 	const file_input = ref<HTMLInputElement | null>(null);
 
-	function open_file_picker() {
+	function openFilePicker() {
 		file_input.value?.click();
 	}
 
-	function on_file_picked(event: Event) {
+	function onFilePicked(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const file = target.files?.[0];
 		if (!file) return;
@@ -20,19 +20,19 @@ export function useAuthProfileDetailsStep(params: {
 		target.value = '';
 	}
 
-	function update_first_name(value: string) {
+	function updateFirstName(value: string) {
 		params.emitUpdateFirstName(value);
 	}
 
-	function update_last_name(value: string) {
+	function updateLastName(value: string) {
 		params.emitUpdateLastName(value);
 	}
 
 	return {
 		fileInput: file_input,
-		openFilePicker: open_file_picker,
-		onFilePicked: on_file_picked,
-		updateFirstName: update_first_name,
-		updateLastName: update_last_name,
+		openFilePicker: openFilePicker,
+		onFilePicked: onFilePicked,
+		updateFirstName: updateFirstName,
+		updateLastName: updateLastName,
 	};
 }

@@ -41,14 +41,14 @@ onMounted(() => {
 const profileToastVisible = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
 
-function clear_profile_toast_timer() {
+function clearProfileToastTimer() {
 	if (!profile_toast_timer) return;
 	clearTimeout(profile_toast_timer);
 	profile_toast_timer = null;
 }
 
 function showProfileSavedToast() {
-	clear_profile_toast_timer();
+	clearProfileToastTimer();
 	profileToastVisible.value = true;
 	profile_toast_timer = setTimeout(() => {
 		profileToastVisible.value = false;
@@ -65,7 +65,7 @@ async function onSaveProfile() {
 }
 
 onBeforeUnmount(() => {
-	clear_profile_toast_timer();
+	clearProfileToastTimer();
 });
 </script>
 

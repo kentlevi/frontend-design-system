@@ -52,11 +52,11 @@ function createRecentSearchCookieEntry(
 	return { type, value };
 }
 
-function normalize_product_name(value: unknown, fallback: string) {
+function normalizeProductName(value: unknown, fallback: string) {
 	return typeof value === 'string' && value.trim() ? value : fallback;
 }
 
-function normalize_search_text(value: string) {
+function normalizeSearchText(value: string) {
 	return value
 		.trim()
 		.toLowerCase()
@@ -88,16 +88,16 @@ export function useAppHeaderSearch() {
 	const search_loading_timeout = ref<ReturnType<typeof setTimeout> | null>(null);
 	const search_debounce_timeout = ref<ReturnType<typeof setTimeout> | null>(null);
 
-	function get_localized_product_name(product_id: string, fallback: string) {
+	function getLocalizedProductName(product_id: string, fallback: string) {
 		const translation_key = `product.items.${product_id}.name`;
 		const translated_name = t(translation_key);
-		return normalize_product_name(
+		return normalizeProductName(
 			translated_name !== translation_key ? translated_name : fallback,
 			fallback
 		);
 	}
 
-	function get_localized_product_blurb(product_id: string, fallback_name: string) {
+	function getLocalizedProductBlurb(product_id: string, fallback_name: string) {
 		const translation_key = `product.items.${product_id}.blurb`;
 		const translated_blurb = t(translation_key, fallback_name);
 		return typeof translated_blurb === 'string' && translated_blurb !== translation_key
@@ -106,7 +106,7 @@ export function useAppHeaderSearch() {
 	}
 
 	const search_results = computed<SearchItem[]>(() => {
-		const term = normalize_search_text(debounced_search_query.value);
+		const term = normalizeSearchText(debounced_search_query.value);
 		if (!term) return [];
 
 		return headerSearchCategories.flatMap((category_key) => {
@@ -115,12 +115,12 @@ export function useAppHeaderSearch() {
 
 			return category.products
 				.map((product) => {
-					const localized_name = get_localized_product_name(
+					const localized_name = getLocalizedProductName(
 						product.id,
 						product.name
 					);
-					const normalized_localized_name = normalize_search_text(localized_name);
-					const normalized_product_id = normalize_search_text(product.id);
+					const normalized_localized_name = normalizeSearchText(localized_name);
+					const normalized_product_id = normalizeSearchText(product.id);
 					const matches =
 						normalized_localized_name.includes(term) ||
 						normalized_product_id.includes(term);
@@ -132,7 +132,7 @@ export function useAppHeaderSearch() {
 						categoryKey: category_key,
 						categoryLabel: t(`product.categories.${category_key}`),
 						name: localized_name,
-						blurb: get_localized_product_blurb(product.id, localized_name),
+						blurb: getLocalizedProductBlurb(product.id, localized_name),
 						image: product.image,
 						to: withCountry(
 							`/${category_key}/${getProductSlugByCategory(product.id, category_key)}`
@@ -187,8 +187,8 @@ export function useAppHeaderSearch() {
 			.slice(0, HEADER_MAX_RECENT_SEARCHES);
 	});
 
-	function find_matching_product(term: string): SearchItem | null {
-		const normalized_term = normalize_search_text(term);
+	function findMatchingProduct(term: string): SearchItem | null {
+		const normalized_term = normalizeSearchText(term);
 		if (!normalized_term) return null;
 
 		for (const category_key of headerSearchCategories) {
@@ -196,16 +196,16 @@ export function useAppHeaderSearch() {
 			if (!category) continue;
 
 			for (const product of category.products) {
-				const localized_name = get_localized_product_name(
+				const localized_name = getLocalizedProductName(
 					product.id,
 					product.name
 				);
 				const name_matches =
-					normalize_search_text(localized_name) === normalized_term;
+					normalizeSearchText(localized_name) === normalized_term;
 				const fallback_name_matches =
-					normalize_search_text(product.name) === normalized_term;
+					normalizeSearchText(product.name) === normalized_term;
 				const id_matches =
-					normalize_search_text(product.id) === normalized_term;
+					normalizeSearchText(product.id) === normalized_term;
 
 				if (!name_matches && !fallback_name_matches && !id_matches) continue;
 
@@ -214,7 +214,7 @@ export function useAppHeaderSearch() {
 					categoryKey: category_key,
 					categoryLabel: t(`product.categories.${category_key}`),
 					name: localized_name,
-					blurb: get_localized_product_blurb(product.id, localized_name),
+					blurb: getLocalizedProductBlurb(product.id, localized_name),
 					image: product.image,
 					to: withCountry(
 						`/${category_key}/${getProductSlugByCategory(product.id, category_key)}`
@@ -234,7 +234,7 @@ export function useAppHeaderSearch() {
 				matchedItem: SearchItem | null;
 			}>
 		>((entries, entry) => {
-			const matched_item = find_matching_product(entry.value);
+			const matched_item = findMatchingProduct(entry.value);
 			const duplicate_entry = entries.find((candidate) => {
 				if (matched_item && candidate.matchedItem) {
 					return candidate.matchedItem.id === matched_item.id;
@@ -287,7 +287,7 @@ export function useAppHeaderSearch() {
 	});
 
 	const search_empty_suggested_term = computed(
-		() => get_localized_product_name('die-cut-sticker', 'Die Cut Sticker')
+		() => getLocalizedProductName('die-cut-sticker', 'Die Cut Sticker')
 	);
 
 	const show_search_recent = computed(
@@ -321,23 +321,23 @@ export function useAppHeaderSearch() {
 			search_results.value.length > 0
 	);
 
-	function clear_search_loading_timeout() {
+	function clearSearchLoadingTimeout() {
 		if (!search_loading_timeout.value) return;
 		clearTimeout(search_loading_timeout.value);
 		search_loading_timeout.value = null;
 	}
 
-	function clear_search_debounce_timeout() {
+	function clearSearchDebounceTimeout() {
 		if (!search_debounce_timeout.value) return;
 		clearTimeout(search_debounce_timeout.value);
 		search_debounce_timeout.value = null;
 	}
 
-	function reset_search_navigation() {
+	function resetSearchNavigation() {
 		active_search_nav_index.value = -1;
 	}
 
-	function persist_recent_search(type: 'product' | 'term', value: string) {
+	function persistRecentSearch(type: 'product' | 'term', value: string) {
 		const normalized_value = value.trim();
 		if (!normalized_value) return;
 
@@ -356,93 +356,93 @@ export function useAppHeaderSearch() {
 		search_recent_terms_cookie.value = next_entries;
 	}
 
-	async function focus_search_input() {
+	async function focusSearchInput() {
 		await nextTick();
 		search_input_ref.value?.focus();
 	}
 
-	async function open_search_modal() {
+	async function openSearchModal() {
 		search_modal_open.value = true;
-		await focus_search_input();
+		await focusSearchInput();
 	}
 
-	function close_search_modal() {
+	function closeSearchModal() {
 		search_modal_open.value = false;
 		search_loading.value = false;
-		clear_search_loading_timeout();
-		clear_search_debounce_timeout();
+		clearSearchLoadingTimeout();
+		clearSearchDebounceTimeout();
 	}
 
-	function clear_search() {
+	function clearSearch() {
 		search_query.value = '';
 		debounced_search_query.value = '';
-		reset_search_navigation();
+		resetSearchNavigation();
 		search_loading.value = false;
-		clear_search_loading_timeout();
-		clear_search_debounce_timeout();
+		clearSearchLoadingTimeout();
+		clearSearchDebounceTimeout();
 	}
 
-	function clear_recent_searches() {
+	function clearRecentSearches() {
 		search_recent_terms_cookie.value = [];
-		reset_search_navigation();
+		resetSearchNavigation();
 	}
 
-	function remove_recent_search(entry_key: string) {
+	function removeRecentSearch(entry_key: string) {
 		search_recent_terms_cookie.value = normalized_recent_searches.value
 			.filter((entry) => entry.key !== entry_key)
 			.map((entry) => createRecentSearchCookieEntry(entry.type, entry.value));
-		reset_search_navigation();
+		resetSearchNavigation();
 	}
 
-	async function apply_recent_search(entry_key: string) {
+	async function applyRecentSearch(entry_key: string) {
 		const entry = normalized_recent_searches.value.find(
 			(candidate) => candidate.key === entry_key
 		);
 		if (!entry) return;
 
 		const matched_item =
-			find_matching_product(entry.value);
+			findMatchingProduct(entry.value);
 
 		if (matched_item) {
-			await select_search_result(matched_item);
+			await selectSearchResult(matched_item);
 			return;
 		}
 
-		persist_recent_search(entry.type, entry.value);
+		persistRecentSearch(entry.type, entry.value);
 		const next_query = entry.value;
 		search_query.value = next_query;
 		debounced_search_query.value = next_query;
-		reset_search_navigation();
-		await focus_search_input();
+		resetSearchNavigation();
+		await focusSearchInput();
 	}
 
-	function apply_suggested_search() {
+	function applySuggestedSearch() {
 		search_query.value = search_empty_suggested_term.value;
 		debounced_search_query.value = search_empty_suggested_term.value;
-		persist_recent_search('term', search_empty_suggested_term.value);
-		reset_search_navigation();
-		void focus_search_input();
+		persistRecentSearch('term', search_empty_suggested_term.value);
+		resetSearchNavigation();
+		void focusSearchInput();
 	}
 
-	function highlight_search_match(value: string) {
+	function highlightSearchMatch(value: string) {
 		return value;
 	}
 
-	function set_search_modal_ref(element: HTMLElement | null) {
+	function setSearchModalRef(element: HTMLElement | null) {
 		search_modal_ref.value = element;
 	}
 
-	function set_search_input_ref(element: HTMLInputElement | null) {
+	function setSearchInputRef(element: HTMLInputElement | null) {
 		search_input_ref.value = element;
 	}
 
-	async function select_search_result(item: SearchItem) {
-		persist_recent_search('product', item.id);
-		close_search_modal();
+	async function selectSearchResult(item: SearchItem) {
+		persistRecentSearch('product', item.id);
+		closeSearchModal();
 		await router.push(item.to);
 	}
 
-	function handle_search_keydown(event: KeyboardEvent) {
+	function handleSearchKeydown(event: KeyboardEvent) {
 		if (!search_modal_open.value) return false;
 
 		if (event.key === 'ArrowDown') {
@@ -471,11 +471,11 @@ export function useAppHeaderSearch() {
 			if (!target) return true;
 
 			if (target.type === 'recent') {
-				void apply_recent_search(target.entryKey);
+				void applyRecentSearch(target.entryKey);
 				return true;
 			}
 
-			void select_search_result(target.item);
+			void selectSearchResult(target.item);
 			return true;
 		}
 
@@ -483,20 +483,20 @@ export function useAppHeaderSearch() {
 	}
 
 	watch(search_query, (value) => {
-		clear_search_debounce_timeout();
-		clear_search_loading_timeout();
+		clearSearchDebounceTimeout();
+		clearSearchLoadingTimeout();
 
 		if (!value.trim()) {
 			debounced_search_query.value = '';
 			search_loading.value = false;
-			reset_search_navigation();
+			resetSearchNavigation();
 			return;
 		}
 
 		search_loading.value = true;
 		search_debounce_timeout.value = setTimeout(() => {
 			debounced_search_query.value = value;
-			reset_search_navigation();
+			resetSearchNavigation();
 			search_loading_timeout.value = setTimeout(() => {
 				search_loading.value = false;
 				search_loading_timeout.value = null;
@@ -507,14 +507,14 @@ export function useAppHeaderSearch() {
 	watch(
 		() => route.fullPath,
 		() => {
-			close_search_modal();
-			clear_search();
+			closeSearchModal();
+			clearSearch();
 		}
 	);
 
 	onBeforeUnmount(() => {
-		clear_search_loading_timeout();
-		clear_search_debounce_timeout();
+		clearSearchLoadingTimeout();
+		clearSearchDebounceTimeout();
 	});
 
 	return {
@@ -530,17 +530,17 @@ export function useAppHeaderSearch() {
 		showSearchNoRecent: show_search_no_recent,
 		showSearchNoResult: show_search_no_result,
 		showSearchResults: show_search_results,
-		setSearchModalRef: set_search_modal_ref,
-		setSearchInputRef: set_search_input_ref,
-		focusSearchInput: focus_search_input,
-		closeSearchModal: close_search_modal,
-		openSearchModal: open_search_modal,
-		applySuggestedSearch: apply_suggested_search,
-		clearRecentSearches: clear_recent_searches,
-		applyRecentSearch: apply_recent_search,
-		removeRecentSearch: remove_recent_search,
-		selectSearchResult: select_search_result,
-		highlightSearchMatch: highlight_search_match,
-		handleSearchKeydown: handle_search_keydown,
+		setSearchModalRef: setSearchModalRef,
+		setSearchInputRef: setSearchInputRef,
+		focusSearchInput: focusSearchInput,
+		closeSearchModal: closeSearchModal,
+		openSearchModal: openSearchModal,
+		applySuggestedSearch: applySuggestedSearch,
+		clearRecentSearches: clearRecentSearches,
+		applyRecentSearch: applyRecentSearch,
+		removeRecentSearch: removeRecentSearch,
+		selectSearchResult: selectSearchResult,
+		highlightSearchMatch: highlightSearchMatch,
+		handleSearchKeydown: handleSearchKeydown,
 	};
 }

@@ -29,14 +29,14 @@ export function useAuthVerificationModal(params: {
 	const is_resend_tap_locked = ref(false);
 	let resend_tap_lock_timer: ReturnType<typeof setTimeout> | null = null;
 
-	function clear_resend_tap_lock_timer() {
+	function clearResendTapLockTimer() {
 		if (!resend_tap_lock_timer) return;
 		clearTimeout(resend_tap_lock_timer);
 		resend_tap_lock_timer = null;
 	}
 
-	function lock_resend_tap(ms = 2000) {
-		clear_resend_tap_lock_timer();
+	function lockResendTap(ms = 2000) {
+		clearResendTapLockTimer();
 		is_resend_tap_locked.value = true;
 		resend_tap_lock_timer = setTimeout(() => {
 			is_resend_tap_locked.value = false;
@@ -51,27 +51,27 @@ export function useAuthVerificationModal(params: {
 		params.align.value === 'start' ? 'top' : params.align.value
 	);
 
-	function close_modal() {
+	function closeModal() {
 		params.emitUpdateModelValue(false);
 	}
 
-	function emit_code() {
+	function emitCode() {
 		params.emitUpdateCode(getCode());
 	}
 
-	function on_input(index: number, event: Event) {
+	function onInput(index: number, event: Event) {
 		handleInput(index, event);
-		emit_code();
+		emitCode();
 	}
 
-	function on_paste(event: ClipboardEvent) {
+	function onPaste(event: ClipboardEvent) {
 		handlePaste(event);
-		emit_code();
+		emitCode();
 	}
 
-	function on_resend_click() {
+	function onResendClick() {
 		if (!can_resend.value) return;
-		lock_resend_tap();
+		lockResendTap();
 		params.emitResend();
 	}
 
@@ -88,7 +88,7 @@ export function useAuthVerificationModal(params: {
 		(remaining) => {
 			if (remaining > 0) {
 				is_resend_tap_locked.value = false;
-				clear_resend_tap_lock_timer();
+				clearResendTapLockTimer();
 			}
 		}
 	);
@@ -98,12 +98,12 @@ export function useAuthVerificationModal(params: {
 		(is_open) => {
 			if (!is_open) return;
 			is_resend_tap_locked.value = false;
-			clear_resend_tap_lock_timer();
+			clearResendTapLockTimer();
 		}
 	);
 
 	onBeforeUnmount(() => {
-		clear_resend_tap_lock_timer();
+		clearResendTapLockTimer();
 	});
 
 	return {
@@ -113,10 +113,10 @@ export function useAuthVerificationModal(params: {
 		computedSubmitLabel: computed_submit_label,
 		canResend: can_resend,
 		modalAlign: modal_align,
-		closeModal: close_modal,
-		onInput: on_input,
-		onPaste: on_paste,
-		onResendClick: on_resend_click,
+		closeModal: closeModal,
+		onInput: onInput,
+		onPaste: onPaste,
+		onResendClick: onResendClick,
 		handleKeyDown,
 	};
 }

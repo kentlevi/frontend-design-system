@@ -209,7 +209,7 @@ export function useLoginPageForm() {
 		guestVerificationCache.value = null;
 	}
 
-	function set_guest_login_toast_pending() {
+	function setGuestLoginToastPending() {
 		if (!import.meta.client) return;
 		window.localStorage.setItem(GUEST_LOGIN_TOAST_PENDING_KEY, '1');
 		window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
@@ -535,7 +535,7 @@ export function useLoginPageForm() {
 			clearVerificationCache();
 			resendLimitReached.value = '';
 			await fetchUserProfile(response.data.auth_token);
-			set_guest_login_toast_pending();
+			setGuestLoginToastPending();
 			await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 			return response;
 		}
@@ -612,7 +612,7 @@ export function useLoginPageForm() {
 				guestVerificationOrderNumber.value = resolvedOrderNumber;
 			}
 
-			set_guest_login_toast_pending();
+			setGuestLoginToastPending();
 			await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 		} catch (error: unknown) {
 			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
@@ -654,7 +654,7 @@ export function useLoginPageForm() {
 				setAuthCookies(response.data.auth_token, true);
 				clearVerificationCache();
 				await fetchUserProfile(response.data.auth_token);
-				set_guest_login_toast_pending();
+				setGuestLoginToastPending();
 				await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 				return response;
 			}

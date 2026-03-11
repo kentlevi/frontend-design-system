@@ -14,34 +14,34 @@ export function useAuthRegisterCard(params: {
 	);
 	const terms_error_icon_strong = computed(() => terms_error_popover_open.value);
 
-	function clear_terms_error_hover_close_timer() {
+	function clearTermsErrorHoverCloseTimer() {
 		if (!terms_error_hover_close_timer.value) return;
 		clearTimeout(terms_error_hover_close_timer.value);
 		terms_error_hover_close_timer.value = null;
 	}
 
-	function toggle_terms_error_popover() {
+	function toggleTermsErrorPopover() {
 		terms_error_popover_pinned.value = !terms_error_popover_pinned.value;
 	}
 
-	function on_terms_error_hover_start() {
-		clear_terms_error_hover_close_timer();
+	function onTermsErrorHoverStart() {
+		clearTermsErrorHoverCloseTimer();
 		terms_error_popover_hovered.value = true;
 	}
 
-	function on_terms_error_hover_end() {
-		clear_terms_error_hover_close_timer();
+	function onTermsErrorHoverEnd() {
+		clearTermsErrorHoverCloseTimer();
 		terms_error_hover_close_timer.value = setTimeout(() => {
 			terms_error_popover_hovered.value = false;
 			terms_error_hover_close_timer.value = null;
 		}, 90);
 	}
 
-	function on_document_click(event: MouseEvent) {
+	function onDocumentClick(event: MouseEvent) {
 		const target = event.target as Node | null;
 		if (!target) return;
 		if (!terms_error_ref.value?.contains(target)) {
-			clear_terms_error_hover_close_timer();
+			clearTermsErrorHoverCloseTimer();
 			terms_error_popover_pinned.value = false;
 			terms_error_popover_hovered.value = false;
 		}
@@ -51,7 +51,7 @@ export function useAuthRegisterCard(params: {
 		() => Boolean(params.termsError.value && !params.agreeTerms.value),
 		(has_terms_error) => {
 			if (!has_terms_error) {
-				clear_terms_error_hover_close_timer();
+				clearTermsErrorHoverCloseTimer();
 				terms_error_popover_pinned.value = false;
 				terms_error_popover_hovered.value = false;
 			}
@@ -59,20 +59,20 @@ export function useAuthRegisterCard(params: {
 	);
 
 	onMounted(() => {
-		document.addEventListener('click', on_document_click);
+		document.addEventListener('click', onDocumentClick);
 	});
 
 	onBeforeUnmount(() => {
-		clear_terms_error_hover_close_timer();
-		document.removeEventListener('click', on_document_click);
+		clearTermsErrorHoverCloseTimer();
+		document.removeEventListener('click', onDocumentClick);
 	});
 
 	return {
 		termsErrorPopoverOpen: terms_error_popover_open,
 		termsErrorIconStrong: terms_error_icon_strong,
 		termsErrorRef: terms_error_ref,
-		toggleTermsErrorPopover: toggle_terms_error_popover,
-		onTermsErrorHoverStart: on_terms_error_hover_start,
-		onTermsErrorHoverEnd: on_terms_error_hover_end,
+		toggleTermsErrorPopover: toggleTermsErrorPopover,
+		onTermsErrorHoverStart: onTermsErrorHoverStart,
+		onTermsErrorHoverEnd: onTermsErrorHoverEnd,
 	};
 }

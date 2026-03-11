@@ -23,21 +23,21 @@ const HIDE_TOAST_DELAY_MS = 5000;
 const guest_register_path = computed(() => withCountry('/auth/register'));
 const is_guest_session = computed(() => String(guest_login_mode.value ?? '') === '1');
 
-function clear_hide_toast_timer() {
+function clearHideToastTimer() {
 	if (!hide_toast_timer) return;
 	clearTimeout(hide_toast_timer);
 	hide_toast_timer = null;
 }
 
-function clear_show_toast_timer() {
+function clearShowToastTimer() {
 	if (!show_toast_timer) return;
 	clearTimeout(show_toast_timer);
 	show_toast_timer = null;
 }
 
-function show_toast(kind: 'member' | 'guest') {
-	clear_show_toast_timer();
-	clear_hide_toast_timer();
+function showToast(kind: 'member' | 'guest') {
+	clearShowToastTimer();
+	clearHideToastTimer();
 	show_toast_timer = setTimeout(() => {
 		toast_kind.value = kind;
 		is_visible.value = true;
@@ -49,7 +49,7 @@ function show_toast(kind: 'member' | 'guest') {
 	}, SHOW_TOAST_DELAY_MS);
 }
 
-function consume_pending_login_success_toast() {
+function consumePendingLoginSuccessToast() {
 	if (!import.meta.client) return;
 	const is_member_pending =
 		window.localStorage.getItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY) === '1';
@@ -59,23 +59,23 @@ function consume_pending_login_success_toast() {
 
 	window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
 	window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
-	show_toast(is_guest_pending || is_guest_session.value ? 'guest' : 'member');
+	showToast(is_guest_pending || is_guest_session.value ? 'guest' : 'member');
 }
 
 onMounted(() => {
-	consume_pending_login_success_toast();
+	consumePendingLoginSuccessToast();
 });
 
 watch(
 	() => route.fullPath,
 	() => {
-		consume_pending_login_success_toast();
+		consumePendingLoginSuccessToast();
 	}
 );
 
 onBeforeUnmount(() => {
-	clear_show_toast_timer();
-	clear_hide_toast_timer();
+	clearShowToastTimer();
+	clearHideToastTimer();
 });
 </script>
 

@@ -79,28 +79,28 @@ export function useAppHeaderCartPreview(params: {
 	);
 	const cart_quantity_options = computed<number[]>(() => [...quantityOptions]);
 
-	function format_cart_price(value: number) {
+	function formatCartPrice(value: number) {
 		return formatCurrencyByCountry(value, country.value);
 	}
 
-	function get_cart_product_name(product: ProductItem) {
+	function getCartProductName(product: ProductItem) {
 		return t(`product.items.${product.id}.name`);
 	}
 
-	function cart_featured_start_price(product: ProductItem) {
-		return format_cart_price(defaultStartPriceByProductId(product.id));
+	function cartFeaturedStartPrice(product: ProductItem) {
+		return formatCartPrice(defaultStartPriceByProductId(product.id));
 	}
 
-	function sync_cart_from_storage() {
+	function syncCartFromStorage() {
 		cart_state.value = readStoredCartStateFromStorage();
 	}
 
-	function write_cart_state(next: StoredCartState[]) {
+	function writeCartState(next: StoredCartState[]) {
 		cart_state.value = next;
 		writeStoredCartStateToStorage(next);
 	}
 
-	function open_cart_preview() {
+	function openCartPreview() {
 		if (is_cart_page.value) {
 			if (typeof window !== 'undefined') {
 				window.location.assign(withCountry('/cart'));
@@ -115,19 +115,19 @@ export function useAppHeaderCartPreview(params: {
 		cart_preview_open.value = true;
 	}
 
-	function close_cart_preview() {
+	function closeCartPreview() {
 		cart_preview_open.value = false;
 	}
 
-	function close_cart_featured() {
+	function closeCartFeatured() {
 		cart_featured_open.value = false;
 	}
 
-	function remove_cart_item(item_id: string) {
-		write_cart_state(cart_state.value.filter((item) => item.id !== item_id));
+	function removeCartItem(item_id: string) {
+		writeCartState(cart_state.value.filter((item) => item.id !== item_id));
 	}
 
-	function update_cart_item(item_id: string, next_size_key: string, next_qty: number) {
+	function updateCartItem(item_id: string, next_size_key: string, next_qty: number) {
 		const qty = Number(next_qty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
@@ -137,7 +137,7 @@ export function useAppHeaderCartPreview(params: {
 			? next_size_key
 			: sizeOptions[0];
 
-		write_cart_state(
+		writeCartState(
 			cart_state.value.map((item) => {
 				if (item.id !== item_id) return item;
 				const unit_price = item.qty > 0 ? item.total / item.qty : 0;
@@ -152,29 +152,29 @@ export function useAppHeaderCartPreview(params: {
 		);
 	}
 
-	function handle_storage(event: StorageEvent) {
+	function handleStorage(event: StorageEvent) {
 		if (event.key && event.key !== 'musticker-product-cart-v1') return;
-		sync_cart_from_storage();
+		syncCartFromStorage();
 	}
 
 	onMounted(() => {
 		if (typeof window === 'undefined') return;
 
-		sync_cart_from_storage();
-		window.addEventListener('storage', handle_storage);
+		syncCartFromStorage();
+		window.addEventListener('storage', handleStorage);
 		window.addEventListener(
 			CART_UPDATED_EVENT,
-			sync_cart_from_storage as EventListener
+			syncCartFromStorage as EventListener
 		);
 	});
 
 	onBeforeUnmount(() => {
 		if (typeof window === 'undefined') return;
 
-		window.removeEventListener('storage', handle_storage);
+		window.removeEventListener('storage', handleStorage);
 		window.removeEventListener(
 			CART_UPDATED_EVENT,
-			sync_cart_from_storage as EventListener
+			syncCartFromStorage as EventListener
 		);
 	});
 
@@ -187,13 +187,13 @@ export function useAppHeaderCartPreview(params: {
 		cartItemCount: cart_item_count,
 		cartSizeOptionModels: cart_size_option_models,
 		cartQuantityOptions: cart_quantity_options,
-		getCartProductName: get_cart_product_name,
-		formatCartPrice: format_cart_price,
-		cartFeaturedStartPrice: cart_featured_start_price,
-		openCartPreview: open_cart_preview,
-		closeCartPreview: close_cart_preview,
-		closeCartFeatured: close_cart_featured,
-		removeCartItem: remove_cart_item,
-		updateCartItem: update_cart_item,
+		getCartProductName: getCartProductName,
+		formatCartPrice: formatCartPrice,
+		cartFeaturedStartPrice: cartFeaturedStartPrice,
+		openCartPreview: openCartPreview,
+		closeCartPreview: closeCartPreview,
+		closeCartFeatured: closeCartFeatured,
+		removeCartItem: removeCartItem,
+		updateCartItem: updateCartItem,
 	};
 }

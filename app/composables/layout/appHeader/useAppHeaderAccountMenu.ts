@@ -30,11 +30,11 @@ export function useAppHeaderAccountMenu(params: {
 	const account_toggle_ref = ref<HTMLButtonElement | null>(null);
 	const account_dropdown_ref = ref<HTMLElement | null>(null);
 
-	function bind_wrap_ref(element: Element | ComponentPublicInstance | null) {
+	function bindWrapRef(element: Element | ComponentPublicInstance | null) {
 		params.setWrapRef(element instanceof HTMLElement ? element : null);
 	}
 
-	function handle_account_link_click(event: MouseEvent, to: string) {
+	function handleAccountLinkClick(event: MouseEvent, to: string) {
 		if (to === '/auth/profile') {
 			event.preventDefault();
 			if (import.meta.client) {
@@ -63,7 +63,7 @@ export function useAppHeaderAccountMenu(params: {
 
 	const guest_order_target = computed(() => withCountry('/'));
 
-	function resolve_button_element(
+	function resolveButtonElement(
 		element: Element | ComponentPublicInstance | null
 	) {
 		if (element instanceof HTMLButtonElement) return element;
@@ -73,11 +73,11 @@ export function useAppHeaderAccountMenu(params: {
 		return null;
 	}
 
-	function set_account_toggle_ref(element: Element | ComponentPublicInstance | null) {
-		account_toggle_ref.value = resolve_button_element(element);
+	function setAccountToggleRef(element: Element | ComponentPublicInstance | null) {
+		account_toggle_ref.value = resolveButtonElement(element);
 	}
 
-	function set_account_dropdown_ref(element: HTMLElement | null) {
+	function setAccountDropdownRef(element: HTMLElement | null) {
 		account_dropdown_ref.value = element;
 	}
 
@@ -131,14 +131,14 @@ export function useAppHeaderAccountMenu(params: {
 	);
 
 	return {
-		bindWrapRef: bind_wrap_ref,
-		handleAccountLinkClick: handle_account_link_click,
+		bindWrapRef: bindWrapRef,
+		handleAccountLinkClick: handleAccountLinkClick,
 		primaryAccountLinks: primary_account_links,
 		gettingStartedLink: getting_started_link,
 		guestOrderLink: guest_order_link,
 		guestOrderTarget: guest_order_target,
-		setAccountToggleRef: set_account_toggle_ref,
-		setAccountDropdownRef: set_account_dropdown_ref,
+		setAccountToggleRef: setAccountToggleRef,
+		setAccountDropdownRef: setAccountDropdownRef,
 		guestLoginTarget: guest_login_target,
 	};
 }
