@@ -5,7 +5,7 @@ import {
 	getProfileFieldValue,
 	processAccountAvatarFile,
 	readFileAsDataUrl,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/useCountry';
 import { useUserStore } from '~/stores/user';
 
@@ -72,21 +72,21 @@ export function useAuthProfileSetup() {
 
 	const firstName = ref(
 		storeFirstName.value ||
-            userStore.onboardingProfile?.firstName ||
-            mockUser.value?.firstName ||
-            accountProfileDefaults.firstName
+		userStore.onboardingProfile?.firstName ||
+		mockUser.value?.firstName ||
+		accountProfileDefaults.firstName
 	);
 	const lastName = ref(
 		storeLastName.value ||
-            userStore.onboardingProfile?.lastName ||
-            mockUser.value?.lastName ||
-            accountProfileDefaults.lastName
+		userStore.onboardingProfile?.lastName ||
+		mockUser.value?.lastName ||
+		accountProfileDefaults.lastName
 	);
 	const email = ref(
 		userStore.email ||
-            userStore.onboardingProfile?.email ||
-            mockUser.value?.email ||
-            accountProfileDefaults.email
+		userStore.onboardingProfile?.email ||
+		mockUser.value?.email ||
+		accountProfileDefaults.email
 	);
 
 	const photoUrl = ref<string | null>(null);
@@ -178,8 +178,7 @@ export function useAuthProfileSetup() {
 	}
 
 	async function completeSetup() {
-		const authToken = useCookie<string | null>('auth_token');
-		if (authToken.value && userStore.id) {
+		if (userStore.id) {
 			try {
 				if (import.meta.client && photoUrl.value) {
 					window.localStorage.setItem(ACCOUNT_LOCAL_AVATAR_KEY, photoUrl.value);
@@ -197,9 +196,6 @@ export function useAuthProfileSetup() {
 
 				await api(`/${apiCountry.value}/user/complete-onboarding`, {
 					method: 'POST',
-					headers: {
-						Authorization: `Bearer ${authToken.value}`
-					},
 					body,
 				});
 

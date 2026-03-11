@@ -35,7 +35,6 @@ export function useAppHeaderAccount() {
 		sameSite: 'lax',
 		path: '/',
 	});
-	const authToken = useCookie<string | null>('auth_token');
 	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 		default: () => null,
 		sameSite: 'lax',
@@ -259,7 +258,6 @@ export function useAppHeaderAccount() {
 			// Continue with local sign-out cleanup even if API logout fails.
 		} finally {
 			mockUser.value = null;
-			authToken.value = null;
 			guestLoginMode.value = null;
 			userStore.clearUser();
 			userStore.clearOnboardingProfile();

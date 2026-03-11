@@ -16,7 +16,10 @@
             "resendCta": "코드 다시 보내기",
             "resendSuffix": ".",
             "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요.",
-            "expiredCode":  "인증 코드가 만료되었습니다."
+            "expiredCode":  "인증 코드가 만료되었습니다.",
+            "resendLimitReachedPrefix": "보안상의 이유로, 최대",
+            "resendLimitReachedMiddle": "시간당 5개의 코드",
+            "resendLimitReachedSuffix": "까지 요청할 수 있습니다. 잠시 후 다시 시도해 주세요."
         }
     }
 }

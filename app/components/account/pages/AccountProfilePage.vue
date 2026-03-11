@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { useCountry } from '~/composables/app/useCountry';
+import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
-	firstName,
-	lastName,
 	email,
 	currentPassword,
 	newPassword,
@@ -18,15 +17,26 @@ const {
 	photoUrl,
 	avatarDisplayUrl,
 	photoError,
-	savingProfile,
 	fileInput,
 	initials,
 	openFilePicker,
 	onFilePicked,
 	removePhoto,
-	saveProfile,
 	signOut,
 } = useAccountProfile();
+
+const {
+	field_definitions,
+	form_state,
+	is_submitting,
+	api_response,
+	loadPersonalForm,
+	submitPersonalForm
+} = usePersonalForm();
+
+onMounted(() => {
+	loadPersonalForm()
+})
 
 const profileToastVisible = ref(false);
 let profileToastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -47,8 +57,9 @@ function showProfileSavedToast() {
 }
 
 async function onSaveProfile() {
-	const saved = await saveProfile();
-	if (!saved) return;
+	await submitPersonalForm();
+
+	if (!api_response) return;
 	showProfileSavedToast();
 }
 
@@ -60,14 +71,14 @@ onBeforeUnmount(() => {
 <template>
 	<section class="account-page" data-testid="account-profile-page">
 		<UiLoadingOverlay
-			:visible="savingProfile"
+			:visible="is_submitting"
 			:label="t('account.profile.saveChanges')"
 			test-id="account-profile-saving-overlay"
 			position="fixed"
 		/>
 		<UiToast
 			:visible="profileToastVisible"
-			message="aby buang"
+			:message=api_response?.message
 			tone="primary"
 			variant="outlined"
 			data-testid="account-profile-save-toast"
@@ -133,31 +144,30 @@ onBeforeUnmount(() => {
 								</div>
 							</div>
 						</div>
+
 						<div class="account-profile-grid" data-testid="account-profile-form">
-							<UiFormField :label="t('account.profile.firstName')" :required="true">
-								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="firstName"
-										type="text"
-										:aria-describedby="describedBy || undefined"
-										data-testid="account-profile-first-name"
-									/>
-								</template>
-							</UiFormField>
-							<UiFormField
-								:label="`${t('account.profile.lastName')} (${t('account.profile.optional')})`"
-							>
-								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="lastName"
-										type="text"
-										:aria-describedby="describedBy || undefined"
-										data-testid="account-profile-last-name"
-									/>
-								</template>
-							</UiFormField>
+
+							<!-- START OF DYNAMIC PROFILE FIELDS -->
+							<div v-for="field in field_definitions" :key="field.id">
+								<UiFormField
+									:label="field.is_required
+										? t(`account.profile.${field.field_key}`)
+										: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
+									:required="field.is_required"
+								>
+									<template #default="{ inputId, describedBy }">
+										<UiInput
+											:id="inputId"
+											v-model="form_state.fields[field.field_key]"
+											type="text"
+											:aria-describedby="describedBy || undefined"
+											:data-testid="`account-profile-${field.field_key}`"
+										/>
+									</template>
+								</UiFormField>
+							</div>
+							<!-- END OF DYNAMIC PROFILE FIELDS -->
+
 							<UiFormField
 								class="account-profile-grid-full"
 								:label="t('account.profile.emailAddress')"

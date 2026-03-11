@@ -11,7 +11,7 @@ import {
 import {
 	getProfileFieldValue,
 	normalizeAccountName,
-} from '~/composables/account/accountProfile.helpers';
+} from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
@@ -132,21 +132,15 @@ export function useLoginPageForm() {
 		resendLimitReached.value = '';
 	}
 
-	function setAuthCookies(authToken: string, isGuest: boolean, keepSigned = false) {
+	function setLoginModeCookie(isGuest: boolean, keepSigned = false) {
 		const tokenDuration = keepSigned ? TOKEN_DURATION_LONG : TOKEN_DURATION_SHORT;
 
-		const authTokenCookie = useCookie('auth_token', {
-			maxAge: tokenDuration,
-			sameSite: 'lax',
-			path: '/',
-		});
 		const guestLoginModeCookie = useCookie<string | number | null>('guest_login_mode', {
 			maxAge: tokenDuration,
 			sameSite: 'lax',
 			path: '/',
 		});
 
-		authTokenCookie.value = authToken;
 		guestLoginModeCookie.value = isGuest ? 1 : 0;
 	}
 
@@ -206,13 +200,10 @@ export function useLoginPageForm() {
 		guestVerificationCache.value = null;
 	}
 
-	async function fetchUserProfile(authToken: string) {
+	async function fetchUserProfile() {
 		try {
 			const response = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
 				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${authToken}`
-				}
 			});
 
 			const { user, profile } = response.data;
@@ -321,7 +312,6 @@ export function useLoginPageForm() {
 		message: string;
 		data: {
 			user?: UserIdentity & { profile: UserProfile | null };
-			auth_token?: string;
 		};
 	}
 
@@ -332,7 +322,7 @@ export function useLoginPageForm() {
 			token?: string;
 			expires_in?: number;
 			otp_required?: boolean;
-			auth_token?: string;
+			user?: UserIdentity & { profile: UserProfile | null };
 		};
 	}
 
@@ -341,7 +331,6 @@ export function useLoginPageForm() {
 		message: string;
 		data?: {
 			user?: UserIdentity & { profile: UserProfile | null };
-			auth_token?: string;
 			order_lookup_token?: string;
 			order_number?: string;
 		};
@@ -368,7 +357,6 @@ export function useLoginPageForm() {
 		token?: string;
 		expires_in?: number;
 		otp_required?: boolean;
-		auth_token?: string;
 		cached_at: number;
 	}
 
@@ -408,12 +396,8 @@ export function useLoginPageForm() {
 			}
 
 			memberInvalidCredentials.value = false;
-
-			const authToken = response.data?.auth_token;
-			if (authToken) {
-				setAuthCookies(authToken, false, keepSignedIn.value);
-				await initializeUserFromResponse(response, false);
-			}
+			setLoginModeCookie(false, keepSignedIn.value);
+			await initializeUserFromResponse(response, false);
 
 			return response;
 		} catch (error: unknown) {
@@ -464,7 +448,6 @@ export function useLoginPageForm() {
 							token: cache.token,
 							expires_in: cache.expires_in,
 							otp_required: cache.otp_required,
-							auth_token: cache.auth_token,
 						},
 					};
 				}
@@ -509,7 +492,6 @@ export function useLoginPageForm() {
 					token: response.data?.token,
 					expires_in: expiresIn,
 					otp_required: response.data?.otp_required,
-					auth_token: response.data?.auth_token,
 					cached_at: Date.now(),
 				};
 			} catch {
@@ -521,11 +503,12 @@ export function useLoginPageForm() {
 			}
 		}
 
-		if (response?.data?.auth_token) {
-			setAuthCookies(response.data.auth_token, true);
+		if (response?.data?.user) {
+			setLoginModeCookie(true);
+			await initializeUserFromResponse({ success: true, message: response.message, data: { user: response.data.user } }, true);
 			clearVerificationCache();
 			resendLimitReached.value = '';
-			await fetchUserProfile(response.data.auth_token);
+			await fetchUserProfile();
 			await navigateTo(withCountry('/account/orders'));
 			return response;
 		}
@@ -586,9 +569,8 @@ export function useLoginPageForm() {
 				return;
 			}
 
-			const authToken = response.data?.auth_token;
-			if (authToken) {
-				setAuthCookies(authToken, true);
+			if (response.data?.user) {
+				setLoginModeCookie(true);
 				await initializeUserFromResponse(response, true);
 			}
 
@@ -639,10 +621,11 @@ export function useLoginPageForm() {
 
 			resendLimitReached.value = '';
 
-			if (response.data?.auth_token) {
-				setAuthCookies(response.data.auth_token, true);
+			if (response.data?.user) {
+				setLoginModeCookie(true);
+				await initializeUserFromResponse({ success: true, message: response.message, data: { user: response.data.user } }, true);
 				clearVerificationCache();
-				await fetchUserProfile(response.data.auth_token);
+				await fetchUserProfile();
 				await navigateTo(withCountry('/account/orders'));
 				return response;
 			}
@@ -664,7 +647,6 @@ export function useLoginPageForm() {
 				token: response.data?.token,
 				expires_in: expiresIn,
 				otp_required: response.data?.otp_required,
-				auth_token: response.data?.auth_token,
 				cached_at: Date.now(),
 			};
 
