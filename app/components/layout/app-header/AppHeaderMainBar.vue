@@ -132,7 +132,7 @@ function isExactNavHeading(path: string) {
 					:icon-only="true"
 					icon="strong-shop-cart"
 					icon-size="md"
-					class="home-header-icon"
+					class="home-header-icon home-header-cart"
 					:aria-label="t('layout.header.cart')"
 					data-testid="app-header-cart-button"
 					@click="emit('open-cart')"

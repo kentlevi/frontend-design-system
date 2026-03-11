@@ -10,6 +10,7 @@ import { productCatalog } from '~/data/products/catalog';
 import { homeProductTypes } from '~/data/products/homeTypes';
 import { defaultStartPriceByProductId } from '~/data/products/pricing';
 import { useCountry } from '~/composables/app/useCountry';
+import { normalizeAppPath } from '~/utils/auth/redirect';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
 
@@ -23,7 +24,8 @@ const CartPreview = defineAsyncComponent(
 	() => import('~/components/cart/CartPreview.vue')
 );
 const { t } = useI18n();
-const { country } = useCountry();
+const { country, withCountry } = useCountry();
+const route = useRoute();
 
 type StoredCartState = {
 	id: string;
@@ -143,6 +145,9 @@ const cartGrandTotal = computed(() =>
 	cartItems.value.reduce((sum, item) => sum + item.total, 0)
 );
 const cartItemCount = computed(() => cartItems.value.length);
+const isCartPage = computed(
+	() => normalizeAppPath(route.path) === normalizeAppPath(withCountry('/cart'))
+);
 const cartSizeOptionModels = computed(() =>
 	sizeOptions.map((size) => {
 		const label = t(`product.sizes.${size}.label`);
@@ -202,6 +207,12 @@ function openSearchModal() {
 }
 
 function openCartPreview() {
+	if (isCartPage.value) {
+		if (typeof window !== 'undefined') {
+			window.location.assign(withCountry('/cart'));
+		}
+		return;
+	}
 	void prefetchHeaderOverlayModules();
 	closeAccountMenu();
 	closeLocaleModal();
@@ -239,33 +250,7 @@ function isPlainItem(item: StoredCartState) {
 }
 
 function mergePlainCartItems(items: StoredCartState[]) {
-	const merged: StoredCartState[] = [];
-	const plainIndexByKey = new Map<string, number>();
-
-	for (const item of items) {
-		if (!isPlainItem(item)) {
-			merged.push(item);
-			continue;
-		}
-
-		const key = `${item.category}::${item.productId}::${item.sizeKey}`;
-		const existingIndex = plainIndexByKey.get(key);
-		if (existingIndex === undefined) {
-			plainIndexByKey.set(key, merged.length);
-			merged.push(item);
-			continue;
-		}
-
-		const existing = merged[existingIndex];
-		if (!existing) continue;
-		merged[existingIndex] = {
-			...existing,
-			qty: existing.qty + item.qty,
-			total: existing.total + item.total,
-		};
-	}
-
-	return merged;
+	return [...items];
 }
 
 function syncCartFromStorage() {
