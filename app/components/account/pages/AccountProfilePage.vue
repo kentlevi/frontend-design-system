@@ -17,7 +17,6 @@ const {
 	photoUrl,
 	avatarDisplayUrl,
 	photoError,
-	savingProfile,
 	fileInput,
 	initials,
 	openFilePicker,
@@ -29,6 +28,8 @@ const {
 const {
 	field_definitions,
 	form_state,
+	is_submitting,
+	api_response,
 	loadPersonalForm,
 	submitPersonalForm
 } = usePersonalForm();
@@ -46,20 +47,21 @@ function clearProfileToastTimer() {
 	profileToastTimer = null;
 }
 
-// function showProfileSavedToast() {
-// 	clearProfileToastTimer();
-// 	profileToastVisible.value = true;
-// 	profileToastTimer = setTimeout(() => {
-// 		profileToastVisible.value = false;
-// 		profileToastTimer = null;
-// 	}, 2400);
-// }
+function showProfileSavedToast() {
+	clearProfileToastTimer();
+	profileToastVisible.value = true;
+	profileToastTimer = setTimeout(() => {
+		profileToastVisible.value = false;
+		profileToastTimer = null;
+	}, 2400);
+}
 
-// async function onSaveProfile() {
-// 	const saved = await saveProfile();
-// 	if (!saved) return;
-// 	showProfileSavedToast();
-// }
+async function onSaveProfile() {
+	await submitPersonalForm();
+
+	if (!api_response) return;
+	showProfileSavedToast();
+}
 
 onBeforeUnmount(() => {
 	clearProfileToastTimer();
@@ -69,14 +71,14 @@ onBeforeUnmount(() => {
 <template>
 	<section class="account-page" data-testid="account-profile-page">
 		<UiLoadingOverlay
-			:visible="savingProfile"
+			:visible="is_submitting"
 			:label="t('account.profile.saveChanges')"
 			test-id="account-profile-saving-overlay"
 			position="fixed"
 		/>
 		<UiToast
 			:visible="profileToastVisible"
-			message="aby buang"
+			:message=api_response?.message
 			tone="primary"
 			variant="outlined"
 			data-testid="account-profile-save-toast"
@@ -183,7 +185,7 @@ onBeforeUnmount(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="submitPersonalForm">
+							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="onSaveProfile">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>

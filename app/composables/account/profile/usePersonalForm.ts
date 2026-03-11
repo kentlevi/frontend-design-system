@@ -24,6 +24,9 @@ export function usePersonalForm() {
 	const is_submitting = ref(false)
 	const error_message = ref('')
 
+	/** Api Response */
+	const api_response = ref()
+
 	/**
 	 * Load field schema and hydrate current values
 	 */
@@ -58,7 +61,7 @@ export function usePersonalForm() {
 		try {
 			const payload = mapPersonalFormToPayload(form_state)
 
-			await updatePersonalForm(payload)
+			api_response.value = await updatePersonalForm(payload)
 		} catch (error: unknown) {
 			error_message.value = 'Failed to save personal details.'
 			throw error
@@ -73,6 +76,7 @@ export function usePersonalForm() {
 		is_loading,
 		is_submitting,
 		error_message,
+		api_response,
 		loadPersonalForm,
 		submitPersonalForm,
 	}
