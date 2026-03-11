@@ -2,14 +2,12 @@
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { HOME_GUIDE_TOUR_TOTAL_STEPS } from '~/data/home/onboarding';
-import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
-
-type GuideTargetRect = {
-	top: number;
-	left: number;
-	width: number;
-	height: number;
-};
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
+import {
+	HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP,
+	resolve_home_guide_tour_panel_style,
+} from '~/helpers/home/homeGuideTour.helper';
+import type { GuideTargetRect } from '~/types/home/guideTour';
 
 const props = withDefaults(
 	defineProps<{
@@ -39,15 +37,10 @@ const panelClass = computed(() => `home-guide-tour-panel--step-${safeStep.value}
 const title = computed(() => t(`home.tour.step${safeStep.value}.title`));
 const body = computed(() => t(`home.tour.step${safeStep.value}.body`));
 const ctaLabel = computed(() => t('home.tour.next'));
-const headerImageByStep: Record<number, string> = {
-	1: '/home/guide-tour/step-1/profile-card.png',
-	2: '/home/guide-tour/step-2/categories-card.png',
-	3: '/home/guide-tour/step-3/search-card.png',
-};
-const hasHeaderImage = computed(() => Boolean(headerImageByStep[safeStep.value]));
-const headerImagePath = computed(() => headerImageByStep[safeStep.value] || '');
+const hasHeaderImage = computed(() => Boolean(HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safeStep.value]));
+const headerImagePath = computed(() => HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safeStep.value] || '');
 const stepImageUrls = computed(() => (
-	Object.values(headerImageByStep).map((path) => resolveFileUrl(path))
+	Object.values(HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP).map((path) => resolveFileUrl(path))
 ));
 const headerImageStyle = computed(() =>
 	hasHeaderImage.value
@@ -56,49 +49,11 @@ const headerImageStyle = computed(() =>
 );
 
 const panelInlineStyle = computed(() => {
-	const stepPosition: Record<number, { x: number; y: number }> = {
-		1: { x: 1314, y: 84 },
-		2: { x: 752, y: 88 },
-		3: { x: 1140, y: 84 },
-		4: { x: 1140, y: 680 },
-	};
-
-	const position = stepPosition[safeStep.value];
-	if (position) {
-		if (typeof window === 'undefined') return {};
-
-		const panelWidth = Math.min(416, window.innerWidth - 24);
-		const clampedLeft = Math.min(
-			Math.max(12, position.x),
-			Math.max(12, window.innerWidth - panelWidth - 12)
-		);
-		const clampedTop = Math.max(12, position.y);
-
-		return {
-			top: `${clampedTop}px`,
-			left: `${clampedLeft}px`,
-			right: 'auto',
-			transform: 'none',
-		};
-	}
-
-	if (!props.targetRect || typeof window === 'undefined') {
-		return {};
-	}
-
-	const panelWidth = Math.min(520, window.innerWidth - 24);
-	const centeredLeft = props.targetRect.left + props.targetRect.width / 2 - panelWidth / 2;
-	const clampedLeft = Math.min(
-		Math.max(12, centeredLeft),
-		Math.max(12, window.innerWidth - panelWidth - 12)
+	return resolve_home_guide_tour_panel_style(
+		safeStep.value,
+		props.targetRect,
+		typeof window === 'undefined' ? undefined : window.innerWidth
 	);
-
-	return {
-		top: `${props.targetRect.top + props.targetRect.height + 12}px`,
-		left: `${clampedLeft}px`,
-		right: 'auto',
-		transform: 'none',
-	};
 });
 
 onMounted(() => {

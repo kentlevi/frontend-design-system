@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoginSuccessToast from '~/components/layout/LoginSuccessToast.vue';
 import {
 	COUNTRY_TO_HTML_LANG,
 	DEFAULT_COUNTRY,
@@ -42,4 +43,5 @@ useHead(() => ({
 	<NuxtLayout>
 		<NuxtPage />
 	</NuxtLayout>
+	<LoginSuccessToast />
 </template>

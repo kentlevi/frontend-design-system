@@ -18,12 +18,10 @@ const ICON_SCAN_DIRS = [
 	"utils",
 ]
 const PUBLIC_SPRITE = path.resolve(__dirname, "../../public/icons/sprite.svg")
-const DATA_FILE = path.resolve(__dirname, "../../app/data/icons.ts")
 const DATA_FILE_UI = path.resolve(__dirname, "../../app/data/ui/icons.ts")
 const GUIDE_ICONS_REF = process.env.GUIDE_ICONS_REF || "site-with-guide"
 
 fs.mkdirSync(path.dirname(PUBLIC_SPRITE), { recursive: true })
-fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true })
 fs.mkdirSync(path.dirname(DATA_FILE_UI), { recursive: true })
 
 const icons = {}
@@ -193,10 +191,6 @@ ${symbols}
 </svg>`
 
 fs.writeFileSync(PUBLIC_SPRITE, sprite)
-fs.writeFileSync(
-	DATA_FILE,
-	`export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`
-)
 fs.writeFileSync(
 	DATA_FILE_UI,
 	`export const iconSpriteVersion = "${iconSpriteVersion}" as const\nexport const icons = ${JSON.stringify(icons, null, 2)} as const\n`

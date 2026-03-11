@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ProductCategoryKey } from '~/data/products/catalog';
+import type { ProductCategoryKey } from '~/types/products/catalog';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 type StoryMedia = {
 	type: 'image' | 'video';

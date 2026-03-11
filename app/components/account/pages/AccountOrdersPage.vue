@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountOrders } from '~/composables/account/useAccountOrders';
+import { useAccountOrders } from '~/composables/account/orders/useAccountOrders';
 
 const { t } = useI18n();
 const { orders, activeOrder } = useAccountOrders();

@@ -1,31 +1,19 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref } from 'vue';
-import lottie from 'lottie-web';
-import type { ProductItem } from '~/data/products/catalog';
-import { useCountry } from '~/composables/app/useCountry';
-import { CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
-import { homeProductTypePathById } from '~/data/products/homeTypes';
+import { toRef } from 'vue';
+import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
 import { sizeDimOnly } from '~/utils/cart';
+import type { ProductItem } from '~/types/products/catalog';
+import type {
+	CartPreviewItem,
+	CartPreviewSizeOptionModel,
+} from '~/types/cart/preview';
 
 const props = withDefaults(
 	defineProps<{
 		open: boolean;
 		cartItemCount: number;
-		cartItems: Array<{
-			id: string;
-			product: ProductItem;
-			sizeKey: string;
-			sizeLabel: string;
-			qty: number;
-			total: number;
-			artworkName: string;
-			artworkPreviewUrl?: string;
-		}>;
-		sizeOptionModels?: Array<{
-			key: string;
-			name: string;
-			dim: string;
-		}>;
+		cartItems: CartPreviewItem[];
+		sizeOptionModels?: CartPreviewSizeOptionModel[];
 		quantityOptions?: readonly number[];
 		grandTotal: number;
 		featuredOpen: boolean;
@@ -48,144 +36,29 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const router = useRouter();
-const { withCountry } = useCountry();
-
-const editingItemId = ref<string | null>(null);
-const draftSizeKey = ref<string>('');
-const draftQty = ref<number>(0);
-const redirectingToCart = ref(false);
-const redirectLoaderRef = ref<HTMLElement | null>(null);
-const CART_REDIRECT_DELAY_MS = 1000;
-let redirectLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
-
-function openInlineEdit(item: (typeof props.cartItems)[number]) {
-	editingItemId.value = item.id;
-	draftSizeKey.value = item.sizeKey;
-	draftQty.value = item.qty;
-}
-
-function cancelInlineEdit() {
-	editingItemId.value = null;
-	draftSizeKey.value = '';
-	draftQty.value = 0;
-}
-
-function saveInlineEdit(itemId: string) {
-	if (!draftSizeKey.value || draftQty.value <= 0) return;
-	emit('update-item', {
-		itemId,
-		sizeKey: draftSizeKey.value,
-		qty: draftQty.value,
-	});
-	cancelInlineEdit();
-}
-
-function editedItemTotal(item: (typeof props.cartItems)[number]) {
-	if (editingItemId.value !== item.id) return item.total;
-	if (!Number.isFinite(draftQty.value) || draftQty.value <= 0 || item.qty <= 0) {
-		return item.total;
-	}
-	const unitPrice = item.total / item.qty;
-	return unitPrice * draftQty.value;
-}
-
-function editedGrandTotal() {
-	if (!editingItemId.value) return props.grandTotal;
-	const editingItem = props.cartItems.find((item) => item.id === editingItemId.value);
-	if (!editingItem) return props.grandTotal;
-	return props.grandTotal - editingItem.total + editedItemTotal(editingItem);
-}
-
-function getInlineSizeOptions(item: (typeof props.cartItems)[number]) {
-	if (props.sizeOptionModels.length === 0) {
-		return [
-			{
-				label: sizeDimOnly(item.sizeLabel),
-				value: item.sizeKey,
-			},
-		];
-	}
-
-	return props.sizeOptionModels.map((size) => ({
-		label: sizeDimOnly(`${size.name} ${size.dim}`),
-		value: size.key,
-	}));
-}
-
-function getInlineQtyOptions(item: (typeof props.cartItems)[number]) {
-	if (props.quantityOptions.length === 0) {
-		return [
-			{
-				label: item.qty.toLocaleString(),
-				value: item.qty,
-			},
-		];
-	}
-
-	return props.quantityOptions.map((qty) => ({
-		label: qty.toLocaleString(),
-		value: qty,
-	}));
-}
-
-function destroyRedirectAnimation() {
-	if (!redirectLoaderAnimation) return;
-	redirectLoaderAnimation.destroy();
-	redirectLoaderAnimation = null;
-}
-
-async function mountRedirectAnimation() {
-	if (typeof window === 'undefined' || !redirectLoaderRef.value) return;
-	destroyRedirectAnimation();
-	const response = await fetch('/animations/musticker-loader.json');
-	if (!response.ok) return;
-	const animationData = await response.json();
-	redirectLoaderAnimation = lottie.loadAnimation({
-		container: redirectLoaderRef.value,
-		renderer: 'svg',
-		loop: true,
-		autoplay: true,
-		animationData,
-		rendererSettings: {
-			preserveAspectRatio: 'xMidYMid meet',
-		},
-	});
-}
-
-async function goToCart() {
-	if (redirectingToCart.value) return;
-	redirectingToCart.value = true;
-	await nextTick();
-	await mountRedirectAnimation();
-	await new Promise((resolve) => setTimeout(resolve, CART_REDIRECT_DELAY_MS));
-	await router.push(withCountry('/cart'));
-	emit('close');
-	destroyRedirectAnimation();
-	redirectingToCart.value = false;
-}
-
-async function goToCheckout() {
-	if (redirectingToCart.value) return;
-	if (typeof window !== 'undefined') {
-		window.localStorage.setItem(
-			CHECKOUT_SELECTION_STORAGE_KEY,
-			JSON.stringify(props.cartItems.map((item) => item.id))
-		);
-	}
-	emit('close');
-	await router.push(withCountry('/checkout'));
-}
-
-async function customizeFeaturedProduct(productId: string) {
-	const targetPath = homeProductTypePathById[productId];
-	if (!targetPath) return;
-	emit('close');
-	await router.push(withCountry(targetPath));
-}
-
-onBeforeUnmount(() => {
-	destroyRedirectAnimation();
+const {
+	editingItemId,
+	draftSizeKey,
+	draftQty,
+	redirectingToCart,
+	redirectLoaderRef,
+	openInlineEdit,
+	cancelInlineEdit,
+	saveInlineEdit,
+	editedItemTotal,
+	editedGrandTotal,
+	getInlineSizeOptions,
+	getInlineQtyOptions,
+	goToCart,
+	goToCheckout,
+	customizeFeaturedProduct,
+} = useCartPreview({
+	cartItems: toRef(props, 'cartItems'),
+	sizeOptionModels: toRef(props, 'sizeOptionModels'),
+	quantityOptions: toRef(props, 'quantityOptions'),
+	grandTotal: toRef(props, 'grandTotal'),
+	closePreview: () => emit('close'),
+	emitUpdateItem: (payload) => emit('update-item', payload),
 });
 </script>
 

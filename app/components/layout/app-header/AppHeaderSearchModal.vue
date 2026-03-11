@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
-import type { SearchItem } from '~/composables/layout/useAppHeaderSearch';
-
-type SearchResultGroup = {
-	key: string;
-	label: string;
-	items: SearchItem[];
-};
-
-type RecentSearchEntry = {
-	key: string;
-	term: string;
-	matchedItem: SearchItem | null;
-};
+import { useAppHeaderSearchModal } from '~/composables/layout/appHeader/useAppHeaderSearchModal';
+import type { SearchItem } from '~/composables/layout/appHeader/useAppHeaderSearch';
+import type {
+	RecentSearchEntry,
+	SearchResultGroup,
+} from '~/types/layout/appHeaderSearch';
 
 const props = defineProps<{
 	open: boolean;
@@ -44,35 +36,11 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-type HighlightPart = {
-	text: string;
-	isMatch: boolean;
-};
-function escapeRegExp(value: string) {
-	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-function getHighlightParts(value: string): HighlightPart[] {
-	const term = typeof props.searchQuery === 'string' ? props.searchQuery.trim() : '';
-	if (!term) return [{ text: value, isMatch: false }];
-	const escapedTerm = escapeRegExp(term);
-	const splitMatcher = new RegExp(`(${escapedTerm})`, 'ig');
-	const exactMatcher = new RegExp(`^${escapedTerm}$`, 'i');
-	return value
-		.split(splitMatcher)
-		.filter((part) => part.length > 0)
-		.map((part) => ({
-			text: part,
-			isMatch: exactMatcher.test(part),
-		}));
-}
-
-function bindModalRef(el: Element | ComponentPublicInstance | null) {
-	props.setModalRef(el instanceof HTMLElement ? el : null);
-}
-
-function bindInputRef(el: Element | ComponentPublicInstance | null) {
-	props.setInputRef(el instanceof HTMLInputElement ? el : null);
-}
+const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModal({
+	searchQuery: () => props.searchQuery,
+	setModalRef: props.setModalRef,
+	setInputRef: props.setInputRef,
+});
 </script>
 
 <template>
@@ -518,15 +486,18 @@ function bindInputRef(el: Element | ComponentPublicInstance | null) {
 
                 border: 0;
                 background: transparent;
-                padding: 0;
+                padding: 0 16px 0 12px;
+                border-radius: 8px;
                 min-height: auto;
                 height: auto;
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--abyss-base);
-                text-decoration: underline;
                 cursor: pointer;
                 box-shadow: none;
+                &:hover {
+                    background-color: var(--gray-20);
+                }
             }
 
             .home-search-recent-list {

@@ -30,35 +30,37 @@ const iconByTone = {
 </script>
 
 <template>
-	<Transition name="ui-toast">
-		<div
-			v-if="visible"
-			class="ui-toast"
-			:data-tone="tone"
-			:data-variant="variant"
-			role="status"
-			aria-live="polite"
-			data-testid="ui-toast"
-		>
-			<UiIcon :name="iconByTone[tone]" :size="18" />
-			<span class="ui-toast-text">
-				<slot>{{ message }}</slot>
-			</span>
-			<UiButton
-				v-if="dismissible"
-				type="button"
-				variant="ghost"
-				tone="neutral"
-				size="sm"
-				class="ui-toast-close"
-				aria-label="Close"
-				data-testid="ui-toast-close-button"
-				@click="emit('close')"
+	<Teleport to="body">
+		<Transition name="ui-toast">
+			<div
+				v-if="visible"
+				class="ui-toast"
+				:data-tone="tone"
+				:data-variant="variant"
+				role="status"
+				aria-live="polite"
+				data-testid="ui-toast"
 			>
-				<UiIcon name="strong-times" :size="14" />
-			</UiButton>
-		</div>
-	</Transition>
+				<UiIcon :name="iconByTone[tone]" :size="18" />
+				<span class="ui-toast-text">
+					<slot>{{ message }}</slot>
+				</span>
+				<UiButton
+					v-if="dismissible"
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="sm"
+					class="ui-toast-close"
+					aria-label="Close"
+					data-testid="ui-toast-close-button"
+					@click="emit('close')"
+				>
+					<UiIcon name="strong-times" :size="14" />
+				</UiButton>
+			</div>
+		</Transition>
+	</Teleport>
 </template>
 
 <style lang="scss">
@@ -67,7 +69,7 @@ const iconByTone = {
     left: 50%;
     bottom: 32px;
     transform: translateX(-50%);
-    z-index: 60;
+    z-index: 1100;
     width: fit-content;
     max-width: calc(100vw - 24px);
     padding: 10px 14px;
@@ -125,18 +127,24 @@ const iconByTone = {
         min-height: auto;
         padding: 0;
         box-shadow: none;
+        &:hover {
+            --btn-soft: transparent;
+        }
     }
 }
 
-.ui-toast-enter-active,
+.ui-toast-enter-active {
+    transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .ui-toast-leave-active {
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1), transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ui-toast-enter-from,
 .ui-toast-leave-to {
     opacity: 0;
-    transform: translate(-50%, 8px);
+    transform: translate(-50%, 18px) scale(0.96);
 }
 
 @media (max-width: 860px) {

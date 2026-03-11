@@ -6,7 +6,7 @@ import AuthLoginModeSwitch from '@/components/auth/login/AuthLoginModeSwitch.vue
 import AuthLoginNonMemberForm from '@/components/auth/login/AuthLoginNonMemberForm.vue';
 import AuthLoginSocialButtons from '@/components/auth/login/AuthLoginSocialButtons.vue';
 import AuthLoginVerificationModal from '@/components/auth/login/AuthLoginVerificationModal.vue';
-import { useLoginPageForm } from '@/composables/auth/useLoginPageForm';
+import { useLoginPageForm } from '@/composables/auth/login/useLoginPageForm';
 
 const { t } = useI18n();
 

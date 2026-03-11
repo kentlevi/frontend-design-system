@@ -185,6 +185,9 @@ const emit = defineEmits<{
 					align-items: center;
 					justify-content: center;
 					box-shadow: none;
+					&:hover:not(:disabled) {
+						--btn-soft: transparent;
+					}
 				}
 			}
 		}

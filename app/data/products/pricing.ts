@@ -1,5 +1,6 @@
 import { quantityOptions } from '~/data/products/categoryExperience';
-import { productCatalog, type ProductCategoryKey } from '~/data/products/catalog';
+import { productCatalog } from '~/data/products/catalog';
+import type { ProductCategoryKey } from '~/types/products/catalog';
 
 const categoryBasePrice: Record<ProductCategoryKey, number> = {
 	stickers: 2.4,

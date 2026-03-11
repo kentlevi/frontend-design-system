@@ -1,9 +1,4 @@
-export type HomeProductType = {
-	key: 'dieCut' | 'dieCutRoll' | 'sheet' | 'hologram' | 'vinyl';
-	productId: string;
-	image: string;
-	to: string;
-};
+import type { HomeProductType } from '~/types/products/homeTypes';
 
 export const homeProductTypes: HomeProductType[] = [
 	{

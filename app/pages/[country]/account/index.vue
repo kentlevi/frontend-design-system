@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { redirectToCountryPath } from '~/composables/app/usePageRedirect';
+import { redirectToCountryPath } from '~/composables/app/pageRedirect/usePageRedirect';
 
 await redirectToCountryPath('/account/profile', { redirectCode: 302 });
 </script>

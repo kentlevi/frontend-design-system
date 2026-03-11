@@ -1,9 +1,4 @@
-export interface AccountPointLog {
-	titleKey: string;
-	date: string;
-	value: string;
-	positive: boolean;
-}
+import type { AccountPointLog } from '~/types/account/points';
 
 export const accountPointLogs: AccountPointLog[] = [
 	{ titleKey: 'earned', date: '11/05/2024', value: '+0.36 P', positive: true },

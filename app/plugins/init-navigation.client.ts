@@ -1,42 +1,60 @@
 import { defineNuxtPlugin } from '#app'
 import { useNavigationStore } from '@/stores/navigation'
+import { useRoute } from 'vue-router'
+
+import {
+	COUNTRY_TO_API_COUNTRY,
+	DEFAULT_COUNTRY,
+	resolveSupportedCountry
+} from '~/constants/countries'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
-    interface Category {
-        id: number
-        name: string
-        url_slug: string
-        description: string
-        sort: number
-    }
+	const route = useRoute();
 
+	interface Category {
+		id: number
+		name: string
+		url_slug: string
+		description: string
+		sort: number
+	}
 
-    const { $api, $pinia } = useNuxtApp()
-    const navigationStore = useNavigationStore($pinia)
+	interface CategoriesResponse {
+		success: boolean
+		message: string
+		data: Category[]
+		meta: Record<string, unknown> | null
+		error: unknown
+	}
 
-    try {
+	const api = useApi()
+	const navigationStore = useNavigationStore(nuxtApp.$pinia)
 
-        const response = await $api.get<Category[]>('navigation/categories')
+	const routeCountry = resolveSupportedCountry(route.params.country || '') || DEFAULT_COUNTRY
+	const apiCountry = COUNTRY_TO_API_COUNTRY[routeCountry]
 
-        if (!response.success) {
-            navigationStore.clearCategories()
-            return
-        }
+	try {
+		const response = await api<CategoriesResponse>(
+			`/${apiCountry}/navigation/categories`,
+			{
+				method: 'GET'
+			}
+		)
 
-        const categories = response.data ?? []
+		const categories = response.data
 
-        if (!categories || !categories.length) {
-            navigationStore.clearCategories()
-            return
-        }
+		if (!categories || !categories.length) {
+			navigationStore.clearCategories()
+			return
+		}
 
-        navigationStore.setCategories(categories)
+		navigationStore.setCategories(categories)
 
-    } catch (error) {
+	} catch (error) {
 
-        console.error('Navigation init failed:', error)
+		console.error('Navigation init failed:', error)
 
-        navigationStore.clearCategories()
-    }
+		navigationStore.clearCategories()
+	}
 
 })

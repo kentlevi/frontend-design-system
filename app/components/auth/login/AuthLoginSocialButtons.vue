@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import type { UserIdentity, UserProfile } from '~/stores/user';
 import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';

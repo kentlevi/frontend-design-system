@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 import { headerCheckoutConfig } from '~/data/layout/header';
 
 const { withCountry } = useCountry();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountCoupons } from '~/composables/account/useAccountCoupons';
+import { useAccountCoupons } from '~/composables/account/coupons/useAccountCoupons';
 
 const { t } = useI18n();
 const { coupons } = useAccountCoupons();

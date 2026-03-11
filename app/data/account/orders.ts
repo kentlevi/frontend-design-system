@@ -1,9 +1,4 @@
-export interface AccountOrder {
-	id: string;
-	itemCount: number;
-	date: string;
-	statusKey: string;
-}
+import type { AccountOrder } from '~/types/account/orders';
 
 export const accountOrders: AccountOrder[] = [
 	{

@@ -1,3 +1,7 @@
+import type {
+	SizeFeatureCard,
+} from '~/types/products/categoryExperience';
+
 export const PRODUCT_SELECTION_NAV_DELAY_MS = 920;
 
 export const sizeOptions = [
@@ -7,17 +11,9 @@ export const sizeOptions = [
 	'extraLarge125',
 ] as const;
 
-export type SizeOptionKey = (typeof sizeOptions)[number];
-
 export const quantityOptions = [
 	10, 50, 100, 200, 300, 500, 1000, 2000, 5000, 10000,
 ] as const;
-
-export type SizeFeatureCard = {
-	key: SizeOptionKey;
-	image: string;
-	descriptionKey: 'small' | 'medium' | 'large' | 'extraLarge';
-};
 
 export const sizeFeatureCards: readonly SizeFeatureCard[] = [
 	{

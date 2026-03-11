@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StatusBackgroundWrapper from '~/components/common/StatusBackgroundWrapper.vue';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 
 definePageMeta({
 	layout: 'home',
