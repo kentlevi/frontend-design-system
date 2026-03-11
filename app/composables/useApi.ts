@@ -2,7 +2,7 @@ export const useApi = () => {
 	const config = useRuntimeConfig()
 
 	const api = $fetch.create({
-		baseURL: config.public.apiBase,
+		baseURL: config.public.api_url,
 		credentials: 'include',
 		onRequest({ options }) {
 			const headers = new Headers(options.headers || {})
