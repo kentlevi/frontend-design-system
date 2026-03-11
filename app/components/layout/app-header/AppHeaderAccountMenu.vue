@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type ComponentPublicInstance } from 'vue';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
@@ -116,8 +116,11 @@ const guestLoginTarget = computed(() => {
 		@mouseenter="emit('mouse-enter')"
 		@mouseleave="emit('mouse-leave')"
 	>
-		<button
+		<UiButton
 			type="button"
+			variant="ghost"
+			tone="neutral"
+			size="sm"
 			class="home-header-icon home-header-account"
 			:class="{
 				'is-open': accountOpen && isMockLoggedIn,
@@ -153,7 +156,7 @@ const guestLoginTarget = computed(() => {
 				:size="16"
 				color="var(--text-primary)"
 			/>
-		</button>
+		</UiButton>
 
 		<Transition :name="accountTransitionName">
 			<div
@@ -197,6 +200,7 @@ const guestLoginTarget = computed(() => {
 							:name="link.icon"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ link.label }}</span>
 					</NuxtLink>
@@ -215,6 +219,7 @@ const guestLoginTarget = computed(() => {
 							:name="gettingStartedLink.icon"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
 					</NuxtLink>
@@ -232,6 +237,7 @@ const guestLoginTarget = computed(() => {
 							name="strong-sign-out"
 							:size="24"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
@@ -266,6 +272,7 @@ const guestLoginTarget = computed(() => {
 							:name="guestOrderLink.icon"
 							:size="22"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ guestOrderLink.label }}</span>
 					</NuxtLink>
@@ -285,6 +292,7 @@ const guestLoginTarget = computed(() => {
 							name="strong-sign-out"
 							:size="22"
 							color="var(--text-primary)"
+							class="home-account-link-icon"
 						/>
 						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
@@ -336,8 +344,13 @@ const guestLoginTarget = computed(() => {
     }
 
     .home-header-icon {
+        --btn-bg: transparent;
+        --btn-soft: rgba(255, 255, 255, 0.3);
+        --btn-border: transparent;
+
         height: 40px;
         min-width: 40px;
+		padding: 0;
         border: 0;
         border-radius: 16px;
         background: transparent;
@@ -354,6 +367,7 @@ const guestLoginTarget = computed(() => {
         .home-header-account {
         position: relative;
         z-index: 2;
+        --btn-soft: rgba(255, 255, 255, 0.3);
         background: transparent;
         transition: background-color 0.2s ease;
         display: inline-flex;
@@ -378,6 +392,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.is-open {
+            --btn-soft: var(--gold-10);
             background: var(--gold-10);
         }
 
@@ -386,6 +401,7 @@ const guestLoginTarget = computed(() => {
         }
 
         &.is-open-guest {
+            --btn-soft: var(--contrast-light);
             background: var(--contrast-light);
         }
 
@@ -504,7 +520,7 @@ const guestLoginTarget = computed(() => {
             color: var(--text-primary);
             padding: 0 20px;
 
-            :deep(.ui-icon) {
+            .home-account-link-icon {
                 flex-shrink: 0;
             }
 

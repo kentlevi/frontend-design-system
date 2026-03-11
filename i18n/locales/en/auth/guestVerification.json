@@ -15,7 +15,10 @@
             "resendPrefix": "Didn't receive any? Please check your spam or ",
             "resendCta": "Resend Code",
             "resendSuffix": ".",
-            "resendCooldown": "Please wait {seconds} seconds before requesting a new code."
+            "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",
+            "resendLimitReachedPrefix": "For security reasons, you can request up to",
+            "resendLimitReachedMiddle": "5 codes per hour",
+            "resendLimitReachedSuffix": ". Please try again later."
         }
     }
 }

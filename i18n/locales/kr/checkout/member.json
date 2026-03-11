@@ -25,15 +25,15 @@
       "completeCheckout": "결제 완료",
       "fields": {
         "cardNumber": {
-          "label": "카드 번호*",
+          "label": "카드 번호",
           "placeholder": "카드 번호 입력"
         },
         "expiration": {
-          "label": "유효기간*",
+          "label": "유효기간",
           "placeholder": "MM/YY"
         },
         "cvv": {
-          "label": "CVV*",
+          "label": "CVV",
           "placeholder": "CVV 입력"
         }
       },

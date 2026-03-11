@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '~/composables/app/useCountry';
 
 const props = withDefaults(
 	defineProps<{
@@ -125,6 +125,10 @@ async function submitReset() {
 					:label="t('auth.login.email')"
 					:error="error"
 					:required="true"
+					head-class="auth-forgot-field-head"
+					label-class="auth-forgot-field-label"
+					label-text-class="auth-forgot-field-label-text"
+					error-class="auth-forgot-field-error"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiInput
@@ -161,6 +165,7 @@ async function submitReset() {
 						tone="neutral"
 						size="sm"
 						class="auth-forgot-return"
+						label-class="auth-forgot-return-label"
 						data-testid="auth-login-forgot-password-return-button"
 						@click="closeModal"
 					>
@@ -222,14 +227,14 @@ async function submitReset() {
     }
 
     .auth-forgot-field {
-        :deep(.ui-form-field-label) {
+        .auth-forgot-field-label {
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-semibold);
             line-height: var(--type-line-100);
             color: var(--text-primary);
         }
 
-        :deep(.ui-form-field-error) {
+        .auth-forgot-field-error {
             margin: 0;
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
@@ -286,7 +291,7 @@ async function submitReset() {
                 color: var(--text-primary);
             }
 
-            :deep(.ui-button-label) {
+            .auth-forgot-return-label {
                 padding: 0;
             }
         }

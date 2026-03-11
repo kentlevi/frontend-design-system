@@ -20,6 +20,9 @@ const props = withDefaults(
 		disabled?: boolean;
 		size?: Size;
 		state?: State;
+		boxClass?: string;
+		iconClass?: string;
+		labelClass?: string;
 	}>(),
 	{
 		modelValue: false,
@@ -27,6 +30,9 @@ const props = withDefaults(
 		disabled: false,
 		size: 'md',
 		state: 'default',
+		boxClass: '',
+		iconClass: '',
+		labelClass: '',
 	}
 );
 
@@ -60,16 +66,16 @@ function onChange(event: Event) {
 			:disabled="props.disabled"
 			@change="onChange"
 		>
-		<span class="ui-checkbox-box" aria-hidden="true">
+		<span :class="['ui-checkbox-box', props.boxClass]" aria-hidden="true">
 			<UiIcon
 				name="strong-check"
 				:size="16"
 				color="var(--text-inverse)"
 				decorative
-				class="ui-checkbox-icon"
+				:class="['ui-checkbox-icon', props.iconClass]"
 			/>
 		</span>
-		<span v-if="$slots.default || props.label" class="ui-checkbox-label">
+		<span v-if="$slots.default || props.label" :class="['ui-checkbox-label', props.labelClass]">
 			<slot>{{ props.label }}</slot>
 		</span>
 	</label>

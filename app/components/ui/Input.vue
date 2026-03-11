@@ -28,6 +28,7 @@ const props = withDefaults(
 		iconRight?: Icon;
 		readonly?: boolean;
 		disabled?: boolean;
+		inputClass?: string;
 	}>(),
 	{
 		modelValue: '',
@@ -39,6 +40,7 @@ const props = withDefaults(
 		iconRight: null,
 		readonly: false,
 		disabled: false,
+		inputClass: '',
 	}
 );
 
@@ -95,7 +97,7 @@ function focusInput() {
 		<input
 			v-bind="inputAttrs"
 			ref="inputRef"
-			class="ui-input-field"
+			:class="['ui-input-field', props.inputClass]"
 			:type="type"
 			:value="modelValue"
 			:placeholder="placeholder"

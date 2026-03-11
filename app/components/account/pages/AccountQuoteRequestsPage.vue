@@ -51,20 +51,22 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 							<div class="account-quote-chat-bubble" data-testid="account-quote-requests-bubble">
 								{{ t('account.quoteRequests.sampleMessage') }}
 								<div class="account-quote-chat-request">
-									<b>{{ t('account.quoteRequests.requestLabel') }}:</b>
+									<span class="account-quote-chat-request-label">{{ t('account.quoteRequests.requestLabel') }}:</span>
 									{{ t('account.quoteRequests.sampleRequestDetails') }}
 								</div>
 							</div>
 						</div>
 						<footer class="account-quote-chat-footer" data-testid="account-quote-requests-footer">
-							<input
+							<UiInput
+								model-value=""
 								type="text"
+								class="account-quote-chat-input"
 								:placeholder="t('account.quoteRequests.messagePlaceholder')"
 								data-testid="account-quote-requests-input"
-							>
-							<button type="button" data-testid="account-quote-requests-send-button">
+							/>
+							<UiButton variant="filled" tone="neutral" size="md" class="account-quote-chat-send" data-testid="account-quote-requests-send-button">
 								{{ t('account.quoteRequests.send') }}
-							</button>
+							</UiButton>
 						</footer>
 					</section>
 				</div>
@@ -189,6 +191,10 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                             border-radius: 8px;
                             padding: 10px;
                             background: var(--contrast-light);
+
+                            .account-quote-chat-request-label {
+                                font-weight: var(--font-weight-bold);
+                            }
                         }
                     }
                 }
@@ -199,23 +205,12 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                     display: flex;
                     gap: 10px;
 
-                    input {
+                    .account-quote-chat-input {
                         flex: 1;
-                        height: 42px;
-                        border: 1px solid var(--border-default);
-                        border-radius: 10px;
-                        background: var(--contrast-light);
-                        padding: 0 12px;
                     }
 
-                    button {
+                    .account-quote-chat-send {
                         width: 84px;
-                        border: 0;
-                        border-radius: 10px;
-                        background: var(--text-primary);
-                        color: var(--contrast-light);
-                        font-weight: var(--font-weight-bold);
-                        cursor: pointer;
                     }
                 }
             }

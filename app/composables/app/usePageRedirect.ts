@@ -1,3 +1,5 @@
+import { useCountry } from '~/composables/app/useCountry';
+
 type PageRedirectOptions = {
 	replace?: boolean;
 	redirectCode?: number;

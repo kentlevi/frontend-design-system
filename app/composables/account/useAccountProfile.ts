@@ -16,6 +16,7 @@ import { useCountry } from '~/composables/app/useCountry';
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 const ACCEPTED_IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/png']);
+const PROFILE_SAVE_OVERLAY_DELAY_MS = 700;
 
 interface ApiErrorPayload {
 	data?: {
@@ -69,6 +70,7 @@ export function useAccountProfile() {
 	const photoError = ref('');
 	const fileInput = ref<HTMLInputElement | null>(null);
 	const localAvatarDataUrl = ref<string | null>(null);
+	const savingProfile = ref(false);
 
 	const avatarDisplayUrl = computed(() => photoUrl.value || localAvatarDataUrl.value);
 
@@ -129,7 +131,10 @@ export function useAccountProfile() {
 		const trimmedLastName = lastName.value.trim() || accountProfileDefaults.lastName;
 		const trimmedEmail = email.value.trim() || accountProfileDefaults.email;
 
+		savingProfile.value = true;
 		try {
+			await new Promise((resolve) => setTimeout(resolve, PROFILE_SAVE_OVERLAY_DELAY_MS));
+
 			if (import.meta.client && photoUrl.value) {
 				window.localStorage.setItem(ACCOUNT_LOCAL_AVATAR_KEY, photoUrl.value);
 				localAvatarDataUrl.value = photoUrl.value;
@@ -143,9 +148,13 @@ export function useAccountProfile() {
 				lastName: trimmedLastName,
 				email: trimmedEmail,
 			};
+			return true;
 		} catch (error: unknown) {
 			const apiError = error as ApiErrorPayload;
 			photoError.value = apiError?.data?.message || 'Failed to save profile. Please try again.';
+			return false;
+		} finally {
+			savingProfile.value = false;
 		}
 	}
 
@@ -190,6 +199,7 @@ export function useAccountProfile() {
 		photoUrl,
 		avatarDisplayUrl,
 		photoError,
+		savingProfile,
 		fileInput,
 		initials,
 		openFilePicker,

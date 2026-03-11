@@ -116,7 +116,7 @@ export function useCartPage() {
 		void router.push(withCountry('/checkout'));
 	}
 
-	const continueShoppingPath = computed(() => withCountry('/stickers'));
+	const continueShoppingPath = computed(() => withCountry('/'));
 
 	onMounted(() => {
 		cartState.value = readStoredCartStateFromStorage();

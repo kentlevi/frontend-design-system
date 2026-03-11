@@ -38,6 +38,10 @@ const props = defineProps({
 		type: String,
 		default: uiTooltipDefaults.contentTestid,
 	},
+	contentClass: {
+		type: String,
+		default: '',
+	},
 });
 
 const { cssVars } = useTooltip({
@@ -59,7 +63,7 @@ const { cssVars } = useTooltip({
 		<Transition name="ui-tooltip-slide">
 			<div
 				v-if="props.open"
-				class="ui-tooltip-content"
+				:class="['ui-tooltip-content', props.contentClass]"
 				:role="props.role"
 				:data-testid="props.contentTestid || null"
 			>

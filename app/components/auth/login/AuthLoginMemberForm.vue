@@ -29,6 +29,10 @@ const emit = defineEmits<{
 				:error="emailError"
 				error-test-id="auth-login-member-email-error"
 				:required="true"
+				head-class="auth-login-field-head"
+				label-class="auth-login-field-label"
+				label-text-class="auth-login-field-label-text"
+				error-class="auth-login-field-error"
 			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -52,6 +56,10 @@ const emit = defineEmits<{
 				:error="passwordError"
 				error-test-id="auth-login-member-password-error"
 				:required="true"
+				head-class="auth-login-field-head"
+				label-class="auth-login-field-label"
+				label-text-class="auth-login-field-label-text"
+				error-class="auth-login-field-error"
 			>
 				<template #default="{ inputId, describedBy }">
 					<div class="auth-login-password-wrap">
@@ -69,19 +77,19 @@ const emit = defineEmits<{
 							@update:model-value="emit('update:password', $event)"
 						>
 							<template #icon-right>
-								<button
-									type="button"
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="sm"
 									class="auth-login-password-toggle"
 									:aria-label="t('auth.login.togglePassword')"
 									data-testid="auth-login-member-password-toggle-button"
+									:sr-label="t('auth.login.togglePassword')"
+									icon-only
+									:icon="showPassword ? 'regular-eye' : 'regular-eye-slash'"
+									:icon-size="24"
 									@click="emit('togglePassword')"
-								>
-									<UiIcon
-										:name="showPassword ? 'regular-eye' : 'regular-eye-slash'"
-										:size="24"
-										color="var(--gray-90)"
-									/>
-								</button>
+								/>
 							</template>
 						</UiInput>
 					</div>
@@ -104,6 +112,7 @@ const emit = defineEmits<{
 				tone="neutral"
 				size="sm"
 				class="auth-login-link-button"
+				label-class="auth-login-link-button-label"
 				data-testid="auth-login-member-forgot-password-button"
 				@click="emit('openForgotPassword')"
 			>
@@ -129,12 +138,12 @@ const emit = defineEmits<{
                 flex-direction: column;
                 gap: 8px;
 
-                :deep(.ui-form-field-head) {
+                .auth-login-field-head {
                     min-height: 24px;
                     align-items: center;
                 }
 
-                :deep(.ui-form-field-label) {
+                .auth-login-field-label {
                     display: block;
                     margin: 0;
                     font-size: var(--type-size-100);
@@ -143,7 +152,7 @@ const emit = defineEmits<{
                     color: var(--text-primary);
                 }
 
-                :deep(.ui-form-field-error) {
+                .auth-login-field-error {
                     margin: 0;
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
@@ -158,10 +167,14 @@ const emit = defineEmits<{
                 position: relative;
 
                 .auth-login-password-toggle {
-                    border: 0;
-                    background: transparent;
-                    display: grid;
-                    place-items: center;
+                    --btn-soft: transparent;
+                    --btn-border: transparent;
+                    padding: 0;
+                    min-height: auto;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 0;
+                    box-shadow: none;
                 }
             }
         }
@@ -203,7 +216,7 @@ const emit = defineEmits<{
                 filter: none;
             }
 
-            :deep(.ui-button-label) {
+            .auth-login-link-button-label {
                 padding: 0;
             }
         }

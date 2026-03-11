@@ -42,38 +42,7 @@ export function isPlainProductCartItem(item: StoredCartState) {
 }
 
 export function mergePlainProductCartItems(items: StoredCartState[]) {
-	const merged: StoredCartState[] = [];
-	const plainIndexByKey = new Map<string, number>();
-
-	for (const item of items) {
-		if (!isPlainProductCartItem(item)) {
-			merged.push(item);
-			continue;
-		}
-
-		const key = `${item.category}::${item.productId}::${item.sizeKey}`;
-		const existingIndex = plainIndexByKey.get(key);
-		if (existingIndex === undefined) {
-			plainIndexByKey.set(key, merged.length);
-			merged.push(item);
-			continue;
-		}
-
-		const existing = merged[existingIndex];
-		if (!existing) {
-			plainIndexByKey.set(key, merged.length);
-			merged.push(item);
-			continue;
-		}
-
-		merged[existingIndex] = {
-			...existing,
-			qty: existing.qty + item.qty,
-			total: existing.total + item.total,
-		};
-	}
-
-	return merged;
+	return [...items];
 }
 
 export function generateProductCartItemId(productId: string) {

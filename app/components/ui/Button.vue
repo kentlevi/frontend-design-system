@@ -28,6 +28,7 @@ const props = withDefaults(
 		width?: string;
 		height?: string;
 		style?: Record<string, string>;
+		labelClass?: string;
 	}>(),
 	{
 		variant: 'filled',
@@ -46,6 +47,7 @@ const props = withDefaults(
 		width: '',
 		height: '',
 		style: () => ({}),
+		labelClass: '',
 	}
 );
 
@@ -111,7 +113,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 
 		<span
 			v-if="!iconOnly && !loading && $slots.default"
-			class="ui-button-label"
+			:class="['ui-button-label', props.labelClass]"
 		>
 			<slot />
 		</span>

@@ -67,15 +67,18 @@ const greetingName = computed(() => {
 			aria-live="polite"
 			data-testid="home-welcome-popover"
 		>
-			<button
+			<UiButton
 				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="sm"
 				class="home-welcome-popover-close"
 				aria-label="Close welcome popover"
 				data-testid="home-welcome-popover-close"
 				@click="emit('close')"
 			>
 				<UiIcon name="strong-times" :size="20" />
-			</button>
+			</UiButton>
 
 			<div class="home-welcome-popover-content">
 				<h3 class="home-welcome-popover-title">
@@ -89,14 +92,17 @@ const greetingName = computed(() => {
 			</div>
 
 			<div class="home-welcome-popover-actions">
-				<button
+				<UiButton
 					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="sm"
 					class="home-welcome-popover-skip"
 					data-testid="home-welcome-popover-skip"
 					@click="emit('close')"
 				>
 					{{ $t('home.welcome.skip') }}
-				</button>
+				</UiButton>
 				<UiButton
 					variant="filled"
 					tone="neutral"
@@ -127,60 +133,60 @@ const greetingName = computed(() => {
     padding: 24px 26px 20px;
 }
 
-.home-welcome-popover-close {
-    position: absolute;
-    top: 18px;
-    right: 16px;
-    border: 0;
-    background: transparent;
-    color: var(--text-primary);
-    cursor: pointer;
-}
+	.home-welcome-popover-close {
+		position: absolute;
+		top: 18px;
+		right: 16px;
+		min-height: auto;
+		padding: 0;
+		color: var(--text-primary);
+		box-shadow: none;
+	}
 
-.home-welcome-popover-title {
-    margin: 0;
-    color: var(--text-primary);
-    font-size: var(--type-size-200);
-    line-height: var(--type-line-200);
-    font-weight: var(--font-weight-bold);
-}
+	.home-welcome-popover-content {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 
-.home-welcome-popover-text {
-    margin: 0;
-    color: var(--text-primary);
-    font-size: var(--type-size-100);
-    line-height: var(--type-line-100);
-}
+		.home-welcome-popover-title {
+			margin: 0;
+			color: var(--text-primary);
+			font-size: var(--type-size-200);
+			line-height: var(--type-line-200);
+			font-weight: var(--font-weight-bold);
+		}
 
-.home-welcome-popover-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
+		.home-welcome-popover-text {
+			margin: 0;
+			color: var(--text-primary);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+		}
+	}
 
-.home-welcome-popover-actions {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 22px;
-}
+	.home-welcome-popover-actions {
+		margin-top: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 22px;
 
-.home-welcome-popover-skip {
-    border: 0;
-    background: transparent;
-    color: var(--text-primary);
-    font-size: var(--type-size-100);
-    line-height: var(--type-line-100);
-    font-weight: var(--font-weight-bold);
-    cursor: pointer;
-}
+		.home-welcome-popover-skip {
+			min-height: auto;
+			padding: 0;
+			color: var(--text-primary);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			font-weight: var(--font-weight-bold);
+			box-shadow: none;
+		}
 
-.home-welcome-popover-start {
-    min-width: 136px;
-    border-radius: 16px;
-    box-shadow: none;
-}
+		.home-welcome-popover-start {
+			min-width: 136px;
+			border-radius: 16px;
+			box-shadow: none;
+		}
+	}
 
 .home-welcome-popover-enter-active,
 .home-welcome-popover-leave-active {
@@ -202,9 +208,11 @@ const greetingName = computed(() => {
         padding: 20px 18px 18px;
     }
 
-    .home-welcome-popover-title {
-        font-size: var(--type-size-500);
-        line-height: var(--type-line-500);
-    }
+	.home-welcome-popover-content {
+		.home-welcome-popover-title {
+			font-size: var(--type-size-500);
+			line-height: var(--type-line-500);
+		}
+	}
 }
 </style>
