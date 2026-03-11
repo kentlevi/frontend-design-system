@@ -1,5 +1,5 @@
 // app.d.ts
-import type { ApiResponse, ApiOptions } from './types/api' // Import your interface
+import type { ApiResponse, ApiOptions } from './app/types/config/api' // Import your interface
 
 declare module '#app' {
 	interface NuxtApp {
