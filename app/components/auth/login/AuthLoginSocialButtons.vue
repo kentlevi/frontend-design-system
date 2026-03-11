@@ -36,18 +36,12 @@ interface MeResponse {
 }
 
 async function syncSocialLoginUserState() {
-	const token = useCookie<string | null>('auth_token');
-	if (!token.value) return;
-
 	try {
 		const response = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
 			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${token.value}`,
-			},
 		});
 
-		if (!response?.data?.user) return;
+		if (!response?.data?.user) return false;
 
 		const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 			maxAge: 60 * 60 * 24 * 3,
@@ -87,8 +81,11 @@ async function syncSocialLoginUserState() {
 		if (import.meta.client) {
 			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
 		}
+
+		return true;
 	} catch {
 		// Keep social login flow non-blocking if profile hydration fails.
+		return false;
 	}
 }
 
@@ -123,14 +120,10 @@ async function handleSocial(provider: string) {
 			if (popup.closed) {
 				clearInterval(pollTimer)
 
-				const token = useCookie('auth_token').value
-
-				if (!token) {
-					return
+				const didLogin = await syncSocialLoginUserState()
+				if (didLogin) {
+					router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
 				}
-
-				await syncSocialLoginUserState()
-				router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
 			}
 		}, 500)
 	} catch (error: unknown) {

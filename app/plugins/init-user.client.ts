@@ -30,12 +30,24 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	const api = useApi();
 	const userStore = useUserStore(nuxtApp.$pinia);
 
-	const token = useCookie<string | null>('auth_token');
-
-	if (!token.value) {
-		userStore.clearUser();
+	if (userStore.id || userStore.email) {
 		return;
 	}
+
+	// Avoid calling `/user/me` for users that are clearly logged out.
+	// HttpOnly auth cookies are not readable in JS, so we rely on safe client hints.
+	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
+	const mockUser = useCookie<{ email?: string } | null>('mock_user', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
+	const hasAuthHint = guestLoginMode.value !== null || Boolean(mockUser.value?.email);
+	if (!hasAuthHint) return;
 
 	const routeCountry = resolveSupportedCountry(route.params.country || '') || DEFAULT_COUNTRY;
 	const apiCountry = COUNTRY_TO_API_COUNTRY[routeCountry];
@@ -43,9 +55,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	try {
 		const response = await api<MeResponse>(`/${apiCountry}/user/me`, {
 			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${token.value}`
-			}
 		});
 
 		const { user, profile } = response.data;
@@ -61,6 +70,5 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 		});
 	} catch {
 		userStore.clearUser();
-		token.value = null;
 	}
 })
