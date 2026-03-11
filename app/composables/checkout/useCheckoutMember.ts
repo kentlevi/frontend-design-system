@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import { checkoutPaymentBrands, checkoutPaymentMethods, checkoutShippingMethods, type CheckoutPaymentMethodKey, type CheckoutShippingMethodKey } from '~/data/checkout/options';
 import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
-import { getProfileFieldValue, normalizeAccountName } from '~/composables/account/accountProfile.helpers';
+import { getProfileFieldValue, normalizeAccountName } from '~/utils/account/accountProfile';
 
 type MemberAddress = {
 	id: string;
