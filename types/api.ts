@@ -4,3 +4,7 @@ export interface ApiResponse<T = unknown> {
 	data: T | null
 	meta: Record<string, unknown> |null
 }
+export interface ApiOptions {
+	params?: Record<string, unknown >
+	headers?: Record<string, string>
+}

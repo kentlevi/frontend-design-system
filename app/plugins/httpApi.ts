@@ -1,9 +1,5 @@
 import { defineNuxtPlugin, useRuntimeConfig, useCookie } from '#app'
-import type { ApiResponse } from '../../types/api'
-type ApiOptions = {
-	params?: Record<string, unknown >
-	headers?: Record<string, string>
-}
+import type { ApiResponse, ApiOptions } from '../../types/api'
 
 export default defineNuxtPlugin(() => {
 	const config = useRuntimeConfig()
@@ -60,7 +56,7 @@ export default defineNuxtPlugin(() => {
 		get: <T>(url: string, options?: ApiOptions) =>
 			apiFetch<ApiResponse <T>>(url, { method: 'GET', ...options }),
 
-		post: <T>(url: string, body?: Record<string, unknown >, options?: ApiOptions) =>
+		post: <T = unknown>(url: string, body?: Record<string, unknown >, options?: ApiOptions) =>
 			apiFetch<ApiResponse <T>>(url, { method: 'POST', body, ...options }),
 
 		put: <T>(url: string, body?: Record<string, unknown >, options?: ApiOptions) =>
