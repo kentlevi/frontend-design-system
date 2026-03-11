@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import LoginSuccessToast from '~/components/layout/LoginSuccessToast.vue';
 import {
 	COUNTRY_TO_HTML_LANG,

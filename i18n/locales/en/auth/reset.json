@@ -2,7 +2,7 @@
     "auth": {
         "reset": {
             "title": "Change Password",
-            "description": "Password must be at least 6 characters and include uppercase, number, and special character.",
+            "description": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
             "newPassword": "New Password",
             "enterNewPassword": "Enter New Password",
             "confirmPassword": "Confirm Password",
@@ -13,7 +13,7 @@
             "changing": "Changing...",
             "errors": {
                 "missingLink": "Reset link is missing required information.",
-                "fillBoth": "Please fill in both password fields.",
+                "fillBoth": "Field cannot be blank.",
                 "passwordRequirements": "Password does not meet requirements.",
                 "mismatch": "Password does not match.",
                 "unable": "Unable to reset password.",
