@@ -550,7 +550,7 @@ function itemMeta(sizeLabel: string, qty: number) {
 		width: 100%;
 
 		.checkout-select-trigger {
-			height: 48px;
+			height: 40px;
 			border-radius: 8px;
 			box-shadow: none;
 		}
