@@ -1,8 +1,6 @@
 import { computed, onBeforeUnmount, ref } from 'vue';
 import {
 	accountProfileDefaults,
-	type AccountMockUser,
-	type AccountUnit,
 } from '~/data/account/profile';
 import {
 	getAccountInitials,
@@ -11,7 +9,8 @@ import {
 	processAccountAvatarFile,
 	readFileAsDataUrl,
 } from '~/utils/account/accountProfile';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
+import type { AccountMockUser, AccountUnit } from '~/types/account/profile';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -159,19 +158,17 @@ export function useAccountProfile() {
 	}
 
 	async function signOut() {
-		try {
-			await api(`/${apiCountry.value}/auth/logout`, {
-				method: 'POST',
-			});
-		} catch {
-			// Continue with local sign-out cleanup even if API logout fails.
-		} finally {
-			mockUser.value = null;
-			authToken.value = null;
-			userStore.clearUser();
-			userStore.clearOnboardingProfile();
-			await navigateTo(withCountry('/'));
-		}
+		void api(`/${apiCountry.value}/auth/logout`, {
+			method: 'POST',
+		}).catch(() => {
+			// Keep local sign-out immediate even if API logout fails.
+		});
+
+		mockUser.value = null;
+		authToken.value = null;
+		userStore.clearUser();
+		userStore.clearOnboardingProfile();
+		await navigateTo(withCountry('/'));
 	}
 
 	if (import.meta.client) {

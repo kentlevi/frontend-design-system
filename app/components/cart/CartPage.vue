@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCartPage } from '~/composables/cart/useCartPage';
+import { useCartPage } from '~/composables/cart/page/useCartPage';
 
 const { t } = useI18n();
 

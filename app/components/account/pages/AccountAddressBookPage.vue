@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountAddressBook } from '~/composables/account/useAccountAddressBook';
+import { useAccountAddressBook } from '~/composables/account/addressBook/useAccountAddressBook';
 
 const { t } = useI18n();
 const { items } = useAccountAddressBook();

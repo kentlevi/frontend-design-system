@@ -1,20 +1,13 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
-import { useRegisterForm } from '~/composables/auth/useRegisterForm';
-import { useCountry } from '~/composables/app/useCountry';
+import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
+import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
+import { useCountry } from '~/composables/app/country/useCountry';
 import { registerRewardPoints } from '~/data/auth/register';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const termsErrorPopoverPinned = ref(false);
-const termsErrorPopoverHovered = ref(false);
-const termsErrorHoverCloseTimer = ref<ReturnType<typeof setTimeout> | null>(null);
-const termsErrorPopoverOpen = computed(
-	() => termsErrorPopoverPinned.value || termsErrorPopoverHovered.value
-);
-const termsErrorIconStrong = computed(() => termsErrorPopoverOpen.value);
-const termsErrorRef = ref<HTMLElement | null>(null);
 
 const {
 	firstName,
@@ -41,57 +34,16 @@ const {
 	resendVerification,
 } = useRegisterForm();
 
-watch(
-	() => Boolean(termsError.value && !agreeTerms.value),
-	(hasTermsError) => {
-		if (!hasTermsError) {
-			clearTermsErrorHoverCloseTimer();
-			termsErrorPopoverPinned.value = false;
-			termsErrorPopoverHovered.value = false;
-		}
-	}
-);
-
-function clearTermsErrorHoverCloseTimer() {
-	if (!termsErrorHoverCloseTimer.value) return;
-	clearTimeout(termsErrorHoverCloseTimer.value);
-	termsErrorHoverCloseTimer.value = null;
-}
-
-function toggleTermsErrorPopover() {
-	termsErrorPopoverPinned.value = !termsErrorPopoverPinned.value;
-}
-
-function onTermsErrorHoverStart() {
-	clearTermsErrorHoverCloseTimer();
-	termsErrorPopoverHovered.value = true;
-}
-
-function onTermsErrorHoverEnd() {
-	clearTermsErrorHoverCloseTimer();
-	termsErrorHoverCloseTimer.value = setTimeout(() => {
-		termsErrorPopoverHovered.value = false;
-		termsErrorHoverCloseTimer.value = null;
-	}, 90);
-}
-
-function onDocumentClick(event: MouseEvent) {
-	const target = event.target as Node | null;
-	if (!target) return;
-	if (!termsErrorRef.value?.contains(target)) {
-		clearTermsErrorHoverCloseTimer();
-		termsErrorPopoverPinned.value = false;
-		termsErrorPopoverHovered.value = false;
-	}
-}
-
-onMounted(() => {
-	document.addEventListener('click', onDocumentClick);
-});
-
-onBeforeUnmount(() => {
-	clearTermsErrorHoverCloseTimer();
-	document.removeEventListener('click', onDocumentClick);
+const {
+	termsErrorPopoverOpen,
+	termsErrorIconStrong,
+	termsErrorRef,
+	toggleTermsErrorPopover,
+	onTermsErrorHoverStart,
+	onTermsErrorHoverEnd,
+} = useAuthRegisterCard({
+	termsError,
+	agreeTerms,
 });
 </script>
 

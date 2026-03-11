@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoginMemberType } from '~/composables/auth/useLoginForm';
+import type { LoginMemberType } from '~/composables/auth/login/useLoginForm';
 
 const { t } = useI18n();
 

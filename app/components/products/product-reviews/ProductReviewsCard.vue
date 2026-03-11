@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { ReviewCard } from '~/data/products/product-reviews';
+import type { ReviewCard } from '~/types/products/productReviews';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import {
 	getProductReviewCopyKey,
 	resolveProductReviewAvatarSrc,
 	resolveProductReviewMediaSrc,
-} from '~/composables/products/productReviews.helpers';
+} from '~/helpers/products/productReviews.helper';
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();

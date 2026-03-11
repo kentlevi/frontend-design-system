@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ProductReviewsCard from '@/components/products/product-reviews/ProductReviewsCard.vue';
 import ProductReviewsHeader from '@/components/products/product-reviews/ProductReviewsHeader.vue';
-import { useProductReviewsCarousel } from '@/composables/products/useProductReviewsCarousel';
+import { useProductReviewsCarousel } from '@/composables/products/reviewsCarousel/useProductReviewsCarousel';
 import { reviewCards } from '~/data/products/product-reviews';
 
 const {

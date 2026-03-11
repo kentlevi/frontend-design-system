@@ -3,7 +3,7 @@ import AuthProfileDetailsStep from '@/components/auth/profile/AuthProfileDetails
 import AuthProfileSettingsStep from '@/components/auth/profile/AuthProfileSettingsStep.vue';
 import AuthProfileSidebar from '@/components/auth/profile/AuthProfileSidebar.vue';
 import AuthProfileWelcomeToast from '@/components/auth/profile/AuthProfileWelcomeToast.vue';
-import { useAuthProfileSetup } from '@/composables/auth/useAuthProfileSetup';
+import { useAuthProfileSetup } from '@/composables/auth/profile/useAuthProfileSetup';
 
 const {
 	step,

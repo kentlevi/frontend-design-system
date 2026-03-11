@@ -1,19 +1,10 @@
 <script setup lang="ts">
-import { computed, type ComponentPublicInstance } from 'vue';
-import { useCountry } from '~/composables/app/useCountry';
-import {
-	HOME_WELCOME_POPOVER_PENDING_KEY,
-	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
-} from '~/data/home/onboarding';
-import {
-	normalizeAppPath,
-	sanitizeExistingRedirect,
-	sanitizeRedirectSource,
-} from '~/utils/auth/redirect';
+import { toRef } from 'vue';
+import { useCountry } from '~/composables/app/country/useCountry';
+import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const route = useRoute();
 type IconName = keyof typeof import('~/data/ui/icons').icons;
 
 type AccountLink = {
@@ -42,69 +33,23 @@ const emit = defineEmits<{
 	(e: 'mouse-leave'): void;
 	(e: 'logout'): void;
 }>();
-
-function bindWrapRef(el: Element | ComponentPublicInstance | null) {
-	props.setWrapRef(el instanceof HTMLElement ? el : null);
-}
-
-function handleAccountLinkClick(event: MouseEvent, to: string) {
-	if (to === '/auth/profile') {
-		event.preventDefault();
-		if (import.meta.client) {
-			window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
-			window.dispatchEvent(new CustomEvent(HOME_WELCOME_POPOVER_TRIGGER_EVENT));
-		}
-		emit('close');
-		void navigateTo(withCountry('/'));
-		return;
-	}
-
-	emit('close');
-}
-
-const primaryAccountLinks = computed(() =>
-	props.accountLinks.filter((link) => link.to !== '/auth/profile')
-);
-
-const gettingStartedLink = computed(
-	() => props.accountLinks.find((link) => link.to === '/auth/profile') ?? null
-);
-const guestOrderLink = computed(
-	() => props.accountLinks.find((link) => link.to === '/account/orders') ?? null
-);
-const guestOrderTarget = computed(() => withCountry('/'));
-
-const guestLoginTarget = computed(() => {
-	const loginPath = normalizeAppPath(withCountry('/auth/login'));
-	const registerPath = normalizeAppPath(withCountry('/auth/register'));
-	const homePath = normalizeAppPath(withCountry('/'));
-	const currentPath = normalizeAppPath(route.path);
-
-	if (currentPath === homePath || currentPath === registerPath) {
-		return withCountry('/auth/login');
-	}
-
-	if (currentPath === loginPath) {
-		const currentRedirect = Array.isArray(route.query.redirect)
-			? route.query.redirect[0]
-			: route.query.redirect;
-		const preservedRedirect = sanitizeExistingRedirect(currentRedirect, withCountry);
-		if (!preservedRedirect) return withCountry('/auth/login');
-
-		return {
-			path: withCountry('/auth/login'),
-			query: {
-				redirect: preservedRedirect,
-			},
-		};
-	}
-
-	return {
-		path: withCountry('/auth/login'),
-		query: {
-			redirect: sanitizeRedirectSource(route.fullPath),
-		},
-	};
+const {
+	bindWrapRef,
+	handleAccountLinkClick,
+	primaryAccountLinks,
+	gettingStartedLink,
+	guestOrderLink,
+	guestOrderTarget,
+	setAccountToggleRef,
+	setAccountDropdownRef,
+	guestLoginTarget,
+} = useAppHeaderAccountMenu({
+	accountOpen: toRef(props, 'accountOpen'),
+	isMockLoggedIn: toRef(props, 'isMockLoggedIn'),
+	isGuestLoggedIn: toRef(props, 'isGuestLoggedIn'),
+	accountLinks: toRef(props, 'accountLinks'),
+	setWrapRef: props.setWrapRef,
+	closeMenu: () => emit('close'),
 });
 </script>
 
@@ -117,6 +62,7 @@ const guestLoginTarget = computed(() => {
 		@mouseleave="emit('mouse-leave')"
 	>
 		<UiButton
+			:ref="setAccountToggleRef"
 			type="button"
 			variant="ghost"
 			tone="neutral"
@@ -161,8 +107,10 @@ const guestLoginTarget = computed(() => {
 		<Transition :name="accountTransitionName">
 			<div
 				v-if="accountOpen && isMockLoggedIn && !isGuestLoggedIn"
+				:ref="setAccountDropdownRef"
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
+				tabindex="-1"
 				:aria-label="t('layout.header.accountMenu')"
 				data-testid="app-header-account-dropdown-member"
 			>
@@ -245,8 +193,10 @@ const guestLoginTarget = computed(() => {
 			</div>
 			<div
 				v-else-if="accountOpen && isGuestLoggedIn"
+				:ref="setAccountDropdownRef"
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
+				tabindex="-1"
 				:aria-label="t('layout.header.accountMenu')"
 				data-testid="app-header-account-dropdown-member"
 			>
@@ -300,8 +250,10 @@ const guestLoginTarget = computed(() => {
 			</div>
 			<div
 				v-else-if="accountOpen"
+				:ref="setAccountDropdownRef"
 				class="home-account-dropdown home-account-dropdown--guest"
 				role="menu"
+				tabindex="-1"
 				:aria-label="t('layout.header.accountMenu')"
 				data-testid="app-header-account-dropdown-guest"
 			>

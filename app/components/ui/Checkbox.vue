@@ -4,7 +4,7 @@ import {
 	useControlAttrs,
 	useControlTestId,
 	useRootAttrs,
-} from '~/components/ui/uiControlAttrs.helpers';
+} from '~/helpers/ui/uiControlAttrs.helper';
 
 type Size = 'md' | 'sm';
 type State = 'default' | 'error' | 'success';

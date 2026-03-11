@@ -1,59 +1,18 @@
 <script setup lang="ts">
 import AppHeaderMainBar from '~/components/layout/app-header/AppHeaderMainBar.vue';
-import { useAppHeaderAccount } from '~/composables/layout/useAppHeaderAccount';
-import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/useAppHeaderKeyboardShortcuts';
-import { useAppHeaderSearch } from '~/composables/layout/useAppHeaderSearch';
-import { CART_STORAGE_KEY, CART_UPDATED_EVENT } from '~/data/cart/page';
-import { quantityOptions, sizeOptions } from '~/data/products/categoryExperience';
-import type { ProductItem } from '~/data/products/catalog';
-import { productCatalog } from '~/data/products/catalog';
-import { homeProductTypes } from '~/data/products/homeTypes';
-import { defaultStartPriceByProductId } from '~/data/products/pricing';
-import { useCountry } from '~/composables/app/useCountry';
-import { normalizeAppPath } from '~/utils/auth/redirect';
-import { formatCurrencyByCountry } from '~/utils/currency';
-import { defineAsyncComponent, onBeforeUnmount, onMounted, watch } from 'vue';
+import AppHeaderSearchModal from '~/components/layout/app-header/AppHeaderSearchModal.vue';
+import { useAppHeaderAccount } from '~/composables/layout/appHeader/useAppHeaderAccount';
+import { useAppHeaderCartPreview } from '~/composables/layout/appHeader/useAppHeaderCartPreview';
+import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/appHeader/useAppHeaderKeyboardShortcuts';
+import { useAppHeaderSearch } from '~/composables/layout/appHeader/useAppHeaderSearch';
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const AppHeaderLocaleModal = defineAsyncComponent(
 	() => import('~/components/layout/app-header/AppHeaderLocaleModal.vue')
 );
-const AppHeaderSearchModal = defineAsyncComponent(
-	() => import('~/components/layout/app-header/AppHeaderSearchModal.vue')
-);
 const CartPreview = defineAsyncComponent(
 	() => import('~/components/cart/CartPreview.vue')
 );
-const { t } = useI18n();
-const { country, withCountry } = useCountry();
-const route = useRoute();
-
-type StoredCartState = {
-	id: string;
-	category: string;
-	productId: string;
-	sizeKey: string;
-	qty: number;
-	total: number;
-	artworkName: string;
-	artworkPreviewUrl?: string;
-};
-
-function isStoredCartState(value: unknown): value is StoredCartState {
-	if (!value || typeof value !== 'object') return false;
-	const candidate = value as Partial<StoredCartState>;
-	return (
-		typeof candidate.id === 'string' &&
-		typeof candidate.category === 'string' &&
-		typeof candidate.productId === 'string' &&
-		typeof candidate.sizeKey === 'string' &&
-		typeof candidate.qty === 'number' &&
-		typeof candidate.total === 'number' &&
-		typeof candidate.artworkName === 'string' &&
-		(candidate.artworkPreviewUrl === undefined ||
-			typeof candidate.artworkPreviewUrl === 'string')
-	);
-}
-
 const {
 	accountOpen,
 	accountMenuRef,
@@ -97,7 +56,6 @@ const {
 	setSearchInputRef,
 	focusSearchInput,
 	closeSearchModal,
-	openSearchModal: openSearchModalBase,
 	applySuggestedSearch,
 	clearRecentSearches,
 	applyRecentSearch,
@@ -107,74 +65,36 @@ const {
 	handleSearchKeydown,
 } = useAppHeaderSearch();
 
-const cartPreviewOpen = ref(false);
-const cartFeaturedOpen = ref(true);
-const allCatalogProducts = Object.values(productCatalog).flatMap((category) => category.products);
-const cartFeaturedItems = computed(() =>
-	homeProductTypes
-		.map((typeItem) => allCatalogProducts.find((product) => product.id === typeItem.productId))
-		.filter((item): item is ProductItem => Boolean(item))
-);
-const cartState = ref<StoredCartState[]>([]);
+const {
+	cartPreviewOpen,
+	cartFeaturedOpen,
+	cartFeaturedItems,
+	cartItems,
+	cartGrandTotal,
+	cartItemCount,
+	cartSizeOptionModels,
+	cartQuantityOptions,
+	getCartProductName,
+	formatCartPrice,
+	cartFeaturedStartPrice,
+	openCartPreview: openCartPreviewBase,
+	closeCartPreview,
+	closeCartFeatured,
+	removeCartItem,
+	updateCartItem,
+} = useAppHeaderCartPreview({
+	closeAccountMenu,
+	closeLocaleModal,
+	closeSearchModal,
+});
 let bodyOverflowBeforeCartLock = '';
 let cartBodyScrollLocked = false;
-
-const cartItems = computed(() =>
-	cartState.value
-		.map((entry) => {
-			for (const category of Object.values(productCatalog)) {
-				const product = category.products.find((item) => item.id === entry.productId);
-				if (product) {
-					return {
-						id: entry.id,
-						product,
-						sizeKey: entry.sizeKey,
-						sizeLabel: t(`product.sizes.${entry.sizeKey}.label`),
-						qty: entry.qty,
-						total: entry.total,
-						artworkName: entry.artworkName,
-						artworkPreviewUrl: entry.artworkPreviewUrl || '',
-					};
-				}
-			}
-			return null;
-		})
-		.filter((item): item is NonNullable<typeof item> => Boolean(item))
-);
-const cartGrandTotal = computed(() =>
-	cartItems.value.reduce((sum, item) => sum + item.total, 0)
-);
-const cartItemCount = computed(() => cartItems.value.length);
-const isCartPage = computed(
-	() => normalizeAppPath(route.path) === normalizeAppPath(withCountry('/cart'))
-);
-const cartSizeOptionModels = computed(() =>
-	sizeOptions.map((size) => {
-		const label = t(`product.sizes.${size}.label`);
-		const [name, ...rest] = label.split(' ');
-		return {
-			key: size,
-			name: name || '',
-			dim: rest.join(' '),
-		};
-	})
-);
-const cartQuantityOptions = computed<number[]>(() => [...quantityOptions]);
 let idlePrefetchTimer: ReturnType<typeof setTimeout> | null = null;
 let idlePrefetchHandle: number | null = null;
 const prefetchedHeaderOverlays = ref(false);
-
-function getCartProductName(product: ProductItem) {
-	return t(`product.items.${product.id}.name`);
-}
-
-function formatCartPrice(value: number) {
-	return formatCurrencyByCountry(value, country.value);
-}
-
-function cartFeaturedStartPrice(product: ProductItem) {
-	return formatCartPrice(defaultStartPriceByProductId(product.id));
-}
+const shouldLockBodyScroll = computed(
+	() => cartPreviewOpen.value || searchModalOpen.value
+);
 
 async function prefetchHeaderOverlayModules() {
 	if (prefetchedHeaderOverlays.value) return;
@@ -198,35 +118,18 @@ function openLocaleModal() {
 	openLocaleModalBase();
 }
 
-function openSearchModal() {
+async function openSearchModal() {
 	void prefetchHeaderOverlayModules();
 	closeAccountMenu();
 	closeLocaleModal();
 	closeCartPreview();
-	openSearchModalBase();
+	searchModalOpen.value = true;
+	await focusSearchInput();
 }
 
 function openCartPreview() {
-	if (isCartPage.value) {
-		if (typeof window !== 'undefined') {
-			window.location.assign(withCountry('/cart'));
-		}
-		return;
-	}
 	void prefetchHeaderOverlayModules();
-	closeAccountMenu();
-	closeLocaleModal();
-	closeSearchModal();
-	cartFeaturedOpen.value = true;
-	cartPreviewOpen.value = true;
-}
-
-function closeCartPreview() {
-	cartPreviewOpen.value = false;
-}
-
-function closeCartFeatured() {
-	cartFeaturedOpen.value = false;
+	openCartPreviewBase();
 }
 
 function setCartBodyScrollLock(locked: boolean) {
@@ -245,83 +148,6 @@ function setCartBodyScrollLock(locked: boolean) {
 	cartBodyScrollLocked = false;
 }
 
-function isPlainItem(item: StoredCartState) {
-	return !item.artworkName && !item.artworkPreviewUrl;
-}
-
-function mergePlainCartItems(items: StoredCartState[]) {
-	return [...items];
-}
-
-function syncCartFromStorage() {
-	if (typeof window === 'undefined') return;
-	try {
-		const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-		if (!raw) {
-			cartState.value = [];
-			return;
-		}
-		const parsed = JSON.parse(raw) as unknown;
-		if (Array.isArray(parsed)) {
-			cartState.value = mergePlainCartItems(parsed.filter(isStoredCartState));
-			return;
-		}
-		cartState.value = isStoredCartState(parsed)
-			? mergePlainCartItems([parsed])
-			: [];
-	} catch {
-		cartState.value = [];
-	}
-}
-
-function writeCartStateToStorage(next: StoredCartState[]) {
-	if (typeof window === 'undefined') return;
-	if (next.length) {
-		window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-	} else {
-		window.localStorage.removeItem(CART_STORAGE_KEY);
-	}
-	window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
-}
-
-function removeCartItem(itemId: string) {
-	const nextState = cartState.value.filter((item) => item.id !== itemId);
-	cartState.value = nextState;
-	writeCartStateToStorage(nextState);
-}
-
-function updateCartItem(itemId: string, nextSizeKey: string, nextQty: number) {
-	const qty = Number(nextQty);
-	if (!Number.isFinite(qty) || qty <= 0) return;
-
-	const normalizedSizeKey = sizeOptions.includes(
-		nextSizeKey as (typeof sizeOptions)[number]
-	)
-		? nextSizeKey
-		: sizeOptions[0];
-
-	const nextState = mergePlainCartItems(
-		cartState.value.map((item) => {
-			if (item.id !== itemId) return item;
-			const unitPrice = item.qty > 0 ? item.total / item.qty : 0;
-			return {
-				...item,
-				sizeKey: normalizedSizeKey,
-				qty,
-				total: unitPrice * qty,
-			};
-		})
-	);
-
-	cartState.value = nextState;
-	writeCartStateToStorage(nextState);
-}
-
-function handleStorage(event: StorageEvent) {
-	if (event.key && event.key !== CART_STORAGE_KEY) return;
-	syncCartFromStorage();
-}
-
 useAppHeaderKeyboardShortcuts({
 	handleSearchKeydown,
 	isSearchModalOpen: () => searchModalOpen.value,
@@ -334,12 +160,6 @@ useAppHeaderKeyboardShortcuts({
 
 onMounted(() => {
 	if (typeof window === 'undefined') return;
-	syncCartFromStorage();
-	window.addEventListener('storage', handleStorage);
-	window.addEventListener(
-		CART_UPDATED_EVENT,
-		syncCartFromStorage as EventListener
-	);
 
 	if ('requestIdleCallback' in window) {
 		idlePrefetchHandle = window.requestIdleCallback(() => {
@@ -353,20 +173,12 @@ onMounted(() => {
 	}, 1200);
 });
 
-watch(
-	() => cartPreviewOpen.value,
-	(isOpen) => {
-		setCartBodyScrollLock(isOpen);
-	}
-);
+watch(shouldLockBodyScroll, (should_lock) => {
+	setCartBodyScrollLock(should_lock);
+});
 
 onBeforeUnmount(() => {
 	if (typeof window === 'undefined') return;
-	window.removeEventListener('storage', handleStorage);
-	window.removeEventListener(
-		CART_UPDATED_EVENT,
-		syncCartFromStorage as EventListener
-	);
 
 	if (idlePrefetchHandle !== null && 'cancelIdleCallback' in window) {
 		window.cancelIdleCallback(idlePrefetchHandle);

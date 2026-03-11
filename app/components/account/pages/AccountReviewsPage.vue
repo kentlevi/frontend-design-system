@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountReviews } from '~/composables/account/useAccountReviews';
+import { useAccountReviews } from '~/composables/account/reviews/useAccountReviews';
 
 const { t } = useI18n();
 const { reviews } = useAccountReviews();

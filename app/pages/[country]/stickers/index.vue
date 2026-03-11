@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import ProductCategoryExperience from '~/components/products/product-category/ProductCategoryExperience.vue';
-import { useProductByCategory } from '~/composables/products/useProductByCategory';
+import { useProductByCategory } from '~/composables/products/byCategory/useProductByCategory';
 
 const { products } = useProductByCategory('stickers')
 

@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/user';
 import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 
 const props = withDefaults(
 	defineProps<{

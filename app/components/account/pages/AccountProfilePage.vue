@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
 const { t } = useI18n();
@@ -39,32 +39,32 @@ onMounted(() => {
 })
 
 const profileToastVisible = ref(false);
-let profileToastTimer: ReturnType<typeof setTimeout> | null = null;
+let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
 
-function clearProfileToastTimer() {
-	if (!profileToastTimer) return;
-	clearTimeout(profileToastTimer);
-	profileToastTimer = null;
+function clear_profile_toast_timer() {
+	if (!profile_toast_timer) return;
+	clearTimeout(profile_toast_timer);
+	profile_toast_timer = null;
 }
 
-function showProfileSavedToast() {
-	clearProfileToastTimer();
+function show_profile_saved_toast() {
+	clear_profile_toast_timer();
 	profileToastVisible.value = true;
-	profileToastTimer = setTimeout(() => {
+	profile_toast_timer = setTimeout(() => {
 		profileToastVisible.value = false;
-		profileToastTimer = null;
+		profile_toast_timer = null;
 	}, 2400);
 }
 
 async function onSaveProfile() {
 	await submitPersonalForm();
 
-	if (!api_response) return;
-	showProfileSavedToast();
+	if (!api_response.value) return;
+	show_profile_saved_toast();
 }
 
 onBeforeUnmount(() => {
-	clearProfileToastTimer();
+	clear_profile_toast_timer();
 });
 </script>
 

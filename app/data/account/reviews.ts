@@ -1,9 +1,4 @@
-export interface AccountReview {
-	titleKey: string;
-	rating: number;
-	date: string;
-	textKey: string;
-}
+import type { AccountReview } from '~/types/account/reviews';
 
 export const accountReviews: AccountReview[] = [
 	{

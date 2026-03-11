@@ -1,9 +1,10 @@
 import type {
+	PersonalFormApiResponse,
 	ProfileFieldDefinition,
 	UpdatePersonalFormPayload,
 } from '~/types/account/profile'
 
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 
 /**
  * Fetch dynamic personal field definitions
@@ -16,8 +17,7 @@ export async function fetchPersonalFieldDefinitions(): Promise<ProfileFieldDefin
 		method: 'GET',
 	})
 
-	/** Adjust this based on your actual API response shape */
-	return response.data ?? []
+	return Array.isArray(response?.data) ? response.data : []
 }
 
 /**
@@ -25,12 +25,14 @@ export async function fetchPersonalFieldDefinitions(): Promise<ProfileFieldDefin
  */
 export async function updatePersonalForm(
 	payload: UpdatePersonalFormPayload
-): Promise<unknown> {
+): Promise<PersonalFormApiResponse> {
 	const api = useApi()
 	const { apiCountry } = useCountry()
 
-	return await api(`/${apiCountry.value}/profile/fields`, {
+	const response = await api(`/${apiCountry.value}/profile/fields`, {
 		method: 'PUT',
 		body: payload,
 	})
+
+	return (response ?? {}) as PersonalFormApiResponse
 }

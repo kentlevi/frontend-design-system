@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
-import { useCountry } from '@/composables/app/useCountry';
-import { useCheckoutCompletion } from '~/composables/checkout/useCheckoutCompletion';
-import {
-	checkoutFieldValidation,
-	checkoutPaymentBrands,
-	checkoutPaymentMethods,
-	checkoutShippingMethods,
-	type CheckoutPaymentMethodKey,
-	type CheckoutShippingMethodKey,
-} from '~/data/checkout/options';
-
-const { t } = useI18n();
-const { withCountry } = useCountry();
+import { useCheckoutGuestPage } from '~/composables/checkout/guest/useCheckoutGuestPage';
 
 const {
+	t,
+	withCountry,
 	provinceOptions,
 	email,
 	fullName,
@@ -36,38 +24,18 @@ const {
 	orderShippingFee,
 	orderSubtotal,
 	formatPrice,
-	sizeDimOnly,
-} = useCheckoutGuest();
-
-const activeShippingMethods = computed(() =>
-	checkoutShippingMethods.filter((method) => method.enabled !== false).map((method) => ({ ...method }))
-);
-const activePaymentMethods = computed(() =>
-	checkoutPaymentMethods.filter((method) => method.enabled !== false).map((method) => ({ ...method }))
-);
-
-const selectedShippingMethod = ref<CheckoutShippingMethodKey>(
-	activeShippingMethods.value.find((method) => method.defaultSelected)?.key || 'express'
-);
-const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
-	activePaymentMethods.value.find((method) => method.defaultSelected)?.key || 'credit-card'
-);
-
-const fieldValidationByKey = computed(() =>
-	Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
-);
-const emailLabelText = computed(() => t('checkout.guest.fields.email.label'));
-
-const { completingCheckout, completeLoaderRef, completeCheckout } = useCheckoutCompletion({
-	redirectPath: withCountry('/checkout/confirmation'),
-});
-
-function itemMeta(sizeLabel: string, qty: number) {
-	return t('checkout.guest.summary.itemMeta', {
-		size: sizeDimOnly(sizeLabel),
-		qty: qty.toLocaleString(),
-	});
-}
+	activeShippingMethods,
+	activePaymentMethods,
+	selectedShippingMethod,
+	selectedPaymentMethod,
+	fieldValidationByKey,
+	emailLabelText,
+	checkoutPaymentBrands,
+	completingCheckout,
+	completeLoaderRef,
+	completeCheckout,
+	itemMeta,
+} = useCheckoutGuestPage();
 </script>
 
 <template>

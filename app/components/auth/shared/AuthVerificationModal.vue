@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useVerificationCodeInput } from '~/composables/auth/useVerificationCodeInput';
+import { toRef } from 'vue';
+import { useAuthVerificationModal } from '~/composables/auth/verification/useAuthVerificationModal';
 import { authVerificationConfig, type AuthVerificationI18nBase } from '~/data/auth/verification';
 
 const { t } = useI18n();
@@ -53,93 +53,31 @@ const emit = defineEmits<{
 	(e: 'resend'): void;
 }>();
 
-const { codeInputs, inputRefs, setCode, getCode, handleInput, handleKeyDown, handlePaste } =
-	useVerificationCodeInput(props.otpLength);
-
-const key = computed(() => props.translationBase);
-
-watch(
-	() => props.code,
-	(value) => {
-		setCode(value ?? '');
-	},
-	{ immediate: true }
-);
-
-const computedSubmitLabel = computed(() =>
-	props.verifying
-		? props.busyLabel || t(`${key.value}.verifying`)
-		: props.submitLabel || t(`${key.value}.verify`)
-);
-const isResendTapLocked = ref(false);
-let resendTapLockTimer: ReturnType<typeof setTimeout> | null = null;
-
-function clearResendTapLockTimer() {
-	if (!resendTapLockTimer) return;
-	clearTimeout(resendTapLockTimer);
-	resendTapLockTimer = null;
-}
-
-function lockResendTap(ms = 2000) {
-	clearResendTapLockTimer();
-	isResendTapLocked.value = true;
-	resendTapLockTimer = setTimeout(() => {
-		isResendTapLocked.value = false;
-		resendTapLockTimer = null;
-	}, ms);
-}
-
-const canResend = computed(() => props.resendCooldownRemaining <= 0 && !isResendTapLocked.value);
-const modalAlign = computed<'top' | 'center' | 'bottom'>(() =>
-	props.align === 'start' ? 'top' : props.align
-);
-
-function closeModal() {
-	emit('update:modelValue', false);
-}
-
-function emitCode() {
-	emit('update:code', getCode());
-}
-
-function onInput(index: number, event: Event) {
-	handleInput(index, event);
-	emitCode();
-}
-
-function onPaste(event: ClipboardEvent) {
-	handlePaste(event);
-	emitCode();
-}
-
-function onResendClick() {
-	if (!canResend.value) return;
-	lockResendTap();
-	emit('resend');
-}
-
-watch(
-	() => props.resendCooldownRemaining,
-	(remaining) => {
-		if (remaining > 0) {
-			// Cooldown now governs the disabled state; release tap-lock quickly.
-			isResendTapLocked.value = false;
-			clearResendTapLockTimer();
-		}
-	}
-);
-
-watch(
-	() => props.modelValue,
-	(isOpen) => {
-		if (!isOpen) return;
-		isResendTapLocked.value = false;
-		clearResendTapLockTimer();
-	}
-);
-
-onBeforeUnmount(() => {
-	clearResendTapLockTimer();
+const {
+	codeInputs,
+	inputRefs,
+	key,
+	computedSubmitLabel,
+	canResend,
+	modalAlign,
+	closeModal,
+	onInput,
+	onPaste,
+	onResendClick,
+	handleKeyDown,
+} = useAuthVerificationModal({
+	otpLength: toRef(props, 'otpLength'),
+	code: toRef(props, 'code'),
+	verifying: toRef(props, 'verifying'),
+	submitLabel: toRef(props, 'submitLabel'),
+	busyLabel: toRef(props, 'busyLabel'),
+	translationBase: toRef(props, 'translationBase'),
+	resendCooldownRemaining: toRef(props, 'resendCooldownRemaining'),
+	modelValue: toRef(props, 'modelValue'),
+	align: toRef(props, 'align'),
+	emitUpdateModelValue: (value) => emit('update:modelValue', value),
+	emitUpdateCode: (value) => emit('update:code', value),
+	emitResend: () => emit('resend'),
 });
 </script>
 

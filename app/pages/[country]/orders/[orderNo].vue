@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCheckoutGuest } from '~/composables/checkout/guest/useCheckoutGuest';
+import { useCountry } from '~/composables/app/country/useCountry';
 
 definePageMeta({
 	layout: 'home',

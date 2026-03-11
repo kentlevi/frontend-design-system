@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useCountry } from '~/composables/app/useCountry';
-import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
+import { useCountry } from '~/composables/app/country/useCountry';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();

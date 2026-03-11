@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { toRef, defineAsyncComponent  } from 'vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
-import { useProductCategoryExperience } from '~/composables/products/useProductCategoryExperience';
-import type { ProductCategoryKey } from '~/data/products/catalog';
-import type { ProductByCategoryApiItem } from '~/composables/products/useProductByCategory';
+import { useProductCategoryExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
+import type { ProductCategoryKey } from '~/types/products/catalog';
+import type { ProductByCategoryApiItem } from '~/types/products/productByCategory';
 
 
 const ProductReviewsSection = defineAsyncComponent(

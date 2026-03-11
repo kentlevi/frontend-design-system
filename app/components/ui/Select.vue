@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import {
 	useControlTestId,
 	useRootAttrs,
-} from '~/components/ui/uiControlAttrs.helpers';
+} from '~/helpers/ui/uiControlAttrs.helper';
 
 type SelectValue = string | number;
 

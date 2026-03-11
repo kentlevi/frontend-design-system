@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useHomeReviewsCarousel } from '@/composables/home/useHomeReviewsCarousel';
-import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
+import { useHomeReviewsCarousel } from '@/composables/home/reviewsCarousel/useHomeReviewsCarousel';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 const { t, te } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();

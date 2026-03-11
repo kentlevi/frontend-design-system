@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountGallery } from '~/composables/account/useAccountGallery';
+import { useAccountGallery } from '~/composables/account/gallery/useAccountGallery';
 
 const { t } = useI18n();
 const { items } = useAccountGallery();
