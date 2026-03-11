@@ -49,16 +49,6 @@ const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
 
-const { $api } = useNuxtApp()
-
-onMounted(async () => {
-	const test = await $api.post('shared/sample-post');
-
-	console.log(test)
-	if( test.success ) {
-		console.log(test.data)
-	}
-})
 </script>
 
 <template>
