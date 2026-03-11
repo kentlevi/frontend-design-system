@@ -178,7 +178,13 @@ export function useAppHeaderAccount() {
 	}
 
 	function is_nav_link_active(path: string) {
-		return normalizeAppPath(route.path) === normalizeAppPath(path);
+		const current_path = normalizeAppPath(route.path);
+		const target_path = normalizeAppPath(path);
+		if (target_path === withCountry('/')) {
+			return current_path === target_path;
+		}
+
+		return current_path === target_path || current_path.startsWith(`${target_path}/`);
 	}
 
 	async function select_locale(next_locale: SupportedCountry) {

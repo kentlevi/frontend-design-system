@@ -339,6 +339,9 @@ const {
                 &:disabled {
                     color: var(--text-muted);
                 }
+				&:hover:not(:disabled) {
+					--btn-soft: transparent;
+				}
 
                 .auth-verification-resend-btn-label {
                     padding: 0;

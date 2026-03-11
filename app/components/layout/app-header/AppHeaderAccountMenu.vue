@@ -396,6 +396,7 @@ const {
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
         z-index: 3;
         overflow: hidden;
+        outline: none;
 
         &.home-account-dropdown--member {
             width: 320px;

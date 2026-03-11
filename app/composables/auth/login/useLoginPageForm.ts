@@ -1,6 +1,6 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useLoginForm } from '~/composables/auth/login/useLoginForm';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import {
 	isValidAuthEmail,
 	getAuthErrorMessage,
@@ -14,7 +14,10 @@ import {
 } from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
 import type { UserIdentity, UserProfile } from '~/stores/user';
-import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
+import {
+	GUEST_LOGIN_TOAST_PENDING_KEY,
+	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
+} from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
 
@@ -23,12 +26,12 @@ const TOKEN_DURATION_SHORT = 60 * 60 * 24 * 3; // 3 days
 const TOKEN_DURATION_LONG = 60 * 60 * 24 * 90; // 90 days
 const CACHE_DURATION = 60 * 60 * 24 * 30; // 30 days
 const DEFAULT_EXPIRES_IN = 300; // 5 minutes
+const GUEST_TEST_REDIRECT_URL = 'http://localhost:4000/us/orders/12405070009';
 
 export function useLoginPageForm() {
 	const api = useApi();
 	const { t } = useI18n();
 
-	const router = useRouter();
 	const route = useRoute();
 	const { withCountry, apiCountry } = useCountry();
 
@@ -204,6 +207,12 @@ export function useLoginPageForm() {
 	function clearVerificationCache() {
 		const guestVerificationCache = useCookie('guest_verification_cache');
 		guestVerificationCache.value = null;
+	}
+
+	function set_guest_login_toast_pending() {
+		if (!import.meta.client) return;
+		window.localStorage.setItem(GUEST_LOGIN_TOAST_PENDING_KEY, '1');
+		window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
 	}
 
 	async function fetchUserProfile(authToken: string) {
@@ -526,7 +535,8 @@ export function useLoginPageForm() {
 			clearVerificationCache();
 			resendLimitReached.value = '';
 			await fetchUserProfile(response.data.auth_token);
-			await navigateTo(withCountry('/account/orders'));
+			set_guest_login_toast_pending();
+			await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 			return response;
 		}
 
@@ -602,7 +612,8 @@ export function useLoginPageForm() {
 				guestVerificationOrderNumber.value = resolvedOrderNumber;
 			}
 
-			await router.push(withCountry('/'));
+			set_guest_login_toast_pending();
+			await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 		} catch (error: unknown) {
 			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
 		} finally {
@@ -643,7 +654,8 @@ export function useLoginPageForm() {
 				setAuthCookies(response.data.auth_token, true);
 				clearVerificationCache();
 				await fetchUserProfile(response.data.auth_token);
-				await navigateTo(withCountry('/account/orders'));
+				set_guest_login_toast_pending();
+				await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 				return response;
 			}
 
