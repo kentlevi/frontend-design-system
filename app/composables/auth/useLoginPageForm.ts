@@ -4,7 +4,10 @@ import { useRoute, useRouter } from 'vue-router';
 import {
 	isValidAuthEmail,
 	getAuthErrorMessage,
+	getAuthResponseMessage,
+	getAuthResponseCode
 } from '~/composables/auth/auth.helpers';
+
 import {
 	getProfileFieldValue,
 	normalizeAccountName,
@@ -47,9 +50,11 @@ export function useLoginPageForm() {
 	const guestVerificationToken = ref('');
 	const guestVerificationCode = ref('');
 	const guestVerificationError = ref('');
+	const resendLimitReached = ref('');
 	const guestVerificationOtpRequired = ref(true);
 	const isGuestVerifying = ref(false);
 	const guestResendCooldownRemaining = ref(0);
+	const guestVerificationTokenExpiresAt = ref(0);
 	let guestResendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
 	function clearGuestResendCooldownTimer() {
@@ -71,6 +76,19 @@ export function useLoginPageForm() {
 			}
 			guestResendCooldownRemaining.value -= 1;
 		}, 1000);
+	}
+
+	function coercePositiveInt(value: unknown) {
+		if (typeof value === 'number') {
+			if (!Number.isFinite(value) || value <= 0) return null;
+			return Math.floor(value);
+		}
+		if (typeof value === 'string') {
+			const parsed = Number(value);
+			if (!Number.isFinite(parsed) || parsed <= 0) return null;
+			return Math.floor(parsed);
+		}
+		return null;
 	}
 
 	const memberEmail = ref('');
@@ -111,6 +129,7 @@ export function useLoginPageForm() {
 		nonMemberEmailError.value = '';
 		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
+		resendLimitReached.value = '';
 	}
 
 	function setAuthCookies(authToken: string, isGuest: boolean, keepSigned = false) {
@@ -412,6 +431,7 @@ export function useLoginPageForm() {
 		const orderNumber = nonMemberOrderNumber.value.trim();
 
 		guestVerificationError.value = '';
+		resendLimitReached.value = '';
 
 		const guestVerificationCache = useCookie<GuestVerificationCache | null>('guest_verification_cache', {
 			maxAge: CACHE_DURATION,
@@ -429,11 +449,14 @@ export function useLoginPageForm() {
 
 			if (credentialsMatch) {
 				const now = Date.now();
-				const cacheAge = (now - cache.cached_at) / 1000;
-				const isExpired = cache.expires_in ? cacheAge >= cache.expires_in : false;
+				const cachedAt = typeof cache.cached_at === 'number' ? cache.cached_at : Number(cache.cached_at);
+				const expiresIn = coercePositiveInt(cache.expires_in);
+				const cacheAge = Number.isFinite(cachedAt) ? (now - cachedAt) / 1000 : Number.POSITIVE_INFINITY;
+				const isExpired = !expiresIn || cacheAge >= expiresIn;
 
 				if (!isExpired) {
 					shouldUseCache = true;
+					guestVerificationTokenExpiresAt.value = cachedAt + expiresIn * 1000;
 					response = {
 						success: true,
 						message: 'Using cached verification',
@@ -444,6 +467,9 @@ export function useLoginPageForm() {
 							auth_token: cache.auth_token,
 						},
 					};
+				}
+				if (isExpired) {
+					clearVerificationCache();
 				}
 			} else {
 				clearVerificationCache();
@@ -461,16 +487,22 @@ export function useLoginPageForm() {
 					}
 				);
 
-				if (!response.success) {
+				const isSuccess = response?.success === true;
+				if (!isSuccess) {
+					const message = getAuthResponseMessage(response);
+					const code = getAuthResponseCode(response);
+					resendLimitReached.value = code === 'max_resend_reached' ? message : '';
 					nonMemberEmailError.value = '';
 					nonMemberEmailHasError.value = true;
 					nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
-					guestVerificationError.value = '';
+					guestVerificationError.value = message;
 					return;
 				}
 
 				// Cache the response
-				const expiresIn = response.data?.expires_in || DEFAULT_EXPIRES_IN;
+				const expiresIn =
+					coercePositiveInt(response.data?.expires_in) ?? DEFAULT_EXPIRES_IN;
+				guestVerificationTokenExpiresAt.value = Date.now() + expiresIn * 1000;
 				guestVerificationCache.value = {
 					email,
 					order_number: orderNumber,
@@ -492,6 +524,7 @@ export function useLoginPageForm() {
 		if (response?.data?.auth_token) {
 			setAuthCookies(response.data.auth_token, true);
 			clearVerificationCache();
+			resendLimitReached.value = '';
 			await fetchUserProfile(response.data.auth_token);
 			await navigateTo(withCountry('/account/orders'));
 			return response;
@@ -502,6 +535,8 @@ export function useLoginPageForm() {
 		guestVerificationToken.value = response?.data?.token || '';
 		guestVerificationOtpRequired.value = response?.data?.otp_required !== false;
 		guestVerificationCode.value = '';
+		guestVerificationTokenExpiresAt.value =
+			Date.now() + (coercePositiveInt(response?.data?.expires_in) ?? DEFAULT_EXPIRES_IN) * 1000;
 
 		if (!guestVerificationOtpRequired.value) {
 			await submitGuestVerification(true);
@@ -515,6 +550,17 @@ export function useLoginPageForm() {
 		const requiresOtp = guestVerificationOtpRequired.value && !forceBypass;
 		if (requiresOtp && !guestVerificationCode.value.trim()) {
 			guestVerificationError.value = t('auth.guestVerification.codeRequired');
+			return;
+		}
+
+		if (
+			guestVerificationOtpRequired.value &&
+			(!guestVerificationToken.value ||
+				(guestVerificationTokenExpiresAt.value > 0 && Date.now() >= guestVerificationTokenExpiresAt.value))
+		) {
+			// Token/code window expired; request a new token/code via the verification endpoint.
+			guestVerificationCode.value = '';
+			await resendGuestVerification();
 			return;
 		}
 
@@ -550,6 +596,7 @@ export function useLoginPageForm() {
 
 			clearVerificationCache();
 			isVerificationModalOpen.value = false;
+			resendLimitReached.value = '';
 
 			if (resolvedOrderNumber) {
 				guestVerificationOrderNumber.value = resolvedOrderNumber;
@@ -579,14 +626,54 @@ export function useLoginPageForm() {
 				}
 			);
 
-			if (response.success) {
-				guestVerificationToken.value = response.data?.token || '';
-				guestVerificationOtpRequired.value = response.data?.otp_required !== false;
-				startGuestResendCooldown();
-				if (!guestVerificationOtpRequired.value) {
-					await submitGuestVerification(true);
-				}
+			const message = getAuthResponseMessage(response);
+			const isSuccess = response?.success === true;
+			if (!isSuccess) {
+				const code = getAuthResponseCode(response);
+				resendLimitReached.value = code === 'max_resend_reached' ? message : '';
+				guestVerificationError.value = resendLimitReached.value
+					? ''
+					: message || guestVerificationError.value;
+				return response;
 			}
+
+			resendLimitReached.value = '';
+
+			if (response.data?.auth_token) {
+				setAuthCookies(response.data.auth_token, true);
+				clearVerificationCache();
+				await fetchUserProfile(response.data.auth_token);
+				await navigateTo(withCountry('/account/orders'));
+				return response;
+			}
+
+			const expiresIn =
+				coercePositiveInt(response.data?.expires_in) ?? DEFAULT_EXPIRES_IN;
+			guestVerificationToken.value = response.data?.token || '';
+			guestVerificationOtpRequired.value = response.data?.otp_required !== false;
+			guestVerificationTokenExpiresAt.value = Date.now() + expiresIn * 1000;
+
+			const guestVerificationCache = useCookie<GuestVerificationCache | null>('guest_verification_cache', {
+				maxAge: CACHE_DURATION,
+				sameSite: 'lax',
+				path: '/',
+			});
+			guestVerificationCache.value = {
+				email: guestVerificationEmail.value,
+				order_number: guestVerificationOrderNumber.value,
+				token: response.data?.token,
+				expires_in: expiresIn,
+				otp_required: response.data?.otp_required,
+				auth_token: response.data?.auth_token,
+				cached_at: Date.now(),
+			};
+
+			startGuestResendCooldown();
+			if (!guestVerificationOtpRequired.value) {
+				await submitGuestVerification(true);
+			}
+
+			return response;
 		} catch {
 			// Keep UX non-blocking for resend tap failures.
 		}
@@ -597,6 +684,7 @@ export function useLoginPageForm() {
 		if (open) return;
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
+		resendLimitReached.value = '';
 		isGuestVerifying.value = false;
 	});
 
@@ -646,6 +734,7 @@ export function useLoginPageForm() {
 		guestVerificationToken,
 		guestVerificationCode,
 		guestVerificationError,
+		resendLimitReached,
 		isGuestVerifying,
 		guestResendCooldownRemaining,
 		nonMemberEmail,

@@ -11,11 +11,13 @@ withDefaults(
 		email: string;
 		code: string;
 		error?: string;
+		resendLimitReached?: string;
 		verifying?: boolean;
 		resendCooldownRemaining?: number;
 	}>(),
 	{
 		error: '',
+		resendLimitReached: '',
 		verifying: false,
 		resendCooldownRemaining: 0,
 	}
@@ -35,6 +37,7 @@ const emit = defineEmits<{
 		:email="email"
 		:code="code"
 		:error="error"
+		:resend-limit-reached="resendLimitReached"
 		:verifying="verifying"
 		:translation-base="authVerificationConfig.i18n.register"
 		:submit-label="t('auth.verification.verifyEmailAddress')"

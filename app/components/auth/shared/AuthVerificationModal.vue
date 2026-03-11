@@ -12,6 +12,7 @@ const props = withDefaults(
 		email?: string;
 		code?: string;
 		error?: string;
+		resendLimitReached?: string;
 		verifying?: boolean;
 		submitLabel?: string;
 		busyLabel?: string;
@@ -29,6 +30,7 @@ const props = withDefaults(
 		email: '',
 		code: '',
 		error: '',
+		resendLimitReached: '',
 		verifying: false,
 		submitLabel: '',
 		busyLabel: '',
@@ -236,7 +238,7 @@ onBeforeUnmount(() => {
 					{{ computedSubmitLabel }}
 				</UiButton>
 
-				<p class="auth-verification-resend">
+				<p v-if="!resendLimitReached" class="auth-verification-resend">
 					{{ t(`${key}.resendPrefix`) }}
 					<UiButton
 						variant="ghost"
@@ -251,6 +253,9 @@ onBeforeUnmount(() => {
 						{{ t(`${key}.resendCta`) }}
 					</UiButton>
 					{{ t(`${key}.resendSuffix`) }}
+				</p>
+				<p v-else class="auth-verification-resend">
+					{{ t(`${key}.resendLimitReachedPrefix`) }} <b>{{ t(`${key}.resendLimitReachedMiddle`) }}</b>{{ t(`${key}.resendLimitReachedSuffix`) }}
 				</p>
 			</div>
 		</div>

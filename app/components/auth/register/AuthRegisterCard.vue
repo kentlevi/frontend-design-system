@@ -32,6 +32,7 @@ const {
 	verificationEmail,
 	verificationCode,
 	verificationError,
+	resendLimitReached,
 	resendCooldownRemaining,
 	isVerifying,
 	isVerificationModalOpen,
@@ -343,6 +344,7 @@ onBeforeUnmount(() => {
 			:email="verificationEmail"
 			:code="verificationCode"
 			:error="verificationError"
+			:resend-limit-reached="resendLimitReached"
 			:verifying="isVerifying"
 			:resend-cooldown-remaining="resendCooldownRemaining"
 			@update:code="verificationCode = $event"
@@ -621,4 +623,17 @@ onBeforeUnmount(() => {
     }
 }
 
+.auth-register-loading-fade-enter-active,
+.auth-register-loading-fade-leave-active {
+    transition: opacity 0.16s ease;
+}
+
+.auth-register-loading-fade-enter-from,
+.auth-register-loading-fade-leave-to {
+    opacity: 0;
+}
+
+body.has-auth-register-loading {
+    overflow: hidden;
+}
 </style>

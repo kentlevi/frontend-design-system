@@ -12,6 +12,7 @@ defineProps<{
 	token: string;
 	code: string;
 	error?: string;
+	resendLimitReached?: string;
 	verifying?: boolean;
 	resendCooldownRemaining?: number;
 }>();
@@ -31,6 +32,7 @@ const emit = defineEmits<{
 		:order-number="orderNumber"
 		:code="code"
 		:error="error"
+		:resend-limit-reached="resendLimitReached"
 		:verifying="verifying"
 		:translation-base="authVerificationConfig.i18n.guest"
 		:submit-label="t('auth.guestVerification.verify')"

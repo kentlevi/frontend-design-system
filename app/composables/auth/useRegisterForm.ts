@@ -2,6 +2,7 @@ import { nextTick, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import {
 	getAuthErrorMessage,
+	getAuthResponseCode,
 	getAuthResponseMessage,
 	isValidAuthEmail,
 } from '~/composables/auth/auth.helpers';
@@ -41,6 +42,7 @@ export function useRegisterForm() {
 	const verificationToken = ref('');
 	const verificationCode = ref('');
 	const verificationError = ref('');
+	const resendLimitReached = ref('');
 	const verificationOtpRequired = ref(true);
 	const isVerifying = ref(false);
 	const resendCooldownRemaining = ref(0);
@@ -497,6 +499,7 @@ export function useRegisterForm() {
 	async function resendVerification() {
 		if (resendCooldownRemaining.value > 0) return;
 		verificationError.value = '';
+		resendLimitReached.value = '';
 
 		try {
 			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
@@ -513,10 +516,18 @@ export function useRegisterForm() {
 
 			const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
 			if (!isSuccess) {
-				verificationError.value = getAuthResponseMessage(response) || t('auth.verification.invalidCode');
+				const code = getAuthResponseCode(response);
+				const message = getAuthResponseMessage(response);
+				if (code === 'max_resend_reached') {
+					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					verificationError.value = '';
+					return;
+				}
+				verificationError.value = message || t('auth.verification.invalidCode');
 				return;
 			}
 
+			resendLimitReached.value = '';
 			const verificationData = response.data as { email?: string; token?: string; otp_required?: boolean } | undefined;
 			const resolvedToken =
 				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
@@ -548,6 +559,7 @@ export function useRegisterForm() {
 		if (open) return;
 
 		// Keep resend cooldown running even if the modal is closed/re-opened.
+		resendLimitReached.value = '';
 	});
 
 	onBeforeUnmount(() => {
@@ -573,6 +585,7 @@ export function useRegisterForm() {
 		verificationToken,
 		verificationCode,
 		verificationError,
+		resendLimitReached,
 		isVerifying,
 		resendCooldownRemaining,
 		submitRegister,
