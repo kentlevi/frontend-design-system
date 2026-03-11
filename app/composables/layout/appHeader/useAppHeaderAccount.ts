@@ -78,7 +78,12 @@ export function useAppHeaderAccount() {
 		}))
 	);
 
-	const is_mock_logged_in = computed(() => Boolean(auth_token.value));
+	const has_member_identity = computed(() =>
+		Boolean(auth_token.value || user_store.email || mock_user.value?.email?.trim())
+	);
+	const is_mock_logged_in = computed(
+		() => has_member_identity.value && String(guest_login_mode.value || '') !== '1'
+	);
 	const is_guest_logged_in = computed(
 		() => String(guest_login_mode.value || '') === '1' && !is_mock_logged_in.value
 	);

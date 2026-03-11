@@ -41,7 +41,7 @@ const iconByTone = {
 				aria-live="polite"
 				data-testid="ui-toast"
 			>
-				<UiIcon :name="iconByTone[tone]" :size="18" />
+				<UiIcon :name="iconByTone[tone]" :size="24" />
 				<span class="ui-toast-text">
 					<slot>{{ message }}</slot>
 				</span>
@@ -76,7 +76,7 @@ const iconByTone = {
     border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
     box-shadow: 0 10px 24px rgba(17, 24, 39, 0.16);
 
     &[data-tone='primary'] {

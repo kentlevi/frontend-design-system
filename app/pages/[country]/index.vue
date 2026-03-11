@@ -379,8 +379,9 @@ useHead({
 		/>
 		<UiToast
 			:visible="isResetSuccessToastVisible"
-			tone="success"
+			tone="primary"
 			:message="t('home.passwordUpdated')"
+			variant="outlined"
 			data-testid="home-reset-password-success-toast"
 			@close="isResetSuccessToastVisible = false"
 		/>
