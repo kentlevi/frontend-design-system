@@ -1,17 +1,15 @@
 import { reactive, ref } from 'vue'
 import { personal_form_defaults } from '~/constants/account/profile'
+import { buildStoredProfileFieldValues, mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
 import {
-	map_personal_form_to_payload,
-	map_profile_to_personal_form_state,
+	mapProfileToPersonalFormState,
+	mapPersonalFormToPayload,
 } from '~/mappers/account/profile/personalForm.mapper'
 import {
 	fetchPersonalFieldDefinitions,
 	updatePersonalForm,
-} from '~/services/account/profile/personalForm.service'
-import type {
-	PersonalFormApiResponse,
-	ProfileFieldDefinition,
-} from '~/types/account/profile'
+} from '~/services/profile/personalForm.service'
+import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/account/profile'
 
 export function usePersonalForm() {
 	const user_store = useUserStore()
@@ -27,8 +25,13 @@ export function usePersonalForm() {
 		error_message.value = ''
 
 		try {
+			form_state.fields = { ...fallback_fields }
+
 			field_definitions.value = await fetchPersonalFieldDefinitions()
-			const mapped_form = map_profile_to_personal_form_state(
+
+			user_store.setDynamicProfileFields(field_definitions.value);
+
+			const mapped_form = mapProfileToPersonalFormState(
 				field_definitions.value,
 				user_store.profile
 			)
@@ -46,8 +49,28 @@ export function usePersonalForm() {
 		error_message.value = ''
 
 		try {
-			const payload = map_personal_form_to_payload(form_state)
+			/**
+             * Build API payload from current form state
+             */
+			const payload = mapPersonalFormToPayload(form_state)
+
+			/**
+             * Save to backend
+             */
 			api_response.value = await updatePersonalForm(payload)
+			/**
+             * If save succeeded, sync latest values into Pinia store
+             */
+			if (api_response?.value?.success) {
+				const updated_user_field_values = mapPersonalFormToUserFieldValues(
+					user_store.dynamic_profile_fields,
+					form_state.fields,
+					user_store.profile
+				)
+
+				user_store.setProfileUserFieldValues(updated_user_field_values)
+			}
+
 		} catch (error: unknown) {
 			error_message.value = 'Failed to save personal details.'
 			throw error
@@ -56,8 +79,12 @@ export function usePersonalForm() {
 		}
 	}
 
+	const fallback_fields = buildStoredProfileFieldValues(
+		user_store.dynamic_profile_fields,
+		user_store.profile
+	)
+
 	return {
-		field_definitions,
 		form_state,
 		is_loading,
 		is_submitting,

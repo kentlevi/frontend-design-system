@@ -9,7 +9,7 @@ import type {
 	UpdatePersonalFormPayload,
 } from '~/types/account/profile'
 
-export function map_profile_to_personal_form_state(
+export function mapProfileToPersonalFormState(
 	field_definitions: ProfileFieldDefinition[],
 	profile: PersonalFormProfile | null
 ): PersonalFormState {
@@ -28,7 +28,7 @@ export function map_profile_to_personal_form_state(
 	}
 }
 
-export function map_personal_form_to_payload(
+export function mapPersonalFormToPayload(
 	form_state: PersonalFormState
 ): UpdatePersonalFormPayload {
 	return {

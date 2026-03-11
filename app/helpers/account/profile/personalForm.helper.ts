@@ -26,3 +26,51 @@ export function get_profile_field_value(
 
 	return matched_field?.value ?? ''
 }
+
+/**
+ * Build form field values from stored profile values
+ */
+export function buildStoredProfileFieldValues(
+	fields: ProfileFieldDefinition[],
+	profile: UserProfile | null
+): Record<string, string> {
+	const stored_fields: Record<string, string> = {}
+
+	for (const field of fields) {
+		/**
+		 * Find matching saved value for this dynamic field
+		 */
+		const matched_value = profile?.user_field_values.find(
+			(user_field_value) => user_field_value.country_field_id === field.id
+		)
+
+		stored_fields[field.field_key] = matched_value?.value ?? ''
+	}
+
+	return stored_fields
+}
+
+/**
+ * Map current form state into user field values
+ */
+export function mapPersonalFormToUserFieldValues(
+	fields: ProfileFieldDefinition[],
+	form_fields: Record<string, unknown>,
+	profile: UserProfile | null
+): UserFieldValue[] {
+	return fields.map((field) => {
+		/**
+		 * Try to keep existing record metadata
+		 */
+		const existing_field_value = profile?.user_field_values.find(
+			(user_field_value) => user_field_value.country_field_id === field.id
+		)
+
+		return {
+			id: existing_field_value?.id ?? 0,
+			user_profile_id: profile?.id ?? 0,
+			country_field_id: field.id,
+			value: String(form_fields[field.field_key] ?? ''),
+		}
+	})
+}
