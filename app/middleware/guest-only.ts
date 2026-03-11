@@ -6,13 +6,13 @@ function resolveCountryFromPath(path: string) {
 }
 
 export default defineNuxtRouteMiddleware((to) => {
-	const authToken = useCookie<string | null>('auth_token');
+	const userStore = useUserStore();
 	const mockUser = useCookie<{
 		firstName: string;
 		lastName: string;
 		email: string;
 	} | null>('mock_user');
-	const isAuthenticated = Boolean(authToken.value || mockUser.value?.email);
+	const isAuthenticated = Boolean(userStore.email || userStore.id || mockUser.value?.email);
 
 	if (!isAuthenticated) return;
 

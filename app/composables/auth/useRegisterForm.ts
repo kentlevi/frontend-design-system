@@ -181,9 +181,7 @@ export function useRegisterForm() {
 	interface RegisterResponse {
 		success: boolean;
 		message: string;
-		data: {
-			auth_token?: string;
-		} & Record<string, unknown>;
+		data: Record<string, unknown>;
 		meta: Record<string, unknown>;
 		error: Record<string, unknown>;
 	}
@@ -422,63 +420,55 @@ export function useRegisterForm() {
 				return response;
 			}
 
-			// Set the auth token from registration response
-			const authTokenValue = (response.data as { auth_token?: string }).auth_token;
-			if (authTokenValue) {
-				const authToken = useCookie('auth_token', {
-					maxAge: 60 * 60 * 24 * 90,
-					sameSite: 'lax',
-					path: '/'
-				})
-				authToken.value = authTokenValue;
+			try {
+				type MeResponse = {
+					success: boolean;
+					data: {
+						user?: UserIdentity;
+						profile?: UserProfile | null;
+					}
+				};
 
-				// Fetch user data using the token
-				try {
-					type MeResponse = {
-						success: boolean;
-						data: {
-							user?: UserIdentity;
-							profile?: UserProfile | null;
-						}
-					};
+				const meResponse = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
+					method: 'GET',
+				});
 
-					const meResponse = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
-						method: 'GET',
-						headers: {
-							Authorization: `Bearer ${authTokenValue}`
-						}
+				if (meResponse?.success && meResponse.data?.user) {
+					userStore.setUser({
+						...meResponse.data.user,
+						profile: meResponse.data.profile ?? null
 					});
 
-					if (meResponse?.success && meResponse.data?.user) {
-						userStore.setUser({
-							...meResponse.data.user,
-							profile: meResponse.data.profile ?? null
-						});
+					const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+						maxAge: 60 * 60 * 24 * 90,
+						sameSite: 'lax',
+						path: '/',
+					});
+					guestLoginMode.value = 0;
 
-						const mockUser = useCookie<{
-							firstName: string;
-							lastName: string;
-							email: string;
-						} | null>('mock_user', {
-							sameSite: 'lax',
-							path: '/',
-						});
+					const mockUser = useCookie<{
+						firstName: string;
+						lastName: string;
+						email: string;
+					} | null>('mock_user', {
+						sameSite: 'lax',
+						path: '/',
+					});
 
-						const fields = meResponse.data.profile?.user_field_values ?? [];
-						const normalizedName = normalizeAccountName(
-							getProfileFieldValue(fields, 'first_name') || firstName.value.trim() || 'User',
-							getProfileFieldValue(fields, 'last_name') || lastName.value.trim()
-						);
+					const fields = meResponse.data.profile?.user_field_values ?? [];
+					const normalizedName = normalizeAccountName(
+						getProfileFieldValue(fields, 'first_name') || firstName.value.trim() || 'User',
+						getProfileFieldValue(fields, 'last_name') || lastName.value.trim()
+					);
 
-						mockUser.value = {
-							firstName: normalizedName.firstName,
-							lastName: normalizedName.lastName,
-							email: meResponse.data.user.email || email.value.trim(),
-						};
-					}
-				} catch (error) {
-					console.warn('Failed to fetch user data after registration.', error);
+					mockUser.value = {
+						firstName: normalizedName.firstName,
+						lastName: normalizedName.lastName,
+						email: meResponse.data.user.email || email.value.trim(),
+					};
 				}
+			} catch (error) {
+				console.warn('Failed to fetch user data after registration.', error);
 			}
 			if (import.meta.client) {
 				window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');

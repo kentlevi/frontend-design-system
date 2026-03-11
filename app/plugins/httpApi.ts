@@ -9,12 +9,25 @@ export default defineNuxtPlugin(() => {
 	const country = route.params.country
 
 	const apiFetch = $fetch.create({
-		baseURL: config.public.apiBase + '/' + country,
+		baseURL: config.public.api_url+'/'+country,
+		credentials: 'include',
 		onRequest({ options }) {
 			// 1. Force the type to be a plain object so we can use the spread operator/assignment
 			const headers = options.headers
-			if (token.value) {
-				headers.set('Authorization', `Bearer ${token.value}`)
+			const device_uuid = useCookie('device_uuid').value
+			const request_from = 'client-panel'
+
+			headers.set('request-from', request_from)
+
+			if (device_uuid) {
+				headers.set('x-device-uuid', device_uuid)
+			}
+
+			if (import.meta.server) {
+				const forwarded = useRequestHeaders(['cookie'])
+				if (forwarded.cookie) {
+					headers.set('cookie', forwarded.cookie)
+				}
 			}
 		},
 		async onResponse({ response }) {

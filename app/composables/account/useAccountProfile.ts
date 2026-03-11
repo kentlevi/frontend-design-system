@@ -30,7 +30,6 @@ export function useAccountProfile() {
 	const userStore = useUserStore();
 	const { t } = useI18n();
 	const mockUser = useCookie<AccountMockUser | null>('mock_user');
-	const authToken = useCookie<string | null>('auth_token');
 
 	const profileFieldValues = computed(
 		() => userStore.profile?.user_field_values ?? []
@@ -167,7 +166,6 @@ export function useAccountProfile() {
 			// Continue with local sign-out cleanup even if API logout fails.
 		} finally {
 			mockUser.value = null;
-			authToken.value = null;
 			userStore.clearUser();
 			userStore.clearOnboardingProfile();
 			await navigateTo(withCountry('/'));

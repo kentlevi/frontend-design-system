@@ -4,11 +4,6 @@ definePageMeta({
 });
 
 const userStore = useUserStore();
-const authToken = useCookie<string | null>('auth_token', {
-	default: () => null,
-	sameSite: 'lax',
-	path: '/',
-});
 const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 	default: () => null,
 	sameSite: 'lax',
@@ -21,7 +16,7 @@ const mockUser = useCookie<{ email?: string } | null>('mock_user', {
 });
 
 const hasMemberIdentity = computed(() =>
-	Boolean(userStore.email || mockUser.value?.email || authToken.value)
+	Boolean(userStore.email || mockUser.value?.email)
 );
 
 const isMemberCheckout = computed(() => {

@@ -2,9 +2,9 @@ export const useApi = () => {
 	const config = useRuntimeConfig()
 
 	const api = $fetch.create({
-		baseURL: config.public.apiBase,
+		baseURL: config.public.api_url,
+		credentials: 'include',
 		onRequest({ options }) {
-			const token = useCookie<string | null>('auth_token').value
 			const headers = new Headers(options.headers || {})
 			const deviceUuid = useCookie('device_uuid').value
 			const requestFrom = 'client-panel'
@@ -15,10 +15,12 @@ export const useApi = () => {
 				headers.set('x-device-uuid', deviceUuid)
 			}
 
-			if (token) {
-				headers.set('Authorization', `Bearer ${token}`)
+			if (import.meta.server) {
+				const forwarded = useRequestHeaders(['cookie'])
+				if (forwarded.cookie) {
+					headers.set('cookie', forwarded.cookie)
+				}
 			}
-
 
 			options.headers = headers
 		}

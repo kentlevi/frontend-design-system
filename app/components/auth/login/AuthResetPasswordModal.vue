@@ -107,7 +107,6 @@ async function submitChangePassword() {
 			success: boolean;
 			message: string;
 			data: {
-				auth_token?: string;
 				user?: UserIdentity & {
 					profile?: Pick<UserProfile, 'user_field_values'> | null;
 				};
@@ -121,20 +120,12 @@ async function submitChangePassword() {
 			},
 		});
 
-		if (!loginResponse?.success || !loginResponse?.data?.auth_token) {
+		if (!loginResponse?.success) {
 			error.value =
 				loginResponse?.message ||
                 t('auth.reset.errors.autoLoginFailed');
 			return;
 		}
-
-		const authToken = useCookie('auth_token', {
-			maxAge: 60 * 60 * 24 * 3,
-			sameSite: 'lax',
-			path: '/',
-		});
-
-		authToken.value = loginResponse.data.auth_token;
 
 		if (loginResponse.data.user) {
 			const normalizedUser: UserIdentity & { profile: UserProfile | null } = {
@@ -142,6 +133,13 @@ async function submitChangePassword() {
 				profile: (loginResponse.data.user.profile as UserProfile | null) ?? null,
 			};
 			userStore.setUser(normalizedUser);
+
+			const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+				maxAge: 60 * 60 * 24 * 3,
+				sameSite: 'lax',
+				path: '/',
+			});
+			guestLoginMode.value = 0;
 
 			const mockUser = useCookie<{
 				firstName: string;
@@ -182,6 +180,22 @@ async function submitChangePassword() {
 				lastName: lastName || fallbackRows[1]?.value?.trim() || '',
 				email: normalizedUser.email || email,
 			};
+		} else {
+			try {
+				const meResponse = await api<{
+					success: boolean;
+					data?: { user?: UserIdentity; profile?: UserProfile | null };
+				}>(`/${apiCountry.value}/user/me`, { method: 'GET' });
+
+				if (meResponse?.success && meResponse.data?.user) {
+					userStore.setUser({
+						...meResponse.data.user,
+						profile: meResponse.data.profile ?? null,
+					});
+				}
+			} catch {
+				// ignore
+			}
 		}
 
 		emit('update:modelValue', false);

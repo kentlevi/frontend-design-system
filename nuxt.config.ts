@@ -5,12 +5,6 @@ import { i18nLocales } from './i18n/locales.config';
 process.env.ENV = process.env.ENV || 'development';
 loadAppEnv();
 
-const rawApiBase = process.env.NUXT_PUBLIC_API_BASE?.replace(/\/+$/, '');
-const rawApiServer = process.env.API_SERVER?.replace(/\/+$/, '');
-const normalizedApiBase = rawApiBase ||
-	(rawApiServer
-		? (/\/sys$/i.test(rawApiServer) ? rawApiServer : `${rawApiServer}/sys`)
-		: 'http://127.0.0.1:8001/sys');
 
 export default defineNuxtConfig({
 	css: [],
@@ -28,13 +22,12 @@ export default defineNuxtConfig({
 			app_name: process.env.APP,
 			node_env: process.env.NODE_ENV,
 			app_url: process.env.APP_URI,
-			api_url: process.env.API_SERVER,
+			api_url: process.env.API_BASE+'sys',
 			file_url: process.env.FILE_URL,
 			s3_file_url: process.env.S3_FILE_URL,
 			file_base_url: process.env.FILE_BASE_URL,
 			host: process.env.APP_HOST,
-			apiBase:
-				normalizedApiBase,
+			api_base: process.env.API_BASE,
 		},
 	},
 	vite: {
