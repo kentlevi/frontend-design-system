@@ -1,4 +1,8 @@
 <script setup lang="ts">
+defineOptions({
+	inheritAttrs: false,
+});
+
 withDefaults(
 	defineProps<{
 		visible?: boolean;
@@ -20,6 +24,8 @@ const emit = defineEmits<{
 	(event: 'close'): void;
 }>();
 
+const attrs = useAttrs();
+
 const iconByTone = {
 	primary: 'strong-check-circle',
 	success: 'strong-check-circle',
@@ -35,6 +41,7 @@ const iconByTone = {
 			<div
 				v-if="visible"
 				class="ui-toast"
+				v-bind="attrs"
 				:data-tone="tone"
 				:data-variant="variant"
 				role="status"

@@ -7,12 +7,19 @@ function resolveCountryFromPath(path: string) {
 
 export default defineNuxtRouteMiddleware((to) => {
 	const userStore = useUserStore();
+	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
+		default: () => null,
+		sameSite: 'lax',
+		path: '/',
+	});
 	const mockUser = useCookie<{
 		firstName: string;
 		lastName: string;
 		email: string;
 	} | null>('mock_user');
-	const isAuthenticated = Boolean(userStore.email || userStore.id || mockUser.value?.email);
+	const isGuestSession = String(guestLoginMode.value ?? '') === '1';
+	const isAuthenticated =
+		!isGuestSession && Boolean(userStore.email || userStore.id || mockUser.value?.email);
 
 	if (!isAuthenticated) return;
 

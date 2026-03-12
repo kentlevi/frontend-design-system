@@ -232,26 +232,11 @@ const {
 							data-testid="auth-register-terms-error-button"
 							sr-label="Terms error information"
 							icon-only
+							:icon="termsErrorIconStrong ? 'strong-info-circle' : 'regular-info-circle'"
+							:icon-size="24"
 							@click="toggleTermsErrorPopover"
 							@focus="onTermsErrorHoverStart"
-						>
-							<span class="auth-register-terms-error-icon-stack" aria-hidden="true">
-								<UiIcon
-									name="regular-info-circle"
-									:size="24"
-									color="var(--error)"
-									class="auth-register-terms-error-icon auth-register-terms-error-icon-regular"
-									:class="{ 'is-hidden': termsErrorIconStrong }"
-								/>
-								<UiIcon
-									name="strong-info-circle"
-									:size="24"
-									color="var(--error)"
-									class="auth-register-terms-error-icon auth-register-terms-error-icon-strong"
-									:class="{ 'is-visible': termsErrorIconStrong }"
-								/>
-							</span>
-						</UiButton>
+						/>
 					</template>
 
 					<UiIcon
@@ -450,45 +435,9 @@ const {
         max-width: 220px;
         position: relative;
 
-        .auth-register-terms-error-icon {
-            flex-shrink: 0;
-            transition: opacity 0.2s ease;
-            transform-origin: center;
-            color: var(--error);
-        }
-
-        .auth-register-terms-error-icon-stack {
-            position: relative;
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            .auth-register-terms-error-icon {
-                position: absolute;
-                inset: 0;
-                margin: auto;
-            }
-        }
-
-        .auth-register-terms-error-icon-regular {
-            opacity: 1;
-
-            &.is-hidden {
-                opacity: 0;
-            }
-        }
-
-        .auth-register-terms-error-icon-strong {
-            opacity: 0;
-
-            &.is-visible {
-                opacity: 1;
-            }
-        }
-
         .auth-register-terms-error-button {
+            --btn-soft: transparent;
+            --btn-border: transparent;
             padding: 0;
             min-height: auto;
             width: 24px;
@@ -505,6 +454,8 @@ const {
         .auth-register-terms-error-tooltip-content {
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
+			height: 40px;
+    		padding: 8px 16px 8px 12px;
         }
     }
 
@@ -562,16 +513,6 @@ const {
             }
         }
 
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .auth-register-card {
-        .auth-register-terms-error {
-            .auth-register-terms-error-icon {
-                transition: none;
-            }
-        }
     }
 }
 
