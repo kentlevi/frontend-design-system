@@ -2,6 +2,8 @@
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
+import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
+import { computed, nextTick } from 'vue';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
@@ -25,9 +27,20 @@ const {
 	removePhoto,
 	signOut,
 } = useAccountProfile();
+const isDeletePhotoModalOpen = ref(false);
+const isEmailChangeModalOpen = ref(false);
+const emailChangeFieldRef = ref<HTMLElement | null>(null);
+const pendingEmail = ref('');
+const isEmailChangeTransitioning = ref(false);
+const isEmailChangeOtpOpen = ref(false);
+const emailChangeOtpCode = ref('');
+const emailChangeOtpError = ref('');
+const emailChangeTargetEmail = ref('');
 
 const {
 	form_state,
+	has_changes,
+	has_required_fields,
 	is_submitting,
 	api_response,
 	loadPersonalForm,
@@ -40,6 +53,9 @@ onMounted(() => {
 
 const profileToastVisible = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
+const emailLocked = computed(() => {
+	return Boolean(email.value.trim());
+});
 
 function clearProfileToastTimer() {
 	if (!profile_toast_timer) return;
@@ -54,6 +70,69 @@ function showProfileSavedToast() {
 		profileToastVisible.value = false;
 		profile_toast_timer = null;
 	}, 2400);
+}
+
+function openDeletePhotoModal() {
+	isDeletePhotoModalOpen.value = true;
+}
+
+function closeDeletePhotoModal() {
+	isDeletePhotoModalOpen.value = false;
+}
+
+function confirmDeletePhoto() {
+	removePhoto();
+	closeDeletePhotoModal();
+}
+
+function openEmailChangeModal() {
+	pendingEmail.value = '';
+	isEmailChangeModalOpen.value = true;
+	void nextTick(() => {
+		emailChangeFieldRef.value?.querySelector('input')?.focus();
+	});
+}
+
+function closeEmailChangeModal() {
+	isEmailChangeModalOpen.value = false;
+	pendingEmail.value = '';
+}
+
+async function confirmEmailChange() {
+	const next_email = pendingEmail.value.trim();
+	if (!next_email) return;
+	emailChangeTargetEmail.value = next_email;
+	closeEmailChangeModal();
+	isEmailChangeTransitioning.value = true;
+	await new Promise((resolve) => setTimeout(resolve, 1200));
+	isEmailChangeTransitioning.value = false;
+	isEmailChangeOtpOpen.value = true;
+}
+
+function closeEmailChangeOtpModal() {
+	isEmailChangeOtpOpen.value = false;
+	emailChangeOtpCode.value = '';
+	emailChangeOtpError.value = '';
+}
+
+async function verifyEmailChangeOtp() {
+	if (emailChangeOtpCode.value.trim().length < 4) {
+		emailChangeOtpError.value = 'Please enter the verification code sent to your email.';
+		return;
+	}
+
+	emailChangeOtpError.value = '';
+	isEmailChangeOtpOpen.value = false;
+	isEmailChangeTransitioning.value = true;
+	await new Promise((resolve) => setTimeout(resolve, 900));
+	isEmailChangeTransitioning.value = false;
+	email.value = emailChangeTargetEmail.value;
+	closeEmailChangeOtpModal();
+}
+
+function resendEmailChangeOtp() {
+	emailChangeOtpCode.value = '';
+	emailChangeOtpError.value = '';
 }
 
 async function onSaveProfile() {
@@ -75,6 +154,12 @@ onBeforeUnmount(() => {
 			:visible="is_submitting"
 			:label="t('account.profile.saveChanges')"
 			test-id="account-profile-saving-overlay"
+			position="fixed"
+		/>
+		<UiLoadingOverlay
+			:visible="isEmailChangeTransitioning"
+			label="Verifying Your Information..."
+			test-id="account-profile-email-change-page-overlay"
 			position="fixed"
 		/>
 		<UiToast
@@ -138,7 +223,7 @@ onBeforeUnmount(() => {
 										size="md"
 										class="account-profile-delete-button"
 										data-testid="account-profile-photo-delete-button"
-										@click="removePhoto"
+										@click="openDeletePhotoModal"
 									>
 										{{ t('account.profile.delete') }}
 									</UiButton>
@@ -175,18 +260,34 @@ onBeforeUnmount(() => {
 								:required="true"
 							>
 								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="email"
-										type="email"
-										:aria-describedby="describedBy || undefined"
-										data-testid="account-profile-email"
-									/>
+									<div class="account-profile-email-input-wrap">
+										<UiInput
+											:id="inputId"
+											v-model="email"
+											type="email"
+											:aria-describedby="describedBy || undefined"
+											:disabled="emailLocked"
+											:input-class="emailLocked ? 'account-profile-email-input-field--locked' : ''"
+											data-testid="account-profile-email"
+										/>
+										<UiButton
+											v-if="emailLocked"
+											type="button"
+											variant="ghost"
+											tone="neutral"
+											size="sm"
+											class="account-profile-email-change-button"
+											data-testid="account-profile-email-change-button"
+											@click="openEmailChangeModal"
+										>
+											Change
+										</UiButton>
+									</div>
 								</template>
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" data-testid="account-profile-save-button" @click="onSaveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || !has_required_fields || is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
@@ -322,6 +423,159 @@ onBeforeUnmount(() => {
 				</div>
 			</div>
 		</AccountShell>
+		<UiModal
+			:model-value="isEmailChangeModalOpen"
+			align="center"
+			width="520px"
+			padding="0"
+			gap="0"
+			modal-class="account-profile-email-change-modal-shell"
+			@update:model-value="isEmailChangeModalOpen = $event"
+		>
+			<section class="account-profile-email-change-modal" data-testid="account-profile-email-change-modal">
+				<button
+					type="button"
+					class="account-profile-email-change-modal-close"
+					aria-label="Close email change modal"
+					data-testid="account-profile-email-change-modal-close"
+					@click="closeEmailChangeModal"
+				>
+					<UiIcon name="regular-times" :size="24" />
+				</button>
+
+				<div class="account-profile-email-change-modal-copy">
+					<div class="account-profile-email-change-modal-icon-wrap">
+						<img
+							src="/icons/custom/account/email-change.svg"
+							alt=""
+							class="account-profile-email-change-modal-icon"
+						>
+					</div>
+					<div class="account-profile-email-change-modal-text-wrap">
+						<h3 class="account-profile-email-change-modal-title">Email Change</h3>
+						<p class="account-profile-email-change-modal-text">
+							Enter your new email address and click the <strong class="change-strong">"Confirm"</strong> button to proceed.
+						</p>
+					</div>
+				</div>
+
+				<div class="account-profile-email-change-modal-body">
+					<UiFormField
+						class="account-profile-email-change-field"
+						head-class="account-profile-email-change-field-head"
+						label-text-class="account-profile-email-change-field-label-text"
+						:label="t('account.profile.emailAddress')"
+						:required="true"
+					>
+						<template #default="{ inputId, describedBy }">
+							<div ref="emailChangeFieldRef" class="account-profile-email-change-input-wrap">
+								<UiInput
+									:id="inputId"
+									v-model="pendingEmail"
+									type="email"
+									:aria-describedby="describedBy || undefined"
+									placeholder="Please enter your new email address."
+									input-class="account-profile-email-change-input"
+									data-testid="account-profile-email-change-input"
+								/>
+							</div>
+						</template>
+					</UiFormField>
+				</div>
+
+				<div class="account-profile-email-change-modal-actions">
+					<UiButton
+						type="button"
+						variant="filled"
+						tone="neutral"
+						size="md"
+						class="account-profile-email-change-modal-confirm"
+						data-testid="account-profile-email-change-modal-confirm"
+						@click="confirmEmailChange"
+					>
+						Confirm
+					</UiButton>
+				</div>
+			</section>
+		</UiModal>
+		<AuthVerificationModal
+			:model-value="isEmailChangeOtpOpen"
+			:email="emailChangeTargetEmail"
+			:code="emailChangeOtpCode"
+			:error="emailChangeOtpError"
+			submit-label="Verify"
+			busy-label="Verifying..."
+			width="504px"
+			align="center"
+			:show-close-button="true"
+			test-id-prefix="account-profile-email-change-verification"
+			@update:model-value="isEmailChangeOtpOpen = $event"
+			@update:code="emailChangeOtpCode = $event"
+			@verify="verifyEmailChangeOtp"
+			@resend="resendEmailChangeOtp"
+		>
+			<template #icon>
+				<img
+					src="/illustrations/icon-verification.svg"
+					:alt="t('auth.verification.iconAlt')"
+					class="account-profile-email-change-verification-icon"
+				>
+			</template>
+		</AuthVerificationModal>
+		<UiModal
+			:model-value="isDeletePhotoModalOpen"
+			align="center"
+			width="520px"
+			padding="0"
+			gap="0"
+			modal-class="account-profile-delete-photo-modal-shell"
+			@update:model-value="isDeletePhotoModalOpen = $event"
+		>
+			<section class="account-profile-delete-photo-modal" data-testid="account-profile-delete-photo-modal">
+				<div class="account-profile-delete-photo-modal-copy">
+					<div class="account-profile-delete-photo-modal-icon-wrap">
+						<img
+							src="/icons/custom/account/delete-photo-trash.svg"
+							alt=""
+							class="account-profile-delete-photo-modal-icon"
+						>
+					</div>
+					<div class="account-profile-delete-photo-modal-text-wrap">
+						<h3 class="account-profile-delete-photo-modal-title">
+							Are you sure you want to delete this photo?
+						</h3>
+						<p class="account-profile-delete-photo-modal-text">
+							This action cannot be undone. Please confirm to proceed.
+						</p>
+					</div>
+				</div>
+
+				<footer class="account-profile-delete-photo-modal-actions">
+					<UiButton
+						type="button"
+						variant="ghost"
+						tone="neutral"
+						size="sm"
+						class="account-profile-delete-photo-modal-cancel"
+						data-testid="account-profile-delete-photo-modal-cancel"
+						@click="closeDeletePhotoModal"
+					>
+						Cancel
+					</UiButton>
+					<UiButton
+						type="button"
+						variant="filled"
+						tone="danger"
+						size="md"
+						class="account-profile-delete-photo-modal-delete"
+						data-testid="account-profile-delete-photo-modal-confirm"
+						@click="confirmDeletePhoto"
+					>
+						Delete
+					</UiButton>
+				</footer>
+			</section>
+		</UiModal>
 	</section>
 </template>
 
@@ -463,6 +717,30 @@ onBeforeUnmount(() => {
                 }
             }
 
+            .account-profile-email-input-wrap {
+                position: relative;
+            }
+
+            .account-profile-email-change-button {
+                position: absolute;
+                top: 50%;
+                right: 12px;
+                transform: translateY(-50%);
+                z-index: 1;
+                min-height: 32px;
+                padding: 0 8px;
+                color: var(--text-primary);
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                font-weight: var(--font-weight-bold);
+                --btn-soft: transparent;
+                --btn-border: transparent;
+            }
+
+            :deep(.account-profile-email-input-field--locked) {
+                padding-right: 92px;
+            }
+
             .account-profile-stack {
                 display: flex;
                 flex-direction: column;
@@ -510,31 +788,38 @@ onBeforeUnmount(() => {
                         position: relative;
                         width: 42px;
                         height: 24px;
+                        display: inline-flex;
+                        flex-shrink: 0;
+                        cursor: pointer;
 
                         .account-profile-switch-input {
                             position: absolute;
                             opacity: 0;
+                            pointer-events: none;
                         }
 
                         .account-profile-switch-track {
-                            display: block;
                             width: 100%;
                             height: 100%;
-                            background: var(--text-primary);
                             border-radius: 999px;
+                            background: var(--gray-30);
                             position: relative;
+
+                            &::after {
+                                content: '';
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                background: var(--contrast-light);
+                                position: absolute;
+                                left: 4px;
+                                top: 4px;
+                                transition: transform 0.2s ease;
+                            }
                         }
 
-                        .account-profile-switch-track::after {
-                            content: '';
-                            width: 16px;
-                            height: 16px;
-                            border-radius: 50%;
-                            background: var(--contrast-light);
-                            position: absolute;
-                            left: 4px;
-                            top: 4px;
-                            transition: transform 0.2s;
+                        .account-profile-switch-input:checked + .account-profile-switch-track {
+                            background: var(--text-primary);
                         }
 
                         .account-profile-switch-input:checked + .account-profile-switch-track::after {
@@ -573,6 +858,165 @@ onBeforeUnmount(() => {
         }
     }
 
+
+}
+
+    .account-profile-delete-photo-modal {
+        background: var(--contrast-light);
+	border-radius: 16px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+
+	.account-profile-delete-photo-modal-copy {
+		width: 100%;
+		box-sizing: border-box;
+		padding: 24px;
+		display: grid;
+		grid-template-columns: 52px minmax(0, 1fr);
+		align-items: center;
+		column-gap: 24px;
+	}
+
+	.account-profile-delete-photo-modal-icon-wrap {
+		width: 52px;
+		height: 52px;
+		flex-shrink: 0;
+		display: grid;
+		place-items: center;
+	}
+
+	.account-profile-delete-photo-modal-icon {
+		display: block;
+		width: 48px;
+		height: 48px;
+	}
+
+	.account-profile-delete-photo-modal-text-wrap {
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.account-profile-delete-photo-modal-title {
+		margin: 0;
+		font-size: var(--type-size-300);
+		line-height: var(--type-line-300);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+
+	.account-profile-delete-photo-modal-text {
+		margin: 0;
+		color: var(--text-secondary);
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
+	}
+
+	.account-profile-delete-photo-modal-actions {
+		width: 100%;
+		box-sizing: border-box;
+		border-top: 1px solid var(--border-default);
+		padding: 16px 24px;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 18px;
+	}
+
+	.account-profile-delete-photo-modal-cancel {
+		&:hover {
+			--btn-soft: transparent;
+		}
+	}
+}
+
+    .account-profile-email-change-modal {
+        position: relative;
+        --account-profile-email-change-modal-padding: 40px;
+        background: var(--contrast-light);
+        border-radius: 16px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	width: 100%;
+	padding: 40px;
+
+	.account-profile-email-change-modal-close {
+		position: absolute;
+		top: 18px;
+		right: calc(var(--account-profile-email-change-modal-padding) - 8px);
+		display: grid;
+		place-items: center;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text-primary);
+		cursor: pointer;
+	}
+	.account-profile-email-change-modal-copy {
+		display: grid;
+		grid-template-columns: 48px minmax(0, 1fr);
+		align-items: start;
+		column-gap: 16px;
+		.account-profile-email-change-modal-icon-wrap {
+			display: grid;
+			place-items: center;
+			width: 48px;
+			height: 48px;
+			.account-profile-email-change-modal-icon {
+				display: block;
+				width: 48px;
+				height: 48px;
+			}
+		}
+
+		.account-profile-email-change-modal-text-wrap {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			.account-profile-email-change-modal-title {
+				margin: 0;
+				color: var(--text-primary);
+				font-size: var(--type-size-400);
+				line-height: var(--type-line-400);
+				font-weight: var(--font-weight-bold);
+			}
+
+			.account-profile-email-change-modal-text {
+				margin: 0;
+				color: var(--text-secondary);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				.change-strong {
+					color: var(--text-primary);
+					font-weight: var(--font-weight-bold);
+				}
+			}
+		}
+	}
+
+        .account-profile-email-change-modal-confirm {
+            width: 100%;
+            min-height: 46px;
+            border-radius: 18px;
+		font-size: var(--type-size-200);
+		line-height: var(--type-line-200);
+        }
+    }
+
+    .account-profile-email-change-verification-icon {
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+        display: block;
+    }
+
     @media (max-width: 980px) {
         .account-content {
             .account-profile-section {
@@ -580,6 +1024,27 @@ onBeforeUnmount(() => {
                 gap: 16px;
             }
         }
+
+        .account-profile-email-change-verification-icon {
+            width: 46px;
+            height: 46px;
+        }
     }
+
+:global(.account-profile-delete-photo-modal-shell) {
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 520px;
+}
+
+:global(.account-profile-email-change-modal-shell) {
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 520px;
+}
+
+:global(.account-profile-email-change-field-label-text) {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
 }
 </style>

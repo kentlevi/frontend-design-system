@@ -68,6 +68,40 @@ const initials = computed(() => {
 const avatarDisplayUrl = computed(
 	() => localAvatarDataUrl.value
 );
+const accountStats = computed(() => [
+	{
+		key: 'orders',
+		label: t('account.shell.stats.order'),
+		value: '0',
+		iconName: '',
+		iconSrc: '/icons/custom/checkout/icon-box.svg',
+		iconAlt: 'Orders',
+	},
+	{
+		key: 'points',
+		label: t('account.shell.stats.points'),
+		value: '0.00',
+		iconName: '',
+		iconSrc: '/icons/custom/account/points-icon.svg',
+		iconAlt: 'Points',
+	},
+	{
+		key: 'coupons',
+		label: t('account.shell.stats.coupons'),
+		value: '0',
+		iconName: '',
+		iconSrc: '/icons/custom/account/coupon-icon.svg',
+		iconAlt: 'Coupons',
+	},
+	{
+		key: 'total-spent',
+		label: t('account.shell.stats.totalSpent'),
+		value: t('account.shell.defaultBalance'),
+		iconName: '',
+		iconSrc: '/icons/custom/account/total-spent-icon.svg',
+		iconAlt: 'Total spent',
+	},
+]);
 
 function syncLocalAvatarFromStorage() {
 	if (!import.meta.client) return;
@@ -128,21 +162,30 @@ const tabs = [
 			</div>
 
 			<div class="account-shell-stats" data-testid="account-shell-stats">
-				<div class="account-shell-stat">
-					<span class="account-shell-stat-label">{{ t('account.shell.stats.order') }}</span>
-					<strong class="account-shell-stat-value">0</strong>
-				</div>
-				<div class="account-shell-stat">
-					<span class="account-shell-stat-label">{{ t('account.shell.stats.points') }}</span>
-					<strong class="account-shell-stat-value">0.00</strong>
-				</div>
-				<div class="account-shell-stat">
-					<span class="account-shell-stat-label">{{ t('account.shell.stats.coupons') }}</span>
-					<strong class="account-shell-stat-value">0</strong>
-				</div>
-				<div class="account-shell-stat">
-					<span class="account-shell-stat-label">{{ t('account.shell.stats.totalSpent') }}</span>
-					<strong class="account-shell-stat-value">{{ t('account.shell.defaultBalance') }}</strong>
+				<div
+					v-for="stat in accountStats"
+					:key="stat.key"
+					class="account-shell-stat"
+					:data-testid="`account-shell-stat-${stat.key}`"
+				>
+					<div class="account-shell-stat-icon-wrap">
+						<img
+							v-if="stat.iconSrc"
+							:src="stat.iconSrc"
+							:alt="stat.iconAlt"
+							class="account-shell-stat-icon-image"
+						>
+						<UiIcon
+							v-else
+							:name="stat.iconName"
+							:size="48"
+							class="account-shell-stat-icon"
+						/>
+					</div>
+					<div class="account-shell-stat-copy">
+						<span class="account-shell-stat-label">{{ stat.label }}</span>
+						<strong class="account-shell-stat-value">{{ stat.value }}</strong>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -156,7 +199,7 @@ const tabs = [
 				:class="{ 'is-active': props.activeTab === tab.key }"
 				:data-testid="`account-shell-tab-${tab.key}`"
 			>
-				<UiIcon :name="tab.icon" :size="14" />
+				<UiIcon :name="tab.icon" :size="24" />
 				<span class="account-shell-tab-label">{{ tab.label }}</span>
 			</NuxtLink>
 		</nav>
@@ -241,6 +284,26 @@ const tabs = [
     }
 
     .account-shell-stat {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .account-shell-stat-icon-wrap {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+    }
+
+    .account-shell-stat-icon-image {
+        display: block;
+        width: 48px;
+        height: 48px;
+    }
+
+    .account-shell-stat-copy {
         display: grid;
         gap: 2px;
     }
@@ -254,11 +317,11 @@ const tabs = [
     .account-shell-stat-value {
         font-size: var(--type-size-300);
         line-height: var(--type-line-300);
+        color: var(--text-primary);
     }
 
     .account-shell-tabs {
         margin-top: 20px;
-        //border-top: 1px solid var(--border-default);
         border-bottom: 1px solid var(--border-default);
         padding: 14px 0;
         display: flex;
@@ -269,7 +332,7 @@ const tabs = [
     .account-shell-tab {
         height: 38px;
         border-radius: 8px;
-        padding: 0 14px;
+        padding: 8px 16px 8px 12px;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -284,6 +347,12 @@ const tabs = [
             background: color-mix(in srgb, var(--brand-primary) 22%, var(--contrast-light));
             border-color: color-mix(in srgb, var(--brand-primary) 52%, var(--border-default));
         }
+
+		&.account-shell-tab-label {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			font-weight: var(--font-weight-semibold);
+		}
     }
 
     @media (max-width: 900px) {

@@ -69,9 +69,9 @@ export function useAccountProfile() {
 	const newPassword = ref('');
 	const confirmPassword = ref('');
 
-	const promotions = ref(false);
-	const reviews = ref(false);
-	const confirmations = ref(false);
+	const promotions = ref(true);
+	const reviews = ref(true);
+	const confirmations = ref(true);
 	const unit = ref<AccountUnit>('millimeter');
 
 	const photoUrl = ref<string | null>(null);

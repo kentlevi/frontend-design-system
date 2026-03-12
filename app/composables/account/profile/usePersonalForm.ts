@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { personal_form_defaults } from '~/constants/account/profile'
 import { mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
 import {
@@ -16,10 +16,28 @@ export function usePersonalForm() {
 	const profile_fields_store = useProfileFieldsStore()
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
 	const form_state = reactive(personal_form_defaults())
+	const initial_fields = ref<Record<string, string>>({})
 	const is_loading = ref(false)
 	const is_submitting = ref(false)
 	const error_message = ref('')
 	const api_response = ref<PersonalFormApiResponse | null>(null)
+	const has_changes = computed(() => {
+		const current_keys = Object.keys(form_state.fields).sort()
+		const initial_keys = Object.keys(initial_fields.value).sort()
+
+		if (current_keys.length !== initial_keys.length) return true
+
+		return current_keys.some((key, index) => {
+			if (key !== initial_keys[index]) return true
+			return (form_state.fields[key] ?? '') !== (initial_fields.value[key] ?? '')
+		})
+	})
+	const has_required_fields = computed(() =>
+		field_definitions.value.every((field) => {
+			if (!field.is_required) return true
+			return String(form_state.fields[field.field_key] ?? '').trim().length > 0
+		})
+	)
 
 	async function loadPersonalForm() {
 		is_loading.value = true
@@ -46,6 +64,9 @@ export function usePersonalForm() {
              * Keep fallback values for fields that have no mapped value yet
              */
 			form_state.fields = {
+				...mapped_form.fields,
+			}
+			initial_fields.value = {
 				...mapped_form.fields,
 			}
 		} catch (_error: unknown) {
@@ -80,6 +101,9 @@ export function usePersonalForm() {
 				)
 
 				user_store.setProfileUserFieldValues(updated_user_field_values)
+				initial_fields.value = {
+					...form_state.fields,
+				}
 			}
 
 		} catch (error: unknown) {
@@ -92,6 +116,8 @@ export function usePersonalForm() {
 
 	return {
 		form_state,
+		has_changes,
+		has_required_fields,
 		is_loading,
 		is_submitting,
 		error_message,
