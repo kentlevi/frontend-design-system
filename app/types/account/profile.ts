@@ -42,7 +42,7 @@ export interface PersonalFormState {
 }
 
 /** Submit payload */
-export interface UpdatePersonalFormPayload {
+export interface UpdatePersonalFormPayload extends Record<string, unknown> {
 	fields: PersonalFormFields
 }
 
