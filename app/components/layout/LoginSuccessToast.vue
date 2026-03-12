@@ -19,7 +19,7 @@ const is_visible = ref(false);
 const toast_kind = ref<'member' | 'guest'>('member');
 let hide_toast_timer: ReturnType<typeof setTimeout> | null = null;
 let show_toast_timer: ReturnType<typeof setTimeout> | null = null;
-const SHOW_TOAST_DELAY_MS = 320;
+const SHOW_TOAST_DELAY_MS = 120;
 const HIDE_TOAST_DELAY_MS = 5000;
 const guest_register_path = computed(() => withCountry('/auth/register'));
 const is_guest_session = computed(() => String(guest_login_mode.value ?? '') === '1');
@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
 <template>
 	<UiToast
 		:visible="is_visible"
-		:tone="toast_kind === 'guest' ? 'warning' : 'primary'"
+		tone="primary"
 		:message="toast_kind === 'guest' ? '' : t('home.loginSuccess')"
 		variant="outlined"
 		class="layout-login-toast"
@@ -97,38 +97,29 @@ onBeforeUnmount(() => {
 		@close="is_visible = false"
 	>
 		<template v-if="toast_kind === 'guest'">
-			<span class="layout-login-toast__message">
-				You're currently using a guest account.
-				<NuxtLink :to="guest_register_path" class="layout-login-toast__link">
-					Create an Account
-				</NuxtLink>
-				to access all features.
-			</span>
+			You're currently using a guest account.
+			<NuxtLink :to="guest_register_path" class="layout-login-toast-link">
+				<strong class="layout-login-toast-link-text">Create an Account</strong>
+			</NuxtLink>
+			to access all features.
 		</template>
 	</UiToast>
 </template>
 
 <style lang="scss">
 .layout-login-toast {
-	&.ui-toast[data-tone='warning'] {
-		background: #f8df4f;
-		color: #111827;
-		border: 2px solid #111827;
-		box-shadow: 4px 4px 0 rgba(17, 24, 39, 0.95);
-	}
-
-	.layout-login-toast__message {
-		display: inline-flex;
-		flex-wrap: wrap;
-		gap: 4px;
-		align-items: center;
-	}
-
-	.layout-login-toast__link {
+	.layout-login-toast-link {
 		color: inherit;
-		text-decoration: underline;
-		text-underline-offset: 2px;
+		display: inline;
+	}
+
+	.layout-login-toast-link-text {
+		display: inline;
 		font-weight: var(--font-weight-bold);
+		font-style: normal;
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 2px;
 	}
 }
 </style>

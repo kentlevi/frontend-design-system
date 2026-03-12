@@ -21,6 +21,7 @@ import {
 } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
+import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
 // Constants
 const TOKEN_DURATION_SHORT = 60 * 60 * 24 * 3; // 3 days
@@ -39,6 +40,10 @@ type MockUserCookie = {
 	lastName: string;
 	email: string;
 };
+
+const {
+	loadPersonalForm
+} = usePersonalForm();
 
 export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const api = useApi();
@@ -182,6 +187,9 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 		userStore.setUser(user);
 
+		/** Store dynamic fields */
+		loadPersonalForm();
+
 		const mockUserCookie = getMockUserCookie();
 
 		if (isGuest) {
@@ -220,11 +228,13 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		guestVerificationCache.value = null;
 	}
 
-	function setGuestLoginToastPending() {
+	function setGuestLoginToastPending(options: { emitImmediately?: boolean } = {}) {
 		if (!import.meta.client) return;
 		window.localStorage.setItem(GUEST_LOGIN_TOAST_PENDING_KEY, '1');
 		window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
-		window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
+		if (options.emitImmediately !== false) {
+			window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
+		}
 	}
 
 	function syncMockUserFromProfile(
@@ -568,7 +578,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				clearVerificationCache();
 				resendLimitReached.value = '';
 				await fetchUserProfile(true);
-				setGuestLoginToastPending();
+				setGuestLoginToastPending({ emitImmediately: false });
 				await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 				return response;
 			}
@@ -651,7 +661,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				guestVerificationOrderNumber.value = resolvedOrderNumber;
 			}
 
-			setGuestLoginToastPending();
+			setGuestLoginToastPending({ emitImmediately: false });
 			await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 		} catch (error: unknown) {
 			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
@@ -694,7 +704,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				await initializeUserFromResponse({ success: true, message: response.message, data: { user: response.data.user } }, true);
 				clearVerificationCache();
 				await fetchUserProfile(true);
-				setGuestLoginToastPending();
+				setGuestLoginToastPending({ emitImmediately: false });
 				await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
 				return response;
 			}

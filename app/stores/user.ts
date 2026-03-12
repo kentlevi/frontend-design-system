@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import type { ProfileFieldDefinition } from '~/types/account/profile'
 
 /**
  * Onboarding profile payload
@@ -44,6 +43,7 @@ export interface UserIdentity {
 	id: number
 	code: string
 	email: string
+	country_id: number
 }
 
 /**
@@ -55,22 +55,15 @@ export interface UserState extends UserIdentity {
 }
 
 /**
- * Full Pinia store state
- */
-export interface UserStoreState extends UserState {
-	dynamic_profile_fields: ProfileFieldDefinition[]
-}
-
-/**
  * Initial user state factory
  */
-const initial_user_state = (): UserStoreState => ({
+const initial_user_state = (): UserState => ({
 	id: 0,
 	code: '',
 	email: '',
+	country_id: 0,
 	onboardingProfile: null,
 	profile: null,
-	dynamic_profile_fields: [],
 })
 
 /**
@@ -80,7 +73,7 @@ export const useUserStore = defineStore('user', {
 	/**
 	 * Store state
 	 */
-	state: (): UserStoreState => initial_user_state(),
+	state: (): UserState => initial_user_state(),
 
 	/**
 	 * Store actions
@@ -94,6 +87,7 @@ export const useUserStore = defineStore('user', {
 				id: user.id,
 				code: user.code,
 				email: user.email,
+				country_id: user.country_id,
 				profile: user.profile,
 			})
 		},
@@ -120,26 +114,12 @@ export const useUserStore = defineStore('user', {
 		},
 
 		/**
-		 * Replace dynamic profile fields
-		 */
-		setDynamicProfileFields(fields: ProfileFieldDefinition[]) {
-			this.dynamic_profile_fields = fields
-		},
-
-		/**
-		 * Clear dynamic profile fields
-		 */
-		clearDynamicProfileFields() {
-			this.dynamic_profile_fields = []
-		},
-
-		/**
          * Replace profile user field values
          */
 		setProfileUserFieldValues(user_field_values: UserFieldValue[]) {
 			if (!this.profile) return
 
 			this.profile.user_field_values = user_field_values
-		}
+		},
 	},
 })

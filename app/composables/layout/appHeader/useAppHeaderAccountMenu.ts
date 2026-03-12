@@ -17,6 +17,8 @@ type AccountLink = {
 	label: string;
 };
 
+const GUEST_ORDER_TEST_ROUTE = '/orders/12405070009';
+
 export function useAppHeaderAccountMenu(params: {
 	accountOpen: Ref<boolean>;
 	isMockLoggedIn: Ref<boolean>;
@@ -62,7 +64,7 @@ export function useAppHeaderAccountMenu(params: {
 		() => params.accountLinks.value.find((link) => link.to === '/account/orders') ?? null
 	);
 
-	const guest_order_target = computed(() => withCountry('/'));
+	const guest_order_target = computed(() => withCountry(GUEST_ORDER_TEST_ROUTE));
 
 	function resolveButtonElement(
 		element: Element | ComponentPublicInstance | null
