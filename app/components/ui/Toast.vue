@@ -48,23 +48,25 @@ const iconByTone = {
 				aria-live="polite"
 				data-testid="ui-toast"
 			>
-				<UiIcon :name="iconByTone[tone]" :size="24" />
-				<span class="ui-toast-text">
-					<slot>{{ message }}</slot>
-				</span>
+				<div class="ui-toast-main">
+					<UiIcon :name="iconByTone[tone]" :size="24" />
+					<span class="ui-toast-text">
+						<slot>{{ message }}</slot>
+					</span>
+				</div>
 				<UiButton
 					v-if="dismissible"
 					type="button"
 					variant="ghost"
 					tone="neutral"
-					size="sm"
+					size="24"
 					:no-hover="true"
 					class="ui-toast-close"
 					aria-label="Close"
 					data-testid="ui-toast-close-button"
 					@click="emit('close')"
 				>
-					<UiIcon name="strong-times" :size="14" />
+					<UiIcon name="regular-times" :size="24" />
 				</UiButton>
 			</div>
 		</Transition>
@@ -84,8 +86,8 @@ const iconByTone = {
     border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    box-shadow: 0 10px 24px rgba(17, 24, 39, 0.16);
+    gap: 24px;
+    box-shadow: var(--shadow-md);
 
     &[data-tone='primary'] {
         background: var(--brand-primary);
@@ -119,6 +121,13 @@ const iconByTone = {
 
     &[data-variant='outlined'] {
         border: 2px solid var(--white-base);
+    }
+
+    .ui-toast-main {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
     }
 
     .ui-toast-text {

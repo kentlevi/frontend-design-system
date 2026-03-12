@@ -4,7 +4,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
-import { computed, nextTick } from 'vue';
+import { computed, nextTick, watch } from 'vue';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
@@ -28,6 +28,7 @@ const isDeletePhotoModalOpen = ref(false);
 const isEmailChangeModalOpen = ref(false);
 const emailChangeFieldRef = ref<HTMLElement | null>(null);
 const pendingEmail = ref('');
+const emailChangeError = ref('');
 const emailChangeOverlayMode = ref<'idle' | 'requesting' | 'verifying'>('idle');
 const isEmailChangeOtpOpen = ref(false);
 const emailChangeOtpCode = ref('');
@@ -36,6 +37,9 @@ const emailChangeTargetEmail = ref('');
 const currentPasswordVisible = ref(false);
 const newPasswordVisible = ref(false);
 const confirmPasswordVisible = ref(false);
+const currentPasswordError = ref('');
+const newPasswordError = ref('');
+const confirmPasswordError = ref('');
 const emailChangeOverlayLabel = computed(() => (
 	emailChangeOverlayMode.value === 'requesting'
 		? 'Verifying Your Information...'
@@ -46,6 +50,13 @@ const emailChangeOverlayDescription = computed(() => (
 		? "Just a moment! We're making sure everything looks perfect."
 		: ''
 ));
+const photoInlineError = computed(() => {
+	if (!photoError.value) return '';
+	const normalized_message = photoError.value.toLowerCase();
+	return /network|timeout|timed out|internet|connect/.test(normalized_message)
+		? ''
+		: photoError.value;
+});
 const isChangePasswordEnabled = computed(() => (
 	Boolean(currentPassword.value.trim())
 	&& Boolean(newPassword.value.trim())
@@ -75,9 +86,12 @@ onMounted(() => {
 
 const profileToastVisible = ref(false);
 const passwordChangeToastVisible = ref(false);
+const photoUploadToastVisible = ref(false);
+const photoUploadToastMessage = ref('');
 const isPasswordChangeSubmitting = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
 let password_change_toast_timer: ReturnType<typeof setTimeout> | null = null;
+let photo_upload_toast_timer: ReturnType<typeof setTimeout> | null = null;
 const emailLocked = computed(() => {
 	return Boolean(email.value.trim());
 });
@@ -92,6 +106,12 @@ function clearPasswordChangeToastTimer() {
 	if (!password_change_toast_timer) return;
 	clearTimeout(password_change_toast_timer);
 	password_change_toast_timer = null;
+}
+
+function clearPhotoUploadToastTimer() {
+	if (!photo_upload_toast_timer) return;
+	clearTimeout(photo_upload_toast_timer);
+	photo_upload_toast_timer = null;
 }
 
 function showProfileSavedToast() {
@@ -127,6 +147,7 @@ function confirmDeletePhoto() {
 
 function openEmailChangeModal() {
 	pendingEmail.value = '';
+	emailChangeError.value = '';
 	isEmailChangeModalOpen.value = true;
 	void nextTick(() => {
 		emailChangeFieldRef.value?.querySelector('input')?.focus();
@@ -136,11 +157,20 @@ function openEmailChangeModal() {
 function closeEmailChangeModal() {
 	isEmailChangeModalOpen.value = false;
 	pendingEmail.value = '';
+	emailChangeError.value = '';
 }
 
 async function confirmEmailChange() {
 	const next_email = pendingEmail.value.trim();
-	if (!next_email) return;
+	if (!next_email) {
+		emailChangeError.value = 'Field cannot be blank.';
+		return;
+	}
+	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next_email)) {
+		emailChangeError.value = 'Email format is invalid.';
+		return;
+	}
+	emailChangeError.value = '';
 	emailChangeTargetEmail.value = next_email;
 	closeEmailChangeModal();
 	emailChangeOverlayMode.value = 'requesting';
@@ -175,6 +205,12 @@ function resendEmailChangeOtp() {
 	emailChangeOtpError.value = '';
 }
 
+function clearPasswordErrors() {
+	currentPasswordError.value = '';
+	newPasswordError.value = '';
+	confirmPasswordError.value = '';
+}
+
 async function onSaveProfile() {
 	await submitPersonalForm();
 
@@ -184,6 +220,36 @@ async function onSaveProfile() {
 }
 
 async function onChangePassword() {
+	clearPasswordErrors();
+
+	if (!currentPassword.value.trim()) {
+		currentPasswordError.value = 'Field cannot be blank.';
+	}
+
+	if (!newPassword.value.trim()) {
+		newPasswordError.value = 'Field cannot be blank.';
+	}
+
+	if (!confirmPassword.value.trim()) {
+		confirmPasswordError.value = 'Field cannot be blank.';
+	}
+
+	if (currentPassword.value.trim() && currentPassword.value.trim() !== 'Musticker123!') {
+		currentPasswordError.value = 'Password is incorrect.';
+	}
+
+	if (newPassword.value.trim() && confirmPassword.value.trim() && newPassword.value !== confirmPassword.value) {
+		confirmPasswordError.value = 'Password does not match.';
+	}
+
+	if (newPassword.value.trim() && newPassword.value.trim().length < 6) {
+		newPasswordError.value = 'Password must be at least 6 characters.';
+	}
+
+	if (currentPasswordError.value || newPasswordError.value || confirmPasswordError.value) {
+		return;
+	}
+
 	isPasswordChangeSubmitting.value = true;
 	await new Promise((resolve) => setTimeout(resolve, 900));
 	isPasswordChangeSubmitting.value = false;
@@ -191,14 +257,38 @@ async function onChangePassword() {
 	currentPassword.value = '';
 	newPassword.value = '';
 	confirmPassword.value = '';
+	clearPasswordErrors();
 	currentPasswordVisible.value = false;
 	newPasswordVisible.value = false;
 	confirmPasswordVisible.value = false;
 }
 
+function showPhotoUploadToast(message: string) {
+	clearPhotoUploadToastTimer();
+	const normalized_message = message.toLowerCase();
+	if (/timeout|timed out/.test(normalized_message)) {
+		photoUploadToastMessage.value = 'The upload timed out. Please try again later.';
+	} else if (/network|internet|connect/.test(normalized_message)) {
+		photoUploadToastMessage.value = 'Unable to upload due to a network issue. Please try again.';
+	} else {
+		photoUploadToastMessage.value = message;
+	}
+	photoUploadToastVisible.value = true;
+	photo_upload_toast_timer = setTimeout(() => {
+		photoUploadToastVisible.value = false;
+		photo_upload_toast_timer = null;
+	}, 3200);
+}
+
+watch(photoError, (message) => {
+	if (!message) return;
+	showPhotoUploadToast(message);
+});
+
 onBeforeUnmount(() => {
 	clearProfileToastTimer();
 	clearPasswordChangeToastTimer();
+	clearPhotoUploadToastTimer();
 });
 </script>
 
@@ -240,6 +330,16 @@ onBeforeUnmount(() => {
 			data-testid="account-profile-password-change-toast"
 			@close="passwordChangeToastVisible = false"
 		/>
+		<UiToast
+			:visible="photoUploadToastVisible"
+			tone="error"
+			class="account-profile-photo-toast"
+			data-testid="account-profile-photo-upload-error-toast"
+			@close="photoUploadToastVisible = false"
+		>
+			<strong class="account-profile-photo-toast-title">Upload Failed</strong>
+			<span> - {{ photoUploadToastMessage }}</span>
+		</UiToast>
 		<AccountShell active-tab="profile">
 			<div class="account-content account-profile" data-testid="account-profile-content">
 				<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
@@ -252,7 +352,10 @@ onBeforeUnmount(() => {
 						</p>
 					</div>
 					<div class="account-profile-section-main">
-						<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
+						<div class="account-profile-photo-head">
+							<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
+							<p v-if="photoInlineError" class="account-profile-photo-error">{{ photoInlineError }}</p>
+						</div>
 						<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
 							<div class="account-profile-avatar">
 								<img
@@ -266,7 +369,6 @@ onBeforeUnmount(() => {
 							<div class="account-profile-photo-copy">
 								<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
 								<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
-								<p v-if="photoError" class="account-profile-photo-error">{{ photoError }}</p>
 								<div class="account-profile-photo-actions">
 									<input
 										ref="fileInput"
@@ -371,15 +473,17 @@ onBeforeUnmount(() => {
 						<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 					</div>
 					<div class="account-profile-stack" data-testid="account-profile-password-form">
-						<UiFormField :label="t('account.profile.currentPassword')" :required="true">
+						<UiFormField :label="t('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
 									:id="inputId"
 									v-model="currentPassword"
 									:type="currentPasswordVisible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
+									:state="currentPasswordError ? 'error' : 'default'"
 									:placeholder="t('account.profile.currentPasswordPlaceholder')"
 									data-testid="account-profile-current-password"
+									@update:model-value="currentPasswordError = ''"
 								>
 									<template #icon-right>
 										<UiButton
@@ -400,15 +504,17 @@ onBeforeUnmount(() => {
 							</template>
 						</UiFormField>
 						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
-						<UiFormField :label="t('account.profile.newPassword')" :required="true">
+						<UiFormField :label="t('account.profile.newPassword')" :error="newPasswordError" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
 									:id="inputId"
 									v-model="newPassword"
 									:type="newPasswordVisible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
+									:state="newPasswordError ? 'error' : 'default'"
 									:placeholder="t('account.profile.newPasswordPlaceholder')"
 									data-testid="account-profile-new-password"
+									@update:model-value="newPasswordError = ''"
 								>
 									<template #icon-right>
 										<UiButton
@@ -428,15 +534,17 @@ onBeforeUnmount(() => {
 								</UiInput>
 							</template>
 						</UiFormField>
-						<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
+						<UiFormField :label="t('account.profile.confirmNewPassword')" :error="confirmPasswordError" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
 									:id="inputId"
 									v-model="confirmPassword"
 									:type="confirmPasswordVisible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
+									:state="confirmPasswordError ? 'error' : 'default'"
 									:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
 									data-testid="account-profile-confirm-password"
+									@update:model-value="confirmPasswordError = ''"
 								>
 									<template #icon-right>
 										<UiButton
@@ -610,6 +718,7 @@ onBeforeUnmount(() => {
 						head-class="account-profile-email-change-field-head"
 						label-text-class="account-profile-email-change-field-label-text"
 						:label="t('account.profile.emailAddress')"
+						:error="emailChangeError"
 						:required="true"
 					>
 						<template #default="{ inputId, describedBy }">
@@ -619,9 +728,11 @@ onBeforeUnmount(() => {
 									v-model="pendingEmail"
 									type="email"
 									:aria-describedby="describedBy || undefined"
+									:state="emailChangeError ? 'error' : 'default'"
 									placeholder="Please enter your new email address."
 									input-class="account-profile-email-change-input"
 									data-testid="account-profile-email-change-input"
+									@update:model-value="emailChangeError = ''"
 								/>
 							</div>
 						</template>
@@ -782,6 +893,23 @@ onBeforeUnmount(() => {
                 margin-bottom: 10px;
             }
 
+            .account-profile-photo-head {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+
+                .account-profile-label {
+                    margin-bottom: 0;
+                }
+
+                .account-profile-photo-error {
+                    margin: 0;
+                    text-align: left;
+                    max-width: 100%;
+                }
+            }
+
             .account-profile-photo-row {
                 display: grid;
                 grid-template-columns: 98px 1fr;
@@ -825,6 +953,7 @@ onBeforeUnmount(() => {
             .account-profile-photo-error {
                 color: var(--error);
                 font-size: var(--type-size-100);
+                font-weight: var(--font-weight-semibold);
                 line-height: var(--type-line-100);
                 margin: 8px 0 0;
             }
@@ -1185,5 +1314,25 @@ onBeforeUnmount(() => {
 :global(.account-profile-email-change-field-label-text) {
     font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
+}
+
+:global(.ui-toast.account-profile-photo-toast) {
+	background: #ff3131;
+	color: var(--contrast-light);
+	border: 2px solid var(--white-base);
+
+	.ui-toast-text {
+		display: inline-flex;
+		align-items: center;
+		gap: 0;
+	}
+
+	.ui-toast-close {
+		color: inherit;
+	}
+}
+
+:global(.account-profile-photo-toast-title) {
+	font-weight: var(--font-weight-bold);
 }
 </style>
