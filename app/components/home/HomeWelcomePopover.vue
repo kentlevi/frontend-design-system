@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import {
-	getProfileFieldValue,
-	normalizeAccountName,
-} from '~/utils/account/accountProfile';
-import { useUserStore } from '~/stores/user';
+import { useHomeWelcomePopover } from '~/composables/home/welcomePopover/useHomeWelcomePopover';
 
 const props = withDefaults(
 	defineProps<{
@@ -22,40 +17,7 @@ const emit = defineEmits<{
 	(event: 'start'): void;
 }>();
 
-const { t } = useI18n();
-const userStore = useUserStore();
-const mockUser = useCookie<{
-	firstName: string;
-	lastName: string;
-	email: string;
-} | null>('mock_user', {
-	default: () => null,
-	sameSite: 'lax',
-	path: '/',
-});
-
-const storeFirstName = computed(() =>
-	getProfileFieldValue(userStore.profile?.user_field_values ?? [], 'first_name')
-);
-
-const emailLocalPart = computed(() => {
-	const source = (userStore.email || mockUser.value?.email || '').trim();
-	if (!source.includes('@')) return '';
-	return source.split('@')[0] || '';
-});
-
-const greetingName = computed(() => {
-	const normalizedName = normalizeAccountName(
-		storeFirstName.value ||
-			userStore.onboardingProfile?.firstName ||
-			mockUser.value?.firstName ||
-			emailLocalPart.value ||
-			t('home.welcome.defaultName'),
-		''
-	);
-
-	return normalizedName.firstName || t('home.welcome.defaultName');
-});
+const { greetingName } = useHomeWelcomePopover();
 </script>
 
 <template>

@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useCountry } from '~/composables/app/useCountry';
-import { useCheckoutMember } from '~/composables/checkout/useCheckoutMember';
-import { useCheckoutCompletion } from '~/composables/checkout/useCheckoutCompletion';
+import { useCheckoutMemberPage } from '~/composables/checkout/member/useCheckoutMemberPage';
 
-const { withCountry } = useCountry();
 const {
+	withCountry,
 	t,
 	selectedCheckoutItems,
 	orderTotal,
@@ -31,28 +28,12 @@ const {
 	expiry,
 	cvv,
 	useAllPoints,
-} = useCheckoutMember();
-
-const { completingCheckout, completeLoaderRef, completeCheckout } = useCheckoutCompletion({
-	redirectPath: withCountry('/checkout/confirmation'),
-});
-
-const shippingMethodDetails = computed(() =>
-	Object.fromEntries(
-		activeShippingMethods.value.map((method) => [
-			method.key,
-			{
-				name: t(`${method.i18nKey}.name`),
-				date: t(`${method.i18nKey}.date`),
-				price: t(`${method.i18nKey}.price`),
-			},
-		])
-	)
-);
-
-function itemMeta(sizeLabel: string, qty: number) {
-	return `${sizeDimOnly(sizeLabel)} / ${qty.toLocaleString()}pcs.`;
-}
+	completingCheckout,
+	completeLoaderRef,
+	completeCheckout,
+	shippingMethodDetails,
+	itemMeta,
+} = useCheckoutMemberPage();
 </script>
 
 <template>

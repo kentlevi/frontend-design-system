@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { split_home_guide_tour_skip_copy } from '~/helpers/home/homeGuideTour.helper';
+
 const { t } = useI18n();
 
 withDefaults(
@@ -16,25 +18,7 @@ const emit = defineEmits<{
 }>();
 
 const skipModalBodyParts = computed(() => {
-	const body = t('home.tour.skipModal.body');
-	const match = body.match(/"([^"]+)"/);
-	if (!match || match.index === undefined) {
-		return {
-			before: body,
-			highlighted: '',
-			after: '',
-		};
-	}
-
-	const highlighted = match[0];
-	const start = match.index;
-	const end = start + highlighted.length;
-
-	return {
-		before: body.slice(0, start),
-		highlighted,
-		after: body.slice(end),
-	};
+	return split_home_guide_tour_skip_copy(t('home.tour.skipModal.body'));
 });
 </script>
 

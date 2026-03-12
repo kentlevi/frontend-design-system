@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '@/composables/app/country/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();

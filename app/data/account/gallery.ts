@@ -1,8 +1,4 @@
-export interface AccountGalleryItem {
-	name: string;
-	size: string;
-	tag: string;
-}
+import type { AccountGalleryItem } from '~/types/account/gallery';
 
 export const accountGalleryItems: AccountGalleryItem[] = [
 	{ name: 'circle-wave.png', size: '200x200', tag: 'Branding' },

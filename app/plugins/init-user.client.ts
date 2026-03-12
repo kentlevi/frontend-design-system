@@ -1,7 +1,7 @@
 import { defineNuxtPlugin } from '#app'
 import { useUserStore } from '@/stores/user'
 
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async () => {
 	type MeUser = {
 		id: number;
 		code: string;

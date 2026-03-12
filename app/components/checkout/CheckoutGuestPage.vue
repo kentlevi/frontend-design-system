@@ -1,21 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useCheckoutGuest } from '~/composables/checkout/useCheckoutGuest';
-import { useCountry } from '@/composables/app/useCountry';
-import { useCheckoutCompletion } from '~/composables/checkout/useCheckoutCompletion';
-import {
-	checkoutFieldValidation,
-	checkoutPaymentBrands,
-	checkoutPaymentMethods,
-	checkoutShippingMethods,
-	type CheckoutPaymentMethodKey,
-	type CheckoutShippingMethodKey,
-} from '~/data/checkout/options';
-
-const { t } = useI18n();
-const { withCountry } = useCountry();
+import CheckoutLoginModal from '~/components/checkout/CheckoutLoginModal.vue';
+import { useCheckoutGuestPage } from '~/composables/checkout/guest/useCheckoutGuestPage';
 
 const {
+	t,
+	withCountry,
 	provinceOptions,
 	email,
 	fullName,
@@ -36,38 +25,21 @@ const {
 	orderShippingFee,
 	orderSubtotal,
 	formatPrice,
-	sizeDimOnly,
-} = useCheckoutGuest();
-
-const activeShippingMethods = computed(() =>
-	checkoutShippingMethods.filter((method) => method.enabled !== false).map((method) => ({ ...method }))
-);
-const activePaymentMethods = computed(() =>
-	checkoutPaymentMethods.filter((method) => method.enabled !== false).map((method) => ({ ...method }))
-);
-
-const selectedShippingMethod = ref<CheckoutShippingMethodKey>(
-	activeShippingMethods.value.find((method) => method.defaultSelected)?.key || 'express'
-);
-const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
-	activePaymentMethods.value.find((method) => method.defaultSelected)?.key || 'credit-card'
-);
-
-const fieldValidationByKey = computed(() =>
-	Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
-);
-const emailLabelText = computed(() => t('checkout.guest.fields.email.label'));
-
-const { completingCheckout, completeLoaderRef, completeCheckout } = useCheckoutCompletion({
-	redirectPath: withCountry('/checkout/confirmation'),
-});
-
-function itemMeta(sizeLabel: string, qty: number) {
-	return t('checkout.guest.summary.itemMeta', {
-		size: sizeDimOnly(sizeLabel),
-		qty: qty.toLocaleString(),
-	});
-}
+	activeShippingMethods,
+	activePaymentMethods,
+	selectedShippingMethod,
+	selectedPaymentMethod,
+	fieldValidationByKey,
+	emailLabelText,
+	checkoutPaymentBrands,
+	completingCheckout,
+	completeLoaderRef,
+	completeCheckout,
+	itemMeta,
+	isLoginModalOpen,
+	openLoginModal,
+	closeLoginModal,
+} = useCheckoutGuestPage();
 </script>
 
 <template>
@@ -100,7 +72,17 @@ function itemMeta(sizeLabel: string, qty: number) {
 							</div>
 							<div class="checkout-login-link">
 								<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
-								<NuxtLink :to="withCountry('/auth/login')" class="checkout-login-link-action">{{ t('checkout.guest.login') }}</NuxtLink>
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="sm"
+									class="checkout-login-link-action"
+									label-class="checkout-login-link-action-label"
+									data-testid="checkout-login-modal-open-button"
+									@click="openLoginModal"
+								>
+									{{ t('checkout.guest.login') }}
+								</UiButton>
 							</div>
 						</div>
 						<UiInput
@@ -348,6 +330,11 @@ function itemMeta(sizeLabel: string, qty: number) {
 			/>
 		</template>
 	</CheckoutPageBase>
+
+	<CheckoutLoginModal
+		v-model="isLoginModalOpen"
+		@update:model-value="closeLoginModal"
+	/>
 </template>
 
 <style lang="scss">
@@ -442,12 +429,24 @@ function itemMeta(sizeLabel: string, qty: number) {
 		line-height: var(--type-line-100);
 
 		.checkout-login-link-action {
+			--btn-soft: transparent;
+			--btn-border: transparent;
+			--btn-bg: transparent;
 			margin-left: 4px;
+			min-height: auto;
+			height: auto;
+			padding: 0;
+			border-radius: 0;
+			box-shadow: none;
 			color: var(--gold-60);
 			font-weight: var(--font-weight-semibold);
 			text-decoration: underline;
 			text-underline-offset: 3px;
 			text-decoration-thickness: 2px;
+
+			.checkout-login-link-action-label {
+				padding: 0;
+			}
 		}
 	}
 

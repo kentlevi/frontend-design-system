@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { ProductItem } from '~/data/products/catalog';
-import type { SizeOptionKey } from '~/data/products/categoryExperience';
+import type { ProductItem } from '~/types/products/catalog';
+import type { SizeOptionKey } from '~/types/products/categoryExperience';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 type SizeOptionModel = {
 	key: SizeOptionKey;

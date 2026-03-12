@@ -1,30 +1,23 @@
 import {
-	buildEmptyFields,
-	getProfileFieldValue,
-} from '~/utils/account/profile/personalForm.helper'
+	build_empty_fields,
+	get_profile_field_value,
+} from '~/helpers/account/profile/personalForm.helper'
 import type {
+	PersonalFormProfile,
 	PersonalFormState,
 	ProfileFieldDefinition,
 	UpdatePersonalFormPayload,
 } from '~/types/account/profile'
 
-/**
- * Map backend schema + saved user values into editable form state
- */
 export function mapProfileToPersonalFormState(
 	field_definitions: ProfileFieldDefinition[],
-	profile: {
-		user_field_values?: Array<{
-			country_field_id: number
-			value?: string
-		}>
-	} | null
+	profile: PersonalFormProfile | null
 ): PersonalFormState {
 	const user_field_values = profile?.user_field_values ?? []
-	const fields = buildEmptyFields(field_definitions)
+	const fields = build_empty_fields(field_definitions)
 
 	for (const field_definition of field_definitions) {
-		fields[field_definition.field_key] = getProfileFieldValue(
+		fields[field_definition.field_key] = get_profile_field_value(
 			user_field_values,
 			field_definition.id
 		)
@@ -35,9 +28,6 @@ export function mapProfileToPersonalFormState(
 	}
 }
 
-/**
- * Map current form draft into backend payload
- */
 export function mapPersonalFormToPayload(
 	form_state: PersonalFormState
 ): UpdatePersonalFormPayload {

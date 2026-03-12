@@ -1,4 +1,10 @@
-import type { ProductCategoryKey } from '~/data/products/catalog';
+import type {
+	ApiClient,
+	CategoryData,
+	NavLinkItem,
+	ProductCategoriesResponse,
+} from '~/types/layout/header';
+import type { ProductCategoryKey } from '~/types/products/catalog';
 import type { FlagCode } from '~/data/ui/flags';
 import type { SupportedCountry } from '~/constants/countries';
 
@@ -30,29 +36,6 @@ export const headerNavLinkConfig = [
 	},
 ] as const;
 
-export type CategoryData = {
-	id?: number | string;
-	name?: string;
-	url_slug?: string;
-	description?: string;
-	sort?: number;
-};
-
-export type NavLinkItem = {
-	key: string;
-	label: string;
-	to: string;
-};
-
-type ApiClient = <T>(
-	path: string,
-	options?: {
-		method?: string;
-		body?: unknown;
-		headers?: HeadersInit;
-	}
-) => Promise<T>;
-
 export function formatCategoryAsNavLink(category: CategoryData): NavLinkItem | null {
 	const key = (category.url_slug || '').trim();
 	const label = (category.name || '').trim();
@@ -61,12 +44,6 @@ export function formatCategoryAsNavLink(category: CategoryData): NavLinkItem | n
 	if (!key || !label || !to) return null;
 
 	return { key, label, to };
-}
-
-interface ProductCategoriesResponse {
-	success: boolean;
-	message: string;
-	data: CategoryData[];
 }
 
 export async function fetchNavigationCategories(

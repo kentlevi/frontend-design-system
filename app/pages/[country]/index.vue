@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '@/composables/app/country/useCountry';
 import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
 import HomeGuideTour from '~/components/home/HomeGuideTour.vue';
@@ -12,7 +12,6 @@ import AuthResetPasswordModal from '~/components/auth/login/AuthResetPasswordMod
 import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
 	HOME_GUIDE_TOUR_TOTAL_STEPS,
-	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
@@ -45,7 +44,6 @@ const resetEmail = ref('');
 const resetToken = ref('');
 const resetExpiry = ref('');
 const isResetSuccessToastVisible = ref(false);
-const isLoginSuccessToastVisible = ref(false);
 const isWelcomePopoverVisible = ref(false);
 const isGuideTourVisible = ref(false);
 const isGuideDonePopoverVisible = ref(false);
@@ -60,10 +58,12 @@ const guideTourTargetRect = ref<{
 } | null>(null);
 let currentGuideTargetEl: Element | null = null;
 let resetToastTimer: ReturnType<typeof setTimeout> | null = null;
-let loginToastTimer: ReturnType<typeof setTimeout> | null = null;
 let welcomePopoverTimer: ReturnType<typeof setTimeout> | null = null;
 let welcomePopoverAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
 let guideDonePopoverAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+let deferredHomeModalTimer: ReturnType<typeof setTimeout> | null = null;
+let deferredHomeInitTimer: ReturnType<typeof setTimeout> | null = null;
+let deferredHomeInitHandle: number | null = null;
 const WELCOME_POPOVER_SHOW_DELAY_MS = 500;
 const HOME_POPOVER_AUTO_CLOSE_MS = 5000;
 
@@ -77,12 +77,6 @@ function clearResetToastTimer() {
 	if (!resetToastTimer) return;
 	clearTimeout(resetToastTimer);
 	resetToastTimer = null;
-}
-
-function clearLoginToastTimer() {
-	if (!loginToastTimer) return;
-	clearTimeout(loginToastTimer);
-	loginToastTimer = null;
 }
 
 function clearWelcomePopoverTimer() {
@@ -101,6 +95,23 @@ function clearGuideDonePopoverAutoCloseTimer() {
 	if (!guideDonePopoverAutoCloseTimer) return;
 	clearTimeout(guideDonePopoverAutoCloseTimer);
 	guideDonePopoverAutoCloseTimer = null;
+}
+
+function clearDeferredHomeInit() {
+	if (deferredHomeInitHandle !== null && import.meta.client && 'cancelIdleCallback' in window) {
+		window.cancelIdleCallback(deferredHomeInitHandle);
+		deferredHomeInitHandle = null;
+	}
+
+	if (deferredHomeModalTimer) {
+		clearTimeout(deferredHomeModalTimer);
+		deferredHomeModalTimer = null;
+	}
+
+	if (deferredHomeInitTimer) {
+		clearTimeout(deferredHomeInitTimer);
+		deferredHomeInitTimer = null;
+	}
 }
 
 function clearModalQuery() {
@@ -123,16 +134,6 @@ function showResetSuccessToast() {
 
 	resetToastTimer = setTimeout(() => {
 		isResetSuccessToastVisible.value = false;
-	}, 5000);
-}
-
-function showLoginSuccessToast() {
-	isLoginSuccessToastVisible.value = true;
-
-	clearLoginToastTimer();
-
-	loginToastTimer = setTimeout(() => {
-		isLoginSuccessToastVisible.value = false;
 	}, 5000);
 }
 
@@ -266,7 +267,7 @@ function openWelcomePopoverFromTrigger() {
 	scheduleWelcomePopover(0);
 }
 
-onMounted(() => {
+function runDeferredHomeInit() {
 	if (import.meta.client) {
 		const shouldShowWelcomePopover =
 			window.localStorage.getItem(HOME_WELCOME_POPOVER_PENDING_KEY) === '1';
@@ -277,17 +278,13 @@ onMounted(() => {
 		if (tourQuery === '1' || tourQuery === 'true') {
 			scheduleWelcomePopover(0);
 		}
-		const shouldShowLoginSuccessToast =
-			window.localStorage.getItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY) === '1';
-		if (shouldShowLoginSuccessToast) {
-			showLoginSuccessToast();
-			window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
-		}
 		window.addEventListener(HOME_WELCOME_POPOVER_TRIGGER_EVENT, openWelcomePopoverFromTrigger);
 		window.addEventListener('resize', syncGuideTourTargetRect);
 		window.addEventListener('scroll', syncGuideTourTargetRect, true);
 	}
+}
 
+function openInitialHomeModalFromRoute() {
 	const modalQuery = Array.isArray(route.query.modal)
 		? route.query.modal[0]
 		: route.query.modal;
@@ -326,6 +323,28 @@ onMounted(() => {
 
 	forgotEmail.value = typeof emailQuery === 'string' ? emailQuery : '';
 	isForgotPasswordModalOpen.value = true;
+}
+
+onMounted(() => {
+	deferredHomeModalTimer = setTimeout(() => {
+		openInitialHomeModalFromRoute();
+		deferredHomeModalTimer = null;
+	}, 0);
+
+	if (!import.meta.client) return;
+
+	if ('requestIdleCallback' in window) {
+		deferredHomeInitHandle = window.requestIdleCallback(() => {
+			runDeferredHomeInit();
+			deferredHomeInitHandle = null;
+		});
+		return;
+	}
+
+	deferredHomeInitTimer = setTimeout(() => {
+		runDeferredHomeInit();
+		deferredHomeInitTimer = null;
+	}, 250);
 });
 
 watch(isResetPasswordModalOpen, (open, previous) => {
@@ -342,10 +361,10 @@ watch(isForgotPasswordModalOpen, (open, previous) => {
 
 onBeforeUnmount(() => {
 	clearResetToastTimer();
-	clearLoginToastTimer();
 	clearWelcomePopoverTimer();
 	clearWelcomePopoverAutoCloseTimer();
 	clearGuideDonePopoverAutoCloseTimer();
+	clearDeferredHomeInit();
 	setGuideTourBodyState(false);
 	currentGuideTargetEl?.classList.remove('home-guide-tour-target-active');
 	currentGuideTargetEl = null;
@@ -405,18 +424,11 @@ useHead({
 		/>
 		<UiToast
 			:visible="isResetSuccessToastVisible"
-			tone="success"
+			tone="primary"
 			:message="t('home.passwordUpdated')"
+			variant="outlined"
 			data-testid="home-reset-password-success-toast"
 			@close="isResetSuccessToastVisible = false"
-		/>
-		<UiToast
-			:visible="isLoginSuccessToastVisible"
-			tone="primary"
-			:message="t('home.loginSuccess')"
-			variant="outlined"
-			data-testid="home-login-success-toast"
-			@close="isLoginSuccessToastVisible = false"
 		/>
 		<HomeWelcomePopover
 			:visible="isWelcomePopoverVisible"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountQuoteRequests } from '~/composables/account/useAccountQuoteRequests';
+import { useAccountQuoteRequests } from '~/composables/account/quoteRequests/useAccountQuoteRequests';
 
 const { t } = useI18n();
 const { requests, activeRequest } = useAccountQuoteRequests();

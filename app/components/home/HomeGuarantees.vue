@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useFileBaseUrl } from '~/composables/core/useFileBaseUrl';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();

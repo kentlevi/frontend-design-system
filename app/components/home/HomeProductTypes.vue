@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useCountry } from '@/composables/app/useCountry';
+import { useCountry } from '@/composables/app/country/useCountry';
 import { homeProductTypes } from '~/data/products/homeTypes';
 
 const { t } = useI18n();

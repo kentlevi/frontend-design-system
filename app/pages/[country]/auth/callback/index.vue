@@ -30,4 +30,3 @@ onMounted(() => {
 	navigateTo(country ? `/${country}` : '/')
 })
 </script>
-

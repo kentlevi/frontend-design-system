@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useAuthProfileDetailsStep } from '~/composables/auth/profile/useAuthProfileDetailsStep';
 
 const props = withDefaults(
 	defineProps<{
@@ -30,28 +30,17 @@ const emit = defineEmits<{
 	(event: 'photo-remove'): void;
 }>();
 
-const fileInput = ref<HTMLInputElement | null>(null);
-
-function openFilePicker() {
-	fileInput.value?.click();
-}
-
-function onFilePicked(event: Event) {
-	const target = event.target as HTMLInputElement;
-	const file = target.files?.[0];
-	if (!file) return;
-
-	emit('photo-file-picked', file);
-	target.value = '';
-}
-
-function updateFirstName(value: string) {
-	emit('update:firstName', value);
-}
-
-function updateLastName(value: string) {
-	emit('update:lastName', value);
-}
+const {
+	fileInput,
+	openFilePicker,
+	onFilePicked,
+	updateFirstName,
+	updateLastName,
+} = useAuthProfileDetailsStep({
+	emitUpdateFirstName: (value) => emit('update:firstName', value),
+	emitUpdateLastName: (value) => emit('update:lastName', value),
+	emitPhotoFilePicked: (file) => emit('photo-file-picked', file),
+});
 
 </script>
 

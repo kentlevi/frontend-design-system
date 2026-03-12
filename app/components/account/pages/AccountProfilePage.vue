@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
+const user_store = useUserStore()
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
@@ -26,7 +27,6 @@ const {
 } = useAccountProfile();
 
 const {
-	field_definitions,
 	form_state,
 	is_submitting,
 	api_response,
@@ -39,27 +39,28 @@ onMounted(() => {
 })
 
 const profileToastVisible = ref(false);
-let profileToastTimer: ReturnType<typeof setTimeout> | null = null;
+let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
 
 function clearProfileToastTimer() {
-	if (!profileToastTimer) return;
-	clearTimeout(profileToastTimer);
-	profileToastTimer = null;
+	if (!profile_toast_timer) return;
+	clearTimeout(profile_toast_timer);
+	profile_toast_timer = null;
 }
 
 function showProfileSavedToast() {
 	clearProfileToastTimer();
 	profileToastVisible.value = true;
-	profileToastTimer = setTimeout(() => {
+	profile_toast_timer = setTimeout(() => {
 		profileToastVisible.value = false;
-		profileToastTimer = null;
+		profile_toast_timer = null;
 	}, 2400);
 }
 
 async function onSaveProfile() {
 	await submitPersonalForm();
 
-	if (!api_response) return;
+	if (!api_response?.value?.success) return;
+
 	showProfileSavedToast();
 }
 
@@ -148,7 +149,7 @@ onBeforeUnmount(() => {
 						<div class="account-profile-grid" data-testid="account-profile-form">
 
 							<!-- START OF DYNAMIC PROFILE FIELDS -->
-							<div v-for="field in field_definitions" :key="field.id">
+							<div v-for="field in user_store.dynamic_profile_fields" :key="field.id">
 								<UiFormField
 									:label="field.is_required
 										? t(`account.profile.${field.field_key}`)

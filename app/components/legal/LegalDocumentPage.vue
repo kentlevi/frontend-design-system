@@ -1,68 +1,30 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useLegalDocumentPage } from '~/composables/legal/useLegalDocumentPage';
 import {
 	getBulletContent,
-	normalizeLegalSections,
 	parseEmphasisSegments,
 	toMessageArray,
-	type LegalSection,
-	type RawLegalSection,
-} from '~/composables/legal/legalDocument.helpers';
+} from '~/helpers/legal/legalDocument.helper';
 
 const props = defineProps<{
 	documentKey: 'terms' | 'privacy';
 }>();
 
-const { t, tm, rt } = useI18n();
-
-const activeTopicId = ref('');
-const manualActiveTopicId = ref('');
-const sidebarNavElement = ref<HTMLElement | null>(null);
-const activeIndicatorStyle = ref({
-	transform: 'translate3d(0, 0, 0)',
-	width: '0px',
-	height: '0px',
-	opacity: '0',
-});
-let scrollSpyRafId: number | null = null;
-
-const documentBaseKey = computed(() => `legal.${props.documentKey}`);
-const titlePrefix = computed(() => t(`${documentBaseKey.value}.titlePrefix`));
-const titleSuffix = computed(() => t(`${documentBaseKey.value}.titleSuffix`));
-const hasSplitTitle = computed(
-	() =>
-		titlePrefix.value !== `${documentBaseKey.value}.titlePrefix` &&
-		titleSuffix.value !== `${documentBaseKey.value}.titleSuffix`
-);
-
-function resolveMessage(value: unknown) {
-	if (typeof value === 'string') return value;
-	return rt(value as Parameters<typeof rt>[0]);
-}
-
-const sections = computed(
-	() =>
-		normalizeLegalSections(
-			toMessageArray(tm(`${documentBaseKey.value}.sections`) as RawLegalSection[]) as RawLegalSection[],
-			props.documentKey,
-			resolveMessage
-		) as LegalSection[]
-);
-
-const topics = computed(() =>
-	sections.value.map((section) => ({
-		id: section.id,
-		title: section.title.replace(/^\d+\.\s*/, ''),
-	}))
-);
-
-function setInitialActiveTopic() {
-	activeTopicId.value = sections.value[0]?.id || '';
-}
-
-function clearManualActiveTopic() {
-	manualActiveTopicId.value = '';
-}
+const {
+	t,
+	tm,
+	documentBaseKey,
+	titlePrefix,
+	titleSuffix,
+	hasSplitTitle,
+	resolveMessage,
+	sections,
+	topics,
+	activeTopicId,
+	sidebarNavElement,
+	activeIndicatorStyle,
+	handleTopicClick,
+} = useLegalDocumentPage(props.documentKey);
 
 function usePlainBulletText(sectionId: string) {
 	return sectionId === 'procedure-and-method-of-destruction' || sectionId === 'privacy-section-5';
@@ -87,147 +49,6 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 	return !usePlainBulletText(sectionId) && getBulletContent(value).label.length > 0;
 }
 
-function updateActiveIndicator() {
-	if (!import.meta.client) return;
-	const navElement = sidebarNavElement.value;
-	const activeLinkElement = activeTopicId.value
-		? navElement?.querySelector<HTMLElement>(`a[href="#${CSS.escape(activeTopicId.value)}"]`) || null
-		: null;
-
-	if (!navElement || !activeLinkElement) {
-		activeIndicatorStyle.value = {
-			transform: 'translate3d(0, 0, 0)',
-			width: '0px',
-			height: '0px',
-			opacity: '0',
-		};
-		return;
-	}
-
-	const navRect = navElement.getBoundingClientRect();
-	const linkRect = activeLinkElement.getBoundingClientRect();
-
-	activeIndicatorStyle.value = {
-		transform: `translate3d(0, ${linkRect.top - navRect.top}px, 0)`,
-		width: `${linkRect.width}px`,
-		height: `${linkRect.height}px`,
-		opacity: '1',
-	};
-}
-
-function scrollToTopicSection(topicId: string) {
-	if (!import.meta.client) return;
-	const sectionElement = document.getElementById(topicId);
-	if (!sectionElement) return;
-
-	const topOffset = 132;
-	const targetTop = sectionElement.getBoundingClientRect().top + window.scrollY - topOffset;
-
-	window.scrollTo({
-		top: Math.max(targetTop, 0),
-		behavior: 'smooth',
-	});
-}
-
-function handleTopicClick(event: MouseEvent, topicId: string) {
-	event.preventDefault();
-	manualActiveTopicId.value = topicId;
-	activeTopicId.value = topicId;
-	scrollToTopicSection(topicId);
-	window.history.replaceState(null, '', `#${topicId}`);
-}
-
-function syncActiveTopicFromScroll() {
-	if (!import.meta.client) return;
-	if (manualActiveTopicId.value) {
-		activeTopicId.value = manualActiveTopicId.value;
-		return;
-	}
-	const documentHeight = document.documentElement.scrollHeight;
-	const viewportBottom = window.scrollY + window.innerHeight;
-	const isAtPageBottom = viewportBottom >= documentHeight - 2;
-	const lastSection = sections.value.at(-1);
-	const lastSectionElement = lastSection
-		? document.getElementById(lastSection.id)
-		: null;
-	const lastSectionTop = lastSectionElement?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
-	const lastSectionVisibleAnchor = window.innerHeight * 0.6;
-	if (isAtPageBottom && lastSection?.id && lastSectionElement && lastSectionTop <= lastSectionVisibleAnchor) {
-		activeTopicId.value = lastSection.id;
-		return;
-	}
-
-	const scrollAnchor = 156;
-	let nextActiveId = sections.value[0]?.id || '';
-
-	for (const section of sections.value) {
-		const element = document.getElementById(section.id);
-		if (!element) continue;
-		const { top } = element.getBoundingClientRect();
-		if (top <= scrollAnchor) {
-			nextActiveId = section.id;
-		} else {
-			break;
-		}
-	}
-
-	activeTopicId.value = nextActiveId;
-}
-
-function queueScrollSpySync() {
-	if (!import.meta.client) return;
-	if (scrollSpyRafId !== null) return;
-	scrollSpyRafId = window.requestAnimationFrame(() => {
-		scrollSpyRafId = null;
-		syncActiveTopicFromScroll();
-		updateActiveIndicator();
-	});
-}
-
-onMounted(() => {
-	setInitialActiveTopic();
-	void nextTick(() => {
-		syncActiveTopicFromScroll();
-		updateActiveIndicator();
-		window.addEventListener('scroll', queueScrollSpySync, { passive: true });
-		window.addEventListener('resize', queueScrollSpySync);
-		window.addEventListener('wheel', clearManualActiveTopic, { passive: true });
-		window.addEventListener('touchmove', clearManualActiveTopic, { passive: true });
-		window.addEventListener('keydown', clearManualActiveTopic);
-	});
-});
-
-onBeforeUnmount(() => {
-	if (!import.meta.client) return;
-	window.removeEventListener('scroll', queueScrollSpySync);
-	window.removeEventListener('resize', queueScrollSpySync);
-	window.removeEventListener('wheel', clearManualActiveTopic);
-	window.removeEventListener('touchmove', clearManualActiveTopic);
-	window.removeEventListener('keydown', clearManualActiveTopic);
-	if (scrollSpyRafId !== null) {
-		window.cancelAnimationFrame(scrollSpyRafId);
-		scrollSpyRafId = null;
-	}
-});
-
-watch(
-	() => `${props.documentKey}:${sections.value.map((section) => section.id).join('|')}`,
-	() => {
-		setInitialActiveTopic();
-		if (!import.meta.client) return;
-		void nextTick(() => {
-			syncActiveTopicFromScroll();
-			updateActiveIndicator();
-		});
-	}
-);
-
-watch(activeTopicId, () => {
-	if (!import.meta.client) return;
-	void nextTick(() => {
-		updateActiveIndicator();
-	});
-});
 </script>
 
 <template>

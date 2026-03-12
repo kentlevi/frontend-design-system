@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/user';
 import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
-import { useCountry } from '~/composables/app/useCountry';
+import { useCountry } from '~/composables/app/country/useCountry';
 
 const props = withDefaults(
 	defineProps<{
@@ -214,85 +214,97 @@ async function submitChangePassword() {
 <template>
 	<UiModal
 		:model-value="modelValue"
-		width="640px"
-		padding="36px"
-		gap="8px"
+		width="504px"
+		padding="40px"
+		gap="40px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
-		<template #header>
-			<div class="auth-reset-header">
-				<UiLogo name="musticker" variant="mark" color="colored" :size="34" />
-				<h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
-				<p class="auth-reset-description">
-					{{ t('auth.reset.description') }}
-				</p>
-			</div>
-		</template>
-
 		<div class="auth-reset-body">
-			<div class="auth-reset-field">
-				<label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
-				<UiInput
-					:model-value="password"
-					:type="passwordVisible ? 'text' : 'password'"
-					size="md"
-					:state="error ? 'error' : 'default'"
-					:placeholder="t('auth.reset.enterNewPassword')"
-					data-testid="auth-reset-password-input"
-					@update:model-value="password = $event"
-				>
-					<template #icon-right>
-						<UiButton
-							variant="ghost"
-							tone="neutral"
-							size="sm"
-							class="auth-reset-toggle"
-							:aria-label="t('auth.reset.togglePassword')"
-							:sr-label="t('auth.reset.togglePassword')"
-							icon-only
-							:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
-							:icon-size="20"
-							@click="passwordVisible = !passwordVisible"
-						/>
-					</template>
-				</UiInput>
+			<UiLoadingOverlay
+				:visible="loading"
+				:label="t('auth.reset.changing')"
+				test-id="auth-reset-password-loading-overlay"
+				position="absolute"
+				background="rgba(246, 246, 248, 0.72)"
+				:z-index="5"
+				loader-width="74px"
+				loader-height="74px"
+			/>
+			<div class="auth-reset-header">
+				<UiLogo name="musticker" variant="mark" color="colored" :size="34" class="auth-reset-logo" />
+				<div class="auth-reset-copy">
+					<h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
+					<p class="auth-reset-description">
+						{{ t('auth.reset.description') }}
+					</p>
+				</div>
 			</div>
+			<div class="auth-reset-fields">
+				<div class="auth-reset-field">
+					<div class="auth-reset-field-head">
+						<label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
+						<p
+							v-if="error"
+							class="auth-reset-error"
+							data-testid="auth-reset-error"
+						>
+							{{ error }}
+						</p>
+					</div>
+					<UiInput
+						:model-value="password"
+						:type="passwordVisible ? 'text' : 'password'"
+						size="md"
+						:state="error ? 'error' : 'default'"
+						:placeholder="t('auth.reset.enterNewPassword')"
+						data-testid="auth-reset-password-input"
+						@update:model-value="password = $event"
+					>
+						<template #icon-right>
+							<UiButton
+								variant="ghost"
+								tone="neutral"
+								size="sm"
+								class="auth-reset-toggle"
+								:aria-label="t('auth.reset.togglePassword')"
+								:sr-label="t('auth.reset.togglePassword')"
+								icon-only
+								:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:icon-size="20"
+								@click="passwordVisible = !passwordVisible"
+							/>
+						</template>
+					</UiInput>
+				</div>
 
-			<div class="auth-reset-field">
-				<label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
-				<UiInput
-					:model-value="confirmPassword"
-					:type="confirmVisible ? 'text' : 'password'"
-					size="md"
-					:state="error ? 'error' : 'default'"
-					:placeholder="t('auth.reset.enterConfirmPassword')"
-					data-testid="auth-reset-password-confirm-input"
-					@update:model-value="confirmPassword = $event"
-				>
-					<template #icon-right>
-						<UiButton
-							variant="ghost"
-							tone="neutral"
-							size="sm"
-							class="auth-reset-toggle"
-							:aria-label="t('auth.reset.toggleConfirmPassword')"
-							:sr-label="t('auth.reset.toggleConfirmPassword')"
-							icon-only
-							:icon="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
-							:icon-size="20"
-							@click="confirmVisible = !confirmVisible"
-						/>
-					</template>
-				</UiInput>
+				<div class="auth-reset-field">
+					<label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
+					<UiInput
+						:model-value="confirmPassword"
+						:type="confirmVisible ? 'text' : 'password'"
+						size="md"
+						:state="error ? 'error' : 'default'"
+						:placeholder="t('auth.reset.enterConfirmPassword')"
+						data-testid="auth-reset-password-confirm-input"
+						@update:model-value="confirmPassword = $event"
+					>
+						<template #icon-right>
+							<UiButton
+								variant="ghost"
+								tone="neutral"
+								size="sm"
+								class="auth-reset-toggle"
+								:aria-label="t('auth.reset.toggleConfirmPassword')"
+								:sr-label="t('auth.reset.toggleConfirmPassword')"
+								icon-only
+								:icon="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:icon-size="20"
+								@click="confirmVisible = !confirmVisible"
+							/>
+						</template>
+					</UiInput>
+				</div>
 			</div>
-
-			<p
-				v-if="error"
-				class="auth-reset-error"
-				data-testid="auth-reset-error"
-			>
-				{{ error }}
-			</p>
 
 			<UiButton
 				variant="filled"
@@ -313,33 +325,57 @@ async function submitChangePassword() {
 .auth-reset-header {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 24px;
+	align-items: flex-start;
 
-    .auth-reset-title {
-        margin: 6px 0 0;
-        font-size: var(--type-size-600);
-        line-height: var(--type-line-600);
-        color: var(--text-primary);
-    }
+	.auth-reset-copy {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		.auth-reset-title {
+			font-size: var(--type-size-500);
+			line-height: var(--type-line-500);
+			color: var(--text-primary);
+		}
 
-    .auth-reset-description {
-        margin: 0;
-        color: var(--text-secondary);
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
-    }
+		.auth-reset-description {
+			margin: 0;
+			color: var(--text-secondary);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+		}
+	}
+
 }
 
 .auth-reset-body {
+    position: relative;
+    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    padding: var(--ui-modal-padding, 40px);
+    border-radius: 14px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 24px;
+
+    .auth-reset-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
 
     .auth-reset-field {
         display: flex;
         flex-direction: column;
         gap: 8px;
     }
+
+	.auth-reset-field-head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+	}
 
     .auth-reset-label {
         font-size: var(--type-size-100);
@@ -365,14 +401,18 @@ async function submitChangePassword() {
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--error);
+		text-align: right;
     }
 
     .auth-reset-submit {
         width: 100%;
-        margin-top: 8px;
         border-radius: 16px;
         box-shadow: none;
     }
+}
+
+:deep(.auth-reset-body .ui-loading-overlay) {
+    border-radius: 14px;
 }
 
 @media (max-width: 900px) {

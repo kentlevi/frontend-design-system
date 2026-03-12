@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAccountPoints } from '~/composables/account/useAccountPoints';
+import { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
 const { t } = useI18n();
 const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
