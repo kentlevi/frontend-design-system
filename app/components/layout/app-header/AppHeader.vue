@@ -102,7 +102,6 @@ async function prefetchHeaderOverlayModules() {
 	prefetchedHeaderOverlays.value = true;
 	await Promise.allSettled([
 		import('~/components/layout/app-header/AppHeaderLocaleModal.vue'),
-		import('~/components/layout/app-header/AppHeaderSearchModal.vue'),
 		import('~/components/cart/CartPreview.vue'),
 	]);
 }

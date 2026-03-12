@@ -225,9 +225,16 @@ const {
 
     .auth-verification-head {
         display: grid;
-        grid-template-columns: auto 1fr;
+        grid-template-columns: 48px minmax(0, 1fr);
         align-items: start;
         gap: 16px;
+
+        :deep(img),
+        :deep(svg) {
+            display: block;
+            width: 48px;
+            height: 48px;
+        }
 
         .auth-verification-copy {
             display: flex;
