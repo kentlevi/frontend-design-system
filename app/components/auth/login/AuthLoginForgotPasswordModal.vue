@@ -171,6 +171,7 @@ async function submitReset() {
 						variant="ghost"
 						tone="neutral"
 						size="sm"
+						:no-hover="true"
 						class="auth-forgot-return"
 						label-class="auth-forgot-return-label"
 						data-testid="auth-login-forgot-password-return-button"
@@ -281,7 +282,6 @@ async function submitReset() {
         }
 
         .auth-forgot-return {
-            --btn-soft: transparent;
             --btn-border: transparent;
             --btn-bg: var(--text-secondary);
 

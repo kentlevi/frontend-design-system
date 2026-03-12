@@ -28,11 +28,29 @@ const isDeletePhotoModalOpen = ref(false);
 const isEmailChangeModalOpen = ref(false);
 const emailChangeFieldRef = ref<HTMLElement | null>(null);
 const pendingEmail = ref('');
-const isEmailChangeTransitioning = ref(false);
+const emailChangeOverlayMode = ref<'idle' | 'requesting' | 'verifying'>('idle');
 const isEmailChangeOtpOpen = ref(false);
 const emailChangeOtpCode = ref('');
 const emailChangeOtpError = ref('');
 const emailChangeTargetEmail = ref('');
+const currentPasswordVisible = ref(false);
+const newPasswordVisible = ref(false);
+const confirmPasswordVisible = ref(false);
+const emailChangeOverlayLabel = computed(() => (
+	emailChangeOverlayMode.value === 'requesting'
+		? 'Verifying Your Information...'
+		: ''
+));
+const emailChangeOverlayDescription = computed(() => (
+	emailChangeOverlayMode.value === 'requesting'
+		? "Just a moment! We're making sure everything looks perfect."
+		: ''
+));
+const isChangePasswordEnabled = computed(() => (
+	Boolean(currentPassword.value.trim())
+	&& Boolean(newPassword.value.trim())
+	&& Boolean(confirmPassword.value.trim())
+));
 
 const {
 	form_state: personal_form_state,
@@ -56,7 +74,10 @@ onMounted(() => {
 })
 
 const profileToastVisible = ref(false);
+const passwordChangeToastVisible = ref(false);
+const isPasswordChangeSubmitting = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
+let password_change_toast_timer: ReturnType<typeof setTimeout> | null = null;
 const emailLocked = computed(() => {
 	return Boolean(email.value.trim());
 });
@@ -67,12 +88,27 @@ function clearProfileToastTimer() {
 	profile_toast_timer = null;
 }
 
+function clearPasswordChangeToastTimer() {
+	if (!password_change_toast_timer) return;
+	clearTimeout(password_change_toast_timer);
+	password_change_toast_timer = null;
+}
+
 function showProfileSavedToast() {
 	clearProfileToastTimer();
 	profileToastVisible.value = true;
 	profile_toast_timer = setTimeout(() => {
 		profileToastVisible.value = false;
 		profile_toast_timer = null;
+	}, 2400);
+}
+
+function showPasswordChangedToast() {
+	clearPasswordChangeToastTimer();
+	passwordChangeToastVisible.value = true;
+	password_change_toast_timer = setTimeout(() => {
+		passwordChangeToastVisible.value = false;
+		password_change_toast_timer = null;
 	}, 2400);
 }
 
@@ -107,9 +143,9 @@ async function confirmEmailChange() {
 	if (!next_email) return;
 	emailChangeTargetEmail.value = next_email;
 	closeEmailChangeModal();
-	isEmailChangeTransitioning.value = true;
+	emailChangeOverlayMode.value = 'requesting';
 	await new Promise((resolve) => setTimeout(resolve, 1200));
-	isEmailChangeTransitioning.value = false;
+	emailChangeOverlayMode.value = 'idle';
 	isEmailChangeOtpOpen.value = true;
 }
 
@@ -127,9 +163,9 @@ async function verifyEmailChangeOtp() {
 
 	emailChangeOtpError.value = '';
 	isEmailChangeOtpOpen.value = false;
-	isEmailChangeTransitioning.value = true;
+	emailChangeOverlayMode.value = 'verifying';
 	await new Promise((resolve) => setTimeout(resolve, 900));
-	isEmailChangeTransitioning.value = false;
+	emailChangeOverlayMode.value = 'idle';
 	email.value = emailChangeTargetEmail.value;
 	closeEmailChangeOtpModal();
 }
@@ -147,8 +183,22 @@ async function onSaveProfile() {
 	showProfileSavedToast();
 }
 
+async function onChangePassword() {
+	isPasswordChangeSubmitting.value = true;
+	await new Promise((resolve) => setTimeout(resolve, 900));
+	isPasswordChangeSubmitting.value = false;
+	showPasswordChangedToast();
+	currentPassword.value = '';
+	newPassword.value = '';
+	confirmPassword.value = '';
+	currentPasswordVisible.value = false;
+	newPasswordVisible.value = false;
+	confirmPasswordVisible.value = false;
+}
+
 onBeforeUnmount(() => {
 	clearProfileToastTimer();
+	clearPasswordChangeToastTimer();
 });
 </script>
 
@@ -161,9 +211,17 @@ onBeforeUnmount(() => {
 			position="fixed"
 		/>
 		<UiLoadingOverlay
-			:visible="isEmailChangeTransitioning"
-			label="Verifying Your Information..."
+			:visible="emailChangeOverlayMode !== 'idle'"
+			:label="emailChangeOverlayLabel"
+			:description="emailChangeOverlayDescription"
+			:show-copy="emailChangeOverlayMode === 'requesting'"
 			test-id="account-profile-email-change-page-overlay"
+			position="fixed"
+		/>
+		<UiLoadingOverlay
+			:visible="isPasswordChangeSubmitting"
+			:label="t('account.profile.changePassword')"
+			test-id="account-profile-password-change-overlay"
 			position="fixed"
 		/>
 		<UiToast
@@ -173,6 +231,14 @@ onBeforeUnmount(() => {
 			variant="outlined"
 			data-testid="account-profile-save-toast"
 			@close="profileToastVisible = false"
+		/>
+		<UiToast
+			:visible="passwordChangeToastVisible"
+			message="Your password has been successfully changed!"
+			tone="primary"
+			variant="outlined"
+			data-testid="account-profile-password-change-toast"
+			@close="passwordChangeToastVisible = false"
 		/>
 		<AccountShell active-tab="profile">
 			<div class="account-content account-profile" data-testid="account-profile-content">
@@ -280,6 +346,7 @@ onBeforeUnmount(() => {
 											variant="ghost"
 											tone="neutral"
 											size="sm"
+											:no-hover="true"
 											class="account-profile-email-change-button"
 											data-testid="account-profile-email-change-button"
 											@click="openEmailChangeModal"
@@ -309,11 +376,27 @@ onBeforeUnmount(() => {
 								<UiInput
 									:id="inputId"
 									v-model="currentPassword"
-									type="password"
+									:type="currentPasswordVisible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
 									:placeholder="t('account.profile.currentPasswordPlaceholder')"
 									data-testid="account-profile-current-password"
-								/>
+								>
+									<template #icon-right>
+										<UiButton
+											variant="ghost"
+											tone="neutral"
+											size="24"
+											:no-hover="true"
+											class="account-profile-password-toggle"
+											:aria-label="t('auth.reset.togglePassword')"
+											:sr-label="t('auth.reset.togglePassword')"
+											icon-only
+											:icon="currentPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+											:icon-size="24"
+											@click="currentPasswordVisible = !currentPasswordVisible"
+										/>
+									</template>
+								</UiInput>
 							</template>
 						</UiFormField>
 						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
@@ -322,11 +405,27 @@ onBeforeUnmount(() => {
 								<UiInput
 									:id="inputId"
 									v-model="newPassword"
-									type="password"
+									:type="newPasswordVisible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
 									:placeholder="t('account.profile.newPasswordPlaceholder')"
 									data-testid="account-profile-new-password"
-								/>
+								>
+									<template #icon-right>
+										<UiButton
+											variant="ghost"
+											tone="neutral"
+											size="24"
+											:no-hover="true"
+											class="account-profile-password-toggle"
+											:aria-label="t('auth.reset.togglePassword')"
+											:sr-label="t('auth.reset.togglePassword')"
+											icon-only
+											:icon="newPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+											:icon-size="24"
+											@click="newPasswordVisible = !newPasswordVisible"
+										/>
+									</template>
+								</UiInput>
 							</template>
 						</UiFormField>
 						<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
@@ -334,15 +433,38 @@ onBeforeUnmount(() => {
 								<UiInput
 									:id="inputId"
 									v-model="confirmPassword"
-									type="password"
+									:type="confirmPasswordVisible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
 									:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
 									data-testid="account-profile-confirm-password"
-								/>
+								>
+									<template #icon-right>
+										<UiButton
+											variant="ghost"
+											tone="neutral"
+											size="24"
+											:no-hover="true"
+											class="account-profile-password-toggle"
+											:aria-label="t('auth.reset.toggleConfirmPassword')"
+											:sr-label="t('auth.reset.toggleConfirmPassword')"
+											icon-only
+											:icon="confirmPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+											:icon-size="24"
+											@click="confirmPasswordVisible = !confirmPasswordVisible"
+										/>
+									</template>
+								</UiInput>
 							</template>
 						</UiFormField>
 						<div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
-							<UiButton variant="filled" tone="neutral" size="md" disabled data-testid="account-profile-change-password-button">
+							<UiButton
+								variant="filled"
+								tone="neutral"
+								size="md"
+								:disabled="!isChangePasswordEnabled || isPasswordChangeSubmitting"
+								data-testid="account-profile-change-password-button"
+								@click="onChangePassword"
+							>
 								{{ t('account.profile.changePassword') }}
 							</UiButton>
 							<NuxtLink :to="withCountry('/auth/login')" class="account-profile-forgot-password-link" data-testid="account-profile-forgot-password">
@@ -458,6 +580,7 @@ onBeforeUnmount(() => {
 				<button
 					type="button"
 					class="account-profile-email-change-modal-close"
+					size="24"
 					aria-label="Close email change modal"
 					data-testid="account-profile-email-change-modal-close"
 					@click="closeEmailChangeModal"
@@ -578,6 +701,7 @@ onBeforeUnmount(() => {
 						variant="ghost"
 						tone="neutral"
 						size="sm"
+						:no-hover="true"
 						class="account-profile-delete-photo-modal-cancel"
 						data-testid="account-profile-delete-photo-modal-cancel"
 						@click="closeDeletePhotoModal"
@@ -755,7 +879,6 @@ onBeforeUnmount(() => {
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 font-weight: var(--font-weight-bold);
-                --btn-soft: transparent;
                 --btn-border: transparent;
             }
 
@@ -862,6 +985,7 @@ onBeforeUnmount(() => {
                             font-size: var(--type-size-100);
                             line-height: var(--type-line-100);
                             font-weight: var(--font-weight-bold);
+							border-radius: 0;
 
                             &.active {
                                 background: var(--text-primary);
@@ -948,18 +1072,13 @@ onBeforeUnmount(() => {
 		gap: 18px;
 	}
 
-	.account-profile-delete-photo-modal-cancel {
-		&:hover {
-			--btn-soft: transparent;
-		}
-	}
 }
 
-    .account-profile-email-change-modal {
-        position: relative;
-        --account-profile-email-change-modal-padding: 40px;
-        background: var(--contrast-light);
-        border-radius: 16px;
+.account-profile-email-change-modal {
+	position: relative;
+	--account-profile-email-change-modal-padding: 40px;
+	background: var(--contrast-light);
+	border-radius: 16px;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
@@ -969,12 +1088,10 @@ onBeforeUnmount(() => {
 
 	.account-profile-email-change-modal-close {
 		position: absolute;
-		top: 18px;
-		right: calc(var(--account-profile-email-change-modal-padding) - 8px);
+		top: 24px;
+		right: 24px;
 		display: grid;
 		place-items: center;
-		width: 32px;
-		height: 32px;
 		padding: 0;
 		border: 0;
 		background: transparent;

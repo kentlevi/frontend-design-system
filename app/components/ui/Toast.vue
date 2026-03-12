@@ -58,6 +58,7 @@ const iconByTone = {
 					variant="ghost"
 					tone="neutral"
 					size="sm"
+					:no-hover="true"
 					class="ui-toast-close"
 					aria-label="Close"
 					data-testid="ui-toast-close-button"
@@ -134,9 +135,6 @@ const iconByTone = {
         min-height: auto;
         padding: 0;
         box-shadow: none;
-        &:hover {
-            --btn-soft: transparent;
-        }
     }
 }
 

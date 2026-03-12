@@ -10,8 +10,9 @@ const BODY_LOCK_OVERFLOW_ATTR = 'data-ui-loading-overlay-previous-overflow';
 
 const props = withDefaults(defineProps<{
 	visible: boolean;
-	label: string;
+	label?: string;
 	description?: string;
+	showCopy?: boolean;
 	testId?: string;
 	transitionName?: string;
 	position?: 'fixed' | 'absolute';
@@ -21,7 +22,9 @@ const props = withDefaults(defineProps<{
 	loaderHeight?: string;
 	animationPath?: string;
 }>(), {
+	label: '',
 	description: '',
+	showCopy: false,
 	testId: '',
 	transitionName: 'ui-loading-overlay-fade',
 	position: 'fixed',
@@ -164,9 +167,9 @@ onBeforeUnmount(() => {
 							<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
 						</div>
 					</div>
-					<div v-if="props.description" class="ui-loading-overlay-copy">
-						<p class="ui-loading-overlay-label">{{ props.label }}</p>
-						<p class="ui-loading-overlay-description">{{ props.description }}</p>
+					<div v-if="props.showCopy && (props.label || props.description)" class="ui-loading-overlay-copy">
+						<p v-if="props.label" class="ui-loading-overlay-label">{{ props.label }}</p>
+						<p v-if="props.description" class="ui-loading-overlay-description">{{ props.description }}</p>
 					</div>
 				</div>
 			</div>
@@ -193,9 +196,9 @@ onBeforeUnmount(() => {
 						<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
 					</div>
 				</div>
-				<div v-if="props.description" class="ui-loading-overlay-copy">
-					<p class="ui-loading-overlay-label">{{ props.label }}</p>
-					<p class="ui-loading-overlay-description">{{ props.description }}</p>
+				<div v-if="props.showCopy && (props.label || props.description)" class="ui-loading-overlay-copy">
+					<p v-if="props.label" class="ui-loading-overlay-label">{{ props.label }}</p>
+					<p v-if="props.description" class="ui-loading-overlay-description">{{ props.description }}</p>
 				</div>
 			</div>
 		</div>

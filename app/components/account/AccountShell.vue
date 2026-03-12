@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { useCountry } from '~/composables/app/country/useCountry';
+import type { icons } from '~/data/ui/icons';
 import {
 	getAccountInitials,
 	getProfileFieldValue,
 	normalizeAccountName,
 } from '~/utils/account/accountProfile';
+
+type IconName = keyof typeof icons;
+type AccountStat = {
+	key: string;
+	label: string;
+	value: string;
+	iconName: IconName | null;
+	iconSrc: string;
+	iconAlt: string;
+};
 
 const props = defineProps<{
 	activeTab:
@@ -68,12 +79,12 @@ const initials = computed(() => {
 const avatarDisplayUrl = computed(
 	() => localAvatarDataUrl.value
 );
-const accountStats = computed(() => [
+const accountStats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
 		label: t('account.shell.stats.order'),
 		value: '0',
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/checkout/icon-box.svg',
 		iconAlt: 'Orders',
 	},
@@ -81,7 +92,7 @@ const accountStats = computed(() => [
 		key: 'points',
 		label: t('account.shell.stats.points'),
 		value: '0.00',
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/account/points-icon.svg',
 		iconAlt: 'Points',
 	},
@@ -89,7 +100,7 @@ const accountStats = computed(() => [
 		key: 'coupons',
 		label: t('account.shell.stats.coupons'),
 		value: '0',
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/account/coupon-icon.svg',
 		iconAlt: 'Coupons',
 	},
@@ -97,7 +108,7 @@ const accountStats = computed(() => [
 		key: 'total-spent',
 		label: t('account.shell.stats.totalSpent'),
 		value: t('account.shell.defaultBalance'),
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/account/total-spent-icon.svg',
 		iconAlt: 'Total spent',
 	},
@@ -176,7 +187,7 @@ const tabs = [
 							class="account-shell-stat-icon-image"
 						>
 						<UiIcon
-							v-else
+							v-else-if="stat.iconName"
 							:name="stat.iconName"
 							:size="48"
 							class="account-shell-stat-icon"

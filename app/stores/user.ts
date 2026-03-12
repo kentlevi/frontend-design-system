@@ -8,6 +8,14 @@ import type {
 	UserState
 } from '~/types/auth/user'
 
+export type {
+	UserIdentity,
+	UserProfile,
+	UserFieldValue,
+	OnboardingProfile,
+	UserState
+} from '~/types/auth/user'
+
 /**
  * Initial user state factory
  */

@@ -53,6 +53,7 @@ const emit = defineEmits<{
 					variant="ghost"
 					tone="neutral"
 					size="sm"
+					:no-hover="true"
 					class="checkout-summary-title-action"
 					aria-label="Edit order summary"
 				>
@@ -63,6 +64,7 @@ const emit = defineEmits<{
 					variant="ghost"
 					tone="neutral"
 					size="sm"
+					:no-hover="true"
 					class="checkout-summary-title-action"
 					aria-label="Print order summary"
 				>
@@ -185,9 +187,6 @@ const emit = defineEmits<{
 					align-items: center;
 					justify-content: center;
 					box-shadow: none;
-					&:hover:not(:disabled) {
-						--btn-soft: transparent;
-					}
 				}
 			}
 		}

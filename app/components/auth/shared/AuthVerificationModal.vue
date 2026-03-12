@@ -106,7 +106,8 @@ const {
 				v-if="showCloseButton"
 				variant="ghost"
 				tone="neutral"
-				size="sm"
+				size="24"
+				:no-hover="true"
 				class="auth-verification-close"
 				:aria-label="t(`${key}.closeModal`)"
 				:sr-label="t(`${key}.closeModal`)"
@@ -182,6 +183,7 @@ const {
 						variant="ghost"
 						tone="neutral"
 						size="sm"
+						:no-hover="true"
 						class="auth-verification-resend-btn"
 						label-class="auth-verification-resend-btn-label"
 						:data-testid="`${testIdPrefix}-resend`"
@@ -213,14 +215,16 @@ const {
 
     .auth-verification-close {
         position: absolute;
-        top: -16px;
-        right: -16px;
+        top: 24px;
+        right: 24px;
         width: 24px;
         height: 24px;
         padding: 0;
         min-height: auto;
         border-radius: 0;
         box-shadow: none;
+        z-index: 1;
+
     }
 
     .auth-verification-head {
@@ -350,10 +354,6 @@ const {
                 &:disabled {
                     color: var(--text-muted);
                 }
-				&:hover:not(:disabled) {
-					--btn-soft: transparent;
-				}
-
                 .auth-verification-resend-btn-label {
                     padding: 0;
                     text-decoration: underline;

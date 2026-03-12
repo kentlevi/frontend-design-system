@@ -24,6 +24,7 @@ const props = withDefaults(
 		selected?: boolean;
 		disabled?: boolean;
 		loading?: boolean;
+		noHover?: boolean;
 
 		width?: string;
 		height?: string;
@@ -44,6 +45,7 @@ const props = withDefaults(
 		selected: false,
 		disabled: false,
 		loading: false,
+		noHover: false,
 		width: '',
 		height: '',
 		style: () => ({}),
@@ -83,6 +85,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		:data-tone="tone ?? 'primary'"
 		:data-selected="selected ? 'true' : 'false'"
 		:data-icon-only="iconOnly ? 'true' : 'false'"
+		:data-no-hover="noHover ? 'true' : 'false'"
 		:disabled="disabled || loading"
 		:aria-busy="loading || undefined"
 		:style="mergedStyle"

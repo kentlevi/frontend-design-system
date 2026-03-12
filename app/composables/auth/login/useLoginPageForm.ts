@@ -5,7 +5,6 @@ import {
 	isValidAuthEmail,
 	getAuthErrorMessage,
 	getAuthResponseMessage,
-	getAuthResponseCode,
 	getAuthResponseMessageCode,
 	cacheNonMemberVerificationData,
 	getGuestVerificationCache
@@ -22,7 +21,12 @@ import { authVerificationConfig } from '~/data/auth/verification';
 import { useLoginUser } from '~/composables/auth/useLoginUser';
 import type { NonMemberVerificationCache } from '~/types/auth/auth';
 
-export function useLoginPageForm() {
+interface UseLoginPageFormOptions {
+	skipMemberRedirect?: boolean;
+	onMemberLoginSuccess?: () => void;
+}
+
+export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const route = useRoute();
 
 	const { t } = useI18n();
@@ -50,29 +54,14 @@ export function useLoginPageForm() {
 	const guestVerificationCode = ref('');
 	const guestVerificationError = ref('');
 	const resendLimitReached = ref('');
-	const guestVerificationOtpRequired = ref(true);
 	const isGuestVerifying = ref(false);
 	const guestResendCooldownRemaining = ref(0);
-	const guestVerificationTokenExpiresAt = ref(0);
 	let guestResendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
 	function clearGuestResendCooldownTimer() {
 		if (!guestResendCooldownTimer) return;
 		clearInterval(guestResendCooldownTimer);
 		guestResendCooldownTimer = null;
-	}
-
-	function coercePositiveInt(value: unknown) {
-		if (typeof value === 'number') {
-			if (!Number.isFinite(value) || value <= 0) return null;
-			return Math.floor(value);
-		}
-		if (typeof value === 'string') {
-			const parsed = Number(value);
-			if (!Number.isFinite(parsed) || parsed <= 0) return null;
-			return Math.floor(parsed);
-		}
-		return null;
 	}
 
 	const memberEmail = ref('');
@@ -292,6 +281,10 @@ export function useLoginPageForm() {
 			window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
 			window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
 		}
+
+		options.onMemberLoginSuccess?.();
+
+		if (options.skipMemberRedirect) return response;
 
 		return await navigateTo(postLoginRedirect.value);
 	}
