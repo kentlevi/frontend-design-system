@@ -2,6 +2,7 @@
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
+import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import { computed, nextTick } from 'vue';
 
@@ -13,10 +14,6 @@ const {
 	currentPassword,
 	newPassword,
 	confirmPassword,
-	promotions,
-	reviews,
-	confirmations,
-	unit,
 	photoUrl,
 	avatarDisplayUrl,
 	photoError,
@@ -38,7 +35,7 @@ const emailChangeOtpError = ref('');
 const emailChangeTargetEmail = ref('');
 
 const {
-	form_state,
+	form_state: personal_form_state,
 	has_changes,
 	has_required_fields,
 	is_submitting,
@@ -47,7 +44,14 @@ const {
 	submitPersonalForm
 } = usePersonalForm();
 
+const {
+	form_state: preference_form_state,
+	loadPreferences,
+	updatePreferenceField
+} = usePreferenceForm();
+
 onMounted(() => {
+	loadPreferences()
 	loadPersonalForm()
 })
 
@@ -244,7 +248,7 @@ onBeforeUnmount(() => {
 									<template #default="{ inputId, describedBy }">
 										<UiInput
 											:id="inputId"
-											v-model="form_state.fields[field.field_key]"
+											v-model=" personal_form_state.fields[field.field_key]"
 											type="text"
 											:aria-describedby="describedBy || undefined"
 											:data-testid="`account-profile-${field.field_key}`"
@@ -360,7 +364,13 @@ onBeforeUnmount(() => {
 								<p class="account-profile-muted">{{ t('account.profile.promotionsDesc') }}</p>
 							</div>
 							<label class="account-profile-switch">
-								<input v-model="promotions" type="checkbox" class="account-profile-switch-input" data-testid="account-profile-toggle-promotions" >
+								<input
+									v-model="preference_form_state.offers_emails"
+									type="checkbox"
+									class="account-profile-switch-input"
+									data-testid="account-profile-toggle-promotions"
+									@change="updatePreferenceField('offers_emails', preference_form_state.offers_emails)"
+								>
 								<span class="account-profile-switch-track" />
 							</label>
 						</div>
@@ -370,7 +380,13 @@ onBeforeUnmount(() => {
 								<p class="account-profile-muted">{{ t('account.profile.reviewsDesc') }}</p>
 							</div>
 							<label class="account-profile-switch">
-								<input v-model="reviews" type="checkbox" class="account-profile-switch-input" data-testid="account-profile-toggle-reviews" >
+								<input
+									v-model="preference_form_state.reviews_emails"
+									type="checkbox"
+									class="account-profile-switch-input"
+									data-testid="account-profile-toggle-reviews"
+									@change="updatePreferenceField('reviews_emails', preference_form_state.reviews_emails)"
+								>
 								<span class="account-profile-switch-track" />
 							</label>
 						</div>
@@ -380,7 +396,13 @@ onBeforeUnmount(() => {
 								<p class="account-profile-muted">{{ t('account.profile.confirmationsDesc') }}</p>
 							</div>
 							<label class="account-profile-switch">
-								<input v-model="confirmations" type="checkbox" class="account-profile-switch-input" data-testid="account-profile-toggle-confirmations" >
+								<input
+									v-model="preference_form_state.confirmations_emails"
+									type="checkbox"
+									class="account-profile-switch-input"
+									data-testid="account-profile-toggle-confirmations"
+									@change="updatePreferenceField('confirmations_emails', preference_form_state.confirmations_emails)"
+								>
 								<span class="account-profile-switch-track" />
 							</label>
 						</div>
@@ -395,9 +417,9 @@ onBeforeUnmount(() => {
 									tone="neutral"
 									size="md"
 									class="account-profile-unit-button"
-									:class="{ active: unit === 'millimeter' }"
+									:class="{ active: preference_form_state.unit_of_measurement === 'mm' }"
 									data-testid="account-profile-unit-millimeter-button"
-									@click="unit = 'millimeter'"
+									@click="updatePreferenceField('unit_of_measurement', 'mm')"
 								>
 									{{ t('account.profile.millimeter') }}
 								</UiButton>
@@ -406,9 +428,9 @@ onBeforeUnmount(() => {
 									tone="neutral"
 									size="md"
 									class="account-profile-unit-button"
-									:class="{ active: unit === 'inch' }"
+									:class="{ active: preference_form_state.unit_of_measurement === 'in' }"
 									data-testid="account-profile-unit-inch-button"
-									@click="unit = 'inch'"
+									@click="updatePreferenceField('unit_of_measurement', 'in')"
 								>
 									{{ t('account.profile.inch') }}
 								</UiButton>

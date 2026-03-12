@@ -14,6 +14,7 @@ import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/ac
 export function usePersonalForm() {
 	const user_store = useUserStore()
 	const profile_fields_store = useProfileFieldsStore()
+
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
 	const form_state = reactive(personal_form_defaults())
 	const initial_fields = ref<Record<string, string>>({})
