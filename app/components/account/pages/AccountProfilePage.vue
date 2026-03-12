@@ -211,6 +211,11 @@ function clearPasswordErrors() {
 	confirmPasswordError.value = '';
 }
 
+function clearNewPasswordPairErrors() {
+	newPasswordError.value = '';
+	confirmPasswordError.value = '';
+}
+
 async function onSaveProfile() {
 	await submitPersonalForm();
 
@@ -231,7 +236,7 @@ async function onChangePassword() {
 	}
 
 	if (!confirmPassword.value.trim()) {
-		confirmPasswordError.value = 'Field cannot be blank.';
+		confirmPasswordError.value = ' ';
 	}
 
 	if (currentPassword.value.trim() && currentPassword.value.trim() !== 'Musticker123!') {
@@ -239,11 +244,13 @@ async function onChangePassword() {
 	}
 
 	if (newPassword.value.trim() && confirmPassword.value.trim() && newPassword.value !== confirmPassword.value) {
-		confirmPasswordError.value = 'Password does not match.';
-	}
-
-	if (newPassword.value.trim() && newPassword.value.trim().length < 6) {
+		newPasswordError.value = 'Password does not match.';
+		confirmPasswordError.value = ' ';
+	} else if (newPassword.value.trim() && newPassword.value.trim().length < 6) {
 		newPasswordError.value = 'Password must be at least 6 characters.';
+		if (confirmPassword.value.trim()) {
+			confirmPasswordError.value = ' ';
+		}
 	}
 
 	if (currentPasswordError.value || newPasswordError.value || confirmPasswordError.value) {
@@ -514,7 +521,7 @@ onBeforeUnmount(() => {
 									:state="newPasswordError ? 'error' : 'default'"
 									:placeholder="t('account.profile.newPasswordPlaceholder')"
 									data-testid="account-profile-new-password"
-									@update:model-value="newPasswordError = ''"
+									@update:model-value="clearNewPasswordPairErrors()"
 								>
 									<template #icon-right>
 										<UiButton
@@ -544,7 +551,7 @@ onBeforeUnmount(() => {
 									:state="confirmPasswordError ? 'error' : 'default'"
 									:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
 									data-testid="account-profile-confirm-password"
-									@update:model-value="confirmPasswordError = ''"
+									@update:model-value="clearNewPasswordPairErrors()"
 								>
 									<template #icon-right>
 										<UiButton
