@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue'
 import { personal_form_defaults } from '~/constants/account/profile'
-import { buildStoredProfileFieldValues, mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
+import { mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
 import {
 	mapProfileToPersonalFormState,
 	mapPersonalFormToPayload,
@@ -13,6 +13,7 @@ import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/ac
 
 export function usePersonalForm() {
 	const user_store = useUserStore()
+	const profile_fields_store = useProfileFieldsStore()
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
 	const form_state = reactive(personal_form_defaults())
 	const is_loading = ref(false)
@@ -25,18 +26,28 @@ export function usePersonalForm() {
 		error_message.value = ''
 
 		try {
-			form_state.fields = { ...fallback_fields }
+			if (profile_fields_store.dynamic_profile_fields.length === 0) {
+				field_definitions.value = await fetchPersonalFieldDefinitions()
 
-			field_definitions.value = await fetchPersonalFieldDefinitions()
+				profile_fields_store.setDynamicProfileFields(field_definitions.value)
+			} else {
+				field_definitions.value = profile_fields_store.dynamic_profile_fields
+			}
 
-			user_store.setDynamicProfileFields(field_definitions.value);
-
+			/**
+             * Map values to its fields
+             */
 			const mapped_form = mapProfileToPersonalFormState(
 				field_definitions.value,
 				user_store.profile
 			)
 
-			form_state.fields = { ...mapped_form.fields }
+			/**
+             * Keep fallback values for fields that have no mapped value yet
+             */
+			form_state.fields = {
+				...mapped_form.fields,
+			}
 		} catch (_error: unknown) {
 			error_message.value = 'Failed to load personal form.'
 		} finally {
@@ -63,7 +74,7 @@ export function usePersonalForm() {
              */
 			if (api_response?.value?.success) {
 				const updated_user_field_values = mapPersonalFormToUserFieldValues(
-					user_store.dynamic_profile_fields,
+					profile_fields_store.dynamic_profile_fields,
 					form_state.fields,
 					user_store.profile
 				)
@@ -78,11 +89,6 @@ export function usePersonalForm() {
 			is_submitting.value = false
 		}
 	}
-
-	const fallback_fields = buildStoredProfileFieldValues(
-		user_store.dynamic_profile_fields,
-		user_store.profile
-	)
 
 	return {
 		form_state,

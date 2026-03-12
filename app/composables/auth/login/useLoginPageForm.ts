@@ -21,6 +21,7 @@ import {
 } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
+import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
 // Constants
 const TOKEN_DURATION_SHORT = 60 * 60 * 24 * 3; // 3 days
@@ -39,6 +40,10 @@ type MockUserCookie = {
 	lastName: string;
 	email: string;
 };
+
+const {
+	loadPersonalForm
+} = usePersonalForm();
 
 export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const api = useApi();
@@ -181,6 +186,9 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		}
 
 		userStore.setUser(user);
+
+		/** Store dynamic fields */
+		loadPersonalForm();
 
 		const mockUserCookie = getMockUserCookie();
 

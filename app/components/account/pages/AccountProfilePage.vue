@@ -3,7 +3,7 @@ import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 
-const user_store = useUserStore()
+const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
 						<div class="account-profile-grid" data-testid="account-profile-form">
 
 							<!-- START OF DYNAMIC PROFILE FIELDS -->
-							<div v-for="field in user_store.dynamic_profile_fields" :key="field.id">
+							<div v-for="field in profile_field_store.dynamic_profile_fields" :key="field.id">
 								<UiFormField
 									:label="field.is_required
 										? t(`account.profile.${field.field_key}`)
