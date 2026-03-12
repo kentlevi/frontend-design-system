@@ -61,6 +61,9 @@ let resetToastTimer: ReturnType<typeof setTimeout> | null = null;
 let welcomePopoverTimer: ReturnType<typeof setTimeout> | null = null;
 let welcomePopoverAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
 let guideDonePopoverAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+let deferredHomeModalTimer: ReturnType<typeof setTimeout> | null = null;
+let deferredHomeInitTimer: ReturnType<typeof setTimeout> | null = null;
+let deferredHomeInitHandle: number | null = null;
 const WELCOME_POPOVER_SHOW_DELAY_MS = 500;
 const HOME_POPOVER_AUTO_CLOSE_MS = 5000;
 
@@ -92,6 +95,23 @@ function clearGuideDonePopoverAutoCloseTimer() {
 	if (!guideDonePopoverAutoCloseTimer) return;
 	clearTimeout(guideDonePopoverAutoCloseTimer);
 	guideDonePopoverAutoCloseTimer = null;
+}
+
+function clearDeferredHomeInit() {
+	if (deferredHomeInitHandle !== null && import.meta.client && 'cancelIdleCallback' in window) {
+		window.cancelIdleCallback(deferredHomeInitHandle);
+		deferredHomeInitHandle = null;
+	}
+
+	if (deferredHomeModalTimer) {
+		clearTimeout(deferredHomeModalTimer);
+		deferredHomeModalTimer = null;
+	}
+
+	if (deferredHomeInitTimer) {
+		clearTimeout(deferredHomeInitTimer);
+		deferredHomeInitTimer = null;
+	}
 }
 
 function clearModalQuery() {
@@ -247,7 +267,7 @@ function openWelcomePopoverFromTrigger() {
 	scheduleWelcomePopover(0);
 }
 
-onMounted(() => {
+function runDeferredHomeInit() {
 	if (import.meta.client) {
 		const shouldShowWelcomePopover =
 			window.localStorage.getItem(HOME_WELCOME_POPOVER_PENDING_KEY) === '1';
@@ -262,7 +282,9 @@ onMounted(() => {
 		window.addEventListener('resize', syncGuideTourTargetRect);
 		window.addEventListener('scroll', syncGuideTourTargetRect, true);
 	}
+}
 
+function openInitialHomeModalFromRoute() {
 	const modalQuery = Array.isArray(route.query.modal)
 		? route.query.modal[0]
 		: route.query.modal;
@@ -301,6 +323,28 @@ onMounted(() => {
 
 	forgotEmail.value = typeof emailQuery === 'string' ? emailQuery : '';
 	isForgotPasswordModalOpen.value = true;
+}
+
+onMounted(() => {
+	deferredHomeModalTimer = setTimeout(() => {
+		openInitialHomeModalFromRoute();
+		deferredHomeModalTimer = null;
+	}, 0);
+
+	if (!import.meta.client) return;
+
+	if ('requestIdleCallback' in window) {
+		deferredHomeInitHandle = window.requestIdleCallback(() => {
+			runDeferredHomeInit();
+			deferredHomeInitHandle = null;
+		});
+		return;
+	}
+
+	deferredHomeInitTimer = setTimeout(() => {
+		runDeferredHomeInit();
+		deferredHomeInitTimer = null;
+	}, 250);
 });
 
 watch(isResetPasswordModalOpen, (open, previous) => {
@@ -320,6 +364,7 @@ onBeforeUnmount(() => {
 	clearWelcomePopoverTimer();
 	clearWelcomePopoverAutoCloseTimer();
 	clearGuideDonePopoverAutoCloseTimer();
+	clearDeferredHomeInit();
 	setGuideTourBodyState(false);
 	currentGuideTargetEl?.classList.remove('home-guide-tour-target-active');
 	currentGuideTargetEl = null;

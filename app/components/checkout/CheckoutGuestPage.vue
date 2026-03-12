@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CheckoutLoginModal from '~/components/checkout/CheckoutLoginModal.vue';
 import { useCheckoutGuestPage } from '~/composables/checkout/guest/useCheckoutGuestPage';
 
 const {
@@ -35,6 +36,9 @@ const {
 	completeLoaderRef,
 	completeCheckout,
 	itemMeta,
+	isLoginModalOpen,
+	openLoginModal,
+	closeLoginModal,
 } = useCheckoutGuestPage();
 </script>
 
@@ -68,7 +72,17 @@ const {
 							</div>
 							<div class="checkout-login-link">
 								<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
-								<NuxtLink :to="withCountry('/auth/login')" class="checkout-login-link-action">{{ t('checkout.guest.login') }}</NuxtLink>
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="sm"
+									class="checkout-login-link-action"
+									label-class="checkout-login-link-action-label"
+									data-testid="checkout-login-modal-open-button"
+									@click="openLoginModal"
+								>
+									{{ t('checkout.guest.login') }}
+								</UiButton>
 							</div>
 						</div>
 						<UiInput
@@ -316,6 +330,11 @@ const {
 			/>
 		</template>
 	</CheckoutPageBase>
+
+	<CheckoutLoginModal
+		v-model="isLoginModalOpen"
+		@update:model-value="closeLoginModal"
+	/>
 </template>
 
 <style lang="scss">
@@ -410,12 +429,24 @@ const {
 		line-height: var(--type-line-100);
 
 		.checkout-login-link-action {
+			--btn-soft: transparent;
+			--btn-border: transparent;
+			--btn-bg: transparent;
 			margin-left: 4px;
+			min-height: auto;
+			height: auto;
+			padding: 0;
+			border-radius: 0;
+			box-shadow: none;
 			color: var(--gold-60);
 			font-weight: var(--font-weight-semibold);
 			text-decoration: underline;
 			text-underline-offset: 3px;
 			text-decoration-thickness: 2px;
+
+			.checkout-login-link-action-label {
+				padding: 0;
+			}
 		}
 	}
 

@@ -203,6 +203,10 @@ const {
 <style scoped lang="scss">
 .auth-verification-modal {
     position: relative;
+    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    padding: var(--ui-modal-padding, 40px);
+    border-radius: 14px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -360,5 +364,9 @@ const {
         }
 
     }
+}
+
+:deep(.auth-verification-modal .ui-loading-overlay) {
+    border-radius: 14px;
 }
 </style>

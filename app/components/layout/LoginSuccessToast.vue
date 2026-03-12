@@ -4,6 +4,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import {
 	GUEST_LOGIN_TOAST_PENDING_KEY,
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
+	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 
 const { t } = useI18n();
@@ -64,6 +65,9 @@ function consumePendingLoginSuccessToast() {
 
 onMounted(() => {
 	consumePendingLoginSuccessToast();
+	if (import.meta.client) {
+		window.addEventListener(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT, consumePendingLoginSuccessToast);
+	}
 });
 
 watch(
@@ -74,6 +78,9 @@ watch(
 );
 
 onBeforeUnmount(() => {
+	if (import.meta.client) {
+		window.removeEventListener(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT, consumePendingLoginSuccessToast);
+	}
 	clearShowToastTimer();
 	clearHideToastTimer();
 });

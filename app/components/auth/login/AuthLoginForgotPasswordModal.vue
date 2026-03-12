@@ -96,7 +96,20 @@ async function submitReset() {
 		gap="8px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
-		<template #header>
+		<div
+			class="auth-forgot-body"
+			:class="sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
+		>
+			<UiLoadingOverlay
+				:visible="loading"
+				:label="t('auth.login.forgot.sending')"
+				test-id="auth-login-forgot-password-loading-overlay"
+				position="absolute"
+				background="rgba(246, 246, 248, 0.72)"
+				:z-index="5"
+				loader-width="74px"
+				loader-height="74px"
+			/>
 			<div class="auth-forgot-header">
 				<UiLogo
 					name="musticker"
@@ -109,12 +122,6 @@ async function submitReset() {
 					{{ sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
 				</h3>
 			</div>
-		</template>
-
-		<div
-			class="auth-forgot-body"
-			:class="sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
-		>
 			<template v-if="!sent">
 				<p class="auth-forgot-description">
 					{{ t('auth.login.forgot.description') }}
@@ -216,6 +223,12 @@ async function submitReset() {
 }
 
 .auth-forgot-body {
+    position: relative;
+    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    padding: var(--ui-modal-padding, 40px);
+    background: var(--contrast-light);
+    border-radius: 14px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 
@@ -296,6 +309,10 @@ async function submitReset() {
             }
         }
     }
+}
+
+:deep(.auth-forgot-body .ui-loading-overlay) {
+    border-radius: 14px;
 }
 
 .auth-forgot-body-default {

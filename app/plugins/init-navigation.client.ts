@@ -8,7 +8,7 @@ import {
 	resolveSupportedCountry
 } from '~/constants/countries'
 
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp) => {
 	const route = useRoute();
 
 	interface Category {
@@ -30,31 +30,42 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	const api = useApi()
 	const navigationStore = useNavigationStore(nuxtApp.$pinia)
 
-	const routeCountry = resolveSupportedCountry(route.params.country || '') || DEFAULT_COUNTRY
-	const apiCountry = COUNTRY_TO_API_COUNTRY[routeCountry]
+	async function fetchNavigationCategories() {
+		const routeCountry = resolveSupportedCountry(route.params.country || '') || DEFAULT_COUNTRY
+		const apiCountry = COUNTRY_TO_API_COUNTRY[routeCountry]
 
-	try {
-		const response = await api<CategoriesResponse>(
-			`/${apiCountry}/navigation/categories`,
-			{
-				method: 'GET'
+		try {
+			const response = await api<CategoriesResponse>(
+				`/${apiCountry}/navigation/categories`,
+				{
+					method: 'GET'
+				}
+			)
+
+			const categories = response.data
+
+			if (!categories || !categories.length) {
+				navigationStore.clearCategories()
+				return
 			}
-		)
 
-		const categories = response.data
-
-		if (!categories || !categories.length) {
+			navigationStore.setCategories(categories)
+		} catch (error) {
+			console.error('Navigation init failed:', error)
 			navigationStore.clearCategories()
+		}
+	}
+
+	nuxtApp.hook('app:mounted', () => {
+		if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+			window.requestIdleCallback(() => {
+				void fetchNavigationCategories()
+			})
 			return
 		}
 
-		navigationStore.setCategories(categories)
-
-	} catch (error) {
-
-		console.error('Navigation init failed:', error)
-
-		navigationStore.clearCategories()
-	}
-
+		setTimeout(() => {
+			void fetchNavigationCategories()
+		}, 0)
+	})
 })

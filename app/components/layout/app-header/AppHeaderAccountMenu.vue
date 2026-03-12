@@ -2,10 +2,11 @@
 import { toRef } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
+import type { icons } from '~/data/ui/icons';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-type IconName = keyof typeof import('~/data/ui/icons').icons;
+type IconName = keyof typeof icons;
 
 type AccountLink = {
 	to: string;
@@ -316,7 +317,7 @@ const {
         }
     }
 
-        .home-header-account {
+    .home-header-account {
         position: relative;
         z-index: 2;
         --btn-soft: rgba(255, 255, 255, 0.3);

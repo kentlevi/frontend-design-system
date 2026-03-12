@@ -219,7 +219,17 @@ async function submitChangePassword() {
 		gap="40px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
-		<template #header>
+		<div class="auth-reset-body">
+			<UiLoadingOverlay
+				:visible="loading"
+				:label="t('auth.reset.changing')"
+				test-id="auth-reset-password-loading-overlay"
+				position="absolute"
+				background="rgba(246, 246, 248, 0.72)"
+				:z-index="5"
+				loader-width="74px"
+				loader-height="74px"
+			/>
 			<div class="auth-reset-header">
 				<UiLogo name="musticker" variant="mark" color="colored" :size="34" class="auth-reset-logo" />
 				<div class="auth-reset-copy">
@@ -229,9 +239,6 @@ async function submitChangePassword() {
 					</p>
 				</div>
 			</div>
-		</template>
-
-		<div class="auth-reset-body">
 			<div class="auth-reset-fields">
 				<div class="auth-reset-field">
 					<div class="auth-reset-field-head">
@@ -342,6 +349,11 @@ async function submitChangePassword() {
 }
 
 .auth-reset-body {
+    position: relative;
+    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    padding: var(--ui-modal-padding, 40px);
+    border-radius: 14px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -397,6 +409,10 @@ async function submitChangePassword() {
         border-radius: 16px;
         box-shadow: none;
     }
+}
+
+:deep(.auth-reset-body .ui-loading-overlay) {
+    border-radius: 14px;
 }
 
 @media (max-width: 900px) {

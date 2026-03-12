@@ -16,6 +16,7 @@ import type {
 export function useCheckoutGuestPage() {
 	const { t } = useI18n();
 	const { withCountry } = useCountry();
+	const is_login_modal_open = ref(false);
 
 	const {
 		provinceOptions,
@@ -78,6 +79,14 @@ export function useCheckoutGuestPage() {
 		});
 	}
 
+	function openLoginModal() {
+		is_login_modal_open.value = true;
+	}
+
+	function closeLoginModal() {
+		is_login_modal_open.value = false;
+	}
+
 	return {
 		t,
 		withCountry,
@@ -112,5 +121,8 @@ export function useCheckoutGuestPage() {
 		completeLoaderRef,
 		completeCheckout,
 		itemMeta,
+		isLoginModalOpen: is_login_modal_open,
+		openLoginModal,
+		closeLoginModal,
 	};
 }

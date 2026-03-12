@@ -1,4 +1,5 @@
 import { COUNTRY_TO_API_COUNTRY, DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries';
+import type { UserProfile } from '~/stores/user';
 
 export default defineNuxtRouteMiddleware(async (to) => {
 	const userStore = useUserStore();
@@ -25,7 +26,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 		if (me?.success && me.data?.user) {
 			userStore.setUser({
 				...(me.data.user as { id: number; code: string; email: string }),
-				profile: (me.data.profile as any) ?? null,
+				profile: (me.data.profile as UserProfile | null | undefined) ?? null,
 			});
 			return;
 		}

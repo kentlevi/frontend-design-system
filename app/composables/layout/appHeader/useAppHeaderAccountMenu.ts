@@ -4,6 +4,7 @@ import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import type { icons } from '~/data/ui/icons';
 import {
 	normalizeAppPath,
 	sanitizeExistingRedirect,
@@ -12,7 +13,7 @@ import {
 
 type AccountLink = {
 	to: string;
-	icon: string;
+	icon: keyof typeof icons;
 	label: string;
 };
 
@@ -77,8 +78,8 @@ export function useAppHeaderAccountMenu(params: {
 		account_toggle_ref.value = resolveButtonElement(element);
 	}
 
-	function setAccountDropdownRef(element: HTMLElement | null) {
-		account_dropdown_ref.value = element;
+	function setAccountDropdownRef(element: Element | ComponentPublicInstance | null) {
+		account_dropdown_ref.value = element instanceof HTMLElement ? element : null;
 	}
 
 	const guest_login_target = computed(() => {

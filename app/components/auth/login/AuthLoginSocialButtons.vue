@@ -3,7 +3,10 @@ import { useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import type { UserIdentity, UserProfile } from '~/stores/user';
-import { HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY } from '~/data/home/onboarding';
+import {
+	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
+	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
+} from '~/data/home/onboarding';
 
 const { t } = useI18n();
 const api = useApi();
@@ -80,6 +83,7 @@ async function syncSocialLoginUserState() {
 
 		if (import.meta.client) {
 			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+			window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
 		}
 
 		return true;

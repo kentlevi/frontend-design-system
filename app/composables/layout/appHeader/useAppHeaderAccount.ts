@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { FlagCode } from '~/data/ui/flags';
 import type { SupportedCountry } from '~/constants/countries';
 import { isSupportedCountry } from '~/constants/countries';
@@ -214,6 +214,9 @@ export function useAppHeaderAccount() {
 	}
 
 	async function logoutMock() {
+		closeAccountMenu();
+		await nextTick();
+
 		void api(`/${apiCountry.value}/auth/logout`, {
 			method: 'POST',
 		}).catch(() => {
@@ -225,7 +228,6 @@ export function useAppHeaderAccount() {
 		mock_user.value = null;
 		user_store.clearUser();
 		user_store.clearOnboardingProfile();
-		closeAccountMenu();
 		await navigateTo(withCountry('/'));
 	}
 

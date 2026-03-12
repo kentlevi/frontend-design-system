@@ -31,7 +31,7 @@ export function useCheckoutMember() {
 	const guestCheckout = useCheckoutGuest();
 
 	const memberEmail = computed(() => userStore.email || mockUser.value?.email || 'joy.love@musticker.com');
-	const savedShippingAddresses = ref<MemberAddress[]>([
+	const savedShippingAddresses = computed<MemberAddress[]>(() => [
 		{
 			id: 'addr-default',
 			recipient: `${normalizedName.value.firstName} ${normalizedName.value.lastName}`.trim() || 'Joy Love',
