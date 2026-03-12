@@ -306,6 +306,7 @@ export function useLoginPageForm() {
 		const order_number = nonMemberOrderNumber.value.trim()
 
 		try {
+			isGuestVerifying.value = true;
 			const { handleNonMemberVerification } = useLoginUser()
 			const response = await handleNonMemberVerification({
 				email,
@@ -340,18 +341,19 @@ export function useLoginPageForm() {
 			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
 			console.error(error)
 			return
+		} finally {
+			isGuestVerifying.value = false;
 		}
 	}
 
 	async function resendGuestVerification() {
-
 		if (guestResendCooldownRemaining.value > 0) return
 
 		const cache = getGuestVerificationCache()
 		if (!cache) return
 
 		try {
-
+			isGuestVerifying.value = true;
 			const { handleNonMemberVerification } = useLoginUser()
 
 			const response = await handleNonMemberVerification({
@@ -377,6 +379,8 @@ export function useLoginPageForm() {
 
 		} catch (error) {
 			console.error(error)
+		} finally {
+			isGuestVerifying.value = false;
 		}
 	}
 
