@@ -83,7 +83,6 @@ const {
 				:selected-product="selectedProduct"
 				:size-feature-cards="sizeFeatureCards"
 				:selected-size="selectedSize"
-				:size-option-models="sizeOptionModels"
 				:quantity-options="quantityOptions"
 				:selected-qty="selectedQty"
 				:navigation-in-flight="selectionNavigationInFlight"

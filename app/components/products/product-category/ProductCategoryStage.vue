@@ -3,11 +3,8 @@ import type { ProductItem } from '~/types/products/catalog';
 import type { SizeOptionKey } from '~/types/products/categoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
-type SizeOptionModel = {
-	key: SizeOptionKey;
-	name: string;
-	dim: string;
-};
+import type { SizeOption } from '~/types/products/attributes';
+import { useProductHandler } from '~/composables/product-page/useProductHandler';
 
 type SizeFeatureCard = {
 	key: SizeOptionKey;
@@ -22,7 +19,6 @@ const props = defineProps<{
 	selectedProduct: ProductItem | null;
 	sizeFeatureCards: readonly SizeFeatureCard[];
 	selectedSize: SizeOptionKey;
-	sizeOptionModels: SizeOptionModel[];
 	quantityOptions: readonly number[];
 	selectedQty: number;
 	navigationInFlight: boolean;
@@ -49,6 +45,31 @@ const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
+
+// -------------------------------
+// 🔥 Functionality Implementation
+// -------------------------------
+const {
+	featured_sizes,
+	selected_size,
+	updateProduct
+} = useProductHandler();
+const size_options = ref<SizeOption[]>([])
+const route = useRoute()
+const route_product = route.params?.product
+
+if ( typeof route_product === 'string' ) {
+	onMounted(async () => {
+		console.log('Mounted')
+
+		size_options.value = featured_sizes.value
+
+		updateProduct(route_product)
+	})
+}
+// -------------------------------
+// ⚠️ End of functionalities
+// -------------------------------
 
 </script>
 
@@ -133,16 +154,15 @@ const unitPrice = computed(() =>
 							</div>
 							<div class="option-grid option-grid-size" data-testid="product-category-size-options">
 								<button
-									v-for="size in props.sizeOptionModels"
-									:key="size.key"
+									v-for="size in featured_sizes"
+									:key="size.id"
 									type="button"
 									class="option-pill"
-									:class="{ 'is-active': props.selectedSize === size.key }"
-									:data-testid="`product-category-size-option-${size.key}`"
-									@click="emit('update:selectedSize', size.key)"
+									:class="{ 'is-active': selected_size?.id === size.id }"
+									:data-testid="`product-category-size-option-${size.id}`"
 								>
-									<span class="size-pill-name">{{ size.name }}</span>
-									<span class="size-pill-dim">{{ size.dim }}</span>
+									<span class="size-pill-name">{{ size.label }}</span>
+									<span class="size-pill-dim">{{ size.width }}x{{ size.height }}</span>
 								</button>
 								<button
 									type="button"
