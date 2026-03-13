@@ -42,12 +42,12 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
     min-height: calc(100vh - 176px);
 
     .account-content {
-        padding-top: 24px;
+        padding-top: 40px;
 
         .account-points-title {
             margin: 0 0 18px;
-            font-size: var(--type-size-600);
-            line-height: var(--type-line-600);
+            font-size: var(--type-size-450);
+            line-height: var(--type-line-450);
         }
 
         .account-points-hero {
@@ -61,7 +61,7 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
             gap: 20px;
 
             .account-points-tier {
-                margin: 0;
+
                 font-size: var(--type-size-550);
                 line-height: var(--type-line-550);
             }
@@ -72,7 +72,7 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
             }
 
             .account-points-balance {
-                margin: 0;
+
                 font-size: var(--type-size-550);
                 line-height: var(--type-line-550);
                 color: var(--text-primary);
@@ -99,7 +99,7 @@ const { logs, balance, lastTierUpgradeDate } = useAccountPoints();
                 }
 
                 .account-points-log-title {
-                    margin: 0;
+
                     font-size: var(--type-size-300);
                     line-height: var(--type-line-300);
                 }

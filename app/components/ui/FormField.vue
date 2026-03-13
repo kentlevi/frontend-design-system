@@ -100,7 +100,7 @@ const describedBy = computed(() => {
 }
 
 .ui-form-field-label {
-    margin: 0;
+
     display: inline-flex;
     align-items: center;
 }
@@ -119,7 +119,7 @@ const describedBy = computed(() => {
 }
 
 .ui-form-field-hint {
-    margin: 0;
+
     color: var(--text-secondary);
     font-size: var(--type-size-100);
     line-height: var(--type-line-100);

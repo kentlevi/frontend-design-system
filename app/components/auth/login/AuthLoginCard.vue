@@ -83,6 +83,7 @@ const {
 					variant="ghost"
 					tone="neutral"
 					size="sm"
+					:no-hover="true"
 					class="auth-login-card-close"
 					aria-label="Close modal"
 					@click="emit('close')"
@@ -200,9 +201,6 @@ const {
 			min-height: auto;
 			border-radius: 6px;
 			box-shadow: none;
-			&:hover {
-				--btn-soft: transparent;
-			}
 		}
 
 		.auth-login-intro {

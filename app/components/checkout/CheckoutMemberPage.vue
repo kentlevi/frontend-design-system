@@ -301,7 +301,7 @@ const {
 			}
 
 			.checkout-member-section-title {
-				margin: 0;
+
 				font-size: var(--type-size-300);
 				line-height: var(--type-line-200);
 				font-weight: var(--font-weight-bold);
@@ -399,7 +399,7 @@ const {
 					line-height: var(--type-line-100);
 
 					.checkout-member-address-line {
-						margin: 0;
+
 					}
 				}
 

@@ -153,7 +153,7 @@ const estimatedArrival = computed(() => {
 				}
 
 				.checkout-confirmation-title {
-					margin: 0;
+
 					font-size: var(--type-size-350);
 					font-weight: var(--font-weight-semibold);
 					line-height: var(--type-line-200);
@@ -219,7 +219,7 @@ const estimatedArrival = computed(() => {
 				gap: 16px;
 
 				.checkout-confirmation-summary-title {
-					margin: 0;
+
 					font-size: var(--type-size-100);
 					font-weight: var(--font-weight-semibold);
 					line-height: var(--type-line-100);

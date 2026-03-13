@@ -285,7 +285,7 @@ const unitPrice = computed(() =>
     }
 
     .product-picker-name {
-        margin: 0;
+
         text-align: center;
         font-size: var(--type-size-200);
         font-weight: var(--font-weight-medium);
@@ -344,14 +344,14 @@ const unitPrice = computed(() =>
         padding: 0;
 
         .product-preview-title {
-            margin: 0;
+
             font-size: var(--type-size-600);
             line-height: var(--type-line-600);
             color: var(--text-primary);
         }
 
         .product-preview-blurb {
-            margin: 0;
+
             font-size: var(--type-size-200);
             line-height: var(--type-line-200);
             color: var(--text-secondary);
@@ -406,7 +406,7 @@ const unitPrice = computed(() =>
                     width: 152px;
                     max-width: 100%;
                     height: 24px;
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     font-weight: var(--font-weight-semibold);
@@ -420,7 +420,7 @@ const unitPrice = computed(() =>
                 }
 
                 .mini-feature-description {
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     color: var(--text-secondary);
@@ -455,7 +455,7 @@ const unitPrice = computed(() =>
         gap: 20px;
 
         .option-title {
-            margin: 0;
+
             font-size: var(--type-size-300);
             line-height: var(--type-line-300);
             color: var(--text-primary);
@@ -546,7 +546,7 @@ const unitPrice = computed(() =>
         padding-top: 16px;
 
         .price-summary-row {
-            margin: 0;
+
             display: flex;
             align-items: baseline;
             font-size: var(--type-size-100);

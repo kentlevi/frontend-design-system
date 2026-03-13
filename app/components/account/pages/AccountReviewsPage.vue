@@ -36,12 +36,12 @@ const { reviews } = useAccountReviews();
     min-height: calc(100vh - 176px);
 
     .account-content {
-        padding-top: 24px;
+        padding-top: 40px;
 
         .account-reviews-title {
             margin: 0 0 20px;
-            font-size: var(--type-size-600);
-            line-height: var(--type-line-600);
+            font-size: var(--type-size-450);
+            line-height: var(--type-line-450);
         }
 
         .account-reviews-list {
@@ -61,13 +61,13 @@ const { reviews } = useAccountReviews();
                     gap: 12px;
 
                     .account-reviews-card-title {
-                        margin: 0;
+
                         font-size: var(--type-size-500);
                         line-height: var(--type-line-500);
                     }
 
                     .account-reviews-card-date {
-                        margin: 0;
+
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);
                         color: var(--text-secondary);

@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { useCountry } from '~/composables/app/country/useCountry';
+import type { icons } from '~/data/ui/icons';
 import {
 	getAccountInitials,
 	getProfileFieldValue,
 	normalizeAccountName,
 } from '~/utils/account/accountProfile';
+
+type IconName = keyof typeof icons;
+type AccountStat = {
+	key: string;
+	label: string;
+	value: string;
+	iconName: IconName | null;
+	iconSrc: string;
+	iconAlt: string;
+};
 
 const props = defineProps<{
 	activeTab:
@@ -68,12 +79,12 @@ const initials = computed(() => {
 const avatarDisplayUrl = computed(
 	() => localAvatarDataUrl.value
 );
-const accountStats = computed(() => [
+const accountStats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
 		label: t('account.shell.stats.order'),
 		value: '0',
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/checkout/icon-box.svg',
 		iconAlt: 'Orders',
 	},
@@ -81,7 +92,7 @@ const accountStats = computed(() => [
 		key: 'points',
 		label: t('account.shell.stats.points'),
 		value: '0.00',
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/account/points-icon.svg',
 		iconAlt: 'Points',
 	},
@@ -89,7 +100,7 @@ const accountStats = computed(() => [
 		key: 'coupons',
 		label: t('account.shell.stats.coupons'),
 		value: '0',
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/account/coupon-icon.svg',
 		iconAlt: 'Coupons',
 	},
@@ -97,7 +108,7 @@ const accountStats = computed(() => [
 		key: 'total-spent',
 		label: t('account.shell.stats.totalSpent'),
 		value: t('account.shell.defaultBalance'),
-		iconName: '',
+		iconName: null,
 		iconSrc: '/icons/custom/account/total-spent-icon.svg',
 		iconAlt: 'Total spent',
 	},
@@ -130,14 +141,14 @@ onBeforeUnmount(() => {
 });
 
 const tabs = [
-	{ key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'light-user' },
-	{ key: 'address-book', label: t('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'light-home' },
-	{ key: 'orders', label: t('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'light-box-full' },
-	{ key: 'gallery', label: t('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'light-image' },
-	{ key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'light-star' },
-	{ key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'light-ticket' },
-	{ key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'light-comments' },
-	{ key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'light-file-details' },
+	{ key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'regular-user' },
+	{ key: 'address-book', label: t('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'regular-home' },
+	{ key: 'orders', label: t('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'regular-boxes' },
+	{ key: 'gallery', label: t('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'regular-image' },
+	{ key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'regular-star' },
+	{ key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'regular-ticket' },
+	{ key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'regular-comments' },
+	{ key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'regular-file-details' },
 ] as const;
 </script>
 
@@ -176,7 +187,7 @@ const tabs = [
 							class="account-shell-stat-icon-image"
 						>
 						<UiIcon
-							v-else
+							v-else-if="stat.iconName"
 							:name="stat.iconName"
 							:size="48"
 							class="account-shell-stat-icon"
@@ -212,7 +223,7 @@ const tabs = [
 .account-shell {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 22px 24px 72px;
+    padding: 40px 0;
 
     .account-shell-top {
         display: flex;
@@ -254,7 +265,6 @@ const tabs = [
 
 	.account-shell-user-copy {
 		.account-shell-name {
-			margin: 0;
 			font-size: var(--type-size-300);
 			line-height: var(--type-line-300);
 			font-weight: var(--font-weight-bold);
@@ -321,9 +331,8 @@ const tabs = [
     }
 
     .account-shell-tabs {
-        margin-top: 20px;
-        border-bottom: 1px solid var(--border-default);
-        padding: 14px 0;
+        border-bottom: 1px solid var(--gray-50);
+        padding: 24px 0;
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
@@ -344,9 +353,13 @@ const tabs = [
         border: 1px solid transparent;
 
         &.is-active {
-            background: color-mix(in srgb, var(--brand-primary) 22%, var(--contrast-light));
-            border-color: color-mix(in srgb, var(--brand-primary) 52%, var(--border-default));
+            background: var(--gold-10);
+            border-color: var(--gold-40);
         }
+
+		&:hover {
+            background: var(--gold-10);
+		}
 
 		&.account-shell-tab-label {
 			font-size: var(--type-size-100);

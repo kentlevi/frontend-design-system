@@ -345,7 +345,7 @@ const storyRows = computed<StoryRow[]>(() => {
             }
 
             .product-details-text {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 line-height: var(--type-line-200);
                 color: var(--text-secondary);

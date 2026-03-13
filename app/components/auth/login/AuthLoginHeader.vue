@@ -28,7 +28,7 @@ const { withCountry } = useCountry();
     gap: 12px;
 
     .auth-login-title {
-        margin: 0;
+
         text-align: center;
         color: var(--text-primary);
         font-size: var(--type-size-500);
@@ -36,7 +36,7 @@ const { withCountry } = useCountry();
     }
 
     .auth-login-subtitle {
-        margin: 0;
+
         text-align: center;
         color: var(--text-secondary);
         font-size: var(--type-size-100);

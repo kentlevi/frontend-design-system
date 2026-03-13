@@ -207,7 +207,7 @@ const { t } = useI18n();
         }
 
         .upload-modal-title {
-            margin: 0;
+
             font-size: var(--type-size-300);
             line-height: var(--type-line-300);
             color: var(--text-primary);
@@ -250,7 +250,7 @@ const { t } = useI18n();
             }
 
             .upload-dropzone-title {
-                margin: 0;
+
 				font-size: var(--type-size-100);
 				font-weight: var(--font-weight-semibold);
         		line-height: var(--type-line-100);
@@ -266,7 +266,7 @@ const { t } = useI18n();
             }
 
             .upload-dropzone-meta {
-                margin: 0;
+
 				font-size: var(--type-size-100);
         		line-height: var(--type-line-100);
 				color: var(--gray-80);

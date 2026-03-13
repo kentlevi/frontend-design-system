@@ -265,6 +265,7 @@ async function submitChangePassword() {
 								variant="ghost"
 								tone="neutral"
 								size="sm"
+								:no-hover="true"
 								class="auth-reset-toggle"
 								:aria-label="t('auth.reset.togglePassword')"
 								:sr-label="t('auth.reset.togglePassword')"
@@ -293,6 +294,7 @@ async function submitChangePassword() {
 								variant="ghost"
 								tone="neutral"
 								size="sm"
+								:no-hover="true"
 								class="auth-reset-toggle"
 								:aria-label="t('auth.reset.toggleConfirmPassword')"
 								:sr-label="t('auth.reset.toggleConfirmPassword')"
@@ -339,7 +341,7 @@ async function submitChangePassword() {
 		}
 
 		.auth-reset-description {
-			margin: 0;
+
 			color: var(--text-secondary);
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);
@@ -385,7 +387,6 @@ async function submitChangePassword() {
     }
 
     .auth-reset-toggle {
-        --btn-soft: transparent;
         --btn-border: transparent;
         padding: 0;
         min-height: auto;
@@ -397,7 +398,7 @@ async function submitChangePassword() {
     }
 
     .auth-reset-error {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--error);

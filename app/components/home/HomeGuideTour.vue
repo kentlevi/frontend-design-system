@@ -201,7 +201,7 @@ onMounted(() => {
 			gap: 14px;
 
 			.home-guide-tour-title {
-				margin: 0;
+
 				font-size: var(--type-size-200);
 				line-height: var(--type-line-200);
 				font-weight: var(--font-weight-bold);
@@ -210,7 +210,7 @@ onMounted(() => {
 			}
 
 			.home-guide-tour-text {
-				margin: 0;
+
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
 				color: var(--text-primary);
@@ -224,7 +224,7 @@ onMounted(() => {
 			gap: 12px;
 
 			.home-guide-tour-step {
-				margin: 0;
+
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
 				font-weight: var(--font-weight-bold);

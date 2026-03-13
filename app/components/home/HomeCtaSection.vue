@@ -79,7 +79,7 @@ async function onProductionInquiryClick() {
             gap: 64px;
 
             .home-cta-title {
-                margin: 0;
+
                 font-family: var(--font-base);
                 color: var(--contrast-light);
                 font-size: var(--type-size-600);

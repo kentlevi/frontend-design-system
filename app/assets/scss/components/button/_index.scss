@@ -235,6 +235,28 @@
     }
 }
 
+.ui-button[data-no-hover='true'][data-variant='filled'] {
+    &:hover:not(:disabled) {
+        box-shadow: sh.$shadow-md;
+        filter: none;
+    }
+}
+
+.ui-button[data-no-hover='true'][data-variant='tonal'],
+.ui-button[data-no-hover='true'][data-variant='subtle'] {
+    &:hover:not(:disabled) {
+        filter: none;
+    }
+}
+
+.ui-button[data-no-hover='true'][data-variant='outline'],
+.ui-button[data-no-hover='true'][data-variant='ghost'] {
+    &:hover:not(:disabled) {
+        background: transparent;
+        filter: none;
+    }
+}
+
 .ui-button-indicator {
     position: absolute;
     left: 0;

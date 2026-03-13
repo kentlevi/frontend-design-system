@@ -171,6 +171,7 @@ async function submitReset() {
 						variant="ghost"
 						tone="neutral"
 						size="sm"
+						:no-hover="true"
 						class="auth-forgot-return"
 						label-class="auth-forgot-return-label"
 						data-testid="auth-login-forgot-password-return-button"
@@ -215,7 +216,7 @@ async function submitReset() {
     }
 
     .auth-forgot-title {
-        margin: 0;
+
         font-size: var(--type-size-500);
         line-height: var(--type-line-500);
         color: var(--text-primary);
@@ -233,7 +234,7 @@ async function submitReset() {
     flex-direction: column;
 
     .auth-forgot-description {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--text-secondary);
@@ -248,7 +249,7 @@ async function submitReset() {
         }
 
         .auth-forgot-field-error {
-            margin: 0;
+
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
             font-weight: var(--font-weight-semibold);
@@ -261,7 +262,7 @@ async function submitReset() {
     }
 
     .auth-forgot-success {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--success);
@@ -281,7 +282,6 @@ async function submitReset() {
         }
 
         .auth-forgot-return {
-            --btn-soft: transparent;
             --btn-border: transparent;
             --btn-bg: var(--text-secondary);
 

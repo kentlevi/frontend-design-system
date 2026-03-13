@@ -76,7 +76,7 @@ const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highli
             gap: 20px;
 
             .home-feature-title {
-                margin: 0;
+
                 font-family: var(--font-base);
                 font-size: var(--type-size-550);
                 line-height: var(--type-line-550);
@@ -86,7 +86,7 @@ const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highli
             }
 
             .home-feature-text {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: #4c5261;

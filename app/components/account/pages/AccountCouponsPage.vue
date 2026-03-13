@@ -54,7 +54,7 @@ const { coupons } = useAccountCoupons();
     min-height: calc(100vh - 176px);
 
     .account-content {
-        padding-top: 24px;
+        padding-top: 40px;
     }
 
     .account-coupons-header {
@@ -65,9 +65,9 @@ const { coupons } = useAccountCoupons();
         margin-bottom: 20px;
 
         .account-coupons-title {
-            margin: 0;
-            font-size: var(--type-size-600);
-            line-height: var(--type-line-600);
+
+            font-size: var(--type-size-450);
+            line-height: var(--type-line-450);
         }
     }
 
@@ -100,7 +100,7 @@ const { coupons } = useAccountCoupons();
 
             .account-coupons-card-copy {
                 .account-coupons-card-title {
-                    margin: 0;
+
                     font-size: var(--type-size-400);
                     line-height: var(--type-line-400);
                 }
@@ -126,7 +126,7 @@ const { coupons } = useAccountCoupons();
                 gap: 16px;
 
                 .account-coupons-expiry {
-                    margin: 0;
+
                     font-size: var(--type-size-500);
                     line-height: var(--type-line-500);
                     font-weight: var(--font-weight-bold);

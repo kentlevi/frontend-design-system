@@ -197,7 +197,7 @@ const {
             border-bottom: 1px solid var(--gray-30);
 
             .cart-page-title {
-                margin: 0;
+
                 font-size: var(--type-size-500);
                 line-height: var(--type-line-500);
                 color: var(--text-primary);
@@ -339,14 +339,14 @@ const {
 
                             .cart-item-copy {
                             .cart-item-title {
-                                margin: 0;
+
                                 font-size: var(--type-size-100);
                                 line-height: var(--type-line-100);
                                 color: var(--text-primary);
                             }
 
                             .cart-item-size {
-                                margin: 0;
+
                                 font-size: var(--type-size-100);
                                 line-height: var(--type-line-100);
                                 color: var(--text-secondary);
@@ -432,7 +432,7 @@ const {
                         border-bottom: 1px solid var(--gray-30);
 
                         .cart-summary-title {
-                            margin: 0;
+
                             font-size: var(--type-size-200);
                             font-weight: var(--font-weight-bold);
                             line-height: var(--type-line-200);
@@ -482,7 +482,7 @@ const {
                             }
 
                             .cart-summary-note {
-                                margin: 0;
+
                                 color: var(--text-secondary);
                                 font-size: var(--type-size-100);
                                 line-height: var(--type-line-100);
@@ -497,7 +497,7 @@ const {
                     gap: 8px;
 
                     .cart-payment-label {
-                        margin: 0;
+
                         color: var(--text-primary);
                         font-size: var(--type-size-100);
                         font-weight: var(--font-weight-regular);

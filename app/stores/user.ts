@@ -1,5 +1,14 @@
 import { defineStore } from 'pinia'
+import type { PreferenceState } from '~/types/account/preferences'
 import type {
+	UserIdentity,
+	UserProfile,
+	UserFieldValue,
+	OnboardingProfile,
+	UserState
+} from '~/types/auth/user'
+
+export type {
 	UserIdentity,
 	UserProfile,
 	UserFieldValue,
@@ -15,8 +24,20 @@ const initial_user_state = (): UserState => ({
 	code: '',
 	email: '',
 	country_id: 0,
+
 	onboardingProfile: null,
-	profile: null
+	profile: null,
+	preference: {
+		id: 0,
+		user_id: 0,
+		offers_emails: false,
+		reviews_emails: false,
+		confirmations_emails: false,
+		unit_of_measurement: 'mm',
+		guided_tour_enabled: false,
+		created_at: '',
+		updated_at: ''
+	} as PreferenceState,
 })
 
 /**
@@ -73,6 +94,26 @@ export const useUserStore = defineStore('user', {
 			if (!this.profile) return
 
 			this.profile.user_field_values = user_field_values
+		},
+
+		/**
+		 * Set a single preference field
+		 */
+		setPreferenceField<K extends keyof PreferenceState>(
+			field_name: K,
+			field_value: PreferenceState[K]
+		) {
+			this.preference[field_name] = field_value
+		},
+
+		/**
+		 * Merge multiple preference fields
+		 */
+		setPreferenceFields(preference_fields: Partial<PreferenceState>) {
+			this.preference = {
+				...this.preference,
+				...preference_fields,
+			}
 		},
 	},
 })

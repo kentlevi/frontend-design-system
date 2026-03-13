@@ -360,7 +360,7 @@ const {
         justify-content: space-between;
 
         .cart-preview-title {
-            margin: 0;
+
             font-size: var(--type-size-300);
             line-height: var(--type-line-300);
             color: var(--text-primary);
@@ -454,7 +454,7 @@ const {
             }
 
             .cart-preview-meta {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-secondary);
@@ -553,14 +553,14 @@ const {
             }
 
             .cart-preview-empty-title {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-primary);
             }
 
             .cart-preview-empty-description {
-                margin: 0;
+
                 max-width: 420px;
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
@@ -596,7 +596,7 @@ const {
             margin-bottom: 10px;
 
             .cart-preview-section-title {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 line-height: var(--type-line-200);
                 color: var(--text-primary);
@@ -660,7 +660,7 @@ const {
             }
 
             .cart-featured-item-title {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 font-weight: var(--font-weight-medium);
                 line-height: var(--type-line-100);
@@ -702,7 +702,7 @@ const {
         }
 
         .cart-featured-price {
-            margin: 0;
+
             display: flex;
             align-items: baseline;
             justify-content: space-between;
@@ -730,7 +730,7 @@ const {
         gap: 16px;
 
         .cart-preview-total {
-            margin: 0;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -757,14 +757,14 @@ const {
         }
 
         .cart-preview-note-label {
-            margin: 0;
+
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
             color: var(--text-secondary);
         }
 
         .cart-preview-note {
-            margin: 0;
+
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
             color: var(--text-secondary);

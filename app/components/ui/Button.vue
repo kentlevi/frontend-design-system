@@ -24,6 +24,7 @@ const props = withDefaults(
 		selected?: boolean;
 		disabled?: boolean;
 		loading?: boolean;
+		noHover?: boolean;
 
 		width?: string;
 		height?: string;
@@ -44,6 +45,7 @@ const props = withDefaults(
 		selected: false,
 		disabled: false,
 		loading: false,
+		noHover: false,
 		width: '',
 		height: '',
 		style: () => ({}),
@@ -52,8 +54,18 @@ const props = withDefaults(
 );
 
 const mergedStyle = computed<Record<string, string> | undefined>(() => {
+	let numericSize: number | null = null;
+	if (typeof props.size === 'number') {
+		numericSize = props.size;
+	} else if (typeof props.size === 'string' && !buttonSizes.has(props.size as ButtonSize)) {
+		const parsed = Number(props.size);
+		if (Number.isFinite(parsed)) numericSize = parsed;
+	}
+
 	const style = {
 		...(props.style ?? {}),
+		...(numericSize && !props.height ? { height: `${numericSize}px` } : {}),
+		...(numericSize && props.iconOnly && !props.width ? { width: `${numericSize}px` } : {}),
 		...(props.width ? { width: props.width } : {}),
 		...(props.height ? { height: props.height } : {}),
 	};
@@ -83,6 +95,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		:data-tone="tone ?? 'primary'"
 		:data-selected="selected ? 'true' : 'false'"
 		:data-icon-only="iconOnly ? 'true' : 'false'"
+		:data-no-hover="noHover ? 'true' : 'false'"
 		:disabled="disabled || loading"
 		:aria-busy="loading || undefined"
 		:style="mergedStyle"

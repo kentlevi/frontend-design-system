@@ -76,7 +76,7 @@ const { withCountry } = useCountry();
 }
 
 .under-construction-title {
-    margin: 0;
+
     font-size: var(--type-size-650);
     line-height: var(--type-line-650);
     font-weight: var(--font-weight-bold);
@@ -86,7 +86,7 @@ const { withCountry } = useCountry();
 }
 
 .under-construction-copy {
-    margin: 0;
+
     max-width: 900px;
     text-align: center;
     font-size: var(--type-size-300);

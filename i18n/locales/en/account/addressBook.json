@@ -5,6 +5,10 @@
             "addNew": "Add New Address",
             "shippingTitle": "Shipping Address",
             "shippingDescription": "Designated location where your order will be delivered.",
+            "billingTitle": "Billing Address",
+            "billingDescription": "Address associated with your payment method, typically where your credit card or bank statements are sent.",
+            "dropShippingTitle": "Drop Shipping",
+            "dropShippingDescription": "Third-party delivery destinations used for client fulfillment or external shipment handling.",
             "default": "Default",
             "tags": {
                 "Home": "Home",
