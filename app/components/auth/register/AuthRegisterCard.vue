@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
 import AuthEmailAlreadyRegisteredModal from '@/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
+import AuthLoginForgotPasswordModal from '@/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
@@ -49,6 +50,8 @@ const {
 });
 
 const isEmailAlreadyRegisteredModalOpen = ref(false);
+const isRegisteredEmailForgotPasswordModalOpen = ref(false);
+const shouldRestoreRegisteredEmailModal = ref(false);
 const registeredEmailPassword = ref('');
 const registeredEmailPasswordError = ref('');
 const registeredEmailPasswordVisible = ref(false);
@@ -77,6 +80,21 @@ function continueWithRegisteredEmail() {
 function onRegisteredEmailPasswordInput(value: string) {
 	registeredEmailPassword.value = value;
 	registeredEmailPasswordError.value = '';
+}
+
+function openRegisteredEmailForgotPasswordModal() {
+	shouldRestoreRegisteredEmailModal.value = true;
+	isEmailAlreadyRegisteredModalOpen.value = false;
+	isRegisteredEmailForgotPasswordModalOpen.value = true;
+}
+
+function onRegisteredEmailForgotPasswordModalChange(value: boolean) {
+	isRegisteredEmailForgotPasswordModalOpen.value = value;
+
+	if (!value && shouldRestoreRegisteredEmailModal.value) {
+		isEmailAlreadyRegisteredModalOpen.value = true;
+		shouldRestoreRegisteredEmailModal.value = false;
+	}
 }
 
 watch(isEmailTakenError, (is_taken) => {
@@ -345,6 +363,13 @@ watch(isEmailTakenError, (is_taken) => {
 			@update:password="onRegisteredEmailPasswordInput"
 			@update:password-visible="registeredEmailPasswordVisible = $event"
 			@continue="continueWithRegisteredEmail"
+			@forgot-password="openRegisteredEmailForgotPasswordModal"
+		/>
+
+		<AuthLoginForgotPasswordModal
+			:model-value="isRegisteredEmailForgotPasswordModalOpen"
+			:email="email"
+			@update:model-value="onRegisteredEmailForgotPasswordModalChange"
 		/>
 	</div>
 </template>

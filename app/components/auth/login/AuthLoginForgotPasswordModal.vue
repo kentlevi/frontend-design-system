@@ -100,6 +100,15 @@ async function submitReset() {
 			class="auth-forgot-body"
 			:class="sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
 		>
+			<button
+				type="button"
+				class="auth-forgot-close"
+				aria-label="Close forgot password modal"
+				data-testid="auth-login-forgot-password-close-button"
+				@click="closeModal"
+			>
+				<UiIcon name="regular-times" :size="24" />
+			</button>
 			<UiLoadingOverlay
 				:visible="loading"
 				:label="t('auth.login.forgot.sending')"
@@ -232,6 +241,20 @@ async function submitReset() {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+
+    .auth-forgot-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text-primary);
+        cursor: pointer;
+        z-index: 1;
+    }
 
     .auth-forgot-description {
 

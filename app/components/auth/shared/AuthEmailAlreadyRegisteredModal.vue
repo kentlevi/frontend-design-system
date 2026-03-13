@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useCountry } from '~/composables/app/country/useCountry';
-
 const props = withDefaults(defineProps<{
 	modelValue: boolean;
 	email: string;
@@ -17,9 +15,8 @@ const emit = defineEmits<{
 	'update:password': [value: string];
 	'update:passwordVisible': [value: boolean];
 	continue: [];
+	'forgotPassword': [];
 }>();
-
-const { withCountry } = useCountry();
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -27,6 +24,10 @@ function closeModal() {
 
 function togglePasswordVisibility() {
 	emit('update:passwordVisible', !props.passwordVisible);
+}
+
+function openForgotPassword() {
+	emit('forgotPassword');
 }
 </script>
 
@@ -106,13 +107,14 @@ function togglePasswordVisibility() {
 						</UiInput>
 					</UiFormField>
 
-					<NuxtLink
-						:to="withCountry('/auth/login?forgot-password=1')"
+					<button
+						type="button"
 						class="auth-email-registered-forgot-link"
 						data-testid="auth-email-registered-forgot-link"
+						@click="openForgotPassword"
 					>
 						Forgot Password?
-					</NuxtLink>
+					</button>
 				</div>
 
 				<div class="auth-email-registered-modal-actions">
@@ -224,8 +226,12 @@ function togglePasswordVisibility() {
 
 	.auth-email-registered-forgot-link {
 		align-self: center;
+		padding: 0;
+		border: 0;
+		background: transparent;
 		color: var(--text-primary);
 		font-weight: var(--font-weight-semibold);
+		cursor: pointer;
 	}
 
 	.auth-email-registered-modal-actions {
