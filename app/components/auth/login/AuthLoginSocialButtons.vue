@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
-import type { UserIdentity, UserProfile } from '~/stores/user';
+import type { UserIdentity, UserProfile } from '~/types/auth/user';
 import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,

@@ -8,7 +8,16 @@ import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { registerRewardPoints } from '~/data/auth/register';
+import { useLoginUser } from '~/composables/auth/useLoginUser';
+import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
+import { useRoute } from 'vue-router'
+import {
+	GUEST_LOGIN_TOAST_PENDING_KEY,
+	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
+	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
+} from '~/data/home/onboarding';
 
+const route = useRoute();
 const { t } = useI18n();
 const { withCountry } = useCountry();
 
@@ -62,6 +71,10 @@ const {
 	agreeTerms,
 });
 
+const postLoginRedirect = computed(() =>
+	resolvePostLoginRedirect(getRedirectCandidate(), withCountry)
+);
+
 const isEmailAlreadyRegisteredModalOpen = ref(false);
 const isRegisteredEmailForgotPasswordModalOpen = ref(false);
 const shouldRestoreRegisteredEmailModal = ref(false);
@@ -74,6 +87,16 @@ const registeredEmailCredentialsMismatchMessage = computed(() => t('auth.login.v
 const isEmailTakenError = computed(() => emailError.value === emailTakenMessage.value);
 const visibleEmailError = computed(() => (isEmailTakenError.value ? '' : emailError.value));
 
+// Helper functions
+function getRedirectCandidate() {
+	const queryRedirect = Array.isArray(route.query.redirect)
+		? route.query.redirect[0]
+		: route.query.redirect;
+	if (queryRedirect) return queryRedirect;
+	if (!import.meta.client) return null;
+	return window.history.state?.back ?? null;
+}
+
 function closeEmailAlreadyRegisteredModal() {
 	isEmailAlreadyRegisteredModalOpen.value = false;
 	registeredEmailPassword.value = '';
@@ -81,13 +104,30 @@ function closeEmailAlreadyRegisteredModal() {
 	registeredEmailPasswordVisible.value = false;
 }
 
-function continueWithRegisteredEmail() {
+async function continueWithRegisteredEmail() {
 	if (!registeredEmailPassword.value.trim()) {
 		registeredEmailPasswordError.value = t('auth.register.validation.fieldBlank');
 		return;
 	}
 
-	registeredEmailPasswordError.value = registeredEmailCredentialsMismatchMessage.value;
+	const { handleMemberLogin } = useLoginUser();
+	const response = await handleMemberLogin({
+		email: email.value,
+		password: registeredEmailPassword.value,
+		remember_me: false
+	});
+
+	if (!response.success) {
+		registeredEmailPasswordError.value = registeredEmailCredentialsMismatchMessage.value;
+	}
+
+	if (import.meta.client) {
+		window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+		window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
+		window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
+	}
+
+	return await navigateTo(postLoginRedirect.value);
 }
 
 function onRegisteredEmailPasswordInput(value: string) {

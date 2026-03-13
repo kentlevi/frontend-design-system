@@ -1,4 +1,5 @@
 import { DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries';
+import { useUsersStore } from '~/stores/users/users.store';
 
 function resolveCountryFromPath(path: string) {
 	const [firstSegment] = path.split('/').filter(Boolean);
@@ -6,7 +7,8 @@ function resolveCountryFromPath(path: string) {
 }
 
 export default defineNuxtRouteMiddleware((to) => {
-	const userStore = useUserStore();
+	const userStore = useUsersStore();
+	const { state } = storeToRefs(useUsersStore())
 	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 		default: () => null,
 		sameSite: 'lax',
@@ -19,7 +21,7 @@ export default defineNuxtRouteMiddleware((to) => {
 	} | null>('mock_user');
 	const isGuestSession = String(guestLoginMode.value ?? '') === '1';
 	const isAuthenticated =
-		!isGuestSession && Boolean(userStore.email || userStore.id || mockUser.value?.email);
+		!isGuestSession && Boolean(state.value.email || state.value.id || mockUser.value?.email);
 
 	if (!isAuthenticated) return;
 

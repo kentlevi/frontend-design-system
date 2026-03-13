@@ -5,7 +5,7 @@ export type LoginResponse = ApiResponse<LoginData>
 
 export interface LoginData {
 	user?: UserIdentity
-    & { profile: UserProfile | null };
+	& { profile: UserProfile | null };
 }
 
 export interface LoginPayload {
@@ -47,4 +47,8 @@ export type SubmitNonMemberVerificationResponse = ApiResponse<SubmitNonMemberLog
 
 export interface SubmitNonMemberLoginVerification {
 	auth_token: string;
+}
+
+export interface SendResetPasswordLinkPayload {
+	email: string;
 }

@@ -406,11 +406,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 			fetchUserProfile()
 			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
-			if (import.meta.client) {
-				window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
-				window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
-				window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
-			}
 
 			clearGuestVerificationCache()
 			return navigateTo(GUEST_TEST_REDIRECT_URL);;
