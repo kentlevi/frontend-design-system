@@ -173,7 +173,7 @@ async function handleSocial(provider: string) {
     gap: 16px;
 
     .auth-login-divider {
-        margin: 0;
+
         display: flex;
         align-items: center;
         gap: 12px;

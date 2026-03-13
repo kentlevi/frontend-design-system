@@ -206,7 +206,7 @@ function isExactNavHeading(path: string) {
         gap: 40px;
 
         .home-header-link {
-            margin: 0;
+
             font-size: var(--type-size-200);
             font-weight: var(--font-weight-semibold);
             line-height: var(--type-line-200);

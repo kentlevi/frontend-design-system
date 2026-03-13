@@ -220,7 +220,7 @@ const {
             gap: 4px;
 
             .auth-profile-head-title {
-                margin: 0;
+
                 font-size: var(--type-size-400);
                 line-height: var(--type-line-400);
                 font-weight: var(--font-weight-semibold);
@@ -288,14 +288,14 @@ const {
                         }
 
                         .auth-profile-photo-meta-text {
-                            margin: 0;
+
                             color: var(--text-secondary);
                             font-size: var(--type-size-100);
                             line-height: var(--type-line-100);
                         }
 
                         .auth-profile-photo-error {
-                            margin: 0;
+
                             color: var(--error);
                             font-size: var(--type-size-100);
                             line-height: var(--type-line-100);
@@ -361,7 +361,7 @@ const {
                     }
 
                     .auth-profile-field-help {
-                        margin: 0;
+
                         color: var(--text-secondary);
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);

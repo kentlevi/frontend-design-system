@@ -5,6 +5,10 @@
             "addNew": "새 주소 추가",
             "shippingTitle": "배송지 주소",
             "shippingDescription": "주문 상품이 배송될 기본 위치를 관리하세요.",
+            "billingTitle": "청구지 주소",
+            "billingDescription": "결제 수단과 연결된 주소로, 카드 청구서나 은행 명세서가 발송되는 위치입니다.",
+            "dropShippingTitle": "드롭쉬핑",
+            "dropShippingDescription": "고객 배송이나 외부 출고 처리를 위한 제3자 배송지를 관리하세요.",
             "default": "기본",
             "tags": {
                 "Home": "집",

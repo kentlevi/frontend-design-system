@@ -160,7 +160,7 @@ const emit = defineEmits<{
 	overflow: hidden;
 
 	.checkout-summary-title {
-		margin: 0;
+
 		padding: 12px 24px;
 		border-bottom: 1px solid var(--gray-50);
 		display: flex;
@@ -232,7 +232,7 @@ const emit = defineEmits<{
 				justify-content: space-between;
 				height: 100%;
 				.checkout-summary-name {
-					margin: 0;
+
 					color: var(--text-primary);
 					font-size: var(--type-size-100);
 					font-weight: var(--font-weight-bold);
@@ -240,7 +240,7 @@ const emit = defineEmits<{
 				}
 
 				.checkout-summary-meta {
-					margin: 0;
+
 					color: var(--text-secondary);
 					font-size: var(--type-size-100);
 					line-height: var(--type-line-100);
@@ -288,7 +288,7 @@ const emit = defineEmits<{
 			gap: 4px;
 
 			.checkout-summary-line {
-				margin: 0;
+
 				display: flex;
 				align-items: center;
 				justify-content: space-between;

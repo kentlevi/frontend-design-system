@@ -97,7 +97,7 @@ defineProps<{
         text-align: right;
 
         .home-footer-phone {
-            margin: 0;
+
             font-size: var(--type-size-400);
             font-weight: var(--font-weight-semibold);
             line-height: var(--type-line-400);

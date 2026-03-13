@@ -180,7 +180,7 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 				gap: 16px;
 
 				.order-details-title {
-					margin: 0;
+
 					font-size: var(--type-size-400);
 					line-height: var(--type-line-400);
 					color: var(--text-primary);
@@ -221,7 +221,7 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 
 				.order-details-action-copy {
 					.order-details-action-title {
-						margin: 0;
+
 						font-size: var(--type-size-200);
 						line-height: var(--type-line-200);
 						color: var(--text-primary);

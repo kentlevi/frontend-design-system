@@ -64,7 +64,7 @@ const { withCountry } = useCountry();
             }
 
             .checkout-header-title {
-                margin: 0;
+
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;

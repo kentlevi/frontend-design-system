@@ -120,7 +120,7 @@ const skipModalBodyParts = computed(() => {
             gap: 8px;
 
             .home-guide-tour-skip-modal-title {
-                margin: 0;
+
                 font-size: var(--type-size-300);
                 line-height: var(--type-line-300);
                 font-weight: var(--font-weight-bold);

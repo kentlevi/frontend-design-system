@@ -246,7 +246,7 @@ const {
             gap: 4px;
 
             .auth-verification-title {
-                margin: 0;
+
                 color: var(--text-primary);
                 font-size: var(--type-size-400);
                 font-weight: var(--font-weight-semibold);
@@ -254,7 +254,7 @@ const {
             }
 
             .auth-verification-text {
-                margin: 0;
+
                 color: var(--text-secondary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
@@ -273,7 +273,7 @@ const {
         gap: 16px;
 
         .auth-verification-label {
-            margin: 0;
+
             color: var(--text-primary);
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-semibold);
@@ -317,7 +317,7 @@ const {
         }
 
         .auth-verification-error {
-            margin: 0;
+
             color: var(--error);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
@@ -338,7 +338,7 @@ const {
         }
 
         .auth-verification-resend {
-            margin: 0;
+
             color: var(--text-secondary);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);

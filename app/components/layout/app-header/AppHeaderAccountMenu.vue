@@ -440,7 +440,7 @@ const {
             }
 
             .home-account-summary-name {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 font-weight: var(--font-weight-bold);
                 line-height: var(--type-line-200);

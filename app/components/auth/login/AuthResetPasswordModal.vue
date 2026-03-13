@@ -341,7 +341,7 @@ async function submitChangePassword() {
 		}
 
 		.auth-reset-description {
-			margin: 0;
+
 			color: var(--text-secondary);
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);
@@ -398,7 +398,7 @@ async function submitChangePassword() {
     }
 
     .auth-reset-error {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--error);

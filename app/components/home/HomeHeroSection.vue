@@ -95,7 +95,7 @@ async function onOrderNowClick() {
             }
 
             .home-hero-title {
-                margin: 0;
+
                 font-family: var(--font-base);
                 font-size: var(--type-size-600);
                 font-weight: var(--font-weight-bold);
@@ -104,7 +104,7 @@ async function onOrderNowClick() {
             }
 
             .home-hero-subtitle {
-                margin: 0;
+
                 font-size: var(--type-size-300);
                 line-height: var(--type-line-300);
                 color: var(--abyss-base);
