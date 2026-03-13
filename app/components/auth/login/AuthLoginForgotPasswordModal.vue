@@ -14,6 +14,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
+	(e: 'returnToLogin'): void;
 }>();
 
 const { t } = useI18n();
@@ -41,6 +42,10 @@ const isValidEmail = (value: string) =>
 
 function closeModal() {
 	emit('update:modelValue', false);
+}
+
+function returnToLogin() {
+	emit('returnToLogin');
 }
 
 async function submitReset() {
@@ -184,7 +189,7 @@ async function submitReset() {
 						class="auth-forgot-return"
 						label-class="auth-forgot-return-label"
 						data-testid="auth-login-forgot-password-return-button"
-						@click="closeModal"
+						@click="returnToLogin"
 					>
 						{{ t('auth.login.forgot.returnToLogin') }}
 					</UiButton>
@@ -203,7 +208,7 @@ async function submitReset() {
 						size="lg"
 						class="auth-forgot-submit"
 						data-testid="auth-login-forgot-password-return-button"
-						@click="closeModal"
+						@click="returnToLogin"
 					>
 						{{ t('auth.login.forgot.returnToLogin') }}
 					</UiButton>

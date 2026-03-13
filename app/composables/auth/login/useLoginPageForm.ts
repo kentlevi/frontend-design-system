@@ -24,6 +24,7 @@ import type { NonMemberVerificationCache } from '~/types/auth/auth';
 
 interface UseLoginPageFormOptions {
 	skipMemberRedirect?: boolean;
+	allowNonMemberEmailOnly?: boolean;
 	onMemberLoginSuccess?: () => void;
 }
 
@@ -217,7 +218,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			nonMemberEmailHasError.value = true;
 		}
 
-		if (!nonMemberOrderNumber.value.trim()) {
+		if (!options.allowNonMemberEmailOnly && !nonMemberOrderNumber.value.trim()) {
 			nonMemberOrderError.value = t('auth.login.validation.fieldBlank');
 		}
 

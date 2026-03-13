@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { useCountry } from '@/composables/app/country/useCountry';
 
+const props = withDefaults(defineProps<{
+	registerAsAction?: boolean;
+}>(), {
+	registerAsAction: false,
+});
+
+const emit = defineEmits<{
+	(e: 'open-register'): void;
+}>();
+
 const { t } = useI18n();
 const { withCountry } = useCountry();
 </script>
@@ -11,12 +21,22 @@ const { withCountry } = useCountry();
 		<p class="auth-login-subtitle">
 			{{ t('auth.login.subtitle') }}
 			<NuxtLink
+				v-if="!props.registerAsAction"
 				:to="withCountry('/auth/register')"
 				class="auth-login-create-account-link"
 				data-testid="auth-login-create-account-link"
 			>
 				{{ t('auth.login.createAccount') }}
 			</NuxtLink>
+			<button
+				v-else
+				type="button"
+				class="auth-login-create-account-link"
+				data-testid="auth-login-create-account-link"
+				@click="emit('open-register')"
+			>
+				{{ t('auth.login.createAccount') }}
+			</button>
 		</p>
 	</div>
 </template>
@@ -46,6 +66,10 @@ const { withCountry } = useCountry();
             color: var(--text-primary);
             font-weight: var(--font-weight-bold);
             text-decoration: underline;
+			background: transparent;
+			border: 0;
+			padding: 0;
+			cursor: pointer;
         }
     }
 }
