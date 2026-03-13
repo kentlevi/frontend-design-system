@@ -38,7 +38,6 @@ const {
 	itemMeta,
 	isLoginModalOpen,
 	openLoginModal,
-	closeLoginModal,
 } = useCheckoutGuestPage();
 </script>
 
@@ -333,7 +332,6 @@ const {
 
 	<CheckoutLoginModal
 		v-model="isLoginModalOpen"
-		@update:model-value="closeLoginModal"
 	/>
 </template>
 

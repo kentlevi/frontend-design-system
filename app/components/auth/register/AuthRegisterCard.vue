@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
 import AuthEmailAlreadyRegisteredModal from '@/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
@@ -11,6 +11,19 @@ import { registerRewardPoints } from '~/data/auth/register';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+
+const props = withDefaults(defineProps<{
+	showCloseButton?: boolean;
+	loginAsAction?: boolean;
+}>(), {
+	showCloseButton: false,
+	loginAsAction: false,
+});
+
+const emit = defineEmits<{
+	(e: 'close'): void;
+	(e: 'open-login'): void;
+}>();
 
 const {
 	firstName,
@@ -92,9 +105,15 @@ function onRegisteredEmailForgotPasswordModalChange(value: boolean) {
 	isRegisteredEmailForgotPasswordModalOpen.value = value;
 
 	if (!value && shouldRestoreRegisteredEmailModal.value) {
-		isEmailAlreadyRegisteredModalOpen.value = true;
-		shouldRestoreRegisteredEmailModal.value = false;
+		restoreRegisteredEmailModal();
 	}
+}
+
+async function restoreRegisteredEmailModal() {
+	isRegisteredEmailForgotPasswordModalOpen.value = false;
+	shouldRestoreRegisteredEmailModal.value = false;
+	await nextTick();
+	isEmailAlreadyRegisteredModalOpen.value = true;
 }
 
 watch(isEmailTakenError, (is_taken) => {
@@ -124,6 +143,25 @@ watch(isEmailTakenError, (is_taken) => {
 	/>
 
 	<div class="auth-register-card" data-testid="auth-register-card">
+		<div v-if="props.showCloseButton" class="auth-register-card-close-wrap">
+			<UiButton
+				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="sm"
+				:no-hover="true"
+				class="auth-register-card-close"
+				aria-label="Close modal"
+				@click="emit('close')"
+			>
+				<UiIcon
+					name="regular-times"
+					:size="24"
+					color="#000000"
+				/>
+			</UiButton>
+		</div>
+
 		<div class="auth-register-head">
 			<UiLogo
 				name="musticker"
@@ -332,12 +370,22 @@ watch(isEmailTakenError, (is_taken) => {
 		<p class="auth-register-login">
 			{{ t('auth.register.alreadyMember') }}
 			<NuxtLink
+				v-if="!props.loginAsAction"
 				:to="withCountry('/auth/login')"
 				class="auth-register-login-link"
 				data-testid="auth-register-login-link"
 			>
 				{{ t('auth.register.signInHere') }}
 			</NuxtLink>
+			<button
+				v-else
+				type="button"
+				class="auth-register-login-link"
+				data-testid="auth-register-login-link"
+				@click="emit('open-login')"
+			>
+				{{ t('auth.register.signInHere') }}
+			</button>
 		</p>
 
 		<AuthRegisterVerificationModal
@@ -370,6 +418,7 @@ watch(isEmailTakenError, (is_taken) => {
 			:model-value="isRegisteredEmailForgotPasswordModalOpen"
 			:email="email"
 			@update:model-value="onRegisteredEmailForgotPasswordModalChange"
+			@return-to-login="restoreRegisteredEmailModal"
 		/>
 	</div>
 </template>
@@ -387,6 +436,22 @@ watch(isEmailTakenError, (is_taken) => {
     flex-direction: column;
     gap: 24px;
     position: relative;
+
+	.auth-register-card-close-wrap {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+		z-index: 1;
+	}
+
+	.auth-register-card-close {
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		min-height: auto;
+		border-radius: 6px;
+		box-shadow: none;
+	}
 
     .auth-register-head {
         display: flex;
@@ -562,6 +627,10 @@ watch(isEmailTakenError, (is_taken) => {
             color: var(--text-primary);
             font-weight: var(--font-weight-bold);
             text-decoration: underline;
+			background: transparent;
+			border: 0;
+			padding: 0;
+			cursor: pointer;
         }
     }
 
