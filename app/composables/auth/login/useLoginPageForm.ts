@@ -7,7 +7,8 @@ import {
 	getAuthResponseMessage,
 	getAuthResponseMessageCode,
 	cacheNonMemberVerificationData,
-	getGuestVerificationCache
+	getGuestVerificationCache,
+	clearGuestVerificationCache
 } from '~/helpers/auth/auth.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAuthUser } from '~/composables/auth/useAuthUser'
@@ -410,6 +411,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
 			}
 
+			clearGuestVerificationCache()
 			return navigateTo(GUEST_TEST_REDIRECT_URL);;
 		} catch (error) {
 			console.error(error)
