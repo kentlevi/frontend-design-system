@@ -203,7 +203,7 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
             align-items: flex-start;
 
             .home-reviews-title {
-                margin: 0;
+
                 font-size: var(--type-size-550);
                 font-weight: var(--font-weight-bold);
                 line-height: var(--type-line-550);
@@ -272,7 +272,7 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
                             gap: 10px;
 
                             .home-reviews-item-title {
-                                margin: 0;
+
                                 font-size: var(--heading-6);
                                 font-weight: var(--font-weight-bold);
                                 line-height: 1.4;
@@ -282,7 +282,7 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
                         }
 
                         .home-reviews-item-text {
-                            margin: 0;
+
                             font-size: var(--body-base);
                             line-height: 1.6;
                             color: var(--text-secondary);

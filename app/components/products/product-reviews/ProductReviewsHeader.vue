@@ -118,7 +118,7 @@ const emit = defineEmits<{
     }
 
     .product-reviews-description {
-        margin: 0;
+
         font-size: var(--type-size-200);
         line-height: var(--type-line-200);
         color: var(--text-secondary);

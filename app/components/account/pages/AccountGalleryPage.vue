@@ -51,7 +51,7 @@ const { items } = useAccountGallery();
     min-height: calc(100vh - 176px);
 
     .account-content {
-        padding-top: 24px;
+        padding-top: 40px;
     }
 
     .account-gallery-header {
@@ -62,9 +62,9 @@ const { items } = useAccountGallery();
         margin-bottom: 20px;
 
         .account-gallery-title {
-            margin: 0;
-            font-size: var(--type-size-600);
-            line-height: var(--type-line-600);
+
+            font-size: var(--type-size-450);
+            line-height: var(--type-line-450);
         }
 
         .account-gallery-actions {
@@ -97,7 +97,7 @@ const { items } = useAccountGallery();
             }
 
             .account-gallery-name {
-                margin: 0;
+
                 font-size: var(--type-size-300);
                 line-height: var(--type-line-300);
             }

@@ -71,7 +71,7 @@ const items = [
             .home-guarantees-icon {
                 width: 108px;
                 height: 108px;
-                margin: 0;
+
                 display: grid;
                 place-items: center;
 
@@ -84,14 +84,14 @@ const items = [
             }
 
             .home-guarantees-title {
-                margin: 0;
+
                 font-size: var(--type-size-300);
                 line-height: var(--type-line-300);
                 color: var(--text-primary);
             }
 
             .home-guarantees-text {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 line-height: var(--type-line-200);
                 color: var(--text-secondary);

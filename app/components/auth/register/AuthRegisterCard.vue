@@ -315,14 +315,14 @@ const {
         }
 
         .auth-register-title {
-            margin: 0;
+
             font-size: var(--type-size-500);
             line-height: var(--type-line-500);
             color: var(--text-primary);
         }
 
         .auth-register-subtitle {
-            margin: 0;
+
             color: var(--text-secondary);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
@@ -391,7 +391,7 @@ const {
         }
 
         .auth-register-hint {
-            margin: 0;
+
             color: var(--text-secondary);
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-regular);
@@ -469,7 +469,7 @@ const {
     }
 
     .auth-register-login {
-        margin: 0;
+
         text-align: center;
         color: var(--text-secondary);
         font-size: var(--type-size-100);

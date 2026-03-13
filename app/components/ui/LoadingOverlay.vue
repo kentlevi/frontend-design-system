@@ -243,7 +243,7 @@ onBeforeUnmount(() => {
 	}
 
 	.ui-loading-overlay-label {
-		margin: 0;
+
 		color: var(--text-primary);
 		font-size: var(--type-size-350);
 		line-height: var(--type-line-350);
@@ -251,7 +251,7 @@ onBeforeUnmount(() => {
 	}
 
 	.ui-loading-overlay-description {
-		margin: 0;
+
 		color: var(--text-primary);
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);

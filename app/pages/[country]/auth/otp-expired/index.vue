@@ -80,7 +80,7 @@ const { withCountry } = useCountry();
             text-align: center;
 
             .auth-otp-expired-title {
-                margin: 0;
+
                 font-size: var(--type-size-650);
                 line-height: var(--type-line-650);
                 font-weight: var(--font-weight-bold);
@@ -90,7 +90,7 @@ const { withCountry } = useCountry();
             }
 
             .auth-otp-expired-copy {
-                margin: 0;
+
                 text-align: center;
                 color: var(--text-primary);
                 font-size: var(--type-size-300);

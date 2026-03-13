@@ -54,8 +54,18 @@ const props = withDefaults(
 );
 
 const mergedStyle = computed<Record<string, string> | undefined>(() => {
+	let numericSize: number | null = null;
+	if (typeof props.size === 'number') {
+		numericSize = props.size;
+	} else if (typeof props.size === 'string' && !buttonSizes.has(props.size as ButtonSize)) {
+		const parsed = Number(props.size);
+		if (Number.isFinite(parsed)) numericSize = parsed;
+	}
+
 	const style = {
 		...(props.style ?? {}),
+		...(numericSize && !props.height ? { height: `${numericSize}px` } : {}),
+		...(numericSize && props.iconOnly && !props.width ? { width: `${numericSize}px` } : {}),
 		...(props.width ? { width: props.width } : {}),
 		...(props.height ? { height: props.height } : {}),
 	};

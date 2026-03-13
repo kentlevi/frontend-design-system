@@ -95,7 +95,7 @@ const emit = defineEmits<{
 
                 .auth-login-field-label {
                     display: block;
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     font-weight: var(--font-weight-semibold);
@@ -103,7 +103,7 @@ const emit = defineEmits<{
                 }
 
                 .auth-login-field-error {
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     color: var(--error);

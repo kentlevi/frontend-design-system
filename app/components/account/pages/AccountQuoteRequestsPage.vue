@@ -81,7 +81,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
     min-height: calc(100vh - 176px);
 
     .account-content {
-        padding-top: 24px;
+        padding-top: 40px;
 
         .account-quote-header {
             display: flex;
@@ -91,9 +91,9 @@ const { requests, activeRequest } = useAccountQuoteRequests();
             margin-bottom: 18px;
 
             .account-quote-title {
-                margin: 0;
-                font-size: var(--type-size-600);
-                line-height: var(--type-line-600);
+
+                font-size: var(--type-size-450);
+                line-height: var(--type-line-450);
             }
 
             .account-quote-tools {
@@ -124,7 +124,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                     }
 
                     .account-quote-item-title {
-                        margin: 0;
+
                         font-size: var(--type-size-400);
                         line-height: var(--type-line-400);
                     }
@@ -155,7 +155,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
                     gap: 12px;
 
                     .account-quote-chat-title {
-                        margin: 0;
+
                         font-size: var(--type-size-550);
                         line-height: var(--type-line-550);
                     }

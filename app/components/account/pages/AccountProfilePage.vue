@@ -850,14 +850,14 @@ onBeforeUnmount(() => {
     position: relative;
 
     .account-content {
-        padding-top: 18px;
+        padding-top: 40px;
         min-height: 100%;
 
         .account-profile-title {
             margin: 0 0 26px;
-            font-size: var(--type-size-500);
+            font-size: var(--type-size-450);
             font-weight: var(--font-weight-bold);
-            line-height: var(--type-line-500);
+            line-height: var(--type-line-450);
 
             color: var(--text-primary);
         }
@@ -884,7 +884,7 @@ onBeforeUnmount(() => {
             }
 
             .account-profile-section-description {
-                margin: 0;
+
                 color: var(--text-secondary);
                 font-size: var(--type-size-100);
                 font-weight: var(--font-weight-regular);
@@ -911,7 +911,7 @@ onBeforeUnmount(() => {
                 }
 
                 .account-profile-photo-error {
-                    margin: 0;
+
                     text-align: left;
                     max-width: 100%;
                 }
@@ -954,7 +954,7 @@ onBeforeUnmount(() => {
                 color: var(--text-secondary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
-                margin: 0;
+
             }
 
             .account-profile-photo-error {
@@ -1014,7 +1014,7 @@ onBeforeUnmount(() => {
                 color: var(--text-primary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
-                font-weight: var(--font-weight-bold);
+                font-weight: var(--font-weight-semibold);
                 --btn-border: transparent;
             }
 
@@ -1183,7 +1183,7 @@ onBeforeUnmount(() => {
 	}
 
 	.account-profile-delete-photo-modal-title {
-		margin: 0;
+
 		font-size: var(--type-size-300);
 		line-height: var(--type-line-300);
 		font-weight: var(--font-weight-bold);
@@ -1191,7 +1191,7 @@ onBeforeUnmount(() => {
 	}
 
 	.account-profile-delete-photo-modal-text {
-		margin: 0;
+
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
@@ -1256,7 +1256,7 @@ onBeforeUnmount(() => {
 			flex-direction: column;
 			gap: 8px;
 			.account-profile-email-change-modal-title {
-				margin: 0;
+
 				color: var(--text-primary);
 				font-size: var(--type-size-400);
 				line-height: var(--type-line-400);
@@ -1264,7 +1264,7 @@ onBeforeUnmount(() => {
 			}
 
 			.account-profile-email-change-modal-text {
-				margin: 0;
+
 				color: var(--text-secondary);
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);

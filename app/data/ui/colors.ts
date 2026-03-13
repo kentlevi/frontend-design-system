@@ -74,7 +74,7 @@ export const paletteColors = {
 	informativeBase: ['success-base', 'warning-base', 'error-base'],
 
 	otherBase: [
-		'ultramarine-base',
+		'neon-blue-base',
 		'lynch-base',
 		'azure-base',
 		'aloha-base',
@@ -162,17 +162,17 @@ export const paletteColors = {
 		'error-100',
 	],
 
-	ultramarine: [
-		'ultramarine-10',
-		'ultramarine-20',
-		'ultramarine-30',
-		'ultramarine-40',
-		'ultramarine-50',
-		'ultramarine-60',
-		'ultramarine-70',
-		'ultramarine-80',
-		'ultramarine-90',
-		'ultramarine-100',
+	'neonBlue': [
+		'neon-blue-10',
+		'neon-blue-20',
+		'neon-blue-30',
+		'neon-blue-40',
+		'neon-blue-50',
+		'neon-blue-60',
+		'neon-blue-70',
+		'neon-blue-80',
+		'neon-blue-90',
+		'neon-blue-100',
 	],
 
 	lynch: [
@@ -248,7 +248,7 @@ export const paletteOrder = [
 	'otherBase',
 	'primitives',
 	'gold',
-	'ultramarine',
+	'neonBlue',
 	'azure',
 	'aloha',
 	'lynch',

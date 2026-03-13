@@ -334,7 +334,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 		}
 
 		.legal-title {
-			margin: 0;
+
 			font-size: var(--type-size-650);
 			line-height: var(--type-line-650);
 			font-weight: var(--font-weight-bold);
@@ -367,7 +367,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 			margin-top: 28px;
 
 			.legal-introduction-copy {
-				margin: 0;
+
 				font-size: var(--type-size-300);
 				line-height: var(--type-line-300);
 				color: var(--text-primary);
@@ -399,7 +399,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 			}
 
 			.legal-sidebar-title {
-				margin: 0;
+
 				padding: 16px 32px;
 				font-size: var(--type-size-300);
 				line-height: var(--type-line-300);
@@ -467,7 +467,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 				}
 
 				.legal-section-title {
-					margin: 0;
+
 					font-size: var(--type-size-400);
 					line-height: var(--type-line-400);
 					font-weight: var(--font-weight-bold);
@@ -495,14 +495,14 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 				}
 
 				.legal-section-paragraph {
-					margin: 0;
+
 					font-size: var(--type-size-200);
 					line-height: var(--type-line-200);
 					color: var(--text-primary);
 				}
 
 				.legal-section-list {
-					margin: 0;
+
 					padding-left: 28px;
 					list-style: disc;
 					display: grid;
@@ -531,7 +531,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 						font-size: var(--type-size-200);
 						line-height: var(--type-line-200);
 						color: var(--text-secondary);
-						margin: 0;
+
 
 						&::marker {
 							color: var(--text-tertiary, var(--text-secondary));
@@ -556,7 +556,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 					gap: 0;
 
 					.legal-section-group-title {
-						margin: 0;
+
 						font-size: var(--type-size-200);
 						line-height: var(--type-line-200);
 						font-weight: var(--font-weight-bold);
@@ -606,7 +606,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 				}
 
 				.legal-section-table-note {
-					margin: 0;
+
 					font-size: var(--type-size-200);
 					line-height: var(--type-line-200);
 					font-weight: var(--font-weight-bold);

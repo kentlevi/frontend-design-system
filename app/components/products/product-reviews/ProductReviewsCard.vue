@@ -114,7 +114,7 @@ const onAvatarError = (event: Event) => {
             gap: 8px;
 
             .product-reviews-card-title {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 line-height: var(--type-line-200);
                 font-weight: var(--font-weight-medium);
@@ -122,7 +122,7 @@ const onAvatarError = (event: Event) => {
             }
 
             .product-reviews-card-text {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-secondary);
