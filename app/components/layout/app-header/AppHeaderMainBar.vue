@@ -1,0 +1,306 @@
+<script setup lang="ts">
+import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
+import type { FlagCode } from '~/data/ui/flags';
+import { useCountry } from '~/composables/app/country/useCountry';
+import { normalizeAppPath } from '~/utils/auth/redirect';
+
+const { t } = useI18n();
+const { withCountry } = useCountry();
+const route = useRoute();
+type IconName = keyof typeof import('~/data/ui/icons').icons;
+
+type NavLink = {
+	key: string;
+	label: string;
+	to: string;
+};
+
+type AccountLink = {
+	to: string;
+	icon: IconName;
+	label: string;
+};
+
+const props = defineProps<{
+	navLinks: NavLink[];
+	isNavLinkActive: (path: string) => boolean;
+	selectedLocale: FlagCode;
+	isMockLoggedIn: boolean;
+	isGuestLoggedIn: boolean;
+	accountOpen: boolean;
+	userInitial: string;
+	userAvatarUrl?: string | null;
+	displayName: string;
+	displayEmail: string;
+	accountTransitionName: string;
+	accountLinks: AccountLink[];
+	cartItemCount: number;
+	setAccountMenuRef: (el: HTMLElement | null) => void;
+}>();
+
+const emit = defineEmits<{
+	(e: 'open-locale'): void;
+	(e: 'open-search'): void;
+	(e: 'open-cart'): void;
+	(e: 'prefetch-locale'): void;
+	(e: 'prefetch-search'): void;
+	(e: 'prefetch-cart'): void;
+	(e: 'toggle-account'): void;
+	(e: 'close-account'): void;
+	(e: 'account-mouse-enter'): void;
+	(e: 'account-mouse-leave'): void;
+	(e: 'logout'): void;
+}>();
+
+function isExactNavHeading(path: string) {
+	return normalizeAppPath(route.path) === normalizeAppPath(path);
+}
+</script>
+
+<template>
+	<div class="home-header-container" data-testid="app-header-main-bar-container">
+		<NuxtLink :to="withCountry('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
+			<UiLogo
+				name="musticker"
+				variant="full"
+				color="colored"
+				:size="54"
+				:width="112"
+				loading="eager"
+				fetchpriority="high"
+			/>
+		</NuxtLink>
+
+		<nav class="home-header-nav" :aria-label="t('layout.header.primaryNav')" data-testid="app-header-nav">
+			<template
+				v-for="link in props.navLinks"
+				:key="link.key"
+			>
+				<h1
+					v-if="isExactNavHeading(link.to)"
+					class="home-header-link home-header-link--heading is-active"
+					:data-testid="`app-header-nav-link-${link.key}`"
+				>
+					{{ link.label }}
+				</h1>
+				<NuxtLink
+					v-else
+					:to="link.to"
+					class="home-header-link"
+					:class="{ 'is-active': props.isNavLinkActive(link.to) }"
+					:data-testid="`app-header-nav-link-${link.key}`"
+				>
+					{{ link.label }}
+				</NuxtLink>
+			</template>
+		</nav>
+
+		<div class="home-header-tools" data-testid="app-header-tools">
+			<UiButton
+				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="md"
+				class="home-header-icon home-header-locale"
+				:aria-label="t('layout.header.locale.aria')"
+				data-testid="app-header-locale-button"
+				@click="emit('open-locale')"
+				@mouseenter="emit('prefetch-locale')"
+				@focus="emit('prefetch-locale')"
+			>
+				<UiFlag :code="props.selectedLocale" :size="24" />
+			</UiButton>
+			<UiButton
+				variant="ghost"
+				tone="default"
+				size="md"
+				:icon-only="true"
+				icon="strong-search"
+				icon-size="md"
+				class="home-header-icon"
+				:aria-label="t('layout.header.search')"
+				data-testid="app-header-search-button"
+				@click="emit('open-search')"
+				@mouseenter="emit('prefetch-search')"
+				@focus="emit('prefetch-search')"
+			/>
+			<div class="home-header-cart-wrap">
+				<UiButton
+					variant="ghost"
+					tone="default"
+					size="md"
+					:icon-only="true"
+					icon="strong-shop-cart"
+					icon-size="md"
+					class="home-header-icon home-header-cart"
+					:aria-label="t('layout.header.cart')"
+					data-testid="app-header-cart-button"
+					@click="emit('open-cart')"
+					@mouseenter="emit('prefetch-cart')"
+					@focus="emit('prefetch-cart')"
+				/>
+				<span
+					v-if="props.cartItemCount > 0"
+					class="home-header-cart-dot"
+					data-testid="app-header-cart-count"
+				>
+					{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
+				</span>
+			</div>
+			<UiButton
+				v-if="props.isMockLoggedIn"
+				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="md"
+				class="home-header-icon home-header-bell"
+				data-testid="app-header-notification-button"
+			>
+				<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
+			</UiButton>
+
+			<AppHeaderAccountMenu
+				:account-open="props.accountOpen"
+				:is-mock-logged-in="props.isMockLoggedIn"
+				:is-guest-logged-in="props.isGuestLoggedIn"
+				:user-initial="props.userInitial"
+				:user-avatar-url="props.userAvatarUrl"
+				:display-name="props.displayName"
+				:display-email="props.displayEmail"
+				:account-transition-name="props.accountTransitionName"
+				:account-links="props.accountLinks"
+				:set-wrap-ref="props.setAccountMenuRef"
+				data-testid="app-header-account-menu"
+				@toggle="emit('toggle-account')"
+				@close="emit('close-account')"
+				@mouse-enter="emit('account-mouse-enter')"
+				@mouse-leave="emit('account-mouse-leave')"
+				@logout="emit('logout')"
+			/>
+		</div>
+	</div>
+</template>
+
+<style scoped lang="scss">
+.home-header-container {
+    --home-header-badge-font-size: 12px;
+    --home-header-badge-line-height: 20px;
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+    display: grid;
+    grid-template-columns: 200px 1fr 260px;
+    align-items: center;
+
+    .home-header-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-self: start;
+        width: fit-content;
+    }
+
+    .home-header-nav {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+
+        .home-header-link {
+
+            font-size: var(--type-size-200);
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--type-line-200);
+            text-decoration: none;
+            color: var(--text-primary);
+            position: relative;
+            padding: 10px 24px;
+            border-radius: 14px;
+            transition: background-color 220ms ease, color 220ms ease;
+
+            &.home-header-link--heading {
+                cursor: default;
+                user-select: none;
+            }
+
+            &:hover,
+            &.is-active {
+                background: var(--gold-10);
+                opacity: 1;
+            }
+
+            &.is-active::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                bottom: -5px;
+                transform: translateX(-50%) rotate(45deg);
+                width: 13px;
+                height: 13px;
+                background: var(--gold-10);
+                border-radius: 2px;
+            }
+        }
+    }
+
+    .home-header-tools {
+        justify-self: end;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .home-header-icon {
+            --btn-bg: var(--text-primary);
+            --btn-soft: rgba(255, 255, 255, 0.3);
+            --btn-border: transparent;
+
+            height: 40px;
+            min-width: 40px;
+			padding: 0;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            box-shadow: none;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .home-header-locale {
+            overflow: hidden;
+        }
+
+        .home-header-cart-wrap {
+            position: relative;
+            width: 40px;
+            height: 40px;
+
+            .home-header-cart-dot {
+                @extend .home-header-badge-dot;
+            }
+        }
+
+        .home-header-bell {
+            position: relative;
+        }
+
+        .home-header-badge-dot {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            padding: 0 7px;
+            background: var(--blood-base);
+            color: #fff;
+            font-size: var(--home-header-badge-font-size);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--home-header-badge-line-height);
+            text-align: center;
+            pointer-events: none;
+        }
+    }
+}
+</style>

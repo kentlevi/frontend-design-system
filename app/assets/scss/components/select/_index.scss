@@ -145,7 +145,7 @@
 }
 
 .ui-select-option-label {
-    margin: 0;
+    
     font-family: t.$font-base;
     font-size: t.$body-base;
     line-height: var(--type-line-100);
@@ -157,7 +157,7 @@
 }
 
 .ui-select-option-description {
-    margin: 0;
+    
     font-family: t.$font-base;
     font-size: t.$body-small;
     line-height: 1.4;
@@ -165,7 +165,7 @@
 }
 
 .ui-select-empty {
-    margin: 0;
+    
     padding: 10px sp.$space-3;
     font-family: t.$font-base;
     font-size: t.$body-base;

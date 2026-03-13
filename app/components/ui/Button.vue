@@ -7,119 +7,138 @@ import type { ButtonVariant, ButtonSize, ButtonTone } from '~/data/ui/buttons';
 type IconPosition = 'left' | 'right';
 type IconName = keyof typeof icons;
 type IconSizeValue = ButtonSize | number | `${number}`;
+const buttonSizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
 
 const props = withDefaults(
-    defineProps<{
-        variant?: ButtonVariant;
-        size?: ButtonSize | number | `${number}`;
-        tone?: ButtonTone;
+	defineProps<{
+		variant?: ButtonVariant;
+		size?: ButtonSize | number | `${number}`;
+		tone?: ButtonTone;
 
-        icon?: IconName | null;
-        iconPosition?: IconPosition;
-        iconSize?: IconSizeValue;
-        iconOnly?: boolean;
-        srLabel?: string;
+		icon?: IconName | null;
+		iconPosition?: IconPosition;
+		iconSize?: IconSizeValue;
+		iconOnly?: boolean;
+		srLabel?: string;
 
-        selected?: boolean;
-        disabled?: boolean;
-        loading?: boolean;
+		selected?: boolean;
+		disabled?: boolean;
+		loading?: boolean;
+		noHover?: boolean;
 
-        width?: string;
-        height?: string;
-        style?: Record<string, string>;
-    }>(),
-    {
-        variant: 'filled',
-        size: 'md',
-        tone: 'default',
+		width?: string;
+		height?: string;
+		style?: Record<string, string>;
+		labelClass?: string;
+	}>(),
+	{
+		variant: 'filled',
+		size: 'md',
+		tone: 'default',
 
-        icon: null,
-        iconPosition: 'left',
-        iconSize: 'sm',
-        iconOnly: false,
-        srLabel: '',
+		icon: null,
+		iconPosition: 'left',
+		iconSize: 'sm',
+		iconOnly: false,
+		srLabel: '',
 
-        selected: false,
-        disabled: false,
-        loading: false,
-        width: '',
-        height: '',
-        style: () => ({}),
-    }
+		selected: false,
+		disabled: false,
+		loading: false,
+		noHover: false,
+		width: '',
+		height: '',
+		style: () => ({}),
+		labelClass: '',
+	}
 );
 
 const mergedStyle = computed<Record<string, string> | undefined>(() => {
-    const style = {
-        ...(props.style ?? {}),
-        ...(props.width ? { width: props.width } : {}),
-        ...(props.height ? { height: props.height } : {}),
-    };
+	let numericSize: number | null = null;
+	if (typeof props.size === 'number') {
+		numericSize = props.size;
+	} else if (typeof props.size === 'string' && !buttonSizes.has(props.size as ButtonSize)) {
+		const parsed = Number(props.size);
+		if (Number.isFinite(parsed)) numericSize = parsed;
+	}
 
-    return Object.keys(style).length ? style : undefined;
+	const style = {
+		...(props.style ?? {}),
+		...(numericSize && !props.height ? { height: `${numericSize}px` } : {}),
+		...(numericSize && props.iconOnly && !props.width ? { width: `${numericSize}px` } : {}),
+		...(props.width ? { width: props.width } : {}),
+		...(props.height ? { height: props.height } : {}),
+	};
+
+	return Object.keys(style).length ? style : undefined;
 });
 
 const normalizedIconSize = computed<ButtonSize | number>(() => {
-    if (typeof props.iconSize === 'number') return props.iconSize;
-    if (typeof props.iconSize === 'string') {
-        const parsed = Number(props.iconSize);
-        if (Number.isFinite(parsed)) return parsed;
-    }
-    return props.iconSize;
+	if (typeof props.iconSize === 'number') return props.iconSize;
+	if (typeof props.iconSize === 'string') {
+		if (buttonSizes.has(props.iconSize as ButtonSize)) {
+			return props.iconSize as ButtonSize;
+		}
+		const parsed = Number(props.iconSize);
+		if (Number.isFinite(parsed)) return parsed;
+	}
+	return 'sm';
 });
 </script>
 
 <template>
-    <button
-        class="ui-button"
-        type="button"
-        :data-variant="variant"
-        :data-size="size"
-        :data-tone="tone ?? 'primary'"
-        :data-selected="selected ? 'true' : 'false'"
-        :data-icon-only="iconOnly ? 'true' : 'false'"
-        :disabled="disabled || loading"
-        :aria-busy="loading || undefined"
-        :style="mergedStyle"
-    >
-        <span v-if="selected && !loading" class="ui-button-indicator" />
+	<button
+		class="ui-button"
+		type="button"
+		:data-variant="variant"
+		:data-size="size"
+		:data-tone="tone ?? 'primary'"
+		:data-selected="selected ? 'true' : 'false'"
+		:data-icon-only="iconOnly ? 'true' : 'false'"
+		:data-no-hover="noHover ? 'true' : 'false'"
+		:disabled="disabled || loading"
+		:aria-busy="loading || undefined"
+		:style="mergedStyle"
+	>
+		<span v-if="selected && !loading" class="ui-button-indicator" />
 
-        <span v-if="loading" class="ui-button-spinner" aria-hidden="true" />
+		<span v-if="loading" class="ui-button-spinner" aria-hidden="true" />
 
-        <UiIcon
-            v-if="!loading && icon && iconPosition === 'left' && !iconOnly"
-            :name="icon"
-            :size="normalizedIconSize"
-            decorative
-            class="ui-button-icon"
-        />
+		<UiIcon
+			v-if="!loading && icon && iconPosition === 'left' && !iconOnly"
+			:name="icon"
+			:size="normalizedIconSize"
+			decorative
+			class="ui-button-icon"
+		/>
 
-        <UiIcon
-            v-if="!loading && iconOnly && icon"
-            :name="icon"
-            :size="normalizedIconSize"
-            decorative
-            class="ui-button-icon"
-        />
+		<UiIcon
+			v-if="!loading && iconOnly && icon"
+			:name="icon"
+			:size="normalizedIconSize"
+			decorative
+			class="ui-button-icon"
+		/>
 
-        <span v-if="iconOnly && srLabel" class="ui-button-sr-only">
-            {{ srLabel }}
-        </span>
+		<span v-if="iconOnly && srLabel" class="ui-button-sr-only">
+			{{ srLabel }}
+		</span>
 
-        <span
-            v-if="!iconOnly && !loading && $slots.default"
-            class="ui-button-label"
-        >
-            <slot />
-        </span>
+		<span
+			v-if="!iconOnly && !loading && $slots.default"
+			:class="['ui-button-label', props.labelClass]"
+		>
+			<slot />
+		</span>
 
-        <UiIcon
-            v-if="!loading && icon && iconPosition === 'right' && !iconOnly"
-            :name="icon"
-            :size="normalizedIconSize"
-            decorative
-            class="ui-button-icon"
-        />
-    </button>
+		<UiIcon
+			v-if="!loading && icon && iconPosition === 'right' && !iconOnly"
+			:name="icon"
+			:size="normalizedIconSize"
+			decorative
+			class="ui-button-icon"
+		/>
+	</button>
 </template>
 
 <style scoped lang="scss">
@@ -135,4 +154,3 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
     border: 0;
 }
 </style>
-

@@ -2,19 +2,48 @@
     "account": {
         "orders": {
             "title": "My Orders",
+            "active": "Active",
+            "inactive": "Inactive",
             "selectDate": "Select Date",
             "filters": "Filters",
-            "orderLabel": "Order",
+            "searchPlaceholder": "Search Order #",
+            "sections": {
+                "ongoing": "On-Going",
+                "actionRequired": "Action Required",
+                "completed": "Completed"
+            },
+            "orderLabel": "Order #: {orderNumber}",
             "meta": "{count} item(s) | Order Date: {date}",
             "status": {
                 "beforeProduction": "Before Production",
-                "processing": "Processing",
-                "actionRequired": "Action Required"
+                "checkingArtwork": "Checking Artwork",
+                "completed": "Completed"
             },
-            "orderSummary": "Order Summary",
-            "summaryText": "Upload artwork and review invoice/payment items from this panel.",
-            "actions": "Actions",
+            "moreDetails": "More Details",
+            "viewInvoice": "View Invoice",
+            "viewInvoiceText": "Access and review detailed invoice information.",
+            "paymentProof": "Payment Proof",
+            "paymentProofText": "Production will commence after payment completion.",
+            "sendMessage": "Send a Message",
+            "sendMessageText": "Need an update or want to make changes?",
+            "unpaid": "Unpaid",
+            "paymentMethod": "Method: {method}",
+            "orderSummary": "Order Summary:",
+            "itemNumber": "Item No. {number}",
+            "lackingArtwork": "Lacking Artwork",
+            "checkingArtwork": "Checking Artwork",
+            "size": "Size: {size}",
+            "quantity": "Quantity: {quantity}",
+            "summary": {
+                "subtotal": "Subtotal:",
+                "shippingFee": "Shipping Fee: ({method})",
+                "discounts": "Discounts:",
+                "total": "Total:"
+            },
+            "shippingMethod": "Express Shipping",
             "uploadArtwork": "Upload Artwork",
+            "replaceArtwork": "Replace Artwork",
+            "onHoldOrder": "On-Hold Order",
             "cancelOrder": "Cancel Order"
         }
     }

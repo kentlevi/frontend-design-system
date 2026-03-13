@@ -2,13 +2,14 @@
 *::before,
 *::after {
     box-sizing: border-box;
-    margin: 0;
+    
     padding: 0;
 }
 
 html,
 body {
     height: 100%;
+    margin: 0;
 }
 
 html {
@@ -75,6 +76,7 @@ h4,
 h5,
 h6,
 p {
+    margin: 0;
     letter-spacing: -0.5px;
     overflow-wrap: break-word;
 }
