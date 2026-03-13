@@ -15,13 +15,13 @@ export const checkoutShippingMethods: ReadonlyArray<{
 	{
 		key: 'standard',
 		i18nKey: 'checkout.guest.shippingMethods.standard',
-		icon: '/images/checkout/standard-shipping.svg',
+		icon: '/icons/custom/checkout/standard-shipping.svg',
 		enabled: true,
 	},
 	{
 		key: 'express',
 		i18nKey: 'checkout.guest.shippingMethods.express',
-		icon: '/images/checkout/express-shipping.svg',
+		icon: '/icons/custom/checkout/express-shipping.svg',
 		defaultSelected: true,
 		enabled: true,
 	},
@@ -36,14 +36,14 @@ export const checkoutPaymentMethods: ReadonlyArray<{
 }> = [
 	{
 		key: 'credit-card',
-		icon: '/images/checkout/credit-card.svg',
+		icon: '/icons/custom/checkout/credit-card.svg',
 		i18nKey: 'creditCard',
 		defaultSelected: true,
 		enabled: true,
 	},
 	{
 		key: 'bank-transfer',
-		icon: '/images/checkout/bank-transfer.svg',
+		icon: '/icons/custom/checkout/bank-transfer.svg',
 		i18nKey: 'bankTransfer',
 		enabled: true,
 	},
