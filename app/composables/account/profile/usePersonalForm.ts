@@ -10,6 +10,7 @@ import {
 	updatePersonalForm,
 } from '~/services/profile/personalForm.service'
 import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/account/profile'
+import type { ApiResponse } from '~/types/config/api'
 
 export function usePersonalForm() {
 	const user_store = useUserStore()
@@ -21,7 +22,7 @@ export function usePersonalForm() {
 	const is_loading = ref(false)
 	const is_submitting = ref(false)
 	const error_message = ref('')
-	const api_response = ref<PersonalFormApiResponse | null>(null)
+	const api_response = ref<ApiResponse<PersonalFormApiResponse> | null>(null)
 	const has_changes = computed(() => {
 		const current_keys = Object.keys(form_state.fields).sort()
 		const initial_keys = Object.keys(initial_fields.value).sort()
@@ -46,9 +47,13 @@ export function usePersonalForm() {
 
 		try {
 			if (profile_fields_store.dynamic_profile_fields.length === 0) {
-				field_definitions.value = await fetchPersonalFieldDefinitions()
+				const response = await fetchPersonalFieldDefinitions()
 
-				profile_fields_store.setDynamicProfileFields(field_definitions.value)
+				if (response.data) {
+					field_definitions.value = response.data
+
+					profile_fields_store.setDynamicProfileFields(field_definitions.value)
+				}
 			} else {
 				field_definitions.value = profile_fields_store.dynamic_profile_fields
 			}

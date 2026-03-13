@@ -6,7 +6,7 @@ defineOptions({
 withDefaults(
 	defineProps<{
 		visible?: boolean;
-		message?: string;
+		message?: string | null;
 		tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
 		dismissible?: boolean;
 		variant?: 'default' | 'outlined';
