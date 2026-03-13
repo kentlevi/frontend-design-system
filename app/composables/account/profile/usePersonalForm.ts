@@ -20,9 +20,10 @@ export function usePersonalForm() {
 	const form_state = reactive(personal_form_defaults())
 	const initial_fields = ref<Record<string, string>>({})
 	const is_loading = ref(false)
-	const is_submitting = ref(false)
+	const is_updating = ref(false)
 	const error_message = ref('')
 	const api_response = ref<ApiResponse<PersonalFormApiResponse> | null>(null)
+
 	const has_changes = computed(() => {
 		const current_keys = Object.keys(form_state.fields).sort()
 		const initial_keys = Object.keys(initial_fields.value).sort()
@@ -34,6 +35,7 @@ export function usePersonalForm() {
 			return (form_state.fields[key] ?? '') !== (initial_fields.value[key] ?? '')
 		})
 	})
+
 	const has_required_fields = computed(() =>
 		field_definitions.value.every((field) => {
 			if (!field.is_required) return true
@@ -83,7 +85,7 @@ export function usePersonalForm() {
 	}
 
 	async function submitPersonalForm() {
-		is_submitting.value = true
+		is_updating.value = true
 		error_message.value = ''
 
 		try {
@@ -116,7 +118,7 @@ export function usePersonalForm() {
 			error_message.value = 'Failed to save personal details.'
 			throw error
 		} finally {
-			is_submitting.value = false
+			is_updating.value = false
 		}
 	}
 
@@ -125,7 +127,7 @@ export function usePersonalForm() {
 		has_changes,
 		has_required_fields,
 		is_loading,
-		is_submitting,
+		is_updating,
 		error_message,
 		api_response,
 		loadPersonalForm,

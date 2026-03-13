@@ -4,7 +4,8 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
-import { computed, nextTick, watch } from 'vue';
+import { computed, watch } from 'vue';
+import { useEmailForm } from '~/composables/account/profile/useEmailForm';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
@@ -25,11 +26,6 @@ const {
 	signOut,
 } = useAccountProfile();
 const isDeletePhotoModalOpen = ref(false);
-const isEmailChangeModalOpen = ref(false);
-const emailChangeFieldRef = ref<HTMLElement | null>(null);
-const pendingEmail = ref('');
-const emailChangeError = ref('');
-const emailChangeOverlayMode = ref<'idle' | 'requesting' | 'verifying'>('idle');
 const isEmailChangeOtpOpen = ref(false);
 const emailChangeOtpCode = ref('');
 const emailChangeOtpError = ref('');
@@ -41,12 +37,12 @@ const currentPasswordError = ref('');
 const newPasswordError = ref('');
 const confirmPasswordError = ref('');
 const emailChangeOverlayLabel = computed(() => (
-	emailChangeOverlayMode.value === 'requesting'
+	email_change_overlay_mode.value === 'requesting'
 		? 'Verifying Your Information...'
 		: ''
 ));
 const emailChangeOverlayDescription = computed(() => (
-	emailChangeOverlayMode.value === 'requesting'
+	email_change_overlay_mode.value === 'requesting'
 		? "Just a moment! We're making sure everything looks perfect."
 		: ''
 ));
@@ -67,7 +63,7 @@ const {
 	form_state: personal_form_state,
 	has_changes,
 	has_required_fields,
-	is_submitting,
+	is_updating: name_is_submitting,
 	api_response,
 	loadPersonalForm,
 	submitPersonalForm
@@ -78,6 +74,22 @@ const {
 	loadPreferences,
 	updatePreferenceField
 } = usePreferenceForm();
+
+const {
+	pending_email,
+	is_email_change_modal,
+	email_change_field_ref,
+	email_change_error,
+	email_change_overlay_mode,
+
+	request_sent,
+	is_otp_open,
+
+	openEmailChangeModal,
+	closeEmailChangeModal,
+	confirmEmailChange,
+
+} = useEmailForm();
 
 onMounted(() => {
 	loadPreferences()
@@ -145,40 +157,6 @@ function confirmDeletePhoto() {
 	closeDeletePhotoModal();
 }
 
-function openEmailChangeModal() {
-	pendingEmail.value = '';
-	emailChangeError.value = '';
-	isEmailChangeModalOpen.value = true;
-	void nextTick(() => {
-		emailChangeFieldRef.value?.querySelector('input')?.focus();
-	});
-}
-
-function closeEmailChangeModal() {
-	isEmailChangeModalOpen.value = false;
-	pendingEmail.value = '';
-	emailChangeError.value = '';
-}
-
-async function confirmEmailChange() {
-	const next_email = pendingEmail.value.trim();
-	if (!next_email) {
-		emailChangeError.value = 'Field cannot be blank.';
-		return;
-	}
-	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next_email)) {
-		emailChangeError.value = 'Email format is invalid.';
-		return;
-	}
-	emailChangeError.value = '';
-	emailChangeTargetEmail.value = next_email;
-	closeEmailChangeModal();
-	emailChangeOverlayMode.value = 'requesting';
-	await new Promise((resolve) => setTimeout(resolve, 1200));
-	emailChangeOverlayMode.value = 'idle';
-	isEmailChangeOtpOpen.value = true;
-}
-
 function closeEmailChangeOtpModal() {
 	isEmailChangeOtpOpen.value = false;
 	emailChangeOtpCode.value = '';
@@ -193,9 +171,9 @@ async function verifyEmailChangeOtp() {
 
 	emailChangeOtpError.value = '';
 	isEmailChangeOtpOpen.value = false;
-	emailChangeOverlayMode.value = 'verifying';
+	email_change_overlay_mode.value = 'verifying';
 	await new Promise((resolve) => setTimeout(resolve, 900));
-	emailChangeOverlayMode.value = 'idle';
+	email_change_overlay_mode.value = 'idle';
 	email.value = emailChangeTargetEmail.value;
 	closeEmailChangeOtpModal();
 }
@@ -301,17 +279,18 @@ onBeforeUnmount(() => {
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
+		<!-- Loader on updating name -->
 		<UiLoadingOverlay
-			:visible="is_submitting"
+			:visible="name_is_submitting"
 			:label="t('account.profile.saveChanges')"
 			test-id="account-profile-saving-overlay"
 			position="fixed"
 		/>
 		<UiLoadingOverlay
-			:visible="emailChangeOverlayMode !== 'idle'"
+			:visible="email_change_overlay_mode !== 'idle'"
 			:label="emailChangeOverlayLabel"
 			:description="emailChangeOverlayDescription"
-			:show-copy="emailChangeOverlayMode === 'requesting'"
+			:show-copy="email_change_overlay_mode === 'requesting'"
 			test-id="account-profile-email-change-page-overlay"
 			position="fixed"
 		/>
@@ -467,7 +446,7 @@ onBeforeUnmount(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || !has_required_fields || is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || !has_required_fields || name_is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
@@ -683,13 +662,13 @@ onBeforeUnmount(() => {
 			</div>
 		</AccountShell>
 		<UiModal
-			:model-value="isEmailChangeModalOpen"
+			:model-value="is_email_change_modal"
 			align="center"
 			width="520px"
 			padding="0"
 			gap="0"
 			modal-class="account-profile-email-change-modal-shell"
-			@update:model-value="isEmailChangeModalOpen = $event"
+			@update:model-value="is_email_change_modal = $event"
 		>
 			<section class="account-profile-email-change-modal" data-testid="account-profile-email-change-modal">
 				<button
@@ -725,21 +704,21 @@ onBeforeUnmount(() => {
 						head-class="account-profile-email-change-field-head"
 						label-text-class="account-profile-email-change-field-label-text"
 						:label="t('account.profile.emailAddress')"
-						:error="emailChangeError"
+						:error="email_change_error"
 						:required="true"
 					>
 						<template #default="{ inputId, describedBy }">
-							<div ref="emailChangeFieldRef" class="account-profile-email-change-input-wrap">
+							<div ref="email_change_field_ref" class="account-profile-email-change-input-wrap">
 								<UiInput
 									:id="inputId"
-									v-model="pendingEmail"
+									v-model="pending_email"
 									type="email"
 									:aria-describedby="describedBy || undefined"
-									:state="emailChangeError ? 'error' : 'default'"
+									:state="email_change_error ? 'error' : 'default'"
 									placeholder="Please enter your new email address."
 									input-class="account-profile-email-change-input"
 									data-testid="account-profile-email-change-input"
-									@update:model-value="emailChangeError = ''"
+									@update:model-value="email_change_error = ''"
 								/>
 							</div>
 						</template>
@@ -762,7 +741,7 @@ onBeforeUnmount(() => {
 			</section>
 		</UiModal>
 		<AuthVerificationModal
-			:model-value="isEmailChangeOtpOpen"
+			:model-value="is_otp_open"
 			:email="emailChangeTargetEmail"
 			:code="emailChangeOtpCode"
 			:error="emailChangeOtpError"
@@ -772,7 +751,7 @@ onBeforeUnmount(() => {
 			align="center"
 			:show-close-button="true"
 			test-id-prefix="account-profile-email-change-verification"
-			@update:model-value="isEmailChangeOtpOpen = $event"
+			@update:model-value="is_otp_open = $event"
 			@update:code="emailChangeOtpCode = $event"
 			@verify="verifyEmailChangeOtp"
 			@resend="resendEmailChangeOtp"
