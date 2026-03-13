@@ -105,6 +105,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		nonMemberEmailError.value = '';
 		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
+		guestVerificationError.value = '';
 		resendLimitReached.value = '';
 	}
 
