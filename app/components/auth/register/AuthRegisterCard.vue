@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
+import AuthEmailAlreadyRegisteredModal from '@/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
 import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
@@ -44,6 +46,50 @@ const {
 } = useAuthRegisterCard({
 	termsError,
 	agreeTerms,
+});
+
+const isEmailAlreadyRegisteredModalOpen = ref(false);
+const registeredEmailPassword = ref('');
+const registeredEmailPasswordError = ref('');
+const registeredEmailPasswordVisible = ref(false);
+
+const emailTakenMessage = computed(() => t('auth.register.validation.emailTaken'));
+const registeredEmailCredentialsMismatchMessage = computed(() => t('auth.login.validation.credentialsMismatch'));
+const isEmailTakenError = computed(() => emailError.value === emailTakenMessage.value);
+const visibleEmailError = computed(() => (isEmailTakenError.value ? '' : emailError.value));
+
+function closeEmailAlreadyRegisteredModal() {
+	isEmailAlreadyRegisteredModalOpen.value = false;
+	registeredEmailPassword.value = '';
+	registeredEmailPasswordError.value = '';
+	registeredEmailPasswordVisible.value = false;
+}
+
+function continueWithRegisteredEmail() {
+	if (!registeredEmailPassword.value.trim()) {
+		registeredEmailPasswordError.value = t('auth.register.validation.fieldBlank');
+		return;
+	}
+
+	registeredEmailPasswordError.value = registeredEmailCredentialsMismatchMessage.value;
+}
+
+function onRegisteredEmailPasswordInput(value: string) {
+	registeredEmailPassword.value = value;
+	registeredEmailPasswordError.value = '';
+}
+
+watch(isEmailTakenError, (is_taken) => {
+	if (is_taken && email.value.trim()) {
+		isEmailAlreadyRegisteredModalOpen.value = true;
+		registeredEmailPassword.value = '';
+		registeredEmailPasswordError.value = '';
+		registeredEmailPasswordVisible.value = false;
+	}
+
+	if (!is_taken && isEmailAlreadyRegisteredModalOpen.value) {
+		closeEmailAlreadyRegisteredModal();
+	}
 });
 </script>
 
@@ -127,7 +173,7 @@ const {
 		<UiFormField
 			class="auth-register-field"
 			:label="t('auth.register.email')"
-			:error="emailError"
+			:error="visibleEmailError"
 			head-class="auth-register-field-head"
 			label-class="auth-register-field-label"
 			label-text-class="auth-register-field-label-text"
@@ -138,7 +184,7 @@ const {
 				type="email"
 				size="md"
 				class="auth-register-input"
-				:state="emailError ? 'error' : 'default'"
+				:state="visibleEmailError ? 'error' : 'default'"
 				:placeholder="t('auth.register.enterEmail')"
 				data-testid="auth-register-email-input"
 			/>
@@ -287,6 +333,18 @@ const {
 			@update:code="verificationCode = $event"
 			@verify="submitVerification"
 			@resend="resendVerification"
+		/>
+
+		<AuthEmailAlreadyRegisteredModal
+			:model-value="isEmailAlreadyRegisteredModalOpen"
+			:email="email"
+			:password="registeredEmailPassword"
+			:password-error="registeredEmailPasswordError"
+			:password-visible="registeredEmailPasswordVisible"
+			@update:model-value="isEmailAlreadyRegisteredModalOpen = $event"
+			@update:password="onRegisteredEmailPasswordInput"
+			@update:password-visible="registeredEmailPasswordVisible = $event"
+			@continue="continueWithRegisteredEmail"
 		/>
 	</div>
 </template>
