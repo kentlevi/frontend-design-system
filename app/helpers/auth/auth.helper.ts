@@ -53,6 +53,11 @@ export function getGuestVerificationCache() {
 	return guest_verification_cache.value
 }
 
+export function clearGuestVerificationCache() {
+	const guest_verification_cache = useCookie<NonMemberVerificationCache | null>('guest_verification_cache')
+	return guest_verification_cache.value = null
+}
+
 export function cacheNonMemberVerificationData(response: NonMemberLoginVerificationResponse, email: string, order_number: string) {
 	const CACHE_DURATION = 60 * 60 * 24 * 30; // 30 days
 
