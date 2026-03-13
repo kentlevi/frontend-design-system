@@ -7,8 +7,9 @@ import {
 	readFileAsDataUrl,
 } from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useUserStore } from '~/stores/user';
+import { useUsersStore } from '~/stores/users/users.store';
 import type { AccountMockUser } from '~/types/account/profile';
+import { useAuthUser } from '../useAuthUser';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -17,52 +18,25 @@ const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 const ACCEPTED_IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/png']);
 
-interface UserMeResponse {
-	success: boolean;
-	data?: {
-		user?: {
-			id: number;
-			code: string;
-			email: string;
-		};
-		profile?: {
-			id: number;
-			user_id: number;
-			file_path_id: number;
-			file_name: string | null;
-			user_field_values: Array<{
-				id: number;
-				user_profile_id: number;
-				country_field_id?: number;
-				country_field_ids?: number;
-				country_fields_id?: number;
-				country_field?: {
-					field_key?: string;
-				};
-				value: string;
-			}>;
-		} | null;
-	};
-}
-
 export function useAuthProfileSetup() {
 	const { withCountry, apiCountry } = useCountry();
 	const api = useApi();
-	const userStore = useUserStore();
 	const { t } = useI18n();
 	const mockUser = useCookie<AccountMockUser | null>('mock_user', {
 		default: () => null,
 		sameSite: 'lax',
 		path: '/',
 	});
+	const userStore = useUsersStore();
+	const { state } = storeToRefs(useUsersStore())
 
 	const step = ref<ProfileStep>(1);
-	const isNewOnboardingFlow = Boolean(userStore.onboardingProfile?.onboarding);
+	const isNewOnboardingFlow = Boolean(state.value.onboardingProfile?.onboarding);
 	const showWelcomeToast = ref(isNewOnboardingFlow);
 	let toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	const profileFieldValues = computed(
-		() => userStore.profile?.user_field_values ?? []
+		() => state.value.profile?.user_field_values ?? []
 	);
 	const storeFirstName = computed(
 		() => getProfileFieldValue(profileFieldValues.value, 'first_name')
@@ -73,19 +47,19 @@ export function useAuthProfileSetup() {
 
 	const firstName = ref(
 		storeFirstName.value ||
-		userStore.onboardingProfile?.firstName ||
+		state.value.onboardingProfile?.firstName ||
 		mockUser.value?.firstName ||
 		accountProfileDefaults.firstName
 	);
 	const lastName = ref(
 		storeLastName.value ||
-		userStore.onboardingProfile?.lastName ||
+		state.value.onboardingProfile?.lastName ||
 		mockUser.value?.lastName ||
 		accountProfileDefaults.lastName
 	);
 	const email = ref(
-		userStore.email ||
-		userStore.onboardingProfile?.email ||
+		state.value.email ||
+		state.value.onboardingProfile?.email ||
 		mockUser.value?.email ||
 		accountProfileDefaults.email
 	);
@@ -179,7 +153,7 @@ export function useAuthProfileSetup() {
 	}
 
 	async function completeSetup() {
-		if (userStore.id) {
+		if (state.value.id) {
 			try {
 				if (import.meta.client && photoUrl.value) {
 					window.localStorage.setItem(ACCOUNT_LOCAL_AVATAR_KEY, photoUrl.value);
@@ -200,13 +174,8 @@ export function useAuthProfileSetup() {
 					body,
 				});
 
-				const meResponse = await api<UserMeResponse>(`/${apiCountry.value}/user/me`);
-				if (meResponse?.success && meResponse.data?.user) {
-					userStore.setUser({
-						...meResponse.data.user,
-						profile: meResponse.data.profile ?? null,
-					});
-				}
+				const { fetchAndStoreUser } = useAuthUser()
+				await fetchAndStoreUser()
 			} catch (error) {
 				console.warn('Failed to finalize onboarding.', error);
 			}

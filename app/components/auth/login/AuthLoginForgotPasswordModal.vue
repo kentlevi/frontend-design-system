@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 const props = withDefaults(
 	defineProps<{
@@ -66,15 +67,10 @@ async function submitReset() {
 	loading.value = true;
 
 	try {
-		const response = await api<{ success: boolean; message: string }>(
-			`/${apiCountry.value}/auth/password/reset-link`,
-			{
-				method: 'POST',
-				body: {
-					email: value,
-				},
-			}
-		);
+		const { sendResetPasswordLinkHandler } = usePasswordReset();
+		const response = await sendResetPasswordLinkHandler({
+			email: value
+		});
 
 		if (!response?.success) {
 			error.value = response?.message || t('auth.login.forgot.requestFailed');

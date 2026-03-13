@@ -6,9 +6,9 @@ import {
 	getAuthResponseMessage,
 	isValidAuthEmail,
 } from '~/helpers/auth/auth.helper';
-import { useUserStore } from '~/stores/user';
+import { useUsersStore } from '~/stores/users/users.store';
 import { useCountry } from '~/composables/app/country/useCountry';
-import type { UserIdentity, UserProfile } from '~/stores/user';
+import type { MeUserResponse, UserIdentity, UserProfile } from '~/types/auth/user';
 import {
 	getProfileFieldValue,
 	normalizeAccountName,
@@ -18,7 +18,7 @@ import { authVerificationConfig } from '~/data/auth/verification';
 
 export function useRegisterForm() {
 	const router = useRouter();
-	const userStore = useUserStore();
+	const userStore = useUsersStore();
 	const isVerificationModalOpen = ref(false);
 	const api = useApi();
 	const { t } = useI18n();
@@ -378,6 +378,8 @@ export function useRegisterForm() {
 				await submitVerification(true);
 				return response;
 			}
+
+			clearErrors()
 			// Re-open explicitly in case state was previously left open/closed by a stale render cycle.
 			isVerificationModalOpen.value = false;
 			await nextTick();
@@ -443,15 +445,7 @@ export function useRegisterForm() {
 			}
 
 			try {
-				type MeResponse = {
-					success: boolean;
-					data: {
-						user?: UserIdentity;
-						profile?: UserProfile | null;
-					}
-				};
-
-				const meResponse = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
+				const meResponse = await api<MeUserResponse>(`/${apiCountry.value}/user/me`, {
 					method: 'GET',
 				});
 

@@ -8,7 +8,7 @@ import {
 	headerNavLinkConfig,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useUserStore } from '~/stores/user';
+import { useUsersStore } from '~/stores/users/users.store';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
@@ -26,7 +26,9 @@ export function useAppHeaderAccount() {
 	const route = useRoute();
 	const api = useApi();
 	const { withCountry, apiCountry, country } = useCountry();
-	const user_store = useUserStore();
+	const user_store = useUsersStore();
+	const { state } = storeToRefs(useUsersStore())
+
 
 	const preferred_locale = useCookie<SupportedCountry | null>('preferred_locale', {
 		default: () => null,
@@ -79,7 +81,7 @@ export function useAppHeaderAccount() {
 	);
 
 	const has_member_identity = computed(() =>
-		Boolean(auth_token.value || user_store.email || mock_user.value?.email?.trim())
+		Boolean(auth_token.value || state.value.email || mock_user.value?.email?.trim())
 	);
 	const is_mock_logged_in = computed(
 		() => has_member_identity.value && String(guest_login_mode.value || '') !== '1'
@@ -91,8 +93,8 @@ export function useAppHeaderAccount() {
 	const display_name = computed(() => {
 		const mock_first_name = mock_user.value?.firstName?.trim() || '';
 		const mock_last_name = mock_user.value?.lastName?.trim() || '';
-		const onboarding_first_name = user_store.onboardingProfile?.firstName?.trim() || '';
-		const onboarding_last_name = user_store.onboardingProfile?.lastName?.trim() || '';
+		const onboarding_first_name = state.value.onboardingProfile?.firstName?.trim() || '';
+		const onboarding_last_name = state.value.onboardingProfile?.lastName?.trim() || '';
 		const profile_name = [onboarding_first_name, onboarding_last_name]
 			.filter(Boolean)
 			.join(' ')
@@ -107,9 +109,9 @@ export function useAppHeaderAccount() {
 
 	const display_email = computed(() => {
 		return (
-			user_store.email ||
+			state.value.email ||
 			mock_user.value?.email?.trim() ||
-			user_store.onboardingProfile?.email?.trim() ||
+			state.value.onboardingProfile?.email?.trim() ||
 			''
 		);
 	});

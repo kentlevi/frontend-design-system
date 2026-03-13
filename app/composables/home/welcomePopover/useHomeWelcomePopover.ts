@@ -3,7 +3,7 @@ import {
 	getProfileFieldValue,
 	normalizeAccountName,
 } from '~/utils/account/accountProfile';
-import { useUserStore } from '~/stores/user';
+import { useUsersStore } from '~/stores/users/users.store';
 
 type MockUserCookie = {
 	firstName?: string;
@@ -13,7 +13,7 @@ type MockUserCookie = {
 
 export function useHomeWelcomePopover() {
 	const { t } = useI18n();
-	const user_store = useUserStore();
+	const { state } = storeToRefs(useUsersStore())
 	const mock_user = useCookie<MockUserCookie | null>('mock_user', {
 		default: () => null,
 		sameSite: 'lax',
@@ -21,11 +21,11 @@ export function useHomeWelcomePopover() {
 	});
 
 	const store_first_name = computed(() =>
-		getProfileFieldValue(user_store.profile?.user_field_values ?? [], 'first_name')
+		getProfileFieldValue(state.value.profile?.user_field_values ?? [], 'first_name')
 	);
 
 	const email_local_part = computed(() => {
-		const source = (user_store.email || mock_user.value?.email || '').trim();
+		const source = (state.value.email || mock_user.value?.email || '').trim();
 		if (!source.includes('@')) return '';
 		return source.split('@')[0] || '';
 	});
@@ -33,10 +33,10 @@ export function useHomeWelcomePopover() {
 	const greeting_name = computed(() => {
 		const normalized_name = normalizeAccountName(
 			store_first_name.value ||
-				user_store.onboardingProfile?.firstName ||
-				mock_user.value?.firstName ||
-				email_local_part.value ||
-				t('home.welcome.defaultName'),
+			state.value.onboardingProfile?.firstName ||
+			mock_user.value?.firstName ||
+			email_local_part.value ||
+			t('home.welcome.defaultName'),
 			''
 		);
 

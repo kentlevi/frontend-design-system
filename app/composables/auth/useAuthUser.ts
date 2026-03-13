@@ -1,8 +1,8 @@
-import { useUserStore } from '~/stores/user'
+import { useUsersStore } from '~/stores/users/users.store';
 import { getCurrentAuthenticatedUser } from '~/services/auth/auth.service'
 
 export function useAuthUser() {
-	const userStore = useUserStore()
+	const userStore = useUsersStore()
 
 	/**
      * Fetch authenticated user and store it
