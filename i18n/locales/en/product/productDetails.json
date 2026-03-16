@@ -4,7 +4,7 @@
         "changeProduct": "Change product",
         "options": {
             "selectSize": "Select your preferred size",
-            "unitMm": "(unit: mm)",
+            "unitMm": "(Unit: mm)",
             "customSize": "Custom Size",
             "selectQuantity": "Select your preferred quantity",
             "customQuantity": "Custom Quantity"
