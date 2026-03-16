@@ -43,12 +43,35 @@ export interface SubmitNonMemberLoginVerificationPayload {
 	otp: string;
 }
 
-export type SubmitNonMemberVerificationResponse = ApiResponse<SubmitNonMemberLoginVerification>
-
-export interface SubmitNonMemberLoginVerification {
-	auth_token: string;
-}
-
 export interface SendResetPasswordLinkPayload {
 	email: string;
+}
+
+export interface RegisterVerificationPayload {
+	given_name: string;
+	family_name: string;
+	email: string;
+	password: string;
+	terms_of_service: boolean | number;
+	newsletter: boolean | number;
+}
+
+export type RegisterVerificationResponse = ApiResponse<RegisterVerification>
+
+export interface RegisterVerification {
+	email: string;
+	token: string;
+	expires_in: number;
+	otp_sent?: boolean;
+	cooldown_remaining?: number;
+	given_name?: string;
+	password?: string;
+	terms_of_service?: string;
+	code?: string;
+}
+
+export interface RegisterPayload {
+	email?: string | null;
+	registration_token?: string | null;
+	otp: string;
 }

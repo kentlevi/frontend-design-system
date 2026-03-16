@@ -1,4 +1,14 @@
-import type { LoginResponse, LoginPayload, NonMemberLoginVerificationPayload, NonMemberLoginVerificationResponse, SubmitNonMemberVerificationResponse, SubmitNonMemberLoginVerificationPayload, SendResetPasswordLinkPayload } from '~/types/auth/auth'
+import type {
+	LoginResponse,
+	LoginPayload,
+	NonMemberLoginVerificationPayload,
+	NonMemberLoginVerificationResponse,
+	SubmitNonMemberLoginVerificationPayload,
+	SendResetPasswordLinkPayload,
+	RegisterVerificationPayload,
+	RegisterPayload,
+	RegisterVerificationResponse
+} from '~/types/auth/auth'
 import type { MeUserResponse } from '~/types/auth/user'
 import type { ApiResponse } from "~/types/config/api"
 
@@ -32,7 +42,7 @@ export async function sendNonMemberLoginVerification(payload: NonMemberLoginVeri
 /**
  * Non Member: Submit Verification Code && Finalize Login
  */
-export async function nonMemberSubmitVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<SubmitNonMemberVerificationResponse> {
+export async function nonMemberSubmitVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
 	return await $api.post('auth/login/guest', { ...payload })
@@ -45,4 +55,22 @@ export async function sendResetPasswordLink(payload: SendResetPasswordLinkPayloa
 	const { $api } = useNuxtApp()
 
 	return await $api.post('auth/password/reset-link', { ...payload })
+}
+
+/**
+ * Registration: Send Verification Code
+ */
+export async function sendRegisterVerification(payload: RegisterVerificationPayload): Promise<RegisterVerificationResponse> {
+	const { $api } = useNuxtApp()
+
+	return await $api.post('auth/register/verification', { ...payload })
+}
+
+/**
+ * Registration: Submit Verification Code
+ */
+export async function submitRegisterVerification(payload: RegisterPayload): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return await $api.post('auth/register', { ...payload })
 }

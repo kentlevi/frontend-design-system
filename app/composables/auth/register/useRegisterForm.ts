@@ -6,23 +6,17 @@ import {
 	getAuthResponseMessage,
 	isValidAuthEmail,
 } from '~/helpers/auth/auth.helper';
-import { useUsersStore } from '~/stores/users/users.store';
 import { useCountry } from '~/composables/app/country/useCountry';
-import type { MeUserResponse, UserIdentity, UserProfile } from '~/types/auth/user';
-import {
-	getProfileFieldValue,
-	normalizeAccountName,
-} from '~/utils/account/accountProfile';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 import { authVerificationConfig } from '~/data/auth/verification';
+import { useAuthUser } from '../useAuthUser';
+import { useRegisterUser } from '../useRegisterUser';
 
 export function useRegisterForm() {
 	const router = useRouter();
-	const userStore = useUsersStore();
 	const isVerificationModalOpen = ref(false);
-	const api = useApi();
 	const { t } = useI18n();
-	const { withCountry, apiCountry } = useCountry();
+	const { withCountry } = useCountry();
 
 	const firstName = ref('');
 	const lastName = ref('');
@@ -49,15 +43,13 @@ export function useRegisterForm() {
 
 	type VerificationExpiryCookie = {
 		email?: string;
-		expires_at?: string;
+		token?: string;
+		expires_at?: string | number | Date;
+		resend_cooldown_until?: number;
+		register_cooldown_until?: number;
 	};
 
-	const verificationExpiry = useCookie<VerificationExpiryCookie | null>('verificaiton_expiry', {
-		default: () => null,
-		maxAge: 60 * 10,
-		sameSite: 'lax',
-		path: '/'
-	});
+	const verificationExpiry = ref<VerificationExpiryCookie | null>(null);
 	let resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 	const registerRequestCooldownRemaining = ref(0);
 	let registerRequestCooldownTimer: ReturnType<typeof setInterval> | null = null;
@@ -74,57 +66,123 @@ export function useRegisterForm() {
 		registerRequestCooldownTimer = null;
 	}
 
-	function extractCooldownSeconds(message: string) {
-		const match = message.match(/please wait\s+(\d+)\s*seconds?/i);
-		if (!match) return 0;
-		const seconds = Number(match[1] || 0);
-		return Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+	function toEpochMilliseconds(value: unknown): number {
+		if (typeof value === 'number' && Number.isFinite(value)) {
+			return value > 1e12 ? value : value * 1000;
+		}
+		if (typeof value === 'string') {
+			const parsedNumber = Number(value);
+			if (Number.isFinite(parsedNumber)) {
+				return parsedNumber > 1e12 ? parsedNumber : parsedNumber * 1000;
+			}
+			const parsedDate = Date.parse(value);
+			return Number.isFinite(parsedDate) ? parsedDate : Number.NaN;
+		}
+		if (value instanceof Date) {
+			return value.getTime();
+		}
+		return Number.NaN;
 	}
 
-	function updateRegisterCooldownErrorMessage() {
-		if (registerRequestCooldownRemaining.value <= 0) return;
-		emailError.value = t('auth.verification.resendCooldown', {
-			seconds: registerRequestCooldownRemaining.value,
-		});
+	function getResendCooldownSecondsFromCache(cache: VerificationExpiryCookie | null): number {
+		if (!cache) return 0;
+		const cooldownUntil = toEpochMilliseconds(cache.resend_cooldown_until);
+		if (!Number.isFinite(cooldownUntil)) return 0;
+		const remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
+		return Math.max(0, remaining);
 	}
 
-	function startRegisterRequestCooldown(seconds: number) {
+	function getRegisterCooldownSecondsFromCache(cache: VerificationExpiryCookie | null): number {
+		if (!cache) return 0;
+		const cooldownUntil = toEpochMilliseconds(cache.register_cooldown_until);
+		if (!Number.isFinite(cooldownUntil)) return 0;
+		const remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
+		return Math.max(0, remaining);
+	}
+
+	function clearResendCooldownCache() {
+		if (!verificationExpiry.value) return;
+		const { resend_cooldown_until: _resendCooldownUntil, ...rest } = verificationExpiry.value;
+		verificationExpiry.value = Object.keys(rest).length > 0 ? rest : null;
+	}
+
+	function clearRegisterCooldownCache() {
+		if (!verificationExpiry.value) return;
+		const { register_cooldown_until: _registerCooldownUntil, ...rest } = verificationExpiry.value;
+		verificationExpiry.value = Object.keys(rest).length > 0 ? rest : null;
+	}
+
+	function setResendCooldownCache(seconds: number) {
+		const now = Date.now();
+		const until = now + Math.max(0, Math.floor(seconds)) * 1000;
+		verificationExpiry.value = {
+			...(verificationExpiry.value || {}),
+			resend_cooldown_until: until,
+		};
+	}
+
+	function setRegisterCooldownCache(seconds: number) {
+		const now = Date.now();
+		const until = now + Math.max(0, Math.floor(seconds)) * 1000;
+		verificationExpiry.value = {
+			...(verificationExpiry.value || {}),
+			register_cooldown_until: until,
+		};
+	}
+
+	function startRegisterRequestCooldown(
+		seconds: number,
+		options: { persist?: boolean } = {}
+	) {
 		clearRegisterRequestCooldownTimer();
+		const shouldPersist = options.persist !== false;
 		registerRequestCooldownRemaining.value = Math.max(0, Math.floor(seconds));
-		if (registerRequestCooldownRemaining.value <= 0) return;
-		updateRegisterCooldownErrorMessage();
+		if (registerRequestCooldownRemaining.value <= 0) {
+			clearRegisterCooldownCache();
+			return;
+		}
+		if (shouldPersist) {
+			setRegisterCooldownCache(registerRequestCooldownRemaining.value);
+		}
 
 		registerRequestCooldownTimer = setInterval(() => {
 			if (registerRequestCooldownRemaining.value <= 1) {
 				clearRegisterRequestCooldownTimer();
 				registerRequestCooldownRemaining.value = 0;
-				if (/before requesting a new code/i.test(emailError.value)) {
-					emailError.value = '';
-				}
+				clearRegisterCooldownCache();
 				return;
 			}
 
 			registerRequestCooldownRemaining.value -= 1;
-			updateRegisterCooldownErrorMessage();
 		}, 1000);
 	}
 
-	function applyRegisterCooldownFromMessage(message: string) {
-		const seconds = extractCooldownSeconds(message);
+	function applyRegisterCooldownFromResponse(response: unknown) {
+		const payload = response as { data?: { cooldown_remaining?: unknown } } | null;
+		const seconds = Number(payload?.data?.cooldown_remaining ?? 0);
+		if (!Number.isFinite(seconds)) return false;
 		if (seconds <= 0) return false;
 		startRegisterRequestCooldown(seconds);
 		return true;
 	}
 
-	function startResendCooldown(seconds = authVerificationConfig.resendCooldownSeconds) {
+	function startResendCooldown(
+		seconds: number = authVerificationConfig.resendCooldownSeconds,
+		options: { persist?: boolean } = {}
+	) {
 		clearResendCooldownTimer();
+		const shouldPersist = options.persist !== false;
 		resendCooldownRemaining.value = Math.max(0, Math.floor(seconds));
+		if (shouldPersist && resendCooldownRemaining.value > 0) {
+			setResendCooldownCache(resendCooldownRemaining.value);
+		}
 		if (resendCooldownRemaining.value <= 0) return;
 
 		resendCooldownTimer = setInterval(() => {
 			if (resendCooldownRemaining.value <= 1) {
 				clearResendCooldownTimer();
 				resendCooldownRemaining.value = 0;
+				clearResendCooldownCache();
 				return;
 			}
 			resendCooldownRemaining.value -= 1;
@@ -171,36 +229,16 @@ export function useRegisterForm() {
 		}
 	});
 
-	interface RegisterVerificationResponse {
-		success: boolean | string | number;
-		message: string;
-		data:
-		| {
-			email: string;
-			token: string;
-			expires_in: string;
+	type ValidationPayload = Record<string, string[] | undefined> | null | undefined | any;
+
+	function getFirstError(payload: ValidationPayload, key: string): string {
+		const field_errors = payload?.[key];
+
+		if (!Array.isArray(field_errors) || field_errors.length === 0) {
+			return '';
 		}
-		| Record<string, string[]>;
-		meta: Record<string, unknown>;
-		error: Record<string, unknown>;
-	}
 
-	interface RegisterResponse {
-		success: boolean;
-		message: string;
-		data: Record<string, unknown>;
-		meta: Record<string, unknown>;
-		error: Record<string, unknown>;
-	}
-
-	function getFirstError(
-		payload: RegisterVerificationResponse['data'] | undefined,
-		key: string
-	) {
-		if (!payload || Array.isArray(payload) || typeof payload !== 'object') return '';
-		const value = (payload as Record<string, unknown>)[key];
-		if (!Array.isArray(value) || !value.length) return '';
-		return String(value[0] ?? '').trim();
+		return String(field_errors[0]).trim();
 	}
 
 	function resolveRegisterErrorMessage(payloadMessage?: string, fallbackMessage?: string) {
@@ -242,54 +280,88 @@ export function useRegisterForm() {
 		return message;
 	}
 
-	async function submitRegister() {
-		if (isSubmitting.value) return;
-		clearErrors();
+	function getFirstVerificationDataError(payload: ValidationPayload): string {
+		const prioritizedKeys = ['otp', 'code', 'verification_code', 'registration_token', 'email'];
 
+		for (const key of prioritizedKeys) {
+			const message = getFirstError(payload, key);
+			if (message) return message;
+		}
+
+		if (!payload || typeof payload !== 'object') return '';
+
+		for (const value of Object.values(payload as Record<string, unknown>)) {
+			if (typeof value === 'string' && value.trim()) {
+				return value.trim();
+			}
+			if (Array.isArray(value) && value.length > 0) {
+				const first = String(value[0] ?? '').trim();
+				if (first) return first;
+			}
+		}
+
+		return '';
+	}
+
+	function validateInputs() {
 		if (!firstName.value.trim()) {
 			firstNameError.value = t('auth.register.validation.fieldBlank');
+			return false
 		}
 
 		if (!email.value.trim()) {
 			emailError.value = t('auth.register.validation.fieldBlank');
+			return
 		} else if (!isValidAuthEmail(email.value.trim())) {
 			emailError.value = t('auth.register.validation.emailInvalid');
+			return false
 		}
 
 		if (!password.value.trim()) {
 			passwordError.value = t('auth.register.validation.fieldBlank');
+			return false
 		} else if (!isValidRegisterPassword(password.value.trim())) {
 			passwordError.value = t('auth.register.validation.passwordRequirement');
+			return false
 		}
 
 		if (!agreeTerms.value) {
 			termsError.value = t('auth.register.validation.mustAgree');
+			return false
 		}
 
-		if (
-			firstNameError.value ||
-			emailError.value ||
-			passwordError.value ||
-			termsError.value
-		) {
-			return;
-		}
+		return true
+	}
 
-		// When reading/checking
-		if (verificationExpiry.value && typeof verificationExpiry.value === 'object') {
-			const data = verificationExpiry.value;
-			const now = Date.now();
-			const expiryTime = typeof data.expires_at === 'string'
-				? new Date(data.expires_at).getTime()
-				: Number.NaN;
+	async function submitRegister() {
+		if (isSubmitting.value) return;
+		clearErrors();
 
-			// Only open modal if email matches and not expired
-			if (
-				typeof data.email === 'string' &&
-				data.email === email.value.trim() &&
-				Number.isFinite(expiryTime) &&
-				now < expiryTime
-			) {
+		const valid = validateInputs()
+		if (!valid) return
+
+		const canSkipSendRequest = registerRequestCooldownRemaining.value > 0
+			&& !isVerificationCacheExpired(verificationExpiry.value);
+
+		if (canSkipSendRequest) {
+			const normalizedEmail = email.value.trim().toLowerCase();
+			const cachedEmail =
+				typeof verificationExpiry.value?.email === 'string'
+					? verificationExpiry.value.email.trim()
+					: '';
+			const cachedToken =
+				typeof verificationExpiry.value?.token === 'string'
+					? verificationExpiry.value.token.trim()
+					: '';
+
+			if (cachedEmail.toLowerCase() === normalizedEmail) {
+				verificationEmail.value = cachedEmail;
+			}
+
+			if (cachedToken && cachedEmail.toLowerCase() === normalizedEmail) {
+				verificationToken.value = cachedToken;
+				verificationCode.value = '';
+				verificationError.value = '';
 				isVerificationModalOpen.value = true;
 				return;
 			}
@@ -298,86 +370,75 @@ export function useRegisterForm() {
 		isSubmitting.value = true;
 
 		try {
-			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
-				method: 'POST',
-				body: {
-					given_name: firstName.value.trim(),
-					family_name: lastName.value.trim(),
-					email: email.value.trim(),
-					password: password.value.trim(),
-					terms_of_service: agreeTerms.value,
-					newsletter: optInPromos.value
-				}
-			})
+			const response = await sendVerificationCode()
 
-			const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
-			if (!isSuccess) {
+			if (!response.success) {
+				const code = getAuthResponseCode(response);
+				const message = getAuthResponseMessage(response);
+				if (code === 'max_resend_reached') {
+					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					verificationError.value = '';
+					isVerificationModalOpen.value = true
+					return response;
+				}
+			}
+
+			if (!response.success) {
 				firstNameError.value =
 					getFirstError(response.data, 'given_name') ||
 					getFirstError(response.data, 'first_name');
+
 				emailError.value = normalizeEmailErrorMessage(
 					getFirstError(response.data, 'email')
 				);
+
 				passwordError.value = normalizePasswordErrorMessage(
 					getFirstError(response.data, 'password')
 				);
+
 				termsError.value =
 					getFirstError(response.data, 'terms_of_service') ||
 					getFirstError(response.data, 'terms');
+
 				if (
 					!firstNameError.value &&
 					!emailError.value &&
 					!passwordError.value &&
 					!termsError.value
 				) {
-					if (applyRegisterCooldownFromMessage(response.message || '')) {
+					if (applyRegisterCooldownFromResponse(response)) {
 						return response;
 					}
-					emailError.value = resolveRegisterErrorMessage(
-						response.message,
-						'Registration failed.'
-					);
+
+					if (response.message) {
+						emailError.value = response.message;
+					}
 				}
-				return response
-			}
 
-			const verificationData = response.data as {
-				email?: string;
-				token?: string;
-				expires_in?: string;
-				otp_required?: boolean;
-			} | undefined;
-			const resolvedEmail =
-				typeof verificationData?.email === 'string' && verificationData.email.trim()
-					? verificationData.email.trim()
-					: email.value.trim();
-			const resolvedToken =
-				typeof verificationData?.token === 'string' ? verificationData.token.trim() : '';
-			verificationOtpRequired.value = verificationData?.otp_required !== false;
-			verificationExpiry.value = {
-				email: resolvedEmail,
-				expires_at:
-					typeof verificationData?.expires_in === 'string'
-						? verificationData.expires_in
-						: undefined,
-			};
-
-			if (!resolvedToken) {
-				emailError.value = resolveRegisterErrorMessage(
-					response.message,
-					'Registration failed.'
-				);
 				return response;
 			}
+
+			const resolvedEmail =
+				typeof response.data?.email === 'string' && response.data?.email.trim()
+					? response.data?.email.trim()
+					: email.value.trim();
+			const resolvedToken =
+				typeof response.data?.token === 'string' ? response.data?.token.trim() : '';
+
+			verificationExpiry.value = {
+				email: resolvedEmail,
+				token: resolvedToken,
+				expires_at: response.data?.expires_in
+			};
+			clearResendCooldownTimer();
+			resendCooldownRemaining.value = 0;
+			clearResendCooldownCache();
+			applyRegisterCooldownFromResponse(response);
 
 			verificationEmail.value = resolvedEmail;
 			verificationToken.value = resolvedToken;
 			verificationCode.value = '';
 			verificationError.value = '';
-			if (!verificationOtpRequired.value) {
-				await submitVerification(true);
-				return response;
-			}
 
 			clearErrors()
 			// Re-open explicitly in case state was previously left open/closed by a stale render cycle.
@@ -386,110 +447,44 @@ export function useRegisterForm() {
 			isVerificationModalOpen.value = true;
 			return response
 		} catch (error: unknown) {
-			const errorPayload = error as { data?: RegisterVerificationResponse; message?: string };
-			const payload = errorPayload?.data;
-			const validation = payload?.data;
-			firstNameError.value =
-				getFirstError(validation, 'given_name') ||
-				getFirstError(validation, 'first_name');
-			emailError.value = normalizeEmailErrorMessage(
-				getFirstError(validation, 'email')
-			);
-			passwordError.value = normalizePasswordErrorMessage(
-				getFirstError(validation, 'password')
-			);
-			termsError.value =
-				getFirstError(validation, 'terms_of_service') ||
-				getFirstError(validation, 'terms');
-
-			if (!firstNameError.value && !emailError.value && !passwordError.value && !termsError.value) {
-				const cooldownMessage = (payload?.message || errorPayload?.message || '').trim();
-				if (applyRegisterCooldownFromMessage(cooldownMessage)) {
-					return;
-				}
-				emailError.value = resolveRegisterErrorMessage(
-					payload?.message,
-					errorPayload?.message || 'Registration failed.'
-				);
-			}
+			console.error(error)
 		} finally {
 			isSubmitting.value = false;
 		}
 	}
 
-	async function submitVerification(forceBypass = false) {
-		const requiresOtp = verificationOtpRequired.value && !forceBypass;
-		if (requiresOtp && !verificationCode.value.trim()) {
-			verificationError.value = t('auth.verification.codeRequired');
-			return;
-		}
-
+	async function submitVerification() {
+		console.log('called')
 		isVerifying.value = true;
 		verificationError.value = '';
 
 		try {
-			const response = await api<RegisterResponse>(`/${apiCountry.value}/auth/register`, {
-				method: 'POST',
-				body: {
-					email: verificationEmail.value,
-					registration_token: verificationToken.value,
-					otp: requiresOtp ? verificationCode.value.trim() : undefined,
-				}
-			});
+			const { submitRegisterVerificationHandler } = useRegisterUser()
+			const response = await submitRegisterVerificationHandler({
+				email: verificationEmail.value.trim() || null,
+				registration_token: verificationToken.value.trim() || null,
+				otp: verificationCode.value.trim(),
+			})
 
-			if (response.success === false) {
+			if (!response.success) {
+				const firstDataError = getFirstVerificationDataError(response.data);
 				verificationError.value =
-					normalizeVerificationErrorMessage(getAuthResponseMessage(response))
+					normalizeVerificationErrorMessage(firstDataError)
+					|| normalizeVerificationErrorMessage(getAuthResponseMessage(response))
 					|| t('auth.verification.invalidCode');
 				return response;
 			}
 
-			try {
-				const meResponse = await api<MeUserResponse>(`/${apiCountry.value}/user/me`, {
-					method: 'GET',
-				});
+			const { fetchAndStoreUser } = useAuthUser()
+			await fetchAndStoreUser()
 
-				if (meResponse?.success && meResponse.data?.user) {
-					userStore.setUser({
-						...meResponse.data.user,
-						profile: meResponse.data.profile ?? null
-					});
-
-					const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
-						maxAge: 60 * 60 * 24 * 90,
-						sameSite: 'lax',
-						path: '/',
-					});
-					guestLoginMode.value = 0;
-
-					const mockUser = useCookie<{
-						firstName: string;
-						lastName: string;
-						email: string;
-					} | null>('mock_user', {
-						sameSite: 'lax',
-						path: '/',
-					});
-
-					const fields = meResponse.data.profile?.user_field_values ?? [];
-					const normalizedName = normalizeAccountName(
-						getProfileFieldValue(fields, 'first_name') || firstName.value.trim() || 'User',
-						getProfileFieldValue(fields, 'last_name') || lastName.value.trim()
-					);
-
-					mockUser.value = {
-						firstName: normalizedName.firstName,
-						lastName: normalizedName.lastName,
-						email: meResponse.data.user.email || email.value.trim(),
-					};
-				}
-			} catch (error) {
-				console.warn('Failed to fetch user data after registration.', error);
-			}
 			if (import.meta.client) {
 				window.localStorage.setItem(HOME_WELCOME_POPOVER_PENDING_KEY, '1');
 			}
 
+			verificationExpiry.value = null;
+			clearResendCooldownTimer();
+			resendCooldownRemaining.value = 0;
 			isVerificationModalOpen.value = false;
 			await router.push(withCountry('/auth/profile'));
 			return response;
@@ -508,20 +503,9 @@ export function useRegisterForm() {
 		resendLimitReached.value = '';
 
 		try {
-			const response = await api<RegisterVerificationResponse>(`/${apiCountry.value}/auth/register/verification`, {
-				method: 'POST',
-				body: {
-					given_name: firstName.value.trim(),
-					family_name: lastName.value.trim(),
-					email: verificationEmail.value.trim() || email.value.trim(),
-					password: password.value.trim(),
-					terms_of_service: agreeTerms.value,
-					newsletter: optInPromos.value
-				}
-			});
+			const response = await sendVerificationCode()
 
-			const isSuccess = response?.success === true || response?.success === 'true' || response?.success === 1;
-			if (!isSuccess) {
+			if (!response.success) {
 				const code = getAuthResponseCode(response);
 				const message = getAuthResponseMessage(response);
 				if (code === 'max_resend_reached') {
@@ -552,14 +536,86 @@ export function useRegisterForm() {
 			verificationToken.value = resolvedToken;
 			verificationCode.value = '';
 			verificationError.value = '';
+			verificationExpiry.value = {
+				...(verificationExpiry.value || {}),
+				email: resolvedEmail,
+				token: resolvedToken,
+			};
 			startResendCooldown();
-			if (!verificationOtpRequired.value) {
-				await submitVerification(true);
-			}
 		} catch (error: unknown) {
 			verificationError.value = getAuthErrorMessage(error) || t('auth.verification.invalidCode');
 		}
 	}
+
+	async function sendVerificationCode() {
+		const { sendRegisterVerificationHandler } = useRegisterUser()
+		const response = await sendRegisterVerificationHandler({
+			given_name: firstName.value.trim(),
+			family_name: lastName.value.trim(),
+			email: email.value.trim(),
+			password: password.value.trim(),
+			terms_of_service: agreeTerms.value,
+			newsletter: optInPromos.value
+		})
+
+		return response
+	}
+
+	function isVerificationCacheExpired(
+		cache: VerificationExpiryCookie | null
+	): boolean {
+		if (!cache) return true;
+		const expiry_time = toEpochMilliseconds(cache.expires_at);
+
+		if (!Number.isFinite(expiry_time)) {
+			return true;
+		}
+
+		return Date.now() >= expiry_time;
+	}
+
+	function clearExpiredVerificationCache(): void {
+		if (isVerificationCacheExpired(verificationExpiry.value)) {
+			verificationExpiry.value = null;
+		}
+	}
+
+	function restoreResendCooldownFromCache() {
+		const cachedEmail =
+			typeof verificationExpiry.value?.email === 'string'
+				? verificationExpiry.value.email.trim()
+				: '';
+		const cachedToken =
+			typeof verificationExpiry.value?.token === 'string'
+				? verificationExpiry.value.token.trim()
+				: '';
+		if (cachedEmail) {
+			verificationEmail.value = cachedEmail;
+		}
+		if (cachedToken) {
+			verificationToken.value = cachedToken;
+		}
+
+		const remaining = getResendCooldownSecondsFromCache(verificationExpiry.value);
+		if (remaining <= 0) {
+			clearResendCooldownCache();
+			return;
+		}
+		startResendCooldown(remaining, { persist: false });
+	}
+
+	function restoreRegisterCooldownFromCache() {
+		const remaining = getRegisterCooldownSecondsFromCache(verificationExpiry.value);
+		if (remaining <= 0) {
+			clearRegisterCooldownCache();
+			return;
+		}
+		startRegisterRequestCooldown(remaining, { persist: false });
+	}
+
+	clearExpiredVerificationCache();
+	restoreResendCooldownFromCache();
+	restoreRegisterCooldownFromCache();
 
 	watch(isVerificationModalOpen, (open) => {
 		if (open) return;
@@ -571,6 +627,7 @@ export function useRegisterForm() {
 	onBeforeUnmount(() => {
 		clearResendCooldownTimer();
 		clearRegisterRequestCooldownTimer();
+		clearExpiredVerificationCache();
 	});
 
 	return {
