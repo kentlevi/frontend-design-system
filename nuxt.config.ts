@@ -10,6 +10,7 @@ export default defineNuxtConfig({
 	css: [],
 	compatibilityDate: '2025-07-15',
 	devtools: { enabled: true },
+	// debug: process.env.ENV == 'homestead',
 	imports: {
 		dirs: ['composables', 'composables/core', 'composables/ui'],
 	},

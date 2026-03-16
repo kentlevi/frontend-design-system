@@ -6,8 +6,8 @@ export const useProductStore = defineStore('product', () => {
 	const sizes = ref([
 		{
 			id: 1,
-			width: 30,
-			height: 30,
+			width: 35,
+			height: 35,
 			label: 'Small'
 		},
 		{
@@ -43,8 +43,23 @@ export const useProductStore = defineStore('product', () => {
 		10000
 	]);
 
+	const shipping_fee = ref('$45')
+
+	// 📌 Percentage of discount
+	const discount_perce = ref('-7%')
+
+	// 📌Discounted price
+	const discounted_price = ref()
+
+	// 📌Actual Price
+	const price = ref(0)
+
 	return {
 		sizes,
 		quantities,
+		shipping_fee,
+		discount_perce,
+		discounted_price,
+		price,
 	}
 })
