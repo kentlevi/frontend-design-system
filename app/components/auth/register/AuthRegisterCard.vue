@@ -119,6 +119,7 @@ async function continueWithRegisteredEmail() {
 
 	if (!response.success) {
 		registeredEmailPasswordError.value = registeredEmailCredentialsMismatchMessage.value;
+		return
 	}
 
 	if (import.meta.client) {
