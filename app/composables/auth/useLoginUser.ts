@@ -4,11 +4,11 @@ import type {
 	LoginResponse,
 	NonMemberLoginVerificationPayload,
 	NonMemberLoginVerificationResponse,
-	SubmitNonMemberLoginVerificationPayload,
-	SubmitNonMemberVerificationResponse
+	SubmitNonMemberLoginVerificationPayload
 } from "~/types/auth/auth";
 import { useAuthUser } from "./useAuthUser";
 import { setGuestLoginToastPending } from "~/helpers/auth/auth.helper";
+import type { ApiResponse } from "~/types/config/api";
 
 export function useLoginUser() {
 	async function handleMemberLogin(payload: LoginPayload): Promise<LoginResponse> {
@@ -54,7 +54,7 @@ export function useLoginUser() {
 		}
 	}
 
-	async function handleSubmitNonMemberLoginVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<SubmitNonMemberVerificationResponse> {
+	async function handleSubmitNonMemberLoginVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<ApiResponse> {
 		try {
 			const response = await nonMemberSubmitVerification(payload)
 
@@ -68,7 +68,7 @@ export function useLoginUser() {
 			return {
 				success: false,
 				message: 'non_member_login_verification_error'
-			} as SubmitNonMemberVerificationResponse
+			} as ApiResponse
 		}
 	}
 
