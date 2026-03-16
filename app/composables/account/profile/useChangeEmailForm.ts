@@ -1,26 +1,36 @@
-import { sendEmailChangeOTP, verifyEmailChangeOtp } from "~/services/profile/changeEmail.service";
-import { useLoadingOverlayStore } from "~/stores/loading_overlay";
-import { useToastStore } from "~/stores/toast";
-import { useUsersStore } from "~/stores/users/users.store";
-import type { SendEmailChangeOtpSuccessData } from "~/types/account/changeEmail";
-import type { ApiResponse } from "~/types/config/api";
-import { normalizeResponseError, type ValidationErrors } from "~/utils/response/response";
+import type { Ref } from 'vue'
+import { sendEmailChangeOTP, verifyEmailChangeOtp } from '~/services/profile/changeEmail.service'
+import { useLoadingOverlayStore } from '~/stores/loading_overlay'
+import { useToastStore } from '~/stores/toast'
+import { useUsersStore } from '~/stores/users/users.store'
+import type { SendEmailChangeOtpSuccessData } from '~/types/account/changeEmail'
+import type { ApiResponse } from '~/types/config/api'
+import {
+	normalizeResponseError,
+	type ValidationErrors
+} from '~/utils/response/response'
 
 export function useChangeEmailForm() {
-
 	/** Store */
 	const user_store = useUsersStore()
 	const toast_store = useToastStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 
-
-	/** Response Error handlers */
+	/** Response state */
 	const form_errors = ref<ValidationErrors>({})
 	const error_message = ref<string | null>(null)
 
+	/** Current email shown in UI */
 	const email = ref(user_store.state.email)
 
-	/** OTP MODAL BEHAVIOR */
+	/** Email change modal state */
+	const pending_email = ref('')
+	const is_email_change_modal = ref(false)
+	const email_change_field_ref = ref<HTMLElement | null>(null)
+	const email_change_error = ref('')
+	const request_sent = ref(false)
+
+	/** OTP modal state */
 	const is_otp_open = ref(false)
 	const email_change_otp_code = ref('')
 	const email_change_otp_error = ref('')
@@ -28,153 +38,109 @@ export function useChangeEmailForm() {
 	const resend_cooldown = ref(0)
 
 	/**
-	 * EMAIL CHANGE MODAL BEHAVIOUR
-	*/
-	const pending_email = ref('')
-	const is_email_change_modal = ref(false)
-	const email_change_field_ref = ref<HTMLElement | null>(null);
-	const email_change_error = ref('')
-	const email_change_overlay_mode = ref<'idle' | 'requesting' | 'verifying'>('idle');
-	const request_sent = ref(false)
-
-
-	/** Open modal */
+	 * Open email change modal
+	 */
 	function openEmailChangeModal() {
-		is_email_change_modal.value = true;
+		is_email_change_modal.value = true
 
-		/** Focus on input after open */
+		/** Focus input after modal is rendered */
 		void nextTick(() => {
-			email_change_field_ref.value?.querySelector('input')?.focus();
-		});
-	}
-
-	/** Close Modal */
-	function closeEmailChangeModal() {
-		resetEmailFields()
-		is_email_change_modal.value = false;
-	}
-
-	async function confirmEmailChange() {
-		request_sent.value = false
-		is_otp_open.value = false
-		const next_email = pending_email.value.trim();
-
-		resetEmailFields()
-		closeEmailChangeModal();
-
-		/** Loader */
-		loading_overlay_store.startLoading('request_email_change', {
-			label: 'Verifying Your Information...',
-			description: "Just a moment! We're making sure everything looks perfect.",
-			showCopy: true,
-			testId: 'account-profile-email-change-page-overlay',
-			position: 'fixed'
+			const input_element = email_change_field_ref.value?.querySelector('input') as HTMLInputElement | null
+			input_element?.focus()
 		})
+	}
+
+	/**
+	 * Close email change modal
+	 */
+	function closeEmailChangeModal(reset = true) {
+		is_email_change_modal.value = false
+		if (reset) {
+			resetEmailState()
+			clearResponseState()
+		}
+	}
+
+	/**
+	 * Open OTP modal
+	 */
+	function openOtpModal() {
+		is_otp_open.value = true
+	}
+
+	/**
+	 * Close OTP modal
+	 */
+	function closeOtpModal(reset = true) {
+		is_otp_open.value = false
+		if (reset) {
+			resetOtpState()
+			clearResponseState()
+			resetRequestState()
+		}
+	}
+
+	/**
+	 * Confirm email change request
+	 */
+	async function confirmEmailChange() {
+		const next_email = pending_email.value.trim()
+
+		clearResponseState()
+		resetRequestState()
+
+		closeEmailChangeModal(false)
+
+		startRequestOverlay()
 
 		try {
-			/** Send OTP */
 			const payload = { email: next_email }
-			const response = await sendEmailChangeOTP(payload);
+			const response = await sendEmailChangeOTP(payload)
 
+			/** Success: move user to OTP step */
 			if (response.success) {
-				request_sent.value = true
-				is_otp_open.value = true
-
-				/** Set pending email to use in Otp verification */
 				pending_email.value = next_email
-
+				request_sent.value = true
+				is_email_change_modal.value = false
+				is_otp_open.value = true
 				return
 			}
 
-			/** If max limit reached, still proceed to the otp modal but show the limit reached error */
-			if (skipLimitReached(response, next_email)) {
-				return;
+			/**
+			 * Max resend reached:
+			 * still allow OTP modal to open, but show lock message
+			 */
+			if (handleLimitReached(response, next_email)) {
+				return
 			}
 
-			/** Below is all error handling */
-			const normalized_error = normalizeResponseError(response)
+			/** Validation or normal backend error */
+			applyResponseError(response, 'email', email_change_error)
 
-			if (normalized_error?.errors) {
-				form_errors.value = normalized_error.errors
-			} else if (normalized_error) {
-				error_message.value = normalized_error.message
-			}
-
-			/** If not backend request validation error, get default message */
-			email_change_error.value = getFirstError('email') || error_message.value || ''
-
-			/** Keep modal open to show errors */
+			/**
+			 * Keep email modal open so the user
+			 * does not lose the email they typed
+			 * and display errors
+			 */
 			openEmailChangeModal()
-		}  catch (_error: unknown) {
-			error_message.value = 'Failed to send otp.'
+		} catch (_error: unknown) {
+			error_message.value = 'Failed to send OTP.'
+			email_change_error.value = error_message.value
 		} finally {
 			loading_overlay_store.stopLoading('request_email_change')
 		}
 	}
 
 	/**
-	 * Handle max resend reached flow
-	 *
-	 * Returns:
-	 * - true  => caller should stop further execution
-	 * - false => caller should continue normal error handling
+	 * Verify OTP for email change
 	 */
-	function skipLimitReached(response: ApiResponse<SendEmailChangeOtpSuccessData>, next_email: string) {
-		if (limitReached(response)) {
-			request_sent.value = true
-			is_otp_open.value = true
-
-			/** Set pending email to use in Otp verification */
-			pending_email.value = next_email
-
-			/** Still store the error message */
-			limit_reached_error.value = response?.message ?? ''
-
-			return true
-		}
-
-		return false
-	}
-
-	function getResendCooldown(response: ApiResponse<SendEmailChangeOtpSuccessData>) {
-		resend_cooldown.value = response?.data?.cooldown_remaining ?? 0
-	}
-
-	function resetEmailFields() {
-		pending_email.value = ''
-		email_change_error.value = ''
-		form_errors.value = {}
-		error_message.value = null
-	}
-
-
-
-
-
-
-
-
-	/** Open OTP modal */
-	function openOtpModal() {
-		is_otp_open.value = true
-	}
-
-	/** Close OTP modal */
-	function closeOtpModal() {
-		is_otp_open.value = false
-
-		resetOtpFields()
-	}
-
-	/** Verify Otp modal */
 	async function verifyOtp() {
-		closeOtpModal()
+		clearResponseState()
+		email_change_otp_error.value = ''
+		limit_reached_error.value = ''
 
-		loading_overlay_store.startLoading('verify_email_change', {
-			showCopy: true,
-			testId: 'account-profile-email-change-page-overlay',
-			position: 'fixed'
-		})
+		closeOtpModal(false)
+		startVerifyOverlay()
 
 		try {
 			const payload = {
@@ -188,83 +154,212 @@ export function useChangeEmailForm() {
 				/** Show success toast */
 				toast_store.handleApiResponse(response, 3000)
 
-				/** Set user store email */
+				/** Sync user store */
 				user_store.patchUser({ email: payload.email })
-
-				/** Set local email to sync frontend */
 				email.value = user_store.state.email
 
-				/** Reset fields after success */
-				resetEmailFields()
-				resetOtpFields()
-			} else {
-				const normalized_error = normalizeResponseError(response)
-
-				if (limitReached(response)) {
-					limit_reached_error.value = normalized_error?.message ?? ''
-				} else {
-					if (normalized_error?.errors) {
-						form_errors.value = normalized_error.errors
-					} else if (normalized_error) {
-						error_message.value = normalized_error.message
-					}
-
-					/** If not backend request validation error, get default message */
-					email_change_otp_error.value = getFirstError('otp') || error_message.value || ''
-				}
-
-				/** Keep modal open to show errors */
-				openOtpModal()
+				/** Close flow after success */
+				closeOtpModal()
+				resetAllState()
+				return
 			}
+
+			/** Limit handling, kept for defensive safety */
+			if (limitReached(response)) {
+				limit_reached_error.value = response.message ?? ''
+				return
+			}
+
+			/** Validation or normal backend error */
+			applyResponseError(response, 'otp', email_change_otp_error)
+
+			/**
+			 * Keep otp modal open
+			 * to display errors
+			 */
+			openOtpModal()
 		} catch (_error: unknown) {
 			error_message.value = 'Failed to verify.'
+			email_change_otp_error.value = error_message.value
 		} finally {
 			loading_overlay_store.stopLoading('verify_email_change')
 		}
 	}
 
-	/** Resend email change otp */
+	/**
+	 * Resend email change OTP
+	 */
 	async function resendOtp() {
+		clearResponseState()
+		email_change_otp_error.value = ''
+		limit_reached_error.value = ''
+
 		try {
-			/** Send OTP */
 			const payload = { email: pending_email.value }
-			const response = await sendEmailChangeOTP(payload);
+			const response = await sendEmailChangeOTP(payload)
 
 			getResendCooldown(response)
 
-			if (limitReached(response)) {
-				limit_reached_error.value = response?.message ?? ''
+			if (response.success) {
+				request_sent.value = true
+				return
 			}
+
+			if (limitReached(response)) {
+				limit_reached_error.value = response.message ?? ''
+				return
+			}
+
+			applyResponseError(response, 'otp', email_change_otp_error)
 		} catch (_error: unknown) {
 			error_message.value = 'Failed to resend.'
+			email_change_otp_error.value = error_message.value
 		}
 	}
 
-	function limitReached(response: ApiResponse) {
-		return (!response.success && response?.meta?.code === 'max_resend_reached')
+	/**
+	 * Shared backend error applier
+	 */
+	function applyResponseError(
+		response: ApiResponse,
+		field_name: string,
+		target_error: Ref<string>
+	) {
+		const normalized_error = normalizeResponseError(response)
+
+		if (!normalized_error) {
+			error_message.value = response.message ?? 'Something went wrong.'
+			target_error.value = error_message.value
+			return
+		}
+
+		if (normalized_error.errors) {
+			form_errors.value = normalized_error.errors
+		} else {
+			error_message.value = normalized_error.message
+		}
+
+		target_error.value =
+			getFirstError(field_name) ||
+			normalized_error.message ||
+			response.message ||
+			''
 	}
 
-	function resetOtpFields() {
-		email_change_otp_error.value = ''
+	/**
+	 * Handle max resend reached
+	 *
+	 * Returns:
+	 * - true  => stop caller flow
+	 * - false => continue normal error handling
+	 */
+	function handleLimitReached(
+		response: ApiResponse<SendEmailChangeOtpSuccessData>,
+		next_email: string
+	): boolean {
+		if (!limitReached(response)) {
+			return false
+		}
+
+		pending_email.value = next_email
+		request_sent.value = true
+		is_email_change_modal.value = false
+		is_otp_open.value = true
+		limit_reached_error.value = response.message ?? ''
+
+		return true
+	}
+
+	/**
+	 * Read resend cooldown if present
+	 */
+	function getResendCooldown(response: ApiResponse<SendEmailChangeOtpSuccessData>) {
+		resend_cooldown.value = response.data?.cooldown_remaining ?? 0
+	}
+
+	/**
+	 * Check whether response is max resend reached
+	 *
+	 * Supports either:
+	 * - meta.code
+	 */
+	function limitReached(response: ApiResponse): boolean {
+		return ( !response.success && response.meta?.code === 'max_resend_reached' )
+	}
+
+	/**
+	 * Clear common response state
+	 */
+	function clearResponseState() {
 		form_errors.value = {}
 		error_message.value = null
-		limit_reached_error.value = ''
-		email_change_otp_code.value = ''
 	}
 
+	/**
+	 * Reset email step state
+	 */
+	function resetEmailState() {
+		pending_email.value = ''
+		email_change_error.value = ''
+	}
 
+	/**
+	 * Reset OTP step state
+	 */
+	function resetOtpState() {
+		email_change_otp_code.value = ''
+		email_change_otp_error.value = ''
+		limit_reached_error.value = ''
+		resend_cooldown.value = 0
+	}
 
+	/**
+	 * Reset request flags
+	 */
+	function resetRequestState() {
+		request_sent.value = false
+	}
 
+	/**
+	 * Reset everything in this flow
+	 */
+	function resetAllState() {
+		clearResponseState()
+		resetEmailState()
+		resetOtpState()
+		resetRequestState()
+	}
 
-
-
-
-
-
+	/**
+	 * Get first validation error for a field
+	 */
 	function getFirstError(field_name: string): string {
 		return form_errors.value[field_name]?.[0] ?? ''
 	}
 
+	/**
+	 * Start request overlay
+	 */
+	function startRequestOverlay() {
+		loading_overlay_store.startLoading('request_email_change', {
+			label: 'Verifying Your Information...',
+			description: "Just a moment! We're making sure everything looks perfect.",
+			showCopy: true,
+			testId: 'account-profile-email-change-page-overlay',
+			position: 'fixed'
+		})
+	}
+
+	/**
+	 * Start verify overlay
+	 */
+	function startVerifyOverlay() {
+		loading_overlay_store.startLoading('verify_email_change', {
+			showCopy: true,
+			testId: 'account-profile-email-change-page-overlay',
+			position: 'fixed'
+		})
+	}
 
 	return {
 		email,
@@ -273,7 +368,6 @@ export function useChangeEmailForm() {
 		is_email_change_modal,
 		email_change_field_ref,
 		email_change_error,
-		email_change_overlay_mode,
 
 		request_sent,
 		is_otp_open,
@@ -284,9 +378,10 @@ export function useChangeEmailForm() {
 
 		openEmailChangeModal,
 		closeEmailChangeModal,
+		openOtpModal,
+		closeOtpModal,
 		confirmEmailChange,
-
 		verifyOtp,
-		resendOtp,
+		resendOtp
 	}
 }
