@@ -1,13 +1,38 @@
 <script setup lang="ts">
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
+import AuthEmailAlreadyRegisteredModal from '@/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
+import AuthLoginForgotPasswordModal from '@/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { registerRewardPoints } from '~/data/auth/register';
+import { useLoginUser } from '~/composables/auth/useLoginUser';
+import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
+import { useRoute } from 'vue-router'
+import {
+	GUEST_LOGIN_TOAST_PENDING_KEY,
+	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
+	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
+} from '~/data/home/onboarding';
 
+const route = useRoute();
 const { t } = useI18n();
 const { withCountry } = useCountry();
+
+const props = withDefaults(defineProps<{
+	showCloseButton?: boolean;
+	loginAsAction?: boolean;
+}>(), {
+	showCloseButton: false,
+	loginAsAction: false,
+});
+
+const emit = defineEmits<{
+	(e: 'close'): void;
+	(e: 'open-login'): void;
+}>();
 
 const {
 	firstName,
@@ -45,6 +70,104 @@ const {
 	termsError,
 	agreeTerms,
 });
+
+const postLoginRedirect = computed(() =>
+	resolvePostLoginRedirect(getRedirectCandidate(), withCountry)
+);
+
+const isEmailAlreadyRegisteredModalOpen = ref(false);
+const isRegisteredEmailForgotPasswordModalOpen = ref(false);
+const shouldRestoreRegisteredEmailModal = ref(false);
+const registeredEmailPassword = ref('');
+const registeredEmailPasswordError = ref('');
+const registeredEmailPasswordVisible = ref(false);
+
+const emailTakenMessage = computed(() => t('auth.register.validation.emailTaken'));
+const registeredEmailCredentialsMismatchMessage = computed(() => t('auth.login.validation.credentialsMismatch'));
+const isEmailTakenError = computed(() => emailError.value === emailTakenMessage.value);
+const visibleEmailError = computed(() => (isEmailTakenError.value ? '' : emailError.value));
+
+// Helper functions
+function getRedirectCandidate() {
+	const queryRedirect = Array.isArray(route.query.redirect)
+		? route.query.redirect[0]
+		: route.query.redirect;
+	if (queryRedirect) return queryRedirect;
+	if (!import.meta.client) return null;
+	return window.history.state?.back ?? null;
+}
+
+function closeEmailAlreadyRegisteredModal() {
+	isEmailAlreadyRegisteredModalOpen.value = false;
+	registeredEmailPassword.value = '';
+	registeredEmailPasswordError.value = '';
+	registeredEmailPasswordVisible.value = false;
+}
+
+async function continueWithRegisteredEmail() {
+	if (!registeredEmailPassword.value.trim()) {
+		registeredEmailPasswordError.value = t('auth.register.validation.fieldBlank');
+		return;
+	}
+
+	const { handleMemberLogin } = useLoginUser();
+	const response = await handleMemberLogin({
+		email: email.value,
+		password: registeredEmailPassword.value,
+		remember_me: false
+	});
+
+	if (!response.success) {
+		registeredEmailPasswordError.value = registeredEmailCredentialsMismatchMessage.value;
+	}
+
+	if (import.meta.client) {
+		window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+		window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
+		window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
+	}
+
+	return await navigateTo(postLoginRedirect.value);
+}
+
+function onRegisteredEmailPasswordInput(value: string) {
+	registeredEmailPassword.value = value;
+	registeredEmailPasswordError.value = '';
+}
+
+function openRegisteredEmailForgotPasswordModal() {
+	shouldRestoreRegisteredEmailModal.value = true;
+	isEmailAlreadyRegisteredModalOpen.value = false;
+	isRegisteredEmailForgotPasswordModalOpen.value = true;
+}
+
+function onRegisteredEmailForgotPasswordModalChange(value: boolean) {
+	isRegisteredEmailForgotPasswordModalOpen.value = value;
+
+	if (!value && shouldRestoreRegisteredEmailModal.value) {
+		restoreRegisteredEmailModal();
+	}
+}
+
+async function restoreRegisteredEmailModal() {
+	isRegisteredEmailForgotPasswordModalOpen.value = false;
+	shouldRestoreRegisteredEmailModal.value = false;
+	await nextTick();
+	isEmailAlreadyRegisteredModalOpen.value = true;
+}
+
+watch(isEmailTakenError, (is_taken) => {
+	if (is_taken && email.value.trim()) {
+		isEmailAlreadyRegisteredModalOpen.value = true;
+		registeredEmailPassword.value = '';
+		registeredEmailPasswordError.value = '';
+		registeredEmailPasswordVisible.value = false;
+	}
+
+	if (!is_taken && isEmailAlreadyRegisteredModalOpen.value) {
+		closeEmailAlreadyRegisteredModal();
+	}
+});
 </script>
 
 <template>
@@ -60,6 +183,25 @@ const {
 	/>
 
 	<div class="auth-register-card" data-testid="auth-register-card">
+		<div v-if="props.showCloseButton" class="auth-register-card-close-wrap">
+			<UiButton
+				type="button"
+				variant="ghost"
+				tone="neutral"
+				size="sm"
+				:no-hover="true"
+				class="auth-register-card-close"
+				aria-label="Close modal"
+				@click="emit('close')"
+			>
+				<UiIcon
+					name="regular-times"
+					:size="24"
+					color="#000000"
+				/>
+			</UiButton>
+		</div>
+
 		<div class="auth-register-head">
 			<UiLogo
 				name="musticker"
@@ -127,7 +269,7 @@ const {
 		<UiFormField
 			class="auth-register-field"
 			:label="t('auth.register.email')"
-			:error="emailError"
+			:error="visibleEmailError"
 			head-class="auth-register-field-head"
 			label-class="auth-register-field-label"
 			label-text-class="auth-register-field-label-text"
@@ -138,7 +280,7 @@ const {
 				type="email"
 				size="md"
 				class="auth-register-input"
-				:state="emailError ? 'error' : 'default'"
+				:state="visibleEmailError ? 'error' : 'default'"
 				:placeholder="t('auth.register.enterEmail')"
 				data-testid="auth-register-email-input"
 			/>
@@ -232,26 +374,11 @@ const {
 							data-testid="auth-register-terms-error-button"
 							sr-label="Terms error information"
 							icon-only
+							:icon="termsErrorIconStrong ? 'strong-info-circle' : 'regular-info-circle'"
+							:icon-size="24"
 							@click="toggleTermsErrorPopover"
 							@focus="onTermsErrorHoverStart"
-						>
-							<span class="auth-register-terms-error-icon-stack" aria-hidden="true">
-								<UiIcon
-									name="regular-info-circle"
-									:size="24"
-									color="var(--error)"
-									class="auth-register-terms-error-icon auth-register-terms-error-icon-regular"
-									:class="{ 'is-hidden': termsErrorIconStrong }"
-								/>
-								<UiIcon
-									name="strong-info-circle"
-									:size="24"
-									color="var(--error)"
-									class="auth-register-terms-error-icon auth-register-terms-error-icon-strong"
-									:class="{ 'is-visible': termsErrorIconStrong }"
-								/>
-							</span>
-						</UiButton>
+						/>
 					</template>
 
 					<UiIcon
@@ -283,12 +410,22 @@ const {
 		<p class="auth-register-login">
 			{{ t('auth.register.alreadyMember') }}
 			<NuxtLink
+				v-if="!props.loginAsAction"
 				:to="withCountry('/auth/login')"
 				class="auth-register-login-link"
 				data-testid="auth-register-login-link"
 			>
 				{{ t('auth.register.signInHere') }}
 			</NuxtLink>
+			<button
+				v-else
+				type="button"
+				class="auth-register-login-link"
+				data-testid="auth-register-login-link"
+				@click="emit('open-login')"
+			>
+				{{ t('auth.register.signInHere') }}
+			</button>
 		</p>
 
 		<AuthRegisterVerificationModal
@@ -302,6 +439,26 @@ const {
 			@update:code="verificationCode = $event"
 			@verify="submitVerification"
 			@resend="resendVerification"
+		/>
+
+		<AuthEmailAlreadyRegisteredModal
+			:model-value="isEmailAlreadyRegisteredModalOpen"
+			:email="email"
+			:password="registeredEmailPassword"
+			:password-error="registeredEmailPasswordError"
+			:password-visible="registeredEmailPasswordVisible"
+			@update:model-value="isEmailAlreadyRegisteredModalOpen = $event"
+			@update:password="onRegisteredEmailPasswordInput"
+			@update:password-visible="registeredEmailPasswordVisible = $event"
+			@continue="continueWithRegisteredEmail"
+			@forgot-password="openRegisteredEmailForgotPasswordModal"
+		/>
+
+		<AuthLoginForgotPasswordModal
+			:model-value="isRegisteredEmailForgotPasswordModalOpen"
+			:email="email"
+			@update:model-value="onRegisteredEmailForgotPasswordModalChange"
+			@return-to-login="restoreRegisteredEmailModal"
 		/>
 	</div>
 </template>
@@ -320,6 +477,22 @@ const {
     gap: 24px;
     position: relative;
 
+	.auth-register-card-close-wrap {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+		z-index: 1;
+	}
+
+	.auth-register-card-close {
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		min-height: auto;
+		border-radius: 6px;
+		box-shadow: none;
+	}
+
     .auth-register-head {
         display: flex;
         flex-direction: column;
@@ -330,14 +503,14 @@ const {
         }
 
         .auth-register-title {
-            margin: 0;
+
             font-size: var(--type-size-500);
             line-height: var(--type-line-500);
             color: var(--text-primary);
         }
 
         .auth-register-subtitle {
-            margin: 0;
+
             color: var(--text-secondary);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
@@ -406,7 +579,7 @@ const {
         }
 
         .auth-register-hint {
-            margin: 0;
+
             color: var(--text-secondary);
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-regular);
@@ -450,45 +623,9 @@ const {
         max-width: 220px;
         position: relative;
 
-        .auth-register-terms-error-icon {
-            flex-shrink: 0;
-            transition: opacity 0.2s ease;
-            transform-origin: center;
-            color: var(--error);
-        }
-
-        .auth-register-terms-error-icon-stack {
-            position: relative;
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            .auth-register-terms-error-icon {
-                position: absolute;
-                inset: 0;
-                margin: auto;
-            }
-        }
-
-        .auth-register-terms-error-icon-regular {
-            opacity: 1;
-
-            &.is-hidden {
-                opacity: 0;
-            }
-        }
-
-        .auth-register-terms-error-icon-strong {
-            opacity: 0;
-
-            &.is-visible {
-                opacity: 1;
-            }
-        }
-
         .auth-register-terms-error-button {
+            --btn-soft: transparent;
+            --btn-border: transparent;
             padding: 0;
             min-height: auto;
             width: 24px;
@@ -505,6 +642,8 @@ const {
         .auth-register-terms-error-tooltip-content {
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
+			height: 40px;
+    		padding: 8px 16px 8px 12px;
         }
     }
 
@@ -518,7 +657,7 @@ const {
     }
 
     .auth-register-login {
-        margin: 0;
+
         text-align: center;
         color: var(--text-secondary);
         font-size: var(--type-size-100);
@@ -528,6 +667,10 @@ const {
             color: var(--text-primary);
             font-weight: var(--font-weight-bold);
             text-decoration: underline;
+			background: transparent;
+			border: 0;
+			padding: 0;
+			cursor: pointer;
         }
     }
 
@@ -562,16 +705,6 @@ const {
             }
         }
 
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .auth-register-card {
-        .auth-register-terms-error {
-            .auth-register-terms-error-icon {
-                transition: none;
-            }
-        }
     }
 }
 

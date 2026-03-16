@@ -9,19 +9,19 @@ export default defineNuxtPlugin(() => {
 	const country = route.params.country
 
 	const apiFetch = $fetch.create({
-		baseURL: config.public.api_url+'/'+country,
+		baseURL: config.public.api_url + '/' + country,
 		credentials: 'include',
 		onRequest({ options }) {
 			// 1. Force the type to be a plain object so we can use the spread operator/assignment
 			const headers = options.headers
-			const device_uuid = useCookie('device_uuid').value
-			const request_from = 'client-panel'
 
-			headers.set('request-from', request_from)
-
-			if (device_uuid) {
-				headers.set('x-device-uuid', device_uuid)
+			const device_uuid = useCookie('device_uuid', { maxAge: 10 * 365 * 24 * 60 * 60 })
+			if (!device_uuid.value) {
+				device_uuid.value = crypto.randomUUID()
 			}
+
+			headers.set('x-device-uuid', device_uuid.value)
+			headers.set('request-from', 'client-panel')
 
 			if (import.meta.server) {
 				const forwarded = useRequestHeaders(['cookie'])
@@ -67,16 +67,16 @@ export default defineNuxtPlugin(() => {
 
 	const api = {
 		get: <T>(url: string, options?: ApiOptions) =>
-			apiFetch<ApiResponse <T>>(url, { method: 'GET', ...options }),
+			apiFetch<ApiResponse<T>>(url, { method: 'GET', ...options }),
 
 		post: <T = unknown>(url: string, body?: Record<string, unknown>, options?: ApiOptions) =>
-			apiFetch<ApiResponse <T>>(url, { method: 'POST', body, ...options }),
+			apiFetch<ApiResponse<T>>(url, { method: 'POST', body, ...options }),
 
 		put: <T>(url: string, body?: Record<string, unknown>, options?: ApiOptions) =>
-			apiFetch<ApiResponse <T>>(url, { method: 'PUT', body, ...options }),
+			apiFetch<ApiResponse<T>>(url, { method: 'PUT', body, ...options }),
 
 		delete: <T>(url: string, options?: ApiOptions) =>
-			apiFetch<ApiResponse <T>>(url, { method: 'DELETE', ...options }),
+			apiFetch<ApiResponse<T>>(url, { method: 'DELETE', ...options }),
 	}
 
 	return {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '~/stores/user';
-import type { UserFieldValue, UserIdentity, UserProfile } from '~/stores/user';
+import { useUsersStore } from '~/stores/users/users.store';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { useAuthUser } from '~/composables/auth/useAuthUser';
 
 const props = withDefaults(
 	defineProps<{
@@ -26,7 +26,7 @@ const emit = defineEmits<{
 
 const api = useApi();
 const router = useRouter();
-const userStore = useUserStore();
+const userStore = useUsersStore();
 const { withCountry, apiCountry } = useCountry();
 const { t } = useI18n();
 
@@ -103,102 +103,9 @@ async function submitChangePassword() {
 			return;
 		}
 
-		const loginResponse = await api<{
-			success: boolean;
-			message: string;
-			data: {
-				user?: UserIdentity & {
-					profile?: Pick<UserProfile, 'user_field_values'> | null;
-				};
-			};
-		}>(`/${apiCountry.value}/auth/login`, {
-			method: 'POST',
-			body: {
-				email,
-				password: newPassword,
-				remember_me: false,
-			},
-		});
+		const { fetchAndStoreUser } = useAuthUser()
+		await fetchAndStoreUser()
 
-		if (!loginResponse?.success) {
-			error.value =
-				loginResponse?.message ||
-                t('auth.reset.errors.autoLoginFailed');
-			return;
-		}
-
-		if (loginResponse.data.user) {
-			const normalizedUser: UserIdentity & { profile: UserProfile | null } = {
-				...loginResponse.data.user,
-				profile: (loginResponse.data.user.profile as UserProfile | null) ?? null,
-			};
-			userStore.setUser(normalizedUser);
-
-			const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
-				maxAge: 60 * 60 * 24 * 3,
-				sameSite: 'lax',
-				path: '/',
-			});
-			guestLoginMode.value = 0;
-
-			const mockUser = useCookie<{
-				firstName: string;
-				lastName: string;
-				email: string;
-			} | null>('mock_user', {
-				sameSite: 'lax',
-				path: '/',
-			});
-
-			const fields =
-				normalizedUser.profile?.user_field_values ?? [];
-			const firstName =
-				fields.find(
-					(field: UserFieldValue) =>
-						field.country_field?.field_key === 'first_name' ||
-                        (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) ===
-                        1
-				)?.value?.trim() || '';
-			const lastName =
-				fields.find(
-					(field: UserFieldValue) =>
-						field.country_field?.field_key === 'last_name' ||
-                        (field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) ===
-                        2
-				)?.value?.trim() || '';
-			const fallbackRows = [...fields]
-				.filter((field) => typeof field.value === 'string' && field.value.trim())
-				.sort(
-					(a, b) =>
-						(a.country_field_id ?? a.country_field_ids ?? a.country_fields_id ?? Number.MAX_SAFE_INTEGER) -
-                        (b.country_field_id ?? b.country_field_ids ?? b.country_fields_id ?? Number.MAX_SAFE_INTEGER)
-				)
-				.slice(0, 2);
-
-			mockUser.value = {
-				firstName: firstName || fallbackRows[0]?.value?.trim() || '',
-				lastName: lastName || fallbackRows[1]?.value?.trim() || '',
-				email: normalizedUser.email || email,
-			};
-		} else {
-			try {
-				const meResponse = await api<{
-					success: boolean;
-					data?: { user?: UserIdentity; profile?: UserProfile | null };
-				}>(`/${apiCountry.value}/user/me`, { method: 'GET' });
-
-				if (meResponse?.success && meResponse.data?.user) {
-					userStore.setUser({
-						...meResponse.data.user,
-						profile: meResponse.data.profile ?? null,
-					});
-				}
-			} catch {
-				// ignore
-			}
-		}
-
-		emit('update:modelValue', false);
 		emit('updated');
 		router.push(withCountry('/'));
 	} catch (err: unknown) {
@@ -265,6 +172,7 @@ async function submitChangePassword() {
 								variant="ghost"
 								tone="neutral"
 								size="sm"
+								:no-hover="true"
 								class="auth-reset-toggle"
 								:aria-label="t('auth.reset.togglePassword')"
 								:sr-label="t('auth.reset.togglePassword')"
@@ -293,6 +201,7 @@ async function submitChangePassword() {
 								variant="ghost"
 								tone="neutral"
 								size="sm"
+								:no-hover="true"
 								class="auth-reset-toggle"
 								:aria-label="t('auth.reset.toggleConfirmPassword')"
 								:sr-label="t('auth.reset.toggleConfirmPassword')"
@@ -339,7 +248,7 @@ async function submitChangePassword() {
 		}
 
 		.auth-reset-description {
-			margin: 0;
+
 			color: var(--text-secondary);
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);
@@ -385,7 +294,6 @@ async function submitChangePassword() {
     }
 
     .auth-reset-toggle {
-        --btn-soft: transparent;
         --btn-border: transparent;
         padding: 0;
         min-height: auto;
@@ -397,7 +305,7 @@ async function submitChangePassword() {
     }
 
     .auth-reset-error {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--error);

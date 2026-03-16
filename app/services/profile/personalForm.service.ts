@@ -3,21 +3,16 @@ import type {
 	ProfileFieldDefinition,
 	UpdatePersonalFormPayload,
 } from '~/types/account/profile'
-
-import { useCountry } from '~/composables/app/country/useCountry';
+import type { ApiResponse } from '~/types/config/api';
 
 /**
  * Fetch dynamic personal field definitions
  */
-export async function fetchPersonalFieldDefinitions(): Promise<ProfileFieldDefinition[]> {
-	const api = useApi()
-	const { apiCountry } = useCountry()
+export async function fetchPersonalFieldDefinitions(
+): Promise<ApiResponse<ProfileFieldDefinition[]>> {
+	const { $api } = useNuxtApp();
 
-	const response = await api(`/${apiCountry.value}/profile/fields`, {
-		method: 'GET',
-	})
-
-	return Array.isArray(response?.data) ? response.data : []
+	return $api.get(`/profile/fields`)
 }
 
 /**
@@ -25,14 +20,8 @@ export async function fetchPersonalFieldDefinitions(): Promise<ProfileFieldDefin
  */
 export async function updatePersonalForm(
 	payload: UpdatePersonalFormPayload
-): Promise<PersonalFormApiResponse> {
-	const api = useApi()
-	const { apiCountry } = useCountry()
+): Promise<ApiResponse<PersonalFormApiResponse>> {
+	const { $api } = useNuxtApp();
 
-	const response = await api(`/${apiCountry.value}/profile/fields`, {
-		method: 'PUT',
-		body: payload,
-	})
-
-	return (response ?? {}) as PersonalFormApiResponse
+	return $api.put(`/profile/fields`, payload)
 }

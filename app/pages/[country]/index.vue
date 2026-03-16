@@ -128,6 +128,7 @@ function setGuideTourBodyState(active: boolean) {
 }
 
 function showResetSuccessToast() {
+	isResetPasswordModalOpen.value = false;
 	isResetSuccessToastVisible.value = true;
 
 	clearResetToastTimer();

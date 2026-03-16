@@ -38,7 +38,6 @@ const {
 	itemMeta,
 	isLoginModalOpen,
 	openLoginModal,
-	closeLoginModal,
 } = useCheckoutGuestPage();
 </script>
 
@@ -333,7 +332,6 @@ const {
 
 	<CheckoutLoginModal
 		v-model="isLoginModalOpen"
-		@update:model-value="closeLoginModal"
 	/>
 </template>
 
@@ -391,7 +389,7 @@ const {
 	}
 
 	.checkout-section-title {
-		margin: 0;
+
 		font-size: var(--type-size-300);
 		font-weight: var(--font-weight-semibold);
 		line-height: var(--type-line-200);

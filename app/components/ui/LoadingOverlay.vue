@@ -10,7 +10,9 @@ const BODY_LOCK_OVERFLOW_ATTR = 'data-ui-loading-overlay-previous-overflow';
 
 const props = withDefaults(defineProps<{
 	visible: boolean;
-	label: string;
+	label?: string;
+	description?: string;
+	showCopy?: boolean;
 	testId?: string;
 	transitionName?: string;
 	position?: 'fixed' | 'absolute';
@@ -20,6 +22,9 @@ const props = withDefaults(defineProps<{
 	loaderHeight?: string;
 	animationPath?: string;
 }>(), {
+	label: '',
+	description: '',
+	showCopy: false,
 	testId: '',
 	transitionName: 'ui-loading-overlay-fade',
 	position: 'fixed',
@@ -149,16 +154,22 @@ onBeforeUnmount(() => {
 				:data-testid="props.testId"
 				:style="overlayStyle"
 			>
-				<div
-					class="ui-loading-overlay-loader"
-					role="status"
-					aria-live="polite"
-					:aria-label="props.label"
-					:style="loaderStyle"
-				>
-					<div class="ui-loading-overlay-content" aria-hidden="true">
-						<slot v-if="hasCustomLoader" />
-						<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
+				<div class="ui-loading-overlay-stack">
+					<div
+						class="ui-loading-overlay-loader"
+						role="status"
+						aria-live="polite"
+						:aria-label="props.label"
+						:style="loaderStyle"
+					>
+						<div class="ui-loading-overlay-content" aria-hidden="true">
+							<slot v-if="hasCustomLoader" />
+							<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
+						</div>
+					</div>
+					<div v-if="props.showCopy && (props.label || props.description)" class="ui-loading-overlay-copy">
+						<p v-if="props.label" class="ui-loading-overlay-label">{{ props.label }}</p>
+						<p v-if="props.description" class="ui-loading-overlay-description">{{ props.description }}</p>
 					</div>
 				</div>
 			</div>
@@ -172,16 +183,22 @@ onBeforeUnmount(() => {
 			:data-testid="props.testId"
 			:style="overlayStyle"
 		>
-			<div
-				class="ui-loading-overlay-loader"
-				role="status"
-				aria-live="polite"
-				:aria-label="props.label"
-				:style="loaderStyle"
-			>
-				<div class="ui-loading-overlay-content" aria-hidden="true">
-					<slot v-if="hasCustomLoader" />
-					<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
+			<div class="ui-loading-overlay-stack">
+				<div
+					class="ui-loading-overlay-loader"
+					role="status"
+					aria-live="polite"
+					:aria-label="props.label"
+					:style="loaderStyle"
+				>
+					<div class="ui-loading-overlay-content" aria-hidden="true">
+						<slot v-if="hasCustomLoader" />
+						<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
+					</div>
+				</div>
+				<div v-if="props.showCopy && (props.label || props.description)" class="ui-loading-overlay-copy">
+					<p v-if="props.label" class="ui-loading-overlay-label">{{ props.label }}</p>
+					<p v-if="props.description" class="ui-loading-overlay-description">{{ props.description }}</p>
 				</div>
 			</div>
 		</div>
@@ -199,6 +216,13 @@ onBeforeUnmount(() => {
 		place-items: center;
 	}
 
+	.ui-loading-overlay-stack {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+	}
+
 	.ui-loading-overlay-content {
 		width: 100%;
 		height: 100%;
@@ -207,6 +231,30 @@ onBeforeUnmount(() => {
 	.ui-loading-overlay-lottie {
 		width: 100%;
 		height: 100%;
+	}
+
+	.ui-loading-overlay-copy {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		text-align: center;
+		width: min(360px, calc(100vw - 32px));
+	}
+
+	.ui-loading-overlay-label {
+
+		color: var(--text-primary);
+		font-size: var(--type-size-350);
+		line-height: var(--type-line-350);
+		font-weight: var(--font-weight-semibold);
+	}
+
+	.ui-loading-overlay-description {
+
+		color: var(--text-primary);
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
 	}
 }
 

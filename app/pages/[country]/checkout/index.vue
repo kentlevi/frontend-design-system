@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useUsersStore } from '~/stores/users/users.store';
+
 definePageMeta({
 	layout: 'checkout',
 });
 
-const userStore = useUserStore();
+const userStore = useUsersStore();
 const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 	default: () => null,
 	sameSite: 'lax',
@@ -16,7 +18,7 @@ const mockUser = useCookie<{ email?: string } | null>('mock_user', {
 });
 
 const hasMemberIdentity = computed(() =>
-	Boolean(userStore.email || mockUser.value?.email)
+	Boolean(userStore.state.email || mockUser.value?.email)
 );
 
 const isMemberCheckout = computed(() => {

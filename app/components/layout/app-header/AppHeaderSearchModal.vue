@@ -471,7 +471,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
                 justify-content: space-between;
 
                 .home-search-heading {
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     font-weight: var(--font-weight-medium);
                     line-height: var(--type-line-100);
@@ -501,7 +501,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
             }
 
             .home-search-recent-list {
-                margin: 0;
+
                 padding: 0;
                 list-style: none;
                 display: grid;
@@ -560,7 +560,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
             }
 
             .home-search-recent-title {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 line-height: var(--type-line-200);
                 font-weight: var(--font-weight-medium);
@@ -568,7 +568,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
             }
 
             .home-search-recent-blurb {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--gray-80);
@@ -633,7 +633,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 
                 border: 0;
                 padding: 0;
-                margin: 0;
+
                 min-height: auto;
                 height: auto;
                 background: transparent;
@@ -656,7 +656,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
                 gap: 10px;
 
                 .home-search-heading {
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     font-weight: var(--font-weight-medium);
                     line-height: var(--type-line-200);
@@ -703,7 +703,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
             }
 
             .home-search-result-title {
-                margin: 0;
+
                 font-size: var(--type-size-200);
                 font-weight: var(--font-weight-semibold);
                 line-height: var(--type-line-200);
@@ -711,7 +711,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
             }
 
             .home-search-result-blurb {
-                margin: 0;
+
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-secondary);

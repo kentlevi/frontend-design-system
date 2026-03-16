@@ -7,6 +7,7 @@ defineProps<{
 	emailError?: string;
 	emailHasError?: boolean;
 	orderError?: string;
+	hideOrderNumber?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -47,6 +48,7 @@ const emit = defineEmits<{
 			</UiFormField>
 
 			<UiFormField
+				v-if="!hideOrderNumber"
 				class="auth-login-field"
 				:label="t('auth.login.orderNumber')"
 				:error="orderError"
@@ -95,7 +97,7 @@ const emit = defineEmits<{
 
                 .auth-login-field-label {
                     display: block;
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     font-weight: var(--font-weight-semibold);
@@ -103,7 +105,7 @@ const emit = defineEmits<{
                 }
 
                 .auth-login-field-error {
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     color: var(--error);

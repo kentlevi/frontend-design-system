@@ -5,15 +5,13 @@ import {
 	isValidAuthEmail,
 	getAuthErrorMessage,
 	getAuthResponseMessage,
-	getAuthResponseCode
+	getAuthResponseMessageCode,
+	cacheNonMemberVerificationData,
+	getGuestVerificationCache,
+	clearGuestVerificationCache
 } from '~/helpers/auth/auth.helper';
-
-import {
-	getProfileFieldValue,
-	normalizeAccountName,
-} from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
-import type { UserIdentity, UserProfile } from '~/stores/user';
+import { useAuthUser } from '~/composables/auth/useAuthUser'
 import {
 	GUEST_LOGIN_TOAST_PENDING_KEY,
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
@@ -21,36 +19,21 @@ import {
 } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { authVerificationConfig } from '~/data/auth/verification';
-import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
+import { useLoginUser } from '~/composables/auth/useLoginUser';
+import type { NonMemberVerificationCache } from '~/types/auth/auth';
 
-// Constants
-const TOKEN_DURATION_SHORT = 60 * 60 * 24 * 3; // 3 days
-const TOKEN_DURATION_LONG = 60 * 60 * 24 * 90; // 90 days
-const CACHE_DURATION = 60 * 60 * 24 * 30; // 30 days
-const DEFAULT_EXPIRES_IN = 300; // 5 minutes
-const GUEST_TEST_REDIRECT_URL = 'http://localhost:4000/us/orders/12405070009';
-
-type UseLoginPageFormOptions = {
+interface UseLoginPageFormOptions {
 	skipMemberRedirect?: boolean;
-	onMemberLoginSuccess?: (() => void | Promise<void>) | null;
-};
-
-type MockUserCookie = {
-	firstName: string;
-	lastName: string;
-	email: string;
-};
-
-const {
-	loadPersonalForm
-} = usePersonalForm();
+	allowNonMemberEmailOnly?: boolean;
+	onMemberLoginSuccess?: () => void;
+}
 
 export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
-	const api = useApi();
+	const route = useRoute();
+
 	const { t } = useI18n();
 
-	const route = useRoute();
-	const { withCountry, apiCountry } = useCountry();
+	const { withCountry } = useCountry();
 
 	const {
 		memberType,
@@ -73,44 +56,14 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const guestVerificationCode = ref('');
 	const guestVerificationError = ref('');
 	const resendLimitReached = ref('');
-	const guestVerificationOtpRequired = ref(true);
 	const isGuestVerifying = ref(false);
 	const guestResendCooldownRemaining = ref(0);
-	const guestVerificationTokenExpiresAt = ref(0);
 	let guestResendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
 	function clearGuestResendCooldownTimer() {
 		if (!guestResendCooldownTimer) return;
 		clearInterval(guestResendCooldownTimer);
 		guestResendCooldownTimer = null;
-	}
-
-	function startGuestResendCooldown(seconds = authVerificationConfig.resendCooldownSeconds) {
-		clearGuestResendCooldownTimer();
-		guestResendCooldownRemaining.value = Math.max(0, Math.floor(seconds));
-		if (guestResendCooldownRemaining.value <= 0) return;
-
-		guestResendCooldownTimer = setInterval(() => {
-			if (guestResendCooldownRemaining.value <= 1) {
-				clearGuestResendCooldownTimer();
-				guestResendCooldownRemaining.value = 0;
-				return;
-			}
-			guestResendCooldownRemaining.value -= 1;
-		}, 1000);
-	}
-
-	function coercePositiveInt(value: unknown) {
-		if (typeof value === 'number') {
-			if (!Number.isFinite(value) || value <= 0) return null;
-			return Math.floor(value);
-		}
-		if (typeof value === 'string') {
-			const parsed = Number(value);
-			if (!Number.isFinite(parsed) || parsed <= 0) return null;
-			return Math.floor(parsed);
-		}
-		return null;
 	}
 
 	const memberEmail = ref('');
@@ -154,73 +107,28 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		nonMemberEmailError.value = '';
 		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
+		guestVerificationError.value = '';
 		resendLimitReached.value = '';
 	}
 
-	function setLoginModeCookie(isGuest: boolean, keepSigned = false) {
-		const tokenDuration = keepSigned ? TOKEN_DURATION_LONG : TOKEN_DURATION_SHORT;
+	function checkVerificationExpiry() {
+		const cache = getGuestVerificationCache()
 
-		const guestLoginModeCookie = useCookie<string | number | null>('guest_login_mode', {
-			maxAge: tokenDuration,
-			sameSite: 'lax',
-			path: '/',
-		});
+		if (cache && cache.expires_in) {
+			const expiry_time = new Date(cache.expires_in).getTime()
+			const now = Date.now()
 
-		guestLoginModeCookie.value = isGuest ? 1 : 0;
-	}
+			/* token still valid → reopen modal */
+			if (now < expiry_time) {
+				isVerificationModalOpen.value = true
+				return false;
+			}
 
-	function getMockUserCookie() {
-		return useCookie<MockUserCookie | null>('mock_user', {
-			sameSite: 'lax',
-			path: '/',
-		});
-	}
-
-	async function initializeUserFromResponse(response: LoginResponse | GuestOtpVerifyResponse, isGuest = false) {
-		const userStore = useUserStore();
-		const user = response.data?.user;
-
-		if (!user) {
-			console.warn('No user returned from login API');
-			return;
+			/* token expired → clear it */
+			clearVerificationCache()
 		}
 
-		userStore.setUser(user);
-
-		/** Store dynamic fields */
-		loadPersonalForm();
-
-		const mockUserCookie = getMockUserCookie();
-
-		if (isGuest) {
-			const email = user.email;
-			const emailLocalPart = email && typeof email === 'string' && email.includes('@')
-				? email.split('@')[0]!.trim()
-				: '';
-			const userName = emailLocalPart || 'Guest';
-
-			mockUserCookie.value = {
-				firstName: userName,
-				lastName: '',
-				email: user.email,
-			};
-		} else {
-			const fields = user.profile?.user_field_values ?? [];
-			const firstName = getProfileFieldValue(fields, 'first_name');
-			const lastName = getProfileFieldValue(fields, 'last_name');
-			const existing = mockUserCookie.value;
-			const emailValue = user.email || memberEmail.value.trim();
-			const normalizedName = normalizeAccountName(
-				firstName || existing?.firstName || '',
-				lastName || existing?.lastName || ''
-			);
-
-			mockUserCookie.value = {
-				firstName: normalizedName.firstName,
-				lastName: normalizedName.lastName,
-				email: emailValue,
-			};
-		}
+		return true;
 	}
 
 	function clearVerificationCache() {
@@ -228,68 +136,49 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		guestVerificationCache.value = null;
 	}
 
+	function setResendCooldown(seconds = authVerificationConfig.resendCooldownSeconds) {
+		const guest_verification_cache = useCookie<NonMemberVerificationCache | null>('guest_verification_cache')
+
+		if (!guest_verification_cache.value) return
+
+		const until = Date.now() + seconds * 1000
+
+		guest_verification_cache.value = {
+			...guest_verification_cache.value,
+			resend_cooldown_until: until
+		}
+
+		startGuestResendCooldown(seconds)
+	}
+
+	function startGuestResendCooldown(seconds: number = authVerificationConfig.resendCooldownSeconds) {
+		clearGuestResendCooldownTimer()
+
+		guestResendCooldownRemaining.value = Math.max(0, Math.floor(seconds))
+
+		if (guestResendCooldownRemaining.value <= 0) return
+
+		guestResendCooldownTimer = setInterval(() => {
+			if (guestResendCooldownRemaining.value <= 1) {
+				clearGuestResendCooldownTimer()
+				guestResendCooldownRemaining.value = 0
+				return
+			}
+
+			guestResendCooldownRemaining.value -= 1
+		}, 1000)
+	}
+
 	function setGuestLoginToastPending() {
 		if (!import.meta.client) return;
 		window.localStorage.setItem(GUEST_LOGIN_TOAST_PENDING_KEY, '1');
 		window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
-		window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
 	}
 
-	function syncMockUserFromProfile(
-		user: Pick<UserIdentity, 'email'>,
-		profile: UserProfile | Record<string, unknown> | null | undefined,
-		isGuest = false
-	) {
-		const mockUserCookie = getMockUserCookie();
-		const email = user.email || memberEmail.value.trim();
-
-		if (isGuest) {
-			const emailLocalPart = email && typeof email === 'string' && email.includes('@')
-				? email.split('@')[0]!.trim()
-				: '';
-			const userName = emailLocalPart || 'Guest';
-
-			mockUserCookie.value = {
-				firstName: userName,
-				lastName: '',
-				email,
-			};
-			return;
-		}
-
-		const fields = Array.isArray((profile as UserProfile | null | undefined)?.user_field_values)
-			? ((profile as UserProfile).user_field_values ?? [])
-			: [];
-		const existing = mockUserCookie.value;
-		const firstName = getProfileFieldValue(fields, 'first_name');
-		const lastName = getProfileFieldValue(fields, 'last_name');
-		const normalizedName = normalizeAccountName(
-			firstName || existing?.firstName || '',
-			lastName || existing?.lastName || ''
-		);
-
-		mockUserCookie.value = {
-			firstName: normalizedName.firstName,
-			lastName: normalizedName.lastName,
-			email,
-		};
-	}
-
-	async function fetchUserProfile(isGuest = false) {
-		try {
-			const response = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
-				method: 'GET',
-			});
-
-			const { user, profile } = response.data;
-			if (user) {
-				const userStore = useUserStore();
-				userStore.setUser({ ...user, profile: profile as unknown as UserProfile | null });
-				syncMockUserFromProfile(user, profile as UserProfile | null, isGuest);
-			}
-		} catch {
-			// Handle error if needed, but keep UX non-blocking
-		}
+	async function fetchUserProfile() {
+		const { fetchAndStoreUser } = useAuthUser()
+		setGuestLoginToastPending()
+		await fetchAndStoreUser()
 	}
 
 	function handleApiError(error: unknown, fallbackMessage: string) {
@@ -329,7 +218,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			nonMemberEmailHasError.value = true;
 		}
 
-		if (!nonMemberOrderNumber.value.trim()) {
+		if (!options.allowNonMemberEmailOnly && !nonMemberOrderNumber.value.trim()) {
 			nonMemberOrderError.value = t('auth.login.validation.fieldBlank');
 		}
 
@@ -361,75 +250,11 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		nonMemberOrderError.value = '';
 	}
 
-	// Interfaces
-	interface LoginResponse {
-		success: boolean;
-		message: string;
-		data: {
-			user?: UserIdentity & { profile: UserProfile | null };
-		};
-	}
-
-	interface GuestOtpRequestResponse {
-		success: boolean;
-		message: string;
-		data?: {
-			token?: string;
-			expires_in?: number;
-			otp_required?: boolean;
-			user?: UserIdentity & { profile: UserProfile | null };
-		};
-	}
-
-	interface GuestOtpVerifyResponse {
-		success: boolean;
-		message: string;
-		data?: {
-			user?: UserIdentity & { profile: UserProfile | null };
-			order_lookup_token?: string;
-			order_number?: string;
-		};
-	}
-
-	interface MeResponse {
-		success: boolean;
-		message: string;
-		data: {
-			user?: {
-				id: number;
-				code: string;
-				email: string;
-			};
-			profile?: Record<string, unknown>;
-		};
-		meta: Record<string, unknown>;
-		error: unknown;
-	}
-
-	interface GuestVerificationCache {
-		email: string;
-		order_number: string;
-		token?: string;
-		expires_in?: number;
-		otp_required?: boolean;
-		cached_at: number;
-	}
-
 	// Main handlers
 	async function onSubmitClick() {
+		clearErrors()
 		if (isNonMember.value === false) {
-			const response = await memberLoginHandler();
-			if (response?.success === true) {
-				if (import.meta.client) {
-					window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
-					window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
-					window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
-				}
-				await options.onMemberLoginSuccess?.();
-				if (!options.skipMemberRedirect) {
-					await navigateTo(postLoginRedirect.value);
-				}
-			}
+			await memberLoginHandler();
 		} else {
 			await nonMemberLoginHandler();
 		}
@@ -438,303 +263,155 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	async function memberLoginHandler() {
 		if (!validateMember()) return;
 
-		isSigningInMember.value = true;
+		const { handleMemberLogin } = useLoginUser();
+		const response = await handleMemberLogin({
+			email: memberEmail.value.trim(),
+			password: memberPassword.value.trim(),
+			remember_me: keepSignedIn.value
+		});
 
-		try {
-			const response = await api<LoginResponse>(`/${apiCountry.value}/auth/login`, {
-				method: 'POST',
-				body: {
-					email: memberEmail.value.trim(),
-					password: memberPassword.value.trim(),
-					remember_me: keepSignedIn.value,
-				},
-			});
-
-			if (!response.success) {
-				memberEmailError.value = t('auth.login.validation.credentialsMismatch');
-				memberPasswordError.value = '';
-				memberInvalidCredentials.value = true;
-				return response;
-			}
-
-			memberInvalidCredentials.value = false;
-			setLoginModeCookie(false, keepSignedIn.value);
-			await initializeUserFromResponse(response, false);
-			await fetchUserProfile(false);
-
-			return response;
-		} catch (error: unknown) {
+		if (!response.success) {
 			memberEmailError.value = t('auth.login.validation.credentialsMismatch');
 			memberPasswordError.value = '';
 			memberInvalidCredentials.value = true;
-			console.error(error);
-		} finally {
-			isSigningInMember.value = false;
+			return response;
 		}
+
+		memberInvalidCredentials.value = false;
+
+		if (import.meta.client) {
+			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+			window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
+			window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
+		}
+
+		options.onMemberLoginSuccess?.();
+
+		if (options.skipMemberRedirect) return response;
+
+		return await navigateTo(postLoginRedirect.value);
 	}
 
 	async function nonMemberLoginHandler() {
 		if (!validateNonMember()) return;
 
-		const email = nonMemberEmail.value.trim();
-		const orderNumber = nonMemberOrderNumber.value.trim();
+		const expired = checkVerificationExpiry()
+		if (!expired) return
 
-		isCheckingGuestOrder.value = true;
-		guestVerificationError.value = '';
-		resendLimitReached.value = '';
-
-		try {
-			const guestVerificationCache = useCookie<GuestVerificationCache | null>('guest_verification_cache', {
-				maxAge: CACHE_DURATION,
-				sameSite: 'lax',
-				path: '/',
-			});
-
-			let response: GuestOtpRequestResponse | null = null;
-			let shouldUseCache = false;
-
-			// Check if we have a valid cached response
-			if (guestVerificationCache.value) {
-				const cache = guestVerificationCache.value;
-				const credentialsMatch = cache.email === email && cache.order_number === orderNumber;
-
-				if (credentialsMatch) {
-					const now = Date.now();
-					const cachedAt = typeof cache.cached_at === 'number' ? cache.cached_at : Number(cache.cached_at);
-					const expiresIn = coercePositiveInt(cache.expires_in);
-					const cacheAge = Number.isFinite(cachedAt) ? (now - cachedAt) / 1000 : Number.POSITIVE_INFINITY;
-					const isExpired = !expiresIn || cacheAge >= expiresIn;
-
-					if (!isExpired) {
-						shouldUseCache = true;
-						guestVerificationTokenExpiresAt.value = cachedAt + expiresIn * 1000;
-						response = {
-							success: true,
-							message: 'Using cached verification',
-							data: {
-								token: cache.token,
-								expires_in: cache.expires_in,
-								otp_required: cache.otp_required,
-							},
-						};
-					}
-					if (isExpired) {
-						clearVerificationCache();
-					}
-				} else {
-					clearVerificationCache();
-				}
-			}
-
-			// Call API only if we don't have a valid cache
-			if (!shouldUseCache) {
-				try {
-					response = await api<GuestOtpRequestResponse>(
-						`/${apiCountry.value}/auth/login/guest/verification`,
-						{
-							method: 'POST',
-							body: { email, order_number: orderNumber },
-						}
-					);
-
-					const isSuccess = response?.success === true;
-					if (!isSuccess) {
-						const message = getAuthResponseMessage(response);
-						const code = getAuthResponseCode(response);
-						resendLimitReached.value = code === 'max_resend_reached' ? message : '';
-						nonMemberEmailError.value = '';
-						nonMemberEmailHasError.value = true;
-						nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
-						guestVerificationError.value = message;
-						return;
-					}
-
-					// Cache the response
-					const expiresIn =
-						coercePositiveInt(response.data?.expires_in) ?? DEFAULT_EXPIRES_IN;
-					guestVerificationTokenExpiresAt.value = Date.now() + expiresIn * 1000;
-					guestVerificationCache.value = {
-						email,
-						order_number: orderNumber,
-						token: response.data?.token,
-						expires_in: expiresIn,
-						otp_required: response.data?.otp_required,
-						cached_at: Date.now(),
-					};
-				} catch {
-					nonMemberEmailError.value = '';
-					nonMemberEmailHasError.value = true;
-					nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
-					guestVerificationError.value = '';
-					return;
-				}
-			}
-
-			if (response?.data?.user) {
-				setLoginModeCookie(true);
-				await initializeUserFromResponse({ success: true, message: response.message, data: { user: response.data.user } }, true);
-				clearVerificationCache();
-				resendLimitReached.value = '';
-				await fetchUserProfile(true);
-				setGuestLoginToastPending();
-				await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
-				return response;
-			}
-
-			guestVerificationEmail.value = email;
-			guestVerificationOrderNumber.value = orderNumber;
-			guestVerificationToken.value = response?.data?.token || '';
-			guestVerificationOtpRequired.value = response?.data?.otp_required !== false;
-			guestVerificationCode.value = '';
-			guestVerificationTokenExpiresAt.value =
-				Date.now() + (coercePositiveInt(response?.data?.expires_in) ?? DEFAULT_EXPIRES_IN) * 1000;
-
-			if (!guestVerificationOtpRequired.value) {
-				await submitGuestVerification(true);
-				return;
-			}
-
-			isVerificationModalOpen.value = true;
-			isCheckingGuestOrder.value = false;
-			return;
-		} finally {
-			if (!isVerificationModalOpen.value) {
-				isCheckingGuestOrder.value = false;
-			}
-		}
-	}
-
-	async function submitGuestVerification(forceBypass = false) {
-		const requiresOtp = guestVerificationOtpRequired.value && !forceBypass;
-		if (requiresOtp && !guestVerificationCode.value.trim()) {
-			guestVerificationError.value = t('auth.guestVerification.codeRequired');
-			return;
-		}
-
-		if (
-			guestVerificationOtpRequired.value &&
-			(!guestVerificationToken.value ||
-				(guestVerificationTokenExpiresAt.value > 0 && Date.now() >= guestVerificationTokenExpiresAt.value))
-		) {
-			// Token/code window expired; request a new token/code via the verification endpoint.
-			guestVerificationCode.value = '';
-			await resendGuestVerification();
-			return;
-		}
-
-		isGuestVerifying.value = true;
-		guestVerificationError.value = '';
+		const email = nonMemberEmail.value.trim()
+		const order_number = nonMemberOrderNumber.value.trim()
 
 		try {
-			const response = await api<GuestOtpVerifyResponse>(
-				`/${apiCountry.value}/auth/login/guest`,
-				{
-					method: 'POST',
-					body: {
-						email: guestVerificationEmail.value,
-						order_number: guestVerificationOrderNumber.value,
-						login_token: guestVerificationToken.value || undefined,
-						otp: requiresOtp ? guestVerificationCode.value.trim() : undefined,
-					},
-				}
-			);
+			isGuestVerifying.value = true;
+			const { handleNonMemberVerification } = useLoginUser()
+			const response = await handleNonMemberVerification({
+				email,
+				order_number: order_number
+			})
+
+			const message = getAuthResponseMessage(response)
+			const message_code = getAuthResponseMessageCode(response)
+			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
+
+			if (response.success && message_code === 'login_success') {
+				await fetchUserProfile()
+				return await navigateTo(GUEST_TEST_REDIRECT_URL);
+			}
 
 			if (!response.success) {
-				guestVerificationError.value = response.message || t('auth.guestVerification.invalidCode');
+				nonMemberEmailError.value = '';
+				nonMemberEmailHasError.value = true;
+				nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
+				if (message_code === 'max_resend_reached') {
+					resendLimitReached.value = message
+				} else {
+					guestVerificationError.value = message
+				}
+
 				return;
 			}
 
-			if (response.data?.user) {
-				setLoginModeCookie(true);
-				await initializeUserFromResponse(response, true);
-			}
-
-			const resolvedOrderNumber = response.data?.order_number || guestVerificationOrderNumber.value;
-
-			clearVerificationCache();
-			isVerificationModalOpen.value = false;
-			resendLimitReached.value = '';
-
-			if (resolvedOrderNumber) {
-				guestVerificationOrderNumber.value = resolvedOrderNumber;
-			}
-
-			setGuestLoginToastPending();
-			await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
-		} catch (error: unknown) {
+			cacheNonMemberVerificationData(response, email, order_number)
+			return isVerificationModalOpen.value = true;
+		} catch (error) {
 			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
+			console.error(error)
+			return
 		} finally {
 			isGuestVerifying.value = false;
 		}
 	}
 
 	async function resendGuestVerification() {
-		if (guestResendCooldownRemaining.value > 0) return;
-		if (!guestVerificationEmail.value || !guestVerificationOrderNumber.value) return;
+		if (guestResendCooldownRemaining.value > 0) return
+
+		const cache = getGuestVerificationCache()
+		if (!cache) return
 
 		try {
-			const response = await api<GuestOtpRequestResponse>(
-				`/${apiCountry.value}/auth/login/guest/verification`,
-				{
-					method: 'POST',
-					body: {
-						email: guestVerificationEmail.value,
-						order_number: guestVerificationOrderNumber.value,
-					},
+			isGuestVerifying.value = true;
+			const { handleNonMemberVerification } = useLoginUser()
+
+			const response = await handleNonMemberVerification({
+				email: cache.email,
+				order_number: cache.order_number
+			})
+
+			if (!response.success) {
+				const message = getAuthResponseMessage(response)
+				const code = getAuthResponseMessageCode(response)
+
+				if (code === 'max_resend_reached') {
+					resendLimitReached.value = message
+				} else {
+					guestVerificationError.value = message
 				}
-			);
 
-			const message = getAuthResponseMessage(response);
-			const isSuccess = response?.success === true;
-			if (!isSuccess) {
-				const code = getAuthResponseCode(response);
-				resendLimitReached.value = code === 'max_resend_reached' ? message : '';
-				guestVerificationError.value = resendLimitReached.value
-					? ''
-					: message || guestVerificationError.value;
-				return response;
+				return
 			}
 
-			resendLimitReached.value = '';
+			cacheNonMemberVerificationData(response, cache.email, cache.order_number)
+			setResendCooldown()
 
-			if (response.data?.user) {
-				setLoginModeCookie(true);
-				await initializeUserFromResponse({ success: true, message: response.message, data: { user: response.data.user } }, true);
-				clearVerificationCache();
-				await fetchUserProfile(true);
-				setGuestLoginToastPending();
-				await navigateTo(GUEST_TEST_REDIRECT_URL, { external: true });
-				return response;
+		} catch (error) {
+			console.error(error)
+		} finally {
+			isGuestVerifying.value = false;
+		}
+	}
+
+	async function submitGuestVerification() {
+		clearErrors()
+
+		try {
+			const cache = getGuestVerificationCache()
+
+			if (!cache) {
+				guestVerificationError.value = t('auth.guestVerification.sessionExpired')
+				return
 			}
 
-			const expiresIn =
-				coercePositiveInt(response.data?.expires_in) ?? DEFAULT_EXPIRES_IN;
-			guestVerificationToken.value = response.data?.token || '';
-			guestVerificationOtpRequired.value = response.data?.otp_required !== false;
-			guestVerificationTokenExpiresAt.value = Date.now() + expiresIn * 1000;
-
-			const guestVerificationCache = useCookie<GuestVerificationCache | null>('guest_verification_cache', {
-				maxAge: CACHE_DURATION,
-				sameSite: 'lax',
-				path: '/',
+			const { handleSubmitNonMemberLoginVerification } = useLoginUser();
+			const response = await handleSubmitNonMemberLoginVerification({
+				email: cache.email,
+				order_number: cache.order_number,
+				login_token: cache.token,
+				otp: guestVerificationCode.value.trim()
 			});
-			guestVerificationCache.value = {
-				email: guestVerificationEmail.value,
-				order_number: guestVerificationOrderNumber.value,
-				token: response.data?.token,
-				expires_in: expiresIn,
-				otp_required: response.data?.otp_required,
-				cached_at: Date.now(),
-			};
 
-			startGuestResendCooldown();
-			if (!guestVerificationOtpRequired.value) {
-				await submitGuestVerification(true);
+			if (!response.success) {
+				guestVerificationError.value = response.message || t('auth.guestVerification.invalidCode');
+				return;
 			}
 
-			return response;
-		} catch {
-			// Keep UX non-blocking for resend tap failures.
+			fetchUserProfile()
+			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
+
+			clearGuestVerificationCache()
+			return navigateTo(GUEST_TEST_REDIRECT_URL);;
+		} catch (error) {
+			console.error(error)
+			return
 		}
 	}
 
@@ -752,6 +429,18 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	onMounted(() => {
+		const cache = getGuestVerificationCache()
+
+		if (!cache) return
+
+		if (cache.resend_cooldown_until) {
+			const remaining = Math.floor((cache.resend_cooldown_until - Date.now()) / 1000)
+
+			if (remaining > 0) {
+				startGuestResendCooldown(remaining)
+			}
+		}
+
 		const modalQuery = Array.isArray(route.query.modal)
 			? route.query.modal[0]
 			: route.query.modal;

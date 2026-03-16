@@ -1,27 +1,16 @@
 import { defineStore } from 'pinia'
+import type { Categories, Category } from '~/types/navigation/navgiation'
 
-export interface CategoryIdentity {
-	id: number
-	name: string
-	url_slug: string
-	description: string
-	sort: number
-}
-
-export interface NavigationState {
-	categories: CategoryIdentity[]
-}
-
-const initialState = (): NavigationState => ({
+const initialState = (): Categories => ({
 	categories: []
 })
 
 export const useNavigationStore = defineStore('navigation', {
-	state: (): NavigationState => initialState(),
+	state: (): Categories => initialState(),
 
 	getters: {
 		/* @desc sorted categories for navbar */
-		sortedCategories: (state): CategoryIdentity[] => {
+		sortedCategories: (state): Category[] => {
 			return [...state.categories].sort((a, b) => a.sort - b.sort)
 		}
 	},
@@ -29,7 +18,7 @@ export const useNavigationStore = defineStore('navigation', {
 	actions: {
 
 		/* @desc store categories from API */
-		setCategories(categories: CategoryIdentity[]) {
+		setCategories(categories: Category[]) {
 			this.$patch({
 				categories
 			})

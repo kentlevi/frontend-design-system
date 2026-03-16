@@ -148,7 +148,7 @@ const emit = defineEmits<{
             gap: 4px;
 
             .auth-profile-head-title {
-                margin: 0;
+
                 font-size: var(--type-size-400);
                 line-height: var(--type-line-400);
                 font-weight: var(--font-weight-semibold);
@@ -156,7 +156,7 @@ const emit = defineEmits<{
             }
 
             .auth-profile-head-subtitle {
-                margin: 0;
+
                 color: var(--text-secondary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
@@ -181,7 +181,7 @@ const emit = defineEmits<{
                 gap: 20px;
 
                 .auth-profile-setting-title {
-                    margin: 0;
+
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
                     font-weight: var(--font-weight-bold);

@@ -11,6 +11,7 @@ import {
 } from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
 import type { AccountMockUser, AccountUnit } from '~/types/account/profile';
+import { useUsersStore } from '~/stores/users/users.store';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -26,7 +27,7 @@ interface ApiErrorPayload {
 export function useAccountProfile() {
 	const { withCountry, apiCountry } = useCountry();
 	const api = useApi();
-	const userStore = useUserStore();
+	const userStore = useUsersStore();
 	const { t } = useI18n();
 	const authToken = useCookie<string | null>('auth_token', {
 		default: () => null,
@@ -41,7 +42,7 @@ export function useAccountProfile() {
 	const mockUser = useCookie<AccountMockUser | null>('mock_user');
 
 	const profileFieldValues = computed(
-		() => userStore.profile?.user_field_values ?? []
+		() => userStore.state.profile?.user_field_values ?? []
 	);
 	const storeFirstName = computed(
 		() => getProfileFieldValue(profileFieldValues.value, 'first_name')
@@ -52,26 +53,26 @@ export function useAccountProfile() {
 
 	const rawFirstName =
 		storeFirstName.value ||
-		userStore.onboardingProfile?.firstName ||
+		userStore.state.onboardingProfile?.firstName ||
 		mockUser.value?.firstName ||
 		accountProfileDefaults.firstName;
 	const rawLastName =
 		storeLastName.value ||
-		userStore.onboardingProfile?.lastName ||
+		userStore.state.onboardingProfile?.lastName ||
 		mockUser.value?.lastName ||
 		accountProfileDefaults.lastName;
 	const normalizedName = normalizeAccountName(rawFirstName, rawLastName);
 
 	const firstName = ref(normalizedName.firstName || accountProfileDefaults.firstName);
 	const lastName = ref(normalizedName.lastName || accountProfileDefaults.lastName);
-	const email = ref(userStore.email || mockUser.value?.email || accountProfileDefaults.email);
+	const email = ref(userStore.state.email || mockUser.value?.email || accountProfileDefaults.email);
 	const currentPassword = ref('');
 	const newPassword = ref('');
 	const confirmPassword = ref('');
 
-	const promotions = ref(false);
-	const reviews = ref(false);
-	const confirmations = ref(false);
+	const promotions = ref(true);
+	const reviews = ref(true);
+	const confirmations = ref(true);
 	const unit = ref<AccountUnit>('millimeter');
 
 	const photoUrl = ref<string | null>(null);

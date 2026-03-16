@@ -244,7 +244,7 @@ const {
 								</div>
 								<div class="checkout-member-perk-control">
 									<UiInput v-model="pointsToUse" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
-									<UiButton variant="outlined" tone="neutral" size="md" class="checkout-member-inline-button" @click="useAllPoints">
+									<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="useAllPoints">
 										{{ t('checkout.member.useAll') }}
 									</UiButton>
 								</div>
@@ -256,7 +256,7 @@ const {
 								</div>
 								<div class="checkout-member-perk-control">
 									<UiInput v-model="couponCode" size="md" :placeholder="t('checkout.member.couponPlaceholder')" />
-									<UiButton variant="outlined" tone="neutral" size="md" class="checkout-member-inline-button">
+									<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button">
 										{{ t('checkout.member.applyCoupon') }}
 									</UiButton>
 								</div>
@@ -301,7 +301,7 @@ const {
 			}
 
 			.checkout-member-section-title {
-				margin: 0;
+
 				font-size: var(--type-size-300);
 				line-height: var(--type-line-200);
 				font-weight: var(--font-weight-bold);
@@ -399,7 +399,7 @@ const {
 					line-height: var(--type-line-100);
 
 					.checkout-member-address-line {
-						margin: 0;
+
 					}
 				}
 

@@ -1,4 +1,5 @@
 export type AddressType = 'Home' | 'Office' | 'Client';
+export type AddressSection = 'shipping' | 'billing' | 'dropShipping';
 
 export interface AccountAddressBookItem {
 	name: string;
@@ -6,5 +7,6 @@ export interface AccountAddressBookItem {
 	address: string;
 	company: string;
 	tag: AddressType;
+	section: AddressSection;
 	isDefault?: boolean;
 }

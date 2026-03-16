@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { personal_form_defaults } from '~/constants/account/profile'
 import { mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
 import {
@@ -9,17 +9,40 @@ import {
 	fetchPersonalFieldDefinitions,
 	updatePersonalForm,
 } from '~/services/profile/personalForm.service'
+import { useUsersStore } from '~/stores/users/users.store'
 import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/account/profile'
+import type { ApiResponse } from '~/types/config/api'
 
 export function usePersonalForm() {
-	const user_store = useUserStore()
+	const user_store = useUsersStore()
 	const profile_fields_store = useProfileFieldsStore()
+
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
 	const form_state = reactive(personal_form_defaults())
+	const initial_fields = ref<Record<string, string>>({})
 	const is_loading = ref(false)
-	const is_submitting = ref(false)
+	const is_updating = ref(false)
 	const error_message = ref('')
-	const api_response = ref<PersonalFormApiResponse | null>(null)
+	const api_response = ref<ApiResponse<PersonalFormApiResponse> | null>(null)
+
+	const has_changes = computed(() => {
+		const current_keys = Object.keys(form_state.fields).sort()
+		const initial_keys = Object.keys(initial_fields.value).sort()
+
+		if (current_keys.length !== initial_keys.length) return true
+
+		return current_keys.some((key, index) => {
+			if (key !== initial_keys[index]) return true
+			return (form_state.fields[key] ?? '') !== (initial_fields.value[key] ?? '')
+		})
+	})
+
+	const has_required_fields = computed(() =>
+		field_definitions.value.every((field) => {
+			if (!field.is_required) return true
+			return String(form_state.fields[field.field_key] ?? '').trim().length > 0
+		})
+	)
 
 	async function loadPersonalForm() {
 		is_loading.value = true
@@ -27,25 +50,31 @@ export function usePersonalForm() {
 
 		try {
 			if (profile_fields_store.dynamic_profile_fields.length === 0) {
-				field_definitions.value = await fetchPersonalFieldDefinitions()
+				const response = await fetchPersonalFieldDefinitions()
 
-				profile_fields_store.setDynamicProfileFields(field_definitions.value)
+				if (response.data) {
+					field_definitions.value = response.data
+
+					profile_fields_store.setDynamicProfileFields(field_definitions.value)
+				}
 			} else {
 				field_definitions.value = profile_fields_store.dynamic_profile_fields
 			}
-
 			/**
              * Map values to its fields
              */
 			const mapped_form = mapProfileToPersonalFormState(
 				field_definitions.value,
-				user_store.profile
+				user_store.state.profile
 			)
 
 			/**
              * Keep fallback values for fields that have no mapped value yet
              */
 			form_state.fields = {
+				...mapped_form.fields,
+			}
+			initial_fields.value = {
 				...mapped_form.fields,
 			}
 		} catch (_error: unknown) {
@@ -56,7 +85,7 @@ export function usePersonalForm() {
 	}
 
 	async function submitPersonalForm() {
-		is_submitting.value = true
+		is_updating.value = true
 		error_message.value = ''
 
 		try {
@@ -76,24 +105,29 @@ export function usePersonalForm() {
 				const updated_user_field_values = mapPersonalFormToUserFieldValues(
 					profile_fields_store.dynamic_profile_fields,
 					form_state.fields,
-					user_store.profile
+					user_store.state.profile
 				)
 
 				user_store.setProfileUserFieldValues(updated_user_field_values)
+				initial_fields.value = {
+					...form_state.fields,
+				}
 			}
 
 		} catch (error: unknown) {
 			error_message.value = 'Failed to save personal details.'
 			throw error
 		} finally {
-			is_submitting.value = false
+			is_updating.value = false
 		}
 	}
 
 	return {
 		form_state,
+		has_changes,
+		has_required_fields,
 		is_loading,
-		is_submitting,
+		is_updating,
 		error_message,
 		api_response,
 		loadPersonalForm,

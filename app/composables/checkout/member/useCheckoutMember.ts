@@ -6,6 +6,7 @@ import type {
 	CheckoutPaymentMethodKey,
 	CheckoutShippingMethodKey,
 } from '~/types/checkout/options';
+import { useUsersStore } from '~/stores/users/users.store';
 
 type MemberAddress = {
 	id: string;
@@ -17,10 +18,10 @@ type MemberAddress = {
 
 export function useCheckoutMember() {
 	const { t } = useI18n();
-	const userStore = useUserStore();
+	const userStore = useUsersStore();
 	const mockUser = useCookie<{ firstName?: string; lastName?: string; email?: string } | null>('mock_user');
 
-	const fields = computed(() => userStore.profile?.user_field_values ?? []);
+	const fields = computed(() => userStore.state.profile?.user_field_values ?? []);
 	const normalizedName = computed(() =>
 		normalizeAccountName(
 			getProfileFieldValue(fields.value, 'first_name') || mockUser.value?.firstName || 'Joy',
@@ -30,7 +31,7 @@ export function useCheckoutMember() {
 
 	const guestCheckout = useCheckoutGuest();
 
-	const memberEmail = computed(() => userStore.email || mockUser.value?.email || 'joy.love@musticker.com');
+	const memberEmail = computed(() => userStore.state.email || mockUser.value?.email || 'joy.love@musticker.com');
 	const savedShippingAddresses = computed<MemberAddress[]>(() => [
 		{
 			id: 'addr-default',

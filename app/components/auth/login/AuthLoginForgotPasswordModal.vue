@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 const props = withDefaults(
 	defineProps<{
@@ -14,6 +15,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
+	(e: 'returnToLogin'): void;
 }>();
 
 const { t } = useI18n();
@@ -43,6 +45,10 @@ function closeModal() {
 	emit('update:modelValue', false);
 }
 
+function returnToLogin() {
+	emit('returnToLogin');
+}
+
 async function submitReset() {
 	const value = resetEmail.value.trim();
 	error.value = '';
@@ -61,15 +67,10 @@ async function submitReset() {
 	loading.value = true;
 
 	try {
-		const response = await api<{ success: boolean; message: string }>(
-			`/${apiCountry.value}/auth/password/reset-link`,
-			{
-				method: 'POST',
-				body: {
-					email: value,
-				},
-			}
-		);
+		const { sendResetPasswordLinkHandler } = usePasswordReset();
+		const response = await sendResetPasswordLinkHandler({
+			email: value
+		});
 
 		if (!response?.success) {
 			error.value = response?.message || t('auth.login.forgot.requestFailed');
@@ -100,6 +101,15 @@ async function submitReset() {
 			class="auth-forgot-body"
 			:class="sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
 		>
+			<button
+				type="button"
+				class="auth-forgot-close"
+				aria-label="Close forgot password modal"
+				data-testid="auth-login-forgot-password-close-button"
+				@click="closeModal"
+			>
+				<UiIcon name="regular-times" :size="24" />
+			</button>
 			<UiLoadingOverlay
 				:visible="loading"
 				:label="t('auth.login.forgot.sending')"
@@ -171,10 +181,11 @@ async function submitReset() {
 						variant="ghost"
 						tone="neutral"
 						size="sm"
+						:no-hover="true"
 						class="auth-forgot-return"
 						label-class="auth-forgot-return-label"
 						data-testid="auth-login-forgot-password-return-button"
-						@click="closeModal"
+						@click="returnToLogin"
 					>
 						{{ t('auth.login.forgot.returnToLogin') }}
 					</UiButton>
@@ -193,7 +204,7 @@ async function submitReset() {
 						size="lg"
 						class="auth-forgot-submit"
 						data-testid="auth-login-forgot-password-return-button"
-						@click="closeModal"
+						@click="returnToLogin"
 					>
 						{{ t('auth.login.forgot.returnToLogin') }}
 					</UiButton>
@@ -215,7 +226,7 @@ async function submitReset() {
     }
 
     .auth-forgot-title {
-        margin: 0;
+
         font-size: var(--type-size-500);
         line-height: var(--type-line-500);
         color: var(--text-primary);
@@ -232,8 +243,22 @@ async function submitReset() {
     display: flex;
     flex-direction: column;
 
+    .auth-forgot-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text-primary);
+        cursor: pointer;
+        z-index: 1;
+    }
+
     .auth-forgot-description {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--text-secondary);
@@ -248,7 +273,7 @@ async function submitReset() {
         }
 
         .auth-forgot-field-error {
-            margin: 0;
+
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
             font-weight: var(--font-weight-semibold);
@@ -261,7 +286,7 @@ async function submitReset() {
     }
 
     .auth-forgot-success {
-        margin: 0;
+
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         color: var(--success);
@@ -281,7 +306,6 @@ async function submitReset() {
         }
 
         .auth-forgot-return {
-            --btn-soft: transparent;
             --btn-border: transparent;
             --btn-bg: var(--text-secondary);
 

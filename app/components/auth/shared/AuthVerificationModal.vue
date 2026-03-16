@@ -106,7 +106,8 @@ const {
 				v-if="showCloseButton"
 				variant="ghost"
 				tone="neutral"
-				size="sm"
+				size="24"
+				:no-hover="true"
 				class="auth-verification-close"
 				:aria-label="t(`${key}.closeModal`)"
 				:sr-label="t(`${key}.closeModal`)"
@@ -182,6 +183,7 @@ const {
 						variant="ghost"
 						tone="neutral"
 						size="sm"
+						:no-hover="true"
 						class="auth-verification-resend-btn"
 						label-class="auth-verification-resend-btn-label"
 						:data-testid="`${testIdPrefix}-resend`"
@@ -213,21 +215,30 @@ const {
 
     .auth-verification-close {
         position: absolute;
-        top: -16px;
-        right: -16px;
+        top: 24px;
+        right: 24px;
         width: 24px;
         height: 24px;
         padding: 0;
         min-height: auto;
         border-radius: 0;
         box-shadow: none;
+        z-index: 1;
+
     }
 
     .auth-verification-head {
         display: grid;
-        grid-template-columns: auto 1fr;
+        grid-template-columns: 48px minmax(0, 1fr);
         align-items: start;
         gap: 16px;
+
+        :deep(img),
+        :deep(svg) {
+            display: block;
+            width: 48px;
+            height: 48px;
+        }
 
         .auth-verification-copy {
             display: flex;
@@ -235,7 +246,7 @@ const {
             gap: 4px;
 
             .auth-verification-title {
-                margin: 0;
+
                 color: var(--text-primary);
                 font-size: var(--type-size-400);
                 font-weight: var(--font-weight-semibold);
@@ -243,7 +254,7 @@ const {
             }
 
             .auth-verification-text {
-                margin: 0;
+
                 color: var(--text-secondary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
@@ -262,7 +273,7 @@ const {
         gap: 16px;
 
         .auth-verification-label {
-            margin: 0;
+
             color: var(--text-primary);
             font-size: var(--type-size-100);
             font-weight: var(--font-weight-semibold);
@@ -306,7 +317,7 @@ const {
         }
 
         .auth-verification-error {
-            margin: 0;
+
             color: var(--error);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
@@ -327,7 +338,7 @@ const {
         }
 
         .auth-verification-resend {
-            margin: 0;
+
             color: var(--text-secondary);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
@@ -343,10 +354,6 @@ const {
                 &:disabled {
                     color: var(--text-muted);
                 }
-				&:hover:not(:disabled) {
-					--btn-soft: transparent;
-				}
-
                 .auth-verification-resend-btn-label {
                     padding: 0;
                     text-decoration: underline;

@@ -111,7 +111,7 @@ const { greetingName } = useHomeWelcomePopover();
 		gap: 8px;
 
 		.home-welcome-popover-title {
-			margin: 0;
+
 			color: var(--text-primary);
 			font-size: var(--type-size-200);
 			line-height: var(--type-line-200);
@@ -119,7 +119,7 @@ const { greetingName } = useHomeWelcomePopover();
 		}
 
 		.home-welcome-popover-text {
-			margin: 0;
+
 			color: var(--text-primary);
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);

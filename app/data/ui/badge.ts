@@ -1,4 +1,4 @@
-export const badgeVariants = ['filled', 'tonal', 'outline', 'subtle'] as const;
+export const badgeVariants = ['filled', 'tonal', 'outline', 'subtle', 'ghost'] as const;
 
 export const badgeTones = ['default', 'success', 'warning', 'danger'] as const;
 

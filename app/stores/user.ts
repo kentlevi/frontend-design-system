@@ -1,58 +1,20 @@
 import { defineStore } from 'pinia'
+import type { PreferenceState } from '~/types/account/preferences'
+import type {
+	UserIdentity,
+	UserProfile,
+	UserFieldValue,
+	OnboardingProfile,
+	UserState
+} from '~/types/auth/user'
 
-/**
- * Onboarding profile payload
- */
-export interface OnboardingProfile {
-	firstName: string
-	lastName: string
-	email: string
-	onboarding: boolean
-}
-
-/**
- * Dynamic user field value
- */
-export interface UserFieldValue {
-	id: number
-	user_profile_id: number
-	country_field_id: number
-	country_field_ids?: number | null
-	country_fields_id?: number | null
-	country_field?: {
-		field_key?: string | null
-	} | null
-	value?: string
-}
-
-/**
- * User profile payload
- */
-export interface UserProfile {
-	id: number
-	user_id: number
-	file_path_id: number
-	file_name: string | null
-	user_field_values: UserFieldValue[]
-}
-
-/**
- * Basic user identity
- */
-export interface UserIdentity {
-	id: number
-	code: string
-	email: string
-	country_id: number
-}
-
-/**
- * Base user state
- */
-export interface UserState extends UserIdentity {
-	onboardingProfile: OnboardingProfile | null
-	profile: UserProfile | null
-}
+export type {
+	UserIdentity,
+	UserProfile,
+	UserFieldValue,
+	OnboardingProfile,
+	UserState
+} from '~/types/auth/user'
 
 /**
  * Initial user state factory
@@ -62,8 +24,20 @@ const initial_user_state = (): UserState => ({
 	code: '',
 	email: '',
 	country_id: 0,
+
 	onboardingProfile: null,
 	profile: null,
+	preference: {
+		id: 0,
+		user_id: 0,
+		offers_emails: false,
+		reviews_emails: false,
+		confirmations_emails: false,
+		unit_of_measurement: 'mm',
+		guided_tour_enabled: false,
+		created_at: '',
+		updated_at: ''
+	} as PreferenceState,
 })
 
 /**
@@ -114,12 +88,32 @@ export const useUserStore = defineStore('user', {
 		},
 
 		/**
-         * Replace profile user field values
-         */
+		 * Replace profile user field values
+		 */
 		setProfileUserFieldValues(user_field_values: UserFieldValue[]) {
 			if (!this.profile) return
 
 			this.profile.user_field_values = user_field_values
+		},
+
+		/**
+		 * Set a single preference field
+		 */
+		setPreferenceField<K extends keyof PreferenceState>(
+			field_name: K,
+			field_value: PreferenceState[K]
+		) {
+			this.preference[field_name] = field_value
+		},
+
+		/**
+		 * Merge multiple preference fields
+		 */
+		setPreferenceFields(preference_fields: Partial<PreferenceState>) {
+			this.preference = {
+				...this.preference,
+				...preference_fields,
+			}
 		},
 	},
 })

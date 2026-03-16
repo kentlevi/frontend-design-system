@@ -1,1 +1,1 @@
-export const registerRewardPoints = 4;
+export const registerRewardPoints = 500;

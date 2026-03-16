@@ -11,14 +11,22 @@ import { useLoginPageForm } from '@/composables/auth/login/useLoginPageForm';
 const props = withDefaults(defineProps<{
 	skipMemberRedirect?: boolean;
 	showCloseButton?: boolean;
+	registerAsAction?: boolean;
+	forgotPasswordAsAction?: boolean;
+	hideNonMemberOrderNumber?: boolean;
 }>(), {
 	skipMemberRedirect: false,
 	showCloseButton: false,
+	registerAsAction: false,
+	forgotPasswordAsAction: false,
+	hideNonMemberOrderNumber: false,
 });
 
 const emit = defineEmits<{
 	(e: 'member-login-success'): void;
 	(e: 'close'): void;
+	(e: 'open-register'): void;
+	(e: 'open-forgot-password', email: string): void;
 }>();
 
 const { t } = useI18n();
@@ -63,8 +71,18 @@ const {
 	openForgotPasswordModal,
 } = useLoginPageForm({
 	skipMemberRedirect: props.skipMemberRedirect,
+	allowNonMemberEmailOnly: props.hideNonMemberOrderNumber,
 	onMemberLoginSuccess: () => emit('member-login-success'),
 });
+
+function handleForgotPasswordOpen() {
+	if (props.forgotPasswordAsAction) {
+		emit('open-forgot-password', memberEmail.value);
+		return;
+	}
+
+	openForgotPasswordModal();
+}
 </script>
 
 <template>
@@ -83,6 +101,7 @@ const {
 					variant="ghost"
 					tone="neutral"
 					size="sm"
+					:no-hover="true"
 					class="auth-login-card-close"
 					aria-label="Close modal"
 					@click="emit('close')"
@@ -96,7 +115,10 @@ const {
 			</div>
 
 			<div class="auth-login-intro">
-				<AuthLoginHeader />
+				<AuthLoginHeader
+					:register-as-action="props.registerAsAction"
+					@open-register="emit('open-register')"
+				/>
 
 				<AuthLoginModeSwitch
 					:member-type="memberType"
@@ -117,7 +139,7 @@ const {
 				@update:keep-signed-in="setKeepSignedIn"
 				@update:email="onMemberEmailInput"
 				@update:password="onMemberPasswordInput"
-				@open-forgot-password="openForgotPasswordModal"
+				@open-forgot-password="handleForgotPasswordOpen"
 			/>
 
 			<AuthLoginNonMemberForm
@@ -127,6 +149,7 @@ const {
 				:email-error="nonMemberEmailError"
 				:email-has-error="nonMemberEmailHasError"
 				:order-error="nonMemberOrderError"
+				:hide-order-number="props.hideNonMemberOrderNumber"
 				@update:email="onNonMemberEmailInput"
 				@update:order-number="onNonMemberOrderInput"
 			/>
@@ -151,8 +174,10 @@ const {
 		</div>
 
 		<AuthLoginForgotPasswordModal
+			v-if="!props.forgotPasswordAsAction"
 			v-model="isForgotPasswordModalOpen"
 			:email="memberEmail"
+			@return-to-login="isForgotPasswordModalOpen = false"
 		/>
 		<AuthLoginVerificationModal
 			v-model="isVerificationModalOpen"
@@ -200,9 +225,6 @@ const {
 			min-height: auto;
 			border-radius: 6px;
 			box-shadow: none;
-			&:hover {
-				--btn-soft: transparent;
-			}
 		}
 
 		.auth-login-intro {

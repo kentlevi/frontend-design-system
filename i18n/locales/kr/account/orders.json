@@ -2,19 +2,48 @@
     "account": {
         "orders": {
             "title": "주문 내역",
+            "active": "진행 중",
+            "inactive": "보관됨",
             "selectDate": "날짜 선택",
             "filters": "필터",
-            "orderLabel": "주문",
+            "searchPlaceholder": "주문 번호 검색",
+            "sections": {
+                "ongoing": "진행 중",
+                "actionRequired": "조치 필요",
+                "completed": "완료됨"
+            },
+            "orderLabel": "주문 #: {orderNumber}",
             "meta": "{count}개 품목 | 주문일: {date}",
             "status": {
                 "beforeProduction": "제작 전",
-                "processing": "진행 중",
-                "actionRequired": "조치 필요"
+                "checkingArtwork": "아트워크 확인 중",
+                "completed": "완료됨"
             },
-            "orderSummary": "주문 요약",
-            "summaryText": "이 패널에서 아트워크 업로드 및 송장/결제 항목을 확인할 수 있습니다.",
-            "actions": "작업",
+            "moreDetails": "상세 보기",
+            "viewInvoice": "인보이스 보기",
+            "viewInvoiceText": "상세 인보이스 정보를 확인할 수 있습니다.",
+            "paymentProof": "결제 증빙",
+            "paymentProofText": "결제 완료 후 제작이 시작됩니다.",
+            "sendMessage": "메시지 보내기",
+            "sendMessageText": "수정 요청이나 진행 문의가 필요하신가요?",
+            "unpaid": "미결제",
+            "paymentMethod": "결제 수단: {method}",
+            "orderSummary": "주문 요약:",
+            "itemNumber": "상품 번호 {number}",
+            "lackingArtwork": "아트워크 미제출",
+            "checkingArtwork": "아트워크 확인 중",
+            "size": "사이즈: {size}",
+            "quantity": "수량: {quantity}",
+            "summary": {
+                "subtotal": "소계:",
+                "shippingFee": "배송비: ({method})",
+                "discounts": "할인:",
+                "total": "합계:"
+            },
+            "shippingMethod": "빠른 배송",
             "uploadArtwork": "아트워크 업로드",
+            "replaceArtwork": "아트워크 교체",
+            "onHoldOrder": "주문 보류",
             "cancelOrder": "주문 취소"
         }
     }
