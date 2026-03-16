@@ -1,44 +1,24 @@
-# Nuxt Minimal Starter
+# frontend-design-system
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Central source for MuSticker's frontend UI system, including design tokens, reusable components, interaction patterns, guide pages, and implementation guidance for a consistent storefront experience.
 
 ## Setup
 
-Make sure to install dependencies:
+Install dependencies:
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## Development
 
-Start the development server on `http://localhost:3000`:
+Start the local guide app:
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Live Automation Testing
+## Testing
 
 Run Playwright in UI mode with a visible browser:
 
@@ -46,46 +26,18 @@ Run Playwright in UI mode with a visible browser:
 npm run test:live
 ```
 
-What this does:
-- Starts the Nuxt app automatically through Playwright `webServer` (default `http://127.0.0.1:4173`)
-- Opens Playwright UI so you can run tests interactively
-- Runs tests in headed mode so you can watch automation live
-
-Tip:
-- Use `npm run test:e2e:ui` if you want the same UI without forcing headed browser windows.
+Use `npm run test:e2e:ui` if you want the same UI without forcing headed browser windows.
 
 ## Production
 
 Build the application for production:
 
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+Preview the production build locally:
 
 ```bash
-# npm
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

@@ -1,24 +1,34 @@
 <script setup lang="ts">
 const shadowScale = [
     {
+        label: 'Base',
+        token: '$shadow-base',
+        css: '0 1px 2px rgba(51, 51, 51, 0.08)',
+        use: 'Base separation for light surfaces and subtle cards.',
+    },
+    {
+        label: 'Small',
         token: '$shadow-sm',
-        css: '0 1px 2px rgba(0, 0, 0, 0.06)',
-        use: 'Subtle lift for compact controls',
+        css: '0 1px 2px rgba(51, 51, 51, 0.08)',
+        use: 'Subtle lift for compact controls and inputs.',
     },
     {
+        label: 'Medium',
         token: '$shadow-md',
-        css: '0 4px 10px rgba(0, 0, 0, 0.08)',
-        use: 'Default elevated component surfaces',
+        css: '0 4px 4px rgba(51, 51, 51, 0.04)',
+        use: 'Default elevated component surfaces.',
     },
     {
+        label: 'Large',
         token: '$shadow-lg',
-        css: '0 8px 24px rgba(0, 0, 0, 0.18)',
-        use: 'Menus, popovers, and layered panels',
+        css: '0 16px 20px rgba(51, 51, 51, 0.08)',
+        use: 'Menus, drawers, and layered panels.',
     },
     {
+        label: 'XLarge',
         token: '$shadow-xl',
-        css: '0 16px 40px rgba(0, 0, 0, 0.24)',
-        use: 'Modals and high-priority overlays',
+        css: '0 20px 40px rgba(51, 51, 51, 0.12)',
+        use: 'Modals and high-priority overlays.',
     },
 ] as const;
 </script>
@@ -45,6 +55,7 @@ const shadowScale = [
                     <div class="shadow-preview-wrap">
                         <div class="shadow-preview" :style="{ boxShadow: item.css }" />
                     </div>
+                    <p class="shadow-name">{{ item.label }}</p>
                     <p class="shadow-token">{{ item.token }}</p>
                     <p class="shadow-css">{{ item.css }}</p>
                     <p class="shadow-use">{{ item.use }}</p>
@@ -101,11 +112,18 @@ const shadowScale = [
 }
 
 .shadow-token {
-    margin: 12px 0 4px;
+    margin: 2px 0 4px;
     font-size: var(--type-size-100);
     line-height: var(--type-line-100);
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
+}
+
+.shadow-name {
+    margin: 12px 0 0;
+    font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
+    color: var(--text-secondary);
 }
 
 .shadow-css {
@@ -156,10 +174,10 @@ const shadowScale = [
 }
 
 .shadow-demo-card--base {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 4px rgba(51, 51, 51, 0.04);
 }
 
 .shadow-demo-card--overlay {
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 20px 40px rgba(51, 51, 51, 0.12);
 }
 </style>
