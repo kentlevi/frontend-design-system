@@ -1,7 +1,12 @@
+import { sendEmailChangeOTP } from "~/services/profile/email.service";
+import { normalizeResponseError, type ValidationErrors } from "~/utils/response/response";
+
 export function useEmailForm() {
 
 	const request_sent = ref(false)
 	const is_otp_open = ref(false)
+	const form_errors = ref<ValidationErrors>({})
+	const error_message = ref<string | null>(null)
 
 	/**
      * EMAIL CHANGE MODAL BEHAVIOUR
@@ -15,7 +20,6 @@ export function useEmailForm() {
 	/** Open modal */
 	function openEmailChangeModal() {
 		is_email_change_modal.value = true;
-		resetFields()
 
 		/** Focus on input after open */
 		void nextTick(() => {
@@ -33,28 +37,46 @@ export function useEmailForm() {
 		request_sent.value = false
 		is_otp_open.value = false
 		const next_email = pending_email.value.trim();
-		if (!next_email) {
-			email_change_error.value = 'Field cannot be blank.';
-			return;
-		}
-
-		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next_email)) {
-			email_change_error.value = 'Email format is invalid.';
-			return;
-		}
 
 		resetFields()
 		closeEmailChangeModal();
 		email_change_overlay_mode.value = 'requesting'
-		await new Promise((resolve) => setTimeout(resolve, 1200));
+
+		/** Send OTP */
+		const payload = { email: next_email }
+		const response = await sendEmailChangeOTP(payload);
+
+		if (response.success) {
+			request_sent.value = true
+			is_otp_open.value = true
+		} else {
+			const normalized_error = normalizeResponseError(response)
+
+			if (normalized_error?.errors) {
+				form_errors.value = normalized_error.errors
+			} else if (normalized_error) {
+				error_message.value = normalized_error.message
+			}
+
+			/** If not backend request validation error, get default message */
+			email_change_error.value = getFirstError('email') || error_message.value || ''
+
+			/** Keep modal open to show errors */
+			openEmailChangeModal()
+		}
+
 		email_change_overlay_mode.value = 'idle'
-		request_sent.value = true
-		is_otp_open.value = true
 	}
 
 	function resetFields() {
 		pending_email.value = ''
 		email_change_error.value = ''
+		form_errors.value = {}
+		error_message.value = null
+	}
+
+	function getFirstError(field_name: string): string {
+		return form_errors.value[field_name]?.[0] ?? ''
 	}
 
 	/**

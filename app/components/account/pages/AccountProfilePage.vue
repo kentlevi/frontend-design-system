@@ -82,7 +82,6 @@ const {
 	email_change_error,
 	email_change_overlay_mode,
 
-	request_sent,
 	is_otp_open,
 
 	openEmailChangeModal,
