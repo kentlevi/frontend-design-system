@@ -9,11 +9,12 @@ import {
 	fetchPersonalFieldDefinitions,
 	updatePersonalForm,
 } from '~/services/profile/personalForm.service'
+import { useUsersStore } from '~/stores/users/users.store'
 import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/account/profile'
 import type { ApiResponse } from '~/types/config/api'
 
 export function usePersonalForm() {
-	const user_store = useUserStore()
+	const user_store = useUsersStore()
 	const profile_fields_store = useProfileFieldsStore()
 
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
@@ -59,13 +60,12 @@ export function usePersonalForm() {
 			} else {
 				field_definitions.value = profile_fields_store.dynamic_profile_fields
 			}
-
 			/**
              * Map values to its fields
              */
 			const mapped_form = mapProfileToPersonalFormState(
 				field_definitions.value,
-				user_store.profile
+				user_store.state.profile
 			)
 
 			/**
@@ -105,7 +105,7 @@ export function usePersonalForm() {
 				const updated_user_field_values = mapPersonalFormToUserFieldValues(
 					profile_fields_store.dynamic_profile_fields,
 					form_state.fields,
-					user_store.profile
+					user_store.state.profile
 				)
 
 				user_store.setProfileUserFieldValues(updated_user_field_values)

@@ -1,5 +1,7 @@
+import { useUsersStore } from "~/stores/users/users.store"
+
 export function useAppInit() {
-	const user_store = useUserStore()
+	const user_store = useUsersStore()
 	const profile_fields_store = useProfileFieldsStore()
 
 	/**
@@ -7,11 +9,11 @@ export function useAppInit() {
 	 */
 	async function initUserApp(force_refresh = false): Promise<void> {
 		/** No authenticated user yet */
-		if (!user_store.profile) {
+		if (!user_store.state.profile) {
 			return
 		}
 
-		const country_id = user_store.country_id
+		const country_id = user_store.state.country_id
 
 		/** Load country-based field definitions */
 		profile_fields_store.ensureLoaded(country_id, force_refresh)

@@ -1,9 +1,10 @@
 import { fetchPreferences, updatePreference } from "~/services/profile/preference.service"
+import { useUsersStore } from "~/stores/users/users.store"
 import type { PreferenceState } from "~/types/account/preferences"
 
 
 export function usePreferenceForm() {
-	const user_store = useUserStore()
+	const user_store = useUsersStore()
 
 	/** Form */
 	const form_state = reactive<Partial<PreferenceState>>({})
@@ -66,97 +67,8 @@ export function usePreferenceForm() {
 		is_loading,
 		is_submitting,
 		error_message,
-		preference: computed(() => user_store.preference),
+		preference: computed(() => user_store.state.preference),
 		loadPreferences,
 		updatePreferenceField
 	}
 }
-
-
-// import type {
-// 	PreferenceFormState,
-// 	UpdatePreferencePayload,
-// 	UpdatePreferenceResponse
-// } from '~/types/account/preference'
-// import { updatePreference } from '~/services/account/preference'
-
-// export function usePreferenceForm() {
-// 	const user_store = useUserStore()
-
-// 	/** Form values shown in UI */
-// 	const form_state = reactive<PreferenceFormState>({
-// 		promotions: false,
-// 		reviews: false,
-// 		confirmations: false,
-// 		unit: 'metric',
-// 	})
-
-// 	/** UI states */
-// 	const is_submitting = ref(false)
-// 	const error_message = ref('')
-// 	const api_response = ref<UpdatePreferenceResponse | null>(null)
-
-// 	/**
-// 	 * Fill form from store data
-// 	 */
-// 	function loadPreferenceForm() {
-// 		form_state.promotions = Boolean(user_store.profile?.promotions ?? false)
-// 		form_state.reviews = Boolean(user_store.profile?.reviews ?? false)
-// 		form_state.confirmations = Boolean(user_store.profile?.confirmations ?? false)
-// 		form_state.unit = user_store.profile?.unit ?? 'metric'
-// 	}
-
-// 	/**
-// 	 * Convert form state to API payload
-// 	 */
-// 	function mapPreferenceFormToPayload(): UpdatePreferencePayload {
-// 		return {
-// 			promotions: form_state.promotions,
-// 			reviews: form_state.reviews,
-// 			confirmations: form_state.confirmations,
-// 			unit: form_state.unit,
-// 		}
-// 	}
-
-// 	/**
-// 	 * Save current preference values
-// 	 */
-// 	async function submitPreferenceForm() {
-// 		is_submitting.value = true
-// 		error_message.value = ''
-
-// 		try {
-// 			const payload = mapPreferenceFormToPayload()
-
-// 			api_response.value = await updatePreference(payload)
-
-// 			/**
-// 			 * Patch local store after successful save
-// 			 * Prefer backend response data if available
-// 			 */
-// 			if (user_store.profile) {
-// 				user_store.profile = {
-// 					...user_store.profile,
-// 					promotions: api_response.value.data?.promotions ?? form_state.promotions,
-// 					reviews: api_response.value.data?.reviews ?? form_state.reviews,
-// 					confirmations: api_response.value.data?.confirmations ?? form_state.confirmations,
-// 					unit: api_response.value.data?.unit ?? form_state.unit,
-// 				}
-// 			}
-// 		} catch (error: unknown) {
-// 			error_message.value = 'Failed to update preferences.'
-// 			throw error
-// 		} finally {
-// 			is_submitting.value = false
-// 		}
-// 	}
-
-// 	return {
-// 		form_state,
-// 		is_submitting,
-// 		error_message,
-// 		api_response,
-// 		loadPreferenceForm,
-// 		submitPreferenceForm,
-// 	}
-// }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCountry } from '~/composables/app/country/useCountry';
 import type { icons } from '~/data/ui/icons';
+import { useUsersStore } from '~/stores/users/users.store';
 import {
 	getAccountInitials,
 	getProfileFieldValue,
@@ -31,7 +32,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const userStore = useUserStore();
+const userStore = useUsersStore();
 const mockUser = useCookie<{
 	firstName: string;
 	lastName: string;
@@ -42,7 +43,7 @@ const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 const localAvatarDataUrl = ref<string | null>(null);
 
 const profileFieldValues = computed(
-	() => userStore.profile?.user_field_values ?? []
+	() => userStore.state.profile?.user_field_values ?? []
 );
 const storeFirstName = computed(
 	() => getProfileFieldValue(profileFieldValues.value, 'first_name')
@@ -51,7 +52,7 @@ const storeLastName = computed(
 	() => getProfileFieldValue(profileFieldValues.value, 'last_name')
 );
 const emailLocalPart = computed(() => {
-	const source = (userStore.email || mockUser.value?.email || '').trim();
+	const source = (userStore.state.email || mockUser.value?.email || '').trim();
 	if (!source.includes('@')) return '';
 	return source.split('@')[0] || '';
 });
@@ -69,7 +70,7 @@ const fullName = computed(() => {
 		.trim();
 });
 
-const userEmail = computed(() => userStore.email || mockUser.value?.email || '');
+const userEmail = computed(() => userStore.state.email || mockUser.value?.email || '');
 const initials = computed(() => {
 	return getAccountInitials(
 		normalizedName.value.firstName || 'User',
