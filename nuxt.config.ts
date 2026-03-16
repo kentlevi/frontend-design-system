@@ -63,7 +63,7 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n'],
+    modules: ['@netlify/nuxt', '@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n'],
 
     i18n: {
         defaultLocale: 'us',

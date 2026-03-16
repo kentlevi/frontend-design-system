@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@lhci/cli": "^0.14.0",
+    "@netlify/nuxt": "^0.2.34",
     "@nuxt/eslint": "^1.13.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.2",
