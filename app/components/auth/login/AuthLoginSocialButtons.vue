@@ -7,13 +7,14 @@ import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import { useUsersStore } from '~/stores/users/users.store';
 
 const { t } = useI18n();
 const api = useApi();
 const router = useRouter();
 const route = useRoute();
 const { withCountry, apiCountry } = useCountry();
-const userStore = useUserStore();
+const userStore = useUsersStore();
 
 function getRedirectCandidate() {
 	const queryRedirect = Array.isArray(route.query.redirect)
