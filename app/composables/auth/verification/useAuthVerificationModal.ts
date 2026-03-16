@@ -36,6 +36,7 @@ export function useAuthVerificationModal(params: {
 	}
 
 	function lockResendTap(ms = 2000) {
+		console.log('ms: ', ms);
 		clearResendTapLockTimer();
 		is_resend_tap_locked.value = true;
 		resend_tap_lock_timer = setTimeout(() => {
@@ -70,8 +71,10 @@ export function useAuthVerificationModal(params: {
 	}
 
 	function onResendClick() {
+		console.log('on resend click');
+		console.log(can_resend.value);
 		if (!can_resend.value) return;
-		lockResendTap();
+		lockResendTap(params.resendCooldownRemaining.value);
 		params.emitResend();
 	}
 

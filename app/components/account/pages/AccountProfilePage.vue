@@ -5,13 +5,12 @@ import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import { computed, watch } from 'vue';
-import { useEmailForm } from '~/composables/account/profile/useEmailForm';
+import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
-	email,
 	currentPassword,
 	newPassword,
 	confirmPassword,
@@ -26,9 +25,6 @@ const {
 	signOut,
 } = useAccountProfile();
 const isDeletePhotoModalOpen = ref(false);
-const isEmailChangeOtpOpen = ref(false);
-const emailChangeOtpCode = ref('');
-const emailChangeOtpError = ref('');
 const emailChangeTargetEmail = ref('');
 const currentPasswordVisible = ref(false);
 const newPasswordVisible = ref(false);
@@ -36,16 +32,6 @@ const confirmPasswordVisible = ref(false);
 const currentPasswordError = ref('');
 const newPasswordError = ref('');
 const confirmPasswordError = ref('');
-const emailChangeOverlayLabel = computed(() => (
-	email_change_overlay_mode.value === 'requesting'
-		? 'Verifying Your Information...'
-		: ''
-));
-const emailChangeOverlayDescription = computed(() => (
-	email_change_overlay_mode.value === 'requesting'
-		? "Just a moment! We're making sure everything looks perfect."
-		: ''
-));
 const photoInlineError = computed(() => {
 	if (!photoError.value) return '';
 	const normalized_message = photoError.value.toLowerCase();
@@ -76,19 +62,26 @@ const {
 } = usePreferenceForm();
 
 const {
+	email,
+
 	pending_email,
 	is_email_change_modal,
 	email_change_field_ref,
 	email_change_error,
-	email_change_overlay_mode,
 
 	is_otp_open,
+	email_change_otp_code,
+	email_change_otp_error,
+	limit_reached_error,
+	resend_cooldown,
 
 	openEmailChangeModal,
 	closeEmailChangeModal,
 	confirmEmailChange,
 
-} = useEmailForm();
+	verifyOtp,
+	resendOtp,
+} = useChangeEmailForm()
 
 onMounted(() => {
 	loadPreferences()
@@ -156,31 +149,11 @@ function confirmDeletePhoto() {
 	closeDeletePhotoModal();
 }
 
-function closeEmailChangeOtpModal() {
-	isEmailChangeOtpOpen.value = false;
-	emailChangeOtpCode.value = '';
-	emailChangeOtpError.value = '';
-}
-
-async function verifyEmailChangeOtp() {
-	if (emailChangeOtpCode.value.trim().length < 4) {
-		emailChangeOtpError.value = 'Please enter the verification code sent to your email.';
-		return;
-	}
-
-	emailChangeOtpError.value = '';
-	isEmailChangeOtpOpen.value = false;
-	email_change_overlay_mode.value = 'verifying';
-	await new Promise((resolve) => setTimeout(resolve, 900));
-	email_change_overlay_mode.value = 'idle';
-	email.value = emailChangeTargetEmail.value;
-	closeEmailChangeOtpModal();
-}
-
-function resendEmailChangeOtp() {
-	emailChangeOtpCode.value = '';
-	emailChangeOtpError.value = '';
-}
+// function resendOtp() {
+// 	console.log('hi');
+// 	email_change_otp_code.value = '';
+// 	email_change_otp_error.value = '';
+// }
 
 function clearPasswordErrors() {
 	currentPasswordError.value = '';
@@ -283,14 +256,6 @@ onBeforeUnmount(() => {
 			:visible="name_is_submitting"
 			:label="t('account.profile.saveChanges')"
 			test-id="account-profile-saving-overlay"
-			position="fixed"
-		/>
-		<UiLoadingOverlay
-			:visible="email_change_overlay_mode !== 'idle'"
-			:label="emailChangeOverlayLabel"
-			:description="emailChangeOverlayDescription"
-			:show-copy="email_change_overlay_mode === 'requesting'"
-			test-id="account-profile-email-change-page-overlay"
 			position="fixed"
 		/>
 		<UiLoadingOverlay
@@ -742,8 +707,10 @@ onBeforeUnmount(() => {
 		<AuthVerificationModal
 			:model-value="is_otp_open"
 			:email="emailChangeTargetEmail"
-			:code="emailChangeOtpCode"
-			:error="emailChangeOtpError"
+			:code="email_change_otp_code"
+			:error="email_change_otp_error"
+			:resend-limit-reached="limit_reached_error"
+			:resend-cooldown-remaining="resend_cooldown"
 			submit-label="Verify"
 			busy-label="Verifying..."
 			width="504px"
@@ -751,9 +718,9 @@ onBeforeUnmount(() => {
 			:show-close-button="true"
 			test-id-prefix="account-profile-email-change-verification"
 			@update:model-value="is_otp_open = $event"
-			@update:code="emailChangeOtpCode = $event"
-			@verify="verifyEmailChangeOtp"
-			@resend="resendEmailChangeOtp"
+			@update:code="email_change_otp_code = $event"
+			@verify="verifyOtp"
+			@resend="resendOtp"
 		>
 			<template #icon>
 				<img
