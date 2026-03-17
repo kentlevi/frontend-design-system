@@ -60,6 +60,11 @@ export function clearGuestVerificationCache() {
 
 export function cacheNonMemberVerificationData(response: NonMemberLoginVerificationResponse, email: string, order_number: string) {
 	const CACHE_DURATION = 60 * 60 * 24 * 30; // 30 days
+	const cooldown_seconds = Number(response.data?.cooldown_remaining ?? 0);
+	const resend_cooldown_until =
+		Number.isFinite(cooldown_seconds) && cooldown_seconds > 0
+			? Date.now() + Math.floor(cooldown_seconds) * 1000
+			: undefined;
 
 	const guest_verification_cache = useCookie<NonMemberVerificationCache | null>('guest_verification_cache', {
 		maxAge: CACHE_DURATION,
@@ -73,5 +78,6 @@ export function cacheNonMemberVerificationData(response: NonMemberLoginVerificat
 		token: response.data?.token,
 		expires_in: response.data?.expires_in,
 		cached_at: Date.now(),
+		resend_cooldown_until,
 	}
 }

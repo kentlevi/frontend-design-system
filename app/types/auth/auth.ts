@@ -17,6 +17,7 @@ export interface LoginPayload {
 export interface NonMemberLoginVerificationPayload {
 	email: string;
 	order_number: string;
+	is_resend?: boolean;
 }
 
 export type NonMemberLoginVerificationResponse = ApiResponse<NonMemberLoginVerification>
@@ -25,6 +26,8 @@ export interface NonMemberLoginVerification {
 	email: string;
 	token: string;
 	expires_in: number;
+	otp_sent?: boolean;
+	cooldown_remaining?: number;
 }
 
 export interface NonMemberVerificationCache {
@@ -37,9 +40,9 @@ export interface NonMemberVerificationCache {
 }
 
 export interface SubmitNonMemberLoginVerificationPayload {
-	email: string;
-	order_number: string;
-	login_token?: string;
+	email?: string | null;
+	order_number?: string | null;
+	login_token?: string | null;
 	otp: string;
 }
 
@@ -54,6 +57,7 @@ export interface RegisterVerificationPayload {
 	password: string;
 	terms_of_service: boolean | number;
 	newsletter: boolean | number;
+	is_resend?: boolean;
 }
 
 export type RegisterVerificationResponse = ApiResponse<RegisterVerification>
