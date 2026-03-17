@@ -81,6 +81,7 @@ const {
 
 	verifyOtp,
 	resendOtp,
+	closeOtpModal,
 } = useChangeEmailForm()
 
 onMounted(() => {
@@ -721,6 +722,7 @@ onBeforeUnmount(() => {
 			@update:code="email_change_otp_code = $event"
 			@verify="verifyOtp"
 			@resend="resendOtp"
+			@close="closeOtpModal"
 		>
 			<template #icon>
 				<img
