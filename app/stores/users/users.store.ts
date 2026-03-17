@@ -64,6 +64,17 @@ export const useUsersStore = defineStore('users', () => {
 	}
 
 	/**
+     * Update only provided user fields
+     */
+	function patchUser(user: Partial<UserIdentity & { profile: UserProfile | null }>): void {
+		if (user.id !== undefined) state.value.id = user.id
+		if (user.code !== undefined) state.value.code = user.code
+		if (user.email !== undefined) state.value.email = user.email
+		if (user.country_id !== undefined) state.value.country_id = user.country_id
+		if (user.profile !== undefined) state.value.profile = user.profile
+	}
+
+	/**
      * Reset entire store
      */
 	function clearUser(): void {
@@ -120,6 +131,7 @@ export const useUsersStore = defineStore('users', () => {
 		state,
 
 		setUser,
+		patchUser,
 		clearUser,
 
 		setOnboardingProfile,

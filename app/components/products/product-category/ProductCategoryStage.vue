@@ -46,6 +46,56 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const isCustomSize = ref(false)
+const customWidth = ref<number | null>(null)
+const customHeight = ref<number | null>(null)
+const customWidthInput = ref<HTMLInputElement | null>(null)
+const isCustomQty = ref(false)
+const customQty = ref<number | null>(null)
+const customQtyInput = ref<HTMLInputElement | null>(null)
+
+const formattedCustomQty = computed(() => {
+	if (!customQty.value) return ''
+	return customQty.value.toLocaleString()
+})
+
+const onCustomQtyInput = (e: Event) => {
+	const input = e.target as HTMLInputElement
+
+	// remove commas
+	const raw = input.value.replace(/,/g, '')
+
+	const number = Number(raw)
+
+	if (!isNaN(number)) {
+		customQty.value = number
+		emit('update:selectedQty', number)
+	}
+}
+
+const enableCustomQty = async () => {
+	isCustomQty.value = true
+	customQty.value = props.selectedQty
+	await nextTick()
+	customQtyInput.value?.focus()
+}
+
+watch(customQty, (val) => {
+	if (val && val > 0) {
+		emit('update:selectedQty', val)
+	}
+})
+
+const focusWidthInput = () => {
+	customWidthInput.value?.focus()
+}
+
+const enableCustomSize = async () => {
+	isCustomSize.value = true
+	await nextTick()
+	customWidthInput.value?.focus()
+}
+
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
@@ -86,8 +136,17 @@ const unitPrice = computed(() =>
 			<section v-if="props.selectedProduct">
 				<section class="product-configurator" data-testid="product-category-configurator">
 					<div class="product-preview" data-testid="product-category-preview">
-						<h1 class="product-preview-title" data-testid="product-category-preview-title">{{ props.getProductName(props.selectedProduct) }}</h1>
-						<p class="product-preview-blurb" data-testid="product-category-preview-blurb">{{ props.getProductBlurb(props.selectedProduct) }}</p>
+
+						<div class="product-preview-header">
+							<h1 class="product-preview-title" data-testid="product-category-preview-title">
+								{{ props.getProductName(props.selectedProduct) }}
+							</h1>
+
+							<p class="product-preview-blurb" data-testid="product-category-preview-blurb">
+								{{ props.getProductBlurb(props.selectedProduct) }}
+							</p>
+						</div>
+
 						<div class="product-preview-media" data-testid="product-category-preview-media">
 							<video
 								:poster="demoHeroPosterUrl"
@@ -113,10 +172,13 @@ const unitPrice = computed(() =>
 								@click="emit('update:selectedSize', feature.key)"
 							>
 								<h4 class="mini-feature-title">{{ t(`product.sizes.${feature.key}.label`) }}</h4>
+
 								<img
 									:src="feature.image"
 									:alt="t(`product.sizes.${feature.key}.label`)"
-									loading="lazy" class="mini-feature-image" >
+									loading="lazy"
+									class="mini-feature-image"
+								>
 
 								<p class="mini-feature-description">
 									{{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
@@ -137,21 +199,49 @@ const unitPrice = computed(() =>
 									:key="size.key"
 									type="button"
 									class="option-pill"
-									:class="{ 'is-active': props.selectedSize === size.key }"
+									:class="{ 'is-active': !isCustomSize && props.selectedSize === size.key }"
 									:data-testid="`product-category-size-option-${size.key}`"
-									@click="emit('update:selectedSize', size.key)"
+									@click="isCustomSize = false; emit('update:selectedSize', size.key)"
 								>
 									<span class="size-pill-name">{{ size.name }}</span>
 									<span class="size-pill-dim">{{ size.dim }}</span>
 								</button>
+
+								<!-- Custom size button -->
 								<button
+									v-if="!isCustomSize"
 									type="button"
-									class="option-pill option-pill-wide is-disabled"
-									disabled
+									class="option-pill option-pill-wide"
 									data-testid="product-category-size-option-custom-button"
+									@click="enableCustomSize"
 								>
 									{{ t('product.options.customSize') }}
 								</button>
+
+								<!-- Width x Height input -->
+								<div
+									v-else
+									class="option-pill option-pill-wide custom-size-pill is-active"
+									data-testid="product-category-size-option-custom-input"
+									@click.self="focusWidthInput"
+								>
+									<input
+										ref="customWidthInput"
+										v-model="customWidth"
+										type="number"
+										placeholder="Width"
+										class="custom-size-input"
+									>
+
+									<span class="size-separator">x</span>
+
+									<input
+										v-model="customHeight"
+										type="number"
+										placeholder="Height"
+										class="custom-size-input"
+									>
+								</div>
 							</div>
 						</section>
 
@@ -165,28 +255,40 @@ const unitPrice = computed(() =>
 									class="option-pill"
 									:class="{ 'is-active': props.selectedQty === qty }"
 									:data-testid="`product-category-quantity-option-${qty}`"
-									@click="emit('update:selectedQty', qty)"
+									@click="isCustomQty = false; emit('update:selectedQty', qty)"
 								>
 									<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
 									<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
 								</button>
 								<button
+									v-if="!isCustomQty"
 									type="button"
-									class="option-pill option-pill-wide is-disabled"
-									disabled
+									class="option-pill option-pill-wide"
 									data-testid="product-category-quantity-option-custom-button"
+									@click="enableCustomQty"
 								>
 									{{ t('product.options.customQuantity') }}
 								</button>
+
+								<div
+									v-else
+									class="option-pill option-pill-wide custom-size-pill is-active"
+									data-testid="product-category-quantity-option-custom-input"
+									@click.self="customQtyInput?.focus()"
+								>
+									<input
+										ref="customQtyInput"
+										:value="formattedCustomQty"
+										type="text"
+										placeholder="Quantity"
+										class="custom-size-input"
+										@input="onCustomQtyInput"
+									/>
+								</div>
 							</div>
 						</section>
 
 						<section class="price-summary" data-testid="product-category-price-summary">
-							<p class="price-summary-row price-summary-row-hidden" data-testid="product-category-price-subtotal-row">
-								<span class="price-summary-label">{{ t('product.price.subtotal') }}</span>
-								<strong class="price-summary-value">{{ props.formatPrice(props.subtotal) }}</strong>
-							</p>
-
 							<div class="price-summary-top">
 								<ul class="price-benefits" data-testid="product-category-price-benefits">
 									<li data-testid="product-category-price-benefit-shipping">{{ t('product.price.benefitShipping') }}</li>
@@ -452,12 +554,11 @@ const unitPrice = computed(() =>
         padding: 2px 0 0;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 16px;
 
         .option-title {
-
-            font-size: var(--type-size-300);
-            line-height: var(--type-line-300);
+            font-size: var(--type-size-200);
+            line-height: var(--type-line-200);
             color: var(--text-primary);
         }
 
@@ -468,7 +569,7 @@ const unitPrice = computed(() =>
             gap: 8px;
 
             .option-head-unit {
-                color: var(--text-muted);
+                color: var(--text-secondary);
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
             }
@@ -478,7 +579,7 @@ const unitPrice = computed(() =>
             margin-top: 10px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px 12px;
+            gap: 8px;
 
             &:not(.option-grid-size) {
                 .qty-pill-count {
@@ -489,12 +590,12 @@ const unitPrice = computed(() =>
             .option-pill {
                 border: 1px solid var(--border-default);
                 border-radius: 999px;
-                min-height: 44px;
+                min-height: 36px;
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
                 color: var(--text-primary);
                 cursor: pointer;
-                padding: 8px 14px;
+                padding: 0 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -515,6 +616,43 @@ const unitPrice = computed(() =>
                 &.is-disabled {
                     cursor: not-allowed;
                     opacity: 0.55;
+                }
+            }
+            .custom-size-pill {
+                justify-content: center;
+                gap: 8px;
+
+                .custom-size-input {
+                    width: 64px;
+                    border: none;
+                    background: transparent;
+                    text-align: center;
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                    font-weight: var(--font-weight-regular);
+                    outline: none;
+                    &::placeholder {
+                        color: var(--gray-60);
+                        opacity: 1; // prevents browser default fading
+                    }
+                }
+                .custom-size-input::-webkit-outer-spin-button,
+                .custom-size-input::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                .custom-size-input {
+                    -moz-appearance: textfield;
+                }
+                .size-separator {
+                    color: var(--text-primary);
+                    font-weight: var(--font-weight-medium);
+                }
+                &.is-active {
+                    border: 2px solid var(--gold-base);
+                    background: var(--white-base);
+
                 }
             }
 
@@ -542,9 +680,9 @@ const unitPrice = computed(() =>
     }
 
     .price-summary {
-        border-top: 1px solid var(--border-default);
-        padding-top: 16px;
-
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
         .price-summary-row {
 
             display: flex;
@@ -599,8 +737,8 @@ const unitPrice = computed(() =>
         }
 
         .total .price-summary-value {
-            font-size: var(--type-size-500);
-            line-height: var(--type-line-500);
+            font-size: var(--type-size-450);
+            line-height: var(--type-line-450);
         }
 
         .price-summary-unit {
@@ -616,14 +754,13 @@ const unitPrice = computed(() =>
         color: var(--text-secondary);
         display: grid;
         gap: 4px;
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
+        font-size: 12px;
+        line-height: 20px;
         list-style: disc;
         max-width: 174.5px;
     }
 
     .next-step-btn {
-        margin-top: 16px;
         width: 100%;
         border-radius: 999px;
         background: var(--gold-base);
