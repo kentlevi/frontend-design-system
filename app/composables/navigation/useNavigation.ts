@@ -1,12 +1,12 @@
-import { useNavigationStore } from '@/stores/navigation'
-import { getProductCategories } from '~/services/navigation/navigation.service'
+import { useNavigationStore } from '@/stores/navigation/navigation.store'
+import { getProductCategories, getProductsByCategory } from '~/services/navigation/navigation.service'
 
 export function useNavigation() {
 	const navigationStore = useNavigationStore()
 
 	/**
-     * Fetch navigation categories from API and store them
-     */
+	 * Fetch navigation categories from API and store them
+	 */
 	async function fetchAndStoreCategories(): Promise<boolean> {
 		try {
 			const response = await getProductCategories()
@@ -26,7 +26,27 @@ export function useNavigation() {
 		}
 	}
 
+	async function fetchAndStoreProducts(url_slug: string): Promise<boolean> {
+		try {
+			const response = await getProductsByCategory(url_slug)
+			const products = response.data
+
+			if(!products || products.length === 0) {
+				navigationStore?.clearProducts()
+				return false
+			}
+
+			navigationStore.setProducts(products)
+			return true
+		} catch (error) {
+			console.error('Products fetch failed:', error)
+			navigationStore?.clearProducts()
+			return false
+		}
+	}
+
 	return {
-		fetchAndStoreCategories
+		fetchAndStoreCategories,
+		fetchAndStoreProducts
 	}
 }
