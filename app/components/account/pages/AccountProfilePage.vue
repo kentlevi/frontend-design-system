@@ -59,7 +59,8 @@ const {
 	email_change_otp_code,
 	email_change_otp_error,
 	limit_reached_error,
-	resend_cooldown,
+
+	remaining,
 
 	openEmailChangeModal,
 	closeEmailChangeModal,
@@ -615,7 +616,7 @@ onBeforeUnmount(() => {
 			:code="email_change_otp_code"
 			:error="email_change_otp_error"
 			:resend-limit-reached="limit_reached_error"
-			:resend-cooldown-remaining="resend_cooldown"
+			:resend-cooldown-remaining="remaining"
 			submit-label="Verify"
 			busy-label="Verifying..."
 			width="504px"
