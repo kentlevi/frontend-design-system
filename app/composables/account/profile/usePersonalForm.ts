@@ -22,10 +22,12 @@ export function usePersonalForm() {
 	const initial_fields = ref<Record<string, string>>({})
 	const is_loading = ref(false)
 	const is_updating = ref(false)
-	const error_message = ref('')
+	const field_errors = ref<Record<string, string>>({})
 	const api_response = ref<ApiResponse<PersonalFormApiResponse> | null>(null)
 
 	const has_changes = computed(() => {
+		clearFieldErrors()
+
 		const current_keys = Object.keys(form_state.fields).sort()
 		const initial_keys = Object.keys(initial_fields.value).sort()
 
@@ -37,16 +39,8 @@ export function usePersonalForm() {
 		})
 	})
 
-	const has_required_fields = computed(() =>
-		field_definitions.value.every((field) => {
-			if (!field.is_required) return true
-			return String(form_state.fields[field.field_key] ?? '').trim().length > 0
-		})
-	)
-
 	async function loadPersonalForm() {
 		is_loading.value = true
-		error_message.value = ''
 
 		try {
 			if (profile_fields_store.dynamic_profile_fields.length === 0) {
@@ -78,7 +72,7 @@ export function usePersonalForm() {
 				...mapped_form.fields,
 			}
 		} catch (_error: unknown) {
-			error_message.value = 'Failed to load personal form.'
+			console.log(_error);
 		} finally {
 			is_loading.value = false
 		}
@@ -86,7 +80,6 @@ export function usePersonalForm() {
 
 	async function submitPersonalForm() {
 		is_updating.value = true
-		error_message.value = ''
 
 		try {
 			/**
@@ -112,24 +105,88 @@ export function usePersonalForm() {
 				initial_fields.value = {
 					...form_state.fields,
 				}
+
+				return
 			}
 
+			/**
+			 * Handle validation errors from backend
+			 */
+			setFieldErrorsFromResponse(api_response.value)
 		} catch (error: unknown) {
-			error_message.value = 'Failed to save personal details.'
-			throw error
+			console.log(error);
 		} finally {
 			is_updating.value = false
+		}
+	}
+
+	/**
+	 * Reset all field-level validation errors
+	 */
+	function clearFieldErrors() {
+		field_errors.value = {}
+	}
+
+	/**
+	 * Convert backend validation errors into:
+	 * {
+	 *   first_name: 'First name is required.',
+	 *   last_name: 'Last name is required.'
+	 * }
+	 */
+	function setFieldErrorsFromResponse(response: ApiResponse<PersonalFormApiResponse> | null) {
+		clearFieldErrors()
+
+		const response_data = response?.data
+
+		/**
+		 * Guard: only continue when backend returned validation data
+		 */
+		if (!response_data || typeof response_data !== 'object' || Array.isArray(response_data)) {
+			return
+		}
+
+		/**
+		 * Expected backend shape:
+		 * {
+		 *   "fields.first_name": ["First name is required."],
+		 *   "fields.last_name": ["Last name is required."]
+		 * }
+		 */
+		for (const [key, value] of Object.entries(response_data as Record<string, unknown>)) {
+			/**
+			 * Only handle dynamic field validation keys
+			 */
+			if (!key.startsWith('fields.')) {
+				continue
+			}
+
+			/**
+			 * Convert "fields.first_name" -> "first_name"
+			 */
+			const field_key = key.replace(/^fields\./, '')
+
+			/**
+			 * Get the first validation message
+			 */
+			if (Array.isArray(value) && typeof value[0] === 'string') {
+				field_errors.value[field_key] = value[0]
+				continue
+			}
+
+			if (typeof value === 'string') {
+				field_errors.value[field_key] = value
+			}
 		}
 	}
 
 	return {
 		form_state,
 		has_changes,
-		has_required_fields,
 		is_loading,
 		is_updating,
-		error_message,
 		api_response,
+		field_errors,
 		loadPersonalForm,
 		submitPersonalForm,
 	}

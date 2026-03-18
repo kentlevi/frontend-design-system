@@ -91,21 +91,19 @@ export function useAppHeaderAccount() {
 	);
 
 	const display_name = computed(() => {
-		const mock_first_name = mock_user.value?.firstName?.trim() || '';
-		const mock_last_name = mock_user.value?.lastName?.trim() || '';
-		const onboarding_first_name = state.value.onboardingProfile?.firstName?.trim() || '';
-		const onboarding_last_name = state.value.onboardingProfile?.lastName?.trim() || '';
-		const profile_name = [onboarding_first_name, onboarding_last_name]
+		/** Get all user field values safely */
+		const user_field_values = state.value.profile?.user_field_values ?? []
+
+		/** Sort by sort_order, get each value, remove empty ones, then join */
+		return [...user_field_values]
+			.sort(
+				(first_value, second_value) =>
+					(first_value.sort_order ?? 0) - (second_value.sort_order ?? 0)
+			)
+			.map((val) => val.value)
 			.filter(Boolean)
 			.join(' ')
-			.trim();
-		const mock_name = [mock_first_name, mock_last_name].filter(Boolean).join(' ').trim();
-
-		if (profile_name) return profile_name;
-		if (mock_name) return mock_name;
-		if (display_email.value) return display_email.value;
-		return t('layout.header.account');
-	});
+	})
 
 	const display_email = computed(() => {
 		return (
