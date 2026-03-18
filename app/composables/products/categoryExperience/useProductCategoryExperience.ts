@@ -1,6 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
-import type { ProductByCategoryApiItem } from '~/types/products/productByCategory';
 import {
 	productCatalog,
 } from '~/data/products/catalog';
@@ -33,8 +32,9 @@ import {
 	readProductArtworkAsDataUrl,
 } from '~/helpers/products/productCategory.helper';
 import { formatCurrencyByCountry } from '~/utils/currency';
+import type { Products } from '~/types/navigation/navgiation';
 
-export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, apiProducts?: Ref<ProductByCategoryApiItem[] | undefined>) {
+export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, apiProducts?: Ref<Products | undefined>) {
 	const { t } = useI18n();
 	const route = useRoute();
 	const router = useRouter();
@@ -42,9 +42,9 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 	const categoryData = computed<ProductCategory>(() => {
 		const catalogCategory = productCatalog[category.value];
-		const responseProducts = apiProducts?.value;
+		const responseProducts = apiProducts?.value?.products ?? [];
 
-		if (!responseProducts?.length) {
+		if (!responseProducts.length) {
 			return catalogCategory;
 		}
 
