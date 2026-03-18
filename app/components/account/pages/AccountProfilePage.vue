@@ -34,7 +34,7 @@ const photoInlineError = computed(() => {
 const {
 	form_state: personal_form_state,
 	has_changes,
-	has_required_fields,
+	field_errors,
 	is_updating: name_is_submitting,
 	api_response,
 	loadPersonalForm,
@@ -59,7 +59,8 @@ const {
 	email_change_otp_code,
 	email_change_otp_error,
 	limit_reached_error,
-	resend_cooldown,
+
+	remaining,
 
 	openEmailChangeModal,
 	closeEmailChangeModal,
@@ -264,6 +265,7 @@ onBeforeUnmount(() => {
 							<!-- START OF DYNAMIC PROFILE FIELDS -->
 							<div v-for="field in profile_field_store.dynamic_profile_fields" :key="field.id">
 								<UiFormField
+									:error="field_errors[field.field_key]"
 									:label="field.is_required
 										? t(`account.profile.${field.field_key}`)
 										: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
@@ -273,6 +275,7 @@ onBeforeUnmount(() => {
 										<UiInput
 											:id="inputId"
 											v-model=" personal_form_state.fields[field.field_key]"
+											:state="field_errors[field.field_key] ? 'error' : 'default'"
 											type="text"
 											:aria-describedby="describedBy || undefined"
 											:data-testid="`account-profile-${field.field_key}`"
@@ -316,7 +319,7 @@ onBeforeUnmount(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || !has_required_fields || name_is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || name_is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
@@ -615,7 +618,7 @@ onBeforeUnmount(() => {
 			:code="email_change_otp_code"
 			:error="email_change_otp_error"
 			:resend-limit-reached="limit_reached_error"
-			:resend-cooldown-remaining="resend_cooldown"
+			:resend-cooldown-remaining="remaining"
 			submit-label="Verify"
 			busy-label="Verifying..."
 			width="504px"
