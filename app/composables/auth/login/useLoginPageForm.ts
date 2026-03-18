@@ -271,8 +271,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			const { handleNonMemberVerification } = useLoginUser();
 			const response = await handleNonMemberVerification({
 				email,
-				order_number,
-				is_resend: false,
+				order_number
 			});
 
 			const message = getAuthResponseMessage(response);
@@ -333,8 +332,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 			const response = await handleNonMemberVerification({
 				email: session_email,
-				order_number: session_order_number,
-				is_resend: true,
+				order_number: session_order_number
 			});
 
 			if (!response.success) {
