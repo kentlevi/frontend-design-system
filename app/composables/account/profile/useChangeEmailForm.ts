@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import { useVerificationCooldown } from '~/composables/auth/verification/useVerificationCooldown'
 import { sendEmailChangeOTP, verifyEmailChangeOtp } from '~/services/profile/changeEmail.service'
 import { useLoadingOverlayStore } from '~/stores/loading_overlay'
 import { useToastStore } from '~/stores/toast'
@@ -11,6 +12,13 @@ import {
 } from '~/utils/response/response'
 
 export function useChangeEmailForm() {
+
+	/** OTP Cooldown handler */
+	const {
+		remaining,
+		applyFromResponse
+	} = useVerificationCooldown()
+
 	/** Store */
 	const user_store = useUsersStore()
 	const toast_store = useToastStore()
@@ -35,7 +43,6 @@ export function useChangeEmailForm() {
 	const email_change_otp_code = ref('')
 	const email_change_otp_error = ref('')
 	const limit_reached_error = ref('')
-	const resend_cooldown = ref(0)
 
 	/**
 	 * Open email change modal
@@ -96,6 +103,9 @@ export function useChangeEmailForm() {
 		try {
 			const payload = { email: next_email }
 			const response = await sendEmailChangeOTP(payload)
+
+			/** Get cooldown_remaining from api response */
+			applyFromResponse(response)
 
 			/** Success: move user to OTP step */
 			if (response.success) {
@@ -195,10 +205,14 @@ export function useChangeEmailForm() {
 		limit_reached_error.value = ''
 
 		try {
+			/** Set initial cooldown value */
+			remaining.value = 60
+
 			const payload = { email: pending_email.value }
 			const response = await sendEmailChangeOTP(payload)
 
-			getResendCooldown(response)
+			/** Get cooldown_remaining from api response */
+			applyFromResponse(response)
 
 			if (response.success) {
 				request_sent.value = true
@@ -270,12 +284,6 @@ export function useChangeEmailForm() {
 		return true
 	}
 
-	/**
-	 * Read resend cooldown if present
-	 */
-	function getResendCooldown(response: ApiResponse<SendEmailChangeOtpSuccessData>) {
-		resend_cooldown.value = response.data?.cooldown_remaining ?? 0
-	}
 
 	/**
 	 * Check whether response is max resend reached
@@ -310,7 +318,6 @@ export function useChangeEmailForm() {
 		email_change_otp_code.value = ''
 		email_change_otp_error.value = ''
 		limit_reached_error.value = ''
-		resend_cooldown.value = 0
 	}
 
 	/**
@@ -374,7 +381,8 @@ export function useChangeEmailForm() {
 		email_change_otp_code,
 		email_change_otp_error,
 		limit_reached_error,
-		resend_cooldown,
+
+		remaining,
 
 		openEmailChangeModal,
 		closeEmailChangeModal,
