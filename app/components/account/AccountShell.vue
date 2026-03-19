@@ -224,7 +224,7 @@ const tabs = [
 .account-shell {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 0;
+    padding: 40px 0 104px;
 
     .account-shell-top {
         display: flex;

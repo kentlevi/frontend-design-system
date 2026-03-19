@@ -100,9 +100,10 @@ const describedBy = computed(() => {
 }
 
 .ui-form-field-label {
-
+	font-weight: var(--font-weight-semibold);
     display: inline-flex;
     align-items: center;
+	gap: 4px;
 }
 
 .ui-form-field-required {
