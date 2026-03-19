@@ -110,7 +110,7 @@ export const useToastStore = defineStore('toast', () => {
 	 */
 	function showToastWithTimer(
 		toast_payload: ToastPayload,
-		duration = 3000
+		duration = 4000
 	): void {
 		showToast(toast_payload)
 
@@ -131,7 +131,6 @@ export const useToastStore = defineStore('toast', () => {
 	 */
 	function handleApiResponse(
 		api_response?: ToastApiResponse | null,
-		duration?: number
 	): void {
 		if (!api_response?.message) return
 
@@ -142,12 +141,7 @@ export const useToastStore = defineStore('toast', () => {
 			variant: 'default',
 		}
 
-		if (typeof duration === 'number') {
-			showToastWithTimer(toast_payload, duration)
-			return
-		}
-
-		showToast(toast_payload)
+		showToastWithTimer(toast_payload)
 	}
 
 
