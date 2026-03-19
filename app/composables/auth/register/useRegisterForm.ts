@@ -346,7 +346,7 @@ export function useRegisterForm() {
 		isSubmitting.value = true;
 
 		try {
-			const response = await sendVerificationCode()
+			const response = await sendVerificationCode(false)
 
 			if (!response.success) {
 				const code = getAuthResponseCode(response);
@@ -480,7 +480,7 @@ export function useRegisterForm() {
 		resendLimitReached.value = '';
 
 		try {
-			const response = await sendVerificationCode()
+			const response = await sendVerificationCode(true)
 
 			if (!response.success) {
 				const code = getAuthResponseCode(response);
@@ -525,7 +525,7 @@ export function useRegisterForm() {
 		}
 	}
 
-	async function sendVerificationCode() {
+	async function sendVerificationCode(resend: boolean) {
 		const { sendRegisterVerificationHandler } = useRegisterUser()
 		const response = await sendRegisterVerificationHandler({
 			given_name: firstName.value.trim(),
@@ -533,7 +533,8 @@ export function useRegisterForm() {
 			email: email.value.trim(),
 			password: password.value.trim(),
 			terms_of_service: agreeTerms.value,
-			newsletter: optInPromos.value
+			newsletter: optInPromos.value,
+			is_resend: resend
 		})
 
 		return response
