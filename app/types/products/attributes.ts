@@ -9,6 +9,7 @@ export interface SizeSpec {
 export interface QuantitySpec {
 	custom?: boolean | null,
 	nr: number,
+	price: number,
 }
 
 export interface ProductAttributes {

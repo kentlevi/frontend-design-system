@@ -3,8 +3,9 @@ import type { ProductItem } from '~/types/products/catalog';
 import type { SizeOptionKey } from '~/types/products/categoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
-import type { SizeOption } from '~/types/products/attributes';
-import { useProductHandler } from '~/composables/product-page/useProductHandler';
+import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
+import { formatCurrencyByCountry } from '~/utils/currency';
+import { useCountry } from '~/composables/app/country/useCountry';
 
 type SizeFeatureCard = {
 	key: SizeOptionKey;
@@ -27,7 +28,6 @@ const props = defineProps<{
 	total: number;
 	getProductName: (product: ProductItem) => string;
 	getProductBlurb: (product: ProductItem) => string;
-	formatPrice: (value: number) => string;
 	quantityPrice: (qty: number) => number;
 }>();
 
@@ -43,38 +43,6 @@ const { resolveFileUrl } = useFileBaseUrl();
 const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 
-const formattedCustomQty = computed(() => {
-	if (!customQty.value) return ''
-	return customQty.value.toLocaleString()
-})
-
-const onCustomQtyInput = (e: Event) => {
-	const input = e.target as HTMLInputElement
-
-	// remove commas
-	const raw = input.value.replace(/,/g, '')
-
-	const number = Number(raw)
-
-	if (!isNaN(number)) {
-		customQty.value = number
-		emit('update:selectedQty', number)
-	}
-}
-
-const enableCustomQty = async () => {
-	is_custom_qty.value = true
-	customQty.value = props.selectedQty
-	await nextTick()
-	customQtyInput.value?.focus()
-}
-
-const focusWidthInput = () => {
-	custom_width_input.value?.focus()
-}
-
-
-
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
@@ -84,32 +52,31 @@ const {
 	featured_sizes,
 	featured_quantities,
 	size,
-	quantity,
-	updateProduct,
-	changeSize,
-	changeQuantity,
-	is_custom_size,
 	custom_width,
 	custom_height,
-	custom_width_input,
-	changeCustomSize,
-	enableCustomSize,
-} = useProductHandler();
+	is_custom_size,
+	quantity,
+	is_custom_qty,
+	formatted_custom_qty,
+	custom_qty_input,
+	update,
+	instatiateForm,
+	showCustomSize,
+	focusWidthInput,
+	showCustomQty,
+} = useQuoteSectionHandler();
 
 const route = useRoute()
 const route_product = route.params?.product
+const { country } = useCountry();
 
-const is_custom_qty = ref(false)
-const customQty = ref<number | null>(null)
-const customQtyInput = ref<HTMLInputElement | null>(null)
+const formatPrice = (price: number) => { return formatCurrencyByCountry(price, country.value) }
 
-if ( typeof route_product === 'string' ) {
-	onMounted(async () => {
-		console.log('Mounted')
+onMounted(async () => {
+	if ( typeof route_product === 'string' )
+		instatiateForm(route_product)
+})
 
-		updateProduct(route_product)
-	})
-}
 // ⚠️ End of functionalities
 
 </script>
@@ -213,7 +180,7 @@ if ( typeof route_product === 'string' ) {
 									class="option-pill"
 									:class="{ 'is-active': !is_custom_size && size?.id === fsize.id }"
 									:data-testid="`product-category-size-option-${fsize.id}`"
-									@click="is_custom_size = false; changeSize(fsize)"
+									@click="update('size', fsize)"
 								>
 									<span class="size-pill-name">{{ fsize.label }}</span>
 									<span class="size-pill-dim">{{ fsize.width }}x{{ fsize.height }}</span>
@@ -225,7 +192,7 @@ if ( typeof route_product === 'string' ) {
 									type="button"
 									class="option-pill option-pill-wide"
 									data-testid="product-category-size-option-custom-button"
-									@click="enableCustomSize"
+									@click="showCustomSize"
 								>
 									{{ t('product.options.customSize') }}
 								</button>
@@ -243,7 +210,7 @@ if ( typeof route_product === 'string' ) {
 										type="number"
 										placeholder="Width"
 										class="custom-size-input"
-										@change="changeCustomSize()"
+										@change="update('custom-size')"
 									>
 
 									<span class="size-separator">x</span>
@@ -253,7 +220,7 @@ if ( typeof route_product === 'string' ) {
 										type="number"
 										placeholder="Height"
 										class="custom-size-input"
-										@change="changeCustomSize()"
+										@change="update('custom-size')"
 									>
 								</div>
 							</div>
@@ -264,22 +231,22 @@ if ( typeof route_product === 'string' ) {
 							<div class="option-grid" data-testid="product-category-quantity-options">
 								<button
 									v-for="qty in featured_quantities"
-									:key="qty"
+									:key="qty.nr"
 									type="button"
 									class="option-pill"
-									:class="{ 'is-active': quantity === qty }"
+									:class="{ 'is-active': quantity?.nr === qty.nr }"
 									:data-testid="`product-category-quantity-option-${qty}`"
-									@click="changeQuantity(qty)"
+									@click="update('quantity', qty)"
 								>
-									<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
-									<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
+									<span class="qty-pill-count">{{ qty.nr.toLocaleString() }}</span>
+									<strong class="qty-pill-price">{{ formatPrice(qty.price) }}</strong>
 								</button>
 								<button
 									v-if="!is_custom_qty"
 									type="button"
 									class="option-pill option-pill-wide"
 									data-testid="product-category-quantity-option-custom-button"
-									@click="enableCustomQty"
+									@click="showCustomQty"
 								>
 									{{ t('product.options.customQuantity') }}
 								</button>
@@ -288,15 +255,15 @@ if ( typeof route_product === 'string' ) {
 									v-else
 									class="option-pill option-pill-wide custom-size-pill is-active"
 									data-testid="product-category-quantity-option-custom-input"
-									@click.self="customQtyInput?.focus()"
+									@click.self="custom_qty_input?.focus()"
 								>
 									<input
-										ref="customQtyInput"
-										:value="formattedCustomQty"
+										ref="custom_qty_input"
+										:value="formatted_custom_qty"
 										type="text"
 										placeholder="Quantity"
 										class="custom-size-input"
-										@input="onCustomQtyInput"
+										@input="update('custom-quantity', $event)"
 									>
 								</div>
 							</div>
@@ -312,13 +279,13 @@ if ( typeof route_product === 'string' ) {
 								<div class="price-summary-stack">
 									<p class="price-summary-row discount" data-testid="product-category-price-discount-row">
 										<strong class="price-discount-rate">-{{ Math.round(props.discountRate * 100) }}%</strong>
-										<span class="price-summary-strike">{{ props.formatPrice(props.subtotal) }}</span>
+										<span class="price-summary-strike">{{ formatPrice(props.subtotal) }}</span>
 									</p>
 									<p class="price-summary-row total" data-testid="product-category-price-total-row">
-										<strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
+										<strong class="price-summary-value">{{ formatPrice(props.total) }}</strong>
 									</p>
 									<p class="price-summary-unit">
-										({{ props.formatPrice(unitPrice) }} per piece)
+										({{ formatPrice(unitPrice) }} per piece)
 									</p>
 								</div>
 							</div>
