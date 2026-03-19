@@ -6,6 +6,7 @@ import {
 	getAuthErrorMessage,
 	getAuthResponseMessage,
 	getAuthResponseMessageCode,
+	getAuthResponseCode,
 } from '~/helpers/auth/auth.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAuthUser } from '~/composables/auth/useAuthUser'
@@ -278,6 +279,18 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			const message = getAuthResponseMessage(response);
 			const message_code = getAuthResponseMessageCode(response);
 			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
+
+			if (!response.success) {
+				const code = getAuthResponseCode(response);
+				const message = getAuthResponseMessage(response);
+				if (code === 'max_resend_reached') {
+					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					nonMemberEmailError.value = '';
+					nonMemberOrderError.value = '';
+					isVerificationModalOpen.value = true
+					return response;
+				}
+			}
 
 			if (response.success && message_code === 'login_success') {
 				await fetchUserProfile();
