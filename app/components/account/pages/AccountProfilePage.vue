@@ -20,7 +20,6 @@ const {
 	openFilePicker,
 	onFilePicked,
 	removePhoto,
-	signOut,
 } = useAccountProfile();
 const isDeletePhotoModalOpen = ref(false);
 const photoInlineError = computed(() => {
@@ -172,9 +171,8 @@ onBeforeUnmount(() => {
 			<span> - {{ photoUploadToastMessage }}</span>
 		</UiToast>
 		<AccountShell active-tab="profile">
+			<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
 			<div class="account-content account-profile" data-testid="account-profile-content">
-				<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
-
 				<div class="account-profile-section" data-testid="account-profile-personal-section">
 					<div class="account-profile-section-copy">
 						<h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
@@ -183,53 +181,55 @@ onBeforeUnmount(() => {
 						</p>
 					</div>
 					<div class="account-profile-section-main">
-						<div class="account-profile-photo-head">
-							<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
-							<p v-if="photoInlineError" class="account-profile-photo-error">{{ photoInlineError }}</p>
-						</div>
-						<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-							<div class="account-profile-avatar">
-								<img
-									v-if="avatarDisplayUrl"
-									:src="avatarDisplayUrl"
-									:alt="t('account.profile.profilePhoto')"
-									class="account-profile-avatar-image"
-								>
-								<span v-else class="account-profile-avatar-text">{{ initials }}</span>
+						<div class="account-profile-photo-group">
+							<div class="account-profile-photo-head">
+								<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
+								<p v-if="photoInlineError" class="account-profile-photo-error">{{ photoInlineError }}</p>
 							</div>
-							<div class="account-profile-photo-copy">
-								<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
-								<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
-								<div class="account-profile-photo-actions">
-									<input
-										ref="fileInput"
-										type="file"
-										class="account-profile-file-input"
-										accept=".jpg,.jpeg,.png"
-										data-testid="account-profile-photo-input"
-										@change="onFilePicked"
+							<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
+								<div class="account-profile-avatar">
+									<img
+										v-if="avatarDisplayUrl"
+										:src="avatarDisplayUrl"
+										:alt="t('account.profile.profilePhoto')"
+										class="account-profile-avatar-image"
 									>
-									<UiButton
-										variant="outline"
-										tone="neutral"
-										size="md"
-										class="account-profile-outline-button"
-										data-testid="account-profile-photo-upload-button"
-										@click="openFilePicker"
-									>
-										{{ t('account.profile.uploadNewPhoto') }}
-									</UiButton>
-									<UiButton
-										v-if="photoUrl"
-										variant="ghost"
-										tone="danger"
-										size="md"
-										class="account-profile-delete-button"
-										data-testid="account-profile-photo-delete-button"
-										@click="openDeletePhotoModal"
-									>
-										{{ t('account.profile.delete') }}
-									</UiButton>
+									<span v-else class="account-profile-avatar-text">{{ initials }}</span>
+								</div>
+								<div class="account-profile-photo-copy">
+									<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
+									<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
+									<div class="account-profile-photo-actions">
+										<input
+											ref="fileInput"
+											type="file"
+											class="account-profile-file-input"
+											accept=".jpg,.jpeg,.png"
+											data-testid="account-profile-photo-input"
+											@change="onFilePicked"
+										>
+										<UiButton
+											variant="outline"
+											tone="neutral"
+											size="md"
+											class="account-profile-outline-button"
+											data-testid="account-profile-photo-upload-button"
+											@click="openFilePicker"
+										>
+											{{ t('account.profile.uploadNewPhoto') }}
+										</UiButton>
+										<UiButton
+											v-if="photoUrl"
+											variant="ghost"
+											tone="danger"
+											size="md"
+											class="account-profile-delete-button"
+											data-testid="account-profile-photo-delete-button"
+											@click="openDeletePhotoModal"
+										>
+											{{ t('account.profile.delete') }}
+										</UiButton>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -245,6 +245,14 @@ onBeforeUnmount(() => {
 										: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
 									:required="field.is_required"
 								>
+									<template v-if="field.field_key === 'last_name' || field.field_key === 'family_name'" #label>
+										<span class="ui-form-field-label-text">
+											{{ t(`account.profile.${field.field_key}`) }}
+										</span>
+										<span class="account-profile-optional">
+											({{ t('account.profile.optional') }})
+										</span>
+									</template>
 									<template #default="{ inputId, describedBy }">
 										<UiInput
 											:id="inputId"
@@ -364,6 +372,7 @@ onBeforeUnmount(() => {
 										/>
 									</template>
 								</UiInput>
+								<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
 							</template>
 						</UiFormField>
 						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
@@ -507,11 +516,6 @@ onBeforeUnmount(() => {
 									{{ t('account.profile.inch') }}
 								</UiButton>
 							</div>
-						</div>
-						<div class="account-profile-actions-right" data-testid="account-profile-signout-wrap">
-							<UiButton variant="outline" tone="neutral" size="md" data-testid="account-profile-signout-button" @click="signOut">
-								{{ t('account.profile.signOut') }}
-							</UiButton>
 						</div>
 					</div>
 				</div>
@@ -691,29 +695,30 @@ onBeforeUnmount(() => {
     min-height: calc(100vh - 176px);
     position: relative;
 
+	.account-profile-title {
+		font-size: var(--type-size-450);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--type-line-450);
+		color: var(--text-primary);
+		padding: 40px 0 24px;
+	}
+
     .account-content {
-        padding-top: 40px;
         min-height: 100%;
-
-        .account-profile-title {
-            margin: 0 0 26px;
-            font-size: var(--type-size-450);
-            font-weight: var(--font-weight-bold);
-            line-height: var(--type-line-450);
-
-            color: var(--text-primary);
-        }
+		display: flex;
+		flex-direction: column;
+		gap: 56px;
 
         .account-profile-section {
             display: grid;
             grid-template-columns: 300px 1fr;
             gap: 126px;
-            padding: 26px 0;
 
             .account-profile-section-copy,
             .account-profile-section-main {
                 display: flex;
                 flex-direction: column;
+				gap: 16px;
             }
 
             .account-profile-section-title {
@@ -759,12 +764,17 @@ onBeforeUnmount(() => {
                 }
             }
 
+            .account-profile-photo-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
             .account-profile-photo-row {
                 display: grid;
                 grid-template-columns: 98px 1fr;
                 gap: 18px;
                 align-items: center;
-                margin-bottom: 16px;
 
                 .account-profile-avatar {
                     width: 98px;
@@ -867,14 +877,13 @@ onBeforeUnmount(() => {
             .account-profile-stack {
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
+                gap: 16px;
 
                 .account-profile-inline-actions {
                     display: flex;
                     gap: 16px;
                     align-items: center;
                     justify-content: flex-end;
-                    margin-top: 6px;
 
                     .account-profile-forgot-password-link {
                         min-height: auto;
@@ -984,7 +993,6 @@ onBeforeUnmount(() => {
             }
 
             .account-profile-actions-right {
-                margin-top: 12px;
                 display: flex;
                 justify-content: flex-end;
             }

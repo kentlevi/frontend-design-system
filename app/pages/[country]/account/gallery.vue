@@ -2,6 +2,7 @@
 import AccountGalleryPage from '~/components/account/pages/AccountGalleryPage.vue';
 definePageMeta({
 	layout: 'home',
+	footerVariant: 'compact',
 });
 </script>
 

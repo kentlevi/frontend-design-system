@@ -2,6 +2,7 @@
 import AccountOrdersPage from '~/components/account/pages/AccountOrdersPage.vue';
 definePageMeta({
 	layout: 'home',
+	footerVariant: 'compact',
 });
 </script>
 

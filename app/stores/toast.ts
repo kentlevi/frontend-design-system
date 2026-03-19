@@ -15,6 +15,7 @@ export type ToastVariant = 'default' | 'outlined'
 /** Payload accepted by toast actions */
 export interface ToastPayload {
 	visible?: boolean
+	title?: string | null
 	message?: string | null
 	tone?: ToastTone
 	dismissible?: boolean
@@ -41,6 +42,9 @@ export const useToastStore = defineStore('toast', () => {
 
 	/** Message rendered inside the toast */
 	const toast_message = ref<string | null>('')
+
+	/** Optional title rendered before the message */
+	const toast_title = ref<string | null>('')
 
 	/** Semantic tone passed to UiToast */
 	const toast_tone = ref<ToastTone>('primary')
@@ -79,6 +83,7 @@ export const useToastStore = defineStore('toast', () => {
 		clearTimer()
 
 		is_visible.value = false
+		toast_title.value = ''
 		toast_message.value = ''
 		toast_tone.value = 'primary'
 		is_dismissible.value = true
@@ -93,6 +98,7 @@ export const useToastStore = defineStore('toast', () => {
 		clearTimer()
 
 		is_visible.value = toast_payload.visible ?? true
+		toast_title.value = toast_payload.title ?? ''
 		toast_message.value = toast_payload.message ?? ''
 		toast_tone.value = toast_payload.tone ?? 'primary'
 		is_dismissible.value = toast_payload.dismissible ?? true
@@ -150,7 +156,8 @@ export const useToastStore = defineStore('toast', () => {
      */
 	function showUpdateError(): void {
 		const toast_payload: ToastPayload = {
-			message: 'Update Failed - We couldn\'t complete your update. Please try again.',
+			title: 'Update Failed',
+			message: 'We couldn\'t complete your update. Please try again.',
 			tone: 'error',
 			dismissible: true,
 			variant: 'default'
@@ -161,6 +168,7 @@ export const useToastStore = defineStore('toast', () => {
 
 	return {
 		is_visible,
+		toast_title,
 		toast_message,
 		toast_tone,
 		is_dismissible,

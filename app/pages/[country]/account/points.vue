@@ -2,6 +2,7 @@
 import AccountPointsPage from '~/components/account/pages/AccountPointsPage.vue';
 definePageMeta({
 	layout: 'home',
+	footerVariant: 'compact',
 });
 </script>
 
