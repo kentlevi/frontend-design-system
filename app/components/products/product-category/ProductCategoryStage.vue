@@ -83,7 +83,6 @@ const customWidth = ref<number | null>(null)
 const customHeight = ref<number | null>(null)
 const isCustomQty = ref(false)
 const customQty = ref<number | null>(null)
-const customQtyInput = ref<HTMLInputElement | null>(null)
 const selectedColor = ref<(typeof colorOptions)[number]['key']>('black')
 const vinylWidth = ref(192)
 const vinylHeight = ref(30)
@@ -182,15 +181,14 @@ const {
 	is_custom_size,
 	quantity,
 	is_custom_qty,
-	custom_quantity,
 	custom_qty_input,
 	formatted_custom_qty,
 	is_custom_size_focus,
 	is_custom_qty_focus,
 	update,
 	instatiateForm,
-	showCustomSize,
 	focusWidthInput,
+	showCustomSize,
 	showCustomQty,
 	formatPrice,
 	onCustomSizeFocus,
@@ -460,13 +458,13 @@ onMounted(async () => {
 								>
 									<input
 										ref="custom_qty_input"
-										:value="custom_quantity.nr"
+										:value="formatted_custom_qty"
 										type="text"
 										placeholder="Enter Quantity"
 										class="custom-size-input custom-quantity-input"
 										@focus="onCustomQtyFocus"
 										@blur="onCustomQtyBlur"
-										@input="update('custom-quantity', $event)"
+										@change="update('custom-quantity', $event)"
 									>
 								</div>
 							</div>
@@ -499,16 +497,16 @@ onMounted(async () => {
 								<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
 								<div class="option-grid vinyl-quantity-grid" data-testid="product-category-quantity-options">
 									<button
-										v-for="qty in vinylQuantityOptions"
-										:key="qty"
+										v-for="qty in featured_quantities"
+										:key="qty.nr ?? 'qty-key'"
 										type="button"
 										class="option-pill"
-										:class="{ 'is-active': !isCustomQty && props.selectedQty === qty }"
-										:data-testid="`product-category-quantity-option-${qty}`"
-										@click="isCustomQty = false; customQty = null; emit('update:selectedQty', qty)"
+										:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
+										:data-testid="`product-category-quantity-option-${qty.nr}`"
+										@click="update('quantity', qty)"
 									>
-										<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
-										<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
+										<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
+										<strong class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</strong>
 									</button>
 									<button
 										v-if="!isCustomQty"
@@ -519,7 +517,6 @@ onMounted(async () => {
 									>
 										{{ t('product.options.customQuantity') }}
 									</button>
-
 									<div
 										v-else
 										class="option-pill option-pill-wide custom-size-pill"
@@ -528,16 +525,17 @@ onMounted(async () => {
 											'is-input-focused': is_custom_qty_focus
 										}"
 										data-testid="product-category-quantity-option-custom-input"
+										@click.self="custom_qty_input?.focus()"
 									>
 										<input
-											ref="customQtyInput"
+											ref="custom_qty_input"
 											:value="formatted_custom_qty"
 											type="text"
 											placeholder="Enter Quantity"
 											class="custom-size-input custom-quantity-input"
-											@input="update('custom-quantity', $event)"
 											@focus="onCustomQtyFocus"
 											@blur="onCustomQtyBlur"
+											@change="update('custom-quantity', $event)"
 										>
 									</div>
 								</div>

@@ -94,6 +94,7 @@ export const useQuoteSectionHandler = () => {
 		await nextTick()
 
 		custom_width_input.value?.focus()
+		quoteService.changeCustomSize()
 	}
 
 	function hideCustomSize() {
@@ -105,11 +106,19 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	async function showCustomQty() {
+		console.log('Showing custom quantity')
 		is_custom_qty.value = true
 
 		await nextTick()
 
 		custom_qty_input.value?.focus()
+
+		/**
+		 * This will trigger the @change event,
+		 * When the custom field has already a value during toggling the show buttom
+		 */
+		if( custom_qty_input.value )
+			custom_qty_input.value?.dispatchEvent(new Event('change', { bubbles: true }))
 	}
 
 	async function hideCustomQty() {
@@ -148,7 +157,7 @@ export const useQuoteSectionHandler = () => {
 	 */
 	async function update(
 		attr: string,
-		data?: SizeSpec | QuantitySpec | InputEvent | null
+		data?: SizeSpec | QuantitySpec | Event | null
 	) {
 		const request_pricing = ref<boolean>(false)
 
@@ -205,8 +214,17 @@ export const useQuoteSectionHandler = () => {
 			// 📌 Handling custom quantity changes
 			case 'custom-quantity':
 				console.log('Custom Quantity', data)
-				if( data instanceof InputEvent) {
-					await quoteService.changeCustomQuantity(data)
+				if( data instanceof Event) {
+					const input = data.target as HTMLInputElement
+
+					// remove commas
+					const raw = input.value.replace(/,/g, '')
+
+					const n = Number(raw)
+
+					if (!isNaN(n))
+						await quoteService.changeCustomQuantity(n)
+
 					request_pricing.value = true
 				} else {
 					console.log('⚠️ Invalid custom quantity data structure!')

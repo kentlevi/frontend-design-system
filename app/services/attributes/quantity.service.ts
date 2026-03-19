@@ -40,19 +40,10 @@ export const useQuantityService = () => {
 	}
 
 
-	const changeCustomQuantity = (e: Event) => {
-		const input = e.target as HTMLInputElement
+	const changeCustomQuantity = (nr: number) => {
+		custom_quantity.value.nr = nr
 
-		// remove commas
-		const raw = input.value.replace(/,/g, '')
-
-		const number = Number(raw)
-
-		if (!isNaN(number)) {
-			custom_quantity.value.nr = number
-
-			selectionStore.updateQuantity(custom_quantity.value)
-		}
+		selectionStore.updateQuantity(custom_quantity.value)
 	}
 
 	return {
