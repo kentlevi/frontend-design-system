@@ -61,6 +61,7 @@ const { greetingName } = useHomeWelcomePopover();
 					size="sm"
 					class="home-welcome-popover-skip"
 					data-testid="home-welcome-popover-skip"
+					:no-hover="true"
 					@click="emit('close')"
 				>
 					{{ $t('home.welcome.skip') }}

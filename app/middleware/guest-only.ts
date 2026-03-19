@@ -7,7 +7,6 @@ function resolveCountryFromPath(path: string) {
 }
 
 export default defineNuxtRouteMiddleware((to) => {
-	const userStore = useUsersStore();
 	const { state } = storeToRefs(useUsersStore())
 	const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
 		default: () => null,

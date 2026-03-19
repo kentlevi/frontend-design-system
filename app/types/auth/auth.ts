@@ -17,6 +17,7 @@ export interface LoginPayload {
 export interface NonMemberLoginVerificationPayload {
 	email: string;
 	order_number: string;
+	is_resend?: boolean;
 }
 
 export type NonMemberLoginVerificationResponse = ApiResponse<NonMemberLoginVerification>
@@ -56,6 +57,7 @@ export interface RegisterVerificationPayload {
 	password: string;
 	terms_of_service: boolean | number;
 	newsletter: boolean | number;
+	is_resend?: boolean;
 }
 
 export type RegisterVerificationResponse = ApiResponse<RegisterVerification>

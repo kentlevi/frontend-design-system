@@ -144,6 +144,21 @@ export const useToastStore = defineStore('toast', () => {
 		showToast(toast_payload)
 	}
 
+
+	/**
+     * Show general update catch error
+     */
+	function showUpdateError(): void {
+		const toast_payload: ToastPayload = {
+			message: 'Update Failed - We couldn\'t complete your update. Please try again.',
+			tone: 'error',
+			dismissible: true,
+			variant: 'default'
+		}
+
+		showToast(toast_payload)
+	}
+
 	return {
 		is_visible,
 		toast_message,
@@ -157,5 +172,6 @@ export const useToastStore = defineStore('toast', () => {
 		showToast,
 		showToastWithTimer,
 		handleApiResponse,
+		showUpdateError,
 	}
 })

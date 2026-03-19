@@ -5,11 +5,14 @@
 import type { SizeSpec, QuantitySpec } from '~/types/products/attributes'
 
 import { useQuoteSectionService } from '~/services/attributes/quote.section'
+import { useCountry } from '../app/country/useCountry';
 
 export const useQuoteSectionHandler = () => {
 
 	// 🔥 Quote section service
 	const quoteService = useQuoteSectionService()
+
+	const { country } = useCountry();
 
 	const is_custom_qty = ref<boolean>(!!quoteService.quantity.value?.custom)
 
@@ -18,6 +21,10 @@ export const useQuoteSectionHandler = () => {
 	const custom_qty_input = ref<HTMLInputElement | null>(null)
 
 	const custom_width_input = ref<HTMLInputElement | null>(null)
+
+	const is_custom_size_focus = ref(false)
+
+	const is_custom_qty_focus = ref(false)
 
 	/**
 	 * 📌Initiate the value of all fields in form and set the default value and behaviour
@@ -115,6 +122,24 @@ export const useQuoteSectionHandler = () => {
 
 		return quoteService.custom_quantity.value.nr.toLocaleString()
 	})
+
+	const formatPrice = (price: number) => { return formatCurrencyByCountry(price, country.value) }
+
+	const onCustomSizeFocus = () => {
+		is_custom_size_focus.value = true
+	}
+
+	const onCustomSizeBlur = () => {
+		is_custom_size_focus.value = false
+	}
+
+	const onCustomQtyFocus = () => {
+		is_custom_qty_focus.value = true
+	}
+
+	const onCustomQtyBlur = () => {
+		is_custom_qty_focus.value = false
+	}
 
 	/**
 	 * Handles every changes in quote section component
@@ -219,6 +244,8 @@ export const useQuoteSectionHandler = () => {
 		is_custom_qty,
 		custom_qty_input,
 		formatted_custom_qty,
+		is_custom_size_focus,
+		is_custom_qty_focus,
 		instatiateForm,
 		showCustomSize,
 		hideCustomSize,
@@ -226,5 +253,10 @@ export const useQuoteSectionHandler = () => {
 		showCustomQty,
 		hideCustomQty,
 		update,
+		formatPrice,
+		onCustomSizeFocus,
+		onCustomSizeBlur,
+		onCustomQtyFocus,
+		onCustomQtyBlur,
 	}
 }

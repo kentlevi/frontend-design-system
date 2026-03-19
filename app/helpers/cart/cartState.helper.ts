@@ -11,15 +11,25 @@ export type StoredCartState = {
 	category: ProductCategoryKey;
 	productId: string;
 	sizeKey: string;
+	customSizeLabel?: string;
 	qty: number;
 	total: number;
 	artworkName: string;
+	artworkSizeLabel?: string;
+	specialInstructions?: string;
 	artworkPreviewUrl?: string;
 };
 
 export type LocalizedCatalogProduct = ProductItem & {
 	name: string;
 };
+
+function stripStoredCartPreviewUrls(items: StoredCartState[]) {
+	return items.map((item) => ({
+		...item,
+		artworkPreviewUrl: '',
+	}));
+}
 
 export function normalizeStoredCartState(payload: unknown): StoredCartState[] {
 	if (!Array.isArray(payload)) return [];
@@ -34,6 +44,12 @@ export function normalizeStoredCartState(payload: unknown): StoredCartState[] {
 		)
 		.map((item) => ({
 			...item,
+			customSizeLabel:
+				typeof item.customSizeLabel === 'string' ? item.customSizeLabel : '',
+			artworkSizeLabel:
+				typeof item.artworkSizeLabel === 'string' ? item.artworkSizeLabel : '',
+			specialInstructions:
+				typeof item.specialInstructions === 'string' ? item.specialInstructions : '',
 			artworkPreviewUrl:
 				typeof item.artworkPreviewUrl === 'string' ? item.artworkPreviewUrl : '',
 		}));
@@ -68,10 +84,26 @@ export function readCheckoutSelectionIdsFromStorage() {
 export function writeStoredCartStateToStorage(next: StoredCartState[]) {
 	if (typeof window === 'undefined') return;
 
-	if (next.length) {
-		window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-	} else {
-		window.localStorage.removeItem(CART_STORAGE_KEY);
+	try {
+		if (next.length) {
+			window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
+		} else {
+			window.localStorage.removeItem(CART_STORAGE_KEY);
+		}
+	} catch (error) {
+		if (
+			next.length
+			&& error instanceof DOMException
+			&& error.name === 'QuotaExceededError'
+		) {
+			const fallback_state = stripStoredCartPreviewUrls(next);
+			window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(fallback_state));
+			console.warn(
+				'[cart] Local storage quota exceeded. Stored cart without artwork preview images.'
+			);
+		} else {
+			throw error;
+		}
 	}
 
 	window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));

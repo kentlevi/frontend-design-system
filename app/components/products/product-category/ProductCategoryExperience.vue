@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { toRef, defineAsyncComponent  } from 'vue';
+import { toRef, defineAsyncComponent } from 'vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
 import { useProductCategoryExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
-import type { Product, Products } from '~/types/navigation/navgiation';
+import type { Products } from '~/types/navigation/navgiation';
 import type { ProductCategoryKey } from '~/types/products/catalog';
 
 const ProductReviewsSection = defineAsyncComponent(
@@ -142,7 +142,7 @@ const {
 			:format-price="formatPrice"
 			:featured-start-price="featuredStartPrice"
 			@close="closeCartPreview"
-			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty)"
+			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty, $event.customSizeLabel || '')"
 			@remove-item="removeCartItem($event)"
 			@close-featured="closeFeaturedItems"
 		/>
