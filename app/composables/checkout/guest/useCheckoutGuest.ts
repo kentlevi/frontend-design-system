@@ -41,6 +41,8 @@ export function useCheckoutGuest(options: UseCheckoutGuestOptions = {}) {
 	const { country } = useCountry();
 
 	function resolveSizeLabel(sizeKey: string) {
+		if (sizeKey === 'custom') return '';
+
 		if (!options.labelCountry) {
 			return t(`product.sizes.${sizeKey}.label`);
 		}
@@ -87,7 +89,7 @@ export function useCheckoutGuest(options: UseCheckoutGuestOptions = {}) {
 				return {
 					id: entry.id,
 					product,
-					sizeLabel: resolveSizeLabel(entry.sizeKey),
+					sizeLabel: entry.customSizeLabel || resolveSizeLabel(entry.sizeKey),
 					qty: entry.qty,
 					total: entry.total,
 					artworkPreviewUrl: entry.artworkPreviewUrl || '',

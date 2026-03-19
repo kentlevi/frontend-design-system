@@ -74,6 +74,12 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	const artworkPreviewUrl = ref('');
 	const artworkInputRef = ref<HTMLInputElement | null>(null);
 
+	function resolveCartSizeLabel(entry: Pick<StoredCartState, 'sizeKey' | 'customSizeLabel'>) {
+		if (entry.customSizeLabel) return entry.customSizeLabel;
+		if (entry.sizeKey === 'custom') return '';
+		return t(`product.sizes.${entry.sizeKey}.label`);
+	}
+
 	const sizeOptionModels = computed(() =>
 		sizeOptions.map((size) => ({
 			key: size,
@@ -123,7 +129,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 					id: entry.id,
 					product,
 					sizeKey: entry.sizeKey,
-					sizeLabel: t(`product.sizes.${entry.sizeKey}.label`),
+					sizeLabel: resolveCartSizeLabel(entry),
+					customSizeLabel: entry.customSizeLabel || '',
 					qty: entry.qty,
 					total: entry.total,
 					artworkName: entry.artworkName,
@@ -214,6 +221,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			qty: selectedQty.value,
 			total: total.value,
 			artworkName,
+			artworkSizeLabel: cartArtworkSize.value,
+			specialInstructions: specialInstructions.value,
 			artworkPreviewUrl: artworkPreviewUrlValue,
 		};
 
@@ -372,7 +381,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		writeStoredCartStateToStorage(nextState);
 	}
 
-	function updateCartItem(itemId: string, nextSizeKey: string, nextQty: number) {
+	function updateCartItem(itemId: string, nextSizeKey: string, nextQty: number, customSizeLabel = '') {
 		const qty = Number(nextQty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
@@ -380,7 +389,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			nextSizeKey as (typeof sizeOptions)[number]
 		)
 			? nextSizeKey
-			: sizeOptions[0];
+			: 'custom';
 
 		const nextState = mergePlainProductCartItems(
 			cartState.value.map((item) => {
@@ -389,6 +398,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 				return {
 					...item,
 					sizeKey: normalizedSizeKey,
+					customSizeLabel: normalizedSizeKey === 'custom' ? customSizeLabel : '',
 					qty,
 					total: unitPrice * qty,
 				};

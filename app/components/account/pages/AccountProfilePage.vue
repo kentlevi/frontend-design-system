@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { useAccountProfile } from '~/composables/account/useAccountProfile';
-import { useCountry } from '~/composables/app/country/useCountry';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import { computed, watch } from 'vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
+import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
+import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
-const { withCountry } = useCountry();
+const { sendResetPasswordLinkHandler } = usePasswordReset();
 const {
 	photoUrl,
 	avatarDisplayUrl,
@@ -96,6 +97,9 @@ onMounted(() => {
 const profileToastVisible = ref(false);
 const photoUploadToastVisible = ref(false);
 const photoUploadToastMessage = ref('');
+const isForgotPasswordModalOpen = ref(false);
+const forgotPasswordRequestSent = ref(false);
+const forgotPasswordRequestError = ref('');
 const isPasswordChangeSubmitting = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
 let photo_upload_toast_timer: ReturnType<typeof setTimeout> | null = null;
@@ -140,6 +144,36 @@ async function onSaveProfile() {
 	if (!api_response?.value?.success) return;
 
 	showProfileSavedToast();
+}
+
+function closeForgotPasswordModal() {
+	isForgotPasswordModalOpen.value = false;
+	forgotPasswordRequestSent.value = false;
+	forgotPasswordRequestError.value = '';
+}
+
+async function openForgotPasswordModal() {
+	const accountEmail = email.value.trim();
+	if (!accountEmail) return;
+
+	isForgotPasswordModalOpen.value = true;
+	forgotPasswordRequestSent.value = false;
+	forgotPasswordRequestError.value = '';
+
+	try {
+		const response = await sendResetPasswordLinkHandler({
+			email: accountEmail,
+		});
+
+		if (!response?.success) {
+			forgotPasswordRequestError.value = response?.message || t('account.profile.forgotPasswordRequestFailed');
+			return;
+		}
+
+		forgotPasswordRequestSent.value = true;
+	} catch {
+		forgotPasswordRequestError.value = t('account.profile.forgotPasswordRequestFailed');
+	}
 }
 
 function showPhotoUploadToast(message: string) {
@@ -434,9 +468,18 @@ onBeforeUnmount(() => {
 							>
 								{{ t('account.profile.changePassword') }}
 							</UiButton>
-							<NuxtLink :to="withCountry('/auth/login')" class="account-profile-forgot-password-link" data-testid="account-profile-forgot-password">
+							<UiButton
+								variant="ghost"
+								tone="neutral"
+								size="sm"
+								:no-hover="true"
+								class="account-profile-forgot-password-link"
+								label-class="account-profile-forgot-password-link-label"
+								data-testid="account-profile-forgot-password"
+								@click="openForgotPasswordModal"
+							>
 								{{ t('account.profile.forgotPassword') }}
-							</NuxtLink>
+							</UiButton>
 						</div>
 					</div>
 				</div>
@@ -550,7 +593,7 @@ onBeforeUnmount(() => {
 					size="24"
 					aria-label="Close email change modal"
 					data-testid="account-profile-email-change-modal-close"
-					@click="closeEmailChangeModal"
+					@click="() => closeEmailChangeModal()"
 				>
 					<UiIcon name="regular-times" :size="24" />
 				</button>
@@ -629,7 +672,7 @@ onBeforeUnmount(() => {
 			@update:code="email_change_otp_code = $event"
 			@verify="verifyOtp"
 			@resend="resendOtp"
-			@close="closeOtpModal"
+			@close="() => closeOtpModal()"
 		>
 			<template #icon>
 				<img
@@ -639,59 +682,64 @@ onBeforeUnmount(() => {
 				>
 			</template>
 		</AuthVerificationModal>
-		<UiModal
-			:model-value="isDeletePhotoModalOpen"
-			align="center"
-			width="520px"
-			padding="0"
-			gap="0"
+		<DeleteConfirmModal
+			v-model="isDeletePhotoModalOpen"
+			title="Are you sure you want to delete this photo?"
+			description="This action cannot be undone. Please confirm to proceed."
 			modal-class="account-profile-delete-photo-modal-shell"
-			@update:model-value="isDeletePhotoModalOpen = $event"
+			test-id="account-profile-delete-photo-modal"
+			@cancel="closeDeletePhotoModal"
+			@confirm="confirmDeletePhoto"
+		/>
+		<UiModal
+			:model-value="isForgotPasswordModalOpen"
+			align="center"
+			width="504px"
+			padding="40px"
+			gap="8px"
+			modal-class="account-profile-forgot-password-modal-shell"
+			@update:model-value="$event ? (isForgotPasswordModalOpen = true) : closeForgotPasswordModal()"
 		>
-			<section class="account-profile-delete-photo-modal" data-testid="account-profile-delete-photo-modal">
-				<div class="account-profile-delete-photo-modal-copy">
-					<div class="account-profile-delete-photo-modal-icon-wrap">
-						<img
-							src="/icons/custom/account/delete-photo-trash.svg"
-							alt=""
-							class="account-profile-delete-photo-modal-icon"
-						>
-					</div>
-					<div class="account-profile-delete-photo-modal-text-wrap">
-						<h3 class="account-profile-delete-photo-modal-title">
-							Are you sure you want to delete this photo?
-						</h3>
-						<p class="account-profile-delete-photo-modal-text">
-							This action cannot be undone. Please confirm to proceed.
-						</p>
-					</div>
+			<section class="account-profile-forgot-password-modal" data-testid="account-profile-forgot-password-modal">
+				<button
+					type="button"
+					class="account-profile-forgot-password-modal-close"
+					:aria-label="t('account.profile.forgotPasswordModalClose')"
+					data-testid="account-profile-forgot-password-modal-close"
+					@click="closeForgotPasswordModal"
+				>
+					<UiIcon name="regular-times" :size="24" />
+				</button>
+
+				<div class="account-profile-forgot-password-modal-header">
+					<UiLogo
+						name="musticker"
+						variant="mark"
+						color="colored"
+						:size="40"
+						class="account-profile-forgot-password-modal-logo"
+					/>
+					<h3 class="account-profile-forgot-password-modal-title">
+						{{ forgotPasswordRequestSent ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+					</h3>
 				</div>
 
-				<footer class="account-profile-delete-photo-modal-actions">
+				<p class="account-profile-forgot-password-modal-description">
+					{{ forgotPasswordRequestSent ? t('account.profile.forgotPasswordCheckEmailDescription') : forgotPasswordRequestError || t('account.profile.forgotPasswordRequestFailed') }}
+				</p>
+
+				<div class="account-profile-forgot-password-modal-actions">
 					<UiButton
-						type="button"
-						variant="ghost"
-						tone="neutral"
-						size="sm"
-						:no-hover="true"
-						class="account-profile-delete-photo-modal-cancel"
-						data-testid="account-profile-delete-photo-modal-cancel"
-						@click="closeDeletePhotoModal"
-					>
-						Cancel
-					</UiButton>
-					<UiButton
-						type="button"
 						variant="filled"
-						tone="danger"
-						size="md"
-						class="account-profile-delete-photo-modal-delete"
-						data-testid="account-profile-delete-photo-modal-confirm"
-						@click="confirmDeletePhoto"
+						tone="neutral"
+						size="lg"
+						class="account-profile-forgot-password-modal-confirm"
+						data-testid="account-profile-forgot-password-modal-confirm"
+						@click="closeForgotPasswordModal"
 					>
-						Delete
+						{{ t('account.profile.forgotPasswordReturnToDashboard') }}
 					</UiButton>
-				</footer>
+				</div>
 			</section>
 		</UiModal>
 	</section>
@@ -889,10 +937,19 @@ onBeforeUnmount(() => {
                     margin-top: 6px;
 
                     .account-profile-forgot-password-link {
+                        min-height: auto;
+                        padding: 0;
                         color: var(--text-primary);
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);
                         text-decoration: underline;
+
+                        :deep(.account-profile-forgot-password-link-label) {
+                            color: inherit;
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
+                            text-decoration: underline;
+                        }
                     }
                 }
             }
@@ -997,71 +1054,57 @@ onBeforeUnmount(() => {
 
 }
 
-    .account-profile-delete-photo-modal {
-        background: var(--contrast-light);
-	border-radius: 16px;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-	width: 100%;
+.account-profile-forgot-password-modal {
+    position: relative;
+    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    padding: var(--ui-modal-padding, 40px);
+    background: var(--contrast-light);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 
-	.account-profile-delete-photo-modal-copy {
-		width: 100%;
-		box-sizing: border-box;
-		padding: 24px;
-		display: grid;
-		grid-template-columns: 52px minmax(0, 1fr);
-		align-items: center;
-		column-gap: 24px;
-	}
+    .account-profile-forgot-password-modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text-primary);
+        cursor: pointer;
+        z-index: 1;
+    }
 
-	.account-profile-delete-photo-modal-icon-wrap {
-		width: 52px;
-		height: 52px;
-		flex-shrink: 0;
-		display: grid;
-		place-items: center;
-	}
+    .account-profile-forgot-password-modal-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
 
-	.account-profile-delete-photo-modal-icon {
-		display: block;
-		width: 48px;
-		height: 48px;
-	}
+    .account-profile-forgot-password-modal-title {
+        font-size: var(--type-size-500);
+        line-height: var(--type-line-500);
+        color: var(--text-primary);
+    }
 
-	.account-profile-delete-photo-modal-text-wrap {
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
+    .account-profile-forgot-password-modal-description {
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        color: var(--text-secondary);
+    }
 
-	.account-profile-delete-photo-modal-title {
+    .account-profile-forgot-password-modal-actions {
+        display: flex;
+    }
 
-		font-size: var(--type-size-300);
-		line-height: var(--type-line-300);
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
-
-	.account-profile-delete-photo-modal-text {
-
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-	}
-
-	.account-profile-delete-photo-modal-actions {
-		width: 100%;
-		box-sizing: border-box;
-		border-top: 1px solid var(--border-default);
-		padding: 16px 24px;
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		gap: 18px;
-	}
-
+    .account-profile-forgot-password-modal-confirm {
+        width: 100%;
+    }
 }
 
 .account-profile-email-change-modal {
@@ -1159,12 +1202,6 @@ onBeforeUnmount(() => {
             height: 46px;
         }
     }
-
-:global(.account-profile-delete-photo-modal-shell) {
-    border-radius: 16px;
-    overflow: hidden;
-    max-width: 520px;
-}
 
 :global(.account-profile-email-change-modal-shell) {
     border-radius: 16px;

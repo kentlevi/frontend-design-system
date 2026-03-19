@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { ref, toRef } from 'vue';
 import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
 import { sizeDimOnly } from '~/utils/cart';
+import CartItemEditModal from '~/components/cart/CartItemEditModal.vue';
+import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import type { ProductItem } from '~/types/products/catalog';
 import type {
 	CartPreviewItem,
@@ -31,16 +33,37 @@ const props = withDefaults(
 const emit = defineEmits<{
 	close: [];
 	'close-featured': [];
-	'update-item': [payload: { itemId: string; sizeKey: string; qty: number }];
+	'update-item': [payload: { itemId: string; sizeKey: string; qty: number; customSizeLabel?: string }];
 	'remove-item': [itemId: string];
 }>();
+
+const deletingItemId = ref<string | null>(null);
+
+function openDeleteModal(itemId: string) {
+	deletingItemId.value = itemId;
+}
+
+function closeDeleteModal() {
+	deletingItemId.value = null;
+}
+
+function confirmDeleteItem() {
+	if (!deletingItemId.value) return;
+	emit('remove-item', deletingItemId.value);
+	deletingItemId.value = null;
+}
 
 const { t } = useI18n();
 const {
 	editingItemId,
+	editingItem,
 	draftSizeKey,
+	draftCustomSizeWidth,
+	draftCustomSizeHeight,
 	draftQty,
+	draftCustomQty,
 	redirectingToCart,
+	savingInlineEdit,
 	redirectLoaderRef,
 	openInlineEdit,
 	cancelInlineEdit,
@@ -67,8 +90,8 @@ const {
 		<Transition name="cart-preview-slide">
 			<div v-if="props.open" class="cart-preview-shell" data-testid="product-category-cart-overlay" @click.self="emit('close')">
 				<UiLoadingOverlay
-					:visible="redirectingToCart"
-					:label="t('cart.cartPreview.redirectingToCart')"
+					:visible="redirectingToCart || savingInlineEdit"
+					:label="redirectingToCart ? t('cart.cartPreview.redirectingToCart') : t('cart.cartPage.savingChanges')"
 					test-id="product-category-cart-redirect-loading"
 					transition-name="cart-redirect-fade"
 					position="absolute"
@@ -135,39 +158,11 @@ const {
 												{{ props.getProductName(item.product) }}
 												<UiIcon name="regular-info-circle" :size="20" color="#6d7180" />
 											</h4>
-											<template v-if="editingItemId === item.id">
-												<div class="cart-preview-inline-edit" data-testid="product-category-cart-item-inline-edit">
-													<p class="cart-preview-meta" data-testid="product-category-cart-item-size">
-														{{ t('cart.cartPreview.size') }}:
-														<UiSelect
-															:model-value="draftSizeKey"
-															class="cart-inline-select"
-															trigger-class="cart-inline-select-trigger"
-															:options="getInlineSizeOptions(item)"
-															data-testid="product-category-cart-item-size-select"
-															@update:model-value="draftSizeKey = String($event)"
-														/>
-													</p>
-													<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
-														{{ t('cart.cartPreview.quantity') }}:
-														<UiSelect
-															:model-value="draftQty"
-															class="cart-inline-select"
-															trigger-class="cart-inline-select-trigger"
-															:options="getInlineQtyOptions(item)"
-															data-testid="product-category-cart-item-qty-select"
-															@update:model-value="draftQty = Number($event)"
-														/>
-													</p>
-												</div>
-											</template>
-											<template v-else>
-												<p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ sizeDimOnly(item.sizeLabel) }}</p>
-												<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
-													{{ t('cart.cartPreview.quantity') }}:
-													{{ item.qty.toLocaleString() }}
-												</p>
-											</template>
+											<p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ sizeDimOnly(item.sizeLabel) }}</p>
+											<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
+												{{ t('cart.cartPreview.quantity') }}:
+												{{ item.qty.toLocaleString() }}
+											</p>
 										</div>
 									</div>
 									<div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
@@ -175,37 +170,6 @@ const {
 											{{ props.formatPrice(editedItemTotal(item)) }}
 										</strong>
 										<div
-											v-if="editingItemId === item.id"
-											class="cart-preview-item-actions"
-											data-testid="product-category-cart-item-actions"
-										>
-											<UiButton
-												variant="ghost"
-												tone="neutral"
-												size="sm"
-												class="cart-item-icon-btn"
-												icon-only
-												icon="strong-save"
-												:icon-size="24"
-												:sr-label="t('cart.cartPreview.aria.saveItemChanges')"
-												data-testid="product-category-cart-item-save-button"
-												@click="saveInlineEdit(item.id)"
-											/>
-											<UiButton
-												variant="ghost"
-												tone="neutral"
-												size="sm"
-												class="cart-item-icon-btn"
-												icon-only
-												icon="strong-times"
-												:icon-size="24"
-												:sr-label="t('cart.cartPreview.aria.cancelItemChanges')"
-												data-testid="product-category-cart-item-cancel-button"
-												@click="cancelInlineEdit"
-											/>
-										</div>
-										<div
-											v-else
 											class="cart-preview-item-actions"
 											data-testid="product-category-cart-item-actions"
 										>
@@ -231,7 +195,7 @@ const {
 												:icon-size="24"
 												:sr-label="t('cart.cartPreview.aria.removeItem')"
 												data-testid="product-category-cart-item-delete-button"
-												@click="emit('remove-item', item.id)"
+												@click="openDeleteModal(item.id)"
 											/>
 										</div>
 									</div>
@@ -327,6 +291,36 @@ const {
 			</div>
 		</Transition>
 	</Teleport>
+	<CartItemEditModal
+		v-if="editingItem"
+		:model-value="Boolean(editingItemId)"
+		:item="editingItem"
+		:size-options="getInlineSizeOptions(editingItem)"
+		:quantity-options="getInlineQtyOptions(editingItem)"
+		:size-key="draftSizeKey"
+		:custom-size-width="draftCustomSizeWidth"
+		:custom-size-height="draftCustomSizeHeight"
+		:qty="draftQty"
+		:custom-qty="draftCustomQty"
+		@update:model-value="!$event ? cancelInlineEdit() : undefined"
+		@update:size-key="draftSizeKey = $event"
+		@update:custom-size-width="draftCustomSizeWidth = $event"
+		@update:custom-size-height="draftCustomSizeHeight = $event"
+		@update:qty="draftQty = $event"
+		@update:custom-qty="draftCustomQty = $event"
+		@cancel="cancelInlineEdit"
+		@save="saveInlineEdit(editingItem.id)"
+	/>
+	<DeleteConfirmModal
+		:model-value="Boolean(deletingItemId)"
+		:title="t('cart.cartPage.deleteItemTitle')"
+		:description="t('cart.cartPage.deleteItemDescription')"
+		:confirm-label="t('cart.cartPage.removeConfirm')"
+		test-id="cart-item-delete-modal"
+		@update:model-value="!$event ? closeDeleteModal() : undefined"
+		@cancel="closeDeleteModal"
+		@confirm="confirmDeleteItem"
+	/>
 </template>
 
 <style scoped lang="scss">
@@ -463,27 +457,6 @@ const {
                 align-items: center;
             }
 
-            .cart-preview-inline-edit {
-                margin-top: 0;
-                display: grid;
-                gap: 0;
-                max-width: 320px;
-
-                .cart-inline-select {
-                    min-width: 132px;
-                }
-
-                .cart-inline-select-trigger {
-                    height: 24px;
-                    padding-right: 8px;
-                    padding-bottom: 1px;
-                    border-radius: 8px;
-                    background: var(--contrast-light);
-                    color: var(--text-primary);
-                    vertical-align: middle;
-                    box-shadow: none;
-                }
-            }
         }
 
         .cart-preview-item-side {

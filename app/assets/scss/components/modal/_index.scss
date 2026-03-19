@@ -65,6 +65,7 @@
     color: #000;
     display: grid;
     place-items: center;
+    padding: 0;
     cursor: pointer;
     transition:
         background-color 0.2s ease,
@@ -77,6 +78,7 @@
 
 .ui-modal-body {
     padding: 0;
+    border-radius: inherit;
 }
 
 .ui-modal-footer {
@@ -86,21 +88,22 @@
 .ui-modal-fade-enter-active,
 .ui-modal-fade-leave-active {
     transition: opacity 0.2s ease;
-
-    .ui-modal {
-        transition:
-            transform 0.2s ease,
-            opacity 0.2s ease;
-    }
 }
 
 .ui-modal-fade-enter-from,
 .ui-modal-fade-leave-to {
     opacity: 0;
+}
 
+.ui-modal-fade-leave-active {
+    .ui-modal {
+        transition: opacity 0.16s ease;
+    }
+}
+
+.ui-modal-fade-leave-to {
     .ui-modal {
         opacity: 0;
-        transform: translateY(-8px) scale(0.98);
     }
 }
 

@@ -217,7 +217,7 @@ export function useRegisterForm() {
 		}
 	});
 
-	type ValidationPayload = Record<string, unknown> | null | undefined | any;
+	type ValidationPayload = Record<string, unknown> | null | undefined;
 
 	function getFirstError(payload: ValidationPayload, key: string): string {
 		const field_errors = payload?.[key];

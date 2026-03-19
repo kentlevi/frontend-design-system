@@ -27,7 +27,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 	try {
 		const { fetchAndStoreUser } = useAuthUser()
-		await fetchAndStoreUser()
+		const restored = await fetchAndStoreUser()
+		if (restored) return
 	} catch {
 		// ignore
 	}
