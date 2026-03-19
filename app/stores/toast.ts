@@ -163,7 +163,7 @@ export const useToastStore = defineStore('toast', () => {
 			variant: 'default'
 		}
 
-		showToast(toast_payload)
+		showToastWithTimer(toast_payload)
 	}
 
 	return {
