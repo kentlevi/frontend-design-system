@@ -871,6 +871,7 @@ onBeforeUnmount(() => {
 
             :deep(.account-profile-email-input-field--locked) {
                 padding-right: 92px;
+				color: var(--text-primary);
             }
 
             .account-profile-stack {

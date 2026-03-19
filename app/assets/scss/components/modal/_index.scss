@@ -1,9 +1,7 @@
-@use '../../foundation' as f;
-
 .ui-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: f.$z-modal;
+    z-index: var(--z-modal);
     display: grid;
     place-items: start center;
     background: rgba(17, 23, 35, 0.4);
