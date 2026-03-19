@@ -9,15 +9,22 @@ export const useQuantityService = () => {
 
 	const featured_quantities = computed(() => attributesStore.quantities)
 
-	const quantity = computed(() => selectionStore.quantity )
+	const quantity = ref<QuantitySpec | null>(selectionStore.quantity ?? null)
 
-	const raw_custom_qty = ref<number | null>(null)
+	const custom_quantity = ref<QuantitySpec>({
+		custom: true,
+		nr: null,
+		price: null,
+	})
 
 	function defaultQuantity(selected_qty: QuantitySpec) {
-		selectionStore.updateQuantity({
-			...selected_qty,
-			custom: false
-		}, true)
+		if( selected_qty.custom ) {
+			custom_quantity.value = selected_qty
+		} else {
+			quantity.value = selected_qty
+		}
+
+		selectionStore.updateQuantity(selected_qty, true)
 	}
 
 	/**
@@ -25,21 +32,11 @@ export const useQuantityService = () => {
 	 * @param selected_qty number — selected/inputed quantity
 	 * @param custom boolean — [OPTIONAL] True if the source of selected_qty is from custom field
 	 */
-	function changeQuantity(selected_qty: QuantitySpec, custom?: boolean) {
-		// If the inputed size exist in featured quantities, set the custom flag false
-		if( custom ) {
-			const featured_qty = attributesStore.quantities.find(e => e.nr === selected_qty.nr);
-			console.log(featured_qty)
-			if( featured_qty )
-				custom = false
-		}
-		// obj.find(item => item.nr === 50)
+	function changeQuantity(selected_qty: QuantitySpec) {
+		quantity.value = selected_qty
 
 		// Updating state
-		selectionStore.updateQuantity({
-			...selected_qty,
-			custom: !!custom
-		})
+		selectionStore.updateQuantity(quantity.value)
 	}
 
 
@@ -52,15 +49,16 @@ export const useQuantityService = () => {
 		const number = Number(raw)
 
 		if (!isNaN(number)) {
-			raw_custom_qty.value = number
-			changeQuantity({ nr: number, price: 0 }, true)
+			custom_quantity.value.nr = number
+
+			selectionStore.updateQuantity(custom_quantity.value)
 		}
 	}
 
 	return {
 		featured_quantities,
 		quantity,
-		raw_custom_qty,
+		custom_quantity,
 		defaultQuantity,
 		changeQuantity,
 		changeCustomQuantity,

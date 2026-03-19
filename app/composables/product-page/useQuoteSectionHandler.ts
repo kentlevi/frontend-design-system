@@ -28,14 +28,7 @@ export const useQuoteSectionHandler = () => {
 		quoteService.updateProduct(prod_str)
 
 		await assignDefault(prod_str)
-
-		// Setting the default value of size
-		loadPrevSizeForm()
-
-		// Setting the default value of quantity
-		loadPrevQtyForm()
 	}
-
 
 	/**
 	 * Assigning the default base on use activity
@@ -47,15 +40,25 @@ export const useQuoteSectionHandler = () => {
 
 		// 🔥 If the current selected product, has already a pre-selected attributes
 		if( existing_attr ) {
-			quoteService.changeSize(existing_attr.size)
+			quoteService.defaultSize(existing_attr.size)
+			if( existing_attr.size.custom )
+				showCustomSize()
+			else
+				hideCustomSize()
 
-			quoteService.changeQuantity(existing_attr.quantity)
+			quoteService.defaultQuantity(existing_attr.quantity)
+			if( existing_attr.quantity.custom )
+				showCustomQty()
+			else
+				hideCustomQty()
 		}
 		// 🔥 The user don't have a pre-selected or changes in default attributes
 		else {
 			prepareDefaultSize()
+			hideCustomSize()
 
 			prepareDefaultQty()
+			hideCustomQty()
 		}
 	}
 
@@ -78,39 +81,6 @@ export const useQuoteSectionHandler = () => {
 			})
 	}
 
-	function loadPrevSizeForm() {
-		if( quoteService.size.value ) {
-			// Load custom size if exist in selection state
-			if( quoteService.size.value.custom ) {
-				quoteService.custom_width.value 	= quoteService.size.value.width
-
-				quoteService.custom_height.value = quoteService.size.value.height
-
-				showCustomSize()
-			} else {
-				hideCustomSize()
-			}
-		}
-	}
-
-	function loadPrevQtyForm() {
-		if( quoteService.quantity.value ) {
-
-			if( quoteService.quantity.value.custom ) {
-
-				quoteService.raw_custom_qty.value = quoteService.quantity.value.nr
-
-				showCustomQty()
-
-			} else {
-
-				hideCustomQty()
-
-			}
-
-		}
-	}
-
 	async function showCustomSize() {
 		is_custom_size.value = true
 
@@ -130,25 +100,21 @@ export const useQuoteSectionHandler = () => {
 	async function showCustomQty() {
 		is_custom_qty.value = true
 
-		quoteService.raw_custom_qty.value = quoteService.quantity.value
-			? quoteService.quantity.value?.nr
-			: 0
-
 		await nextTick()
 
 		custom_qty_input.value?.focus()
 	}
 
-	const formatted_custom_qty = computed(() => {
-		if (!quoteService.raw_custom_qty.value)
-			return ''
-
-		return quoteService.raw_custom_qty.value.toLocaleString()
-	})
-
 	async function hideCustomQty() {
 		is_custom_qty.value = false
 	}
+
+	const formatted_custom_qty = computed(() => {
+		if (!quoteService.custom_quantity.value.nr)
+			return ''
+
+		return quoteService.custom_quantity.value.nr.toLocaleString()
+	})
 
 	/**
 	 * Handles every changes in quote section component

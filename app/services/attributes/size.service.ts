@@ -8,39 +8,49 @@ export const useSizeService = () => {
 
 	const featured_sizes = computed(() => attributesStore.sizes)
 
-	const size = computed(() => selectionStore.size)
+	const size = ref<SizeSpec |  null>(selectionStore.size ?? null)
 
-	const custom_width = ref<number | null>(null)
-
-	const custom_height = ref<number | null>(null)
+	const custom_size = ref<SizeSpec>({
+		id		: null,
+		width	: null,
+		height	: null,
+		label	: null,
+		custom	: true
+	})
 
 	function defaultSize(selected_size: SizeSpec) {
+		if( selected_size.custom ) {
+			custom_size.value = selected_size
+		} else {
+			size.value = selected_size
+		}
+
 		selectionStore.updateSize(selected_size, true)
 	}
 
 
 	// 📌 [Size] on-change
 	function changeSize(selected_size: SizeSpec) {
+		size.value = selected_size
+
 		selectionStore.updateSize(selected_size)
 	}
 
 	const changeCustomSize = () => {
-		const inputed_size = ref<SizeSpec>({
-			id		: null,
-			width	: custom_width.value ?? 0,
-			height	: custom_height.value ?? 0,
-			label	: null,
-			custom	: true
-		})
+		const matched_size = featured_sizes.value.find(e => e.width == custom_size.value.width &&  e.height == custom_size.value.height)
 
-		selectionStore.updateSize(inputed_size.value)
+		if( matched_size ) {
+			custom_size.value.id = matched_size.id
+			custom_size.value.label = matched_size.label
+		}
+
+		selectionStore.updateSize(custom_size.value)
 	}
 
 	return {
 		featured_sizes,
 		size,
-		custom_width,
-		custom_height,
+		custom_size,
 		defaultSize,
 		changeSize,
 		changeCustomSize,

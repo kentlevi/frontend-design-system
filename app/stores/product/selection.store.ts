@@ -53,7 +53,12 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	}
 
 	function calculateUnitPrice(selected_qty: QuantitySpec) {
-		if( selected_qty && 'nr' in selected_qty && 'price' in selected_qty )
+		if( selected_qty
+			&& 'nr' in selected_qty
+			&& 'price' in selected_qty
+			&& selected_qty.nr
+			&& selected_qty.price
+		)
 			return selected_qty.nr > 0 ? selected_qty.price / selected_qty.nr : 0
 		else
 			return 0

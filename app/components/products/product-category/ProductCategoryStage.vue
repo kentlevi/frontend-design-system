@@ -52,12 +52,11 @@ const {
 	featured_sizes,
 	featured_quantities,
 	size,
-	custom_width,
-	custom_height,
+	custom_size,
 	is_custom_size,
 	quantity,
 	is_custom_qty,
-	formatted_custom_qty,
+	custom_quantity,
 	custom_qty_input,
 	update,
 	instatiateForm,
@@ -206,7 +205,7 @@ onMounted(async () => {
 								>
 									<input
 										ref="custom_width_input"
-										v-model="custom_width"
+										v-model="custom_size.width"
 										type="number"
 										placeholder="Width"
 										class="custom-size-input"
@@ -216,7 +215,7 @@ onMounted(async () => {
 									<span class="size-separator">x</span>
 
 									<input
-										v-model="custom_height"
+										v-model="custom_size.height"
 										type="number"
 										placeholder="Height"
 										class="custom-size-input"
@@ -259,7 +258,7 @@ onMounted(async () => {
 								>
 									<input
 										ref="custom_qty_input"
-										:value="formatted_custom_qty"
+										:value="custom_quantity.nr"
 										type="text"
 										placeholder="Quantity"
 										class="custom-size-input"

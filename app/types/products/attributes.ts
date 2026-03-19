@@ -1,15 +1,15 @@
 export interface SizeSpec {
 	id: number | null,
-	width: number
-	height: number
+	width: number | null
+	height: number | null
 	label: string | null,
 	custom?: boolean | null
 }
 
 export interface QuantitySpec {
 	custom?: boolean | null,
-	nr: number,
-	price: number,
+	nr: number | null,
+	price: number | null,
 }
 
 export interface ProductAttributes {
