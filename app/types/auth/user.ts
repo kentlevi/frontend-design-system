@@ -37,12 +37,8 @@ export interface UserFieldValue {
 	id: number
 	user_profile_id: number
 	country_field_id: number
-	country_field_ids?: number | null
-	country_fields_id?: number | null
-	country_field?: {
-		field_key?: string | null
-	} | null
 	value?: string
+	sort_order: number
 }
 
 /**

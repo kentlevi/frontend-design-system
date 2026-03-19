@@ -4,9 +4,13 @@
 
 <script setup lang="ts">
 import ProductCategoryExperience from '~/components/products/product-category/ProductCategoryExperience.vue';
-import { useProductByCategory } from '~/composables/products/byCategory/useProductByCategory';
+import { useNavigation } from '~/composables/navigation/useNavigation';
+import { useNavigationStore } from '~/stores/navigation/navigation.store';
 
-const { products } = useProductByCategory('sheet-stickers')
+const navigation = useNavigation()
+navigation.fetchAndStoreProducts('sheet-stickers')
+const { product_state } = storeToRefs(useNavigationStore())
+const products = product_state.value
 
 definePageMeta({
 	layout: 'home',

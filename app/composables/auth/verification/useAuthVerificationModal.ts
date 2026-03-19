@@ -71,7 +71,7 @@ export function useAuthVerificationModal(params: {
 
 	function onResendClick() {
 		if (!can_resend.value) return;
-		lockResendTap();
+		lockResendTap(params.resendCooldownRemaining.value);
 		params.emitResend();
 	}
 

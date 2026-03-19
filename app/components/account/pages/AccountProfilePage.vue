@@ -5,16 +5,13 @@ import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import { computed, watch } from 'vue';
-import { useEmailForm } from '~/composables/account/profile/useEmailForm';
+import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
+import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const {
-	email,
-	currentPassword,
-	newPassword,
-	confirmPassword,
 	photoUrl,
 	avatarDisplayUrl,
 	photoError,
@@ -26,26 +23,6 @@ const {
 	signOut,
 } = useAccountProfile();
 const isDeletePhotoModalOpen = ref(false);
-const isEmailChangeOtpOpen = ref(false);
-const emailChangeOtpCode = ref('');
-const emailChangeOtpError = ref('');
-const emailChangeTargetEmail = ref('');
-const currentPasswordVisible = ref(false);
-const newPasswordVisible = ref(false);
-const confirmPasswordVisible = ref(false);
-const currentPasswordError = ref('');
-const newPasswordError = ref('');
-const confirmPasswordError = ref('');
-const emailChangeOverlayLabel = computed(() => (
-	email_change_overlay_mode.value === 'requesting'
-		? 'Verifying Your Information...'
-		: ''
-));
-const emailChangeOverlayDescription = computed(() => (
-	email_change_overlay_mode.value === 'requesting'
-		? "Just a moment! We're making sure everything looks perfect."
-		: ''
-));
 const photoInlineError = computed(() => {
 	if (!photoError.value) return '';
 	const normalized_message = photoError.value.toLowerCase();
@@ -53,16 +30,11 @@ const photoInlineError = computed(() => {
 		? ''
 		: photoError.value;
 });
-const isChangePasswordEnabled = computed(() => (
-	Boolean(currentPassword.value.trim())
-	&& Boolean(newPassword.value.trim())
-	&& Boolean(confirmPassword.value.trim())
-));
 
 const {
 	form_state: personal_form_state,
 	has_changes,
-	has_required_fields,
+	field_errors,
 	is_updating: name_is_submitting,
 	api_response,
 	loadPersonalForm,
@@ -76,19 +48,45 @@ const {
 } = usePreferenceForm();
 
 const {
+	email,
+
 	pending_email,
 	is_email_change_modal,
 	email_change_field_ref,
 	email_change_error,
-	email_change_overlay_mode,
 
 	is_otp_open,
+	email_change_otp_code,
+	email_change_otp_error,
+	limit_reached_error,
+
+	remaining,
 
 	openEmailChangeModal,
 	closeEmailChangeModal,
 	confirmEmailChange,
 
-} = useEmailForm();
+	verifyOtp,
+	resendOtp,
+	closeOtpModal,
+} = useChangeEmailForm()
+
+const {
+	current_password,
+	new_password,
+	new_password_confirmation,
+	current_password_error,
+	pair_password_error,
+
+	is_change_password_enabled,
+
+	current_password_visible,
+	new_password_visible,
+	new_password_confirmation_visible,
+
+	clearNewPasswordPairErrors,
+	onChangePassword,
+} = usePasswordForm()
 
 onMounted(() => {
 	loadPreferences()
@@ -96,27 +94,16 @@ onMounted(() => {
 })
 
 const profileToastVisible = ref(false);
-const passwordChangeToastVisible = ref(false);
 const photoUploadToastVisible = ref(false);
 const photoUploadToastMessage = ref('');
 const isPasswordChangeSubmitting = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
-let password_change_toast_timer: ReturnType<typeof setTimeout> | null = null;
 let photo_upload_toast_timer: ReturnType<typeof setTimeout> | null = null;
-const emailLocked = computed(() => {
-	return Boolean(email.value.trim());
-});
 
 function clearProfileToastTimer() {
 	if (!profile_toast_timer) return;
 	clearTimeout(profile_toast_timer);
 	profile_toast_timer = null;
-}
-
-function clearPasswordChangeToastTimer() {
-	if (!password_change_toast_timer) return;
-	clearTimeout(password_change_toast_timer);
-	password_change_toast_timer = null;
 }
 
 function clearPhotoUploadToastTimer() {
@@ -134,15 +121,6 @@ function showProfileSavedToast() {
 	}, 2400);
 }
 
-function showPasswordChangedToast() {
-	clearPasswordChangeToastTimer();
-	passwordChangeToastVisible.value = true;
-	password_change_toast_timer = setTimeout(() => {
-		passwordChangeToastVisible.value = false;
-		password_change_toast_timer = null;
-	}, 2400);
-}
-
 function openDeletePhotoModal() {
 	isDeletePhotoModalOpen.value = true;
 }
@@ -156,95 +134,12 @@ function confirmDeletePhoto() {
 	closeDeletePhotoModal();
 }
 
-function closeEmailChangeOtpModal() {
-	isEmailChangeOtpOpen.value = false;
-	emailChangeOtpCode.value = '';
-	emailChangeOtpError.value = '';
-}
-
-async function verifyEmailChangeOtp() {
-	if (emailChangeOtpCode.value.trim().length < 4) {
-		emailChangeOtpError.value = 'Please enter the verification code sent to your email.';
-		return;
-	}
-
-	emailChangeOtpError.value = '';
-	isEmailChangeOtpOpen.value = false;
-	email_change_overlay_mode.value = 'verifying';
-	await new Promise((resolve) => setTimeout(resolve, 900));
-	email_change_overlay_mode.value = 'idle';
-	email.value = emailChangeTargetEmail.value;
-	closeEmailChangeOtpModal();
-}
-
-function resendEmailChangeOtp() {
-	emailChangeOtpCode.value = '';
-	emailChangeOtpError.value = '';
-}
-
-function clearPasswordErrors() {
-	currentPasswordError.value = '';
-	newPasswordError.value = '';
-	confirmPasswordError.value = '';
-}
-
-function clearNewPasswordPairErrors() {
-	newPasswordError.value = '';
-	confirmPasswordError.value = '';
-}
-
 async function onSaveProfile() {
 	await submitPersonalForm();
 
 	if (!api_response?.value?.success) return;
 
 	showProfileSavedToast();
-}
-
-async function onChangePassword() {
-	clearPasswordErrors();
-
-	if (!currentPassword.value.trim()) {
-		currentPasswordError.value = 'Field cannot be blank.';
-	}
-
-	if (!newPassword.value.trim()) {
-		newPasswordError.value = 'Field cannot be blank.';
-	}
-
-	if (!confirmPassword.value.trim()) {
-		confirmPasswordError.value = ' ';
-	}
-
-	if (currentPassword.value.trim() && currentPassword.value.trim() !== 'Musticker123!') {
-		currentPasswordError.value = 'Password is incorrect.';
-	}
-
-	if (newPassword.value.trim() && confirmPassword.value.trim() && newPassword.value !== confirmPassword.value) {
-		newPasswordError.value = 'Password does not match.';
-		confirmPasswordError.value = ' ';
-	} else if (newPassword.value.trim() && newPassword.value.trim().length < 6) {
-		newPasswordError.value = 'Password must be at least 6 characters.';
-		if (confirmPassword.value.trim()) {
-			confirmPasswordError.value = ' ';
-		}
-	}
-
-	if (currentPasswordError.value || newPasswordError.value || confirmPasswordError.value) {
-		return;
-	}
-
-	isPasswordChangeSubmitting.value = true;
-	await new Promise((resolve) => setTimeout(resolve, 900));
-	isPasswordChangeSubmitting.value = false;
-	showPasswordChangedToast();
-	currentPassword.value = '';
-	newPassword.value = '';
-	confirmPassword.value = '';
-	clearPasswordErrors();
-	currentPasswordVisible.value = false;
-	newPasswordVisible.value = false;
-	confirmPasswordVisible.value = false;
 }
 
 function showPhotoUploadToast(message: string) {
@@ -271,7 +166,6 @@ watch(photoError, (message) => {
 
 onBeforeUnmount(() => {
 	clearProfileToastTimer();
-	clearPasswordChangeToastTimer();
 	clearPhotoUploadToastTimer();
 });
 </script>
@@ -285,20 +179,6 @@ onBeforeUnmount(() => {
 			test-id="account-profile-saving-overlay"
 			position="fixed"
 		/>
-		<UiLoadingOverlay
-			:visible="email_change_overlay_mode !== 'idle'"
-			:label="emailChangeOverlayLabel"
-			:description="emailChangeOverlayDescription"
-			:show-copy="email_change_overlay_mode === 'requesting'"
-			test-id="account-profile-email-change-page-overlay"
-			position="fixed"
-		/>
-		<UiLoadingOverlay
-			:visible="isPasswordChangeSubmitting"
-			:label="t('account.profile.changePassword')"
-			test-id="account-profile-password-change-overlay"
-			position="fixed"
-		/>
 		<UiToast
 			:visible="profileToastVisible"
 			:message=api_response?.message
@@ -306,14 +186,6 @@ onBeforeUnmount(() => {
 			variant="outlined"
 			data-testid="account-profile-save-toast"
 			@close="profileToastVisible = false"
-		/>
-		<UiToast
-			:visible="passwordChangeToastVisible"
-			message="Your password has been successfully changed!"
-			tone="primary"
-			variant="outlined"
-			data-testid="account-profile-password-change-toast"
-			@close="passwordChangeToastVisible = false"
 		/>
 		<UiToast
 			:visible="photoUploadToastVisible"
@@ -393,6 +265,7 @@ onBeforeUnmount(() => {
 							<!-- START OF DYNAMIC PROFILE FIELDS -->
 							<div v-for="field in profile_field_store.dynamic_profile_fields" :key="field.id">
 								<UiFormField
+									:error="field_errors[field.field_key]"
 									:label="field.is_required
 										? t(`account.profile.${field.field_key}`)
 										: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
@@ -402,6 +275,7 @@ onBeforeUnmount(() => {
 										<UiInput
 											:id="inputId"
 											v-model=" personal_form_state.fields[field.field_key]"
+											:state="field_errors[field.field_key] ? 'error' : 'default'"
 											type="text"
 											:aria-describedby="describedBy || undefined"
 											:data-testid="`account-profile-${field.field_key}`"
@@ -423,12 +297,12 @@ onBeforeUnmount(() => {
 											v-model="email"
 											type="email"
 											:aria-describedby="describedBy || undefined"
-											:disabled="emailLocked"
-											:input-class="emailLocked ? 'account-profile-email-input-field--locked' : ''"
+											:disabled="true"
+											:input-class="true ? 'account-profile-email-input-field--locked' : ''"
 											data-testid="account-profile-email"
 										/>
 										<UiButton
-											v-if="emailLocked"
+											v-if="true"
 											type="button"
 											variant="ghost"
 											tone="neutral"
@@ -445,7 +319,7 @@ onBeforeUnmount(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || !has_required_fields || name_is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || name_is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
@@ -458,17 +332,17 @@ onBeforeUnmount(() => {
 						<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 					</div>
 					<div class="account-profile-stack" data-testid="account-profile-password-form">
-						<UiFormField :label="t('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
+						<UiFormField :label="t('account.profile.currentPassword')" :error="current_password_error" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
 									:id="inputId"
-									v-model="currentPassword"
-									:type="currentPasswordVisible ? 'text' : 'password'"
+									v-model="current_password"
+									:type="current_password_visible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
-									:state="currentPasswordError ? 'error' : 'default'"
+									:state="current_password_error ? 'error' : 'default'"
 									:placeholder="t('account.profile.currentPasswordPlaceholder')"
 									data-testid="account-profile-current-password"
-									@update:model-value="currentPasswordError = ''"
+									@update:model-value="current_password_error = ''"
 								>
 									<template #icon-right>
 										<UiButton
@@ -480,23 +354,23 @@ onBeforeUnmount(() => {
 											:aria-label="t('auth.reset.togglePassword')"
 											:sr-label="t('auth.reset.togglePassword')"
 											icon-only
-											:icon="currentPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+											:icon="current_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 											:icon-size="24"
-											@click="currentPasswordVisible = !currentPasswordVisible"
+											@click="current_password_visible = !current_password_visible"
 										/>
 									</template>
 								</UiInput>
 							</template>
 						</UiFormField>
 						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
-						<UiFormField :label="t('account.profile.newPassword')" :error="newPasswordError" :required="true">
+						<UiFormField :label="t('account.profile.newPassword')" :error="pair_password_error" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
 									:id="inputId"
-									v-model="newPassword"
-									:type="newPasswordVisible ? 'text' : 'password'"
+									v-model="new_password"
+									:type="new_password_visible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
-									:state="newPasswordError ? 'error' : 'default'"
+									:state="pair_password_error ? 'error' : 'default'"
 									:placeholder="t('account.profile.newPasswordPlaceholder')"
 									data-testid="account-profile-new-password"
 									@update:model-value="clearNewPasswordPairErrors()"
@@ -511,22 +385,22 @@ onBeforeUnmount(() => {
 											:aria-label="t('auth.reset.togglePassword')"
 											:sr-label="t('auth.reset.togglePassword')"
 											icon-only
-											:icon="newPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+											:icon="new_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 											:icon-size="24"
-											@click="newPasswordVisible = !newPasswordVisible"
+											@click="new_password_visible = !new_password_visible"
 										/>
 									</template>
 								</UiInput>
 							</template>
 						</UiFormField>
-						<UiFormField :label="t('account.profile.confirmNewPassword')" :error="confirmPasswordError" :required="true">
+						<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
 									:id="inputId"
-									v-model="confirmPassword"
-									:type="confirmPasswordVisible ? 'text' : 'password'"
+									v-model="new_password_confirmation"
+									:type="new_password_confirmation_visible ? 'text' : 'password'"
 									:aria-describedby="describedBy || undefined"
-									:state="confirmPasswordError ? 'error' : 'default'"
+									:state="pair_password_error ? 'error' : 'default'"
 									:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
 									data-testid="account-profile-confirm-password"
 									@update:model-value="clearNewPasswordPairErrors()"
@@ -541,9 +415,9 @@ onBeforeUnmount(() => {
 											:aria-label="t('auth.reset.toggleConfirmPassword')"
 											:sr-label="t('auth.reset.toggleConfirmPassword')"
 											icon-only
-											:icon="confirmPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+											:icon="new_password_confirmation_visible ? 'regular-eye' : 'regular-eye-slash'"
 											:icon-size="24"
-											@click="confirmPasswordVisible = !confirmPasswordVisible"
+											@click="new_password_confirmation_visible = !new_password_confirmation_visible"
 										/>
 									</template>
 								</UiInput>
@@ -554,7 +428,7 @@ onBeforeUnmount(() => {
 								variant="filled"
 								tone="neutral"
 								size="md"
-								:disabled="!isChangePasswordEnabled || isPasswordChangeSubmitting"
+								:disabled="!is_change_password_enabled || isPasswordChangeSubmitting"
 								data-testid="account-profile-change-password-button"
 								@click="onChangePassword"
 							>
@@ -741,9 +615,10 @@ onBeforeUnmount(() => {
 		</UiModal>
 		<AuthVerificationModal
 			:model-value="is_otp_open"
-			:email="emailChangeTargetEmail"
-			:code="emailChangeOtpCode"
-			:error="emailChangeOtpError"
+			:code="email_change_otp_code"
+			:error="email_change_otp_error"
+			:resend-limit-reached="limit_reached_error"
+			:resend-cooldown-remaining="remaining"
 			submit-label="Verify"
 			busy-label="Verifying..."
 			width="504px"
@@ -751,9 +626,10 @@ onBeforeUnmount(() => {
 			:show-close-button="true"
 			test-id-prefix="account-profile-email-change-verification"
 			@update:model-value="is_otp_open = $event"
-			@update:code="emailChangeOtpCode = $event"
-			@verify="verifyEmailChangeOtp"
-			@resend="resendEmailChangeOtp"
+			@update:code="email_change_otp_code = $event"
+			@verify="verifyOtp"
+			@resend="resendOtp"
+			@close="closeOtpModal"
 		>
 			<template #icon>
 				<img

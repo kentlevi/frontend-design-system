@@ -51,6 +51,7 @@ const emit = defineEmits<{
 	(e: 'update:code', value: string): void;
 	(e: 'verify'): void;
 	(e: 'resend'): void;
+	(e: 'close'): void;
 }>();
 
 const {
@@ -60,7 +61,7 @@ const {
 	computedSubmitLabel,
 	canResend,
 	modalAlign,
-	closeModal,
+	closeModal: baseCloseModal,
 	onInput,
 	onPaste,
 	onResendClick,
@@ -79,6 +80,38 @@ const {
 	emitUpdateCode: (value) => emit('update:code', value),
 	emitResend: () => emit('resend'),
 });
+
+/**
+ * Extra logic when modal closes
+ */
+function runCloseSideEffects() {
+	/** Example cleanup */
+	emit('update:code', '')
+	emit('close')
+}
+
+/**
+ * Wrapped close modal
+ */
+function closeModal() {
+	runCloseSideEffects()
+	baseCloseModal()
+}
+
+/**
+ * Catch UiModal model changes
+ *
+ * This is important because the modal may close
+ * from places other than your button.
+ */
+function handleModalModelValueUpdate(value: boolean) {
+	if (!value) {
+		closeModal()
+		return
+	}
+
+	emit('update:modelValue', value)
+}
 </script>
 
 <template>
@@ -88,7 +121,7 @@ const {
 		:width="width"
 		:align="modalAlign"
 		:modal-class="modalClass"
-		@update:model-value="emit('update:modelValue', $event)"
+		@update:model-value="handleModalModelValueUpdate"
 	>
 		<div class="auth-verification-modal">
 			<UiLoadingOverlay
@@ -160,8 +193,8 @@ const {
 					v-if="error"
 					class="auth-verification-error"
 					data-testid="auth-verification-error"
+					v-html="error"
 				>
-					{{ error }}
 				</p>
 			</div>
 

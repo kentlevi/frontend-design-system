@@ -6,9 +6,6 @@ import {
 	getAuthErrorMessage,
 	getAuthResponseMessage,
 	getAuthResponseMessageCode,
-	cacheNonMemberVerificationData,
-	getGuestVerificationCache,
-	clearGuestVerificationCache
 } from '~/helpers/auth/auth.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAuthUser } from '~/composables/auth/useAuthUser'
@@ -18,9 +15,8 @@ import {
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
-import { authVerificationConfig } from '~/data/auth/verification';
 import { useLoginUser } from '~/composables/auth/useLoginUser';
-import type { NonMemberVerificationCache } from '~/types/auth/auth';
+import { isTimestampExpired, useVerificationCooldown } from '~/composables/auth/verification/useVerificationCooldown';
 
 interface UseLoginPageFormOptions {
 	skipMemberRedirect?: boolean;
@@ -57,13 +53,18 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const guestVerificationError = ref('');
 	const resendLimitReached = ref('');
 	const isGuestVerifying = ref(false);
-	const guestResendCooldownRemaining = ref(0);
-	let guestResendCooldownTimer: ReturnType<typeof setInterval> | null = null;
+	const guestResendCooldown = useVerificationCooldown();
+	const guestResendCooldownRemaining = guestResendCooldown.remaining;
+	type NonMemberVerificationSession = {
+		email?: string | null;
+		order_number?: string | null;
+		token?: string | null;
+		expires_in?: string | number | Date | null;
+	};
+	const guestVerificationSession = ref<NonMemberVerificationSession | null>(null);
 
 	function clearGuestResendCooldownTimer() {
-		if (!guestResendCooldownTimer) return;
-		clearInterval(guestResendCooldownTimer);
-		guestResendCooldownTimer = null;
+		guestResendCooldown.clear();
 	}
 
 	const memberEmail = ref('');
@@ -111,64 +112,14 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		resendLimitReached.value = '';
 	}
 
-	function checkVerificationExpiry() {
-		const cache = getGuestVerificationCache()
-
-		if (cache && cache.expires_in) {
-			const expiry_time = new Date(cache.expires_in).getTime()
-			const now = Date.now()
-
-			/* token still valid → reopen modal */
-			if (now < expiry_time) {
-				isVerificationModalOpen.value = true
-				return false;
-			}
-
-			/* token expired → clear it */
-			clearVerificationCache()
-		}
-
-		return true;
+	function isVerificationSessionExpired(session: NonMemberVerificationSession | null): boolean {
+		if (!session) return true;
+		return isTimestampExpired(session.expires_in);
 	}
 
-	function clearVerificationCache() {
-		const guestVerificationCache = useCookie('guest_verification_cache');
-		guestVerificationCache.value = null;
+	function applyGuestResendCooldownFromResponse(response: unknown) {
+		guestResendCooldown.applyFromResponse(response);
 	}
-
-	function setResendCooldown(seconds = authVerificationConfig.resendCooldownSeconds) {
-		const guest_verification_cache = useCookie<NonMemberVerificationCache | null>('guest_verification_cache')
-
-		if (!guest_verification_cache.value) return
-
-		const until = Date.now() + seconds * 1000
-
-		guest_verification_cache.value = {
-			...guest_verification_cache.value,
-			resend_cooldown_until: until
-		}
-
-		startGuestResendCooldown(seconds)
-	}
-
-	function startGuestResendCooldown(seconds: number = authVerificationConfig.resendCooldownSeconds) {
-		clearGuestResendCooldownTimer()
-
-		guestResendCooldownRemaining.value = Math.max(0, Math.floor(seconds))
-
-		if (guestResendCooldownRemaining.value <= 0) return
-
-		guestResendCooldownTimer = setInterval(() => {
-			if (guestResendCooldownRemaining.value <= 1) {
-				clearGuestResendCooldownTimer()
-				guestResendCooldownRemaining.value = 0
-				return
-			}
-
-			guestResendCooldownRemaining.value -= 1
-		}, 1000)
-	}
-
 	function setGuestLoginToastPending() {
 		if (!import.meta.client) return;
 		window.localStorage.setItem(GUEST_LOGIN_TOAST_PENDING_KEY, '1');
@@ -295,26 +246,40 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	async function nonMemberLoginHandler() {
 		if (!validateNonMember()) return;
 
-		const expired = checkVerificationExpiry()
-		if (!expired) return
+		const email = nonMemberEmail.value.trim();
+		const order_number = nonMemberOrderNumber.value.trim();
+		const session_email = (guestVerificationSession.value?.email || '').trim().toLowerCase();
+		const session_order_number = (guestVerificationSession.value?.order_number || '').trim();
+		const session_token = (guestVerificationSession.value?.token || '').trim();
+		const can_skip_verification_request =
+			guestResendCooldownRemaining.value > 0
+			&& !isVerificationSessionExpired(guestVerificationSession.value)
+			&& session_email === email.toLowerCase()
+			&& session_order_number === order_number
+			&& session_token !== '';
 
-		const email = nonMemberEmail.value.trim()
-		const order_number = nonMemberOrderNumber.value.trim()
+		if (can_skip_verification_request) {
+			guestVerificationEmail.value = email;
+			guestVerificationOrderNumber.value = order_number;
+			guestVerificationToken.value = session_token;
+			isVerificationModalOpen.value = true;
+			return;
+		}
 
 		try {
 			isGuestVerifying.value = true;
-			const { handleNonMemberVerification } = useLoginUser()
+			const { handleNonMemberVerification } = useLoginUser();
 			const response = await handleNonMemberVerification({
 				email,
-				order_number: order_number
-			})
+				order_number
+			});
 
-			const message = getAuthResponseMessage(response)
-			const message_code = getAuthResponseMessageCode(response)
+			const message = getAuthResponseMessage(response);
+			const message_code = getAuthResponseMessageCode(response);
 			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
 
 			if (response.success && message_code === 'login_success') {
-				await fetchUserProfile()
+				await fetchUserProfile();
 				return await navigateTo(GUEST_TEST_REDIRECT_URL);
 			}
 
@@ -323,79 +288,92 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				nonMemberEmailHasError.value = true;
 				nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
 				if (message_code === 'max_resend_reached') {
-					resendLimitReached.value = message
+					resendLimitReached.value = message;
 				} else {
-					guestVerificationError.value = message
+					guestVerificationError.value = message;
 				}
 
 				return;
 			}
 
-			cacheNonMemberVerificationData(response, email, order_number)
-			return isVerificationModalOpen.value = true;
+			guestVerificationEmail.value = email;
+			guestVerificationOrderNumber.value = order_number;
+			guestVerificationToken.value = (response.data?.token || '').trim();
+			guestVerificationSession.value = {
+				email,
+				order_number,
+				token: response.data?.token || null,
+				expires_in: response.data?.expires_in || null,
+			};
+			applyGuestResendCooldownFromResponse(response);
+			isVerificationModalOpen.value = true;
+			return;
 		} catch (error) {
 			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
-			console.error(error)
-			return
+			console.error(error);
+			return;
 		} finally {
 			isGuestVerifying.value = false;
 		}
 	}
-
 	async function resendGuestVerification() {
-		if (guestResendCooldownRemaining.value > 0) return
+		if (guestResendCooldownRemaining.value > 0) return;
 
-		const cache = getGuestVerificationCache()
-		if (!cache) return
+		const session_email = (guestVerificationSession.value?.email || '').trim();
+		const session_order_number = (guestVerificationSession.value?.order_number || '').trim();
+		if (!session_email || !session_order_number) {
+			guestVerificationError.value = t('auth.guestVerification.sessionExpired');
+			return;
+		}
 
 		try {
 			isGuestVerifying.value = true;
-			const { handleNonMemberVerification } = useLoginUser()
+			const { handleNonMemberVerification } = useLoginUser();
 
 			const response = await handleNonMemberVerification({
-				email: cache.email,
-				order_number: cache.order_number
-			})
+				email: session_email,
+				order_number: session_order_number
+			});
 
 			if (!response.success) {
-				const message = getAuthResponseMessage(response)
-				const code = getAuthResponseMessageCode(response)
+				const message = getAuthResponseMessage(response);
+				const code = getAuthResponseMessageCode(response);
 
 				if (code === 'max_resend_reached') {
-					resendLimitReached.value = message
+					resendLimitReached.value = message;
 				} else {
-					guestVerificationError.value = message
+					guestVerificationError.value = message;
 				}
 
-				return
+				return;
 			}
 
-			cacheNonMemberVerificationData(response, cache.email, cache.order_number)
-			setResendCooldown()
+			guestVerificationEmail.value = session_email;
+			guestVerificationOrderNumber.value = session_order_number;
+			guestVerificationToken.value = (response.data?.token || '').trim();
+			guestVerificationSession.value = {
+				email: session_email,
+				order_number: session_order_number,
+				token: response.data?.token || null,
+				expires_in: response.data?.expires_in || null,
+			};
+			applyGuestResendCooldownFromResponse(response);
 
 		} catch (error) {
-			console.error(error)
+			console.error(error);
 		} finally {
 			isGuestVerifying.value = false;
 		}
 	}
-
 	async function submitGuestVerification() {
-		clearErrors()
+		clearErrors();
 
 		try {
-			const cache = getGuestVerificationCache()
-
-			if (!cache) {
-				guestVerificationError.value = t('auth.guestVerification.sessionExpired')
-				return
-			}
-
 			const { handleSubmitNonMemberLoginVerification } = useLoginUser();
 			const response = await handleSubmitNonMemberLoginVerification({
-				email: cache.email,
-				order_number: cache.order_number,
-				login_token: cache.token,
+				email: guestVerificationEmail.value.trim() || null,
+				order_number: guestVerificationOrderNumber.value.trim() || null,
+				login_token: guestVerificationToken.value.trim() || null,
 				otp: guestVerificationCode.value.trim()
 			});
 
@@ -404,17 +382,17 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				return;
 			}
 
-			fetchUserProfile()
+			fetchUserProfile();
 			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
 
-			clearGuestVerificationCache()
-			return navigateTo(GUEST_TEST_REDIRECT_URL);;
+			guestVerificationSession.value = null;
+			guestVerificationToken.value = '';
+			return navigateTo(GUEST_TEST_REDIRECT_URL);
 		} catch (error) {
-			console.error(error)
-			return
+			console.error(error);
+			return;
 		}
 	}
-
 	// Modal and utility functions
 	watch(isVerificationModalOpen, (open) => {
 		if (open) return;
@@ -429,18 +407,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	onMounted(() => {
-		const cache = getGuestVerificationCache()
-
-		if (!cache) return
-
-		if (cache.resend_cooldown_until) {
-			const remaining = Math.floor((cache.resend_cooldown_until - Date.now()) / 1000)
-
-			if (remaining > 0) {
-				startGuestResendCooldown(remaining)
-			}
-		}
-
 		const modalQuery = Array.isArray(route.query.modal)
 			? route.query.modal[0]
 			: route.query.modal;
@@ -459,7 +425,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 		isForgotPasswordModalOpen.value = true;
 	});
-
 	onBeforeUnmount(() => {
 		clearGuestResendCooldownTimer();
 	});

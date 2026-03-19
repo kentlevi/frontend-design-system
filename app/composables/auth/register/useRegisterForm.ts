@@ -8,7 +8,11 @@ import {
 } from '~/helpers/auth/auth.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
-import { authVerificationConfig } from '~/data/auth/verification';
+import {
+	getRemainingSecondsFromTimestamp,
+	isTimestampExpired,
+	useVerificationCooldown,
+} from '~/composables/auth/verification/useVerificationCooldown';
 import { useAuthUser } from '../useAuthUser';
 import { useRegisterUser } from '../useRegisterUser';
 
@@ -39,7 +43,10 @@ export function useRegisterForm() {
 	const resendLimitReached = ref('');
 	const verificationOtpRequired = ref(true);
 	const isVerifying = ref(false);
-	const resendCooldownRemaining = ref(0);
+	const resendCooldown = useVerificationCooldown();
+	const registerRequestCooldown = useVerificationCooldown();
+	const resendCooldownRemaining = resendCooldown.remaining;
+	const registerRequestCooldownRemaining = registerRequestCooldown.remaining;
 
 	type VerificationExpiryCookie = {
 		email?: string;
@@ -50,54 +57,23 @@ export function useRegisterForm() {
 	};
 
 	const verificationExpiry = ref<VerificationExpiryCookie | null>(null);
-	let resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
-	const registerRequestCooldownRemaining = ref(0);
-	let registerRequestCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
 	function clearResendCooldownTimer() {
-		if (!resendCooldownTimer) return;
-		clearInterval(resendCooldownTimer);
-		resendCooldownTimer = null;
+		resendCooldown.clear();
 	}
 
 	function clearRegisterRequestCooldownTimer() {
-		if (!registerRequestCooldownTimer) return;
-		clearInterval(registerRequestCooldownTimer);
-		registerRequestCooldownTimer = null;
-	}
-
-	function toEpochMilliseconds(value: unknown): number {
-		if (typeof value === 'number' && Number.isFinite(value)) {
-			return value > 1e12 ? value : value * 1000;
-		}
-		if (typeof value === 'string') {
-			const parsedNumber = Number(value);
-			if (Number.isFinite(parsedNumber)) {
-				return parsedNumber > 1e12 ? parsedNumber : parsedNumber * 1000;
-			}
-			const parsedDate = Date.parse(value);
-			return Number.isFinite(parsedDate) ? parsedDate : Number.NaN;
-		}
-		if (value instanceof Date) {
-			return value.getTime();
-		}
-		return Number.NaN;
+		registerRequestCooldown.clear();
 	}
 
 	function getResendCooldownSecondsFromCache(cache: VerificationExpiryCookie | null): number {
 		if (!cache) return 0;
-		const cooldownUntil = toEpochMilliseconds(cache.resend_cooldown_until);
-		if (!Number.isFinite(cooldownUntil)) return 0;
-		const remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
-		return Math.max(0, remaining);
+		return getRemainingSecondsFromTimestamp(cache.resend_cooldown_until);
 	}
 
 	function getRegisterCooldownSecondsFromCache(cache: VerificationExpiryCookie | null): number {
 		if (!cache) return 0;
-		const cooldownUntil = toEpochMilliseconds(cache.register_cooldown_until);
-		if (!Number.isFinite(cooldownUntil)) return 0;
-		const remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
-		return Math.max(0, remaining);
+		return getRemainingSecondsFromTimestamp(cache.register_cooldown_until);
 	}
 
 	function clearResendCooldownCache() {
@@ -134,59 +110,59 @@ export function useRegisterForm() {
 		seconds: number,
 		options: { persist?: boolean } = {}
 	) {
-		clearRegisterRequestCooldownTimer();
+		const normalized = Math.max(0, Math.floor(seconds));
+		registerRequestCooldown.start(normalized);
+
 		const shouldPersist = options.persist !== false;
-		registerRequestCooldownRemaining.value = Math.max(0, Math.floor(seconds));
-		if (registerRequestCooldownRemaining.value <= 0) {
+		if (normalized <= 0) {
 			clearRegisterCooldownCache();
 			return;
 		}
+
 		if (shouldPersist) {
-			setRegisterCooldownCache(registerRequestCooldownRemaining.value);
+			setRegisterCooldownCache(normalized);
 		}
-
-		registerRequestCooldownTimer = setInterval(() => {
-			if (registerRequestCooldownRemaining.value <= 1) {
-				clearRegisterRequestCooldownTimer();
-				registerRequestCooldownRemaining.value = 0;
-				clearRegisterCooldownCache();
-				return;
-			}
-
-			registerRequestCooldownRemaining.value -= 1;
-		}, 1000);
 	}
 
 	function applyRegisterCooldownFromResponse(response: unknown) {
-		const payload = response as { data?: { cooldown_remaining?: unknown } } | null;
-		const seconds = Number(payload?.data?.cooldown_remaining ?? 0);
-		if (!Number.isFinite(seconds)) return false;
-		if (seconds <= 0) return false;
-		startRegisterRequestCooldown(seconds);
+		const seconds = registerRequestCooldown.applyFromResponse(response);
+		if (seconds <= 0) {
+			clearRegisterRequestCooldownTimer();
+			clearRegisterCooldownCache();
+			return false;
+		}
+
+		setRegisterCooldownCache(seconds);
 		return true;
 	}
 
+	function applyResendCooldownFromResponse(response: unknown) {
+		const seconds = resendCooldown.applyFromResponse(response);
+		if (seconds <= 0) {
+			clearResendCooldownTimer();
+			clearResendCooldownCache();
+			return;
+		}
+
+		setResendCooldownCache(seconds);
+	}
+
 	function startResendCooldown(
-		seconds: number = authVerificationConfig.resendCooldownSeconds,
+		seconds: number,
 		options: { persist?: boolean } = {}
 	) {
-		clearResendCooldownTimer();
-		const shouldPersist = options.persist !== false;
-		resendCooldownRemaining.value = Math.max(0, Math.floor(seconds));
-		if (shouldPersist && resendCooldownRemaining.value > 0) {
-			setResendCooldownCache(resendCooldownRemaining.value);
-		}
-		if (resendCooldownRemaining.value <= 0) return;
+		const normalized = Math.max(0, Math.floor(seconds));
+		resendCooldown.start(normalized);
 
-		resendCooldownTimer = setInterval(() => {
-			if (resendCooldownRemaining.value <= 1) {
-				clearResendCooldownTimer();
-				resendCooldownRemaining.value = 0;
-				clearResendCooldownCache();
-				return;
-			}
-			resendCooldownRemaining.value -= 1;
-		}, 1000);
+		const shouldPersist = options.persist !== false;
+		if (normalized <= 0) {
+			clearResendCooldownCache();
+			return;
+		}
+
+		if (shouldPersist) {
+			setResendCooldownCache(normalized);
+		}
 	}
 
 	function isValidRegisterPassword(value: string) {
@@ -217,6 +193,18 @@ export function useRegisterForm() {
 		}
 	});
 
+	watch(resendCooldownRemaining, (value) => {
+		if (value <= 0) {
+			clearResendCooldownCache();
+		}
+	});
+
+	watch(registerRequestCooldownRemaining, (value) => {
+		if (value <= 0) {
+			clearRegisterCooldownCache();
+		}
+	});
+
 	watch(password, (value) => {
 		if (value.trim()) {
 			passwordError.value = '';
@@ -229,7 +217,7 @@ export function useRegisterForm() {
 		}
 	});
 
-	type ValidationPayload = Record<string, string[] | undefined> | null | undefined | any;
+	type ValidationPayload = Record<string, unknown> | null | undefined | any;
 
 	function getFirstError(payload: ValidationPayload, key: string): string {
 		const field_errors = payload?.[key];
@@ -239,18 +227,6 @@ export function useRegisterForm() {
 		}
 
 		return String(field_errors[0]).trim();
-	}
-
-	function resolveRegisterErrorMessage(payloadMessage?: string, fallbackMessage?: string) {
-		const technicalMessagePattern = /(failed to fetch|\[post\]|network|fetch failed|load failed)/i;
-		const message = (payloadMessage || fallbackMessage || '').trim();
-		if (/request up to 5 codes per hour/i.test(message)) {
-			return '';
-		}
-		if (!message || technicalMessagePattern.test(message)) {
-			return t('auth.register.validation.requestFailed');
-		}
-		return message;
 	}
 
 	function normalizeEmailErrorMessage(message: string) {
@@ -434,6 +410,7 @@ export function useRegisterForm() {
 			resendCooldownRemaining.value = 0;
 			clearResendCooldownCache();
 			applyRegisterCooldownFromResponse(response);
+			applyResendCooldownFromResponse(response);
 
 			verificationEmail.value = resolvedEmail;
 			verificationToken.value = resolvedToken;
@@ -541,7 +518,8 @@ export function useRegisterForm() {
 				email: resolvedEmail,
 				token: resolvedToken,
 			};
-			startResendCooldown();
+			applyRegisterCooldownFromResponse(response);
+			applyResendCooldownFromResponse(response);
 		} catch (error: unknown) {
 			verificationError.value = getAuthErrorMessage(error) || t('auth.verification.invalidCode');
 		}
@@ -565,13 +543,7 @@ export function useRegisterForm() {
 		cache: VerificationExpiryCookie | null
 	): boolean {
 		if (!cache) return true;
-		const expiry_time = toEpochMilliseconds(cache.expires_at);
-
-		if (!Number.isFinite(expiry_time)) {
-			return true;
-		}
-
-		return Date.now() >= expiry_time;
+		return isTimestampExpired(cache.expires_at);
 	}
 
 	function clearExpiredVerificationCache(): void {
