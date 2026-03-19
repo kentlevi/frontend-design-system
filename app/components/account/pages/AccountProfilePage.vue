@@ -373,7 +373,6 @@ onBeforeUnmount(() => {
 								</UiInput>
 							</template>
 						</UiFormField>
-						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
 						<UiFormField :label="t('account.profile.newPassword')" :error="pair_password_error" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
@@ -404,6 +403,7 @@ onBeforeUnmount(() => {
 								</UiInput>
 							</template>
 						</UiFormField>
+						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
 						<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
 							<template #default="{ inputId, describedBy }">
 								<UiInput
