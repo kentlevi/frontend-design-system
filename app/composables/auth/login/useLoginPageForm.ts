@@ -368,7 +368,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		}
 	}
 	async function submitGuestVerification() {
-		clearErrors();
+		guestVerificationError.value = '';
 
 		try {
 			const { handleSubmitNonMemberLoginVerification } = useLoginUser();
