@@ -119,6 +119,7 @@ export function usePersonalForm() {
 			setFieldErrorsFromResponse(response)
 		} catch (error: unknown) {
 			console.log(error);
+			toast_store.showUpdateError()
 		} finally {
 			is_updating.value = false
 			loading_overlay_store.stopLoading('update_personal')
