@@ -162,7 +162,7 @@ export function useChangeEmailForm() {
 
 			if (response.success) {
 				/** Show success toast */
-				toast_store.handleApiResponse(response, 3000)
+				toast_store.handleApiResponse(response)
 
 				/** Sync user store */
 				user_store.patchUser({ email: payload.email })
