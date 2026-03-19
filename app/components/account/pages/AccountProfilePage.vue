@@ -372,7 +372,6 @@ onBeforeUnmount(() => {
 										/>
 									</template>
 								</UiInput>
-								<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
 							</template>
 						</UiFormField>
 						<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
