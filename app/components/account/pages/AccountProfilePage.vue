@@ -36,7 +36,6 @@ const {
 	has_changes,
 	field_errors,
 	is_updating: name_is_submitting,
-	api_response,
 	loadPersonalForm,
 	submitPersonalForm
 } = usePersonalForm();
@@ -101,12 +100,8 @@ onMounted(() => {
 	loadPersonalForm()
 })
 
-const profileToastVisible = ref(false);
 const photoUploadToastVisible = ref(false);
 const photoUploadToastMessage = ref('');
-const isForgotPasswordModalOpen = ref(false);
-const forgotPasswordRequestSent = ref(false);
-const forgotPasswordRequestError = ref('');
 const isPasswordChangeSubmitting = ref(false);
 let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
 let photo_upload_toast_timer: ReturnType<typeof setTimeout> | null = null;
@@ -123,15 +118,6 @@ function clearPhotoUploadToastTimer() {
 	photo_upload_toast_timer = null;
 }
 
-function showProfileSavedToast() {
-	clearProfileToastTimer();
-	profileToastVisible.value = true;
-	profile_toast_timer = setTimeout(() => {
-		profileToastVisible.value = false;
-		profile_toast_timer = null;
-	}, 2400);
-}
-
 function openDeletePhotoModal() {
 	isDeletePhotoModalOpen.value = true;
 }
@@ -143,14 +129,6 @@ function closeDeletePhotoModal() {
 function confirmDeletePhoto() {
 	removePhoto();
 	closeDeletePhotoModal();
-}
-
-async function onSaveProfile() {
-	await submitPersonalForm();
-
-	if (!api_response?.value?.success) return;
-
-	showProfileSavedToast();
 }
 
 function showPhotoUploadToast(message: string) {
@@ -183,21 +161,6 @@ onBeforeUnmount(() => {
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
-		<!-- Loader on updating name -->
-		<UiLoadingOverlay
-			:visible="name_is_submitting"
-			:label="t('account.profile.saveChanges')"
-			test-id="account-profile-saving-overlay"
-			position="fixed"
-		/>
-		<UiToast
-			:visible="profileToastVisible"
-			:message=api_response?.message
-			tone="primary"
-			variant="outlined"
-			data-testid="account-profile-save-toast"
-			@close="profileToastVisible = false"
-		/>
 		<UiToast
 			:visible="photoUploadToastVisible"
 			tone="error"
@@ -330,7 +293,7 @@ onBeforeUnmount(() => {
 							</UiFormField>
 						</div>
 						<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || name_is_submitting" data-testid="account-profile-save-button" @click="onSaveProfile">
+							<UiButton variant="filled" tone="neutral" size="md" :disabled="!has_changes || name_is_submitting" data-testid="account-profile-save-button" @click="submitPersonalForm">
 								{{ t('account.profile.saveChanges') }}
 							</UiButton>
 						</div>
@@ -668,68 +631,6 @@ onBeforeUnmount(() => {
 			@cancel="closeDeletePhotoModal"
 			@confirm="confirmDeletePhoto"
 		/>
-		<UiModal
-			:model-value="isForgotPasswordModalOpen"
-			align="center"
-			width="504px"
-			padding="40px"
-			gap="8px"
-			modal-class="account-profile-forgot-password-modal-shell"
-			@update:model-value="$event ? (isForgotPasswordModalOpen = true) : closeForgotPasswordModal()"
-		>
-			<section class="account-profile-forgot-password-modal" data-testid="account-profile-forgot-password-modal">
-				<button
-					type="button"
-					class="account-profile-forgot-password-modal-close"
-					:aria-label="t('account.profile.forgotPasswordModalClose')"
-					data-testid="account-profile-forgot-password-modal-close"
-					@click="closeForgotPasswordModal"
-				>
-					<UiIcon name="regular-times" :size="24" />
-				</button>
-
-				<div class="account-profile-forgot-password-modal-header">
-					<UiLogo
-						name="musticker"
-						variant="mark"
-						color="colored"
-						:size="40"
-						class="account-profile-forgot-password-modal-logo"
-					/>
-					<h3 class="account-profile-forgot-password-modal-title">
-						{{ forgotPasswordRequestSent ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
-					</h3>
-				</div>
-
-				<p class="account-profile-forgot-password-modal-description">
-					{{ forgotPasswordRequestSent ? t('account.profile.forgotPasswordCheckEmailDescription') : forgotPasswordRequestError || t('account.profile.forgotPasswordRequestFailed') }}
-				</p>
-
-				<div class="account-profile-forgot-password-modal-actions">
-					<UiButton
-						variant="filled"
-						tone="neutral"
-						size="lg"
-						class="account-profile-forgot-password-modal-confirm"
-						data-testid="account-profile-forgot-password-modal-confirm"
-						@click="closeForgotPasswordModal"
-					>
-						{{ t('account.profile.forgotPasswordReturnToDashboard') }}
-					</UiButton>
-					<UiButton
-						type="button"
-						variant="filled"
-						tone="danger"
-						size="md"
-						class="account-profile-delete-photo-modal-delete"
-						data-testid="account-profile-delete-photo-modal-confirm"
-						@click="confirmDeletePhoto"
-					>
-						Delete
-					</UiButton>
-				</div>
-			</section>
-		</UiModal>
 		<UiModal
 			:model-value="is_forgot_password_modal_open"
 			align="center"

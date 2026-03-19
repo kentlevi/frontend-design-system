@@ -14,8 +14,11 @@ import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/ac
 import type { ApiResponse } from '~/types/config/api'
 
 export function usePersonalForm() {
+	/** Store */
 	const user_store = useUsersStore()
 	const profile_fields_store = useProfileFieldsStore()
+	const toast_store = useToastStore()
+	const loading_overlay_store = useLoadingOverlayStore()
 
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
 	const form_state = reactive(personal_form_defaults())
@@ -23,7 +26,6 @@ export function usePersonalForm() {
 	const is_loading = ref(false)
 	const is_updating = ref(false)
 	const field_errors = ref<Record<string, string>>({})
-	const api_response = ref<ApiResponse<PersonalFormApiResponse> | null>(null)
 
 	const has_changes = computed(() => {
 		clearFieldErrors()
@@ -80,6 +82,7 @@ export function usePersonalForm() {
 
 	async function submitPersonalForm() {
 		is_updating.value = true
+		startRequestOverlay()
 
 		try {
 			/**
@@ -90,11 +93,11 @@ export function usePersonalForm() {
 			/**
              * Save to backend
              */
-			api_response.value = await updatePersonalForm(payload)
+			const response = await updatePersonalForm(payload)
 			/**
              * If save succeeded, sync latest values into Pinia store
              */
-			if (api_response?.value?.success) {
+			if (response.success) {
 				const updated_user_field_values = mapPersonalFormToUserFieldValues(
 					profile_fields_store.dynamic_profile_fields,
 					form_state.fields,
@@ -106,17 +109,19 @@ export function usePersonalForm() {
 					...form_state.fields,
 				}
 
+				toast_store.handleApiResponse(response, 3000)
 				return
 			}
 
 			/**
 			 * Handle validation errors from backend
 			 */
-			setFieldErrorsFromResponse(api_response.value)
+			setFieldErrorsFromResponse(response)
 		} catch (error: unknown) {
 			console.log(error);
 		} finally {
 			is_updating.value = false
+			loading_overlay_store.stopLoading('update_personal')
 		}
 	}
 
@@ -180,12 +185,25 @@ export function usePersonalForm() {
 		}
 	}
 
+
+
+
+	/**
+	 * Start request overlay
+	 */
+	function startRequestOverlay() {
+		loading_overlay_store.startLoading('update_personal', {
+			showCopy: true,
+			testId: 'account-profile-saving-overlay',
+			position: 'fixed'
+		})
+	}
+
 	return {
 		form_state,
 		has_changes,
 		is_loading,
 		is_updating,
-		api_response,
 		field_errors,
 		loadPersonalForm,
 		submitPersonalForm,
