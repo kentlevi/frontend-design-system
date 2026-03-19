@@ -109,7 +109,7 @@ export function usePersonalForm() {
 					...form_state.fields,
 				}
 
-				toast_store.handleApiResponse(response, 3000)
+				toast_store.handleApiResponse(response)
 				return
 			}
 

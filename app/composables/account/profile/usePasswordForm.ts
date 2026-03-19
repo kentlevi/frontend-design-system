@@ -41,7 +41,7 @@ export function usePasswordForm() {
 			const response = await changePassword(payload)
 
 			if (response.success) {
-				toast_store.handleApiResponse(response, 3000)
+				toast_store.handleApiResponse(response)
 
 				clearPasswordState()
 			} else {
