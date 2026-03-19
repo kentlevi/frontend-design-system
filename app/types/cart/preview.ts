@@ -5,9 +5,12 @@ export type CartPreviewItem = {
 	product: ProductItem;
 	sizeKey: string;
 	sizeLabel: string;
+	customSizeLabel?: string;
 	qty: number;
 	total: number;
 	artworkName: string;
+	artworkSizeLabel?: string;
+	specialInstructions?: string;
 	artworkPreviewUrl?: string;
 }
 

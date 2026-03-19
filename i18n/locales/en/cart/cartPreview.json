@@ -18,6 +18,16 @@
             "proceedToCheckout": "Proceed to Checkout",
             "redirectingToCart": "Redirecting to cart",
             "closeFeaturedItems": "Close featured items",
+            "editModal": {
+                "title": "Edit Size and Quantity",
+                "sizeOnlyTitle": "Edit Size",
+                "widthPlaceholder": "Width",
+                "heightPlaceholder": "Height",
+                "cancel": "Cancel",
+                "update": "Update",
+                "customSize": "Custom Size",
+                "customQuantity": "Custom Quantity"
+            },
             "aria": {
                 "saveItemChanges": "Save item changes",
                 "cancelItemChanges": "Cancel item changes",

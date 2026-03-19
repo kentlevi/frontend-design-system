@@ -55,7 +55,7 @@ const {
 			<section class="checkout-member-section">
 				<div class="checkout-member-section-head">
 					<h1 class="checkout-member-section-title">{{ t('checkout.member.shippingDetails') }}</h1>
-					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link">
+					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true">
 						{{ t('checkout.member.viewShippingAddresses') }}
 					</UiButton>
 				</div>
@@ -120,7 +120,7 @@ const {
 
 					<div class="checkout-member-inline-row">
 						<UiCheckbox v-model="dropShippingEnabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
-						<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted">
+						<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted" :no-hover="true">
 							{{ t('checkout.member.viewDropShippingAddresses') }}
 						</UiButton>
 					</div>
@@ -192,7 +192,7 @@ const {
 
 				<div class="checkout-member-inline-row">
 					<UiCheckbox v-model="useShippingAsBilling">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
-					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted">
+					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted" :no-hover="true">
 						{{ t('checkout.member.viewBillingAddresses') }}
 					</UiButton>
 				</div>
@@ -397,10 +397,6 @@ const {
 					color: var(--text-secondary);
 					font-size: var(--type-size-100);
 					line-height: var(--type-line-100);
-
-					.checkout-member-address-line {
-
-					}
 				}
 
 				.checkout-member-block {

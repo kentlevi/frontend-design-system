@@ -273,7 +273,7 @@ onBeforeUnmount(() => {
 			:format-price="formatCartPrice"
 			:featured-start-price="cartFeaturedStartPrice"
 			@close="closeCartPreview"
-			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty)"
+			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty, $event.customSizeLabel || '')"
 			@remove-item="removeCartItem($event)"
 			@close-featured="closeCartFeatured"
 		/>

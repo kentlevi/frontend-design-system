@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useCountry } from '~/composables/app/country/useCountry';
 import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 const props = withDefaults(
@@ -19,8 +18,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const api = useApi();
-const { apiCountry } = useCountry();
 
 const resetEmail = ref('');
 const error = ref('');

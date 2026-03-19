@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUsersStore } from '~/stores/users/users.store';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAuthUser } from '~/composables/auth/useAuthUser';
 
@@ -26,7 +25,6 @@ const emit = defineEmits<{
 
 const api = useApi();
 const router = useRouter();
-const userStore = useUsersStore();
 const { withCountry, apiCountry } = useCountry();
 const { t } = useI18n();
 
