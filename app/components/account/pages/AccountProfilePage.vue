@@ -7,11 +7,10 @@ import { computed, watch } from 'vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
-import { usePasswordReset } from '~/composables/auth/usePasswordReset';
+import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
-const { sendResetPasswordLinkHandler } = usePasswordReset();
 const {
 	photoUrl,
 	avatarDisplayUrl,
@@ -89,6 +88,14 @@ const {
 	onChangePassword,
 } = usePasswordForm()
 
+const {
+	is_forgot_password_modal_open,
+	forgot_password_request_send,
+
+	sendForgotPasswordEmail,
+	closeForgotPasswordModal
+} = useForgotPasswordForm()
+
 onMounted(() => {
 	loadPreferences()
 	loadPersonalForm()
@@ -144,36 +151,6 @@ async function onSaveProfile() {
 	if (!api_response?.value?.success) return;
 
 	showProfileSavedToast();
-}
-
-function closeForgotPasswordModal() {
-	isForgotPasswordModalOpen.value = false;
-	forgotPasswordRequestSent.value = false;
-	forgotPasswordRequestError.value = '';
-}
-
-async function openForgotPasswordModal() {
-	const accountEmail = email.value.trim();
-	if (!accountEmail) return;
-
-	isForgotPasswordModalOpen.value = true;
-	forgotPasswordRequestSent.value = false;
-	forgotPasswordRequestError.value = '';
-
-	try {
-		const response = await sendResetPasswordLinkHandler({
-			email: accountEmail,
-		});
-
-		if (!response?.success) {
-			forgotPasswordRequestError.value = response?.message || t('account.profile.forgotPasswordRequestFailed');
-			return;
-		}
-
-		forgotPasswordRequestSent.value = true;
-	} catch {
-		forgotPasswordRequestError.value = t('account.profile.forgotPasswordRequestFailed');
-	}
 }
 
 function showPhotoUploadToast(message: string) {
@@ -476,7 +453,7 @@ onBeforeUnmount(() => {
 								class="account-profile-forgot-password-link"
 								label-class="account-profile-forgot-password-link-label"
 								data-testid="account-profile-forgot-password"
-								@click="openForgotPasswordModal"
+								@click="sendForgotPasswordEmail"
 							>
 								{{ t('account.profile.forgotPassword') }}
 							</UiButton>
@@ -726,6 +703,68 @@ onBeforeUnmount(() => {
 
 				<p class="account-profile-forgot-password-modal-description">
 					{{ forgotPasswordRequestSent ? t('account.profile.forgotPasswordCheckEmailDescription') : forgotPasswordRequestError || t('account.profile.forgotPasswordRequestFailed') }}
+				</p>
+
+				<div class="account-profile-forgot-password-modal-actions">
+					<UiButton
+						variant="filled"
+						tone="neutral"
+						size="lg"
+						class="account-profile-forgot-password-modal-confirm"
+						data-testid="account-profile-forgot-password-modal-confirm"
+						@click="closeForgotPasswordModal"
+					>
+						{{ t('account.profile.forgotPasswordReturnToDashboard') }}
+					</UiButton>
+					<UiButton
+						type="button"
+						variant="filled"
+						tone="danger"
+						size="md"
+						class="account-profile-delete-photo-modal-delete"
+						data-testid="account-profile-delete-photo-modal-confirm"
+						@click="confirmDeletePhoto"
+					>
+						Delete
+					</UiButton>
+				</div>
+			</section>
+		</UiModal>
+		<UiModal
+			:model-value="is_forgot_password_modal_open"
+			align="center"
+			width="504px"
+			padding="40px"
+			gap="8px"
+			modal-class="account-profile-forgot-password-modal-shell"
+			@update:model-value="$event ? (is_forgot_password_modal_open = true) : closeForgotPasswordModal()"
+		>
+			<section class="account-profile-forgot-password-modal" data-testid="account-profile-forgot-password-modal">
+				<button
+					type="button"
+					class="account-profile-forgot-password-modal-close"
+					:aria-label="t('account.profile.forgotPasswordModalClose')"
+					data-testid="account-profile-forgot-password-modal-close"
+					@click="closeForgotPasswordModal"
+				>
+					<UiIcon name="regular-times" :size="24" />
+				</button>
+
+				<div class="account-profile-forgot-password-modal-header">
+					<UiLogo
+						name="musticker"
+						variant="mark"
+						color="colored"
+						:size="40"
+						class="account-profile-forgot-password-modal-logo"
+					/>
+					<h3 class="account-profile-forgot-password-modal-title">
+						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+					</h3>
+				</div>
+
+				<p class="account-profile-forgot-password-modal-description">
+					{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
 				</p>
 
 				<div class="account-profile-forgot-password-modal-actions">
@@ -1202,6 +1241,59 @@ onBeforeUnmount(() => {
             height: 46px;
         }
     }
+
+.account-profile-forgot-password-modal {
+    position: relative;
+    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    padding: var(--ui-modal-padding, 40px);
+    background: var(--contrast-light);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .account-profile-forgot-password-modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text-primary);
+        cursor: pointer;
+        z-index: 1;
+    }
+
+    .account-profile-forgot-password-modal-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    .account-profile-forgot-password-modal-title {
+        font-size: var(--type-size-500);
+        line-height: var(--type-line-500);
+        color: var(--text-primary);
+    }
+
+    .account-profile-forgot-password-modal-description {
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+        color: var(--text-secondary);
+    }
+
+    .account-profile-forgot-password-modal-actions {
+        display: flex;
+    }
+
+    .account-profile-forgot-password-modal-confirm {
+        width: 100%;
+    }
+}
 
 :global(.account-profile-email-change-modal-shell) {
     border-radius: 16px;
