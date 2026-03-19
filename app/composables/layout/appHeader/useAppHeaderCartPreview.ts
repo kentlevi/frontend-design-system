@@ -27,6 +27,12 @@ export function useAppHeaderCartPreview(params: {
 	const cart_featured_open = ref(true);
 	const cart_state = ref<StoredCartState[]>([]);
 
+	function resolveCartSizeLabel(entry: Pick<StoredCartState, 'sizeKey' | 'customSizeLabel'>) {
+		if (entry.customSizeLabel) return entry.customSizeLabel;
+		if (entry.sizeKey === 'custom') return '';
+		return t(`product.sizes.${entry.sizeKey}.label`);
+	}
+
 	const all_catalog_products = Object.values(productCatalog).flatMap((category) => category.products);
 	const cart_featured_items = computed(() =>
 		homeProductTypes
@@ -44,7 +50,8 @@ export function useAppHeaderCartPreview(params: {
 							id: entry.id,
 							product,
 							sizeKey: entry.sizeKey,
-							sizeLabel: t(`product.sizes.${entry.sizeKey}.label`),
+							sizeLabel: resolveCartSizeLabel(entry),
+							customSizeLabel: entry.customSizeLabel || '',
 							qty: entry.qty,
 							total: entry.total,
 							artworkName: entry.artworkName,
@@ -127,7 +134,7 @@ export function useAppHeaderCartPreview(params: {
 		writeCartState(cart_state.value.filter((item) => item.id !== item_id));
 	}
 
-	function updateCartItem(item_id: string, next_size_key: string, next_qty: number) {
+	function updateCartItem(item_id: string, next_size_key: string, next_qty: number, custom_size_label = '') {
 		const qty = Number(next_qty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
@@ -135,7 +142,7 @@ export function useAppHeaderCartPreview(params: {
 			next_size_key as (typeof sizeOptions)[number]
 		)
 			? next_size_key
-			: sizeOptions[0];
+			: 'custom';
 
 		writeCartState(
 			cart_state.value.map((item) => {
@@ -145,6 +152,7 @@ export function useAppHeaderCartPreview(params: {
 				return {
 					...item,
 					sizeKey: normalized_size_key,
+					customSizeLabel: normalized_size_key === 'custom' ? custom_size_label : '',
 					qty,
 					total: unit_price * qty,
 				};

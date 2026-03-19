@@ -2,6 +2,7 @@
 import type { ProductItem } from '~/types/products/catalog';
 import type { SizeOptionKey } from '~/types/products/categoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
+import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
 
 type SizeOptionModel = {
 	key: SizeOptionKey;
@@ -13,6 +14,11 @@ type SizeFeatureCard = {
 	key: SizeOptionKey;
 	image: string;
 	descriptionKey: string;
+};
+
+type SelectOption = {
+	label: string;
+	value: string | number;
 };
 
 const props = defineProps<{
@@ -46,6 +52,38 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const specialColorProductIds = ['transfer-sticker', 'vinyl-lettering'] as const
+const vinylQuantityOptions = [1, 2, 5, 10, 50, 100, 200, 300] as const
+const vinylFontOptions: SelectOption[] = [
+	{ label: 'Antique Olive', value: 'antique-olive' },
+	{ label: 'Helvetica Neue', value: 'helvetica-neue' },
+	{ label: 'Bebas Neue', value: 'bebas-neue' },
+	{ label: 'Brush Script', value: 'brush-script' },
+]
+const colorOptions = [
+	{ key: 'black', label: 'Black', checkColor: '#ffffff', swatchStyle: { background: '#000000' } },
+	{ key: 'white', label: 'White', checkColor: '#111827', swatchStyle: { background: '#FFFFFF', border: '1px solid var(--black-base)' } },
+	{ key: 'red', label: 'Red', checkColor: '#ffffff', swatchStyle: { background: '#FF0000' } },
+	{ key: 'orange', label: 'Orange', checkColor: '#ffffff', swatchStyle: { background: '#FFA500' } },
+	{ key: 'yellow', label: 'Yellow', checkColor: '#111827', swatchStyle: { background: '#FFFF00' } },
+	{ key: 'green', label: 'Green', checkColor: '#ffffff', swatchStyle: { background: '#008000' } },
+	{ key: 'blue', label: 'Blue', checkColor: '#ffffff', swatchStyle: { background: '#0000FF' } },
+	{ key: 'purple', label: 'Purple', checkColor: '#ffffff', swatchStyle: { background: '#800080' } },
+	{ key: 'pink', label: 'Pink', checkColor: '#111827', swatchStyle: { background: '#FFC0CB' } },
+	{ key: 'yellow-orange', label: 'Yellow Orange', checkColor: '#111827', swatchStyle: { background: '#FFB700' } },
+	{ key: 'gold', label: 'Gold', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #FFD700 0%, #FFF 50%, #FFD700 100%)' } },
+	{ key: 'silver', label: 'Silver', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #C0C0C0 0%, #FFF 50%, #C0C0C0 100%)' } },
+	{ key: 'bronze', label: 'Bronze', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #CD7F32 0%, #FFF 49.52%, #CD7F32 100%)' } },
+	{ key: 'hologram', label: 'Hologram', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #B6EEE8 0%, #F5F3EA 32%, #F1B2B9 50%, #D893C1 60%, #B6EEE8 80%)' } },
+	{
+		key: 'full-color',
+		label: 'Full Color',
+		checkColor: '#111827',
+		swatchStyle: {
+			background: 'conic-gradient(from 0deg, #ff3c3c 0deg, #ff9800 60deg, #ffe600 120deg, #1abf48 180deg, #0085ff 240deg, #7f2cff 300deg, #ff3c3c 360deg)',
+		},
+	},
+] as const
 const isCustomSize = ref(false)
 const customWidth = ref<number | null>(null)
 const customHeight = ref<number | null>(null)
@@ -53,20 +91,44 @@ const customWidthInput = ref<HTMLInputElement | null>(null)
 const isCustomQty = ref(false)
 const customQty = ref<number | null>(null)
 const customQtyInput = ref<HTMLInputElement | null>(null)
+const isCustomSizeFocused = ref(false)
+const isCustomQtyFocused = ref(false)
+const selectedColor = ref<(typeof colorOptions)[number]['key']>('black')
+const vinylWidth = ref(192)
+const vinylHeight = ref(30)
+const vinylText = ref('')
+const selectedVinylFont = ref<string>('antique-olive')
+const vinylActiveSize = ref<'width' | 'height'>('height')
+
+const onCustomSizeFocus = () => {
+	isCustomSizeFocused.value = true
+}
+
+const onCustomSizeBlur = () => {
+	isCustomSizeFocused.value = false
+}
+
+const onCustomQtyFocus = () => {
+	isCustomQtyFocused.value = true
+}
+
+const onCustomQtyBlur = () => {
+	isCustomQtyFocused.value = false
+}
 
 const formattedCustomQty = computed(() => {
-	if (!customQty.value) return ''
+	if (customQty.value === null) return ''
 	return customQty.value.toLocaleString()
 })
 
 const onCustomQtyInput = (e: Event) => {
 	const input = e.target as HTMLInputElement
-
-	// remove commas
 	const raw = input.value.replace(/,/g, '')
-
+	if (raw === '') {
+		customQty.value = null
+		return
+	}
 	const number = Number(raw)
-
 	if (!isNaN(number)) {
 		customQty.value = number
 		emit('update:selectedQty', number)
@@ -75,7 +137,8 @@ const onCustomQtyInput = (e: Event) => {
 
 const enableCustomQty = async () => {
 	isCustomQty.value = true
-	customQty.value = props.selectedQty
+	customQty.value = null
+	emit('update:selectedQty', 0)
 	await nextTick()
 	customQtyInput.value?.focus()
 }
@@ -83,7 +146,10 @@ const enableCustomQty = async () => {
 watch(customQty, (val) => {
 	if (val && val > 0) {
 		emit('update:selectedQty', val)
+		return
 	}
+
+	emit('update:selectedQty', 0)
 })
 
 const focusWidthInput = () => {
@@ -92,6 +158,9 @@ const focusWidthInput = () => {
 
 const enableCustomSize = async () => {
 	isCustomSize.value = true
+	customWidth.value = null
+	customHeight.value = null
+	emit('update:selectedQty', 0)
 	await nextTick()
 	customWidthInput.value?.focus()
 }
@@ -99,6 +168,81 @@ const enableCustomSize = async () => {
 const unitPrice = computed(() =>
 	props.selectedQty > 0 ? props.total / props.selectedQty : 0
 );
+
+const hasValidCustomSize = computed(() =>
+	Boolean(isCustomSize.value && customWidth.value && customWidth.value > 0 && customHeight.value && customHeight.value > 0)
+)
+
+const hasValidCustomQty = computed(() =>
+	Boolean(isCustomQty.value && customQty.value && customQty.value > 0)
+)
+
+const hasValidVinylText = computed(() =>
+	!isVinylLettering.value || vinylText.value.trim().length > 0
+)
+
+const hasPendingCustomSelection = computed(() =>
+	(isCustomSize.value && !hasValidCustomSize.value)
+	|| (isCustomQty.value && !hasValidCustomQty.value)
+	|| props.selectedQty <= 0
+	|| !hasValidVinylText.value
+)
+
+const displayedSubtotal = computed(() => (hasPendingCustomSelection.value ? 0 : props.subtotal))
+const displayedDiscountRate = computed(() => (hasPendingCustomSelection.value ? 0 : props.discountRate))
+const displayedTotal = computed(() => (hasPendingCustomSelection.value ? 0 : props.total))
+const displayedUnitPrice = computed(() => (hasPendingCustomSelection.value ? 0 : unitPrice.value))
+const showDiscountRow = computed(() => displayedSubtotal.value > 0 && displayedDiscountRate.value > 0)
+const isVinylLettering = computed(() => props.selectedProduct?.id === 'vinyl-lettering')
+const shouldPlayPreviewVideo = computed(() =>
+	Boolean(props.selectedProduct) && !isVinylLettering.value && !props.navigationInFlight
+)
+const showPreferredColorSection = computed(() =>
+	Boolean(props.selectedProduct && specialColorProductIds.includes(props.selectedProduct.id as (typeof specialColorProductIds)[number]))
+)
+const availableColorOptions = computed(() => {
+	if (isVinylLettering.value) {
+		return colorOptions.filter((color) => color.key !== 'full-color')
+	}
+
+	return colorOptions
+})
+const displayedProductTitle = computed(() =>
+	isVinylLettering.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
+)
+
+const onVinylWidthInput = (event: Event) => {
+	const target = event.target as HTMLInputElement
+	const nextWidth = Number(target.value)
+	if (!Number.isFinite(nextWidth) || nextWidth <= 0) return
+	vinylActiveSize.value = 'width'
+	vinylWidth.value = nextWidth
+}
+
+const onVinylHeightInput = (event: Event) => {
+	const target = event.target as HTMLInputElement
+	const nextHeight = Number(target.value)
+	if (!Number.isFinite(nextHeight) || nextHeight <= 0) return
+	vinylActiveSize.value = 'height'
+	vinylHeight.value = nextHeight
+}
+
+watch(
+	() => props.selectedProduct?.id ?? null,
+	(nextProductId) => {
+		if (!nextProductId || !specialColorProductIds.includes(nextProductId as (typeof specialColorProductIds)[number])) {
+			selectedColor.value = 'black'
+		}
+		else if (nextProductId === 'vinyl-lettering' && selectedColor.value === 'full-color') {
+			selectedColor.value = 'black'
+		}
+
+		if (nextProductId === 'vinyl-lettering' && !vinylQuantityOptions.includes(props.selectedQty as (typeof vinylQuantityOptions)[number])) {
+			emit('update:selectedQty', vinylQuantityOptions[0])
+		}
+	},
+	{ immediate: true }
+)
 
 </script>
 
@@ -139,7 +283,7 @@ const unitPrice = computed(() =>
 
 						<div class="product-preview-header">
 							<h1 class="product-preview-title" data-testid="product-category-preview-title">
-								{{ props.getProductName(props.selectedProduct) }}
+								{{ displayedProductTitle }}
 							</h1>
 
 							<p class="product-preview-blurb" data-testid="product-category-preview-blurb">
@@ -147,8 +291,20 @@ const unitPrice = computed(() =>
 							</p>
 						</div>
 
-						<div class="product-preview-media" data-testid="product-category-preview-media">
+						<div
+							v-if="!isVinylLettering"
+							class="product-preview-media"
+							data-testid="product-category-preview-media"
+						>
+							<img
+								v-if="!shouldPlayPreviewVideo"
+								:src="demoHeroPosterUrl"
+								:alt="`${displayedProductTitle || 'Product'} preview poster`"
+								class="product-preview-media-image"
+							>
 							<video
+								v-else
+								:key="props.selectedId ?? 'preview-video'"
 								:poster="demoHeroPosterUrl"
 								class="product-preview-media-image"
 								autoplay
@@ -159,6 +315,25 @@ const unitPrice = computed(() =>
 							>
 								<source :src="demoHeroVideoUrl" type="video/mp4">
 							</video>
+						</div>
+
+						<div
+							v-else
+							class="vinyl-preview-board"
+							data-testid="product-category-vinyl-preview"
+						>
+							<VinylLetteringDesigner
+								:text="vinylText"
+								:width="vinylWidth"
+								:height="vinylHeight"
+								:font="selectedVinylFont"
+								:color-key="selectedColor"
+								:redirecting="props.navigationInFlight"
+								:active-size="vinylActiveSize"
+								@update:text="vinylText = $event"
+								@update:width="vinylWidth = $event"
+								@update:height="vinylHeight = $event"
+							/>
 						</div>
 
 						<div class="product-preview-features" data-testid="product-category-preview-features">
@@ -188,7 +363,34 @@ const unitPrice = computed(() =>
 					</div>
 
 					<aside class="product-options" data-testid="product-category-options">
-						<section>
+						<section v-if="showPreferredColorSection" class="product-section">
+							<h3 class="option-title" data-testid="product-category-color-title">Select your preferred color</h3>
+							<div class="color-grid" data-testid="product-category-color-options">
+								<button
+									v-for="color in availableColorOptions"
+									:key="color.key"
+									type="button"
+									class="color-swatch"
+									:class="{ 'is-active': selectedColor === color.key }"
+									:aria-label="color.label"
+									:data-testid="`product-category-color-option-${color.key}`"
+									@click="selectedColor = color.key"
+								>
+									<span class="color-swatch-tooltip">{{ color.label }}</span>
+									<span class="color-swatch-core" :style="color.swatchStyle">
+										<UiIcon
+											v-if="selectedColor === color.key"
+											name="regular-check"
+											:size="24"
+											class="color-swatch-check"
+											:color="color.checkColor"
+										/>
+									</span>
+								</button>
+							</div>
+						</section>
+
+						<section v-if="!isVinylLettering" class="product-section">
 							<div class="option-head" data-testid="product-category-size-head">
 								<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
 								<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
@@ -201,7 +403,7 @@ const unitPrice = computed(() =>
 									class="option-pill"
 									:class="{ 'is-active': !isCustomSize && props.selectedSize === size.key }"
 									:data-testid="`product-category-size-option-${size.key}`"
-									@click="isCustomSize = false; emit('update:selectedSize', size.key)"
+									@click="isCustomSize = false; customWidth = null; customHeight = null; emit('update:selectedSize', size.key)"
 								>
 									<span class="size-pill-name">{{ size.name }}</span>
 									<span class="size-pill-dim">{{ size.dim }}</span>
@@ -221,7 +423,11 @@ const unitPrice = computed(() =>
 								<!-- Width x Height input -->
 								<div
 									v-else
-									class="option-pill option-pill-wide custom-size-pill is-active"
+									class="option-pill option-pill-wide custom-size-pill"
+									:class="{
+										'is-active': true,
+										'is-input-focused': isCustomSizeFocused
+									}"
 									data-testid="product-category-size-option-custom-input"
 									@click.self="focusWidthInput"
 								>
@@ -231,6 +437,8 @@ const unitPrice = computed(() =>
 										type="number"
 										placeholder="Width"
 										class="custom-size-input"
+										@focus="onCustomSizeFocus"
+										@blur="onCustomSizeBlur"
 									>
 
 									<span class="size-separator">x</span>
@@ -240,12 +448,14 @@ const unitPrice = computed(() =>
 										type="number"
 										placeholder="Height"
 										class="custom-size-input"
+										@focus="onCustomSizeFocus"
+										@blur="onCustomSizeBlur"
 									>
 								</div>
 							</div>
 						</section>
 
-						<section>
+						<section v-if="!isVinylLettering" class="product-section">
 							<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
 							<div class="option-grid" data-testid="product-category-quantity-options">
 								<button
@@ -253,9 +463,9 @@ const unitPrice = computed(() =>
 									:key="qty"
 									type="button"
 									class="option-pill"
-									:class="{ 'is-active': props.selectedQty === qty }"
+									:class="{ 'is-active': !isCustomQty && props.selectedQty === qty }"
 									:data-testid="`product-category-quantity-option-${qty}`"
-									@click="isCustomQty = false; emit('update:selectedQty', qty)"
+									@click="isCustomQty = false; customQty = null; emit('update:selectedQty', qty)"
 								>
 									<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
 									<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
@@ -272,21 +482,98 @@ const unitPrice = computed(() =>
 
 								<div
 									v-else
-									class="option-pill option-pill-wide custom-size-pill is-active"
+									class="option-pill option-pill-wide custom-size-pill"
+									:class="{
+										'is-active': true,
+										'is-input-focused': isCustomQtyFocused
+									}"
 									data-testid="product-category-quantity-option-custom-input"
-									@click.self="customQtyInput?.focus()"
 								>
 									<input
 										ref="customQtyInput"
 										:value="formattedCustomQty"
 										type="text"
-										placeholder="Quantity"
-										class="custom-size-input"
+										placeholder="Enter Quantity"
+										class="custom-size-input custom-quantity-input"
 										@input="onCustomQtyInput"
-									/>
+										@focus="onCustomQtyFocus"
+										@blur="onCustomQtyBlur"
+									>
 								</div>
 							</div>
 						</section>
+
+						<template v-else>
+							<section>
+								<div class="option-head" data-testid="product-category-size-head">
+									<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
+									<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+								</div>
+								<div class="vinyl-size-pill" data-testid="product-category-vinyl-size-input">
+									<input :value="vinylWidth" type="number" min="1" class="vinyl-size-input" @input="onVinylWidthInput">
+									<span class="vinyl-size-separator">x</span>
+									<input :value="vinylHeight" type="number" min="1" class="vinyl-size-input" @input="onVinylHeightInput">
+								</div>
+							</section>
+
+							<section>
+								<h3 class="option-title">Select your font</h3>
+								<UiSelect
+									v-model="selectedVinylFont"
+									:options="vinylFontOptions"
+									trigger-class="vinyl-font-trigger"
+									menu-class="vinyl-font-menu"
+								/>
+							</section>
+
+							<section>
+								<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
+								<div class="option-grid vinyl-quantity-grid" data-testid="product-category-quantity-options">
+									<button
+										v-for="qty in vinylQuantityOptions"
+										:key="qty"
+										type="button"
+										class="option-pill"
+										:class="{ 'is-active': !isCustomQty && props.selectedQty === qty }"
+										:data-testid="`product-category-quantity-option-${qty}`"
+										@click="isCustomQty = false; customQty = null; emit('update:selectedQty', qty)"
+									>
+										<span class="qty-pill-count">{{ qty.toLocaleString() }}</span>
+										<strong class="qty-pill-price">{{ props.formatPrice(props.quantityPrice(qty)) }}</strong>
+									</button>
+									<button
+										v-if="!isCustomQty"
+										type="button"
+										class="option-pill option-pill-wide"
+										data-testid="product-category-quantity-option-custom-button"
+										@click="enableCustomQty"
+									>
+										{{ t('product.options.customQuantity') }}
+									</button>
+
+									<div
+										v-else
+										class="option-pill option-pill-wide custom-size-pill"
+										:class="{
+											'is-active': true,
+											'is-input-focused': isCustomQtyFocused
+										}"
+										data-testid="product-category-quantity-option-custom-input"
+									>
+										<input
+											ref="customQtyInput"
+											:value="formattedCustomQty"
+											type="text"
+											placeholder="Enter Quantity"
+											class="custom-size-input custom-quantity-input"
+											@input="onCustomQtyInput"
+											@focus="onCustomQtyFocus"
+											@blur="onCustomQtyBlur"
+										>
+									</div>
+								</div>
+							</section>
+						</template>
 
 						<section class="price-summary" data-testid="product-category-price-summary">
 							<div class="price-summary-top">
@@ -296,15 +583,19 @@ const unitPrice = computed(() =>
 								</ul>
 
 								<div class="price-summary-stack">
-									<p class="price-summary-row discount" data-testid="product-category-price-discount-row">
-										<strong class="price-discount-rate">-{{ Math.round(props.discountRate * 100) }}%</strong>
-										<span class="price-summary-strike">{{ props.formatPrice(props.subtotal) }}</span>
+									<p
+										v-if="showDiscountRow"
+										class="price-summary-row discount"
+										data-testid="product-category-price-discount-row"
+									>
+										<strong class="price-discount-rate">-{{ Math.round(displayedDiscountRate * 100) }}%</strong>
+										<span class="price-summary-strike">{{ props.formatPrice(displayedSubtotal) }}</span>
 									</p>
 									<p class="price-summary-row total" data-testid="product-category-price-total-row">
-										<strong class="price-summary-value">{{ props.formatPrice(props.total) }}</strong>
+										<strong class="price-summary-value">{{ props.formatPrice(displayedTotal) }}</strong>
 									</p>
 									<p class="price-summary-unit">
-										({{ props.formatPrice(unitPrice) }} per piece)
+										({{ props.formatPrice(displayedUnitPrice) }} per piece)
 									</p>
 								</div>
 							</div>
@@ -316,7 +607,7 @@ const unitPrice = computed(() =>
 								size="md"
 								height="48px"
 								class="next-step-btn"
-								:disabled="props.navigationInFlight"
+								:disabled="props.navigationInFlight || hasPendingCustomSelection"
 								data-testid="product-category-next-step-button"
 								@click="emit('open-upload')"
 							>
@@ -335,7 +626,7 @@ const unitPrice = computed(() =>
     position: relative;
     margin-top: 0;
     display: grid;
-    overflow: hidden;
+    overflow: visible;
     min-height: 864px;
     align-content: start;
 
@@ -418,7 +709,7 @@ const unitPrice = computed(() =>
         z-index: 1;
         grid-area: 1 / 1;
         align-self: stretch;
-        overflow: hidden;
+        overflow: visible;
     }
 
     &.is-selected {
@@ -458,6 +749,7 @@ const unitPrice = computed(() =>
             line-height: var(--type-line-200);
             color: var(--text-secondary);
         }
+
         .product-preview-media {
             margin-top: 0;
             height: 362px;
@@ -562,21 +854,159 @@ const unitPrice = computed(() =>
             color: var(--text-primary);
         }
 
-        .option-head {
+        .color-grid {
             display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 8px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
 
-            .option-head-unit {
-                color: var(--text-secondary);
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+            &:hover {
+                transform: translateY(-1px);
+            }
+
+            &.is-active {
+                border-radius: 16px;
+                border: 1px solid var(--Gold-Base-Color, #F5DF4D);
+                background: var(--gold-10, #FDF9DB);
+            }
+
+            &:hover .color-swatch-tooltip {
+                opacity: 1;
+                transform: translate(-50%, 0);
             }
         }
 
+        .color-swatch-core {
+            width: 28px;
+            height: 28px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .color-swatch-tooltip {
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 12px);
+            transform: translate(-50%, 6px);
+            min-width: 72px;
+            padding: 8px 14px;
+            border-radius: 18px;
+            background: #342b37;
+            color: var(--white-base);
+            font-size: var(--type-size-150);
+            line-height: 1;
+            font-weight: var(--font-weight-semibold);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: calc(100% - 1px);
+                transform: translateX(-50%);
+                width: 14px;
+                height: 10px;
+                background: #342b37;
+                clip-path: polygon(50% 100%, 0 0, 100% 0);
+            }
+        }
+
+        .color-swatch-check {
+            flex: 0 0 auto;
+        }
+        .product-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            .option-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                gap: 8px;
+
+                .option-head-unit {
+                    color: var(--text-secondary);
+                    font-size: var(--type-size-100);
+                    line-height: var(--type-line-100);
+                }
+            }
+        }
+
+
+        :deep(.vinyl-font-trigger) {
+            min-height: 36px;
+            border-radius: 999px;
+            border: 1px solid var(--border-default);
+            padding: 0 16px 0 20px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            color: var(--text-primary);
+        }
+
+        :deep(.vinyl-font-menu) {
+            border-radius: 20px;
+        }
+
+        .vinyl-size-pill {
+            min-height: 36px;
+            border-radius: 999px;
+            border: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            padding: 0 16px;
+        }
+
+        .vinyl-size-input {
+            width: 72px;
+            border: 0;
+            background: transparent;
+            text-align: center;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .vinyl-size-input::-webkit-outer-spin-button,
+        .vinyl-size-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .vinyl-size-input {
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .vinyl-size-separator {
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
+            color: var(--text-primary);
+            font-weight: var(--font-weight-semibold);
+        }
+
         .option-grid {
-            margin-top: 10px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
@@ -620,10 +1050,11 @@ const unitPrice = computed(() =>
             }
             .custom-size-pill {
                 justify-content: center;
-                gap: 8px;
+                gap: 24px;
 
                 .custom-size-input {
-                    width: 64px;
+                    width: 100%;
+                    max-width: 42px;
                     border: none;
                     background: transparent;
                     text-align: center;
@@ -635,6 +1066,9 @@ const unitPrice = computed(() =>
                         color: var(--gray-60);
                         opacity: 1; // prevents browser default fading
                     }
+                    &.custom-quantity-input {
+                        max-width: 84px;
+                    }
                 }
                 .custom-size-input::-webkit-outer-spin-button,
                 .custom-size-input::-webkit-inner-spin-button {
@@ -643,6 +1077,7 @@ const unitPrice = computed(() =>
                 }
 
                 .custom-size-input {
+                    appearance: textfield;
                     -moz-appearance: textfield;
                 }
                 .size-separator {
@@ -651,8 +1086,11 @@ const unitPrice = computed(() =>
                 }
                 &.is-active {
                     border: 2px solid var(--gold-base);
-                    background: var(--white-base);
 
+                }
+                &.is-input-focused {
+                    border: 2px solid var(--gold-base);
+                    background: var(--white-base);
                 }
             }
 
@@ -675,6 +1113,10 @@ const unitPrice = computed(() =>
         }
 
         .option-grid-size {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .vinyl-quantity-grid {
             grid-template-columns: 1fr 1fr;
         }
     }
@@ -772,6 +1214,7 @@ const unitPrice = computed(() =>
         --btn-border: transparent;
     }
 }
+
 
 @media (max-width: 980px) {
     .product-stage {

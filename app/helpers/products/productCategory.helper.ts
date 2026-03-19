@@ -14,6 +14,12 @@ export function normalizeProductCartState(payload: unknown): StoredCartState[] {
 			)
 			.map((item) => ({
 				...item,
+				customSizeLabel:
+					typeof item.customSizeLabel === 'string' ? item.customSizeLabel : '',
+				artworkSizeLabel:
+					typeof item.artworkSizeLabel === 'string' ? item.artworkSizeLabel : '',
+				specialInstructions:
+					typeof item.specialInstructions === 'string' ? item.specialInstructions : '',
 				artworkPreviewUrl:
 					typeof item.artworkPreviewUrl === 'string' ? item.artworkPreviewUrl : '',
 			}));
@@ -29,6 +35,12 @@ export function normalizeProductCartState(payload: unknown): StoredCartState[] {
 			{
 				...single,
 				id: single.id || `${single.productId}-${Date.now()}`,
+				customSizeLabel:
+					typeof single.customSizeLabel === 'string' ? single.customSizeLabel : '',
+				artworkSizeLabel:
+					typeof single.artworkSizeLabel === 'string' ? single.artworkSizeLabel : '',
+				specialInstructions:
+					typeof single.specialInstructions === 'string' ? single.specialInstructions : '',
 				artworkPreviewUrl:
 					typeof single.artworkPreviewUrl === 'string' ? single.artworkPreviewUrl : '',
 			},

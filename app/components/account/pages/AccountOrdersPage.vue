@@ -15,7 +15,7 @@ const {
 } = useAccountOrders();
 
 const action_icon_map = {
-	invoice: 'regular-invoice-check',
+	invoice: 'regular-file-dollar',
 	paymentProof: 'regular-dollar-sign',
 	message: 'regular-message',
 } as const;
@@ -167,8 +167,8 @@ const summary_totals = computed(() => {
 									variant="tonal"
 									tone="default"
 									size="md"
-									bg-color="var(--amber-20)"
-									text-color="var(--amber-70)"
+									bg-color="var(--amber-50)"
+									text-color="var(--white-base)"
 									class="account-orders-detail-status"
 								>
 									{{ t(`account.orders.status.${active_order.statusKey}`) }}
@@ -468,12 +468,12 @@ const summary_totals = computed(() => {
 
 						.account-orders-list-card {
 							border: 1px solid var(--border-default);
-							border-radius: 12px;
+							border-radius: 8px;
 							background: var(--contrast-light);
-							padding: 18px 20px;
+							padding: 16px 24px;
 							display: flex;
 							flex-direction: column;
-							gap: 10px;
+							gap: 4px;
 							cursor: pointer;
 							transition:
 								border-color 0.15s ease,
@@ -481,15 +481,15 @@ const summary_totals = computed(() => {
 								box-shadow 0.15s ease;
 
 							&.is-active {
-								border-color: var(--amber-50);
-								background: var(--amber-10);
+								border-color: var(--gold-base);
+								background: var(--gold-10);
 								box-shadow: var(--shadow-sm);
 							}
 
 							.account-orders-list-card-head {
 								display: flex;
 								align-items: center;
-								gap: 10px;
+								gap: 8px;
 
 								.account-orders-list-card-dot {
 									width: 8px;
@@ -498,15 +498,15 @@ const summary_totals = computed(() => {
 									flex: 0 0 auto;
 
 									&.is-warning {
-										background: var(--amber-50);
+										background: var(--amber-base);
 									}
 
 									&.is-success {
-										background: var(--aloha-60);
+										background: var(--aloha-base);
 									}
 
 									&.is-neutral {
-										background: var(--gray-70);
+										background: var(--gray-90);
 									}
 								}
 
@@ -533,13 +533,14 @@ const summary_totals = computed(() => {
 				background: var(--contrast-light);
 				display: flex;
 				flex-direction: column;
+				gap: 16px;
+				padding: 32px 40px;
 
 				.account-orders-detail-head {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 					gap: 20px;
-					padding: 30px 40px 18px;
 
 					.account-orders-detail-title-row {
 						display: flex;
@@ -548,8 +549,8 @@ const summary_totals = computed(() => {
 						flex-wrap: wrap;
 
 						.account-orders-detail-title {
-							font-size: var(--type-size-550);
-							line-height: var(--type-line-550);
+							font-size: var(--type-size-400);
+							line-height: var(--type-line-400);
 							font-weight: var(--font-weight-bold);
 							color: var(--text-primary);
 						}
@@ -581,8 +582,7 @@ const summary_totals = computed(() => {
 				.account-orders-detail-body {
 					display: flex;
 					flex-direction: column;
-					gap: 30px;
-					padding: 0 40px 34px;
+					gap: 32px;
 
 					.account-orders-actions-list {
 						display: flex;
@@ -593,7 +593,7 @@ const summary_totals = computed(() => {
 							grid-template-columns: minmax(0, 1fr) 188px;
 							align-items: center;
 							gap: 24px;
-							padding: 20px 0;
+							padding: 16px 0;
 							border-bottom: 1px solid var(--border-default);
 
 							.account-orders-action-main {
@@ -654,7 +654,7 @@ const summary_totals = computed(() => {
 					.account-orders-summary {
 						display: flex;
 						flex-direction: column;
-						gap: 20px;
+						gap: 16px;
 
 						.account-orders-summary-title {
 							font-size: var(--type-size-200);
@@ -677,8 +677,8 @@ const summary_totals = computed(() => {
 								padding: 2px 0;
 
 								.account-orders-summary-thumb {
-									width: 84px;
-									height: 84px;
+									width: 88px;
+									height: 88px;
 									border-radius: 10px;
 									background: var(--gray-20);
 									display: grid;
@@ -696,18 +696,17 @@ const summary_totals = computed(() => {
 									display: flex;
 									flex-direction: column;
 									gap: 8px;
-									padding-top: 6px;
 
 									.account-orders-summary-head {
 										display: flex;
 										align-items: center;
-										gap: 10px;
+										gap: 16px;
 										flex-wrap: wrap;
 
 											.account-orders-summary-title-group {
 												display: inline-flex;
 												align-items: center;
-												gap: 8px;
+												gap: 4px;
 
 												.account-orders-summary-item-no {
 													font-size: var(--type-size-200);
@@ -725,10 +724,6 @@ const summary_totals = computed(() => {
 										}
 
 									.account-orders-summary-meta {
-										display: flex;
-										flex-direction: column;
-										gap: 4px;
-
 										.account-orders-summary-meta-line {
 											font-size: var(--type-size-100);
 											line-height: var(--type-line-100);
@@ -742,14 +737,14 @@ const summary_totals = computed(() => {
 									flex-direction: column;
 									align-items: flex-end;
 									justify-content: space-between;
-									gap: 16px;
+									gap: 20px;
 									min-height: 84px;
 									padding-top: 0;
-									width: 190px;
+									min-width: 128px;
 
 									.account-orders-summary-price {
-										font-size: var(--type-size-300);
-										line-height: var(--type-line-300);
+										font-size: var(--type-size-200);
+										line-height: var(--type-line-200);
 										font-weight: var(--font-weight-bold);
 										color: var(--text-primary);
 									}
@@ -760,8 +755,7 @@ const summary_totals = computed(() => {
 						.account-orders-totals {
 							display: flex;
 							flex-direction: column;
-							gap: 10px;
-							padding-top: 2px;
+							gap: 4px;
 
 							.account-orders-total-row {
 								display: flex;
@@ -789,14 +783,14 @@ const summary_totals = computed(() => {
 								}
 
 								&.is-total {
-									padding-top: 12px;
-
 									.account-orders-total-label,
 									.account-orders-total-value {
-										font-size: var(--type-size-550);
-										line-height: var(--type-line-550);
 										font-weight: var(--font-weight-bold);
 										color: var(--text-primary);
+									}
+									.account-orders-total-value {
+										font-size: var(--type-size-400);
+										line-height: var(--type-line-400);
 									}
 								}
 							}
@@ -808,7 +802,6 @@ const summary_totals = computed(() => {
 					display: flex;
 					justify-content: flex-end;
 					gap: 12px;
-					padding: 0 40px 28px;
 
 					:deep(.ui-button) {
 						min-width: 132px;

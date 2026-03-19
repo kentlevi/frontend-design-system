@@ -88,7 +88,7 @@ onBeforeUnmount(() => {
 				@click="onBackdropClick"
 			>
 				<div
-					:class="['ui-modal', modalClass]"
+					:class="['ui-modal', 'auth-shell-enter', modalClass]"
 					role="dialog"
 					aria-modal="true"
 					:aria-label="title || 'Modal'"
@@ -112,7 +112,7 @@ onBeforeUnmount(() => {
 								type="button"
 								variant="ghost"
 								tone="neutral"
-								size="sm"
+								size="24"
 								class="ui-modal-close"
 								aria-label="Close modal"
 								@click="closeModal"

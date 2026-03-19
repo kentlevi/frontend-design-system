@@ -3,6 +3,7 @@ import type { ApiResponse, ApiOptions } from '../types/config/api'
 
 export default defineNuxtPlugin(() => {
 	const config = useRuntimeConfig()
+	const authToken = useCookie<string | null>('auth_token')
 	const token = useCookie<string | null>('token')
 	const route = useRoute()
 
@@ -50,7 +51,8 @@ export default defineNuxtPlugin(() => {
 		async onResponseError({ response }) {
 			// 🚫 1. Check for Unauthorized status
 			if (response.status === 401) {
-				// 📌 2. Clear the token (using the cookie ref from the outer scope)
+				// Keep member session cookie refs in sync when auth is no longer valid.
+				authToken.value = null
 				token.value = null
 
 				// 🔥 Action or redirection will be added here.
