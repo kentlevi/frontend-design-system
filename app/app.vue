@@ -12,6 +12,7 @@ const toast_store = useToastStore()
 
 const {
 	is_visible: toast_visible,
+	toast_title,
 	toast_message,
 	toast_tone,
 	is_dismissible,
@@ -62,6 +63,7 @@ useHead(() => ({
 
 		<UiToast
 			:visible="toast_visible"
+			:title="toast_title"
 			:message="toast_message"
 			:tone="toast_tone"
 			:dismissible="is_dismissible"

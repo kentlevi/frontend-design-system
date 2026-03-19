@@ -2,6 +2,7 @@
 import AccountAddressBookPage from '~/components/account/pages/AccountAddressBookPage.vue';
 definePageMeta({
 	layout: 'home',
+	footerVariant: 'compact',
 });
 </script>
 

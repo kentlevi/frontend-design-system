@@ -21,7 +21,9 @@ export function usePasswordForm() {
 	const new_password_confirmation_visible = ref(false)
 
 	const is_change_password_enabled = computed(() => (
-		Boolean(current_password.value.trim())
+		Boolean(current_password.value.trim()) &&
+		Boolean(new_password.value.trim()) &&
+		Boolean(new_password_confirmation.value.trim())
 	))
 
 
