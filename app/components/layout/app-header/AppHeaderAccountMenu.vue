@@ -3,6 +3,7 @@ import { toRef } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
 import type { icons } from '~/data/ui/icons';
+import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -18,8 +19,6 @@ const props = defineProps<{
 	accountOpen: boolean;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
-	userInitial: string;
-	userAvatarUrl?: string | null;
 	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
@@ -81,12 +80,12 @@ const {
 		>
 			<span v-if="isMockLoggedIn && !isGuestLoggedIn" class="home-header-avatar">
 				<img
-					v-if="props.userAvatarUrl"
-					:src="props.userAvatarUrl"
+					v-if="display_avatar"
+					:src="display_avatar"
 					:alt="displayName"
 					class="home-header-avatar-image"
 				>
-				<template v-else>{{ userInitial }}</template>
+				<template v-else>{{ user_initial }}</template>
 			</span>
 			<span v-else-if="isGuestLoggedIn" class="home-header-avatar home-header-avatar--guest">
 				<UiIcon name="strong-user" :size="16" color="var(--text-primary)" />
@@ -118,12 +117,12 @@ const {
 				<div class="home-account-summary" data-testid="app-header-account-summary">
 					<span class="home-account-summary-avatar">
 						<img
-							v-if="props.userAvatarUrl"
-							:src="props.userAvatarUrl"
+							v-if="display_avatar"
+							:src="display_avatar"
 							:alt="displayName"
 							class="home-account-summary-avatar-image"
 						>
-						<template v-else>{{ userInitial }}</template>
+						<template v-else>{{ user_initial }}</template>
 					</span>
 					<div>
 						<p class="home-account-summary-name">

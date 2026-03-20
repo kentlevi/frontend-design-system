@@ -123,6 +123,17 @@ export const useUsersStore = defineStore('users', () => {
 		}
 	}
 
+	function setProfileField<K extends keyof UserProfile>(
+		field_name: K,
+		field_value: UserProfile[K]
+	): void {
+		/** Stop if profile is not yet available */
+		if (!state.value.profile) return
+
+		/** Update only the requested profile field */
+		state.value.profile[field_name] = field_value
+	}
+
 	/* --------------------------------------------------------------------------
      * Expose
      * -------------------------------------------------------------------------- */
@@ -140,6 +151,8 @@ export const useUsersStore = defineStore('users', () => {
 		setProfileUserFieldValues,
 
 		setPreferenceField,
-		setPreferenceFields
+		setPreferenceFields,
+
+		setProfileField
 	}
 })

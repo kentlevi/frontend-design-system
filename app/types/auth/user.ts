@@ -41,6 +41,11 @@ export interface UserFieldValue {
 	sort_order: number
 }
 
+export interface FilePathValue {
+	code: string
+	file_path: string
+}
+
 /**
  * User profile payload
  */
@@ -48,6 +53,7 @@ export interface UserProfile {
 	id: number
 	user_id: number
 	file_path_id: number
+	file_path: FilePathValue
 	file_name: string | null
 	user_field_values: UserFieldValue[]
 }
