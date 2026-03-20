@@ -71,7 +71,7 @@ const iconByTone = {
 					tone="neutral"
 					size="24"
 					:no-hover="true"
-					:style="{ '--btn-bg': 'var(--white-base)' }"
+					:style="tone === 'error' ? { '--btn-bg': 'var(--white-base)' } : undefined"
 					class="ui-toast-close"
 					aria-label="Close"
 					data-testid="ui-toast-close-button"
