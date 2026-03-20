@@ -4,11 +4,15 @@ export const useProductService = () => {
 
 	const product = computed(() => selectionStore.product)
 
-	function updateProduct(prod_str: string) {
-		selectionStore.updateProduct(prod_str)
+	const slug = computed(() => selectionStore.slug)
+
+	function updateProduct(prod_slug: string) {
+		console.log('Updating product:', prod_slug)
+		selectionStore.updateProduct(prod_slug)
 	}
 
 	return {
+		slug,
 		product,
 		updateProduct,
 	}

@@ -2,10 +2,10 @@
  * ⚠️ This composable will handle the logic and behavior of Quote Section component
  */
 
-import type { SizeSpec, QuantitySpec } from '~/types/products/attributes'
+import type { SizeSpec, QuantitySpec, ColorSpec, AttributeSelection } from '~/types/products/attributes'
 
 import { useQuoteSectionService } from '~/services/attributes/quote.section'
-import { useCountry } from '../app/country/useCountry';
+import { useCountry } from '../app/country/useCountry'
 
 export const useQuoteSectionHandler = () => {
 
@@ -26,38 +26,37 @@ export const useQuoteSectionHandler = () => {
 
 	const is_custom_qty_focus = ref(false)
 
+	const lettering_navigation_flight = ref(false)
 	/**
 	 * 📌Initiate the value of all fields in form and set the default value and behaviour
-	 * @param prod_str string — Product URL slug
+	 * @param prod_slug string — Product URL slug
 	 */
-	async function instatiateForm(prod_str: string) {
+	const instatiateForm = async () => {
 		console.log('🔥 Preparing form...')
-		quoteService.updateProduct(prod_str)
 
-		await assignDefault(prod_str)
+		await assignDefault()
 	}
 
 	/**
 	 * Assigning the default base on use activity
-	 * @param prod_str string — Product URL Slug
+	 * @param prod_slug string — Product URL Slug
 	 */
-	async function assignDefault(prod_str : string) {
+	const assignDefault = async () => {
+		if( !quoteService.slug || !quoteService.slug.value )
+			return
+
 		// 📌 Existing attributes
-		const existing_attr = quoteService.recentSelection(prod_str)
+		const existing_attr = quoteService.recentSelection()
 
 		// 🔥 If the current selected product, has already a pre-selected attributes
 		if( existing_attr ) {
-			quoteService.defaultSize(existing_attr.size)
-			if( existing_attr.size.custom )
-				showCustomSize()
-			else
-				hideCustomSize()
-
-			quoteService.defaultQuantity(existing_attr.quantity)
-			if( existing_attr.quantity.custom )
-				showCustomQty()
-			else
-				hideCustomQty()
+			if(quoteService.slug.value == 'vinyl-lettering' ) {
+				if( existing_attr.lettering_text ) {
+					quoteService.defaultLettering(existing_attr.size, existing_attr.lettering_text)
+				}
+			} else {
+				preparingExistingSelection(existing_attr)
+			}
 		}
 		// 🔥 The user don't have a pre-selected or changes in default attributes
 		else {
@@ -66,10 +65,35 @@ export const useQuoteSectionHandler = () => {
 
 			prepareDefaultQty()
 			hideCustomQty()
+
+			if( quoteService.has_color_selection.value )
+				prepareDefaultColor()
 		}
 	}
 
-	function prepareDefaultSize() {
+	const preparingExistingSelection = (existing_attr : AttributeSelection) => {
+		quoteService.defaultSize(existing_attr.size)
+		if( existing_attr.size.custom )
+			showCustomSize()
+		else
+			hideCustomSize()
+
+		quoteService.defaultQuantity(existing_attr.quantity)
+		if( existing_attr.quantity.custom )
+			showCustomQty()
+		else
+			hideCustomQty()
+
+		if(
+			quoteService.has_color_selection
+			&& 'color' in existing_attr
+			&& existing_attr.color
+		) {
+			quoteService.defaultColor(existing_attr.color)
+		}
+	}
+
+	const prepareDefaultSize = () => {
 		// Get first size as default
 		const default_size = quoteService.featured_sizes.value[0]
 
@@ -77,7 +101,7 @@ export const useQuoteSectionHandler = () => {
 			quoteService.defaultSize(default_size)
 	}
 
-	function prepareDefaultQty() {
+	const prepareDefaultQty = () => {
 		// Get first quantity as default
 		const default_qty = quoteService.featured_quantities.value[0]
 
@@ -88,7 +112,18 @@ export const useQuoteSectionHandler = () => {
 			})
 	}
 
-	async function showCustomSize() {
+	const prepareDefaultColor = () => {
+		if( !quoteService.has_color_selection )
+			return
+
+		const default_color = quoteService.featured_colors.value[0]
+
+		if( default_color ) {
+			quoteService.defaultColor(default_color)
+		}
+	}
+
+	const showCustomSize = async () => {
 		is_custom_size.value = true
 
 		await nextTick()
@@ -97,7 +132,7 @@ export const useQuoteSectionHandler = () => {
 		quoteService.changeCustomSize()
 	}
 
-	function hideCustomSize() {
+	const hideCustomSize = () => {
 		is_custom_size.value = false
 	}
 
@@ -105,7 +140,7 @@ export const useQuoteSectionHandler = () => {
 		custom_width_input.value?.focus()
 	}
 
-	async function showCustomQty() {
+	const showCustomQty = async () => {
 		console.log('Showing custom quantity')
 		is_custom_qty.value = true
 
@@ -121,7 +156,7 @@ export const useQuoteSectionHandler = () => {
 			custom_qty_input.value?.dispatchEvent(new Event('change', { bubbles: true }))
 	}
 
-	async function hideCustomQty() {
+	const hideCustomQty = async () => {
 		is_custom_qty.value = false
 	}
 
@@ -150,109 +185,69 @@ export const useQuoteSectionHandler = () => {
 		is_custom_qty_focus.value = false
 	}
 
-	/**
-	 * Handles every changes in quote section component
-	 * @param attr — Name/Key of attribute that has changes
-	 * @param data — Data that contains the changes.
-	 */
-	async function update(
-		attr: string,
-		data?: SizeSpec | QuantitySpec | Event | null
-	) {
-		const request_pricing = ref<boolean>(false)
 
-		switch (attr) {
+	const inputUpdateSize = async (ssize: SizeSpec) => {
+		hideCustomSize()
+		await quoteService.changeSize(ssize)
+	}
 
-			// 📌 Handling size changes
-			case 'size':
-				if (data && 'width' in data && 'height' in data) {
-					hideCustomSize()
-					await quoteService.changeSize(data)
-				}
-				else {
-					console.log('⚠️ Invalid size data structure!')
-					return
-				}
+	const inputUpdateCustomSize = async () => {
+		await quoteService.changeCustomSize()
+	}
 
-				request_pricing.value = true
-				break;
+	const inputUpdateQuantity = async (sqty: QuantitySpec) => {
+		hideCustomQty()
 
+		await quoteService.changeQuantity(sqty)
+	}
 
+	const inputUpdateCustomQuantity = async (event: Event) => {
+		const input = event.target as HTMLInputElement
 
+		// remove commas
+		const raw = input.value.replace(/,/g, '')
+		const n = Number(raw)
 
-
-			// 📌 Handling custom size changes
-			case 'custom-size':
-				console.log('Custom Size')
-				await quoteService.changeCustomSize()
-				request_pricing.value = true
-				break;
-
-
-
-
-
-			// 📌 Handling quantity changes
-			case 'quantity':
-				console.log('Quantity', data)
-				if( data && 'nr' in data && 'price' in data ) {
-					// hide custom field when use select featured options of quantities
-					hideCustomQty()
-
-					await quoteService.changeQuantity(data)
-				}
-				else {
-					console.log('⚠️ Invalid quantity data structure!')
-					return
-				}
-				break;
-
-
-
-
-
-			// 📌 Handling custom quantity changes
-			case 'custom-quantity':
-				console.log('Custom Quantity', data)
-				if( data instanceof Event) {
-					const input = data.target as HTMLInputElement
-
-					// remove commas
-					const raw = input.value.replace(/,/g, '')
-
-					const n = Number(raw)
-
-					if (!isNaN(n))
-						await quoteService.changeCustomQuantity(n)
-
-					request_pricing.value = true
-				} else {
-					console.log('⚠️ Invalid custom quantity data structure!')
-					return
-				}
-				break;
-
-
-
-
-
-
-			default:
-				console.log('No process!!!')
-				break;
-		}
-
-
-
-
-
-
-		if( request_pricing.value ) {
-			console.log('Request pricing!!!')
-		}
+		if (!isNaN(n))
+			await quoteService.changeCustomQuantity(n)
 	}
 
 
+	const inputUpdateColor = async (scolor: ColorSpec) => {
+		await quoteService.changeColor(scolor)
+	}
+
+
+	const letteringTextInput = () => {
+		console.log(quoteService.slug.value, quoteService.has_lettering_editor.value)
+		if( quoteService.has_lettering_editor.value )
+			quoteService.letteringUpdate()
+	}
+
+	const letteringWidthInput = (event: Event) => {
+		const target = event.target as HTMLInputElement
+		const next_w = Number(target.value)
+
+		if (!Number.isFinite(next_w) || next_w <= 0) return
+
+		quoteService.lettering.value.active = 'width'
+		quoteService.lettering.value.width = next_w
+	}
+
+	const letteringHeightInput = (event: Event) => {
+		const target = event.target as HTMLInputElement
+		const next_h = Number(target.value)
+
+		if (!Number.isFinite(next_h) || next_h <= 0) return
+
+		quoteService.lettering.value.active = 'height'
+		quoteService.lettering.value.height = next_h
+	}
+
+
+	// const inputUpdateFont = async (sfont: FontSpec) => {
+	// 	await quoteService.changeFont(sfont)
+	// }
 
 
 	return {
@@ -264,17 +259,26 @@ export const useQuoteSectionHandler = () => {
 		formatted_custom_qty,
 		is_custom_size_focus,
 		is_custom_qty_focus,
+		lettering_navigation_flight,
 		instatiateForm,
 		showCustomSize,
 		hideCustomSize,
 		focusWidthInput,
 		showCustomQty,
 		hideCustomQty,
-		update,
+		inputUpdateSize,
+		inputUpdateCustomSize,
+		inputUpdateQuantity,
+		inputUpdateCustomQuantity,
 		formatPrice,
 		onCustomSizeFocus,
 		onCustomSizeBlur,
 		onCustomQtyFocus,
 		onCustomQtyBlur,
+		inputUpdateColor,
+		prepareDefaultColor,
+		letteringTextInput,
+		letteringWidthInput,
+		letteringHeightInput,
 	}
 }

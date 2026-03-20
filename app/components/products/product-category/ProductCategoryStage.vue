@@ -54,30 +54,7 @@ const vinylFontOptions: SelectOption[] = [
 	{ label: 'Bebas Neue', value: 'bebas-neue' },
 	{ label: 'Brush Script', value: 'brush-script' },
 ]
-const colorOptions = [
-	{ key: 'black', label: 'Black', checkColor: '#ffffff', swatchStyle: { background: '#000000' } },
-	{ key: 'white', label: 'White', checkColor: '#111827', swatchStyle: { background: '#FFFFFF', border: '1px solid var(--black-base)' } },
-	{ key: 'red', label: 'Red', checkColor: '#ffffff', swatchStyle: { background: '#FF0000' } },
-	{ key: 'orange', label: 'Orange', checkColor: '#ffffff', swatchStyle: { background: '#FFA500' } },
-	{ key: 'yellow', label: 'Yellow', checkColor: '#111827', swatchStyle: { background: '#FFFF00' } },
-	{ key: 'green', label: 'Green', checkColor: '#ffffff', swatchStyle: { background: '#008000' } },
-	{ key: 'blue', label: 'Blue', checkColor: '#ffffff', swatchStyle: { background: '#0000FF' } },
-	{ key: 'purple', label: 'Purple', checkColor: '#ffffff', swatchStyle: { background: '#800080' } },
-	{ key: 'pink', label: 'Pink', checkColor: '#111827', swatchStyle: { background: '#FFC0CB' } },
-	{ key: 'yellow-orange', label: 'Yellow Orange', checkColor: '#111827', swatchStyle: { background: '#FFB700' } },
-	{ key: 'gold', label: 'Gold', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #FFD700 0%, #FFF 50%, #FFD700 100%)' } },
-	{ key: 'silver', label: 'Silver', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #C0C0C0 0%, #FFF 50%, #C0C0C0 100%)' } },
-	{ key: 'bronze', label: 'Bronze', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #CD7F32 0%, #FFF 49.52%, #CD7F32 100%)' } },
-	{ key: 'hologram', label: 'Hologram', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #B6EEE8 0%, #F5F3EA 32%, #F1B2B9 50%, #D893C1 60%, #B6EEE8 80%)' } },
-	{
-		key: 'full-color',
-		label: 'Full Color',
-		checkColor: '#111827',
-		swatchStyle: {
-			background: 'conic-gradient(from 0deg, #ff3c3c 0deg, #ff9800 60deg, #ffe600 120deg, #1abf48 180deg, #0085ff 240deg, #7f2cff 300deg, #ff3c3c 360deg)',
-		},
-	},
-] as const
+
 const isCustomSize = ref(false)
 const customWidth = ref<number | null>(null)
 const customHeight = ref<number | null>(null)
@@ -123,16 +100,7 @@ const isVinylLettering = computed(() => props.selectedProduct?.id === 'vinyl-let
 const shouldPlayPreviewVideo = computed(() =>
 	Boolean(props.selectedProduct) && !isVinylLettering.value && !props.navigationInFlight
 )
-const showPreferredColorSection = computed(() =>
-	Boolean(props.selectedProduct && specialColorProductIds.includes(props.selectedProduct.id as (typeof specialColorProductIds)[number]))
-)
-const availableColorOptions = computed(() => {
-	if (isVinylLettering.value) {
-		return colorOptions.filter((color) => color.key !== 'full-color')
-	}
 
-	return colorOptions
-})
 const displayedProductTitle = computed(() =>
 	isVinylLettering.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
@@ -174,18 +142,28 @@ watch(
 
 // 🔥 Functionality Implementation
 const {
-	featured_sizes,
-	featured_quantities,
+	slug,
+	product,
 	size,
+	featured_sizes,
 	custom_size,
 	is_custom_size,
 	quantity,
+	featured_quantities,
 	is_custom_qty,
 	custom_qty_input,
 	formatted_custom_qty,
 	is_custom_size_focus,
 	is_custom_qty_focus,
-	update,
+	color,
+	featured_colors,
+	has_color_selection,
+	lettering,
+	lettering_navigation_flight,
+	inputUpdateSize,
+	inputUpdateCustomSize,
+	inputUpdateQuantity,
+	inputUpdateCustomQuantity,
 	instatiateForm,
 	focusWidthInput,
 	showCustomSize,
@@ -195,15 +173,24 @@ const {
 	onCustomSizeBlur,
 	onCustomQtyFocus,
 	onCustomQtyBlur,
+	inputUpdateColor,
+	letteringTextInput,
+	letteringWidthUpdate,
+	letteringHeightUpdate,
+	letteringWidthInput,
+	letteringHeightInput,
+	updateProduct,
 } = useQuoteSectionHandler();
 
 const route = useRoute()
-const route_product = route.params?.product
+const route_prod_slug = route.params?.product
 
+if ( typeof route_prod_slug === 'string' )
+	updateProduct(route_prod_slug)
 
 onMounted(async () => {
-	if ( typeof route_product === 'string' )
-		instatiateForm(route_product)
+	if ( typeof slug.value === 'string' && slug.value )
+		instatiateForm()
 })
 
 // ⚠️ End of functionalities
@@ -241,7 +228,7 @@ onMounted(async () => {
 		</section>
 
 		<section v-show="props.hasPickedProduct" class="product-reveal product-reveal-layer" data-testid="product-category-reveal">
-			<section v-if="props.selectedProduct">
+			<section v-if="props.selectedProduct && product">
 				<section class="product-configurator" data-testid="product-category-configurator">
 					<div class="product-preview" data-testid="product-category-preview">
 
@@ -287,16 +274,16 @@ onMounted(async () => {
 							data-testid="product-category-vinyl-preview"
 						>
 							<VinylLetteringDesigner
-								:text="vinylText"
-								:width="vinylWidth"
-								:height="vinylHeight"
+								:text="lettering.text"
+								:width="lettering.width"
+								:height="lettering.height"
 								:font="selectedVinylFont"
-								:color-key="selectedColor"
-								:redirecting="props.navigationInFlight"
-								:active-size="vinylActiveSize"
-								@update:text="vinylText = $event"
-								@update:width="vinylWidth = $event"
-								@update:height="vinylHeight = $event"
+								:color-key="color?.key ?? 'black'"
+								:redirecting="lettering_navigation_flight"
+								:active-size="lettering.active"
+								@update:text="letteringTextInput($event)"
+								@update:width="letteringWidthUpdate($event)"
+								@update:height="letteringHeightUpdate($event)"
 							/>
 						</div>
 
@@ -320,34 +307,34 @@ onMounted(async () => {
 								>
 
 								<p class="mini-feature-description">
-									{{ t(`product.featureCards.${feature.descriptionKey}.description`) }}
+									{{ t(`product.featureCards.${feature.descriptionKey}.description`) }} xx
 								</p>
 							</button>
 						</div>
 					</div>
 
 					<aside class="product-options" data-testid="product-category-options">
-						<section v-if="showPreferredColorSection" class="product-section">
+						<section v-if="has_color_selection" class="product-section">
 							<h3 class="option-title" data-testid="product-category-color-title">Select your preferred color</h3>
 							<div class="color-grid" data-testid="product-category-color-options">
 								<button
-									v-for="color in availableColorOptions"
-									:key="color.key"
+									v-for="(fcolor, key) in featured_colors"
+									:key="'color-'+key+'-'+fcolor.id"
 									type="button"
 									class="color-swatch"
-									:class="{ 'is-active': selectedColor === color.key }"
-									:aria-label="color.label"
-									:data-testid="`product-category-color-option-${color.key}`"
-									@click="selectedColor = color.key"
+									:class="{ 'is-active': color?.id === fcolor.id }"
+									:aria-label="fcolor.name"
+									:data-testid="`product-category-color-option-${fcolor.key}`"
+									@click="inputUpdateColor(fcolor)"
 								>
-									<span class="color-swatch-tooltip">{{ color.label }}</span>
-									<span class="color-swatch-core" :style="color.swatchStyle">
+									<span class="color-swatch-tooltip">{{ fcolor.name }}</span>
+									<span class="color-swatch-core" :style="fcolor.swatch_style">
 										<UiIcon
-											v-if="selectedColor === color.key"
+											v-if="color?.id === fcolor.id"
 											name="regular-check"
 											:size="24"
 											class="color-swatch-check"
-											:color="color.checkColor"
+											:color="fcolor.code"
 										/>
 									</span>
 								</button>
@@ -361,13 +348,13 @@ onMounted(async () => {
 							</div>
 							<div class="option-grid option-grid-size" data-testid="product-category-size-options">
 								<button
-									v-for="fsize in featured_sizes"
-									:key="fsize.id"
+									v-for="(fsize, key) in featured_sizes"
+									:key="'size-'+key+'-'+fsize.id"
 									type="button"
 									class="option-pill"
 									:class="{ 'is-active': !is_custom_size && size?.id === fsize.id }"
 									:data-testid="`product-category-size-option-${fsize.id}`"
-									@click="update('size', fsize)"
+									@click="inputUpdateSize(fsize)"
 								>
 									<span class="size-pill-name">{{ fsize.label }}</span>
 									<span class="size-pill-dim">{{ fsize.width }}x{{ fsize.height }}</span>
@@ -403,7 +390,7 @@ onMounted(async () => {
 										class="custom-size-input"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
-										@change="update('custom-size')"
+										@change="inputUpdateCustomSize"
 									>
 
 									<span class="size-separator">x</span>
@@ -415,7 +402,7 @@ onMounted(async () => {
 										class="custom-size-input"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
-										@change="update('custom-size')"
+										@change="inputUpdateCustomSize"
 									>
 								</div>
 							</div>
@@ -431,7 +418,7 @@ onMounted(async () => {
 									class="option-pill"
 									:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
 									:data-testid="`product-category-quantity-option-${qty.nr}`"
-									@click="update('quantity', qty)"
+									@click="inputUpdateQuantity(qty)"
 								>
 									<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
 									<strong class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</strong>
@@ -464,7 +451,7 @@ onMounted(async () => {
 										class="custom-size-input custom-quantity-input"
 										@focus="onCustomQtyFocus"
 										@blur="onCustomQtyBlur"
-										@change="update('custom-quantity', $event)"
+										@change="inputUpdateCustomQuantity($event)"
 									>
 								</div>
 							</div>
@@ -477,9 +464,9 @@ onMounted(async () => {
 									<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 								</div>
 								<div class="vinyl-size-pill" data-testid="product-category-vinyl-size-input">
-									<input :value="vinylWidth" type="number" min="1" class="vinyl-size-input" @input="onVinylWidthInput">
+									<input :value="lettering.width" type="number" min="1" class="vinyl-size-input" @input="letteringWidthInput" >
 									<span class="vinyl-size-separator">x</span>
-									<input :value="vinylHeight" type="number" min="1" class="vinyl-size-input" @input="onVinylHeightInput">
+									<input :value="lettering.height" type="number" min="1" class="vinyl-size-input" @input="letteringHeightInput" >
 								</div>
 							</section>
 
@@ -503,13 +490,13 @@ onMounted(async () => {
 										class="option-pill"
 										:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
 										:data-testid="`product-category-quantity-option-${qty.nr}`"
-										@click="update('quantity', qty)"
+										@click="inputUpdateQuantity(qty)"
 									>
 										<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
 										<strong class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</strong>
 									</button>
 									<button
-										v-if="!isCustomQty"
+										v-if="!is_custom_qty"
 										type="button"
 										class="option-pill option-pill-wide"
 										data-testid="product-category-quantity-option-custom-button"
@@ -535,7 +522,7 @@ onMounted(async () => {
 											class="custom-size-input custom-quantity-input"
 											@focus="onCustomQtyFocus"
 											@blur="onCustomQtyBlur"
-											@change="update('custom-quantity', $event)"
+											@change="inputUpdateCustomQuantity($event)"
 										>
 									</div>
 								</div>

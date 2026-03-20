@@ -2,10 +2,15 @@ import { useProductService } from "./product.service"
 import { usePricingService } from "./pricing.service"
 import { useQuantityService } from "./quantity.service"
 import { useSizeService } from "./size.service"
-import { useSelectionStore } from "~/stores/product"
+import { useAttributesStore, useSelectionStore } from "~/stores/product"
+import { useColorService } from "./color.service"
+import { useLetteringService } from "./lettering.service"
 
 export const useQuoteSectionService = () => {
-	const selectionStore = useSelectionStore()
+
+	const attributeStore 	= useAttributesStore()
+
+	const selectionStore 	= useSelectionStore()
 
 	const productService  	= useProductService()
 
@@ -15,16 +20,45 @@ export const useQuoteSectionService = () => {
 
 	const pricingService 	= usePricingService()
 
-	function recentSelection(prod_str: string) {
-		return selectionStore.hasSelection(prod_str)
+	const colorService 		= useColorService()
+
+	const letteringService 	= useLetteringService()
+
+	const recentSelection = () => {
+		if( !productService.slug.value )
+			return
+
+		return selectionStore.hasSelection(productService.slug.value)
 	}
+
+	const has_lettering_editor = computed(() =>
+		attributeStore.active_lettering_editor.includes(
+			productService.slug
+			&& productService.slug.value
+				? productService.slug.value
+				: ''
+		)
+	)
+
+	const has_color_selection = computed(() =>
+		attributeStore.product_w_color.includes(
+			productService.slug
+			&& productService.slug.value
+				? productService.slug.value
+				: ''
+		)
+	)
+
 
 	return {
 		...productService,
 		...sizesService,
 		...quantityService,
 		...pricingService,
-
+		...colorService,
+		...letteringService,
 		recentSelection,
+		has_color_selection,
+		has_lettering_editor,
 	}
 }
