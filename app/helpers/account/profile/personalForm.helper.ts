@@ -3,6 +3,7 @@ import type {
 	ProfileFieldDefinition,
 	ProfileUserFieldValue,
 } from '~/types/account/profile'
+import type { UserFieldValue, UserProfile } from '~/types/auth/user'
 
 export function build_empty_fields(
 	field_definitions: ProfileFieldDefinition[]
@@ -48,6 +49,7 @@ export function mapPersonalFormToUserFieldValues(
 			user_profile_id: profile?.id ?? 0,
 			country_field_id: field.id,
 			value: String(form_fields[field.field_key] ?? ''),
+			sort_order: field.sort_order
 		}
 	})
 }

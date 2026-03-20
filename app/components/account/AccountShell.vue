@@ -3,10 +3,10 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import type { icons } from '~/data/ui/icons';
 import { useUsersStore } from '~/stores/users/users.store';
 import {
-	getAccountInitials,
 	getProfileFieldValue,
 	normalizeAccountName,
 } from '~/utils/account/accountProfile';
+import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
 
 type IconName = keyof typeof icons;
 type AccountStat = {
@@ -71,15 +71,6 @@ const fullName = computed(() => {
 });
 
 const userEmail = computed(() => userStore.state.email || mockUser.value?.email || '');
-const initials = computed(() => {
-	return getAccountInitials(
-		normalizedName.value.firstName || 'User',
-		normalizedName.value.lastName
-	);
-});
-const avatarDisplayUrl = computed(
-	() => localAvatarDataUrl.value
-);
 const accountStats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
@@ -159,12 +150,12 @@ const tabs = [
 			<div class="account-shell-user" data-testid="account-shell-user">
 				<div class="account-shell-avatar">
 					<img
-						v-if="avatarDisplayUrl"
-						:src="avatarDisplayUrl"
+						v-if="display_avatar"
+						:src="display_avatar"
 						:alt="fullName"
 						class="account-shell-avatar-image"
 					>
-					<template v-else>{{ initials }}</template>
+					<template v-else>{{ user_initial }}</template>
 				</div>
 				<div class="account-shell-user-copy">
 					<p class="account-shell-name">{{ fullName }}</p>

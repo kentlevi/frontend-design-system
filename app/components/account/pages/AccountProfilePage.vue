@@ -8,20 +8,15 @@ import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmail
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
+import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
+import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
 const {
-	photoUrl,
-	avatarDisplayUrl,
 	photoError,
-	fileInput,
-	initials,
-	openFilePicker,
-	onFilePicked,
-	removePhoto,
 } = useAccountProfile();
-const isDeletePhotoModalOpen = ref(false);
+
 const photoInlineError = computed(() => {
 	if (!photoError.value) return '';
 	const normalized_message = photoError.value.toLowerCase();
@@ -29,6 +24,18 @@ const photoInlineError = computed(() => {
 		? ''
 		: photoError.value;
 });
+
+const {
+	file_input,
+	photo_url,
+	is_delete_photo_modal_open,
+
+	openFilePicker,
+	onFilePicked,
+	openDeletePhotoModal,
+	closeDeletePhotoModal,
+	removePhoto,
+} = useProfilePhoto()
 
 const {
 	form_state: personal_form_state,
@@ -117,19 +124,6 @@ function clearPhotoUploadToastTimer() {
 	photo_upload_toast_timer = null;
 }
 
-function openDeletePhotoModal() {
-	isDeletePhotoModalOpen.value = true;
-}
-
-function closeDeletePhotoModal() {
-	isDeletePhotoModalOpen.value = false;
-}
-
-function confirmDeletePhoto() {
-	removePhoto();
-	closeDeletePhotoModal();
-}
-
 function showPhotoUploadToast(message: string) {
 	clearPhotoUploadToastTimer();
 	const normalized_message = message.toLowerCase();
@@ -189,19 +183,19 @@ onBeforeUnmount(() => {
 							<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
 								<div class="account-profile-avatar">
 									<img
-										v-if="avatarDisplayUrl"
-										:src="avatarDisplayUrl"
+										v-if="display_avatar"
+										:src="display_avatar"
 										:alt="t('account.profile.profilePhoto')"
 										class="account-profile-avatar-image"
 									>
-									<span v-else class="account-profile-avatar-text">{{ initials }}</span>
+									<span v-else class="account-profile-avatar-text">{{ user_initial }}</span>
 								</div>
 								<div class="account-profile-photo-copy">
 									<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
 									<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
 									<div class="account-profile-photo-actions">
 										<input
-											ref="fileInput"
+											ref="file_input"
 											type="file"
 											class="account-profile-file-input"
 											accept=".jpg,.jpeg,.png"
@@ -219,7 +213,7 @@ onBeforeUnmount(() => {
 											{{ t('account.profile.uploadNewPhoto') }}
 										</UiButton>
 										<UiButton
-											v-if="photoUrl"
+											v-if="photo_url"
 											variant="ghost"
 											tone="danger"
 											size="md"
@@ -632,13 +626,13 @@ onBeforeUnmount(() => {
 			</template>
 		</AuthVerificationModal>
 		<DeleteConfirmModal
-			v-model="isDeletePhotoModalOpen"
+			v-model="is_delete_photo_modal_open"
 			title="Are you sure you want to delete this photo?"
 			description="This action cannot be undone. Please confirm to proceed."
 			modal-class="account-profile-delete-photo-modal-shell"
 			test-id="account-profile-delete-photo-modal"
 			@cancel="closeDeletePhotoModal"
-			@confirm="confirmDeletePhoto"
+			@confirm="removePhoto"
 		/>
 		<UiModal
 			:model-value="is_forgot_password_modal_open"
