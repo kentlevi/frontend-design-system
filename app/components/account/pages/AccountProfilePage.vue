@@ -297,6 +297,12 @@ onBeforeUnmount(() => {
 											Change
 										</UiButton>
 									</div>
+									<p class="account-profile-email-helper-text">
+										This account is linked to your <span class="account-profile-facebook-text">Facebook</span> login.
+									</p>
+									<p class="account-profile-email-helper-text">
+										This account is linked to your <span class="account-profile-google-text">Google</span> login.
+									</p>
 								</template>
 							</UiFormField>
 						</div>
@@ -848,6 +854,16 @@ onBeforeUnmount(() => {
                     color: var(--text-muted);
                     font-weight: var(--font-weight-regular);
                 }
+            }
+
+            .account-profile-email-helper-text {
+                margin: 0;
+                color: var(--text-secondary);
+            }
+
+            .account-profile-facebook-text, .account-profile-google-text {
+                color: var(--azure-base);
+                font-weight: var(--font-weight-semibold);
             }
 
             .account-profile-email-input-wrap {
