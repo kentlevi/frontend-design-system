@@ -1,22 +1,16 @@
-@use '../../foundation/colors/semantic' as c;
-@use '../../foundation/typography/semantic' as t;
-
-@use '../../brand/spacing' as sp;
-@use '../../brand/radius' as r;
-
 .ui-input {
     display: flex;
     align-items: center;
 
-    gap: sp.$space-2;
-    padding-inline: sp.$space-3;
+    gap: var(--space-xs);
+    padding-inline: var(--space-md);
 
-    height: sp.$space-10;
+    height: var(--space-2xl);
 
-    border-radius: r.$radius-md;
-    border: 1px solid c.$border-default;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
 
-    background: c.$bg-page;
+    background: var(--bg-page);
     box-shadow: var(--shadow-sm);
     cursor: text;
 
@@ -32,13 +26,13 @@
     outline: none;
     background: transparent;
 
-    font-family: t.$font-base;
-    font-size: t.$body-base;
+    font-family: var(--font-base);
+    font-size: var(--body-base);
     line-height: var(--type-line-100);
-    color: c.$text-primary;
+    color: var(--text-primary);
 
     &::placeholder {
-        color: c.$text-muted;
+        color: var(--text-muted);
     }
 }
 
@@ -49,47 +43,47 @@
     display: grid;
     place-items: center;
 
-    color: c.$text-muted;
+    color: var(--text-muted);
 }
 
 .ui-input:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']),
 .ui-input:focus-within:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
-    border-color: c.$border-strong;
+    border-color: var(--border-strong);
 }
 
 .ui-input[data-state='error'],
 .ui-input[data-state='error']:hover:not([data-disabled='true']) {
-    border-color: c.$error;
+    border-color: var(--error);
 }
 
 .ui-input[data-state='success'],
 .ui-input[data-state='success']:hover:not([data-disabled='true']) {
-    border-color: c.$success;
+    border-color: var(--success);
 }
 
 .ui-input[data-disabled='true'] {
-    background: c.$bg-muted;
-    border-color: c.$bg-muted;
+    background: var(--gray-20);
+    border-color: var(--gray-50);
     box-shadow: none;
 
     cursor: not-allowed;
 
     .ui-input-field {
-        color: c.$text-muted;
+        color: var(--text-muted);
         cursor: not-allowed;
     }
 }
 
 .ui-input[data-readonly='true']:not([data-disabled='true']) {
-    background: c.$surface-subtle;
+    background: var(--surface-subtle);
 }
 
 .ui-input[data-size='lg'] {
-    height: sp.$space-12;
+    height: var(--space-3xl);
 }
 .ui-input[data-size='md'] {
-    height: sp.$space-10;
+    height: var(--space-2xl);
 }
 .ui-input[data-size='sm'] {
-    height: sp.$space-8;
+    height: var(--space-xl);
 }

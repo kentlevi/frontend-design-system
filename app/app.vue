@@ -5,7 +5,7 @@ import {
     resolveSupportedCountry,
 } from '~/constants/countries';
 
-const { t, locale } = useI18n();
+const { locale } = useI18n();
 const resolvedLocaleCountry = computed(
     () => resolveSupportedCountry(String(locale.value)) || DEFAULT_COUNTRY
 );
@@ -17,11 +17,11 @@ useHead(() => ({
     htmlAttrs: {
         lang: htmlLang.value,
     },
-    title: t('home.seo.title'),
+    title: 'MuSticker Frontend Documentation',
     meta: [
         {
             name: 'description',
-            content: t('home.seo.description'),
+            content: 'Design system, guide pages, UI primitives, and implementation standards for the MuSticker storefront.',
         },
     ],
     link: [

@@ -53,6 +53,10 @@ const props = withDefaults(
 	}
 );
 
+const emit = defineEmits<{
+	click: [event: MouseEvent];
+}>();
+
 const mergedStyle = computed<Record<string, string> | undefined>(() => {
 	let numericSize: number | null = null;
 	if (typeof props.size === 'number') {
@@ -99,6 +103,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		:disabled="disabled || loading"
 		:aria-busy="loading || undefined"
 		:style="mergedStyle"
+		@click="emit('click', $event)"
 	>
 		<span v-if="selected && !loading" class="ui-button-indicator" />
 

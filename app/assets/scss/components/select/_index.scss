@@ -1,25 +1,18 @@
-@use '../../foundation/colors/semantic' as c;
-@use '../../foundation/typography/semantic' as t;
-
-@use '../../brand/spacing' as sp;
-@use '../../brand/radius' as r;
-
 .ui-select {
     position: relative;
 }
 
 .ui-select-trigger {
     width: 100%;
-    height: sp.$space-10;
-    border-radius: r.$radius-md;
-    border: 1px solid c.$border-default;
-    background: c.$bg-page;
-    box-shadow: var(--shadow-sm);
-    padding: 0 sp.$space-3;
+    height: var(--space-2xl);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+    background: var(--bg-page);
+    padding: 0 var(--space-sm);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: sp.$space-2;
+    gap: var(--space-xs);
     cursor: pointer;
     transition:
         border-color 0.15s ease,
@@ -29,8 +22,8 @@
 
 .ui-select-value,
 .ui-select-placeholder {
-    font-family: t.$font-base;
-    font-size: t.$body-base;
+    font-family: var(--font-base);
+    font-size: var(--body-base);
     line-height: var(--type-line-100);
     min-width: 0;
     display: block;
@@ -40,11 +33,11 @@
 }
 
 .ui-select-value {
-    color: c.$text-primary;
+    color: var(--text-primary);
 }
 
 .ui-select-placeholder {
-    color: c.$text-muted;
+    color: var(--text-muted);
 }
 
 .ui-select-trigger-icon {
@@ -65,7 +58,7 @@
 
 .ui-select[data-open='true'] {
     .ui-select-trigger {
-        border-color: c.$border-strong;
+        border-color: var(--border-strong);
     }
 }
 
@@ -75,21 +68,21 @@
     left: 0;
     right: 0;
     z-index: 120;
-    border: 1px solid c.$border-default;
-    border-radius: r.$radius-md;
-    background: c.$contrast-light;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--contrast-light);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
 
 
 .ui-select-search {
-    height: sp.$space-10;
-    border-bottom: 1px solid c.$border-default;
-    padding: 0 sp.$space-3;
+    height: var(--space-2xl);
+    border-bottom: 1px solid var(--border-default);
+    padding: 0 var(--space-sm);
     display: flex;
     align-items: center;
-    gap: sp.$space-2;
+    gap: var(--space-xs);
 }
 
 .ui-select-search-input {
@@ -97,13 +90,13 @@
     border: 0;
     outline: none;
     background: transparent;
-    font-family: t.$font-base;
-    font-size: t.$body-base;
+    font-family: var(--font-base);
+    font-size: var(--body-base);
     line-height: 1.5;
-    color: c.$text-primary;
+    color: var(--text-primary);
 
     &::placeholder {
-        color: c.$text-muted;
+        color: var(--text-muted);
     }
 }
 
@@ -118,11 +111,11 @@
     min-height: 44px;
     border: 0;
     background: transparent;
-    padding: 10px sp.$space-3;
+    padding: 10px var(--space-sm);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: sp.$space-2;
+    gap: var(--space-xs);
     text-align: left;
     cursor: pointer;
     transition:
@@ -130,11 +123,11 @@
         color 0.15s ease;
 
     &:hover {
-        background: c.$surface-subtle;
+        background: var(--surface-subtle);
     }
 
     &.is-selected {
-        background: c.$surface-raised;
+        background: var(--surface-raised);
     }
 }
 
@@ -146,10 +139,10 @@
 
 .ui-select-option-label {
     
-    font-family: t.$font-base;
-    font-size: t.$body-base;
+    font-family: var(--font-base);
+    font-size: var(--body-base);
     line-height: var(--type-line-100);
-    color: c.$text-primary;
+    color: var(--text-primary);
 }
 
 .ui-select-option.is-selected .ui-select-option-label {
@@ -158,33 +151,32 @@
 
 .ui-select-option-description {
     
-    font-family: t.$font-base;
-    font-size: t.$body-small;
+    font-family: var(--font-base);
+    font-size: var(--body-small);
     line-height: 1.4;
-    color: c.$text-secondary;
+    color: var(--text-secondary);
 }
 
 .ui-select-empty {
-    
-    padding: 10px sp.$space-3;
-    font-family: t.$font-base;
-    font-size: t.$body-base;
+    padding: 10px var(--space-sm);
+    font-family: var(--font-base);
+    font-size: var(--body-base);
     line-height: 1.5;
-    color: c.$text-muted;
+    color: var(--text-muted);
 }
 
 .ui-select[data-disabled='true'] {
     .ui-select-trigger {
-        background: c.$bg-muted;
-        border-color: c.$bg-muted;
-        color: c.$text-muted;
+        background: var(--bg-muted);
+        border-color: var(--bg-muted);
+        color: var(--text-muted);
         cursor: not-allowed;
         box-shadow: none;
     }
 
     .ui-select-value,
     .ui-select-placeholder {
-        color: c.$text-muted;
+        color: var(--text-muted);
     }
 }
 

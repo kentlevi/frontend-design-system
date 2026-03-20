@@ -6,6 +6,7 @@ defineOptions({
 withDefaults(
 	defineProps<{
 		visible?: boolean;
+		title?: string | null;
 		message?: string | null;
 		tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
 		dismissible?: boolean;
@@ -13,6 +14,7 @@ withDefaults(
 	}>(),
 	{
 		visible: false,
+		title: '',
 		message: '',
 		tone: 'primary',
 		dismissible: true,
@@ -30,7 +32,7 @@ const iconByTone = {
 	primary: 'strong-check-circle',
 	success: 'strong-check-circle',
 	warning: 'strong-exclamation-triangle',
-	error: 'strong-exclamation-circle',
+	error: 'strong-times-circle',
 	info: 'strong-info-circle',
 } as const;
 </script>
@@ -51,7 +53,15 @@ const iconByTone = {
 				<div class="ui-toast-main">
 					<UiIcon :name="iconByTone[tone]" :size="24" />
 					<span class="ui-toast-text">
-						<slot>{{ message }}</slot>
+						<slot>
+							<template v-if="title">
+								<strong>{{ title }}</strong>
+								<span v-if="message"> - {{ message }}</span>
+							</template>
+							<template v-else>
+								{{ message }}
+							</template>
+						</slot>
 					</span>
 				</div>
 				<UiButton
@@ -61,6 +71,7 @@ const iconByTone = {
 					tone="neutral"
 					size="24"
 					:no-hover="true"
+					:style="tone === 'error' ? { '--btn-bg': 'var(--white-base)' } : undefined"
 					class="ui-toast-close"
 					aria-label="Close"
 					data-testid="ui-toast-close-button"
@@ -108,9 +119,9 @@ const iconByTone = {
     }
 
     &[data-tone='error'] {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fca5a5;
+        background: var(--error-base);
+        color: var(--white-base);
+        border: 1px solid var(--white-base);
     }
 
     &[data-tone='info'] {
@@ -135,10 +146,16 @@ const iconByTone = {
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
         font-weight: var(--font-weight-semibold);
+        strong {
+			font-weight: var(--font-weight-semibold);
+		}
+        span {
+            font-weight: var(--font-weight-regular);
+        }
     }
 
     .ui-toast-close {
-        color: inherit;
+        color: var(--white-base);
         display: grid;
         place-items: center;
         min-height: auto;

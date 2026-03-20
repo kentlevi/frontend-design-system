@@ -1,5 +1,3 @@
-@use '../../foundation' as f;
-
 .ui-color {
     display: flex;
     flex-direction: column;
@@ -18,7 +16,7 @@
 }
 
 .ui-color:focus-visible .ui-color-swatch {
-    outline: 2px solid f.$focus-ring;
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
 }
 

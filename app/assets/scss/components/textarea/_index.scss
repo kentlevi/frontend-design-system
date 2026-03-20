@@ -1,15 +1,9 @@
-@use '../../foundation/colors/semantic' as c;
-@use '../../foundation/typography/semantic' as t;
-
-@use '../../brand/spacing' as sp;
-@use '../../brand/radius' as r;
-@use '../../brand/shadows' as sh;
-
 .ui-textarea {
-    border-radius: r.$radius-md;
-    border: 1px solid c.$border-default;
-    background: c.$bg-page;
-    box-shadow: sh.$shadow-md;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+    background: var(--bg-page);
+    box-shadow: var(--shadow-sm);
+    cursor: text;
     transition:
         border-color 0.15s ease,
         box-shadow 0.15s ease,
@@ -18,44 +12,46 @@
 
 .ui-textarea-field {
     width: 100%;
-    min-height: 96px;
+    min-height: 100%;
     border: 0;
     outline: none;
     background: transparent;
-    padding: sp.$space-3;
-    font-family: t.$font-base;
-    font-size: t.$body-base;
-    line-height: t.$body-base-line;
-    color: c.$text-primary;
+    padding: var(--space-sm);
+    font-family: var(--font-base);
+    font-size: var(--body-base);
+    line-height: var(--type-line-100);
+    color: var(--text-primary);
 
     &::placeholder {
-        color: c.$text-muted;
+        color: var(--text-muted);
     }
 }
 
-.ui-textarea:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
-    border-color: c.$border-strong;
+.ui-textarea:hover:not([data-disabled='true']):not([data-state='error']):not([data-state='success']),
+.ui-textarea:focus-within:not([data-disabled='true']):not([data-state='error']):not([data-state='success']) {
+    border-color: var(--border-strong);
 }
 
 .ui-textarea[data-state='error'] {
-    border-color: c.$error;
+    border-color: var(--error);
 }
 
 .ui-textarea[data-state='success'] {
-    border-color: c.$success;
+    border-color: var(--success);
 }
 
 .ui-textarea[data-disabled='true'] {
-    background: c.$bg-muted;
-    border-color: c.$bg-muted;
+    background: var(--bg-muted);
+    border-color: var(--bg-muted);
     box-shadow: none;
+    cursor: not-allowed;
 
     .ui-textarea-field {
-        color: c.$text-muted;
+        color: var(--text-muted);
         cursor: not-allowed;
     }
 }
 
 .ui-textarea[data-readonly='true']:not([data-disabled='true']) {
-    background: c.$surface-subtle;
+    background: var(--surface-subtle);
 }

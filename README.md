@@ -1,6 +1,6 @@
-# frontend-design-system
+# frontend-documentation
 
-Central source for MuSticker's frontend UI system, including design tokens, reusable components, interaction patterns, guide pages, and implementation guidance for a consistent storefront experience.
+Documentation-first guide app for MuSticker's frontend system, including design tokens, reusable UI primitives, guide pages, interaction patterns, and implementation standards for the storefront.
 
 ## Setup
 

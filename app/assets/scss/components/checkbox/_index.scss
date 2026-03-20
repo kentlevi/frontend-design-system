@@ -1,15 +1,9 @@
-@use '../../foundation/colors/semantic' as c;
-@use '../../foundation/typography/semantic' as t;
-
-@use '../../brand/spacing' as sp;
-@use '../../brand/radius' as r;
-
 .ui-checkbox {
     display: inline-flex;
     align-items: center;
-    gap: sp.$space-2;
-    color: c.$text-secondary;
-    font-family: t.$font-base;
+    gap: var(--space-xs);
+    color: var(--text-secondary);
+    font-family: var(--font-base);
     cursor: pointer;
     user-select: none;
 }
@@ -25,9 +19,9 @@
 .ui-checkbox-box {
     width: 20px;
     height: 20px;
-    border: 1px solid c.$border-default;
-    border-radius: r.$radius-sm;
-    background: c.$contrast-light;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--contrast-light);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -48,13 +42,13 @@
 
 
 .ui-checkbox-input:focus-visible + .ui-checkbox-box {
-    border-color: c.$brand-primary;
-    box-shadow: 0 0 0 2px c.$brand-primary;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 2px var(--brand-primary);
 }
 
 .ui-checkbox-input:checked + .ui-checkbox-box {
-    border-color: c.$text-primary;
-    background: c.$text-primary;
+    border-color: var(--text-primary);
+    background: var(--text-primary);
 }
 
 .ui-checkbox-input:checked + .ui-checkbox-box .ui-checkbox-icon {
@@ -69,33 +63,33 @@
     }
 
     .ui-checkbox-label {
-        font-size: t.$body-small;
-        line-height: t.$body-small-line;
+        font-size: var(--body-small);
+        line-height: var(--body-small-line);
     }
 }
 
 .ui-checkbox[data-state='error'] {
     .ui-checkbox-box {
-        border-color: c.$error;
+        border-color: var(--error);
     }
 }
 
 .ui-checkbox[data-state='success'] {
     .ui-checkbox-box {
-        border-color: c.$success;
+        border-color: var(--success);
     }
 }
 
 .ui-checkbox[data-disabled='true'] {
     cursor: not-allowed;
-    color: c.$text-muted;
+    color: var(--text-muted);
 
     .ui-checkbox-box {
-        background: c.$bg-muted;
-        border-color: c.$border-default;
+        background: var(--bg-muted);
+        border-color: var(--border-default);
     }
 
     .ui-checkbox-label {
-        color: c.$text-muted;
+        color: var(--text-muted);
     }
 }

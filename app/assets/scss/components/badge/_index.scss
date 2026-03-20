@@ -1,5 +1,3 @@
-@use '../../foundation' as f;
-
 .ui-badge {
     display: inline-flex;
     align-items: center;
@@ -23,72 +21,72 @@
     }
 
     &[data-tone='default'][data-variant='filled'] {
-        background: f.$surface-raised;
-        color: f.$text-primary;
+        background: var(--surface-raised);
+        color: var(--text-primary);
     }
 
     &[data-tone='default'][data-variant='tonal'] {
-        background: f.$bg-muted;
-        color: f.$text-primary;
+        background: var(--bg-muted);
+        color: var(--text-primary);
     }
 
     &[data-tone='default'][data-variant='outline'] {
-        border-color: f.$border-default;
-        color: f.$text-primary;
+        border-color: var(--border-default);
+        color: var(--text-primary);
     }
 
     &[data-tone='default'][data-variant='subtle'] {
-        color: f.$text-secondary;
+        color: var(--text-secondary);
     }
 
     &[data-tone='default'][data-variant='ghost'] {
         background: transparent;
-        border-color: f.$border-default;
-        color: f.$text-secondary;
+        border-color: var(--border-default);
+        color: var(--text-secondary);
     }
 
     &[data-tone='success'][data-variant='filled'] {
-        background: f.$success;
-        color: f.$text-inverse;
+        background: var(--success);
+        color: var(--text-inverse);
     }
 
     &[data-tone='success'][data-variant='tonal'] {
-        background: f.$success-bg;
-        color: f.$success;
+        background: var(--success-bg);
+        color: var(--success);
     }
 
     &[data-tone='success'][data-variant='outline'] {
-        border-color: f.$success;
+        border-color: var(--success);
         color: var(--success-80);
     }
 
     &[data-tone='danger'][data-variant='filled'] {
-        background: f.$error;
-        color: f.$text-inverse;
+        background: var(--error);
+        color: var(--text-inverse);
     }
 
     &[data-tone='danger'][data-variant='tonal'] {
-        background: f.$error-bg;
-        color: f.$error;
+        background: var(--error-bg);
+        color: var(--error);
     }
 
     &[data-tone='danger'][data-variant='outline'] {
-        border-color: f.$error;
-        color: f.$error;
+        border-color: var(--error);
+        color: var(--error);
     }
 
     &[data-tone='warning'][data-variant='filled'] {
-        background: f.$warning;
-        color: f.$text-inverse;
+        background: var(--warning);
+        color: var(--text-inverse);
     }
 
     &[data-tone='warning'][data-variant='tonal'] {
-        background: f.$warning-bg;
-        color: f.$warning;
+        background: var(--warning-bg);
+        color: var(--warning);
     }
 
     &[data-tone='warning'][data-variant='outline'] {
-        border-color: f.$warning;
-        color: f.$warning;
+        border-color: var(--warning);
+        color: var(--warning);
     }
 }

@@ -1,9 +1,7 @@
-@use '../../foundation' as f;
-
 .ui-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: f.$z-modal;
+    z-index: var(--z-modal);
     display: grid;
     place-items: start center;
     background: rgba(17, 23, 35, 0.4);
@@ -48,7 +46,6 @@
     
     font-size: var(--type-size-500);
     line-height: var(--type-line-500);
-    letter-spacing: -0.02em;
 }
 
 .ui-modal-header-actions {
@@ -66,19 +63,20 @@
     color: #000;
     display: grid;
     place-items: center;
+    padding: 0;
     cursor: pointer;
     transition:
         background-color 0.2s ease,
         color 0.2s ease;
 
     &:hover {
-        background: var(--bg-muted);
-        color: var(--text-primary);
+        --btn-soft: transparent;
     }
 }
 
 .ui-modal-body {
     padding: 0;
+    border-radius: inherit;
 }
 
 .ui-modal-footer {
@@ -88,21 +86,22 @@
 .ui-modal-fade-enter-active,
 .ui-modal-fade-leave-active {
     transition: opacity 0.2s ease;
-
-    .ui-modal {
-        transition:
-            transform 0.2s ease,
-            opacity 0.2s ease;
-    }
 }
 
 .ui-modal-fade-enter-from,
 .ui-modal-fade-leave-to {
     opacity: 0;
+}
 
+.ui-modal-fade-leave-active {
+    .ui-modal {
+        transition: opacity 0.16s ease;
+    }
+}
+
+.ui-modal-fade-leave-to {
     .ui-modal {
         opacity: 0;
-        transform: translateY(-8px) scale(0.98);
     }
 }
 

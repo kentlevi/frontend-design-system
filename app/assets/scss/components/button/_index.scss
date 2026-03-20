@@ -1,29 +1,22 @@
-@use '../../foundation/colors/semantic' as c;
-@use '../../foundation/typography/semantic' as t;
-
-@use '../../brand/spacing' as sp;
-@use '../../brand/radius' as r;
-@use '../../brand/shadows' as sh;
-
 .ui-button {
-    --btn-bg: #{c.$brand-primary};
-    --btn-fg: #{c.$text-inverse};
+    --btn-bg: var(--brand-primary);
+    --btn-fg: var(--text-inverse);
     --btn-border: transparent;
-    --btn-soft: #{c.$bg-muted};
+    --btn-soft: var(--bg-muted);
 
     display: inline-flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
 
-    gap: sp.$space-1;
-    padding-inline: sp.$space-3;
+    gap: var(--space-xxs);
+    padding-inline: var(--space-md);
 
-    border-radius: r.$radius-xl;
+    border-radius: var(--radius-xl);
     border: 1px solid transparent;
 
-    font-family: t.$font-base;
-    font-size: t.$body-base;
+    font-family: var(--font-base);
+    font-size: var(--body-base);
     font-weight: var(--font-weight-semibold);
     line-height: var(--type-line-100);
 
@@ -41,7 +34,7 @@
 }
 
 .ui-button:focus-visible {
-    outline: 2px solid c.$focus-ring;
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
 }
 
@@ -49,11 +42,14 @@
     display: grid;
     place-items: center;
 
-    font-size: t.$body-small;
-    line-height: t.$body-small-line;
+    font-size: var(--body-small);
+    line-height: var(--body-small-line);
 }
 
 .ui-button-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     white-space: nowrap;
 }
 
@@ -62,64 +58,64 @@
 }
 
 .ui-button[data-size='lg'] {
-    height: sp.$space-12;
+    height: var(--space-3xl);
 }
 
 .ui-button[data-size='md'] {
-    height: sp.$space-10;
+    height: var(--space-2xl);
 }
 
 .ui-button[data-size='sm'] {
-    height: sp.$space-7;
+    height: 28px;
 }
 
 .ui-button[data-icon-only='true'][data-size='lg'] {
-    width: sp.$space-12;
+    width: var(--space-3xl);
 }
 
 .ui-button[data-icon-only='true'][data-size='md'] {
-    width: sp.$space-10;
+    width: var(--space-2xl);
 }
 
 .ui-button[data-icon-only='true'][data-size='sm'] {
-    width: sp.$space-7;
+    width: 28px;
 }
 
 .ui-button[data-tone='primary'],
 .ui-button[data-tone='default'],
 .ui-button:not([data-tone]) {
-    --btn-bg: #{c.$brand-primary};
-    --btn-fg: #{c.$text-inverse};
-    --btn-border: #{c.$brand-primary};
-    --btn-soft: color-mix(in srgb, #{c.$brand-primary} 12%, white);
+    --btn-bg: var(--brand-primary);
+    --btn-fg: var(--text-inverse);
+    --btn-border: var(--brand-primary);
+    --btn-soft: color-mix(in srgb, var(--brand-primary) 12%, white);
 }
 
 .ui-button[data-tone='accent'] {
-    --btn-bg: #{c.$brand-primary-hover};
-    --btn-fg: #{c.$text-inverse};
-    --btn-border: #{c.$brand-primary-hover};
-    --btn-soft: color-mix(in srgb, #{c.$brand-primary-hover} 12%, white);
+    --btn-bg: var(--brand-primary-hover);
+    --btn-fg: var(--text-inverse);
+    --btn-border: var(--brand-primary-hover);
+    --btn-soft: color-mix(in srgb, var(--brand-primary-hover) 12%, white);
 }
 
 .ui-button[data-tone='neutral'] {
-    --btn-bg: #{c.$text-primary};
-    --btn-fg: #{c.$text-inverse};
-    --btn-border: #{c.$border-default};
-    --btn-soft: #{c.$bg-muted};
+    --btn-bg: var(--text-primary);
+    --btn-fg: var(--text-inverse);
+    --btn-border: var(--border-default);
+    --btn-soft: var(--bg-muted);
 }
 
 .ui-button[data-tone='success'] {
-    --btn-bg: #{c.$success};
-    --btn-fg: #{c.$text-inverse};
-    --btn-border: #{c.$success};
-    --btn-soft: #{c.$success-bg};
+    --btn-bg: var(--success);
+    --btn-fg: var(--text-inverse);
+    --btn-border: var(--success);
+    --btn-soft: var(--success-bg);
 }
 
 .ui-button[data-tone='danger'] {
-    --btn-bg: #{c.$error};
-    --btn-fg: #{c.$text-inverse};
-    --btn-border: #{c.$error};
-    --btn-soft: #{c.$error-bg};
+    --btn-bg: var(--error);
+    --btn-fg: var(--text-inverse);
+    --btn-border: var(--error);
+    --btn-soft: var(--error-bg);
 }
 
 .ui-button[style*='--btn-bg'] {
@@ -136,21 +132,21 @@
     background: var(--btn-bg);
     color: var(--btn-fg);
     border-color: var(--btn-border);
-    box-shadow: sh.$shadow-md;
+    box-shadow: var(--shadow-md);
 
     &:hover:not(:disabled) {
-        box-shadow: sh.$shadow-sm;
+        box-shadow: var(--shadow-sm);
         filter: brightness(0.98);
     }
 
     &:active:not(:disabled) {
         filter: brightness(0.94);
-        box-shadow: sh.$shadow-md;
+        box-shadow: var(--shadow-md);
     }
 
     &:disabled {
-        background: c.$bg-muted;
-        color: c.$text-muted;
+        background: var(--abyss-20);
+        color: var(--white-base);
         border-color: transparent;
         box-shadow: none;
         cursor: not-allowed;
@@ -171,8 +167,8 @@
     }
 
     &:disabled {
-        background: c.$bg-muted;
-        color: c.$text-muted;
+        background: var(--bg-muted);
+        color: var(--text-muted);
     }
 }
 
@@ -190,8 +186,8 @@
     }
 
     &:disabled {
-        border-color: c.$bg-muted;
-        color: c.$text-muted;
+        border-color: var(--bg-muted);
+        color: var(--text-muted);
     }
 }
 
@@ -209,8 +205,8 @@
     }
 
     &:disabled {
-        background: c.$bg-muted;
-        color: c.$text-muted;
+        background: var(--bg-muted);
+        color: var(--text-muted);
     }
 }
 
@@ -228,7 +224,29 @@
     }
 
     &:disabled {
-        color: c.$text-muted;
+        color: var(--text-muted);
+    }
+}
+
+.ui-button[data-no-hover='true'][data-variant='filled'] {
+    &:hover:not(:disabled) {
+        box-shadow: var(--shadow-md);
+        filter: none;
+    }
+}
+
+.ui-button[data-no-hover='true'][data-variant='tonal'],
+.ui-button[data-no-hover='true'][data-variant='subtle'] {
+    &:hover:not(:disabled) {
+        filter: none;
+    }
+}
+
+.ui-button[data-no-hover='true'][data-variant='outline'],
+.ui-button[data-no-hover='true'][data-variant='ghost'] {
+    &:hover:not(:disabled) {
+        background: transparent;
+        filter: none;
     }
 }
 
@@ -238,11 +256,11 @@
     top: 50%;
     transform: translateY(-50%);
 
-    width: sp.$space-1;
+    width: var(--space-xxs);
     height: 60%;
 
     background: var(--btn-bg);
-    border-radius: r.$radius-sm;
+    border-radius: var(--radius-sm);
 }
 
 .ui-button[data-icon-right='true'] {
