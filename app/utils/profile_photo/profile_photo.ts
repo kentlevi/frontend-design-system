@@ -1,28 +1,45 @@
+import { computed } from "vue"
 import { useUsersStore } from "~/stores/users/users.store"
 
-export const user_initial = computed(() => {
+/**
+ * Get ordered, cleaned profile field values
+ */
+function getOrderedProfileValues(): string[] {
 	/** Store */
 	const user_store = useUsersStore()
 
-	/**
-     * Get all dynamic field values from profile
-     */
+	/** Get all user field values safely */
 	const user_field_values = user_store.state.profile?.user_field_values ?? []
 
-	/**
-     * Build initials from the first letter of each field
-     */
+	/** Sort, clean, and keep only non-empty values */
 	return [...user_field_values]
 		.sort(
 			(first_value, second_value) =>
 				(first_value.sort_order ?? 0) - (second_value.sort_order ?? 0)
 		)
-		.map((val) => val.value?.trim() ?? '')
-		.filter((value) => value.length > 0)
-		.map((value) => value.charAt(0).toUpperCase())
-		.join('')
+		.map((value_item) => value_item.value?.trim() ?? "")
+		.filter((value_item) => value_item.length > 0)
+}
+
+/**
+ * Display full name
+ */
+export const display_name = computed(() => {
+	return getOrderedProfileValues().join(" ")
 })
 
+/**
+ * Display initials
+ */
+export const user_initial = computed(() => {
+	return getOrderedProfileValues()
+		.map((value_item) => value_item.charAt(0).toUpperCase())
+		.join("")
+})
+
+/**
+ * Display avatar url
+ */
 export const display_avatar = computed(() => {
 	/** Store */
 	const user_store = useUsersStore()
@@ -35,12 +52,12 @@ export const display_avatar = computed(() => {
 
 	/** Return empty string if avatar is incomplete */
 	if (!base_url || !folder_path || !file_name) {
-		return ''
+		return ""
 	}
 
 	/** Normalize URL parts */
-	const normalized_base = base_url.endsWith('/') ? base_url : `${base_url}/`
-	const normalized_path = folder_path.startsWith('/') ? folder_path.slice(1) : folder_path
+	const normalized_base = base_url.endsWith("/") ? base_url : `${base_url}/`
+	const normalized_path = folder_path.startsWith("/") ? folder_path.slice(1) : folder_path
 
 	return `${normalized_base}${normalized_path}${file_name}`
 })

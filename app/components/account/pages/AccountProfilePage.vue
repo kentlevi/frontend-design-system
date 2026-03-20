@@ -27,7 +27,6 @@ const photoInlineError = computed(() => {
 
 const {
 	file_input,
-	photo_url,
 	is_delete_photo_modal_open,
 
 	openFilePicker,
@@ -210,10 +209,10 @@ onBeforeUnmount(() => {
 											data-testid="account-profile-photo-upload-button"
 											@click="openFilePicker"
 										>
-											{{ t('account.profile.uploadNewPhoto') }}
+											{{ display_avatar ? t('account.profile.uploadNewPhoto') : t('account.profile.uploadPhoto') }}
 										</UiButton>
 										<UiButton
-											v-if="photo_url"
+											v-if="display_avatar"
 											variant="ghost"
 											tone="danger"
 											size="md"

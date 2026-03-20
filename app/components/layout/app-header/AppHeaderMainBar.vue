@@ -28,9 +28,7 @@ const props = defineProps<{
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
 	accountOpen: boolean;
-	userInitial: string;
 	userAvatarUrl?: string | null;
-	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
 	accountLinks: AccountLink[];
@@ -163,9 +161,7 @@ function isExactNavHeading(path: string) {
 				:account-open="props.accountOpen"
 				:is-mock-logged-in="props.isMockLoggedIn"
 				:is-guest-logged-in="props.isGuestLoggedIn"
-				:user-initial="props.userInitial"
 				:user-avatar-url="props.userAvatarUrl"
-				:display-name="props.displayName"
 				:display-email="props.displayEmail"
 				:account-transition-name="props.accountTransitionName"
 				:account-links="props.accountLinks"
