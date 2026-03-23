@@ -9,7 +9,8 @@ import type {
 	RegisterPayload,
 	RegisterVerificationResponse,
 	SocialLoginPayload,
-	SocialRedirectResponse
+	SocialRedirectResponse,
+	OnboardingPayload
 } from '~/types/auth/auth'
 import type { MeUserResponse } from '~/types/auth/user'
 import type { ApiResponse } from "~/types/config/api"
@@ -93,4 +94,13 @@ export async function logout(): Promise<ApiResponse>{
 	const { $api } = useNuxtApp()
 
 	return await $api.post('auth/logout');
+}
+
+/**
+ * Onboarding
+ */
+export async function completeOnboarding(payload: OnboardingPayload): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return await $api.post('user/complete-onboarding', { ...payload })
 }

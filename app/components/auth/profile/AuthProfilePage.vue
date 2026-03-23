@@ -33,6 +33,7 @@ const {
 	onPhotoFilePicked,
 	removePhoto,
 	goNext,
+	skipProfileDetails,
 	goBack,
 	closeEmailVerificationModal,
 	submitEmailVerification,
@@ -66,6 +67,7 @@ const {
 					@photo-file-picked="onPhotoFilePicked"
 					@photo-remove="removePhoto"
 					@next="goNext"
+					@skip="skipProfileDetails"
 				/>
 
 				<AuthProfileSettingsStep

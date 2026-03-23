@@ -5,10 +5,11 @@ import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
-import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
 const profile_field_store = useProfileFieldsStore();
+const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
 	file_input,
