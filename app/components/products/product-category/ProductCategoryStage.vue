@@ -99,6 +99,14 @@ const vinylHeight = ref(30)
 const vinylText = ref('')
 const selectedVinylFont = ref<string>('antique-olive')
 const vinylActiveSize = ref<'width' | 'height'>('height')
+const isVinylSizeFocused = ref(false)
+const isVinylFontFocused = ref(false)
+
+const onVinylSizeFocus = () => { isVinylSizeFocused.value = true }
+const onVinylSizeBlur = () => { isVinylSizeFocused.value = false }
+const onVinylFontFocus = () => { isVinylFontFocused.value = true }
+const onVinylFontBlur = () => { isVinylFontFocused.value = false }
+
 
 const onCustomSizeFocus = () => {
 	isCustomSizeFocused.value = true
@@ -413,7 +421,10 @@ watch(
 						</section>
 
 						<section v-if="!isVinylLettering" class="product-section">
-							<div class="option-head" data-testid="product-category-size-head">
+							<div
+								class="option-pill option-pill-wide custom-size-pill is-active"
+								data-testid="product-category-size-head"
+							>
 								<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
 								<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 							</div>
@@ -537,29 +548,73 @@ watch(
 						</section>
 
 						<template v-else>
-							<section>
-								<div class="option-head" data-testid="product-category-size-head">
+							<section class="product-section">
+								<div
+									class="option-pill option-pill-wide custom-size-pill is-active"
+									data-testid="product-category-size-head"
+								>
 									<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
 									<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 								</div>
-								<div class="vinyl-size-pill" data-testid="product-category-vinyl-size-input">
-									<input :value="vinylWidth" type="text" inputmode="numeric" pattern="[0-9]*" class="vinyl-size-input" @beforeinput="preventNonDigitInput" @input="onVinylWidthInput">
-									<span class="vinyl-size-separator">x</span>
-									<input :value="vinylHeight" type="text" inputmode="numeric" pattern="[0-9]*" class="vinyl-size-input" @beforeinput="preventNonDigitInput" @input="onVinylHeightInput">
+								
+								<div class="option-grid">
+									<div
+										class="option-pill option-pill-wide custom-size-pill"
+										:class="{
+											'is-active': true,
+											'is-input-focused': isVinylSizeFocused
+										}"
+										data-testid="product-category-vinyl-size-input"
+									>
+										<input
+											:value="vinylWidth"
+											type="text"
+											inputmode="numeric"
+											pattern="[0-9]*"
+											class="custom-size-input"
+											@beforeinput="preventNonDigitInput"
+											@input="onVinylWidthInput"
+											@focus="onVinylSizeFocus"
+											@blur="onVinylSizeBlur"
+										>
+										<span class="size-separator">x</span>
+										<input
+											:value="vinylHeight"
+											type="text"
+											inputmode="numeric"
+											pattern="[0-9]*"
+											class="custom-size-input"
+											@beforeinput="preventNonDigitInput"
+											@input="onVinylHeightInput"
+											@focus="onVinylSizeFocus"
+											@blur="onVinylSizeBlur"
+										>
+									</div>
 								</div>
 							</section>
 
-							<section>
-								<h3 class="option-title">Select your font</h3>
-								<UiSelect
-									v-model="selectedVinylFont"
-									:options="vinylFontOptions"
-									trigger-class="vinyl-font-trigger"
-									menu-class="vinyl-font-menu"
-								/>
+							<section class="product-section">
+								<div
+									class="option-pill option-pill-wide custom-size-pill is-active"
+									:class="{
+										'is-input-focused': isVinylFontFocused
+									}"
+								>
+									<h3 class="option-title">Select your font</h3>
+									<div style="flex: 1; min-width: 0;">
+										<UiSelect
+											v-model="selectedVinylFont"
+											:options="vinylFontOptions"
+											trigger-class="custom-size-input font-select-trigger"
+											menu-class="vinyl-font-menu"
+											@focus="onVinylFontFocus"
+											@blur="onVinylFontBlur"
+										/>
+									</div>
+								</div>
 							</section>
 
-							<section>
+							<section class="product-section">
 								<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
 								<div class="option-grid vinyl-quantity-grid" data-testid="product-category-quantity-options">
 									<button
@@ -976,8 +1031,9 @@ watch(
             .option-head {
                 display: flex;
                 justify-content: space-between;
-                align-items: baseline;
+                align-items: center;
                 gap: 8px;
+                padding: 0 16px;
 
                 .option-head-unit {
                     color: var(--text-secondary);

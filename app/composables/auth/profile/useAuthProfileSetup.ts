@@ -501,6 +501,12 @@ export function useAuthProfileSetup() {
 				email: email.value.trim() || accountProfileDefaults.email,
 			};
 		}
+		await navigateTo(withCountry('/'));
+
+		// Clear Draft State
+		step.value = 1;
+		onboardingDraft.value = {};
+		user_store.clearOnboardingProfile();
 	}
 
 	async function submitEmailVerification() {

@@ -3,12 +3,12 @@
     grid-template-columns: 384px 1fr;
     gap: 126px;
 
-    .account-profile-section-copy,
     .account-profile-section-main {
         display: flex;
         flex-direction: column;
+        gap: 16px;
     }
-
+    
     .account-profile-section-title {
         margin: 0;
         font-size: var(--type-size-300);
