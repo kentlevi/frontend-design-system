@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
-import { computed, watch } from 'vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
@@ -13,28 +11,17 @@ import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
-const {
-	photoError,
-} = useAccountProfile();
-
-const photoInlineError = computed(() => {
-	if (!photoError.value) return '';
-	const normalized_message = photoError.value.toLowerCase();
-	return /network|timeout|timed out|internet|connect/.test(normalized_message)
-		? ''
-		: photoError.value;
-});
 
 const {
 	file_input,
-	photo_url,
 	is_delete_photo_modal_open,
+	error: photo_inline_error,
 
 	openFilePicker,
 	onFilePicked,
 	openDeletePhotoModal,
 	closeDeletePhotoModal,
-	removePhoto,
+	deletePhoto,
 } = useProfilePhoto()
 
 const {
@@ -124,28 +111,6 @@ function clearPhotoUploadToastTimer() {
 	photo_upload_toast_timer = null;
 }
 
-function showPhotoUploadToast(message: string) {
-	clearPhotoUploadToastTimer();
-	const normalized_message = message.toLowerCase();
-	if (/timeout|timed out/.test(normalized_message)) {
-		photoUploadToastMessage.value = 'The upload timed out. Please try again later.';
-	} else if (/network|internet|connect/.test(normalized_message)) {
-		photoUploadToastMessage.value = 'Unable to upload due to a network issue. Please try again.';
-	} else {
-		photoUploadToastMessage.value = message;
-	}
-	photoUploadToastVisible.value = true;
-	photo_upload_toast_timer = setTimeout(() => {
-		photoUploadToastVisible.value = false;
-		photo_upload_toast_timer = null;
-	}, 3200);
-}
-
-watch(photoError, (message) => {
-	if (!message) return;
-	showPhotoUploadToast(message);
-});
-
 onBeforeUnmount(() => {
 	clearProfileToastTimer();
 	clearPhotoUploadToastTimer();
@@ -178,7 +143,7 @@ onBeforeUnmount(() => {
 						<div class="account-profile-photo-group">
 							<div class="account-profile-photo-head">
 								<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
-								<p v-if="photoInlineError" class="account-profile-photo-error">{{ photoInlineError }}</p>
+								<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
 							</div>
 							<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
 								<div class="account-profile-avatar">
@@ -210,10 +175,10 @@ onBeforeUnmount(() => {
 											data-testid="account-profile-photo-upload-button"
 											@click="openFilePicker"
 										>
-											{{ t('account.profile.uploadNewPhoto') }}
+											{{ display_avatar ? t('account.profile.uploadNewPhoto') : t('account.profile.uploadPhoto') }}
 										</UiButton>
 										<UiButton
-											v-if="photo_url"
+											v-if="display_avatar"
 											variant="ghost"
 											tone="danger"
 											size="md"
@@ -632,7 +597,7 @@ onBeforeUnmount(() => {
 			modal-class="account-profile-delete-photo-modal-shell"
 			test-id="account-profile-delete-photo-modal"
 			@cancel="closeDeletePhotoModal"
-			@confirm="removePhoto"
+			@confirm="deletePhoto"
 		/>
 		<UiModal
 			:model-value="is_forgot_password_modal_open"

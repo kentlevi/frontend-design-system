@@ -23,9 +23,7 @@ const {
 	accountLinks,
 	isMockLoggedIn,
 	isGuestLoggedIn,
-	userInitial,
 	userAvatarUrl,
-	displayName,
 	displayEmail,
 	accountTransitionName,
 	isNavLinkActive,
@@ -200,9 +198,7 @@ onBeforeUnmount(() => {
 			:is-mock-logged-in="isMockLoggedIn"
 			:is-guest-logged-in="isGuestLoggedIn"
 			:account-open="accountOpen"
-			:user-initial="userInitial"
 			:user-avatar-url="userAvatarUrl"
-			:display-name="displayName"
 			:display-email="displayEmail"
 			:account-transition-name="accountTransitionName"
 			:account-links="accountLinks"

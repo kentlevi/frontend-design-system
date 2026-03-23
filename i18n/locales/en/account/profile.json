@@ -8,6 +8,7 @@
             "photoHint1": "At least 800x800px recommended file size.",
             "photoHint2": "Accepted filetypes: .jpg and .png",
             "uploadNewPhoto": "Upload New Photo",
+            "uploadPhoto": "Upload Photo",
             "delete": "Delete",
             "first_name": "First Name",
             "last_name": "Last Name",
