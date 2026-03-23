@@ -722,6 +722,8 @@ watch(
 </template>
 
 <style scoped lang="scss">
+@use '~/assets/scss/fonts/lettering';
+
 .product-stage {
     position: relative;
     margin-top: 0;
