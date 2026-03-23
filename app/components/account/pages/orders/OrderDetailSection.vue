@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { AccountOrder } from '~/types/account/orders';
+
 const props = defineProps<{
-	order: any;
+	order: AccountOrder;
 	isDetailOpen: boolean;
 }>();
 
@@ -468,7 +470,7 @@ const summary_totals = computed(() => {
 			.account-orders-summary-items {
 				.account-orders-summary-item {
 					grid-template-columns: 84px 1fr;
-					
+
 					.account-orders-summary-side {
 						grid-column: 1 / -1;
 						align-items: flex-start;
@@ -480,7 +482,7 @@ const summary_totals = computed(() => {
 
 		.account-orders-action-row {
 			grid-template-columns: 1fr;
-			
+
 			.account-orders-payment-meta {
 				align-items: flex-start;
 			}

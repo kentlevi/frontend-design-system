@@ -108,7 +108,7 @@ const accent_class_map = {
 						:accent-class-map="accent_class_map"
 						@set-active="set_active_order"
 					/>
-					
+
 					<OrderDetailSection
 						v-if="active_order"
 						:order="active_order"

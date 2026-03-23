@@ -468,7 +468,7 @@ export function useAuthProfileSetup() {
 				}
 				body.append('offers_emails', promotions.value ? '1' : '0');
 				body.append('reviews_emails', reviews.value ? '1' : '0');
-		
+
 
 				await api(`/${apiCountry.value}/user/complete-onboarding`, {
 					method: 'POST',
@@ -488,7 +488,7 @@ export function useAuthProfileSetup() {
 			};
 		}
 		await navigateTo(withCountry('/'));
-		
+
 		// Clear Draft State
 		step.value = 1;
 		onboardingDraft.value = {};

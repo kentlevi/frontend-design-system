@@ -5,7 +5,7 @@ interface AddressItem {
 	address: string;
 	company: string;
 	tag: string;
-	isDefault: boolean;
+	isDefault?: boolean;
 }
 
 const props = defineProps<{

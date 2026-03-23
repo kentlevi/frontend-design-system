@@ -198,8 +198,7 @@ function handleModalModelValueUpdate(value: boolean) {
 					class="auth-verification-error"
 					data-testid="auth-verification-error"
 					v-html="error"
-				>
-				</p>
+				/>
 			</div>
 
 			<div class="auth-verification-actions">

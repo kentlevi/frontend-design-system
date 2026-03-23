@@ -1,6 +1,13 @@
 <script setup lang="ts">
-const props = defineProps<{
-	orderGroups: any[];
+import type { AccountOrderSection } from '~/types/account/orders';
+
+interface OrderGroup {
+	section: AccountOrderSection;
+	items: any[];
+}
+
+defineProps<{
+	orderGroups: OrderGroup[];
 	activeOrderId?: string;
 	accentClassMap: Record<string, string>;
 }>();

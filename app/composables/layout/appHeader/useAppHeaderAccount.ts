@@ -25,10 +25,8 @@ type MockUserCookie = {
 export function useAppHeaderAccount() {
 	const { t, setLocale } = useI18n();
 	const route = useRoute();
-	const api = useApi();
-	const { withCountry, apiCountry, country } = useCountry();
-	const user_store = useUsersStore();
-	const { state } = storeToRefs(useUsersStore())
+	const { withCountry, country } = useCountry();
+	const { state } = storeToRefs(useUsersStore());
 
 
 	const preferred_locale = useCookie<SupportedCountry | null>('preferred_locale', {
