@@ -1,5 +1,5 @@
 import { useUsersStore } from '~/stores/users/users.store';
-import { getCurrentAuthenticatedUser } from '~/services/auth/auth.service'
+import { getCurrentAuthenticatedUser, logout } from '~/services/auth/auth.service'
 
 export function useAuthUser() {
 	const userStore = useUsersStore()
@@ -31,7 +31,30 @@ export function useAuthUser() {
 		}
 	}
 
+	/**
+	 * Logout user
+	 */
+	async function logoutUser(): Promise<boolean> {
+		try {
+			const response = await logout()
+
+			if (!response.success) {
+				return false
+			}
+
+			userStore.clearUser()
+
+			await navigateTo('/')
+
+			return true
+		} catch (error) {
+			console.error(error)
+			return false
+		}
+	}
+
 	return {
-		fetchAndStoreUser
+		fetchAndStoreUser,
+		logoutUser
 	}
 }

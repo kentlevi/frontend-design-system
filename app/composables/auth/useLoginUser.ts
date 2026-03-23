@@ -1,9 +1,11 @@
-import { memberLogin, nonMemberSubmitVerification, sendNonMemberLoginVerification } from "~/services/auth/auth.service";
+import { memberLogin, nonMemberSubmitVerification, sendNonMemberLoginVerification, socialRedirect } from "~/services/auth/auth.service";
 import type {
 	LoginPayload,
 	LoginResponse,
 	NonMemberLoginVerificationPayload,
 	NonMemberLoginVerificationResponse,
+	SocialLoginPayload,
+	SocialRedirectResponse,
 	SubmitNonMemberLoginVerificationPayload
 } from "~/types/auth/auth";
 import { useAuthUser } from "./useAuthUser";
@@ -40,10 +42,6 @@ export function useLoginUser() {
 		try {
 			const response = await sendNonMemberLoginVerification(payload)
 
-			if (!response.success) {
-				return response
-			}
-
 			return response
 		} catch (error) {
 			console.error(error)
@@ -58,10 +56,6 @@ export function useLoginUser() {
 		try {
 			const response = await nonMemberSubmitVerification(payload)
 
-			if (!response.success) {
-				return response
-			}
-
 			return response
 		} catch (error) {
 			console.error(error)
@@ -72,10 +66,25 @@ export function useLoginUser() {
 		}
 	}
 
+	async function handleSocialLogin(payload: SocialLoginPayload): Promise<SocialRedirectResponse> {
+		try {
+			const response = await socialRedirect(payload)
+
+			return response
+		} catch (error) {
+			console.error(error)
+			return {
+				success: false,
+				message: 'social_login_error'
+			} as SocialRedirectResponse
+		}
+	}
+
 	return {
 		handleMemberLogin,
 		handleNonMemberVerification,
-		handleSubmitNonMemberLoginVerification
+		handleSubmitNonMemberLoginVerification,
+		handleSocialLogin
 	}
 }
 

@@ -79,3 +79,13 @@ export interface RegisterPayload {
 	registration_token?: string | null;
 	otp: string;
 }
+
+export type SocialRedirectResponse = ApiResponse<SocialRedirect>
+
+export interface SocialRedirect {
+	url: string
+}
+
+export interface SocialLoginPayload {
+	provider: string
+}

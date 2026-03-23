@@ -70,13 +70,11 @@ export function useProfilePhoto() {
 	}
 
 	async function deletePhoto() {
-
+		closeDeletePhotoModal()
 		startDeleteOverlay()
 		try {
 			await deleteAvatar()
-
 			user_store.setProfileField('file_name', null)
-			closeDeletePhotoModal()
 		} catch {
 			toast_store.showUpdateError()
 			return

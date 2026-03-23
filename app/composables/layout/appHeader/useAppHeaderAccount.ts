@@ -10,6 +10,7 @@ import {
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
 import { normalizeAppPath } from '~/utils/auth/redirect';
+import { useAuthUser } from '~/composables/auth/useAuthUser';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -188,18 +189,8 @@ export function useAppHeaderAccount() {
 		closeAccountMenu();
 		await nextTick();
 
-		void api(`/${apiCountry.value}/auth/logout`, {
-			method: 'POST',
-		}).catch(() => {
-			// Ignore logout request failures and keep local sign-out immediate.
-		});
-
-		auth_token.value = null;
-		guest_login_mode.value = null;
-		mock_user.value = null;
-		user_store.clearUser();
-		user_store.clearOnboardingProfile();
-		await navigateTo(withCountry('/'));
+		const { logoutUser } = useAuthUser()
+		await logoutUser()
 	}
 
 	function handleAvatarUpdated(event: Event) {

@@ -276,6 +276,12 @@ function handleEscape(event: KeyboardEvent) {
 	closeCustomQtyMode();
 }
 
+function preventNonDigitInput(event: InputEvent) {
+	if (!event.data) return;
+	if (/^\d+$/.test(event.data)) return;
+	event.preventDefault();
+}
+
 function openDeleteModal(ids: string[]) {
 	deleteTargetIds.value = [...ids];
 }
@@ -529,6 +535,7 @@ onBeforeUnmount(() => {
 									inputmode="numeric"
 									placeholder="Enter quantity"
 									class="cart-qty-inline-input"
+									@beforeinput="preventNonDigitInput"
 									@input="onCustomQtyInput(($event.target as HTMLInputElement).value)"
 									@blur="void commitCustomQty(row.id)"
 									@keydown.enter.prevent="void commitCustomQty(row.id)"
@@ -865,6 +872,17 @@ onBeforeUnmount(() => {
                         align-items: center;
                         gap: 16px;
 
+                        .cart-link-btn {
+                            border: 0;
+                            background: transparent;
+                            color: var(--gold-60);
+                            padding: 0;
+                            font-size: var(--type-size-100);
+                            line-height: var(--type-line-100);
+                            font-weight: var(--font-weight-semibold);
+                            cursor: pointer;
+                        }
+
                         .cart-item-thumb {
                             width: 96px;
                             height: 96px;
@@ -896,16 +914,6 @@ onBeforeUnmount(() => {
                                 color: var(--text-secondary);
                             }
 
-                            .cart-link-btn {
-                                border: 0;
-                                background: transparent;
-                                color: var(--gold-60);
-                                padding: 0;
-                                font-size: var(--type-size-100);
-                                line-height: var(--type-line-100);
-                                font-weight: var(--font-weight-semibold);
-                                cursor: pointer;
-                            }
                         }
                     }
 
@@ -913,17 +921,6 @@ onBeforeUnmount(() => {
                         display: flex;
                         align-items: center;
                         gap: 32px;
-
-                        .cart-link-btn {
-                            border: 0;
-                            background: transparent;
-                            color: var(--gold-60);
-                            padding: 0;
-                            font-size: var(--type-size-100);
-                            line-height: var(--type-line-100);
-                            font-weight: var(--font-weight-semibold);
-                            cursor: pointer;
-                        }
 
 						.cart-qty-select-control {
 							width: 176px;

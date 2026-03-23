@@ -116,6 +116,12 @@ const onCustomQtyBlur = () => {
 	isCustomQtyFocused.value = false
 }
 
+const preventNonDigitInput = (event: InputEvent) => {
+	if (!event.data) return
+	if (/^\d+$/.test(event.data)) return
+	event.preventDefault()
+}
+
 const formattedCustomQty = computed(() => {
 	if (customQty.value === null) return ''
 	return customQty.value.toLocaleString()
@@ -123,7 +129,7 @@ const formattedCustomQty = computed(() => {
 
 const onCustomQtyInput = (e: Event) => {
 	const input = e.target as HTMLInputElement
-	const raw = input.value.replace(/,/g, '')
+	const raw = input.value.replace(/[^0-9]/g, '')
 	if (raw === '') {
 		customQty.value = null
 		return
@@ -151,6 +157,18 @@ watch(customQty, (val) => {
 
 	emit('update:selectedQty', 0)
 })
+
+const onCustomWidthInput = (event: Event) => {
+	const target = event.target as HTMLInputElement
+	const raw = target.value.replace(/[^0-9]/g, '')
+	customWidth.value = raw === '' ? null : Number(raw)
+}
+
+const onCustomHeightInput = (event: Event) => {
+	const target = event.target as HTMLInputElement
+	const raw = target.value.replace(/[^0-9]/g, '')
+	customHeight.value = raw === '' ? null : Number(raw)
+}
 
 const focusWidthInput = () => {
 	customWidthInput.value?.focus()
@@ -213,7 +231,9 @@ const displayedProductTitle = computed(() =>
 
 const onVinylWidthInput = (event: Event) => {
 	const target = event.target as HTMLInputElement
-	const nextWidth = Number(target.value)
+	const raw = target.value.replace(/[^0-9]/g, '')
+	if (raw === '') return
+	const nextWidth = Number(raw)
 	if (!Number.isFinite(nextWidth) || nextWidth <= 0) return
 	vinylActiveSize.value = 'width'
 	vinylWidth.value = nextWidth
@@ -221,7 +241,9 @@ const onVinylWidthInput = (event: Event) => {
 
 const onVinylHeightInput = (event: Event) => {
 	const target = event.target as HTMLInputElement
-	const nextHeight = Number(target.value)
+	const raw = target.value.replace(/[^0-9]/g, '')
+	if (raw === '') return
+	const nextHeight = Number(raw)
 	if (!Number.isFinite(nextHeight) || nextHeight <= 0) return
 	vinylActiveSize.value = 'height'
 	vinylHeight.value = nextHeight
@@ -433,10 +455,14 @@ watch(
 								>
 									<input
 										ref="customWidthInput"
-										v-model="customWidth"
-										type="number"
+										:value="customWidth ?? ''"
+										type="text"
+										inputmode="numeric"
+										pattern="[0-9]*"
 										placeholder="Width"
 										class="custom-size-input"
+										@beforeinput="preventNonDigitInput"
+										@input="onCustomWidthInput"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
 									>
@@ -444,10 +470,14 @@ watch(
 									<span class="size-separator">x</span>
 
 									<input
-										v-model="customHeight"
-										type="number"
+										:value="customHeight ?? ''"
+										type="text"
+										inputmode="numeric"
+										pattern="[0-9]*"
 										placeholder="Height"
 										class="custom-size-input"
+										@beforeinput="preventNonDigitInput"
+										@input="onCustomHeightInput"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
 									>
@@ -493,8 +523,11 @@ watch(
 										ref="customQtyInput"
 										:value="formattedCustomQty"
 										type="text"
+										inputmode="numeric"
+										pattern="[0-9]*"
 										placeholder="Enter Quantity"
 										class="custom-size-input custom-quantity-input"
+										@beforeinput="preventNonDigitInput"
 										@input="onCustomQtyInput"
 										@focus="onCustomQtyFocus"
 										@blur="onCustomQtyBlur"
@@ -510,9 +543,9 @@ watch(
 									<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 								</div>
 								<div class="vinyl-size-pill" data-testid="product-category-vinyl-size-input">
-									<input :value="vinylWidth" type="number" min="1" class="vinyl-size-input" @input="onVinylWidthInput">
+									<input :value="vinylWidth" type="text" inputmode="numeric" pattern="[0-9]*" class="vinyl-size-input" @beforeinput="preventNonDigitInput" @input="onVinylWidthInput">
 									<span class="vinyl-size-separator">x</span>
-									<input :value="vinylHeight" type="number" min="1" class="vinyl-size-input" @input="onVinylHeightInput">
+									<input :value="vinylHeight" type="text" inputmode="numeric" pattern="[0-9]*" class="vinyl-size-input" @beforeinput="preventNonDigitInput" @input="onVinylHeightInput">
 								</div>
 							</section>
 
@@ -564,8 +597,11 @@ watch(
 											ref="customQtyInput"
 											:value="formattedCustomQty"
 											type="text"
+											inputmode="numeric"
+											pattern="[0-9]*"
 											placeholder="Enter Quantity"
 											class="custom-size-input custom-quantity-input"
+											@beforeinput="preventNonDigitInput"
 											@input="onCustomQtyInput"
 											@focus="onCustomQtyFocus"
 											@blur="onCustomQtyBlur"
@@ -1062,24 +1098,25 @@ watch(
                     line-height: var(--type-line-100);
                     font-weight: var(--font-weight-regular);
                     outline: none;
+                    appearance: textfield;
+                    -moz-appearance: textfield;
+
                     &::placeholder {
                         color: var(--gray-60);
                         opacity: 1; // prevents browser default fading
                     }
+
                     &.custom-quantity-input {
                         max-width: 84px;
                     }
                 }
+
                 .custom-size-input::-webkit-outer-spin-button,
                 .custom-size-input::-webkit-inner-spin-button {
                     -webkit-appearance: none;
                     margin: 0;
                 }
 
-                .custom-size-input {
-                    appearance: textfield;
-                    -moz-appearance: textfield;
-                }
                 .size-separator {
                     color: var(--text-primary);
                     font-weight: var(--font-weight-medium);
