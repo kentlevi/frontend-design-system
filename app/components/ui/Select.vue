@@ -11,6 +11,7 @@ type SelectOption = {
 	label: string;
 	value: SelectValue;
 	description?: string;
+	style?: Record<string, any>;
 };
 
 defineOptions({
@@ -161,6 +162,7 @@ onBeforeUnmount(() => {
 			<span
 				v-if="selectedOption"
 				class="ui-select-value"
+				:style="selectedOption.style"
 			>
 				{{ selectedOption.label }}
 			</span>
@@ -204,7 +206,7 @@ onBeforeUnmount(() => {
 						@mousedown.prevent="selectOption(option)"
 					>
 						<div class="ui-select-option-copy">
-							<p class="ui-select-option-label">{{ option.label }}</p>
+							<p class="ui-select-option-label" :style="option.style">{{ option.label }}</p>
 							<p v-if="option.description" class="ui-select-option-description">
 								{{ option.description }}
 							</p>
