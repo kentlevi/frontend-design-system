@@ -16,6 +16,7 @@ type AccountLink = {
 };
 
 const props = defineProps<{
+	simple?: boolean;
 	accountOpen: boolean;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
@@ -133,7 +134,10 @@ const {
 					</div>
 				</div>
 
-				<div class="home-account-link-group home-account-link-group--primary">
+				<div
+					v-if="!props.simple"
+					class="home-account-link-group home-account-link-group--primary"
+				>
 					<NuxtLink
 						v-for="link in primaryAccountLinks"
 						:key="link.to"
@@ -155,7 +159,7 @@ const {
 
 				<div class="home-account-link-group home-account-link-group--secondary">
 					<NuxtLink
-						v-if="gettingStartedLink"
+						v-if="!props.simple && gettingStartedLink"
 						:to="withCountry(gettingStartedLink.to)"
 						class="home-account-link home-account-link--section-start"
 						role="menuitem"
@@ -208,7 +212,10 @@ const {
 					</div>
 				</div>
 
-				<div class="home-account-link-group home-account-link-group--primary">
+				<div
+					v-if="!props.simple"
+					class="home-account-link-group home-account-link-group--primary"
+				>
 					<NuxtLink
 						v-if="guestOrderLink"
 						:to="guestOrderTarget"

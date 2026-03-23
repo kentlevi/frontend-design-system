@@ -19,7 +19,6 @@ const {
 	photoError,
 	promotions,
 	reviews,
-	confirmations,
 	initials,
 	canContinueProfileDetails,
 	canSkipProfileDetails,
@@ -73,10 +72,8 @@ const {
 					v-else
 					:promotions="promotions"
 					:reviews="reviews"
-					:confirmations="confirmations"
 					@update:promotions="promotions = $event"
 					@update:reviews="reviews = $event"
-					@update:confirmations="confirmations = $event"
 					@back="goBack"
 					@complete="completeSetup"
 				/>

@@ -69,7 +69,12 @@ const {
 				</template>
 			</UiFormField>
 
-			<UiFormField :label="t('account.profile.newPassword')" :error="pair_password_error" :required="true">
+			<UiFormField
+				:label="t('account.profile.newPassword')"
+				:error="pair_password_error"
+				:required="true"
+				:hint="t('account.profile.passwordHint')"
+			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
@@ -100,7 +105,6 @@ const {
 				</template>
 			</UiFormField>
 
-			<p class="account-profile-muted">{{ t('account.profile.passwordHint') }}</p>
 
 			<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
 				<template #default="{ inputId, describedBy }">
@@ -216,30 +220,6 @@ const {
 
 <style scoped lang="scss">
 .account-profile-section {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	gap: 126px;
-
-	.account-profile-section-copy {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-profile-section-title {
-		margin: 0;
-		font-size: var(--type-size-300);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-300);
-	}
-
-	.account-profile-section-description {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-regular);
-		line-height: var(--type-line-100);
-	}
-
 	.account-profile-stack {
 		display: flex;
 		flex-direction: column;
@@ -327,13 +307,6 @@ const {
 
 	.account-profile-forgot-password-modal-confirm {
 		width: 100%;
-	}
-}
-
-@media (max-width: 980px) {
-	.account-profile-section {
-		grid-template-columns: 1fr;
-		gap: 16px;
 	}
 }
 </style>

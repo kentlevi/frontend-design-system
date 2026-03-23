@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import ProfileEmailChangeModal from './ProfileEmailChangeModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
@@ -37,7 +36,6 @@ const {
 
 	pending_email,
 	is_email_change_modal,
-	email_change_field_ref,
 	email_change_error,
 
 	is_otp_open,
@@ -55,22 +53,6 @@ const {
 	resendOtp,
 	closeOtpModal,
 } = useChangeEmailForm()
-
-function bindEmailChangeFieldRef(element: Element | ComponentPublicInstance | null) {
-	email_change_field_ref.value = element as HTMLElement | null
-}
-
-function setIsEmailChangeModal(value: boolean) {
-	is_email_change_modal.value = value
-}
-
-function setPendingEmail(value: string) {
-	pending_email.value = value
-}
-
-function clearEmailChangeError() {
-	email_change_error.value = ''
-}
 
 onMounted(() => {
 	loadPersonalForm()
@@ -236,15 +218,13 @@ onMounted(() => {
 	/>
 
 	<ProfileEmailChangeModal
-		:model-value="is_email_change_modal"
+		v-model="is_email_change_modal"
 		:pending-email="pending_email"
 		:email-change-error="email_change_error"
-		:bind-email-change-field-ref="bindEmailChangeFieldRef"
-		:set-model-value="setIsEmailChangeModal"
-		:set-pending-email="setPendingEmail"
-		:clear-email-change-error="clearEmailChangeError"
 		:close-email-change-modal="closeEmailChangeModal"
 		:confirm-email-change="confirmEmailChange"
+		@update:pending-email="pending_email = $event"
+		@input-change="email_change_error = ''"
 	/>
 
 	<AuthVerificationModal
@@ -277,31 +257,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .account-profile-section {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	gap: 126px;
-
-	.account-profile-section-copy,
-	.account-profile-section-main {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-profile-section-title {
-		margin: 0;
-		font-size: var(--type-size-300);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-300);
-	}
-
-	.account-profile-section-description {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-regular);
-		line-height: var(--type-line-100);
-	}
-
 	.account-profile-label {
 		display: block;
 		font-size: var(--type-size-100);
@@ -442,7 +397,7 @@ onMounted(() => {
 		--btn-border: transparent;
 	}
 
-	:deep(.account-profile-email-input-field--locked) {
+	:deep(.ui-input[data-disabled="true"] .ui-input-field.account-profile-email-input-field--locked) {
 		padding-right: 92px;
 		color: var(--text-primary);
 	}
@@ -450,13 +405,6 @@ onMounted(() => {
 	.account-profile-actions-right {
 		display: flex;
 		justify-content: flex-end;
-	}
-}
-
-@media (max-width: 980px) {
-	.account-profile-section {
-		grid-template-columns: 1fr;
-		gap: 16px;
 	}
 }
 </style>

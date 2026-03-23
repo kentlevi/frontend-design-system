@@ -12,8 +12,6 @@ withDefaults(
 <template>
 	<aside class="auth-profile-sidebar" data-testid="auth-profile-sidebar">
 		<div class="auth-profile-sidebar-main">
-			<UiLogo class="auth-profile-sidebar-logo" name="musticker" variant="full" color="colored" :size="58" />
-
 			<div class="auth-profile-sidebar-content">
 				<div class="auth-profile-sidebar-head">
 					{{ $t('auth.profile.sidebar.title') }}
@@ -72,17 +70,12 @@ withDefaults(
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 850px;
+    min-height: 721px;
     max-width: 384px;
 
     .auth-profile-sidebar-main {
         display: flex;
         flex-direction: column;
-        gap: 80px;
-
-        .ui-logo.auth-profile-sidebar-logo {
-            align-self: flex-start;
-        }
 
         .auth-profile-sidebar-content {
             display: flex;

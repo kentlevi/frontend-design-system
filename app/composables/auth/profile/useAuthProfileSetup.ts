@@ -50,7 +50,11 @@ export function useAuthProfileSetup() {
 	const profile_fields_store = useProfileFieldsStore();
 	const { state } = storeToRefs(user_store);
 
-	const step = ref<ProfileStep>(1);
+	const step = useCookie<ProfileStep>('auth_onboarding_step', {
+		default: () => 1,
+		path: '/',
+		sameSite: 'lax',
+	});
 	const is_new_onboarding_flow = Boolean(state.value.onboardingProfile?.onboarding);
 	const showWelcomeToast = ref(is_new_onboarding_flow);
 	let toast_timeout: ReturnType<typeof setTimeout> | null = null;
@@ -121,14 +125,24 @@ export function useAuthProfileSetup() {
 		mock_user.value?.email ||
 		accountProfileDefaults.email
 	);
-	const firstName = ref(first_name_source.value);
-	const lastName = ref(last_name_source.value);
-	const email = ref(email_source.value);
+	const onboardingDraft = useCookie<Record<string, any>>('auth_onboarding_draft', {
+		default: () => ({}),
+		path: '/',
+		sameSite: 'lax',
+	});
+
+	const firstName = ref(onboardingDraft.value.firstName || first_name_source.value);
+	const lastName = ref(onboardingDraft.value.lastName || last_name_source.value);
+	const email = ref(onboardingDraft.value.email || email_source.value);
 	const original_email_from_state = ref(normalizeEmail(state.value.email));
 	const is_syncing_from_state = ref(false);
-	const has_first_name_manual_input = ref(false);
-	const has_last_name_manual_input = ref(false);
-	const has_email_manual_input = ref(false);
+	const has_first_name_manual_input = ref(Boolean(onboardingDraft.value.firstName));
+	const has_last_name_manual_input = ref(Boolean(onboardingDraft.value.lastName));
+	const has_email_manual_input = ref(Boolean(onboardingDraft.value.email));
+
+	watch([firstName, lastName, email], ([f, l, e]) => {
+		onboardingDraft.value = { ...onboardingDraft.value, firstName: f, lastName: l, email: e };
+	});
 	const has_required_email = computed(() => {
 		if (!email_required.value) return true;
 		return isValidEmail(email.value);
@@ -147,7 +161,6 @@ export function useAuthProfileSetup() {
 
 	const promotions = ref(true);
 	const reviews = ref(true);
-	const confirmations = ref(true);
 	const useShippingAsBilling = ref(true);
 	const unit = ref<ProfileUnit>('millimeter');
 
@@ -455,7 +468,7 @@ export function useAuthProfileSetup() {
 				}
 				body.append('offers_emails', promotions.value ? '1' : '0');
 				body.append('reviews_emails', reviews.value ? '1' : '0');
-				body.append('confirmations_emails', confirmations.value ? '1' : '0');
+		
 
 				await api(`/${apiCountry.value}/user/complete-onboarding`, {
 					method: 'POST',
@@ -475,6 +488,11 @@ export function useAuthProfileSetup() {
 			};
 		}
 		await navigateTo(withCountry('/'));
+		
+		// Clear Draft State
+		step.value = 1;
+		onboardingDraft.value = {};
+		user_store.clearOnboardingProfile();
 	}
 
 	async function submitEmailVerification() {
@@ -614,7 +632,7 @@ export function useAuthProfileSetup() {
 		restoreCooldownsFromCache();
 	});
 
-	user_store.clearOnboardingProfile();
+
 
 	return {
 		step,
@@ -629,7 +647,6 @@ export function useAuthProfileSetup() {
 		photoError,
 		promotions,
 		reviews,
-		confirmations,
 		useShippingAsBilling,
 		unit,
 		initials,
