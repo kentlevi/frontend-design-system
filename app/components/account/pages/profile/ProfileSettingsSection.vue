@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import type { PreferenceState } from '~/types/account/preferences';
-
-defineProps<{
-	preferenceFormState: Partial<PreferenceState>;
-	updatePreferenceField: (
-		field: 'offers_emails' | 'reviews_emails' | 'confirmations_emails' | 'unit_of_measurement',
-		value: boolean | 'in' | 'mm'
-	) => void;
-}>();
+import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 
 const { t } = useI18n();
+
+const {
+	form_state: preference_form_state,
+	loadPreferences,
+	updatePreferenceField
+} = usePreferenceForm();
+
+
+onMounted(() => {
+	loadPreferences();
+});
 </script>
 
 <template>
@@ -26,7 +29,7 @@ const { t } = useI18n();
 				</div>
 				<label class="account-profile-switch">
 					<input
-						:checked="Boolean(preferenceFormState.offers_emails)"
+						:checked="Boolean(preference_form_state.offers_emails)"
 						type="checkbox"
 						class="account-profile-switch-input"
 						data-testid="account-profile-toggle-promotions"
@@ -43,7 +46,7 @@ const { t } = useI18n();
 				</div>
 				<label class="account-profile-switch">
 					<input
-						:checked="Boolean(preferenceFormState.reviews_emails)"
+						:checked="Boolean(preference_form_state.reviews_emails)"
 						type="checkbox"
 						class="account-profile-switch-input"
 						data-testid="account-profile-toggle-reviews"
@@ -60,7 +63,7 @@ const { t } = useI18n();
 				</div>
 				<label class="account-profile-switch">
 					<input
-						:checked="Boolean(preferenceFormState.confirmations_emails)"
+						:checked="Boolean(preference_form_state.confirmations_emails)"
 						type="checkbox"
 						class="account-profile-switch-input"
 						data-testid="account-profile-toggle-confirmations"
@@ -81,7 +84,7 @@ const { t } = useI18n();
 						tone="neutral"
 						size="md"
 						class="account-profile-unit-button"
-						:class="{ active: preferenceFormState.unit_of_measurement === 'mm' }"
+						:class="{ active: preference_form_state.unit_of_measurement === 'mm' }"
 						data-testid="account-profile-unit-millimeter-button"
 						@click="updatePreferenceField('unit_of_measurement', 'mm')"
 					>
@@ -92,7 +95,7 @@ const { t } = useI18n();
 						tone="neutral"
 						size="md"
 						class="account-profile-unit-button"
-						:class="{ active: preferenceFormState.unit_of_measurement === 'in' }"
+						:class="{ active: preference_form_state.unit_of_measurement === 'in' }"
 						data-testid="account-profile-unit-inch-button"
 						@click="updatePreferenceField('unit_of_measurement', 'in')"
 					>

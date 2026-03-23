@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { ComponentPublicInstance } from 'vue';
-import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 
 defineProps<{
 	pendingEmail: string;
@@ -39,57 +37,6 @@ const { t } = useI18n();
 <template>
 
 
-	<UiModal
-		:model-value="isForgotPasswordModalOpen"
-		align="center"
-		width="504px"
-		padding="40px"
-		gap="8px"
-		modal-class="account-profile-forgot-password-modal-shell"
-		@update:model-value="$event ? setIsForgotPasswordModalOpen(true) : closeForgotPasswordModal()"
-	>
-		<section class="account-profile-forgot-password-modal" data-testid="account-profile-forgot-password-modal">
-			<button
-				type="button"
-				class="account-profile-forgot-password-modal-close"
-				:aria-label="t('account.profile.forgotPasswordModalClose')"
-				data-testid="account-profile-forgot-password-modal-close"
-				@click="closeForgotPasswordModal"
-			>
-				<UiIcon name="regular-times" :size="24" />
-			</button>
-
-			<div class="account-profile-forgot-password-modal-header">
-				<UiLogo
-					name="musticker"
-					variant="mark"
-					color="colored"
-					:size="40"
-					class="account-profile-forgot-password-modal-logo"
-				/>
-				<h3 class="account-profile-forgot-password-modal-title">
-					{{ forgotPasswordRequestSend ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
-				</h3>
-			</div>
-
-			<p class="account-profile-forgot-password-modal-description">
-				{{ forgotPasswordRequestSend ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
-			</p>
-
-			<div class="account-profile-forgot-password-modal-actions">
-				<UiButton
-					variant="filled"
-					tone="neutral"
-					size="lg"
-					class="account-profile-forgot-password-modal-confirm"
-					data-testid="account-profile-forgot-password-modal-confirm"
-					@click="closeForgotPasswordModal"
-				>
-					{{ t('account.profile.forgotPasswordReturnToDashboard') }}
-				</UiButton>
-			</div>
-		</section>
-	</UiModal>
 </template>
 
 <style scoped lang="scss">

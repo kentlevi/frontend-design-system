@@ -255,7 +255,6 @@ onMounted(() => {
 		:resend-cooldown-remaining="remaining"
 		submit-label="Verify"
 		busy-label="Verifying..."
-		width="504px"
 		align="center"
 		:show-close-button="true"
 		test-id-prefix="account-profile-email-change-verification"
