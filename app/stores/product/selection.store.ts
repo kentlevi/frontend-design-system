@@ -3,6 +3,7 @@ import type { SizeSpec, QuantitySpec, AttributeSelection, ColorSpec, FontSpec } 
 
 export const useSelectionStore = defineStore('attr-selection', () => {
 
+
 	const selections = ref<Record<string, AttributeSelection>>({})
 
 	const product = ref<string>()
@@ -46,11 +47,13 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 		const slettering_text = lettering_text && lettering_text?.value ? lettering_text.value : null
 
+		const sfont = font && font?.value ? font.value : null
+
 		selections.value[slug.value] = {
 			size			: size.value,
 			quantity		: quantity.value,
 			color			: scolor,
-			font			: null,
+			font			: sfont,
 			lettering_text	: slettering_text,
 		}
 	}
@@ -102,6 +105,15 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 			saveSelection()
 	}
 
+	const clearSelection = () => {
+		product.value = undefined
+		slug.value = undefined
+		size.value = undefined
+		quantity.value = undefined
+		color.value = null
+		font.value = null
+	}
+
 	return {
 		product,
 		slug,
@@ -117,6 +129,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		price,
 		unit_price,
 		updateProduct,
+		clearSelection,
 		hasSelection,
 		saveSelection,
 		updateSize,

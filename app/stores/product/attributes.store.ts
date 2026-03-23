@@ -4,7 +4,9 @@ import type { ColorSpec, FontSpec, QuantitySpec, SizeSpec } from '~/types/produc
 export const useAttributesStore = defineStore('attributes', () => {
 	// const { $api } = useNuxtApp()
 
-	const product_w_color = ref(['transfer-sticker', 'vinyl-lettering'])
+	const product_w_color = ref(['transfer', 'vinyl-lettering'])
+
+	const product_w_font = ref(['vinyl-lettering'])
 
 	const active_lettering_editor = ref([ 'vinyl-lettering' ])
 
@@ -34,6 +36,34 @@ export const useAttributesStore = defineStore('attributes', () => {
 			label: 'Extra'
 		}
 	])
+
+	const size_featured_cards = ref([
+		{
+			id: 1,
+			key: 'small30',
+			image: '/icons/custom/size-use-cases/small-helmet.svg',
+			description: 'small',
+		},
+		{
+			id: 2,
+			key: 'medium75',
+			image: '/icons/custom/size-use-cases/medium-tumbler.svg',
+			description: 'medium',
+		},
+		{
+			id: 3,
+			key: 'large100',
+			image: '/icons/custom/size-use-cases/large-case.svg',
+			description: 'large',
+		},
+		{
+			id: 4,
+			key: 'extraLarge125',
+			image: '/icons/custom/size-use-cases/extra-large-cooler.svg',
+			description: 'extraLarge',
+		},
+	])
+
 
 	const quantities = ref<QuantitySpec []>([
 		{
@@ -78,13 +108,6 @@ export const useAttributesStore = defineStore('attributes', () => {
 		},
 	]);
 
-	const fonts = ref<FontSpec[]>([
-		{ id: 1, name: 'Antique Olive', key: 'antique-olive' },
-		{ id: 1, name: 'Helvetica Neue', key: 'helvetica-neue' },
-		{ id: 1, name: 'Bebas Neue', key: 'bebas-neue' },
-		{ id: 1, name: 'Brush Script', key: 'brush-script' },
-	])
-
 	const colors = ref<ColorSpec []>([
 		{ id: 1, key: 'black', name: 'Black', code: '#ffffff', swatch_style: { background: '#000000' } },
 		{ id: 2, key: 'white', name: 'White', code: '#111827', swatch_style: { background: '#FFFFFF', border: '1px solid var(--black-base)' } },
@@ -111,6 +134,13 @@ export const useAttributesStore = defineStore('attributes', () => {
 		}
 	])
 
+	const fonts = ref<FontSpec[]>([
+		{ id: 1, label: 'Antique Olive', value: 'antique-olive' },
+		{ id: 1, label: 'Helvetica Neue', value: 'helvetica-neue' },
+		{ id: 1, label: 'Bebas Neue', value: 'bebas-neue' },
+		{ id: 1, label: 'Brush Script', value: 'brush-script' },
+	])
+
 
 	return {
 		sizes,
@@ -118,6 +148,8 @@ export const useAttributesStore = defineStore('attributes', () => {
 		fonts,
 		colors,
 		product_w_color,
+		product_w_font,
 		active_lettering_editor,
+		size_featured_cards,
 	}
 })

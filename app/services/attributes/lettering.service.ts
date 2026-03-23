@@ -31,7 +31,6 @@ export const useLetteringService = () => {
 
 
 	const letteringUpdate = () => {
-		console.log(23)
 		const ssize = ref<SizeSpec>({
 			id: null,
 			custom: false,
@@ -46,21 +45,18 @@ export const useLetteringService = () => {
 	}
 
 	const letteringTextUpdate = (value: string) => {
-		console.log(1)
 		lettering.value.text = value
 
 		letteringUpdate()
 	}
 
 	const letteringWidthUpdate = (value: number) => {
-		console.log(2)
 		lettering.value.width = value
 
 		letteringUpdate()
 	}
 
 	const letteringHeightUpdate = (value: number) => {
-		console.log(3)
 		lettering.value.height = value
 
 		letteringUpdate()

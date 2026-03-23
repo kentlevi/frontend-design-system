@@ -1,8 +1,8 @@
 
 export interface FontSpec {
 	id: number
-	name: string
-	key: string
+	label: string
+	value: string
 }
 
 export interface SwatchStyleSpec {

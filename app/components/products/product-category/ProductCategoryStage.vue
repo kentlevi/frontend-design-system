@@ -12,11 +12,6 @@ type SizeFeatureCard = {
 	descriptionKey: string;
 };
 
-type SelectOption = {
-	label: string;
-	value: string | number;
-};
-
 const props = defineProps<{
 	categoryProducts: ProductItem[];
 	hasPickedProduct: boolean;
@@ -42,110 +37,13 @@ const emit = defineEmits<{
 	'open-upload': [];
 }>();
 
-const { t } = useI18n();
-const { resolveFileUrl } = useFileBaseUrl();
-const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
-const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
-const specialColorProductIds = ['transfer-sticker', 'vinyl-lettering'] as const
-const vinylQuantityOptions = [1, 2, 5, 10, 50, 100, 200, 300] as const
-const vinylFontOptions: SelectOption[] = [
-	{ label: 'Antique Olive', value: 'antique-olive' },
-	{ label: 'Helvetica Neue', value: 'helvetica-neue' },
-	{ label: 'Bebas Neue', value: 'bebas-neue' },
-	{ label: 'Brush Script', value: 'brush-script' },
-]
-
-const isCustomSize = ref(false)
-const customWidth = ref<number | null>(null)
-const customHeight = ref<number | null>(null)
-const isCustomQty = ref(false)
-const customQty = ref<number | null>(null)
-const selectedColor = ref<(typeof colorOptions)[number]['key']>('black')
-const vinylWidth = ref(192)
-const vinylHeight = ref(30)
-const vinylText = ref('')
-const selectedVinylFont = ref<string>('antique-olive')
-const vinylActiveSize = ref<'width' | 'height'>('height')
-
-
-const unitPrice = computed(() =>
-	props.selectedQty > 0 ? props.total / props.selectedQty : 0
-);
-
-const hasValidCustomSize = computed(() =>
-	Boolean(isCustomSize.value && customWidth.value && customWidth.value > 0 && customHeight.value && customHeight.value > 0)
-)
-
-const hasValidCustomQty = computed(() =>
-	Boolean(isCustomQty.value && customQty.value && customQty.value > 0)
-)
-
-const hasValidVinylText = computed(() =>
-	!isVinylLettering.value || vinylText.value.trim().length > 0
-)
-
-const hasPendingCustomSelection = computed(() =>
-	(isCustomSize.value && !hasValidCustomSize.value)
-	|| (isCustomQty.value && !hasValidCustomQty.value)
-	|| props.selectedQty <= 0
-	|| !hasValidVinylText.value
-)
-
-const displayedSubtotal = computed(() => (hasPendingCustomSelection.value ? 0 : props.subtotal))
-const displayedDiscountRate = computed(() => (hasPendingCustomSelection.value ? 0 : props.discountRate))
-const displayedTotal = computed(() => (hasPendingCustomSelection.value ? 0 : props.total))
-const displayedUnitPrice = computed(() => (hasPendingCustomSelection.value ? 0 : unitPrice.value))
-const showDiscountRow = computed(() => displayedSubtotal.value > 0 && displayedDiscountRate.value > 0)
-const isVinylLettering = computed(() => props.selectedProduct?.id === 'vinyl-lettering')
-const shouldPlayPreviewVideo = computed(() =>
-	Boolean(props.selectedProduct) && !isVinylLettering.value && !props.navigationInFlight
-)
-
-const displayedProductTitle = computed(() =>
-	isVinylLettering.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
-)
-
-const onVinylWidthInput = (event: Event) => {
-	const target = event.target as HTMLInputElement
-	const nextWidth = Number(target.value)
-	if (!Number.isFinite(nextWidth) || nextWidth <= 0) return
-	vinylActiveSize.value = 'width'
-	vinylWidth.value = nextWidth
-}
-
-const onVinylHeightInput = (event: Event) => {
-	const target = event.target as HTMLInputElement
-	const nextHeight = Number(target.value)
-	if (!Number.isFinite(nextHeight) || nextHeight <= 0) return
-	vinylActiveSize.value = 'height'
-	vinylHeight.value = nextHeight
-}
-
-watch(
-	() => props.selectedProduct?.id ?? null,
-	(nextProductId) => {
-		if (!nextProductId || !specialColorProductIds.includes(nextProductId as (typeof specialColorProductIds)[number])) {
-			selectedColor.value = 'black'
-		}
-		else if (nextProductId === 'vinyl-lettering' && selectedColor.value === 'full-color') {
-			selectedColor.value = 'black'
-		}
-
-		if (nextProductId === 'vinyl-lettering' && !vinylQuantityOptions.includes(props.selectedQty as (typeof vinylQuantityOptions)[number])) {
-			emit('update:selectedQty', vinylQuantityOptions[0])
-		}
-	},
-	{ immediate: true }
-)
-
-
-
 // 🔥 Functionality Implementation
 const {
 	slug,
 	product,
 	size,
 	featured_sizes,
+	size_featured_cards,
 	custom_size,
 	is_custom_size,
 	quantity,
@@ -158,8 +56,17 @@ const {
 	color,
 	featured_colors,
 	has_color_selection,
+	has_font_selection,
+	has_lettering_editor,
 	lettering,
 	lettering_navigation_flight,
+	selected_font,
+	featured_fonts,
+	pricing_ready,
+	discount,
+	standard_price,
+	unit_price,
+	price,
 	inputUpdateSize,
 	inputUpdateCustomSize,
 	inputUpdateQuantity,
@@ -180,6 +87,8 @@ const {
 	letteringWidthInput,
 	letteringHeightInput,
 	updateProduct,
+	clearForm,
+	featuredCardChange,
 } = useQuoteSectionHandler();
 
 const route = useRoute()
@@ -187,11 +96,38 @@ const route_prod_slug = route.params?.product
 
 if ( typeof route_prod_slug === 'string' )
 	updateProduct(route_prod_slug)
+else
+	clearForm()
 
 onMounted(async () => {
 	if ( typeof slug.value === 'string' && slug.value )
 		instatiateForm()
 })
+
+
+const { t } = useI18n();
+const { resolveFileUrl } = useFileBaseUrl();
+const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
+const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+
+const hasValidCustomSize = computed(() =>
+	Boolean(is_custom_size.value && custom_size.value.width && custom_size.value.width > 0 && custom_size.value.height && custom_size.value.height > 0)
+)
+
+const hasPendingCustomSelection = computed(() =>
+	(is_custom_size.value && !hasValidCustomSize.value)
+	|| (is_custom_size.value && !quantity.value?.nr)
+	|| (quantity.value && quantity.value?.nr && quantity.value?.nr <= 0 )
+	|| !lettering.value.text
+)
+
+const shouldPlayPreviewVideo = computed(() =>
+	Boolean(props.selectedProduct) && !has_lettering_editor.value && !props.navigationInFlight
+)
+
+const displayedProductTitle = computed(() =>
+	has_lettering_editor.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
+)
 
 // ⚠️ End of functionalities
 
@@ -201,18 +137,18 @@ onMounted(async () => {
 	<section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
 		<section class="product-picker product-picker-layer" data-testid="product-category-picker">
 			<button
-				v-for="(product, index) in props.categoryProducts"
-				:key="product.id"
+				v-for="(prod, index) in props.categoryProducts"
+				:key="prod.id"
 				type="button"
 				class="product-picker-item"
-				:class="{ 'is-active': props.selectedId === product.id }"
-				:data-testid="`product-category-picker-item-${product.id}`"
-				@click="emit('select-product', product.id)"
+				:class="{ 'is-active': props.selectedId === prod.id }"
+				:data-testid="`product-category-picker-item-${prod.id}`"
+				@click="emit('select-product', prod.id)"
 			>
-				<div class="product-picker-icon" :class="`is-${product.id}`">
+				<div class="product-picker-icon" :class="`is-${prod.id}`">
 					<img
-						:src="product.image"
-						:alt="`${props.getProductName(product)} preview`"
+						:src="prod.image"
+						:alt="`${props.getProductName(prod)} preview`"
 						:loading="index === 0 ? 'eager' : 'lazy'"
 						:fetchpriority="index === 0 ? 'high' : undefined"
 						:decoding="index === 0 ? 'sync' : 'async'"
@@ -222,7 +158,7 @@ onMounted(async () => {
 					>
 				</div>
 				<p class="product-picker-name">
-					{{ props.getProductName(product) }}
+					{{ props.getProductName(prod) }}
 				</p>
 			</button>
 		</section>
@@ -243,7 +179,7 @@ onMounted(async () => {
 						</div>
 
 						<div
-							v-if="!isVinylLettering"
+							v-if="!has_lettering_editor"
 							class="product-preview-media"
 							data-testid="product-category-preview-media"
 						>
@@ -277,7 +213,7 @@ onMounted(async () => {
 								:text="lettering.text"
 								:width="lettering.width"
 								:height="lettering.height"
-								:font="selectedVinylFont"
+								:font="selected_font"
 								:color-key="color?.key ?? 'black'"
 								:redirecting="lettering_navigation_flight"
 								:active-size="lettering.active"
@@ -289,25 +225,25 @@ onMounted(async () => {
 
 						<div class="product-preview-features" data-testid="product-category-preview-features">
 							<button
-								v-for="feature in props.sizeFeatureCards"
-								:key="feature.key"
+								v-for="featured_size_cards in size_featured_cards"
+								:key="'sizes-cards-'+featured_size_cards.key+'-'+featured_size_cards.id"
 								type="button"
 								class="mini-feature"
-								:class="{ 'is-active': props.selectedSize === feature.key }"
-								:data-testid="`product-category-feature-card-${feature.key}`"
-								@click="emit('update:selectedSize', feature.key)"
+								:class="{ 'is-active': !is_custom_size && !has_lettering_editor && size?.id === featured_size_cards.id }"
+								:data-testid="`product-category-feature-card-${featured_size_cards.key}`"
+								@click="featuredCardChange(featured_size_cards.id)"
 							>
-								<h4 class="mini-feature-title">{{ t(`product.sizes.${feature.key}.label`) }}</h4>
+								<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.key}.label`) }}</h4>
 
 								<img
-									:src="feature.image"
-									:alt="t(`product.sizes.${feature.key}.label`)"
+									:src="featured_size_cards.image"
+									:alt="t(`product.sizes.${featured_size_cards.key}.label`)"
 									loading="lazy"
 									class="mini-feature-image"
 								>
 
 								<p class="mini-feature-description">
-									{{ t(`product.featureCards.${feature.descriptionKey}.description`) }} xx
+									{{ t(`product.featureCards.${featured_size_cards.description}.description`) }}
 								</p>
 							</button>
 						</div>
@@ -341,7 +277,7 @@ onMounted(async () => {
 							</div>
 						</section>
 
-						<section v-if="!isVinylLettering" class="product-section">
+						<section v-if="!has_lettering_editor" class="product-section">
 							<div class="option-head" data-testid="product-category-size-head">
 								<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
 								<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
@@ -408,7 +344,7 @@ onMounted(async () => {
 							</div>
 						</section>
 
-						<section v-if="!isVinylLettering" class="product-section">
+						<section v-if="!has_lettering_editor" class="product-section">
 							<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
 							<div class="option-grid" data-testid="product-category-quantity-options">
 								<button
@@ -470,11 +406,11 @@ onMounted(async () => {
 								</div>
 							</section>
 
-							<section>
+							<section v-if="has_font_selection">
 								<h3 class="option-title">Select your font</h3>
 								<UiSelect
-									v-model="selectedVinylFont"
-									:options="vinylFontOptions"
+									v-model="selected_font"
+									:options="featured_fonts"
 									trigger-class="vinyl-font-trigger"
 									menu-class="vinyl-font-menu"
 								/>
@@ -538,18 +474,18 @@ onMounted(async () => {
 
 								<div class="price-summary-stack">
 									<p
-										v-if="showDiscountRow"
+										v-if="pricing_ready"
 										class="price-summary-row discount"
 										data-testid="product-category-price-discount-row"
 									>
-										<strong class="price-discount-rate">-{{ Math.round(displayedDiscountRate * 100) }}%</strong>
-										<span class="price-summary-strike">{{ formatPrice(displayedSubtotal) }}</span>
+										<strong class="price-discount-rate">-{{ Math.round(discount * 100)}}%</strong>
+										<span class="price-summary-strike">{{ formatPrice(standard_price) }}</span>
 									</p>
 									<p class="price-summary-row total" data-testid="product-category-price-total-row">
-										<strong class="price-summary-value">{{ formatPrice(displayedTotal) }}</strong>
+										<strong class="price-summary-value">{{ pricing_ready ? formatPrice(unit_price) : '--' }}</strong>
 									</p>
 									<p class="price-summary-unit">
-										({{ formatPrice(displayedUnitPrice) }} per piece)
+										({{ pricing_ready ? formatPrice(price) : '--' }} per piece)
 									</p>
 								</div>
 							</div>

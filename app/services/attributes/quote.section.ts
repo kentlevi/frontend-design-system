@@ -5,6 +5,7 @@ import { useSizeService } from "./size.service"
 import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import { useColorService } from "./color.service"
 import { useLetteringService } from "./lettering.service"
+import { useFontService } from "./font.service"
 
 export const useQuoteSectionService = () => {
 
@@ -23,6 +24,15 @@ export const useQuoteSectionService = () => {
 	const colorService 		= useColorService()
 
 	const letteringService 	= useLetteringService()
+
+	const fontService = useFontService()
+
+	const size_featured_cards = computed(() => attributeStore.size_featured_cards )
+
+
+	const clearSelection = () => {
+		selectionStore.clearSelection()
+	}
 
 	const recentSelection = () => {
 		if( !productService.slug.value )
@@ -49,6 +59,15 @@ export const useQuoteSectionService = () => {
 		)
 	)
 
+	const has_font_selection = computed(() =>
+		attributeStore.product_w_font.includes(
+			productService.slug
+			&& productService.slug.value
+				? productService.slug.value
+				: ''
+		)
+	)
+
 
 	return {
 		...productService,
@@ -57,8 +76,12 @@ export const useQuoteSectionService = () => {
 		...pricingService,
 		...colorService,
 		...letteringService,
+		...fontService,
+		clearSelection,
 		recentSelection,
 		has_color_selection,
+		has_font_selection,
 		has_lettering_editor,
+		size_featured_cards,
 	}
 }
