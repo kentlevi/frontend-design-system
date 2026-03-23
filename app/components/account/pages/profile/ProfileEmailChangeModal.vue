@@ -1,17 +1,33 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
-
 defineProps<{
-	modelValue: boolean;
-	pendingEmail: string;
-	emailChangeError: string;
-	bindEmailChangeFieldRef: (element: Element | ComponentPublicInstance | null) => void;
-	setModelValue: (value: boolean) => void;
-	setPendingEmail: (value: string) => void;
-	clearEmailChangeError: () => void;
-	closeEmailChangeModal: () => void;
-	confirmEmailChange: () => void;
-}>();
+	modelValue: boolean
+	pendingEmail: string
+	emailChangeError: string
+	closeEmailChangeModal: () => void
+	confirmEmailChange: () => void
+}>()
+
+/** Emits */
+const emit = defineEmits<{
+	(e: 'update:modelValue', value: boolean): void
+	(e: 'update:pendingEmail', value: string): void
+	(e: 'input-change'): void
+}>()
+
+/**
+ * Update modal visibility
+ */
+function handleModalValueChange(value: boolean) {
+	emit('update:modelValue', value)
+}
+
+/**
+ * Update pending email and notify parent to clear error
+ */
+function handlePendingEmailChange(value: string) {
+	emit('update:pendingEmail', value)
+	emit('input-change')
+}
 
 const { t } = useI18n();
 </script>
@@ -24,7 +40,7 @@ const { t } = useI18n();
 		padding="0"
 		gap="0"
 		modal-class="account-profile-email-change-modal-shell"
-		@update:model-value="setModelValue"
+		@update:model-value="handleModalValueChange"
 	>
 		<section class="account-profile-email-change-modal" data-testid="account-profile-email-change-modal">
 			<button
@@ -45,6 +61,7 @@ const { t } = useI18n();
 						class="account-profile-email-change-modal-icon"
 					>
 				</div>
+
 				<div class="account-profile-email-change-modal-text-wrap">
 					<h3 class="account-profile-email-change-modal-title">Email Change</h3>
 					<p class="account-profile-email-change-modal-text">
@@ -63,7 +80,7 @@ const { t } = useI18n();
 					:required="true"
 				>
 					<template #default="{ inputId, describedBy }">
-						<div :ref="bindEmailChangeFieldRef" class="account-profile-email-change-input-wrap">
+						<div class="account-profile-email-change-input-wrap">
 							<UiInput
 								:id="inputId"
 								:model-value="pendingEmail"
@@ -73,7 +90,7 @@ const { t } = useI18n();
 								placeholder="Please enter your new email address."
 								input-class="account-profile-email-change-input"
 								data-testid="account-profile-email-change-input"
-								@update:model-value="(value) => { setPendingEmail(value); clearEmailChangeError() }"
+								@update:model-value="handlePendingEmailChange"
 							/>
 						</div>
 					</template>

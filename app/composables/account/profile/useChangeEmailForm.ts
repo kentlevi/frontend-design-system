@@ -34,7 +34,6 @@ export function useChangeEmailForm() {
 	/** Email change modal state */
 	const pending_email = ref('')
 	const is_email_change_modal = ref(false)
-	const email_change_field_ref = ref<HTMLElement | null>(null)
 	const email_change_error = ref('')
 	const request_sent = ref(false)
 
@@ -49,12 +48,6 @@ export function useChangeEmailForm() {
 	 */
 	function openEmailChangeModal() {
 		is_email_change_modal.value = true
-
-		/** Focus input after modal is rendered */
-		void nextTick(() => {
-			const input_element = email_change_field_ref.value?.querySelector('input') as HTMLInputElement | null
-			input_element?.focus()
-		})
 	}
 
 	/**
@@ -373,7 +366,6 @@ export function useChangeEmailForm() {
 
 		pending_email,
 		is_email_change_modal,
-		email_change_field_ref,
 		email_change_error,
 
 		request_sent,
