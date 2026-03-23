@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useCountry } from '~/composables/app/country/useCountry';
 import type { icons } from '~/data/ui/icons';
-import { display_avatar, display_name, user_initial } from '~/utils/profile_photo/profile_photo';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 type IconName = keyof typeof icons;
 type AccountStat = {
@@ -27,6 +27,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 const localAvatarDataUrl = ref<string | null>(null);
