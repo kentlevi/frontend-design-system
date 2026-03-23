@@ -81,9 +81,17 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const nonMemberOrderError = ref('');
 
 	// Computed
-	const submitLabel = computed(() =>
-		isNonMember.value ? t('auth.login.checkOrder') : t('auth.login.signIn')
-	);
+	const submitLabel = computed(() => {
+		const is_login_page = route.path === withCountry('/auth/login');
+
+		if (isNonMember.value) {
+			return is_login_page
+				? t('auth.login.checkOrder')
+				: t('auth.login.signIn');
+		}
+
+		return t('auth.login.signIn');
+	});
 	const isPageLoginBusy = computed(() =>
 		isCheckingGuestOrder.value || isSigningInMember.value
 	);
@@ -278,7 +286,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 			const message = getAuthResponseMessage(response);
 			const message_code = getAuthResponseMessageCode(response);
-			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
 
 			if (!response.success) {
 				const code = getAuthResponseCode(response);
@@ -294,7 +301,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 			if (response.success && message_code === 'login_success') {
 				await fetchUserProfile();
-				return await navigateTo(GUEST_TEST_REDIRECT_URL);
+				return await navigateTo(postLoginRedirect.value);
 			}
 
 			if (!response.success) {
@@ -397,12 +404,11 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				return;
 			}
 
-			fetchUserProfile();
-			const GUEST_TEST_REDIRECT_URL = '/orders/12405070009';
+			await fetchUserProfile();
 
 			guestVerificationSession.value = null;
 			guestVerificationToken.value = '';
-			return navigateTo(GUEST_TEST_REDIRECT_URL);
+			return navigateTo(postLoginRedirect.value);
 		} catch (error) {
 			console.error(error);
 			return;

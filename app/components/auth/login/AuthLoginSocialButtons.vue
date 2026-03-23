@@ -45,7 +45,11 @@ interface MeResponse {
 async function syncSocialLoginUserState() {
 	try {
 		const { fetchAndStoreUser } = useAuthUser()
-		await fetchAndStoreUser()
+		const response = await fetchAndStoreUser()
+
+		if (!response) {
+			return
+		}
 
 		if (import.meta.client) {
 			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');

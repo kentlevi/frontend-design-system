@@ -131,6 +131,15 @@ async function continueWithRegisteredEmail() {
 	return await navigateTo(postLoginRedirect.value);
 }
 
+async function handleSubmitVerification() {
+	const response = await submitVerification();
+	if (!response?.success) return;
+
+	if (props.loginAsAction) {
+		emit('close');
+	}
+}
+
 function onRegisteredEmailPasswordInput(value: string) {
 	registeredEmailPassword.value = value;
 	registeredEmailPasswordError.value = '';
@@ -438,7 +447,7 @@ watch(isEmailTakenError, (is_taken) => {
 			:verifying="isVerifying"
 			:resend-cooldown-remaining="resendCooldownRemaining"
 			@update:code="verificationCode = $event"
-			@verify="submitVerification"
+			@verify="handleSubmitVerification"
 			@resend="resendVerification"
 		/>
 
