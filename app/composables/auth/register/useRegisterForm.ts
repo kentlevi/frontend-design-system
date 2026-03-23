@@ -1,5 +1,5 @@
 import { nextTick, onBeforeUnmount, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
 	getAuthErrorMessage,
 	getAuthResponseCode,
@@ -15,9 +15,11 @@ import {
 } from '~/composables/auth/verification/useVerificationCooldown';
 import { useAuthUser } from '../useAuthUser';
 import { useRegisterUser } from '../useRegisterUser';
+import { normalizeAppPath } from '~/utils/auth/redirect';
 
 export function useRegisterForm() {
 	const router = useRouter();
+	const route = useRoute();
 	const isVerificationModalOpen = ref(false);
 	const { t } = useI18n();
 	const { withCountry } = useCountry();
@@ -463,7 +465,13 @@ export function useRegisterForm() {
 			clearResendCooldownTimer();
 			resendCooldownRemaining.value = 0;
 			isVerificationModalOpen.value = false;
-			await router.push(withCountry('/auth/profile'));
+
+			const isRegisterPage =
+				normalizeAppPath(route.path) === normalizeAppPath(withCountry('/auth/register'));
+			if (isRegisterPage) {
+				await router.push(withCountry('/auth/profile'));
+			}
+
 			return response;
 		} catch (error: unknown) {
 			verificationError.value =
