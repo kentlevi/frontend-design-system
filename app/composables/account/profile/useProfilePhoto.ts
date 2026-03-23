@@ -1,4 +1,4 @@
-import { saveAvatar } from "~/services/profile/avatar.service";
+import { deleteAvatar, saveAvatar } from "~/services/profile/avatar.service";
 import { useUsersStore } from "~/stores/users/users.store";
 import { processAvatarFile } from "~/utils/avatar/processAvatar";
 import { resolveUploadPath } from "~/utils/file/file";
@@ -9,12 +9,12 @@ export function useProfilePhoto() {
 	/** State */
 	const user_store = useUsersStore()
 	const loading_overlay_store = useLoadingOverlayStore()
+	const toast_store = useToastStore()
 
 	const is_delete_photo_modal_open = ref(false)
 
 	const file_input = ref<HTMLInputElement | null>(null);
-	const photo_url = ref<string | null>(null);
-
+	const error = ref('')
 
 	/** Opens the native file picker */
 	function openFilePicker() {
@@ -59,69 +59,30 @@ export function useProfilePhoto() {
 			/** Save file name in database */
 			await saveAvatar(file_name)
 
-			try {
-				/**
-                 * Convert the processed file into a data URL
-                 * so it can be displayed immediately in the UI
-                 */
-				photo_url.value = await readFileAsDataUrl(processed_avatar.file)
-			} catch {
-				console.log('Failed to read data as url');
-				return
-			}
-
 			/** Set file name in store */
 			user_store.setProfileField('file_name', file_name)
-		} catch (_error: unknown) {
-			console.log(_error);
+		} catch {
+			toast_store.showUpdateError()
+			return
 		} finally {
 			loading_overlay_store.stopLoading('upload_avatar')
 		}
 	}
 
-	function readFileAsDataUrl(file: File): Promise<string> {
-		/** Return a Promise because file reading is asynchronous */
-		return new Promise((resolve, reject) => {
-			/** Create browser file reader */
-			const reader = new FileReader();
+	async function deletePhoto() {
 
-			/** Runs when file reading succeeds */
-			reader.onload = () => {
-				/** Ensure result is a string before resolving */
-				if (typeof reader.result === 'string') {
-					resolve(reader.result);
-					return;
-				}
+		startDeleteOverlay()
+		try {
+			await deleteAvatar()
 
-				/** Reject if result is not the expected type */
-				reject(new Error('Failed to read file as data URL.'));
-			};
-
-			/** Runs when file reading fails */
-			reader.onerror = () => reject(new Error('Failed to read file.'));
-
-			/** Start reading the file as a Data URL */
-			reader.readAsDataURL(file);
-		});
-	}
-
-	/**
-	 * Revokes the current photo URL if it is a blob URL
-	 *
-	 * This prevents memory leaks when replacing an old preview.
-	 * Only blob URLs need manual cleanup.
-	 */
-	function revokePhotoUrl() {
-		if (photo_url.value?.startsWith('blob:')) {
-			URL.revokeObjectURL(photo_url.value);
+			user_store.setProfileField('file_name', null)
+			closeDeletePhotoModal()
+		} catch {
+			toast_store.showUpdateError()
+			return
+		} finally {
+			loading_overlay_store.stopLoading('delete_avatar')
 		}
-	}
-
-	function removePhoto() {
-		revokePhotoUrl()
-		photo_url.value = null
-
-		closeDeletePhotoModal()
 	}
 
 
@@ -143,9 +104,7 @@ export function useProfilePhoto() {
 
 
 
-	/**
-	 * Start request overlay
-	 */
+	/** Overlays */
 	function startRequestOverlay() {
 		loading_overlay_store.startLoading('upload_avatar', {
 			showCopy: true,
@@ -154,15 +113,24 @@ export function useProfilePhoto() {
 		})
 	}
 
+	function startDeleteOverlay() {
+		loading_overlay_store.startLoading('delete_avatar', {
+			showCopy: true,
+			testId: 'account-profile-upload-avatar-overlay',
+			position: 'fixed'
+		})
+	}
+	/** End: Overlays */
+
 	return {
 		file_input,
-		photo_url,
 		is_delete_photo_modal_open,
+		error,
 
 		openFilePicker,
 		onFilePicked,
 		openDeletePhotoModal,
 		closeDeletePhotoModal,
-		removePhoto,
+		deletePhoto,
 	};
 }

@@ -3,7 +3,7 @@ import { toRef } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
 import type { icons } from '~/data/ui/icons';
-import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
+import { display_avatar, display_name, user_initial } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -19,7 +19,6 @@ const props = defineProps<{
 	accountOpen: boolean;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
-	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
 	accountLinks: AccountLink[];
@@ -82,7 +81,7 @@ const {
 				<img
 					v-if="display_avatar"
 					:src="display_avatar"
-					:alt="displayName"
+					:alt="display_name"
 					class="home-header-avatar-image"
 				>
 				<template v-else>{{ user_initial }}</template>
@@ -119,14 +118,14 @@ const {
 						<img
 							v-if="display_avatar"
 							:src="display_avatar"
-							:alt="displayName"
+							:alt="display_name"
 							class="home-account-summary-avatar-image"
 						>
 						<template v-else>{{ user_initial }}</template>
 					</span>
 					<div>
 						<p class="home-account-summary-name">
-							{{ displayName }}
+							{{ display_name }}
 						</p>
 						<p class="home-account-summary-email">
 							{{ displayEmail }}

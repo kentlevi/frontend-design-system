@@ -90,21 +90,6 @@ export function useAppHeaderAccount() {
 		() => String(guest_login_mode.value || '') === '1' && !is_mock_logged_in.value
 	);
 
-	const display_name = computed(() => {
-		/** Get all user field values safely */
-		const user_field_values = state.value.profile?.user_field_values ?? []
-
-		/** Sort by sort_order, get each value, remove empty ones, then join */
-		return [...user_field_values]
-			.sort(
-				(first_value, second_value) =>
-					(first_value.sort_order ?? 0) - (second_value.sort_order ?? 0)
-			)
-			.map((val) => val.value)
-			.filter(Boolean)
-			.join(' ')
-	})
-
 	const display_email = computed(() => {
 		return (
 			state.value.email ||
@@ -112,20 +97,6 @@ export function useAppHeaderAccount() {
 			state.value.onboardingProfile?.email?.trim() ||
 			''
 		);
-	});
-
-	const user_initial = computed(() => {
-		const source_name = display_name.value.trim();
-		if (!source_name) return 'MU';
-
-		const initials = source_name
-			.split(/\s+/)
-			.filter(Boolean)
-			.slice(0, 2)
-			.map((part) => part.charAt(0).toUpperCase())
-			.join('');
-
-		return initials || source_name.charAt(0).toUpperCase() || 'MU';
 	});
 
 	const account_transition_name = computed(() =>
@@ -283,9 +254,7 @@ export function useAppHeaderAccount() {
 		accountLinks: account_links,
 		isMockLoggedIn: is_mock_logged_in,
 		isGuestLoggedIn: is_guest_logged_in,
-		userInitial: user_initial,
 		userAvatarUrl: user_avatar_url,
-		displayName: display_name,
 		displayEmail: display_email,
 		accountTransitionName: account_transition_name,
 		isNavLinkActive: isNavLinkActive,
