@@ -1,28 +1,34 @@
 <script setup lang="ts">
-defineProps<{
-	currentPassword: string;
-	newPassword: string;
-	newPasswordConfirmation: string;
-	currentPasswordError: string;
-	pairPasswordError: string;
-	isChangePasswordEnabled: boolean;
-	currentPasswordVisible: boolean;
-	newPasswordVisible: boolean;
-	newPasswordConfirmationVisible: boolean;
-	isPasswordChangeSubmitting: boolean;
-	updateCurrentPassword: (value: string) => void;
-	updateNewPassword: (value: string) => void;
-	updateNewPasswordConfirmation: (value: string) => void;
-	clearCurrentPasswordError: () => void;
-	toggleCurrentPasswordVisible: () => void;
-	toggleNewPasswordVisible: () => void;
-	toggleNewPasswordConfirmationVisible: () => void;
-	clearNewPasswordPairErrors: () => void;
-	onChangePassword: () => void;
-	sendForgotPasswordEmail: () => void;
-}>();
+import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
+import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 
 const { t } = useI18n();
+
+const {
+	current_password,
+	new_password,
+	new_password_confirmation,
+	current_password_error,
+	pair_password_error,
+
+	is_change_password_enabled,
+
+	current_password_visible,
+	new_password_visible,
+	new_password_confirmation_visible,
+
+	clearNewPasswordPairErrors,
+	onChangePassword,
+} = usePasswordForm()
+
+const {
+	is_forgot_password_modal_open,
+	forgot_password_request_send,
+
+	sendForgotPasswordEmail,
+	closeForgotPasswordModal
+} = useForgotPasswordForm()
+
 </script>
 
 <template>
@@ -32,17 +38,17 @@ const { t } = useI18n();
 			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 		</div>
 		<div class="account-profile-stack" data-testid="account-profile-password-form">
-			<UiFormField :label="t('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
+			<UiFormField :label="t('account.profile.currentPassword')" :error="current_password_error" :required="true">
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
-						:model-value="currentPassword"
-						:type="currentPasswordVisible ? 'text' : 'password'"
+						v-model="current_password"
+						:type="current_password_visible ? 'text' : 'password'"
 						:aria-describedby="describedBy || undefined"
-						:state="currentPasswordError ? 'error' : 'default'"
+						:state="current_password_error ? 'error' : 'default'"
 						:placeholder="t('account.profile.currentPasswordPlaceholder')"
 						data-testid="account-profile-current-password"
-						@update:model-value="updateCurrentPassword($event); clearCurrentPasswordError()"
+						@update:model-value="current_password_error = ''"
 					>
 						<template #icon-right>
 							<UiButton
@@ -54,26 +60,26 @@ const { t } = useI18n();
 								:aria-label="t('auth.reset.togglePassword')"
 								:sr-label="t('auth.reset.togglePassword')"
 								icon-only
-								:icon="currentPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:icon="current_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
-								@click="toggleCurrentPasswordVisible"
+								@click="current_password_visible = !current_password_visible"
 							/>
 						</template>
 					</UiInput>
 				</template>
 			</UiFormField>
 
-			<UiFormField :label="t('account.profile.newPassword')" :error="pairPasswordError" :required="true">
+			<UiFormField :label="t('account.profile.newPassword')" :error="pair_password_error" :required="true">
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
-						:model-value="newPassword"
-						:type="newPasswordVisible ? 'text' : 'password'"
+						v-model="new_password"
+						:type="new_password_visible ? 'text' : 'password'"
 						:aria-describedby="describedBy || undefined"
-						:state="pairPasswordError ? 'error' : 'default'"
+						:state="pair_password_error ? 'error' : 'default'"
 						:placeholder="t('account.profile.newPasswordPlaceholder')"
 						data-testid="account-profile-new-password"
-						@update:model-value="updateNewPassword($event); clearNewPasswordPairErrors()"
+						@update:model-value="clearNewPasswordPairErrors()"
 					>
 						<template #icon-right>
 							<UiButton
@@ -85,9 +91,9 @@ const { t } = useI18n();
 								:aria-label="t('auth.reset.togglePassword')"
 								:sr-label="t('auth.reset.togglePassword')"
 								icon-only
-								:icon="newPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:icon="new_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
-								@click="toggleNewPasswordVisible"
+								@click="new_password_visible = !new_password_visible"
 							/>
 						</template>
 					</UiInput>
@@ -100,13 +106,13 @@ const { t } = useI18n();
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
-						:model-value="newPasswordConfirmation"
-						:type="newPasswordConfirmationVisible ? 'text' : 'password'"
+						v-model="new_password_confirmation"
+						:type="new_password_confirmation_visible ? 'text' : 'password'"
 						:aria-describedby="describedBy || undefined"
-						:state="pairPasswordError ? 'error' : 'default'"
+						:state="pair_password_error ? 'error' : 'default'"
 						:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
 						data-testid="account-profile-confirm-password"
-						@update:model-value="updateNewPasswordConfirmation($event); clearNewPasswordPairErrors()"
+						@update:model-value="clearNewPasswordPairErrors()"
 					>
 						<template #icon-right>
 							<UiButton
@@ -118,9 +124,9 @@ const { t } = useI18n();
 								:aria-label="t('auth.reset.toggleConfirmPassword')"
 								:sr-label="t('auth.reset.toggleConfirmPassword')"
 								icon-only
-								:icon="newPasswordConfirmationVisible ? 'regular-eye' : 'regular-eye-slash'"
+								:icon="new_password_confirmation_visible ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
-								@click="toggleNewPasswordConfirmationVisible"
+								@click="new_password_confirmation_visible = !new_password_confirmation_visible"
 							/>
 						</template>
 					</UiInput>
@@ -132,7 +138,7 @@ const { t } = useI18n();
 					variant="filled"
 					tone="neutral"
 					size="md"
-					:disabled="!isChangePasswordEnabled || isPasswordChangeSubmitting"
+					:disabled="!is_change_password_enabled"
 					data-testid="account-profile-change-password-button"
 					@click="onChangePassword"
 				>
@@ -153,6 +159,59 @@ const { t } = useI18n();
 			</div>
 		</div>
 	</div>
+
+
+	<UiModal
+		:model-value="is_forgot_password_modal_open"
+		align="center"
+		width="504px"
+		padding="40px"
+		gap="8px"
+		modal-class="account-profile-forgot-password-modal-shell"
+		@update:model-value="$event ? (is_forgot_password_modal_open = true) : closeForgotPasswordModal()"
+	>
+		<section class="account-profile-forgot-password-modal" data-testid="account-profile-forgot-password-modal">
+			<button
+				type="button"
+				class="account-profile-forgot-password-modal-close"
+				:aria-label="t('account.profile.forgotPasswordModalClose')"
+				data-testid="account-profile-forgot-password-modal-close"
+				@click="closeForgotPasswordModal"
+			>
+				<UiIcon name="regular-times" :size="24" />
+			</button>
+
+			<div class="account-profile-forgot-password-modal-header">
+				<UiLogo
+					name="musticker"
+					variant="mark"
+					color="colored"
+					:size="40"
+					class="account-profile-forgot-password-modal-logo"
+				/>
+				<h3 class="account-profile-forgot-password-modal-title">
+					{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+				</h3>
+			</div>
+
+			<p class="account-profile-forgot-password-modal-description">
+				{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
+			</p>
+
+			<div class="account-profile-forgot-password-modal-actions">
+				<UiButton
+					variant="filled"
+					tone="neutral"
+					size="lg"
+					class="account-profile-forgot-password-modal-confirm"
+					data-testid="account-profile-forgot-password-modal-confirm"
+					@click="closeForgotPasswordModal"
+				>
+					{{ t('account.profile.forgotPasswordReturnToDashboard') }}
+				</UiButton>
+			</div>
+		</section>
+	</UiModal>
 </template>
 
 <style scoped lang="scss">
@@ -214,6 +273,60 @@ const { t } = useI18n();
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
+	}
+}
+
+
+.account-profile-forgot-password-modal {
+	position: relative;
+	margin: calc(var(--ui-modal-padding, 40px) * -1);
+	padding: var(--ui-modal-padding, 40px);
+	background: var(--contrast-light);
+	border-radius: 14px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	.account-profile-forgot-password-modal-close {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+		display: grid;
+		place-items: center;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text-primary);
+		cursor: pointer;
+		z-index: 1;
+	}
+
+	.account-profile-forgot-password-modal-header {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 24px;
+	}
+
+	.account-profile-forgot-password-modal-title {
+		font-size: var(--type-size-500);
+		line-height: var(--type-line-500);
+		color: var(--text-primary);
+	}
+
+	.account-profile-forgot-password-modal-description {
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
+		color: var(--text-secondary);
+	}
+
+	.account-profile-forgot-password-modal-actions {
+		display: flex;
+	}
+
+	.account-profile-forgot-password-modal-confirm {
+		width: 100%;
 	}
 }
 
