@@ -1,11 +1,11 @@
-import type { SendEmailChangeOtpSuccessData } from "~/types/account/changeEmail";
+import type { SendEmailChangeOtpSuccessData, EmailChangeRequestPayload, VerifyEmailChangePayload } from "~/types/account/changeEmail";
 import type { ApiResponse } from "~/types/config/api";
 
 /**
  * Send email change OTP
  */
 export async function sendEmailChangeOTP(
-	payload: Record<string, string>
+	payload: EmailChangeRequestPayload
 ): Promise<ApiResponse<SendEmailChangeOtpSuccessData>> {
 	const { $api } = useNuxtApp()
 
@@ -14,7 +14,7 @@ export async function sendEmailChangeOTP(
 
 /** Verify Otp sent */
 export async function verifyEmailChangeOtp(
-	payload: Record<string, string>
+	payload: VerifyEmailChangePayload
 ): Promise<ApiResponse<SendEmailChangeOtpSuccessData>> {
 	const { $api } = useNuxtApp()
 

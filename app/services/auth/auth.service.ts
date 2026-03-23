@@ -7,7 +7,9 @@ import type {
 	SendResetPasswordLinkPayload,
 	RegisterVerificationPayload,
 	RegisterPayload,
-	RegisterVerificationResponse
+	RegisterVerificationResponse,
+	SocialLoginPayload,
+	SocialRedirectResponse
 } from '~/types/auth/auth'
 import type { MeUserResponse } from '~/types/auth/user'
 import type { ApiResponse } from "~/types/config/api"
@@ -73,4 +75,13 @@ export async function submitRegisterVerification(payload: RegisterPayload): Prom
 	const { $api } = useNuxtApp()
 
 	return await $api.post('auth/register', { ...payload })
+}
+
+/**
+ * Login: Social Login Redirect to provider page
+ */
+export async function socialRedirect(payload: SocialLoginPayload): Promise<SocialRedirectResponse> {
+	const { $api } = useNuxtApp()
+
+	return await $api.post('auth/social/redirect', { ...payload })
 }

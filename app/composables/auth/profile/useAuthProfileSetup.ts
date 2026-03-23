@@ -1,5 +1,15 @@
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { accountProfileDefaults } from '~/data/account/profile';
+import {
+	getAuthErrorMessage,
+	getAuthResponseMessage,
+	isValidAuthEmail,
+} from '~/helpers/auth/auth.helper';
+import {
+	getRemainingSecondsFromTimestamp,
+	isTimestampExpired,
+	useVerificationCooldown,
+} from '~/composables/auth/verification/useVerificationCooldown';
 import {
 	getAccountInitials,
 	getProfileFieldValue,
@@ -7,12 +17,21 @@ import {
 	readFileAsDataUrl,
 } from '~/utils/account/accountProfile';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { sendEmailChangeOTP, verifyEmailChangeOtp } from '~/services/profile/changeEmail.service';
 import { useUsersStore } from '~/stores/users/users.store';
+import { useProfileFieldsStore } from '~/stores/profile_field';
 import type { AccountMockUser } from '~/types/account/profile';
 import { useAuthUser } from '../useAuthUser';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
+
+type EmailVerificationSession = {
+	email?: string;
+	expires_at?: string | number | Date;
+	resend_cooldown_until?: number;
+	request_cooldown_until?: number;
+};
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -22,47 +41,106 @@ export function useAuthProfileSetup() {
 	const { withCountry, apiCountry } = useCountry();
 	const api = useApi();
 	const { t } = useI18n();
-	const mockUser = useCookie<AccountMockUser | null>('mock_user', {
+	const mock_user = useCookie<AccountMockUser | null>('mock_user', {
 		default: () => null,
 		sameSite: 'lax',
 		path: '/',
 	});
-	const userStore = useUsersStore();
-	const { state } = storeToRefs(useUsersStore())
+	const user_store = useUsersStore();
+	const profile_fields_store = useProfileFieldsStore();
+	const { state } = storeToRefs(user_store);
 
 	const step = ref<ProfileStep>(1);
-	const isNewOnboardingFlow = Boolean(state.value.onboardingProfile?.onboarding);
-	const showWelcomeToast = ref(isNewOnboardingFlow);
-	let toastTimeout: ReturnType<typeof setTimeout> | null = null;
+	const is_new_onboarding_flow = Boolean(state.value.onboardingProfile?.onboarding);
+	const showWelcomeToast = ref(is_new_onboarding_flow);
+	let toast_timeout: ReturnType<typeof setTimeout> | null = null;
 
-	const profileFieldValues = computed(
+	const email_verification_session = ref<EmailVerificationSession | null>(null);
+	const is_email_verification_modal_open = ref(false);
+	const verification_email = ref('');
+	const verification_code = ref('');
+	const verification_error = ref('');
+	const resend_limit_reached = ref('');
+	const email_input_error = ref('');
+	const is_verifying_email = ref(false);
+	const resend_cooldown = useVerificationCooldown();
+	const request_cooldown = useVerificationCooldown();
+	const resend_cooldown_remaining = resend_cooldown.remaining;
+	const request_cooldown_remaining = request_cooldown.remaining;
+
+	const profile_field_values = computed(
 		() => state.value.profile?.user_field_values ?? []
 	);
-	const storeFirstName = computed(
-		() => getProfileFieldValue(profileFieldValues.value, 'first_name')
+	const dynamic_profile_fields = computed(
+		() => profile_fields_store.dynamic_profile_fields
 	);
-	const storeLastName = computed(
-		() => getProfileFieldValue(profileFieldValues.value, 'last_name')
+	const store_first_name = computed(
+		() => getProfileFieldValue(
+			profile_field_values.value,
+			'first_name',
+			dynamic_profile_fields.value
+		)
 	);
+	const store_last_name = computed(
+		() => getProfileFieldValue(
+			profile_field_values.value,
+			'last_name',
+			dynamic_profile_fields.value
+		)
+	);
+	const has_saved_email = computed(
+		() => Boolean((state.value.email ?? '').trim())
+	);
+	const email_disabled = computed(() => has_saved_email.value);
+	const email_required = computed(() => !has_saved_email.value);
+	const can_skip_profile_details = computed(() => !email_required.value);
 
-	const firstName = ref(
-		storeFirstName.value ||
+	function normalizeEmail(value: string | null | undefined) {
+		return (value || '').trim().toLowerCase();
+	}
+
+	function isValidEmail(value: string) {
+		return isValidAuthEmail(value.trim());
+	}
+
+	const first_name_source = computed(() =>
+		store_first_name.value ||
 		state.value.onboardingProfile?.firstName ||
-		mockUser.value?.firstName ||
+		mock_user.value?.firstName ||
 		accountProfileDefaults.firstName
 	);
-	const lastName = ref(
-		storeLastName.value ||
+	const last_name_source = computed(() =>
+		store_last_name.value ||
 		state.value.onboardingProfile?.lastName ||
-		mockUser.value?.lastName ||
+		mock_user.value?.lastName ||
 		accountProfileDefaults.lastName
 	);
-	const email = ref(
+	const email_source = computed(() =>
 		state.value.email ||
 		state.value.onboardingProfile?.email ||
-		mockUser.value?.email ||
+		mock_user.value?.email ||
 		accountProfileDefaults.email
 	);
+	const firstName = ref(first_name_source.value);
+	const lastName = ref(last_name_source.value);
+	const email = ref(email_source.value);
+	const original_email_from_state = ref(normalizeEmail(state.value.email));
+	const is_syncing_from_state = ref(false);
+	const has_first_name_manual_input = ref(false);
+	const has_last_name_manual_input = ref(false);
+	const has_email_manual_input = ref(false);
+	const has_required_email = computed(() => {
+		if (!email_required.value) return true;
+		return isValidEmail(email.value);
+	});
+	const email_changed_from_state = computed(() => {
+		return normalizeEmail(email.value) !== original_email_from_state.value;
+	});
+	const requires_email_verification = computed(() => {
+		if (!state.value.id) return false;
+		if (!has_required_email.value) return false;
+		return email_changed_from_state.value;
+	});
 
 	const photoUrl = ref<string | null>(null);
 	const photoError = ref('');
@@ -73,36 +151,50 @@ export function useAuthProfileSetup() {
 	const useShippingAsBilling = ref(true);
 	const unit = ref<ProfileUnit>('millimeter');
 
-	const initialFirstName = ref(firstName.value.trim());
-	const initialLastName = ref(lastName.value.trim());
+	const initial_first_name = ref(firstName.value.trim());
+	const initial_last_name = ref(lastName.value.trim());
 
 	const initials = computed(() => {
 		return getAccountInitials(firstName.value.trim(), lastName.value.trim());
 	});
 
-	const hasEditedProfileDetails = computed(() => {
+	const has_edited_profile_details = computed(() => {
 		return (
-			firstName.value.trim() !== initialFirstName.value
-			|| lastName.value.trim() !== initialLastName.value
+			firstName.value.trim() !== initial_first_name.value
+			|| lastName.value.trim() !== initial_last_name.value
 		);
 	});
 
-	const hasUploadedPhoto = computed(() => Boolean(photoUrl.value));
-	const canContinueProfileDetails = computed(() => hasEditedProfileDetails.value || hasUploadedPhoto.value);
+	const has_uploaded_photo = computed(() => Boolean(photoUrl.value));
+	const canContinueProfileDetails = computed(() => {
+		if (email_required.value) {
+			return has_required_email.value;
+		}
+
+		return has_edited_profile_details.value || has_uploaded_photo.value;
+	});
 
 	function dismissToast() {
 		showWelcomeToast.value = false;
 	}
 
+	function syncFieldFromState(target: typeof firstName, value: string) {
+		is_syncing_from_state.value = true;
+		target.value = value;
+		queueMicrotask(() => {
+			is_syncing_from_state.value = false;
+		});
+	}
+
 	function clearToastTimeout() {
-		if (!toastTimeout) return;
-		clearTimeout(toastTimeout);
-		toastTimeout = null;
+		if (!toast_timeout) return;
+		clearTimeout(toast_timeout);
+		toast_timeout = null;
 	}
 
 	function startToastTimeout() {
 		clearToastTimeout();
-		toastTimeout = setTimeout(() => {
+		toast_timeout = setTimeout(() => {
 			showWelcomeToast.value = false;
 		}, 3500);
 	}
@@ -144,7 +236,195 @@ export function useAuthProfileSetup() {
 		photoError.value = '';
 	}
 
-	function goNext() {
+	function getFirstError(payload: Record<string, unknown> | null | undefined, key: string): string {
+		const field_errors = payload?.[key];
+		if (!Array.isArray(field_errors) || field_errors.length === 0) {
+			return '';
+		}
+
+		return String(field_errors[0]).trim();
+	}
+
+	function isVerificationSessionExpired() {
+		return isTimestampExpired(email_verification_session.value?.expires_at);
+	}
+
+	function clearResendCooldownCache() {
+		if (!email_verification_session.value) return;
+		const { resend_cooldown_until: _resend_cooldown_until, ...rest } = email_verification_session.value;
+		email_verification_session.value = Object.keys(rest).length > 0 ? rest : null;
+	}
+
+	function clearRequestCooldownCache() {
+		if (!email_verification_session.value) return;
+		const { request_cooldown_until: _request_cooldown_until, ...rest } = email_verification_session.value;
+		email_verification_session.value = Object.keys(rest).length > 0 ? rest : null;
+	}
+
+	function setResendCooldownCache(seconds: number) {
+		const now = Date.now();
+		const cooldown_until = now + Math.max(0, Math.floor(seconds)) * 1000;
+		email_verification_session.value = {
+			...(email_verification_session.value || {}),
+			resend_cooldown_until: cooldown_until,
+		};
+	}
+
+	function setRequestCooldownCache(seconds: number) {
+		const now = Date.now();
+		const cooldown_until = now + Math.max(0, Math.floor(seconds)) * 1000;
+		email_verification_session.value = {
+			...(email_verification_session.value || {}),
+			request_cooldown_until: cooldown_until,
+		};
+	}
+
+	function applyResendCooldownFromResponse(response: unknown) {
+		const seconds = resend_cooldown.applyFromResponse(response);
+		if (seconds <= 0) {
+			resend_cooldown.clear();
+			clearResendCooldownCache();
+			return;
+		}
+
+		setResendCooldownCache(seconds);
+	}
+
+	function applyRequestCooldownFromResponse(response: unknown) {
+		const seconds = request_cooldown.applyFromResponse(response);
+		if (seconds <= 0) {
+			request_cooldown.clear();
+			clearRequestCooldownCache();
+			return;
+		}
+
+		setRequestCooldownCache(seconds);
+	}
+
+	function restoreCooldownsFromCache() {
+		const resend_remaining = getRemainingSecondsFromTimestamp(
+			email_verification_session.value?.resend_cooldown_until
+		);
+		if (resend_remaining > 0) {
+			resend_cooldown.start(resend_remaining);
+		} else {
+			clearResendCooldownCache();
+		}
+
+		const request_remaining = getRemainingSecondsFromTimestamp(
+			email_verification_session.value?.request_cooldown_until
+		);
+		if (request_remaining > 0) {
+			request_cooldown.start(request_remaining);
+		} else {
+			clearRequestCooldownCache();
+		}
+	}
+
+	function clearVerificationState() {
+		verification_code.value = '';
+		verification_error.value = '';
+		resend_limit_reached.value = '';
+		is_verifying_email.value = false;
+	}
+
+	function closeEmailVerificationModal() {
+		is_email_verification_modal_open.value = false;
+	}
+
+	function canReusePendingVerification(email_value: string) {
+		if (request_cooldown_remaining.value <= 0) return false;
+		if (isVerificationSessionExpired()) return false;
+		const session_email = normalizeEmail(email_verification_session.value?.email);
+		return session_email === normalizeEmail(email_value);
+	}
+
+	async function requestEmailVerification(is_resend: boolean) {
+		const target_email = email.value.trim();
+		verification_email.value = target_email;
+		const response = await sendEmailChangeOTP({
+			email: target_email,
+			is_resend,
+		});
+
+		applyRequestCooldownFromResponse(response);
+		applyResendCooldownFromResponse(response);
+
+		if (!response.success) {
+			const meta_code = (response.meta as { code?: string } | null)?.code || '';
+			const response_message = getAuthResponseMessage(response);
+
+			if (meta_code === 'max_resend_reached') {
+				resend_limit_reached.value = response_message || t('auth.verification.invalidCode');
+				verification_error.value = '';
+				return response;
+			}
+
+			const first_email_error = getFirstError(
+				response.data as Record<string, unknown> | null | undefined,
+				'email'
+			);
+			const fallback_error = first_email_error || response_message || t('auth.register.validation.emailInvalid');
+
+			if (is_resend) {
+				verification_error.value = fallback_error;
+			} else {
+				email_input_error.value = fallback_error;
+			}
+
+			return response;
+		}
+
+		const resolved_email =
+			typeof response.data?.email === 'string' && response.data.email.trim()
+				? response.data.email.trim()
+				: target_email;
+
+		verification_email.value = resolved_email;
+		verification_code.value = '';
+		verification_error.value = '';
+		resend_limit_reached.value = '';
+		email_verification_session.value = {
+			...(email_verification_session.value || {}),
+			email: resolved_email,
+			expires_at: response.data?.expires_in,
+		};
+
+		return response;
+	}
+
+	async function goNext() {
+		if (!canContinueProfileDetails.value) return;
+		email_input_error.value = '';
+
+		if (requires_email_verification.value) {
+			const target_email = email.value.trim();
+			if (canReusePendingVerification(target_email)) {
+				verification_email.value = target_email;
+				clearVerificationState();
+				is_email_verification_modal_open.value = true;
+				return;
+			}
+
+			try {
+				const response = await requestEmailVerification(false);
+				if (!response?.success) {
+					if (resend_limit_reached.value) {
+						is_email_verification_modal_open.value = true;
+					}
+					return;
+				}
+
+				is_email_verification_modal_open.value = true;
+				return;
+			} catch (error: unknown) {
+				email_input_error.value =
+					getAuthErrorMessage(error)
+					|| t('auth.verification.invalidCode');
+				return;
+			}
+		}
+
 		step.value = 2;
 	}
 
@@ -153,6 +433,11 @@ export function useAuthProfileSetup() {
 	}
 
 	async function completeSetup() {
+		if (email_required.value && !has_required_email.value) {
+			step.value = 1;
+			return;
+		}
+
 		if (state.value.id) {
 			try {
 				if (import.meta.client && photoUrl.value) {
@@ -165,6 +450,9 @@ export function useAuthProfileSetup() {
 				const body = new FormData();
 				body.append('given_name', firstName.value.trim());
 				body.append('family_name', lastName.value.trim());
+				if (email_required.value) {
+					body.append('email', email.value.trim());
+				}
 				body.append('offers_emails', promotions.value ? '1' : '0');
 				body.append('reviews_emails', reviews.value ? '1' : '0');
 				body.append('confirmations_emails', confirmations.value ? '1' : '0');
@@ -180,13 +468,71 @@ export function useAuthProfileSetup() {
 				console.warn('Failed to finalize onboarding.', error);
 			}
 		} else {
-			mockUser.value = {
+			mock_user.value = {
 				firstName: firstName.value.trim() || accountProfileDefaults.firstName,
 				lastName: lastName.value.trim() || accountProfileDefaults.lastName,
 				email: email.value.trim() || accountProfileDefaults.email,
 			};
 		}
 		await navigateTo(withCountry('/'));
+	}
+
+	async function submitEmailVerification() {
+		if (is_verifying_email.value) return;
+		is_verifying_email.value = true;
+		verification_error.value = '';
+
+		try {
+			const response = await verifyEmailChangeOtp({
+				email: verification_email.value.trim() || email.value.trim(),
+				otp: verification_code.value.trim(),
+			});
+
+			if (!response.success) {
+				const otp_error = getFirstError(
+					response.data as Record<string, unknown> | null | undefined,
+					'otp'
+				);
+				verification_error.value =
+					otp_error
+					|| getAuthResponseMessage(response)
+					|| t('auth.verification.invalidCode');
+				return;
+			}
+
+			const verified_email = (verification_email.value || email.value).trim();
+			user_store.patchUser({ email: verified_email });
+			email.value = verified_email;
+			original_email_from_state.value = normalizeEmail(verified_email);
+
+			email_verification_session.value = null;
+			request_cooldown.clear();
+			resend_cooldown.clear();
+			clearVerificationState();
+			closeEmailVerificationModal();
+			step.value = 2;
+		} catch (error: unknown) {
+			verification_error.value =
+				getAuthErrorMessage(error)
+				|| t('auth.verification.invalidCode');
+		} finally {
+			is_verifying_email.value = false;
+		}
+	}
+
+	async function resendEmailVerification() {
+		if (resend_cooldown_remaining.value > 0) return;
+		verification_error.value = '';
+		resend_limit_reached.value = '';
+
+		try {
+			const response = await requestEmailVerification(true);
+			if (!response?.success) return;
+		} catch (error: unknown) {
+			verification_error.value =
+				getAuthErrorMessage(error)
+				|| t('auth.verification.invalidCode');
+		}
 	}
 
 	watch(
@@ -200,13 +546,75 @@ export function useAuthProfileSetup() {
 		},
 		{ immediate: true }
 	);
+	watch(first_name_source, (value) => {
+		if (has_first_name_manual_input.value) return;
+		syncFieldFromState(firstName, value);
+		initial_first_name.value = value.trim();
+	}, { immediate: true });
+	watch(last_name_source, (value) => {
+		if (has_last_name_manual_input.value) return;
+		syncFieldFromState(lastName, value);
+		initial_last_name.value = value.trim();
+	}, { immediate: true });
+	watch(email_source, (value) => {
+		if (email_disabled.value || !has_email_manual_input.value) {
+			syncFieldFromState(email, value);
+		}
+	}, { immediate: true });
+	watch(firstName, () => {
+		if (!is_syncing_from_state.value) {
+			has_first_name_manual_input.value = true;
+		}
+	});
+	watch(lastName, () => {
+		if (!is_syncing_from_state.value) {
+			has_last_name_manual_input.value = true;
+		}
+	});
+	watch(email, () => {
+		if (!is_syncing_from_state.value && !email_disabled.value) {
+			has_email_manual_input.value = true;
+		}
+	});
+	watch(email, () => {
+		if (email_input_error.value) {
+			email_input_error.value = '';
+		}
+	});
+	watch(resend_cooldown_remaining, (value) => {
+		if (value <= 0) {
+			clearResendCooldownCache();
+		}
+	});
+	watch(request_cooldown_remaining, (value) => {
+		if (value <= 0) {
+			clearRequestCooldownCache();
+		}
+	});
+	watch(is_email_verification_modal_open, (open) => {
+		if (open) return;
+		clearVerificationState();
+	});
 
 	onBeforeUnmount(() => {
 		clearToastTimeout();
 		revokePhotoUrl();
+		resend_cooldown.clear();
+		request_cooldown.clear();
 	});
 
-	userStore.clearOnboardingProfile();
+	onMounted(() => {
+		const country_id = state.value.country_id;
+		if (country_id && profile_fields_store.dynamic_profile_fields.length === 0) {
+			void profile_fields_store.ensureLoaded(country_id).catch(() => {
+				// Keep onboarding non-blocking if dynamic field metadata cannot be loaded.
+			});
+		}
+
+		restoreCooldownsFromCache();
+	});
+
+	user_store.clearOnboardingProfile();
 
 	return {
 		step,
@@ -214,6 +622,9 @@ export function useAuthProfileSetup() {
 		firstName,
 		lastName,
 		email,
+		emailError: email_input_error,
+		emailDisabled: email_disabled,
+		emailRequired: email_required,
 		photoUrl,
 		photoError,
 		promotions,
@@ -223,11 +634,22 @@ export function useAuthProfileSetup() {
 		unit,
 		initials,
 		canContinueProfileDetails,
+		canSkipProfileDetails: can_skip_profile_details,
 		dismissToast,
 		onPhotoFilePicked,
 		removePhoto,
 		goNext,
 		goBack,
+		isEmailVerificationModalOpen: is_email_verification_modal_open,
+		verificationEmail: verification_email,
+		verificationCode: verification_code,
+		verificationError: verification_error,
+		resendLimitReached: resend_limit_reached,
+		isVerifyingEmail: is_verifying_email,
+		verificationResendCooldownRemaining: resend_cooldown_remaining,
+		closeEmailVerificationModal,
+		submitEmailVerification,
+		resendEmailVerification,
 		completeSetup,
 	};
 }
