@@ -85,3 +85,12 @@ export async function socialRedirect(payload: SocialLoginPayload): Promise<Socia
 
 	return await $api.post('auth/social/redirect', { ...payload })
 }
+
+/**
+ * Logout user
+ */
+export async function logout(): Promise<ApiResponse>{
+	const { $api } = useNuxtApp()
+
+	return await $api.post('auth/logout');
+}
