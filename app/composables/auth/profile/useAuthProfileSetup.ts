@@ -22,6 +22,8 @@ import { useUsersStore } from '~/stores/users/users.store';
 import { useProfileFieldsStore } from '~/stores/profile_field';
 import type { AccountMockUser } from '~/types/account/profile';
 import { useAuthUser } from '../useAuthUser';
+import { completeOnboarding } from '~/services/auth/auth.service';
+import type { OnboardingPayload } from '~/types/auth/auth';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -407,9 +409,6 @@ export function useAuthProfileSetup() {
 	}
 
 	async function goNext() {
-		if (!canContinueProfileDetails.value) return;
-		email_input_error.value = '';
-
 		if (requires_email_verification.value) {
 			const target_email = email.value.trim();
 			if (canReusePendingVerification(target_email)) {
@@ -418,26 +417,35 @@ export function useAuthProfileSetup() {
 				is_email_verification_modal_open.value = true;
 				return;
 			}
-
-			try {
-				const response = await requestEmailVerification(false);
-				if (!response?.success) {
-					if (resend_limit_reached.value) {
-						is_email_verification_modal_open.value = true;
-					}
-					return;
-				}
-
-				is_email_verification_modal_open.value = true;
-				return;
-			} catch (error: unknown) {
-				email_input_error.value =
-					getAuthErrorMessage(error)
-					|| t('auth.verification.invalidCode');
-				return;
-			}
 		}
 
+		step.value = 2;
+	}
+
+	function resetFirstStepDraftToOriginalState() {
+		syncFieldFromState(firstName, first_name_source.value);
+		syncFieldFromState(lastName, last_name_source.value);
+		syncFieldFromState(email, email_source.value);
+
+		initial_first_name.value = first_name_source.value.trim();
+		initial_last_name.value = last_name_source.value.trim();
+
+		has_first_name_manual_input.value = false;
+		has_last_name_manual_input.value = false;
+		has_email_manual_input.value = false;
+		email_input_error.value = '';
+
+		// Skip means "discard first-step edits", including temporary avatar choice.
+		removePhoto();
+		clearVerificationState();
+		is_email_verification_modal_open.value = false;
+		email_verification_session.value = null;
+		request_cooldown.clear();
+		resend_cooldown.clear();
+	}
+
+	function skipProfileDetails() {
+		resetFirstStepDraftToOriginalState();
 		step.value = 2;
 	}
 
@@ -460,23 +468,29 @@ export function useAuthProfileSetup() {
 					);
 				}
 
-				const body = new FormData();
-				body.append('given_name', firstName.value.trim());
-				body.append('family_name', lastName.value.trim());
-				if (email_required.value) {
-					body.append('email', email.value.trim());
-				}
-				body.append('offers_emails', promotions.value ? '1' : '0');
-				body.append('reviews_emails', reviews.value ? '1' : '0');
-		
+				const payload: OnboardingPayload = {
+					given_name: firstName.value.trim(),
+					family_name: lastName.value.trim(),
+					offers_emails: promotions.value,
+					reviews_emails: reviews.value,
+				};
 
-				await api(`/${apiCountry.value}/user/complete-onboarding`, {
-					method: 'POST',
-					body,
-				});
+				if (email_required.value) payload.email = email.value.trim()
+
+				const response = await completeOnboarding(payload)
+
+				if (!response.success) {
+					return
+				}
 
 				const { fetchAndStoreUser } = useAuthUser()
 				await fetchAndStoreUser()
+				await navigateTo(withCountry('/'));
+		
+				// Clear Draft State
+				step.value = 1;
+				onboardingDraft.value = {};
+				user_store.clearOnboardingProfile();
 			} catch (error) {
 				console.warn('Failed to finalize onboarding.', error);
 			}
@@ -487,12 +501,6 @@ export function useAuthProfileSetup() {
 				email: email.value.trim() || accountProfileDefaults.email,
 			};
 		}
-		await navigateTo(withCountry('/'));
-		
-		// Clear Draft State
-		step.value = 1;
-		onboardingDraft.value = {};
-		user_store.clearOnboardingProfile();
 	}
 
 	async function submitEmailVerification() {
@@ -656,6 +664,7 @@ export function useAuthProfileSetup() {
 		onPhotoFilePicked,
 		removePhoto,
 		goNext,
+		skipProfileDetails,
 		goBack,
 		isEmailVerificationModalOpen: is_email_verification_modal_open,
 		verificationEmail: verification_email,

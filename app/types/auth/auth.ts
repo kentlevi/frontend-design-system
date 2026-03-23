@@ -89,3 +89,11 @@ export interface SocialRedirect {
 export interface SocialLoginPayload {
 	provider: string
 }
+
+export interface OnboardingPayload {
+	given_name?: string;
+	family_name?: string;
+	email?: string;
+	offers_emails?: boolean;
+	reviews_emails?: boolean;
+}
