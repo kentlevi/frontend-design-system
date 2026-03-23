@@ -1,28 +1,62 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
-import type { ProfileFieldDefinition, PersonalFormFields } from '~/types/account/profile';
-
-defineProps<{
-	photoInlineError: string;
-	avatarDisplayUrl: string | null;
-	initials: string;
-	photoUrl: string | null;
-	profileFields: ProfileFieldDefinition[];
-	fieldErrors: Record<string, string>;
-	personalFormFields: PersonalFormFields;
-	hasChanges: boolean;
-	nameIsSubmitting: boolean;
-	email: string | undefined;
-	updatePersonalField: (fieldKey: string, value: string) => void;
-	bindPhotoFileInput: (element: Element | ComponentPublicInstance | null) => void;
-	openFilePicker: () => void;
-	onFilePicked: (event: Event) => void;
-	openDeletePhotoModal: () => void;
-	openEmailChangeModal: () => void;
-	submitPersonalForm: () => void;
-}>();
+import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
+import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
+import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
+import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
+import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
+import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
+const profile_field_store = useProfileFieldsStore();
+
+const {
+	file_input,
+	is_delete_photo_modal_open,
+	error: photo_inline_error,
+
+	openFilePicker,
+	onFilePicked,
+	openDeletePhotoModal,
+	closeDeletePhotoModal,
+	deletePhoto,
+} = useProfilePhoto()
+
+const {
+	form_state: personal_form_state,
+	has_changes,
+	field_errors,
+	is_updating: name_is_submitting,
+	loadPersonalForm,
+	submitPersonalForm
+} = usePersonalForm();
+
+const {
+	email,
+
+	pending_email,
+	is_email_change_modal,
+	email_change_field_ref,
+	email_change_error,
+
+	is_otp_open,
+	email_change_otp_code,
+	email_change_otp_error,
+	limit_reached_error,
+
+	remaining,
+
+	openEmailChangeModal,
+	closeEmailChangeModal,
+	confirmEmailChange,
+
+	verifyOtp,
+	resendOtp,
+	closeOtpModal,
+} = useChangeEmailForm()
+
+onMounted(() => {
+	loadPersonalForm()
+})
 </script>
 
 <template>
@@ -37,24 +71,24 @@ const { t } = useI18n();
 			<div class="account-profile-photo-group">
 				<div class="account-profile-photo-head">
 					<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
-					<p v-if="photoInlineError" class="account-profile-photo-error">{{ photoInlineError }}</p>
+					<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
 				</div>
 				<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
 					<div class="account-profile-avatar">
 						<img
-							v-if="avatarDisplayUrl"
-							:src="avatarDisplayUrl"
+							v-if="display_avatar"
+							:src="display_avatar"
 							:alt="t('account.profile.profilePhoto')"
 							class="account-profile-avatar-image"
 						>
-						<span v-else class="account-profile-avatar-text">{{ initials }}</span>
+						<span v-else class="account-profile-avatar-text">{{ user_initial }}</span>
 					</div>
 					<div class="account-profile-photo-copy">
 						<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
 						<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
 						<div class="account-profile-photo-actions">
 							<input
-								:ref="bindPhotoFileInput"
+								ref="file_input"
 								type="file"
 								class="account-profile-file-input"
 								accept=".jpg,.jpeg,.png"
@@ -69,10 +103,10 @@ const { t } = useI18n();
 								data-testid="account-profile-photo-upload-button"
 								@click="openFilePicker"
 							>
-								{{ t('account.profile.uploadNewPhoto') }}
+								{{ display_avatar ? t('account.profile.uploadNewPhoto') : t('account.profile.uploadPhoto') }}
 							</UiButton>
 							<UiButton
-								v-if="photoUrl"
+								v-if="display_avatar"
 								variant="ghost"
 								tone="danger"
 								size="md"
@@ -88,9 +122,9 @@ const { t } = useI18n();
 			</div>
 
 			<div class="account-profile-grid" data-testid="account-profile-form">
-				<div v-for="field in profileFields" :key="field.id">
+				<div v-for="field in profile_field_store.dynamic_profile_fields" :key="field.id">
 					<UiFormField
-						:error="fieldErrors[field.field_key]"
+						:error="field_errors[field.field_key]"
 						:label="field.is_required
 							? t(`account.profile.${field.field_key}`)
 							: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
@@ -107,12 +141,11 @@ const { t } = useI18n();
 						<template #default="{ inputId, describedBy }">
 							<UiInput
 								:id="inputId"
-								:model-value="personalFormFields[field.field_key]"
-								:state="fieldErrors[field.field_key] ? 'error' : 'default'"
+								v-model="personal_form_state.fields[field.field_key]"
+								:state="field_errors[field.field_key] ? 'error' : 'default'"
 								type="text"
 								:aria-describedby="describedBy || undefined"
 								:data-testid="`account-profile-${field.field_key}`"
-								@update:model-value="updatePersonalField(field.field_key, $event)"
 							/>
 						</template>
 					</UiFormField>
@@ -162,7 +195,7 @@ const { t } = useI18n();
 					variant="filled"
 					tone="neutral"
 					size="md"
-					:disabled="!hasChanges || nameIsSubmitting"
+					:disabled="!has_changes || name_is_submitting"
 					data-testid="account-profile-save-button"
 					@click="submitPersonalForm"
 				>
@@ -171,6 +204,125 @@ const { t } = useI18n();
 			</div>
 		</div>
 	</div>
+
+
+	<!-- Modals -->
+	<DeleteConfirmModal
+		:model-value="is_delete_photo_modal_open"
+		title="Are you sure you want to delete this photo?"
+		description="This action cannot be undone. Please confirm to proceed."
+		modal-class="account-profile-delete-photo-modal-shell"
+		test-id="account-profile-delete-photo-modal"
+		@cancel="closeDeletePhotoModal"
+		@confirm="deletePhoto"
+	/>
+
+	<UiModal
+		:model-value="is_email_change_modal"
+		align="center"
+		width="520px"
+		padding="0"
+		gap="0"
+		modal-class="account-profile-email-change-modal-shell"
+		@update:model-value="is_email_change_modal = $event"
+	>
+		<section class="account-profile-email-change-modal" data-testid="account-profile-email-change-modal">
+			<button
+				type="button"
+				class="account-profile-email-change-modal-close"
+				aria-label="Close email change modal"
+				data-testid="account-profile-email-change-modal-close"
+				@click="() => closeEmailChangeModal()"
+			>
+				<UiIcon name="regular-times" :size="24" />
+			</button>
+
+			<div class="account-profile-email-change-modal-copy">
+				<div class="account-profile-email-change-modal-icon-wrap">
+					<img
+						src="/icons/custom/account/email-change.svg"
+						alt=""
+						class="account-profile-email-change-modal-icon"
+					>
+				</div>
+				<div class="account-profile-email-change-modal-text-wrap">
+					<h3 class="account-profile-email-change-modal-title">Email Change</h3>
+					<p class="account-profile-email-change-modal-text">
+						Enter your new email address and click the <strong class="change-strong">"Confirm"</strong> button to proceed.
+					</p>
+				</div>
+			</div>
+
+			<div class="account-profile-email-change-modal-body">
+				<UiFormField
+					class="account-profile-email-change-field"
+					head-class="account-profile-email-change-field-head"
+					label-text-class="account-profile-email-change-field-label-text"
+					:label="t('account.profile.emailAddress')"
+					:error="email_change_error"
+					:required="true"
+				>
+					<template #default="{ inputId, describedBy }">
+						<div ref="email_change_field_ref" class="account-profile-email-change-input-wrap">
+							<UiInput
+								:id="inputId"
+								v-model="pending_email"
+								type="email"
+								:aria-describedby="describedBy || undefined"
+								:state="email_change_error ? 'error' : 'default'"
+								placeholder="Please enter your new email address."
+								input-class="account-profile-email-change-input"
+								data-testid="account-profile-email-change-input"
+								@update:model-value="email_change_error = ''"
+							/>
+						</div>
+					</template>
+				</UiFormField>
+			</div>
+
+			<div class="account-profile-email-change-modal-actions">
+				<UiButton
+					type="button"
+					variant="filled"
+					tone="neutral"
+					size="md"
+					class="account-profile-email-change-modal-confirm"
+					data-testid="account-profile-email-change-modal-confirm"
+					@click="confirmEmailChange"
+				>
+					Confirm
+				</UiButton>
+			</div>
+		</section>
+	</UiModal>
+
+	<AuthVerificationModal
+		:model-value="is_otp_open"
+		:code="email_change_otp_code"
+		:error="email_change_otp_error"
+		:resend-limit-reached="limit_reached_error"
+		:resend-cooldown-remaining="remaining"
+		submit-label="Verify"
+		busy-label="Verifying..."
+		width="504px"
+		align="center"
+		:show-close-button="true"
+		test-id-prefix="account-profile-email-change-verification"
+		@update:model-value="is_otp_open = $event"
+		@update:code="email_change_otp_code = $event"
+		@verify="verifyOtp"
+		@resend="resendOtp"
+		@close="closeOtpModal"
+	>
+		<template #icon>
+			<img
+				src="/illustrations/icon-verification.svg"
+				:alt="t('auth.verification.iconAlt')"
+				class="account-profile-email-change-verification-icon"
+			>
+		</template>
+	</AuthVerificationModal>
+
 </template>
 
 <style scoped lang="scss">
@@ -348,6 +500,83 @@ const { t } = useI18n();
 	.account-profile-actions-right {
 		display: flex;
 		justify-content: flex-end;
+	}
+}
+
+.account-profile-email-change-modal {
+	position: relative;
+	background: var(--contrast-light);
+	border-radius: 16px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	width: 100%;
+	padding: 40px;
+
+	.account-profile-email-change-modal-close {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+		display: grid;
+		place-items: center;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text-primary);
+		cursor: pointer;
+	}
+
+	.account-profile-email-change-modal-copy {
+		display: grid;
+		grid-template-columns: 48px minmax(0, 1fr);
+		align-items: start;
+		column-gap: 16px;
+
+		.account-profile-email-change-modal-icon-wrap {
+			display: grid;
+			place-items: center;
+			width: 48px;
+			height: 48px;
+
+			.account-profile-email-change-modal-icon {
+				display: block;
+				width: 48px;
+				height: 48px;
+			}
+		}
+
+		.account-profile-email-change-modal-text-wrap {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+
+			.account-profile-email-change-modal-title {
+				color: var(--text-primary);
+				font-size: var(--type-size-400);
+				line-height: var(--type-line-400);
+				font-weight: var(--font-weight-bold);
+			}
+
+			.account-profile-email-change-modal-text {
+				color: var(--text-secondary);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+
+				.change-strong {
+					color: var(--text-primary);
+					font-weight: var(--font-weight-bold);
+				}
+			}
+		}
+	}
+
+	.account-profile-email-change-modal-confirm {
+		width: 100%;
+		min-height: 46px;
+		border-radius: 18px;
+		font-size: var(--type-size-200);
+		line-height: var(--type-line-200);
 	}
 }
 

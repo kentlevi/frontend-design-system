@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
-import type { ComponentPublicInstance } from 'vue';
-import { useAccountProfile } from '~/composables/account/useAccountProfile';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
@@ -14,24 +11,7 @@ import ProfileModals from './ProfileModals.vue';
 
 const profile_field_store = useProfileFieldsStore();
 const { t } = useI18n();
-const {
-	photoUrl,
-	avatarDisplayUrl,
-	photoError,
-	fileInput,
-	initials,
-	openFilePicker,
-	onFilePicked,
-	removePhoto,
-} = useAccountProfile();
 const isDeletePhotoModalOpen = ref(false);
-const photoInlineError = computed(() => {
-	if (!photoError.value) return '';
-	const normalized_message = photoError.value.toLowerCase();
-	return /network|timeout|timed out|internet|connect/.test(normalized_message)
-		? ''
-		: photoError.value;
-});
 
 const {
 	form_state: personal_form_state,
@@ -92,146 +72,10 @@ onMounted(() => {
 	loadPreferences();
 	loadPersonalForm();
 });
-
-const photoUploadToastVisible = ref(false);
-const photoUploadToastMessage = ref('');
-const isPasswordChangeSubmitting = ref(false);
-let profile_toast_timer: ReturnType<typeof setTimeout> | null = null;
-let photo_upload_toast_timer: ReturnType<typeof setTimeout> | null = null;
-
-function clearProfileToastTimer() {
-	if (!profile_toast_timer) return;
-	clearTimeout(profile_toast_timer);
-	profile_toast_timer = null;
-}
-
-function clearPhotoUploadToastTimer() {
-	if (!photo_upload_toast_timer) return;
-	clearTimeout(photo_upload_toast_timer);
-	photo_upload_toast_timer = null;
-}
-
-function bindPhotoFileInput(element: Element | ComponentPublicInstance | null) {
-	fileInput.value = element instanceof HTMLInputElement ? element : null;
-}
-
-function bindEmailChangeFieldRef(element: Element | ComponentPublicInstance | null) {
-	email_change_field_ref.value = element instanceof HTMLElement ? element : null;
-}
-
-function updatePersonalField(fieldKey: string, value: string) {
-	personal_form_state.fields[fieldKey] = value;
-}
-
-function updateCurrentPassword(value: string) {
-	current_password.value = value;
-}
-
-function updateNewPassword(value: string) {
-	new_password.value = value;
-}
-
-function updateNewPasswordConfirmation(value: string) {
-	new_password_confirmation.value = value;
-}
-
-function clearCurrentPasswordError() {
-	current_password_error.value = '';
-}
-
-function toggleCurrentPasswordVisible() {
-	current_password_visible.value = !current_password_visible.value;
-}
-
-function toggleNewPasswordVisible() {
-	new_password_visible.value = !new_password_visible.value;
-}
-
-function toggleNewPasswordConfirmationVisible() {
-	new_password_confirmation_visible.value = !new_password_confirmation_visible.value;
-}
-
-function setIsEmailChangeModal(value: boolean) {
-	is_email_change_modal.value = value;
-}
-
-function setPendingEmail(value: string) {
-	pending_email.value = value;
-}
-
-function clearEmailChangeError() {
-	email_change_error.value = '';
-}
-
-function setIsOtpOpen(value: boolean) {
-	is_otp_open.value = value;
-}
-
-function setEmailChangeOtpCode(value: string) {
-	email_change_otp_code.value = value;
-}
-
-function setIsDeletePhotoModalOpen(value: boolean) {
-	isDeletePhotoModalOpen.value = value;
-}
-
-function setIsForgotPasswordModalOpen(value: boolean) {
-	is_forgot_password_modal_open.value = value;
-}
-
-function openDeletePhotoModal() {
-	isDeletePhotoModalOpen.value = true;
-}
-
-function closeDeletePhotoModal() {
-	isDeletePhotoModalOpen.value = false;
-}
-
-function confirmDeletePhoto() {
-	removePhoto();
-	closeDeletePhotoModal();
-}
-
-function showPhotoUploadToast(message: string) {
-	clearPhotoUploadToastTimer();
-	const normalized_message = message.toLowerCase();
-	if (/timeout|timed out/.test(normalized_message)) {
-		photoUploadToastMessage.value = 'The upload timed out. Please try again later.';
-	} else if (/network|internet|connect/.test(normalized_message)) {
-		photoUploadToastMessage.value = 'Unable to upload due to a network issue. Please try again.';
-	} else {
-		photoUploadToastMessage.value = message;
-	}
-	photoUploadToastVisible.value = true;
-	photo_upload_toast_timer = setTimeout(() => {
-		photoUploadToastVisible.value = false;
-		photo_upload_toast_timer = null;
-	}, 3200);
-}
-
-watch(photoError, (message) => {
-	if (!message) return;
-	showPhotoUploadToast(message);
-});
-
-onBeforeUnmount(() => {
-	clearProfileToastTimer();
-	clearPhotoUploadToastTimer();
-});
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
-		<UiToast
-			:visible="photoUploadToastVisible"
-			tone="error"
-			class="account-profile-photo-toast"
-			data-testid="account-profile-photo-upload-error-toast"
-			@close="photoUploadToastVisible = false"
-		>
-			<strong class="account-profile-photo-toast-title">Upload Failed</strong>
-			<span> - {{ photoUploadToastMessage }}</span>
-		</UiToast>
 
 		<AccountShell active-tab="profile">
 			<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
