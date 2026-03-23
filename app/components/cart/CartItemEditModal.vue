@@ -42,6 +42,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
 const sizeDropdownRef = ref<HTMLElement | null>(null);
 const qtyDropdownRef = ref<HTMLElement | null>(null);
 const customWidthInputRef = ref<HTMLInputElement | null>(null);
@@ -62,15 +63,15 @@ const parsed_size_from_option = computed(() => {
 });
 
 const display_width = computed(() =>
-	props.sizeKey === 'custom' ? props.customSizeWidth : parsed_size_from_option.value.width
+	props.sizeKey === 'custom' ? digits_only(props.customSizeWidth) : parsed_size_from_option.value.width
 );
 
 const display_height = computed(() =>
-	props.sizeKey === 'custom' ? props.customSizeHeight : parsed_size_from_option.value.height
+	props.sizeKey === 'custom' ? digits_only(props.customSizeHeight) : parsed_size_from_option.value.height
 );
 
 const display_qty = computed(() =>
-	props.qty === -1 ? props.customQty : (props.qty > 0 ? String(props.qty) : '')
+	props.qty === -1 ? digits_only(props.customQty) : (props.qty > 0 ? String(props.qty) : '')
 );
 
 const is_update_disabled = computed(() => {
@@ -121,6 +122,12 @@ function handlePointerDown(event: PointerEvent) {
 
 function handleEscape(event: KeyboardEvent) {
 	if (event.key === 'Escape') closeMenus();
+}
+
+function preventNonDigitInput(event: InputEvent) {
+	if (!event.data) return;
+	if (/^\d+$/.test(event.data)) return;
+	event.preventDefault();
 }
 
 function onSizeOptionSelect(value: string | number) {
@@ -249,9 +256,11 @@ watch(
 									:value="display_width"
 									type="text"
 									inputmode="numeric"
+									pattern="[0-9]*"
 									:placeholder="t('cart.cartPreview.editModal.widthPlaceholder')"
 									class="cart-item-edit-inline-input"
 									data-testid="cart-item-edit-custom-width"
+									@beforeinput="preventNonDigitInput"
 									@input="onCustomWidthInput(($event.target as HTMLInputElement).value)"
 								>
 								<span class="cart-item-edit-multiply">x</span>
@@ -259,9 +268,11 @@ watch(
 									:value="display_height"
 									type="text"
 									inputmode="numeric"
+									pattern="[0-9]*"
 									:placeholder="t('cart.cartPreview.editModal.heightPlaceholder')"
 									class="cart-item-edit-inline-input"
 									data-testid="cart-item-edit-custom-height"
+									@beforeinput="preventNonDigitInput"
 									@input="onCustomHeightInput(($event.target as HTMLInputElement).value)"
 								>
 							</div>
@@ -321,9 +332,11 @@ watch(
 								:value="display_qty"
 								type="text"
 								inputmode="numeric"
+								pattern="[0-9]*"
 								placeholder="Enter quantity"
 								class="cart-item-edit-inline-input cart-item-edit-inline-input--qty"
 								data-testid="cart-item-edit-custom-qty"
+								@beforeinput="preventNonDigitInput"
 								@input="onCustomQtyInput(($event.target as HTMLInputElement).value)"
 							>
 							<button
@@ -507,6 +520,17 @@ watch(
 		padding: 0 12px;
 		color: var(--text-primary);
 		box-shadow: none;
+
+		.ui-select-menu {
+			top: calc(100% + 8px);
+			left: 0;
+			right: 0;
+		}
+
+		&:hover {
+			border: 1px solid var(--gray-50);
+			background-color: var(--gray-20);
+		}
 	}
 
 	.cart-item-edit-size-combo {
@@ -529,6 +553,7 @@ watch(
 		&::placeholder {
 			color: var(--text-secondary);
 		}
+
 		&.cart-item-edit-inline-input--qty {
 			width: 100%;
 		}
@@ -555,18 +580,6 @@ watch(
 		.ui-icon.is-open {
 			transform: rotate(180deg);
 		}
-	}
-
-	.cart-item-edit-select-shell {
-		.ui-select-menu {
-			top: calc(100% + 8px);
-			left: 0;
-			right: 0;
-		}
-		&:hover {
-				border: 1px solid var(--gray-50);
-				background-color: var(--gray-20);
-			}
 	}
 
 	.cart-item-edit-modal-actions {
