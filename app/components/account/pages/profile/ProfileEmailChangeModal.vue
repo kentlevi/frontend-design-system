@@ -167,7 +167,7 @@ const { t } = useI18n();
 				color: var(--text-primary);
 				font-size: var(--type-size-400);
 				line-height: var(--type-line-400);
-				font-weight: var(--font-weight-bold);
+				font-weight: var(--font-weight-semibold);
 			}
 
 			.account-profile-email-change-modal-text {
