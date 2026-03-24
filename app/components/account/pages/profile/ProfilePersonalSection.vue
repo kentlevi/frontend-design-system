@@ -5,10 +5,16 @@ import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
-import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
+import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 
 const { t } = useI18n();
 const profile_field_store = useProfileFieldsStore();
+const { display_avatar, user_initial } = useProfilePhotoDisplay();
+
+const {
+	social
+} = useSocialAccount()
 
 const {
 	file_input,
@@ -74,7 +80,7 @@ onMounted(() => {
 					<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
 				</div>
 				<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-					<div class="account-profile-avatar">
+					<div :class="['account-profile-avatar', { 'account-profile-avatar--error': photo_inline_error }]">
 						<img
 							v-if="display_avatar"
 							:src="display_avatar"
@@ -180,11 +186,8 @@ onMounted(() => {
 								Change
 							</UiButton>
 						</div>
-						<p class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-facebook-text">Facebook</span> login.
-						</p>
-						<p class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-google-text">Google</span> login.
+						<p v-if="social" class="account-profile-email-helper-text">
+							This account is linked to your <span class="account-profile-social-text">{{ capitalizeFirst(social) }}</span> login.
 						</p>
 					</template>
 				</UiFormField>
@@ -228,6 +231,7 @@ onMounted(() => {
 	/>
 
 	<AuthVerificationModal
+		:email="pending_email"
 		:model-value="is_otp_open"
 		:code="email_change_otp_code"
 		:error="email_change_otp_error"
@@ -267,9 +271,7 @@ onMounted(() => {
 
 	.account-profile-photo-head {
 		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 6px;
+		justify-content: space-between;
 
 		.account-profile-label {
 			margin-bottom: 0;
@@ -285,18 +287,20 @@ onMounted(() => {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+		max-width: 427px;
 	}
 
 	.account-profile-photo-row {
 		display: grid;
-		grid-template-columns: 98px 1fr;
-		gap: 18px;
+		grid-template-columns: 120px 1fr;
+		gap: 32px;
 		align-items: center;
 
 		.account-profile-avatar {
-			width: 98px;
-			height: 98px;
+			width: 120px;
+			height: 120px;
 			border-radius: 50%;
+			border: 1px solid transparent;
 			background: var(--gray-40);
 			color: var(--black-base);
 			display: grid;
@@ -311,6 +315,10 @@ onMounted(() => {
 				height: 100%;
 				object-fit: cover;
 			}
+		}
+
+		.account-profile-avatar--error {
+			border-color: var(--error);
 		}
 	}
 
@@ -330,7 +338,6 @@ onMounted(() => {
 		font-size: var(--type-size-100);
 		font-weight: var(--font-weight-semibold);
 		line-height: var(--type-line-100);
-		margin: 8px 0 0;
 	}
 
 	.account-profile-file-input {
@@ -372,8 +379,7 @@ onMounted(() => {
 		color: var(--text-secondary);
 	}
 
-	.account-profile-facebook-text,
-	.account-profile-google-text {
+	.account-profile-social-text {
 		color: var(--azure-base);
 		font-weight: var(--font-weight-semibold);
 	}

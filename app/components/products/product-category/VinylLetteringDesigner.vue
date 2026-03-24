@@ -51,16 +51,10 @@ const previewContentCenterY = usablePreviewHeight / 2
 
 const placeholderText = 'Your text'
 
-const fontMap: Record<string, string> = {
-	'antique-olive': '"Arial Black", "Segoe UI", sans-serif',
-	'helvetica-neue': '"Helvetica Neue", Helvetica, Arial, sans-serif',
-	'bebas-neue': '"Arial Narrow", Impact, sans-serif',
-	'brush-script': '"Brush Script MT", "Segoe Script", cursive',
-}
 
 const formattedWidth = computed(() => Math.round(props.width * 10) / 10)
 const formattedHeight = computed(() => Math.round(props.height * 10) / 10)
-const fontFamily = computed(() => fontMap[props.font] ?? fontMap['antique-olive'])
+const fontFamily = computed(() => props.font)
 
 const textColorStyle = computed<CSSProperties>(() => {
 	switch (props.colorKey) {

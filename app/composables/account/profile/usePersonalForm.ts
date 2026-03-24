@@ -1,14 +1,8 @@
 import { computed, reactive, ref } from 'vue'
 import { personal_form_defaults } from '~/constants/account/profile'
 import { mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
-import {
-	mapProfileToPersonalFormState,
-	mapPersonalFormToPayload,
-} from '~/mappers/account/profile/personalForm.mapper'
-import {
-	fetchPersonalFieldDefinitions,
-	updatePersonalForm,
-} from '~/services/profile/personalForm.service'
+import { mapProfileToPersonalFormState, mapPersonalFormToPayload } from '~/mappers/account/profile/personalForm.mapper'
+import { fetchPersonalFieldDefinitions, updatePersonalForm } from '~/services/profile/personalForm.service'
 import { useUsersStore } from '~/stores/users/users.store'
 import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/account/profile'
 import type { ApiResponse } from '~/types/config/api'

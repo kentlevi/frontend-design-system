@@ -1,7 +1,7 @@
 import { deleteAvatar, saveAvatar } from "~/services/profile/avatar.service";
 import { useUsersStore } from "~/stores/users/users.store";
 import { processAvatarFile } from "~/utils/avatar/processAvatar";
-import { resolveUploadPath } from "~/utils/file/file";
+import { isImage, resolveUploadPath } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
@@ -18,6 +18,7 @@ export function useProfilePhoto() {
 
 	/** Opens the native file picker */
 	function openFilePicker() {
+		resetPhotoInput()
 		file_input.value?.click();
 	}
 
@@ -31,11 +32,17 @@ export function useProfilePhoto() {
 	async function onFilePicked(event: Event) {
 		/** Get the input element from the emitted event */
 		const input = event.target as HTMLInputElement;
+		error.value = ''
 
 		/** Get the first selected file */
 		const file = input.files?.[0];
 
 		if (!file) return;
+
+		if (!isImage(file)) {
+			error.value = 'File type is invalid'
+			return;
+		}
 
 		startRequestOverlay()
 
@@ -73,13 +80,22 @@ export function useProfilePhoto() {
 		closeDeletePhotoModal()
 		startDeleteOverlay()
 		try {
-			await deleteAvatar()
+			const response = await deleteAvatar()
 			user_store.setProfileField('file_name', null)
+
+			toast_store.handleApiResponse(response)
 		} catch {
 			toast_store.showUpdateError()
 			return
 		} finally {
 			loading_overlay_store.stopLoading('delete_avatar')
+		}
+	}
+
+	function resetPhotoInput() {
+	/** Clear file input so selecting the same file will trigger change again */
+		if (file_input.value) {
+			file_input.value.value = ''
 		}
 	}
 

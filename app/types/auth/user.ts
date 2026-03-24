@@ -28,6 +28,7 @@ export interface UserIdentity {
 	code: string
 	email: string
 	country_id: number
+	social: 'google' | 'facebook' | null
 }
 
 /**

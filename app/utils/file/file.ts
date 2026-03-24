@@ -22,3 +22,7 @@ export async function resolveUploadPath(
 		file_name
 	}
 }
+
+export function isImage(file: File) {
+	return file?.type.startsWith('image/')
+}
