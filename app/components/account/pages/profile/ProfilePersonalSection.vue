@@ -13,7 +13,7 @@ const profile_field_store = useProfileFieldsStore();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
-	account_type
+	social
 } = useSocialAccount()
 
 const {
@@ -186,8 +186,8 @@ onMounted(() => {
 								Change
 							</UiButton>
 						</div>
-						<p v-if="account_type" class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-social-text">{{ capitalizeFirst(account_type) }}</span> login.
+						<p v-if="social" class="account-profile-email-helper-text">
+							This account is linked to your <span class="account-profile-social-text">{{ capitalizeFirst(social) }}</span> login.
 						</p>
 					</template>
 				</UiFormField>
