@@ -119,12 +119,22 @@ async function submitChangePassword() {
 <template>
 	<UiModal
 		:model-value="modelValue"
+		align="center"
 		width="504px"
 		padding="40px"
 		gap="40px"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<div class="auth-reset-body">
+			<button
+				type="button"
+				class="auth-reset-close"
+				aria-label="Close reset password modal"
+				data-testid="auth-reset-password-close-button"
+				@click="emit('update:modelValue', false)"
+			>
+				<UiIcon name="regular-times" :size="24" />
+			</button>
 			<UiLoadingOverlay
 				:visible="loading"
 				:label="t('auth.reset.changing')"
@@ -135,81 +145,84 @@ async function submitChangePassword() {
 				loader-width="74px"
 				loader-height="74px"
 			/>
-			<div class="auth-reset-header">
-				<UiLogo name="musticker" variant="mark" color="colored" :size="34" class="auth-reset-logo" />
-				<div class="auth-reset-copy">
-					<h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
-					<p class="auth-reset-description">
-						{{ t('auth.reset.description') }}
-					</p>
-				</div>
-			</div>
-			<div class="auth-reset-fields">
-				<div class="auth-reset-field">
-					<div class="auth-reset-field-head">
-						<label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
-						<p
-							v-if="error"
-							class="auth-reset-error"
-							data-testid="auth-reset-error"
-						>
-							{{ error }}
+			<div class="auth-reset-content">
+				<div class="auth-reset-header">
+					<UiLogo name="musticker" variant="mark" color="colored" :size="34" class="auth-reset-logo" />
+					<div class="auth-reset-copy">
+						<h3 class="auth-reset-title">{{ t('auth.reset.title') }}</h3>
+						<p class="auth-reset-description">
+							{{ t('auth.reset.description') }}
 						</p>
 					</div>
-					<UiInput
-						:model-value="password"
-						:type="passwordVisible ? 'text' : 'password'"
-						size="md"
-						:state="error ? 'error' : 'default'"
-						:placeholder="t('auth.reset.enterNewPassword')"
-						data-testid="auth-reset-password-input"
-						@update:model-value="password = $event"
-					>
-						<template #icon-right>
-							<UiButton
-								variant="ghost"
-								tone="neutral"
-								size="sm"
-								:no-hover="true"
-								class="auth-reset-toggle"
-								:aria-label="t('auth.reset.togglePassword')"
-								:sr-label="t('auth.reset.togglePassword')"
-								icon-only
-								:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
-								:icon-size="20"
-								@click="passwordVisible = !passwordVisible"
-							/>
-						</template>
-					</UiInput>
 				</div>
 
-				<div class="auth-reset-field">
-					<label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
-					<UiInput
-						:model-value="confirmPassword"
-						:type="confirmVisible ? 'text' : 'password'"
-						size="md"
-						:state="error ? 'error' : 'default'"
-						:placeholder="t('auth.reset.enterConfirmPassword')"
-						data-testid="auth-reset-password-confirm-input"
-						@update:model-value="confirmPassword = $event"
-					>
-						<template #icon-right>
-							<UiButton
-								variant="ghost"
-								tone="neutral"
-								size="sm"
-								:no-hover="true"
-								class="auth-reset-toggle"
-								:aria-label="t('auth.reset.toggleConfirmPassword')"
-								:sr-label="t('auth.reset.toggleConfirmPassword')"
-								icon-only
-								:icon="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
-								:icon-size="20"
-								@click="confirmVisible = !confirmVisible"
-							/>
-						</template>
-					</UiInput>
+				<div class="auth-reset-fields">
+					<div class="auth-reset-field">
+						<div class="auth-reset-field-head">
+							<label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
+							<p
+								v-if="error"
+								class="auth-reset-error"
+								data-testid="auth-reset-error"
+							>
+								{{ error }}
+							</p>
+						</div>
+						<UiInput
+							:model-value="password"
+							:type="passwordVisible ? 'text' : 'password'"
+							size="md"
+							:state="error ? 'error' : 'default'"
+							:placeholder="t('auth.reset.enterNewPassword')"
+							data-testid="auth-reset-password-input"
+							@update:model-value="password = $event"
+						>
+							<template #icon-right>
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="24"
+									:no-hover="true"
+									class="auth-reset-toggle"
+									:aria-label="t('auth.reset.togglePassword')"
+									:sr-label="t('auth.reset.togglePassword')"
+									icon-only
+									:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
+									:icon-size="24"
+									@click="passwordVisible = !passwordVisible"
+								/>
+							</template>
+						</UiInput>
+					</div>
+
+					<div class="auth-reset-field">
+						<label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
+						<UiInput
+							:model-value="confirmPassword"
+							:type="confirmVisible ? 'text' : 'password'"
+							size="md"
+							:state="error ? 'error' : 'default'"
+							:placeholder="t('auth.reset.enterConfirmPassword')"
+							data-testid="auth-reset-password-confirm-input"
+							@update:model-value="confirmPassword = $event"
+						>
+							<template #icon-right>
+								<UiButton
+									variant="ghost"
+									tone="neutral"
+									size="24"
+									:no-hover="true"
+									class="auth-reset-toggle"
+									:aria-label="t('auth.reset.toggleConfirmPassword')"
+									:sr-label="t('auth.reset.toggleConfirmPassword')"
+									icon-only
+									:icon="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
+									:icon-size="24"
+									@click="confirmVisible = !confirmVisible"
+								/>
+							</template>
+						</UiInput>
+					</div>
 				</div>
 			</div>
 
@@ -241,6 +254,7 @@ async function submitChangePassword() {
 		gap: 8px;
 		.auth-reset-title {
 			font-size: var(--type-size-500);
+			font-weight: var(--font-weight-semibold);
 			line-height: var(--type-line-500);
 			color: var(--text-primary);
 		}
@@ -264,6 +278,26 @@ async function submitChangePassword() {
     display: flex;
     flex-direction: column;
     gap: 24px;
+
+	.auth-reset-content {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+	}
+
+	.auth-reset-close {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+		display: grid;
+		place-items: center;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--text-primary);
+		cursor: pointer;
+		z-index: 6;
+	}
 
     .auth-reset-fields {
         display: flex;
@@ -299,7 +333,7 @@ async function submitChangePassword() {
         height: 20px;
         border-radius: 0;
         box-shadow: none;
-        color: var(--text-secondary);
+        color: var(--gray-90);
     }
 
     .auth-reset-error {

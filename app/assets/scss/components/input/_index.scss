@@ -39,8 +39,8 @@
     width: 24px;
     height: 24px;
 
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
 
     color: var(--text-muted);
 }
