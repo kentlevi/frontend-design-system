@@ -201,7 +201,7 @@ export function useChangeEmailForm() {
 			/** Set initial cooldown value */
 			remaining.value = 60
 
-			const payload = { email: pending_email.value }
+			const payload = { email: pending_email.value, is_resend: true }
 			const response = await sendEmailChangeOTP(payload)
 
 			/** Get cooldown_remaining from api response */

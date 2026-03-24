@@ -6,10 +6,15 @@ import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmail
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
+import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 
 const { t } = useI18n();
 const profile_field_store = useProfileFieldsStore();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
+
+const {
+	social
+} = useSocialAccount()
 
 const {
 	file_input,
@@ -181,11 +186,8 @@ onMounted(() => {
 								Change
 							</UiButton>
 						</div>
-						<p class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-facebook-text">Facebook</span> login.
-						</p>
-						<p class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-google-text">Google</span> login.
+						<p v-if="social" class="account-profile-email-helper-text">
+							This account is linked to your <span class="account-profile-social-text">{{ capitalizeFirst(social) }}</span> login.
 						</p>
 					</template>
 				</UiFormField>
@@ -229,6 +231,7 @@ onMounted(() => {
 	/>
 
 	<AuthVerificationModal
+		:email="pending_email"
 		:model-value="is_otp_open"
 		:code="email_change_otp_code"
 		:error="email_change_otp_error"
@@ -373,8 +376,7 @@ onMounted(() => {
 		color: var(--text-secondary);
 	}
 
-	.account-profile-facebook-text,
-	.account-profile-google-text {
+	.account-profile-social-text {
 		color: var(--azure-base);
 		font-weight: var(--font-weight-semibold);
 	}
