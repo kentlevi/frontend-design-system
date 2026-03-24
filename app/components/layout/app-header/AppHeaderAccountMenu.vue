@@ -3,9 +3,11 @@ import { toRef } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
 import type { icons } from '~/data/ui/icons';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 type IconName = keyof typeof icons;
 
 type AccountLink = {
@@ -15,12 +17,10 @@ type AccountLink = {
 };
 
 const props = defineProps<{
+	simple?: boolean;
 	accountOpen: boolean;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
-	userInitial: string;
-	userAvatarUrl?: string | null;
-	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
 	accountLinks: AccountLink[];
@@ -81,12 +81,12 @@ const {
 		>
 			<span v-if="isMockLoggedIn && !isGuestLoggedIn" class="home-header-avatar">
 				<img
-					v-if="props.userAvatarUrl"
-					:src="props.userAvatarUrl"
-					:alt="displayName"
+					v-if="display_avatar"
+					:src="display_avatar"
+					:alt="display_name"
 					class="home-header-avatar-image"
 				>
-				<template v-else>{{ userInitial }}</template>
+				<template v-else>{{ user_initial }}</template>
 			</span>
 			<span v-else-if="isGuestLoggedIn" class="home-header-avatar home-header-avatar--guest">
 				<UiIcon name="strong-user" :size="16" color="var(--text-primary)" />
@@ -118,16 +118,16 @@ const {
 				<div class="home-account-summary" data-testid="app-header-account-summary">
 					<span class="home-account-summary-avatar">
 						<img
-							v-if="props.userAvatarUrl"
-							:src="props.userAvatarUrl"
-							:alt="displayName"
+							v-if="display_avatar"
+							:src="display_avatar"
+							:alt="display_name"
 							class="home-account-summary-avatar-image"
 						>
-						<template v-else>{{ userInitial }}</template>
+						<template v-else>{{ user_initial }}</template>
 					</span>
 					<div>
 						<p class="home-account-summary-name">
-							{{ displayName }}
+							{{ display_name }}
 						</p>
 						<p class="home-account-summary-email">
 							{{ displayEmail }}
@@ -135,7 +135,10 @@ const {
 					</div>
 				</div>
 
-				<div class="home-account-link-group home-account-link-group--primary">
+				<div
+					v-if="!props.simple"
+					class="home-account-link-group home-account-link-group--primary"
+				>
 					<NuxtLink
 						v-for="link in primaryAccountLinks"
 						:key="link.to"
@@ -157,7 +160,7 @@ const {
 
 				<div class="home-account-link-group home-account-link-group--secondary">
 					<NuxtLink
-						v-if="gettingStartedLink"
+						v-if="!props.simple && gettingStartedLink"
 						:to="withCountry(gettingStartedLink.to)"
 						class="home-account-link home-account-link--section-start"
 						role="menuitem"
@@ -210,7 +213,10 @@ const {
 					</div>
 				</div>
 
-				<div class="home-account-link-group home-account-link-group--primary">
+				<div
+					v-if="!props.simple"
+					class="home-account-link-group home-account-link-group--primary"
+				>
 					<NuxtLink
 						v-if="guestOrderLink"
 						:to="guestOrderTarget"

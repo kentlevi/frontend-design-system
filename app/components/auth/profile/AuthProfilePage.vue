@@ -3,6 +3,7 @@ import AuthProfileDetailsStep from '@/components/auth/profile/AuthProfileDetails
 import AuthProfileSettingsStep from '@/components/auth/profile/AuthProfileSettingsStep.vue';
 import AuthProfileSidebar from '@/components/auth/profile/AuthProfileSidebar.vue';
 import AuthProfileWelcomeToast from '@/components/auth/profile/AuthProfileWelcomeToast.vue';
+import AuthVerificationModal from '@/components/auth/shared/AuthVerificationModal.vue';
 import { useAuthProfileSetup } from '@/composables/auth/profile/useAuthProfileSetup';
 
 const {
@@ -11,18 +12,32 @@ const {
 	firstName,
 	lastName,
 	email,
+	emailError,
+	emailDisabled,
+	emailRequired,
 	photoUrl,
 	photoError,
 	promotions,
 	reviews,
-	confirmations,
 	initials,
 	canContinueProfileDetails,
+	canSkipProfileDetails,
+	isEmailVerificationModalOpen,
+	verificationEmail,
+	verificationCode,
+	verificationError,
+	resendLimitReached,
+	isVerifyingEmail,
+	verificationResendCooldownRemaining,
 	dismissToast,
 	onPhotoFilePicked,
 	removePhoto,
 	goNext,
+	skipProfileDetails,
 	goBack,
+	closeEmailVerificationModal,
+	submitEmailVerification,
+	resendEmailVerification,
 	completeSetup,
 } = useAuthProfileSetup();
 </script>
@@ -38,25 +53,29 @@ const {
 					:first-name="firstName"
 					:last-name="lastName"
 					:email="email"
+					:email-error="emailError"
+					:email-disabled="emailDisabled"
+					:email-required="emailRequired"
 					:initials="initials"
 					:photo-url="photoUrl"
 					:photo-error="photoError"
 					:can-continue="canContinueProfileDetails"
+					:can-skip="canSkipProfileDetails"
 					@update:first-name="firstName = $event"
 					@update:last-name="lastName = $event"
+					@update:email="email = $event"
 					@photo-file-picked="onPhotoFilePicked"
 					@photo-remove="removePhoto"
 					@next="goNext"
+					@skip="skipProfileDetails"
 				/>
 
 				<AuthProfileSettingsStep
 					v-else
 					:promotions="promotions"
 					:reviews="reviews"
-					:confirmations="confirmations"
 					@update:promotions="promotions = $event"
 					@update:reviews="reviews = $event"
-					@update:confirmations="confirmations = $event"
 					@back="goBack"
 					@complete="completeSetup"
 				/>
@@ -64,6 +83,26 @@ const {
 		</div>
 
 		<AuthProfileWelcomeToast :visible="showWelcomeToast" @close="dismissToast" />
+		<AuthVerificationModal
+			:model-value="isEmailVerificationModalOpen"
+			:email="verificationEmail"
+			:code="verificationCode"
+			:error="verificationError"
+			:resend-limit-reached="resendLimitReached"
+			:verifying="isVerifyingEmail"
+			submit-label="Verify"
+			busy-label="Verifying..."
+			align="center"
+			width="504px"
+			:show-close-button="true"
+			test-id-prefix="auth-profile-email-verification"
+			:resend-cooldown-remaining="verificationResendCooldownRemaining"
+			@update:model-value="isEmailVerificationModalOpen = $event"
+			@update:code="verificationCode = $event"
+			@verify="submitEmailVerification"
+			@resend="resendEmailVerification"
+			@close="closeEmailVerificationModal"
+		/>
 	</section>
 </template>
 

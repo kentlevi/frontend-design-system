@@ -47,29 +47,8 @@ const emit = defineEmits<{
 		@update:code="emit('update:code', $event)"
 		@verify="emit('verify')"
 		@resend="emit('resend')"
-	>
-		<template #icon>
-			<img
-				src="/illustrations/icon-verification.svg"
-				:alt="t('auth.verification.iconAlt')"
-				class="auth-login-verification-icon"
-			>
-		</template>
-	</AuthVerificationModal>
+	/>
 </template>
 
 <style scoped lang="scss">
-.auth-login-verification-icon {
-    width: 52px;
-    height: 52px;
-    object-fit: contain;
-    display: block;
-}
-
-@media (max-width: 900px) {
-    .auth-login-verification-icon {
-        width: 46px;
-        height: 46px;
-    }
-}
 </style>

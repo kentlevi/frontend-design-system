@@ -13,6 +13,7 @@ const AppHeaderLocaleModal = defineAsyncComponent(
 const CartPreview = defineAsyncComponent(
 	() => import('~/components/cart/CartPreview.vue')
 );
+const route = useRoute();
 const {
 	accountOpen,
 	accountMenuRef,
@@ -23,9 +24,7 @@ const {
 	accountLinks,
 	isMockLoggedIn,
 	isGuestLoggedIn,
-	userInitial,
 	userAvatarUrl,
-	displayName,
 	displayEmail,
 	accountTransitionName,
 	isNavLinkActive,
@@ -194,15 +193,14 @@ onBeforeUnmount(() => {
 <template>
 	<header class="home-header" data-testid="app-header">
 		<AppHeaderMainBar
+			:simple="route.meta.isSimpleHeader === true"
 			:nav-links="navLinks"
 			:is-nav-link-active="isNavLinkActive"
 			:selected-locale="selectedLocale"
 			:is-mock-logged-in="isMockLoggedIn"
 			:is-guest-logged-in="isGuestLoggedIn"
 			:account-open="accountOpen"
-			:user-initial="userInitial"
 			:user-avatar-url="userAvatarUrl"
-			:display-name="displayName"
 			:display-email="displayEmail"
 			:account-transition-name="accountTransitionName"
 			:account-links="accountLinks"

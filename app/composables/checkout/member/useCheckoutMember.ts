@@ -1,23 +1,18 @@
 import { computed, ref } from 'vue';
+import { useCheckoutBase } from '../shared/useCheckoutBase';
+import { useCheckoutAddressForm } from '../shared/useCheckoutAddressForm';
 import { checkoutPaymentBrands, checkoutPaymentMethods, checkoutShippingMethods } from '~/data/checkout/options';
-import { useCheckoutGuest } from '~/composables/checkout/guest/useCheckoutGuest';
 import { getProfileFieldValue, normalizeAccountName } from '~/utils/account/accountProfile';
 import type {
 	CheckoutPaymentMethodKey,
 	CheckoutShippingMethodKey,
 } from '~/types/checkout/options';
 import { useUsersStore } from '~/stores/users/users.store';
-
-type MemberAddress = {
-	id: string;
-	recipient: string;
-	line1: string;
-	line2: string;
-	isDefault?: boolean;
-};
+import type { MemberAddress } from '~/types/checkout';
 
 export function useCheckoutMember() {
-	const { t } = useI18n();
+	const base = useCheckoutBase();
+	const addressForm = useCheckoutAddressForm();
 	const userStore = useUsersStore();
 	const mockUser = useCookie<{ firstName?: string; lastName?: string; email?: string } | null>('mock_user');
 
@@ -29,9 +24,9 @@ export function useCheckoutMember() {
 		)
 	);
 
-	const guestCheckout = useCheckoutGuest();
-
+	// Member specific email
 	const memberEmail = computed(() => userStore.state.email || mockUser.value?.email || 'joy.love@musticker.com');
+
 	const savedShippingAddresses = computed<MemberAddress[]>(() => [
 		{
 			id: 'addr-default',
@@ -50,21 +45,24 @@ export function useCheckoutMember() {
 
 	const selectedShippingAddressId = ref(savedShippingAddresses.value[0]?.id || '');
 	const shipToAnotherAddress = ref(false);
+
 	const selectedShippingMethod = ref<CheckoutShippingMethodKey>(
 		checkoutShippingMethods.find((method) => method.defaultSelected)?.key || 'express'
 	);
 	const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
 		checkoutPaymentMethods.find((method) => method.defaultSelected)?.key || 'credit-card'
 	);
+
 	const dropShippingEnabled = ref(false);
-	const useShippingAsBilling = ref(true);
 	const pointsToUse = ref('');
 	const couponCode = ref('');
-	const cardNumber = ref('4242 4242 4242 4242');
-	const expiry = ref('12/28');
-	const cvv = ref('123');
-
 	const pointsAvailable = ref(13.93);
+
+	// Member specific payment pre-fills
+	base.cardNumber.value = '4242 4242 4242 4242';
+	base.expiry.value = '12/28';
+	base.cvv.value = '123';
+
 	const selectedShippingAddress = computed(
 		() => savedShippingAddresses.value.find((address) => address.id === selectedShippingAddressId.value) || null
 	);
@@ -81,8 +79,8 @@ export function useCheckoutMember() {
 	}
 
 	return {
-		...guestCheckout,
-		t,
+		...base,
+		...addressForm, // For "Ship to another address" fields
 		memberEmail,
 		savedShippingAddresses,
 		selectedShippingAddress,
@@ -94,13 +92,9 @@ export function useCheckoutMember() {
 		activePaymentMethods,
 		paymentBrands: checkoutPaymentBrands,
 		dropShippingEnabled,
-		useShippingAsBilling,
 		pointsAvailable,
 		pointsToUse,
 		couponCode,
-		cardNumber,
-		expiry,
-		cvv,
 		useAllPoints,
 	};
 }

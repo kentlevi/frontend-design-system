@@ -6,26 +6,36 @@ const props = withDefaults(
 		firstName?: string;
 		lastName?: string;
 		email?: string;
+		emailError?: string;
+		emailDisabled?: boolean;
+		emailRequired?: boolean;
 		initials?: string;
 		photoUrl?: string | null;
 		photoError?: string;
 		canContinue?: boolean;
+		canSkip?: boolean;
 	}>(),
 	{
 		firstName: '',
 		lastName: '',
 		email: '',
+		emailError: '',
+		emailDisabled: true,
+		emailRequired: false,
 		initials: '',
 		photoUrl: null,
 		photoError: '',
 		canContinue: false,
+		canSkip: true,
 	}
 );
 
 const emit = defineEmits<{
-	(event: 'update:firstName', value: string): void;
-	(event: 'update:lastName', value: string): void;
+	(event: 'update:first-name', value: string): void;
+	(event: 'update:last-name', value: string): void;
+	(event: 'update:email', value: string): void;
 	(event: 'next'): void;
+	(event: 'skip'): void;
 	(event: 'photo-file-picked', file: File): void;
 	(event: 'photo-remove'): void;
 }>();
@@ -36,9 +46,11 @@ const {
 	onFilePicked,
 	updateFirstName,
 	updateLastName,
+	updateEmail,
 } = useAuthProfileDetailsStep({
-	emitUpdateFirstName: (value) => emit('update:firstName', value),
-	emitUpdateLastName: (value) => emit('update:lastName', value),
+	emitUpdateFirstName: (value) => emit('update:first-name', value),
+	emitUpdateLastName: (value) => emit('update:last-name', value),
+	emitUpdateEmail: (value) => emit('update:email', value),
 	emitPhotoFilePicked: (file) => emit('photo-file-picked', file),
 });
 
@@ -154,19 +166,35 @@ const {
 						/>
 					</div>
 					<div class="auth-profile-field auth-profile-field-full">
-						<label class="auth-profile-field-label">{{
-							$t('auth.profile.details.email')
-						}}</label>
+						<label class="auth-profile-field-label">
+							{{ $t('auth.profile.details.email') }}
+							<span
+								v-if="props.emailRequired"
+								class="auth-profile-field-label-required"
+								aria-hidden="true"
+							>
+								*
+							</span>
+						</label>
 						<UiInput
 							:model-value="props.email"
 							type="email"
 							size="md"
 							class="auth-profile-field-input"
 							data-testid="auth-profile-email"
-							disabled
+							:disabled="props.emailDisabled"
+							:required="props.emailRequired"
+							@update:model-value="updateEmail"
 						/>
-						<p class="auth-profile-field-help">
+						<p v-if="props.emailDisabled" class="auth-profile-field-help">
 							{{ $t('auth.profile.details.emailDisabledHint') }}
+						</p>
+						<p
+							v-if="props.emailError"
+							class="auth-profile-field-help auth-profile-field-help-error"
+							data-testid="auth-profile-email-error"
+						>
+							{{ props.emailError }}
 						</p>
 					</div>
 				</div>
@@ -175,12 +203,13 @@ const {
 
 		<div class="auth-profile-actions" data-testid="auth-profile-details-actions">
 			<UiButton
+				v-if="props.canSkip"
 				variant="ghost"
 				tone="neutral"
 				size="md"
 				class="auth-profile-link-btn"
 				data-testid="auth-profile-skip-button"
-				@click="emit('next')"
+				@click="emit('skip')"
 			>
 				{{ $t('auth.profile.details.skip') }}
 			</UiButton>
@@ -349,6 +378,11 @@ const {
                         font-weight: var(--font-weight-semibold);
                         color: var(--text-primary);
 
+                        .auth-profile-field-label-required {
+                            color: var(--error);
+                            margin-left: 2px;
+                        }
+
                         .auth-profile-field-label-optional {
                             color: var(--text-secondary);
                             font-weight: var(--font-weight-regular);
@@ -365,6 +399,11 @@ const {
                         color: var(--text-secondary);
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);
+                    }
+
+                    .auth-profile-field-help-error {
+                        color: var(--error);
+                        font-weight: var(--font-weight-semibold);
                     }
                 }
 

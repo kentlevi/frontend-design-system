@@ -6,3 +6,13 @@ export interface SendEmailChangeOtpSuccessData {
 	otp_sent: boolean
 	cooldown_remaining: number
 }
+
+export interface EmailChangeRequestPayload extends Record<string, unknown> {
+	email: string
+	is_resend?: boolean
+}
+
+export interface VerifyEmailChangePayload extends Record<string, unknown> {
+	email: string
+	otp: string
+}

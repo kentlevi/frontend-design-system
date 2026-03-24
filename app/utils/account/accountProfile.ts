@@ -2,15 +2,28 @@ const AVATAR_TARGET_SIZE_PX = 800;
 const AVATAR_JPEG_QUALITY = 0.82;
 
 type ProfileFieldKey = 'first_name' | 'last_name';
+type ProfileFieldAlias = 'first_name' | 'given_name' | 'last_name' | 'family_name';
 
 type ProfileFieldValue = {
 	value?: string | null;
+	sort_order?: number | null;
 	country_field?: {
 		field_key?: string | null;
 	} | null;
 	country_field_id?: number | null;
 	country_field_ids?: number | null;
 	country_fields_id?: number | null;
+};
+
+type DynamicProfileField = {
+	id?: number | null;
+	field_key?: string | null;
+	sort_order?: number | null;
+};
+
+const profile_field_aliases: Record<ProfileFieldKey, ProfileFieldAlias[]> = {
+	first_name: ['first_name', 'given_name'],
+	last_name: ['last_name', 'family_name'],
 };
 
 function getLegacyFieldId(key: ProfileFieldKey) {
@@ -21,34 +34,70 @@ function getFieldIdentifier(field: ProfileFieldValue) {
 	return field.country_field_id ?? field.country_field_ids ?? field.country_fields_id;
 }
 
-export function getProfileFieldValue(
-	fieldValues: ProfileFieldValue[],
-	key: ProfileFieldKey
+function normalizeFieldKey(value: string | null | undefined) {
+	return (value || '').trim().toLowerCase();
+}
+
+function getFieldKeyFromDefinitions(
+	field_definitions: DynamicProfileField[],
+	field_identifier: number | null | undefined
 ) {
-	const legacyId = getLegacyFieldId(key);
-	const directMatch =
-		fieldValues.find(
-			(field) =>
-				field.country_field?.field_key === key ||
-				getFieldIdentifier(field) === legacyId
+	if (!field_identifier) return '';
+	const matched_definition = field_definitions.find(
+		(field_definition) => field_definition.id === field_identifier
+	);
+	return normalizeFieldKey(matched_definition?.field_key);
+}
+
+function getFieldSortOrder(field: ProfileFieldValue) {
+	if (typeof field.sort_order === 'number') {
+		return field.sort_order;
+	}
+
+	return getFieldIdentifier(field) ?? Number.MAX_SAFE_INTEGER;
+}
+
+export function getProfileFieldValue(
+	field_values: ProfileFieldValue[],
+	key: ProfileFieldKey,
+	field_definitions: DynamicProfileField[] = []
+) {
+	const normalized_aliases = profile_field_aliases[key];
+	const legacy_id = getLegacyFieldId(key);
+	const direct_match =
+		field_values.find(
+			(field) => {
+				const field_identifier = getFieldIdentifier(field);
+				const field_key_from_payload = normalizeFieldKey(field.country_field?.field_key);
+				const field_key_from_state = getFieldKeyFromDefinitions(
+					field_definitions,
+					field_identifier
+				);
+				const normalized_field_key = field_key_from_payload || field_key_from_state;
+				const is_key_match = normalized_aliases.some(
+					(field_alias) => field_alias === normalized_field_key
+				);
+
+				return (
+					is_key_match
+					|| field_identifier === legacy_id
+				);
+			}
 		)?.value?.trim() || '';
 
-	if (directMatch) return directMatch;
+	if (direct_match) return direct_match;
 
-	const fallbackRows = [...fieldValues]
+	const fallback_rows = [...field_values]
 		.filter((field) => typeof field.value === 'string' && field.value.trim())
 		.sort(
 			(a, b) =>
-				(getFieldIdentifier(a) ?? Number.MAX_SAFE_INTEGER) -
-				(getFieldIdentifier(b) ?? Number.MAX_SAFE_INTEGER)
+				getFieldSortOrder(a) - getFieldSortOrder(b)
 		)
-		.slice(0, 2);
+		.slice(0, 2)
+		.map((field) => field.value?.trim() || '');
 
-	if (fallbackRows.length < 2) return '';
-
-	return key === 'first_name'
-		? (fallbackRows[0]?.value?.trim() || '')
-		: (fallbackRows[1]?.value?.trim() || '');
+	if (key === 'first_name') return fallback_rows[0] || '';
+	return fallback_rows[1] || '';
 }
 
 export function normalizeAccountName(first: string, last: string) {

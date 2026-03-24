@@ -2,12 +2,15 @@
 import { useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
+import { getProfileFieldValue } from '~/utils/account/accountProfile';
 import type { UserIdentity, UserProfile } from '~/types/auth/user';
 import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 import { useUsersStore } from '~/stores/users/users.store';
+import { useAuthUser } from '~/composables/auth/useAuthUser';
+import { useLoginUser } from '~/composables/auth/useLoginUser';
 
 const { t } = useI18n();
 const api = useApi();
@@ -41,46 +44,12 @@ interface MeResponse {
 
 async function syncSocialLoginUserState() {
 	try {
-		const response = await api<MeResponse>(`/${apiCountry.value}/user/me`, {
-			method: 'GET',
-		});
+		const { fetchAndStoreUser } = useAuthUser()
+		const response = await fetchAndStoreUser()
 
-		if (!response?.data?.user) return false;
-
-		const guestLoginMode = useCookie<string | number | null>('guest_login_mode', {
-			maxAge: 60 * 60 * 24 * 3,
-			sameSite: 'lax',
-			path: '/',
-		});
-		const mockUser = useCookie<{
-			firstName: string;
-			lastName: string;
-			email: string;
-		} | null>('mock_user', {
-			sameSite: 'lax',
-			path: '/',
-		});
-
-		userStore.setUser(response.data.user);
-		guestLoginMode.value = 0;
-
-		const fields = response.data.user.profile?.user_field_values ?? [];
-		const firstName =
-			fields.find((field) =>
-				field.country_field?.field_key === 'first_name' ||
-				(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === 1
-			)?.value?.trim() || '';
-		const lastName =
-			fields.find((field) =>
-				field.country_field?.field_key === 'last_name' ||
-				(field.country_field_id ?? field.country_field_ids ?? field.country_fields_id) === 2
-			)?.value?.trim() || '';
-
-		mockUser.value = {
-			firstName,
-			lastName,
-			email: response.data.user.email || '',
-		};
+		if (!response) {
+			return
+		}
 
 		if (import.meta.client) {
 			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
@@ -97,12 +66,8 @@ async function syncSocialLoginUserState() {
 /* @desc social login popup */
 async function handleSocial(provider: string) {
 	try {
-		const response = await api<SocialLogin>(`/${apiCountry.value}/auth/social/redirect`, {
-			method: 'POST',
-			body: {
-				provider
-			}
-		})
+		const { handleSocialLogin } = useLoginUser()
+		const response = await handleSocialLogin({provider})
 
 		const url = response.data?.url
 

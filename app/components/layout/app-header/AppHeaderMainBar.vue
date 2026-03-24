@@ -22,15 +22,14 @@ type AccountLink = {
 };
 
 const props = defineProps<{
+	simple?: boolean;
 	navLinks: NavLink[];
 	isNavLinkActive: (path: string) => boolean;
 	selectedLocale: FlagCode;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
 	accountOpen: boolean;
-	userInitial: string;
 	userAvatarUrl?: string | null;
-	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
 	accountLinks: AccountLink[];
@@ -71,7 +70,12 @@ function isExactNavHeading(path: string) {
 			/>
 		</NuxtLink>
 
-		<nav class="home-header-nav" :aria-label="t('layout.header.primaryNav')" data-testid="app-header-nav">
+		<nav
+			v-if="!props.simple"
+			class="home-header-nav"
+			:aria-label="t('layout.header.primaryNav')"
+			data-testid="app-header-nav"
+		>
 			<template
 				v-for="link in props.navLinks"
 				:key="link.key"
@@ -94,78 +98,95 @@ function isExactNavHeading(path: string) {
 				</NuxtLink>
 			</template>
 		</nav>
+		<div v-else />
 
 		<div class="home-header-tools" data-testid="app-header-tools">
-			<UiButton
-				type="button"
-				variant="ghost"
-				tone="neutral"
-				size="md"
-				class="home-header-icon home-header-locale"
-				:aria-label="t('layout.header.locale.aria')"
-				data-testid="app-header-locale-button"
-				@click="emit('open-locale')"
-				@mouseenter="emit('prefetch-locale')"
-				@focus="emit('prefetch-locale')"
-			>
-				<UiFlag :code="props.selectedLocale" :size="24" />
-			</UiButton>
-			<UiButton
-				variant="ghost"
-				tone="default"
-				size="md"
-				:icon-only="true"
-				icon="strong-search"
-				icon-size="md"
-				class="home-header-icon"
-				:aria-label="t('layout.header.search')"
-				data-testid="app-header-search-button"
-				@click="emit('open-search')"
-				@mouseenter="emit('prefetch-search')"
-				@focus="emit('prefetch-search')"
-			/>
-			<div class="home-header-cart-wrap">
+			<template v-if="!props.simple">
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="home-header-icon home-header-locale"
+					:aria-label="t('layout.header.locale.aria')"
+					data-testid="app-header-locale-button"
+					@click="emit('open-locale')"
+					@mouseenter="emit('prefetch-locale')"
+					@focus="emit('prefetch-locale')"
+				>
+					<UiFlag :code="props.selectedLocale" :size="24" />
+				</UiButton>
 				<UiButton
 					variant="ghost"
 					tone="default"
 					size="md"
 					:icon-only="true"
-					icon="strong-shop-cart"
+					icon="strong-search"
 					icon-size="md"
-					class="home-header-icon home-header-cart"
-					:aria-label="t('layout.header.cart')"
-					data-testid="app-header-cart-button"
-					@click="emit('open-cart')"
-					@mouseenter="emit('prefetch-cart')"
-					@focus="emit('prefetch-cart')"
+					class="home-header-icon"
+					:aria-label="t('layout.header.search')"
+					data-testid="app-header-search-button"
+					@click="emit('open-search')"
+					@mouseenter="emit('prefetch-search')"
+					@focus="emit('prefetch-search')"
 				/>
-				<span
-					v-if="props.cartItemCount > 0"
-					class="home-header-cart-dot"
-					data-testid="app-header-cart-count"
+				<div class="home-header-cart-wrap">
+					<UiButton
+						variant="ghost"
+						tone="default"
+						size="md"
+						:icon-only="true"
+						icon="strong-shop-cart"
+						icon-size="md"
+						class="home-header-icon home-header-cart"
+						:aria-label="t('layout.header.cart')"
+						data-testid="app-header-cart-button"
+						@click="emit('open-cart')"
+						@mouseenter="emit('prefetch-cart')"
+						@focus="emit('prefetch-cart')"
+					/>
+					<span
+						v-if="props.cartItemCount > 0"
+						class="home-header-cart-dot"
+						data-testid="app-header-cart-count"
+					>
+						{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
+					</span>
+				</div>
+				<UiButton
+					v-if="props.isMockLoggedIn"
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="home-header-icon home-header-bell"
+					data-testid="app-header-notification-button"
 				>
-					{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
-				</span>
-			</div>
+					<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
+				</UiButton>
+			</template>
+
 			<UiButton
-				v-if="props.isMockLoggedIn"
+				v-if="props.simple"
 				type="button"
 				variant="ghost"
 				tone="neutral"
 				size="md"
-				class="home-header-icon home-header-bell"
-				data-testid="app-header-notification-button"
+				class="home-header-icon"
+				:aria-label="t('layout.header.accountLinks.signOut')"
+				data-testid="app-header-direct-logout-button"
+				@click="emit('logout')"
 			>
-				<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
+				<UiIcon name="strong-sign-out" :size="22" color="var(--text-primary)" />
 			</UiButton>
 
 			<AppHeaderAccountMenu
+				v-else
+				:simple="props.simple"
 				:account-open="props.accountOpen"
 				:is-mock-logged-in="props.isMockLoggedIn"
 				:is-guest-logged-in="props.isGuestLoggedIn"
-				:user-initial="props.userInitial"
 				:user-avatar-url="props.userAvatarUrl"
-				:display-name="props.displayName"
 				:display-email="props.displayEmail"
 				:account-transition-name="props.accountTransitionName"
 				:account-links="props.accountLinks"

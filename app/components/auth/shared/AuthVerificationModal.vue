@@ -152,7 +152,11 @@ function handleModalModelValueUpdate(value: boolean) {
 
 			<div class="auth-verification-head">
 				<slot name="icon">
-					<UiIcon name="strong-shield" :size="46" color="var(--brand-primary)" />
+					<img
+						src="/illustrations/icon-verification.svg"
+						:alt="t(`${key}.iconAlt`)"
+						class="auth-verification-icon"
+					>
 				</slot>
 				<div class="auth-verification-copy">
 					<h3 class="auth-verification-title">
@@ -193,9 +197,8 @@ function handleModalModelValueUpdate(value: boolean) {
 					v-if="error"
 					class="auth-verification-error"
 					data-testid="auth-verification-error"
-				>
-					{{ error }}
-				</p>
+					v-html="error"
+				/>
 			</div>
 
 			<div class="auth-verification-actions">
@@ -266,11 +269,11 @@ function handleModalModelValueUpdate(value: boolean) {
         align-items: start;
         gap: 16px;
 
-        :deep(img),
-        :deep(svg) {
+        .auth-verification-icon {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
             display: block;
-            width: 48px;
-            height: 48px;
         }
 
         .auth-verification-copy {
@@ -403,6 +406,17 @@ function handleModalModelValueUpdate(value: boolean) {
             }
         }
 
+    }
+}
+
+@media (max-width: 900px) {
+    .auth-verification-modal {
+        .auth-verification-head {
+            .auth-verification-icon {
+                width: 46px;
+                height: 46px;
+            }
+        }
     }
 }
 

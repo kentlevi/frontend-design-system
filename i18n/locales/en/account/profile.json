@@ -8,6 +8,7 @@
             "photoHint1": "At least 800x800px recommended file size.",
             "photoHint2": "Accepted filetypes: .jpg and .png",
             "uploadNewPhoto": "Upload New Photo",
+            "uploadPhoto": "Upload Photo",
             "delete": "Delete",
             "first_name": "First Name",
             "last_name": "Last Name",
@@ -45,8 +46,8 @@
             "inch": "inch",
             "signOut": "Sign Out",
             
-            "given_name": "Given Name",
-            "family_name": "Family Name"
+            "given_name": "First Name",
+            "family_name": "Last Name"
         }
     }
 }

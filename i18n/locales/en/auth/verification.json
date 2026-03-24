@@ -2,7 +2,7 @@
     "auth": {
         "verification": {
             "title": "Verification Required",
-            "iconAlt": "Verification shield",
+            "iconAlt": "Verification icon",
             "messagePrefix": "To ensure your security, we'll send a verification code to your email ",
             "messageSuffix": ". The code will expire in 10 minutes.",
             "enterCode": "Please enter the code:",

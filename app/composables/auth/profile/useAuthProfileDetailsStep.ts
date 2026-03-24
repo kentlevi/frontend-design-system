@@ -3,6 +3,7 @@ import { ref } from 'vue';
 export function useAuthProfileDetailsStep(params: {
 	emitUpdateFirstName: (value: string) => void;
 	emitUpdateLastName: (value: string) => void;
+	emitUpdateEmail: (value: string) => void;
 	emitPhotoFilePicked: (file: File) => void;
 }) {
 	const file_input = ref<HTMLInputElement | null>(null);
@@ -28,11 +29,16 @@ export function useAuthProfileDetailsStep(params: {
 		params.emitUpdateLastName(value);
 	}
 
+	function updateEmail(value: string) {
+		params.emitUpdateEmail(value);
+	}
+
 	return {
 		fileInput: file_input,
 		openFilePicker: openFilePicker,
 		onFilePicked: onFilePicked,
 		updateFirstName: updateFirstName,
 		updateLastName: updateLastName,
+		updateEmail: updateEmail,
 	};
 }
