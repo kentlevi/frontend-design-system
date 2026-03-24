@@ -19,6 +19,7 @@ type SizeFeatureCard = {
 type SelectOption = {
 	label: string;
 	value: string | number;
+	style?: Record<string, any>;
 };
 
 const props = defineProps<{
@@ -54,12 +55,30 @@ const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-
 const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 const specialColorProductIds = ['transfer-sticker', 'vinyl-lettering'] as const
 const vinylQuantityOptions = [1, 2, 5, 10, 50, 100, 200, 300] as const
-const vinylFontOptions: SelectOption[] = [
-	{ label: 'Antique Olive', value: 'antique-olive' },
-	{ label: 'Helvetica Neue', value: 'helvetica-neue' },
-	{ label: 'Bebas Neue', value: 'bebas-neue' },
-	{ label: 'Brush Script', value: 'brush-script' },
+
+const fontNames = [
+	'Antique Olive', 'American Typewriter', 'akaDora', 'Arial Black', 'Arial Narrow', 'Arial Rounded', 'Arial',
+	'AT Old English', 'Autumn In November', 'Blackstab Full', 'Balloon', 'Balthazar', 'Bank Ghotic',
+	'BASIC SQUARE 7', 'Bauhaus', 'BEBAS', 'Bender', 'Bimini', 'Bitter', 'Black Chancery', 'Boyz R Gross',
+	'Brush Script', 'Century Gothic', 'Broadway', 'Chunkfive', 'City D Medium', 'Comfortaa', 'Comfortaa Light',
+	'Comic Sans', 'Cooper Black', 'Copperplate Gothic', 'Coquette Regular', 'Curlz', 'Delftone Stylus',
+	'Digital Sans', 'Edwardian Script', 'Forte', 'Franklin G. Heavy', 'Futura Book BT', 'Gill Sans',
+	'Gotham Light', 'Gotham Book', 'Gotham Medium', 'Gotham Black', 'Grave Digger', 'Great Vibes',
+	'Hand Of Sean', 'Handel', 'Harry Potter', 'HIGH SCHOOL USA', 'Honey Script', 'Impact', 'Intro Line',
+	'Juice', 'KaushanScript', 'Kristen ITC', 'Langdon', 'League Spartan', 'Lobster', 'MagnoliaScript',
+	'Mandatory', 'Marker Felt', 'Monotype Corsiva', 'Museo', 'Myriad', 'Nexa Bold', 'Open Sans',
+	'Optimus Princeps', 'OLIVER', 'Ottawa', 'Pacifico', 'Ravie', 'Raleway Semibold', 'Script V730',
+	'Segoe Print', 'Segoe Script', 'Segoe UI', 'STENCIL STD', 'SueEllenFrancisco', 'Tahoma',
+	'Throw My Hands Up', 'THUNDER', 'Time Burner', 'Times New Roman', 'Trajan Pro', 'Vani',
+	'Vladimir Script', 'Walt Disney'
 ]
+
+const vinylFontOptions: SelectOption[] = fontNames.map(font => ({
+	label: font,
+	value: font,
+	style: { fontFamily: font }
+}))
+
 const colorOptions = [
 	{ key: 'black', label: 'Black', checkColor: '#ffffff', swatchStyle: { background: '#000000' } },
 	{ key: 'white', label: 'White', checkColor: '#111827', swatchStyle: { background: '#FFFFFF', border: '1px solid var(--black-base)' } },
@@ -84,6 +103,7 @@ const colorOptions = [
 		},
 	},
 ] as const
+
 const isCustomSize = ref(false)
 const customWidth = ref<number | null>(null)
 const customHeight = ref<number | null>(null)
@@ -97,8 +117,16 @@ const selectedColor = ref<(typeof colorOptions)[number]['key']>('black')
 const vinylWidth = ref(192)
 const vinylHeight = ref(30)
 const vinylText = ref('')
-const selectedVinylFont = ref<string>('antique-olive')
+const selectedVinylFont = ref<string>('Antique Olive')
 const vinylActiveSize = ref<'width' | 'height'>('height')
+const isVinylSizeFocused = ref(false)
+const isVinylFontFocused = ref(false)
+
+const onVinylSizeFocus = () => { isVinylSizeFocused.value = true }
+const onVinylSizeBlur = () => { isVinylSizeFocused.value = false }
+const onVinylFontFocus = () => { isVinylFontFocused.value = true }
+const onVinylFontBlur = () => { isVinylFontFocused.value = false }
+
 
 const onCustomSizeFocus = () => {
 	isCustomSizeFocused.value = true
@@ -537,29 +565,65 @@ watch(
 						</section>
 
 						<template v-else>
-							<section>
+							<section class="product-section">
 								<div class="option-head" data-testid="product-category-size-head">
 									<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
 									<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 								</div>
-								<div class="vinyl-size-pill" data-testid="product-category-vinyl-size-input">
-									<input :value="vinylWidth" type="text" inputmode="numeric" pattern="[0-9]*" class="vinyl-size-input" @beforeinput="preventNonDigitInput" @input="onVinylWidthInput">
-									<span class="vinyl-size-separator">x</span>
-									<input :value="vinylHeight" type="text" inputmode="numeric" pattern="[0-9]*" class="vinyl-size-input" @beforeinput="preventNonDigitInput" @input="onVinylHeightInput">
+								
+								<div class="option-grid">
+									<div
+										class="option-pill option-pill-wide custom-size-pill"
+										:class="{
+											'is-active': true,
+											'is-input-focused': isVinylSizeFocused
+										}"
+										data-testid="product-category-vinyl-size-input"
+									>
+										<input
+											:value="vinylWidth"
+											type="text"
+											inputmode="numeric"
+											pattern="[0-9]*"
+											class="custom-size-input"
+											@beforeinput="preventNonDigitInput"
+											@input="onVinylWidthInput"
+											@focus="onVinylSizeFocus"
+											@blur="onVinylSizeBlur"
+										>
+										<span class="size-separator">x</span>
+										<input
+											:value="vinylHeight"
+											type="text"
+											inputmode="numeric"
+											pattern="[0-9]*"
+											class="custom-size-input"
+											@beforeinput="preventNonDigitInput"
+											@input="onVinylHeightInput"
+											@focus="onVinylSizeFocus"
+											@blur="onVinylSizeBlur"
+										>
+									</div>
 								</div>
 							</section>
 
-							<section>
+							<section class="product-section">
 								<h3 class="option-title">Select your font</h3>
-								<UiSelect
-									v-model="selectedVinylFont"
-									:options="vinylFontOptions"
-									trigger-class="vinyl-font-trigger"
-									menu-class="vinyl-font-menu"
-								/>
+								<div class="option-grid">
+									<div class="option-pill-wide">
+										<UiSelect
+											v-model="selectedVinylFont"
+											:options="vinylFontOptions"
+											trigger-class="custom-size-input font-select-trigger"
+											menu-class="vinyl-font-menu"
+											@focus="onVinylFontFocus"
+											@blur="onVinylFontBlur"
+										/>
+									</div>
+								</div>
 							</section>
 
-							<section>
+							<section class="product-section">
 								<h3 class="option-title" data-testid="product-category-quantity-title">{{ t('product.options.selectQuantity') }}</h3>
 								<div class="option-grid vinyl-quantity-grid" data-testid="product-category-quantity-options">
 									<button
@@ -658,6 +722,8 @@ watch(
 </template>
 
 <style scoped lang="scss">
+@use '~/assets/scss/fonts/lettering';
+
 .product-stage {
     position: relative;
     margin-top: 0;
@@ -976,7 +1042,7 @@ watch(
             .option-head {
                 display: flex;
                 justify-content: space-between;
-                align-items: baseline;
+                align-items: center;
                 gap: 8px;
 
                 .option-head-unit {
@@ -999,7 +1065,35 @@ watch(
         }
 
         :deep(.vinyl-font-menu) {
-            border-radius: 20px;
+            border-radius: 8px;
+        }
+
+        .font-select-trigger {
+            border-radius: 32px !important;
+        }
+
+        :deep(.font-select-trigger) {
+            .ui-select-value {
+                font-size: var(--type-size-100);
+                font-weight: var(--font-weight-bold);
+                color: var(--text-primary);
+            }
+        }
+
+        :deep(.vinyl-font-menu) {
+            border-radius: 8px;
+
+            .ui-select-option {
+                
+                &:hover {
+                    background: var(--gray-10);
+                }
+
+                &.is-selected {
+                    background: var(--gray-20) !important;
+                    font-weight: var(--font-weight-bold);
+                }
+            }
         }
 
         .vinyl-size-pill {

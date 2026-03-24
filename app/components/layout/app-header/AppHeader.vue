@@ -13,6 +13,7 @@ const AppHeaderLocaleModal = defineAsyncComponent(
 const CartPreview = defineAsyncComponent(
 	() => import('~/components/cart/CartPreview.vue')
 );
+const route = useRoute();
 const {
 	accountOpen,
 	accountMenuRef,
@@ -192,6 +193,7 @@ onBeforeUnmount(() => {
 <template>
 	<header class="home-header" data-testid="app-header">
 		<AppHeaderMainBar
+			:simple="route.meta.isSimpleHeader === true"
 			:nav-links="navLinks"
 			:is-nav-link-active="isNavLinkActive"
 			:selected-locale="selectedLocale"

@@ -35,6 +35,7 @@ const emit = defineEmits<{
 	(event: 'update:last-name', value: string): void;
 	(event: 'update:email', value: string): void;
 	(event: 'next'): void;
+	(event: 'skip'): void;
 	(event: 'photo-file-picked', file: File): void;
 	(event: 'photo-remove'): void;
 }>();
@@ -208,7 +209,7 @@ const {
 				size="md"
 				class="auth-profile-link-btn"
 				data-testid="auth-profile-skip-button"
-				@click="emit('next')"
+				@click="emit('skip')"
 			>
 				{{ $t('auth.profile.details.skip') }}
 			</UiButton>

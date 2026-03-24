@@ -1,0 +1,94 @@
+// =============================================================================
+// Vinyl Lettering Font Faces
+// =============================================================================
+
+$lettering-path: '/fonts/lettering';
+
+@font-face { font-family: 'Antique Olive'; src: url('#{$lettering-path}/antique-olive.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'American Typewriter'; src: url('#{$lettering-path}/american-typewriter.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'akaDora'; src: url('#{$lettering-path}/akadora.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Arial Black'; src: url('#{$lettering-path}/arial-black.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Arial Narrow'; src: url('#{$lettering-path}/arial-narrow.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Arial Rounded'; src: url('#{$lettering-path}/arial-rounded.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Arial'; src: url('#{$lettering-path}/arial.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'AT Old English'; src: url('#{$lettering-path}/at-old-english.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Autumn In November'; src: url('#{$lettering-path}/autumn-in-november.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Blackstab Full'; src: url('#{$lettering-path}/blackstab-full.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Balloon'; src: url('#{$lettering-path}/balloon.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Balthazar'; src: url('#{$lettering-path}/balthazar.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Bank Ghotic'; src: url('#{$lettering-path}/bank-gothic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'BASIC SQUARE 7'; src: url('#{$lettering-path}/basic-square.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Bauhaus'; src: url('#{$lettering-path}/bauhaus.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'BEBAS'; src: url('#{$lettering-path}/bebas.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Bender'; src: url('#{$lettering-path}/bender.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Bimini'; src: url('#{$lettering-path}/bimini.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Bitter'; src: url('#{$lettering-path}/bitter.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Black Chancery'; src: url('#{$lettering-path}/black-chancery.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Boyz R Gross'; src: url('#{$lettering-path}/boyz-r-gross.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Brush Script'; src: url('#{$lettering-path}/brush-script.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Century Gothic'; src: url('#{$lettering-path}/century-gothic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Broadway'; src: url('#{$lettering-path}/broadway.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Chunkfive'; src: url('#{$lettering-path}/chunkfive.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'City D Medium'; src: url('#{$lettering-path}/city-d-medium.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Comfortaa'; src: url('#{$lettering-path}/comfortaa.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Comfortaa Light'; src: url('#{$lettering-path}/comfortaa-light.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Comic Sans'; src: url('#{$lettering-path}/comic-sans.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Cooper Black'; src: url('#{$lettering-path}/cooper-black.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Copperplate Gothic'; src: url('#{$lettering-path}/copperplate-gothic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Coquette Regular'; src: url('#{$lettering-path}/coquette.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Curlz'; src: url('#{$lettering-path}/curlz.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Delftone Stylus'; src: url('#{$lettering-path}/deftone-stylus.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Digital Sans'; src: url('#{$lettering-path}/digital-sans.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Edwardian Script'; src: url('#{$lettering-path}/edwardian-script.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Forte'; src: url('#{$lettering-path}/forte.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Franklin G. Heavy'; src: url('#{$lettering-path}/franklin-gothic-heavy.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Futura Book BT'; src: url('#{$lettering-path}/futura.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Gill Sans'; src: url('#{$lettering-path}/gill-sans.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Gotham Light'; src: url('#{$lettering-path}/gotham-light.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Gotham Book'; src: url('#{$lettering-path}/gotham-book.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Gotham Medium'; src: url('#{$lettering-path}/gotham-medium.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Gotham Black'; src: url('#{$lettering-path}/gotham-bold.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Grave Digger'; src: url('#{$lettering-path}/grave-digger.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Great Vibes'; src: url('#{$lettering-path}/great-vibes.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Hand Of Sean'; src: url('#{$lettering-path}/hand-of-sean.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Handel'; src: url('#{$lettering-path}/handel.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Harry Potter'; src: url('#{$lettering-path}/harry-potter.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'HIGH SCHOOL USA'; src: url('#{$lettering-path}/high-school-usa.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Honey Script'; src: url('#{$lettering-path}/honey-script.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Impact'; src: url('#{$lettering-path}/impact.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Intro Line'; src: url('#{$lettering-path}/intro-line.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Juice'; src: url('#{$lettering-path}/juice.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'KaushanScript'; src: url('#{$lettering-path}/kausan.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Kristen ITC'; src: url('#{$lettering-path}/kristen-itc.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Langdon'; src: url('#{$lettering-path}/langdon.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'League Spartan'; src: url('#{$lettering-path}/league-spartan.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Lobster'; src: url('#{$lettering-path}/lobster.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'MagnoliaScript'; src: url('#{$lettering-path}/magnolia-script.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Mandatory'; src: url('#{$lettering-path}/mandatory.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Marker Felt'; src: url('#{$lettering-path}/market-felt.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Monotype Corsiva'; src: url('#{$lettering-path}/monotype-corsiva.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Museo'; src: url('#{$lettering-path}/museo.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Myriad'; src: url('#{$lettering-path}/myriad.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Nexa Bold'; src: url('#{$lettering-path}/nexa-bold.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Open Sans'; src: url('#{$lettering-path}/open-sans.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Optimus Princeps'; src: url('#{$lettering-path}/optimus-princeps.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'OLIVER'; src: url('#{$lettering-path}/oliver.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Ottawa'; src: url('#{$lettering-path}/ottawa.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Pacifico'; src: url('#{$lettering-path}/pacifico.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Ravie'; src: url('#{$lettering-path}/ravie.TTF') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Raleway Semibold'; src: url('#{$lettering-path}/raleway-semibold.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Script V730'; src: url('#{$lettering-path}/script-v730.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Segoe Print'; src: url('#{$lettering-path}/segoe-print.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Segoe Script'; src: url('#{$lettering-path}/segoe-script.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Segoe UI'; src: url('#{$lettering-path}/segoe-ui.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'STENCIL STD'; src: url('#{$lettering-path}/stencil-std.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'SueEllenFrancisco'; src: url('#{$lettering-path}/sue-ellen-francisco.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Tahoma'; src: url('#{$lettering-path}/tahoma.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Throw My Hands Up'; src: url('#{$lettering-path}/throw-my-hands-up.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'THUNDER'; src: url('#{$lettering-path}/thunderbird.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Time Burner'; src: url('#{$lettering-path}/time-burner.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Times New Roman'; src: url('#{$lettering-path}/times-new-roman.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Trajan Pro'; src: url('#{$lettering-path}/trajan-pro.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Vani'; src: url('#{$lettering-path}/vani.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Vladimir Script'; src: url('#{$lettering-path}/vladimir-script.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Walt Disney'; src: url('#{$lettering-path}/walt-disney.ttf') format('truetype'); font-display: swap; }

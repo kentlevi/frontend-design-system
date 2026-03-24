@@ -19,7 +19,6 @@ const {
 	photoError,
 	promotions,
 	reviews,
-	confirmations,
 	initials,
 	canContinueProfileDetails,
 	canSkipProfileDetails,
@@ -34,6 +33,7 @@ const {
 	onPhotoFilePicked,
 	removePhoto,
 	goNext,
+	skipProfileDetails,
 	goBack,
 	closeEmailVerificationModal,
 	submitEmailVerification,
@@ -67,16 +67,15 @@ const {
 					@photo-file-picked="onPhotoFilePicked"
 					@photo-remove="removePhoto"
 					@next="goNext"
+					@skip="skipProfileDetails"
 				/>
 
 				<AuthProfileSettingsStep
 					v-else
 					:promotions="promotions"
 					:reviews="reviews"
-					:confirmations="confirmations"
 					@update:promotions="promotions = $event"
 					@update:reviews="reviews = $event"
-					@update:confirmations="confirmations = $event"
 					@back="goBack"
 					@complete="completeSetup"
 				/>

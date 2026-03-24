@@ -5,10 +5,11 @@ import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
 import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
-import { display_avatar, user_initial } from '~/utils/profile_photo/profile_photo';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
 const profile_field_store = useProfileFieldsStore();
+const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
 	file_input,
@@ -257,31 +258,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .account-profile-section {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	gap: 126px;
-
-	.account-profile-section-copy,
-	.account-profile-section-main {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-profile-section-title {
-		margin: 0;
-		font-size: var(--type-size-300);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-300);
-	}
-
-	.account-profile-section-description {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-regular);
-		line-height: var(--type-line-100);
-	}
-
 	.account-profile-label {
 		display: block;
 		font-size: var(--type-size-100);
@@ -422,7 +398,7 @@ onMounted(() => {
 		--btn-border: transparent;
 	}
 
-	:deep(.account-profile-email-input-field--locked) {
+	:deep(.ui-input[data-disabled="true"] .ui-input-field.account-profile-email-input-field--locked) {
 		padding-right: 92px;
 		color: var(--text-primary);
 	}
@@ -430,13 +406,6 @@ onMounted(() => {
 	.account-profile-actions-right {
 		display: flex;
 		justify-content: flex-end;
-	}
-}
-
-@media (max-width: 980px) {
-	.account-profile-section {
-		grid-template-columns: 1fr;
-		gap: 16px;
 	}
 }
 </style>

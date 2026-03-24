@@ -56,83 +56,13 @@ onMounted(() => {
 				</label>
 			</div>
 
-			<div class="account-profile-setting-row" data-testid="account-profile-setting-confirmations">
-				<div class="account-profile-setting-copy">
-					<h3 class="account-profile-setting-title">{{ t('account.profile.confirmations') }}</h3>
-					<p class="account-profile-muted">{{ t('account.profile.confirmationsDesc') }}</p>
-				</div>
-				<label class="account-profile-switch">
-					<input
-						:checked="Boolean(preference_form_state.confirmations_emails)"
-						type="checkbox"
-						class="account-profile-switch-input"
-						data-testid="account-profile-toggle-confirmations"
-						@change="updatePreferenceField('confirmations_emails', ($event.target as HTMLInputElement).checked)"
-					>
-					<span class="account-profile-switch-track" />
-				</label>
-			</div>
 
-			<div class="account-profile-setting-row" data-testid="account-profile-setting-unit">
-				<div class="account-profile-setting-copy">
-					<h3 class="account-profile-setting-title">{{ t('account.profile.unit') }}</h3>
-					<p class="account-profile-muted">{{ t('account.profile.unitDesc') }}</p>
-				</div>
-				<div class="account-profile-unit-segment">
-					<UiButton
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="account-profile-unit-button"
-						:class="{ active: preference_form_state.unit_of_measurement === 'mm' }"
-						data-testid="account-profile-unit-millimeter-button"
-						@click="updatePreferenceField('unit_of_measurement', 'mm')"
-					>
-						{{ t('account.profile.millimeter') }}
-					</UiButton>
-					<UiButton
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="account-profile-unit-button"
-						:class="{ active: preference_form_state.unit_of_measurement === 'in' }"
-						data-testid="account-profile-unit-inch-button"
-						@click="updatePreferenceField('unit_of_measurement', 'in')"
-					>
-						{{ t('account.profile.inch') }}
-					</UiButton>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
 
 <style scoped lang="scss">
 .account-profile-section {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	gap: 126px;
-
-	.account-profile-section-copy {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-profile-section-title {
-		margin: 0;
-		font-size: var(--type-size-300);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-300);
-	}
-
-	.account-profile-section-description {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-regular);
-		line-height: var(--type-line-100);
-	}
-
 	.account-profile-settings {
 		display: flex;
 		flex-direction: column;
@@ -150,9 +80,10 @@ onMounted(() => {
 			}
 
 			.account-profile-setting-title {
-				margin: 0 0 4px;
-				font-size: var(--type-size-200);
-				line-height: var(--type-line-200);
+				margin: 0;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-semibold);
 			}
 
 			.account-profile-switch {
@@ -226,13 +157,6 @@ onMounted(() => {
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
-	}
-}
-
-@media (max-width: 980px) {
-	.account-profile-section {
-		grid-template-columns: 1fr;
-		gap: 16px;
 	}
 }
 </style>

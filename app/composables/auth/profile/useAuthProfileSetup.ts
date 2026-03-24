@@ -22,6 +22,8 @@ import { useUsersStore } from '~/stores/users/users.store';
 import { useProfileFieldsStore } from '~/stores/profile_field';
 import type { AccountMockUser } from '~/types/account/profile';
 import { useAuthUser } from '../useAuthUser';
+import { completeOnboarding } from '~/services/auth/auth.service';
+import type { OnboardingPayload } from '~/types/auth/auth';
 
 type ProfileStep = 1 | 2;
 type ProfileUnit = 'millimeter' | 'inch';
@@ -50,7 +52,11 @@ export function useAuthProfileSetup() {
 	const profile_fields_store = useProfileFieldsStore();
 	const { state } = storeToRefs(user_store);
 
-	const step = ref<ProfileStep>(1);
+	const step = useCookie<ProfileStep>('auth_onboarding_step', {
+		default: () => 1,
+		path: '/',
+		sameSite: 'lax',
+	});
 	const is_new_onboarding_flow = Boolean(state.value.onboardingProfile?.onboarding);
 	const showWelcomeToast = ref(is_new_onboarding_flow);
 	let toast_timeout: ReturnType<typeof setTimeout> | null = null;
@@ -121,14 +127,24 @@ export function useAuthProfileSetup() {
 		mock_user.value?.email ||
 		accountProfileDefaults.email
 	);
-	const firstName = ref(first_name_source.value);
-	const lastName = ref(last_name_source.value);
-	const email = ref(email_source.value);
+	const onboardingDraft = useCookie<Record<string, any>>('auth_onboarding_draft', {
+		default: () => ({}),
+		path: '/',
+		sameSite: 'lax',
+	});
+
+	const firstName = ref(onboardingDraft.value.firstName || first_name_source.value);
+	const lastName = ref(onboardingDraft.value.lastName || last_name_source.value);
+	const email = ref(onboardingDraft.value.email || email_source.value);
 	const original_email_from_state = ref(normalizeEmail(state.value.email));
 	const is_syncing_from_state = ref(false);
-	const has_first_name_manual_input = ref(false);
-	const has_last_name_manual_input = ref(false);
-	const has_email_manual_input = ref(false);
+	const has_first_name_manual_input = ref(Boolean(onboardingDraft.value.firstName));
+	const has_last_name_manual_input = ref(Boolean(onboardingDraft.value.lastName));
+	const has_email_manual_input = ref(Boolean(onboardingDraft.value.email));
+
+	watch([firstName, lastName, email], ([f, l, e]) => {
+		onboardingDraft.value = { ...onboardingDraft.value, firstName: f, lastName: l, email: e };
+	});
 	const has_required_email = computed(() => {
 		if (!email_required.value) return true;
 		return isValidEmail(email.value);
@@ -147,7 +163,6 @@ export function useAuthProfileSetup() {
 
 	const promotions = ref(true);
 	const reviews = ref(true);
-	const confirmations = ref(true);
 	const useShippingAsBilling = ref(true);
 	const unit = ref<ProfileUnit>('millimeter');
 
@@ -394,9 +409,6 @@ export function useAuthProfileSetup() {
 	}
 
 	async function goNext() {
-		if (!canContinueProfileDetails.value) return;
-		email_input_error.value = '';
-
 		if (requires_email_verification.value) {
 			const target_email = email.value.trim();
 			if (canReusePendingVerification(target_email)) {
@@ -405,26 +417,35 @@ export function useAuthProfileSetup() {
 				is_email_verification_modal_open.value = true;
 				return;
 			}
-
-			try {
-				const response = await requestEmailVerification(false);
-				if (!response?.success) {
-					if (resend_limit_reached.value) {
-						is_email_verification_modal_open.value = true;
-					}
-					return;
-				}
-
-				is_email_verification_modal_open.value = true;
-				return;
-			} catch (error: unknown) {
-				email_input_error.value =
-					getAuthErrorMessage(error)
-					|| t('auth.verification.invalidCode');
-				return;
-			}
 		}
 
+		step.value = 2;
+	}
+
+	function resetFirstStepDraftToOriginalState() {
+		syncFieldFromState(firstName, first_name_source.value);
+		syncFieldFromState(lastName, last_name_source.value);
+		syncFieldFromState(email, email_source.value);
+
+		initial_first_name.value = first_name_source.value.trim();
+		initial_last_name.value = last_name_source.value.trim();
+
+		has_first_name_manual_input.value = false;
+		has_last_name_manual_input.value = false;
+		has_email_manual_input.value = false;
+		email_input_error.value = '';
+
+		// Skip means "discard first-step edits", including temporary avatar choice.
+		removePhoto();
+		clearVerificationState();
+		is_email_verification_modal_open.value = false;
+		email_verification_session.value = null;
+		request_cooldown.clear();
+		resend_cooldown.clear();
+	}
+
+	function skipProfileDetails() {
+		resetFirstStepDraftToOriginalState();
 		step.value = 2;
 	}
 
@@ -447,23 +468,29 @@ export function useAuthProfileSetup() {
 					);
 				}
 
-				const body = new FormData();
-				body.append('given_name', firstName.value.trim());
-				body.append('family_name', lastName.value.trim());
-				if (email_required.value) {
-					body.append('email', email.value.trim());
-				}
-				body.append('offers_emails', promotions.value ? '1' : '0');
-				body.append('reviews_emails', reviews.value ? '1' : '0');
-				body.append('confirmations_emails', confirmations.value ? '1' : '0');
+				const payload: OnboardingPayload = {
+					given_name: firstName.value.trim(),
+					family_name: lastName.value.trim(),
+					offers_emails: promotions.value,
+					reviews_emails: reviews.value,
+				};
 
-				await api(`/${apiCountry.value}/user/complete-onboarding`, {
-					method: 'POST',
-					body,
-				});
+				if (email_required.value) payload.email = email.value.trim()
+
+				const response = await completeOnboarding(payload)
+
+				if (!response.success) {
+					return
+				}
 
 				const { fetchAndStoreUser } = useAuthUser()
 				await fetchAndStoreUser()
+				await navigateTo(withCountry('/'));
+		
+				// Clear Draft State
+				step.value = 1;
+				onboardingDraft.value = {};
+				user_store.clearOnboardingProfile();
 			} catch (error) {
 				console.warn('Failed to finalize onboarding.', error);
 			}
@@ -475,6 +502,11 @@ export function useAuthProfileSetup() {
 			};
 		}
 		await navigateTo(withCountry('/'));
+
+		// Clear Draft State
+		step.value = 1;
+		onboardingDraft.value = {};
+		user_store.clearOnboardingProfile();
 	}
 
 	async function submitEmailVerification() {
@@ -614,7 +646,7 @@ export function useAuthProfileSetup() {
 		restoreCooldownsFromCache();
 	});
 
-	user_store.clearOnboardingProfile();
+
 
 	return {
 		step,
@@ -629,7 +661,6 @@ export function useAuthProfileSetup() {
 		photoError,
 		promotions,
 		reviews,
-		confirmations,
 		useShippingAsBilling,
 		unit,
 		initials,
@@ -639,6 +670,7 @@ export function useAuthProfileSetup() {
 		onPhotoFilePicked,
 		removePhoto,
 		goNext,
+		skipProfileDetails,
 		goBack,
 		isEmailVerificationModalOpen: is_email_verification_modal_open,
 		verificationEmail: verification_email,
