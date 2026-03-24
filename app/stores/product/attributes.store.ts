@@ -134,12 +134,30 @@ export const useAttributesStore = defineStore('attributes', () => {
 		}
 	])
 
-	const fonts = ref<FontSpec[]>([
-		{ id: 1, label: 'Antique Olive', value: 'antique-olive' },
-		{ id: 1, label: 'Helvetica Neue', value: 'helvetica-neue' },
-		{ id: 1, label: 'Bebas Neue', value: 'bebas-neue' },
-		{ id: 1, label: 'Brush Script', value: 'brush-script' },
-	])
+
+	const font_names = [
+		'Antique Olive', 'American Typewriter', 'akaDora', 'Arial Black', 'Arial Narrow', 'Arial Rounded', 'Arial',
+		'AT Old English', 'Autumn In November', 'Blackstab Full', 'Balloon', 'Balthazar', 'Bank Ghotic',
+		'BASIC SQUARE 7', 'Bauhaus', 'BEBAS', 'Bender', 'Bimini', 'Bitter', 'Black Chancery', 'Boyz R Gross',
+		'Brush Script', 'Century Gothic', 'Broadway', 'Chunkfive', 'City D Medium', 'Comfortaa', 'Comfortaa Light',
+		'Comic Sans', 'Cooper Black', 'Copperplate Gothic', 'Coquette Regular', 'Curlz', 'Delftone Stylus',
+		'Digital Sans', 'Edwardian Script', 'Forte', 'Franklin G. Heavy', 'Futura Book BT', 'Gill Sans',
+		'Gotham Light', 'Gotham Book', 'Gotham Medium', 'Gotham Black', 'Grave Digger', 'Great Vibes',
+		'Hand Of Sean', 'Handel', 'Harry Potter', 'HIGH SCHOOL USA', 'Honey Script', 'Impact', 'Intro Line',
+		'Juice', 'KaushanScript', 'Kristen ITC', 'Langdon', 'League Spartan', 'Lobster', 'MagnoliaScript',
+		'Mandatory', 'Marker Felt', 'Monotype Corsiva', 'Museo', 'Myriad', 'Nexa Bold', 'Open Sans',
+		'Optimus Princeps', 'OLIVER', 'Ottawa', 'Pacifico', 'Ravie', 'Raleway Semibold', 'Script V730',
+		'Segoe Print', 'Segoe Script', 'Segoe UI', 'STENCIL STD', 'SueEllenFrancisco', 'Tahoma',
+		'Throw My Hands Up', 'THUNDER', 'Time Burner', 'Times New Roman', 'Trajan Pro', 'Vani',
+		'Vladimir Script', 'Walt Disney'
+	]
+
+	const fonts = ref<FontSpec[]>(font_names.map((font, key) => ({
+		id: key+1,
+		label: font,
+		value: font,
+		style: { fontFamily: font }
+	})))
 
 
 	return {

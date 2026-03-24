@@ -268,8 +268,15 @@ export const useQuoteSectionHandler = () => {
 	const inputUpdateCustomQuantity = async (event: Event) => {
 		const input = event.target as HTMLInputElement
 
+		const filtered_char = input.value.replace(/[^0-9]/g, '')
+
+		if( filtered_char === '' ) {
+			quoteService.custom_quantity.value.nr = null
+			return
+		}
+
 		// remove commas
-		const raw = input.value.replace(/,/g, '')
+		const raw = filtered_char.replace(/,/g, '')
 		const n = Number(raw)
 
 		if (!isNaN(n))
@@ -334,6 +341,16 @@ export const useQuoteSectionHandler = () => {
 	}
 
 
+	const is_vinylsize_focused = ref(false)
+	const is_font_focused = ref(false)
+
+	const onVinylSizeFocus = () => { is_vinylsize_focused.value = true }
+	const onVinylSizeBlur = () => { is_vinylsize_focused.value = false }
+
+	const onVinylFontFocus = () => { is_font_focused.value = true }
+	const onVinylFontBlur = () => { is_font_focused.value = false }
+
+
 	return {
 		...quoteService,
 		is_custom_size,
@@ -345,6 +362,8 @@ export const useQuoteSectionHandler = () => {
 		is_custom_qty_focus,
 		lettering_navigation_flight,
 		selected_font,
+		is_vinylsize_focused,
+		is_font_focused,
 		fontChange,
 		instatiateForm,
 		clearForm,
@@ -368,5 +387,9 @@ export const useQuoteSectionHandler = () => {
 		letteringWidthInput,
 		letteringHeightInput,
 		featuredCardChange,
+		onVinylSizeFocus,
+		onVinylSizeBlur,
+		onVinylFontFocus,
+		onVinylFontBlur,
 	}
 }

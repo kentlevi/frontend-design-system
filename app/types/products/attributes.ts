@@ -3,6 +3,7 @@ export interface FontSpec {
 	id: number
 	label: string
 	value: string
+	style: { fontFamily: string }
 }
 
 export interface SwatchStyleSpec {

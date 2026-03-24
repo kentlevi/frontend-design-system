@@ -6,24 +6,12 @@ import VinylLetteringDesigner from '~/components/products/product-category/Vinyl
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 
-type SizeFeatureCard = {
-	key: SizeOptionKey;
-	image: string;
-	descriptionKey: string;
-};
-
-type SelectOption = {
-	label: string;
-	value: string | number;
-	style?: Record<string, any>;
-};
 
 const props = defineProps<{
 	categoryProducts: ProductItem[];
 	hasPickedProduct: boolean;
 	selectedId: string | null;
 	selectedProduct: ProductItem | null;
-	sizeFeatureCards: readonly SizeFeatureCard[];
 	selectedSize: SizeOptionKey;
 	quantityOptions: readonly number[];
 	selectedQty: number;
@@ -43,100 +31,84 @@ const emit = defineEmits<{
 	'open-upload': [];
 }>();
 
+// 🔥 Functionality Implementation
+const {
+	slug,
+	product,
+	size,
+	featured_sizes,
+	size_featured_cards,
+	custom_size,
+	is_custom_size,
+	quantity,
+	featured_quantities,
+	is_custom_qty,
+	custom_qty_input,
+	formatted_custom_qty,
+	is_custom_size_focus,
+	is_custom_qty_focus,
+	color,
+	featured_colors,
+	has_color_selection,
+	has_font_selection,
+	has_lettering_editor,
+	lettering,
+	lettering_navigation_flight,
+	selected_font,
+	featured_fonts,
+	pricing_ready,
+	discount,
+	standard_price,
+	unit_price,
+	price,
+	is_vinylsize_focused,
+	inputUpdateSize,
+	inputUpdateCustomSize,
+	inputUpdateQuantity,
+	inputUpdateCustomQuantity,
+	instatiateForm,
+	focusWidthInput,
+	showCustomSize,
+	showCustomQty,
+	formatPrice,
+	onCustomSizeFocus,
+	onCustomSizeBlur,
+	onCustomQtyFocus,
+	onCustomQtyBlur,
+	inputUpdateColor,
+	letteringTextInput,
+	letteringWidthUpdate,
+	letteringHeightUpdate,
+	letteringWidthInput,
+	letteringHeightInput,
+	updateProduct,
+	clearForm,
+	featuredCardChange,
+	onVinylSizeFocus,
+	onVinylSizeBlur,
+	onVinylFontFocus,
+	onVinylFontBlur,
+} = useQuoteSectionHandler();
+
+const route = useRoute()
+const route_prod_slug = route.params?.product
+
+if ( typeof route_prod_slug === 'string' )
+	updateProduct(route_prod_slug)
+else
+	clearForm()
+
+onMounted(async () => {
+	if ( typeof slug.value === 'string' && slug.value )
+		instatiateForm()
+})
+
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
-const specialColorProductIds = ['transfer-sticker', 'vinyl-lettering'] as const
-const vinylQuantityOptions = [1, 2, 5, 10, 50, 100, 200, 300] as const
-
-const fontNames = [
-	'Antique Olive', 'American Typewriter', 'akaDora', 'Arial Black', 'Arial Narrow', 'Arial Rounded', 'Arial',
-	'AT Old English', 'Autumn In November', 'Blackstab Full', 'Balloon', 'Balthazar', 'Bank Ghotic',
-	'BASIC SQUARE 7', 'Bauhaus', 'BEBAS', 'Bender', 'Bimini', 'Bitter', 'Black Chancery', 'Boyz R Gross',
-	'Brush Script', 'Century Gothic', 'Broadway', 'Chunkfive', 'City D Medium', 'Comfortaa', 'Comfortaa Light',
-	'Comic Sans', 'Cooper Black', 'Copperplate Gothic', 'Coquette Regular', 'Curlz', 'Delftone Stylus',
-	'Digital Sans', 'Edwardian Script', 'Forte', 'Franklin G. Heavy', 'Futura Book BT', 'Gill Sans',
-	'Gotham Light', 'Gotham Book', 'Gotham Medium', 'Gotham Black', 'Grave Digger', 'Great Vibes',
-	'Hand Of Sean', 'Handel', 'Harry Potter', 'HIGH SCHOOL USA', 'Honey Script', 'Impact', 'Intro Line',
-	'Juice', 'KaushanScript', 'Kristen ITC', 'Langdon', 'League Spartan', 'Lobster', 'MagnoliaScript',
-	'Mandatory', 'Marker Felt', 'Monotype Corsiva', 'Museo', 'Myriad', 'Nexa Bold', 'Open Sans',
-	'Optimus Princeps', 'OLIVER', 'Ottawa', 'Pacifico', 'Ravie', 'Raleway Semibold', 'Script V730',
-	'Segoe Print', 'Segoe Script', 'Segoe UI', 'STENCIL STD', 'SueEllenFrancisco', 'Tahoma',
-	'Throw My Hands Up', 'THUNDER', 'Time Burner', 'Times New Roman', 'Trajan Pro', 'Vani',
-	'Vladimir Script', 'Walt Disney'
-]
-
-const vinylFontOptions: SelectOption[] = fontNames.map(font => ({
-	label: font,
-	value: font,
-	style: { fontFamily: font }
-}))
-
-const colorOptions = [
-	{ key: 'black', label: 'Black', checkColor: '#ffffff', swatchStyle: { background: '#000000' } },
-	{ key: 'white', label: 'White', checkColor: '#111827', swatchStyle: { background: '#FFFFFF', border: '1px solid var(--black-base)' } },
-	{ key: 'red', label: 'Red', checkColor: '#ffffff', swatchStyle: { background: '#FF0000' } },
-	{ key: 'orange', label: 'Orange', checkColor: '#ffffff', swatchStyle: { background: '#FFA500' } },
-	{ key: 'yellow', label: 'Yellow', checkColor: '#111827', swatchStyle: { background: '#FFFF00' } },
-	{ key: 'green', label: 'Green', checkColor: '#ffffff', swatchStyle: { background: '#008000' } },
-	{ key: 'blue', label: 'Blue', checkColor: '#ffffff', swatchStyle: { background: '#0000FF' } },
-	{ key: 'purple', label: 'Purple', checkColor: '#ffffff', swatchStyle: { background: '#800080' } },
-	{ key: 'pink', label: 'Pink', checkColor: '#111827', swatchStyle: { background: '#FFC0CB' } },
-	{ key: 'yellow-orange', label: 'Yellow Orange', checkColor: '#111827', swatchStyle: { background: '#FFB700' } },
-	{ key: 'gold', label: 'Gold', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #FFD700 0%, #FFF 50%, #FFD700 100%)' } },
-	{ key: 'silver', label: 'Silver', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #C0C0C0 0%, #FFF 50%, #C0C0C0 100%)' } },
-	{ key: 'bronze', label: 'Bronze', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #CD7F32 0%, #FFF 49.52%, #CD7F32 100%)' } },
-	{ key: 'hologram', label: 'Hologram', checkColor: '#111827', swatchStyle: { background: 'linear-gradient(135deg, #B6EEE8 0%, #F5F3EA 32%, #F1B2B9 50%, #D893C1 60%, #B6EEE8 80%)' } },
-	{
-		key: 'full-color',
-		label: 'Full Color',
-		checkColor: '#111827',
-		swatchStyle: {
-			background: 'conic-gradient(from 0deg, #ff3c3c 0deg, #ff9800 60deg, #ffe600 120deg, #1abf48 180deg, #0085ff 240deg, #7f2cff 300deg, #ff3c3c 360deg)',
-		},
-	},
-] as const
-
-const isCustomSize = ref(false)
-const customWidth = ref<number | null>(null)
-const customHeight = ref<number | null>(null)
-const customWidthInput = ref<HTMLInputElement | null>(null)
-const isCustomQty = ref(false)
-const customQty = ref<number | null>(null)
-const customQtyInput = ref<HTMLInputElement | null>(null)
-const isCustomSizeFocused = ref(false)
-const isCustomQtyFocused = ref(false)
-const selectedColor = ref<(typeof colorOptions)[number]['key']>('black')
-const vinylWidth = ref(192)
-const vinylHeight = ref(30)
-const vinylText = ref('')
-const selectedVinylFont = ref<string>('Antique Olive')
-const vinylActiveSize = ref<'width' | 'height'>('height')
-const isVinylSizeFocused = ref(false)
-const isVinylFontFocused = ref(false)
-
-const onVinylSizeFocus = () => { isVinylSizeFocused.value = true }
-const onVinylSizeBlur = () => { isVinylSizeFocused.value = false }
-const onVinylFontFocus = () => { isVinylFontFocused.value = true }
-const onVinylFontBlur = () => { isVinylFontFocused.value = false }
 
 
-const onCustomSizeFocus = () => {
-	isCustomSizeFocused.value = true
-}
-
-const onCustomSizeBlur = () => {
-	isCustomSizeFocused.value = false
-}
-
-const onCustomQtyFocus = () => {
-	isCustomQtyFocused.value = true
-}
-
-const onCustomQtyBlur = () => {
-	isCustomQtyFocused.value = false
-}
 
 const preventNonDigitInput = (event: InputEvent) => {
 	if (!event.data) return
@@ -144,70 +116,8 @@ const preventNonDigitInput = (event: InputEvent) => {
 	event.preventDefault()
 }
 
-const formattedCustomQty = computed(() => {
-	if (customQty.value === null) return ''
-	return customQty.value.toLocaleString()
-})
 
-const onCustomQtyInput = (e: Event) => {
-	const input = e.target as HTMLInputElement
-	const raw = input.value.replace(/[^0-9]/g, '')
-	if (raw === '') {
-		customQty.value = null
-		return
-	}
-	const number = Number(raw)
-	if (!isNaN(number)) {
-		customQty.value = number
-		emit('update:selectedQty', number)
-	}
-}
 
-const enableCustomQty = async () => {
-	isCustomQty.value = true
-	customQty.value = null
-	emit('update:selectedQty', 0)
-	await nextTick()
-	customQtyInput.value?.focus()
-}
-
-watch(customQty, (val) => {
-	if (val && val > 0) {
-		emit('update:selectedQty', val)
-		return
-	}
-
-	emit('update:selectedQty', 0)
-})
-
-const onCustomWidthInput = (event: Event) => {
-	const target = event.target as HTMLInputElement
-	const raw = target.value.replace(/[^0-9]/g, '')
-	customWidth.value = raw === '' ? null : Number(raw)
-}
-
-const onCustomHeightInput = (event: Event) => {
-	const target = event.target as HTMLInputElement
-	const raw = target.value.replace(/[^0-9]/g, '')
-	customHeight.value = raw === '' ? null : Number(raw)
-}
-
-const focusWidthInput = () => {
-	customWidthInput.value?.focus()
-}
-
-const enableCustomSize = async () => {
-	isCustomSize.value = true
-	customWidth.value = null
-	customHeight.value = null
-	emit('update:selectedQty', 0)
-	await nextTick()
-	customWidthInput.value?.focus()
-}
-
-const unitPrice = computed(() =>
-	props.selectedQty > 0 ? props.total / props.selectedQty : 0
-);
 
 const hasValidCustomSize = computed(() =>
 	Boolean(is_custom_size.value && custom_size.value.width && custom_size.value.width > 0 && custom_size.value.height && custom_size.value.height > 0)
@@ -228,42 +138,6 @@ const displayedProductTitle = computed(() =>
 	has_lettering_editor.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
 
-const onVinylWidthInput = (event: Event) => {
-	const target = event.target as HTMLInputElement
-	const raw = target.value.replace(/[^0-9]/g, '')
-	if (raw === '') return
-	const nextWidth = Number(raw)
-	if (!Number.isFinite(nextWidth) || nextWidth <= 0) return
-	vinylActiveSize.value = 'width'
-	vinylWidth.value = nextWidth
-}
-
-const onVinylHeightInput = (event: Event) => {
-	const target = event.target as HTMLInputElement
-	const raw = target.value.replace(/[^0-9]/g, '')
-	if (raw === '') return
-	const nextHeight = Number(raw)
-	if (!Number.isFinite(nextHeight) || nextHeight <= 0) return
-	vinylActiveSize.value = 'height'
-	vinylHeight.value = nextHeight
-}
-
-watch(
-	() => props.selectedProduct?.id ?? null,
-	(nextProductId) => {
-		if (!nextProductId || !specialColorProductIds.includes(nextProductId as (typeof specialColorProductIds)[number])) {
-			selectedColor.value = 'black'
-		}
-		else if (nextProductId === 'vinyl-lettering' && selectedColor.value === 'full-color') {
-			selectedColor.value = 'black'
-		}
-
-		if (nextProductId === 'vinyl-lettering' && !vinylQuantityOptions.includes(props.selectedQty as (typeof vinylQuantityOptions)[number])) {
-			emit('update:selectedQty', vinylQuantityOptions[0])
-		}
-	},
-	{ immediate: true }
-)
 
 </script>
 
@@ -453,34 +327,32 @@ watch(
 									@click.self="focusWidthInput"
 								>
 									<input
-										ref="customWidthInput"
-										:value="customWidth ?? ''"
-										type="text"
+										ref="custom_width_input"
+										v-model="custom_size.width"
+										type="number"
 										inputmode="numeric"
 										pattern="[0-9]*"
 										placeholder="Width"
 										class="custom-size-input"
 										@beforeinput="preventNonDigitInput"
-										@input="onCustomWidthInput"
+										@input="inputUpdateCustomSize"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
-										@change="inputUpdateCustomSize"
 									>
 
 									<span class="size-separator">x</span>
 
 									<input
-										:value="customHeight ?? ''"
-										type="text"
+										v-model="custom_size.height"
+										type="number"
 										inputmode="numeric"
 										pattern="[0-9]*"
 										placeholder="Height"
 										class="custom-size-input"
 										@beforeinput="preventNonDigitInput"
-										@input="onCustomHeightInput"
+										@input="inputUpdateCustomSize"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
-										@change="inputUpdateCustomSize"
 									>
 								</div>
 							</div>
@@ -530,10 +402,9 @@ watch(
 										placeholder="Enter Quantity"
 										class="custom-size-input custom-quantity-input"
 										@beforeinput="preventNonDigitInput"
-										@input="onCustomQtyInput"
+										@input="inputUpdateCustomQuantity($event)"
 										@focus="onCustomQtyFocus"
 										@blur="onCustomQtyBlur"
-										@change="inputUpdateCustomQuantity($event)"
 									>
 								</div>
 							</div>
@@ -545,36 +416,36 @@ watch(
 									<h3 class="option-title" data-testid="product-category-size-title">{{ t('product.options.selectSize') }}</h3>
 									<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
 								</div>
-								
+
 								<div class="option-grid">
 									<div
 										class="option-pill option-pill-wide custom-size-pill"
 										:class="{
 											'is-active': true,
-											'is-input-focused': isVinylSizeFocused
+											'is-input-focused': is_vinylsize_focused
 										}"
 										data-testid="product-category-vinyl-size-input"
 									>
 										<input
-											:value="vinylWidth"
+											:value="lettering.width"
 											type="text"
 											inputmode="numeric"
 											pattern="[0-9]*"
 											class="custom-size-input"
 											@beforeinput="preventNonDigitInput"
-											@input="onVinylWidthInput"
+											@input="letteringWidthInput"
 											@focus="onVinylSizeFocus"
 											@blur="onVinylSizeBlur"
 										>
 										<span class="size-separator">x</span>
 										<input
-											:value="vinylHeight"
+											:value="lettering.height"
 											type="text"
 											inputmode="numeric"
 											pattern="[0-9]*"
 											class="custom-size-input"
 											@beforeinput="preventNonDigitInput"
-											@input="onVinylHeightInput"
+											@input="letteringHeightInput"
 											@focus="onVinylSizeFocus"
 											@blur="onVinylSizeBlur"
 										>
@@ -582,13 +453,13 @@ watch(
 								</div>
 							</section>
 
-							<section class="product-section">
+							<section v-if="has_font_selection" class="product-section">
 								<h3 class="option-title">Select your font</h3>
 								<div class="option-grid">
 									<div class="option-pill-wide">
 										<UiSelect
-											v-model="selectedVinylFont"
-											:options="vinylFontOptions"
+											v-model="selected_font"
+											:options="featured_fonts"
 											trigger-class="custom-size-input font-select-trigger"
 											menu-class="vinyl-font-menu"
 											@focus="onVinylFontFocus"
@@ -641,10 +512,9 @@ watch(
 											placeholder="Enter Quantity"
 											class="custom-size-input custom-quantity-input"
 											@beforeinput="preventNonDigitInput"
-											@input="onCustomQtyInput"
+											@input="inputUpdateCustomQuantity($event)"
 											@focus="onCustomQtyFocus"
 											@blur="onCustomQtyBlur"
-											@change="inputUpdateCustomQuantity($event)"
 										>
 									</div>
 								</div>
@@ -1060,7 +930,6 @@ watch(
             border-radius: 8px;
 
             .ui-select-option {
-                
                 &:hover {
                     background: var(--gray-10);
                 }
