@@ -278,6 +278,7 @@ const displayedProductTitle = computed(() =>
 								:key="'sizes-cards-'+featured_size_cards.key+'-'+featured_size_cards.id"
 								type="button"
 								class="mini-feature"
+								:disabled="has_lettering_editor"
 								:class="{ 'is-active': !is_custom_size && !has_lettering_editor && size?.id === featured_size_cards.id }"
 								:data-testid="`product-category-feature-card-${featured_size_cards.key}`"
 								@click="featuredCardChange(featured_size_cards.id)"
@@ -823,6 +824,10 @@ const displayedProductTitle = computed(() =>
 						height: 2px;
 						background: var(--gold-base);
 					}
+				}
+
+				&:disabled {
+					cursor: default;
 				}
 			}
 		}
