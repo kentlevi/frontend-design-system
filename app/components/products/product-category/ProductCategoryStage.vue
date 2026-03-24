@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import type { ProductItem } from '~/types/products/catalog';
+import type { ProductItem, ProductCategoryKey  } from '~/types/products/catalog';
 import type { SizeOptionKey } from '~/types/products/categoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
+import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 
 
 const props = defineProps<{
+	category?: ProductCategoryKey;
 	categoryProducts: ProductItem[];
 	hasPickedProduct: boolean;
 	selectedId: string | null;
@@ -33,7 +35,6 @@ const emit = defineEmits<{
 
 // 🔥 Functionality Implementation
 const {
-	slug,
 	product,
 	size,
 	featured_sizes,
@@ -91,22 +92,62 @@ const {
 } = useQuoteSectionHandler();
 
 const route = useRoute()
-const route_prod_slug = route.params?.product
+const resolvedCategory = computed<ProductCategoryKey>(() => {
+	if (props.category) {
+		return props.category
+	}
 
-if ( typeof route_prod_slug === 'string' )
-	updateProduct(route_prod_slug)
-else
-	clearForm()
+	const routeCategory = route.params?.category
+	if (routeCategory === 'stickers' || routeCategory === 'roll-stickers' || routeCategory === 'sheet-stickers') {
+		return routeCategory
+	}
 
-onMounted(async () => {
-	if ( typeof slug.value === 'string' && slug.value )
-		instatiateForm()
+	return 'stickers'
 })
+const routeProductSlug = computed(() => {
+	const routeProduct = route.params?.product
+	return typeof routeProduct === 'string'
+		? routeProduct
+		: Array.isArray(routeProduct)
+			? routeProduct[0] ?? null
+			: null
+})
+
+watch(
+	routeProductSlug,
+	(nextSlug) => {
+		if (typeof nextSlug === 'string' && nextSlug) {
+			updateProduct(nextSlug)
+			void instatiateForm({ interactive: false })
+			return
+		}
+
+		clearForm()
+	},
+	{ immediate: true }
+)
+
+watch(
+	() => props.selectedProduct?.id,
+	(nextProductId) => {
+		if (!nextProductId) return
+
+		const nextSlug = getProductSlugByCategory(nextProductId, resolvedCategory.value)
+		updateProduct(nextSlug)
+		void instatiateForm({ interactive: false })
+	},
+	{ immediate: true }
+)
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const hasHydrated = ref(false)
+
+onMounted(() => {
+	hasHydrated.value = true
+})
 
 
 
@@ -127,11 +168,11 @@ const hasPendingCustomSelection = computed(() =>
 	(is_custom_size.value && !hasValidCustomSize.value)
 	|| (is_custom_size.value && !quantity.value?.nr)
 	|| (quantity.value && quantity.value?.nr && quantity.value?.nr <= 0 )
-	|| !lettering.value.text
+	|| (has_lettering_editor.value && !lettering.value.text)
 )
 
 const shouldPlayPreviewVideo = computed(() =>
-	Boolean(props.selectedProduct) && !has_lettering_editor.value && !props.navigationInFlight
+	hasHydrated.value && Boolean(props.selectedProduct) && !has_lettering_editor.value && !props.navigationInFlight
 )
 
 const displayedProductTitle = computed(() =>
@@ -223,7 +264,7 @@ const displayedProductTitle = computed(() =>
 								:height="lettering.height"
 								:font="selected_font"
 								:color-key="color?.key ?? 'black'"
-								:redirecting="lettering_navigation_flight"
+								:redirecting="props.navigationInFlight || lettering_navigation_flight"
 								:active-size="lettering.active"
 								@update:text="letteringTextInput($event)"
 								@update:width="letteringWidthUpdate($event)"
@@ -787,7 +828,7 @@ const displayedProductTitle = computed(() =>
 		}
 	}
 
-    .product-options {
+	.product-options {
         background: transparent;
         border: 0;
         border-radius: 0;
