@@ -48,8 +48,8 @@ watch(
 	{ immediate: true }
 );
 
-function isStrongPassword(value: string) {
-	return /^(?=.{6,}$)(?![a-z]+$)(?![A-Z]+$).+$/.test(value);
+function isStrongPassword(value: string): boolean {
+	return /^(?:(?=.*[a-z])(?=.*[A-Z])|(?=.*[a-z])(?=.*\d)|(?=.*[a-z])(?=.*[\W_])|(?=.*[A-Z])(?=.*\d)|(?=.*[A-Z])(?=.*[\W_])|(?=.*\d)(?=.*[\W_])).{6,}$/.test(value);
 }
 
 async function submitChangePassword() {

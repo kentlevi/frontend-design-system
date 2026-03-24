@@ -169,7 +169,7 @@ export function useRegisterForm() {
 
 	function isValidRegisterPassword(value: string) {
 		if (value.length < 6) return false;
-		return /[A-Z]|\d|[^A-Za-z0-9]/.test(value);
+		return /^(?:(?=.*[a-z])(?=.*[A-Z])|(?=.*[a-z])(?=.*\d)|(?=.*[a-z])(?=.*[\W_])|(?=.*[A-Z])(?=.*\d)|(?=.*[A-Z])(?=.*[\W_])|(?=.*\d)(?=.*[\W_])).{6,}$/.test(value);
 	}
 
 	function clearErrors() {
