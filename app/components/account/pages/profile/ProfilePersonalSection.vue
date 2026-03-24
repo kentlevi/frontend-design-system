@@ -80,7 +80,7 @@ onMounted(() => {
 					<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
 				</div>
 				<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-					<div class="account-profile-avatar">
+					<div :class="['account-profile-avatar', { 'account-profile-avatar--error': photo_inline_error }]">
 						<img
 							v-if="display_avatar"
 							:src="display_avatar"
@@ -271,9 +271,7 @@ onMounted(() => {
 
 	.account-profile-photo-head {
 		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 6px;
+		justify-content: space-between;
 
 		.account-profile-label {
 			margin-bottom: 0;
@@ -289,18 +287,20 @@ onMounted(() => {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+		max-width: 427px;
 	}
 
 	.account-profile-photo-row {
 		display: grid;
-		grid-template-columns: 98px 1fr;
-		gap: 18px;
+		grid-template-columns: 120px 1fr;
+		gap: 32px;
 		align-items: center;
 
 		.account-profile-avatar {
-			width: 98px;
-			height: 98px;
+			width: 120px;
+			height: 120px;
 			border-radius: 50%;
+			border: 1px solid transparent;
 			background: var(--gray-40);
 			color: var(--black-base);
 			display: grid;
@@ -315,6 +315,10 @@ onMounted(() => {
 				height: 100%;
 				object-fit: cover;
 			}
+		}
+
+		.account-profile-avatar--error {
+			border-color: var(--error);
 		}
 	}
 
@@ -334,7 +338,6 @@ onMounted(() => {
 		font-size: var(--type-size-100);
 		font-weight: var(--font-weight-semibold);
 		line-height: var(--type-line-100);
-		margin: 8px 0 0;
 	}
 
 	.account-profile-file-input {
