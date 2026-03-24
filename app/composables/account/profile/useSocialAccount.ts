@@ -5,9 +5,9 @@ export function useSocialAccount() {
 	/** Store */
 	const user_store = useUsersStore()
 
-	const account_type = computed(() => user_store.state.account_type ?? 'musticker')
+	const social = computed(() => user_store.state.social)
 
 	return {
-		account_type
+		social
 	}
 }

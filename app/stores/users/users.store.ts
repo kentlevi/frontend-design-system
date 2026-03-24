@@ -19,7 +19,7 @@ function createInitialUserState(): UserState {
 		code: '',
 		email: '',
 		country_id: 0,
-		account_type: 'musticker',
+		social: null,
 
 		onboardingProfile: null,
 		profile: null,
@@ -62,7 +62,7 @@ export const useUsersStore = defineStore('users', () => {
 		state.value.email = user.email
 		state.value.country_id = user.country_id
 		state.value.profile = user.profile
-		state.value.account_type = user.account_type
+		state.value.social = user.social
 	}
 
 	/**

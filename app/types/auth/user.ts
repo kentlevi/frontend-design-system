@@ -28,7 +28,7 @@ export interface UserIdentity {
 	code: string
 	email: string
 	country_id: number
-	account_type: 'google' | 'facebook' | 'musticker'
+	social: 'google' | 'facebook' | null
 }
 
 /**
