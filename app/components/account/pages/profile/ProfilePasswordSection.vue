@@ -151,8 +151,7 @@ const {
 				<UiButton
 					variant="ghost"
 					tone="neutral"
-					size="sm"
-					:no-hover="true"
+					size="md"
 					class="account-profile-forgot-password-link"
 					label-class="account-profile-forgot-password-link-label"
 					data-testid="account-profile-forgot-password"
@@ -193,14 +192,16 @@ const {
 					:size="40"
 					class="account-profile-forgot-password-modal-logo"
 				/>
-				<h3 class="account-profile-forgot-password-modal-title">
-					{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
-				</h3>
-			</div>
+				<div class="account-profile-forgot-password-modal-copy">
+					<h3 class="account-profile-forgot-password-modal-title">
+						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+					</h3>
 
-			<p class="account-profile-forgot-password-modal-description">
-				{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
-			</p>
+					<p class="account-profile-forgot-password-modal-description">
+						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
+					</p>
+				</div>
+			</div>
 
 			<div class="account-profile-forgot-password-modal-actions">
 				<UiButton
@@ -232,18 +233,18 @@ const {
 			justify-content: flex-end;
 
 			.account-profile-forgot-password-link {
-				min-height: auto;
-				padding: 0;
 				color: var(--text-primary);
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
-				text-decoration: underline;
-
+				text-decoration: none;
+					&:hover {
+						--btn-soft: var(--gray-20);
+					}
 				:deep(.account-profile-forgot-password-link-label) {
 					color: inherit;
 					font-size: var(--type-size-100);
 					line-height: var(--type-line-100);
-					text-decoration: underline;
+
 				}
 			}
 		}
@@ -266,7 +267,7 @@ const {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 40px;
 
 	.account-profile-forgot-password-modal-close {
 		position: absolute;
@@ -289,8 +290,15 @@ const {
 		gap: 24px;
 	}
 
+	.account-profile-forgot-password-modal-copy {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
 	.account-profile-forgot-password-modal-title {
 		font-size: var(--type-size-500);
+		font-weight: var(--font-weight-semibold);
 		line-height: var(--type-line-500);
 		color: var(--text-primary);
 	}
