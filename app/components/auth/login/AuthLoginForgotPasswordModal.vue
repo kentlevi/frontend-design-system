@@ -19,23 +19,23 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const resetEmail = ref('');
-const error = ref('');
-const sent = ref(false);
-const loading = ref(false);
+const reset_email = ref('');
+const error_message = ref('');
+const is_sent = ref(false);
+const is_loading = ref(false);
 
 watch(
 	() => props.modelValue,
-	(open) => {
-		if (!open) return;
-		resetEmail.value = props.email ?? '';
-		error.value = '';
-		sent.value = false;
+	(is_open) => {
+		if (!is_open) return;
+		reset_email.value = props.email ?? '';
+		error_message.value = '';
+		is_sent.value = false;
 	},
 	{ immediate: true }
 );
 
-const isValidEmail = (value: string) =>
+const is_valid_email = (value: string) =>
 	/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 function closeModal() {
@@ -47,40 +47,40 @@ function returnToLogin() {
 }
 
 async function submitReset() {
-	const value = resetEmail.value.trim();
-	error.value = '';
-	sent.value = false;
+	const email_value = reset_email.value.trim();
+	error_message.value = '';
+	is_sent.value = false;
 
-	if (!value) {
-		error.value = t('auth.login.validation.fieldBlank');
+	if (!email_value) {
+		error_message.value = t('auth.login.validation.fieldBlank');
 		return;
 	}
 
-	if (!isValidEmail(value)) {
-		error.value = t('auth.login.validation.emailInvalid');
+	if (!is_valid_email(email_value)) {
+		error_message.value = t('auth.login.validation.emailInvalid');
 		return;
 	}
 
-	loading.value = true;
+	is_loading.value = true;
 
 	try {
 		const { sendResetPasswordLinkHandler } = usePasswordReset();
 		const response = await sendResetPasswordLinkHandler({
-			email: value
+			email: email_value
 		});
 
 		if (!response?.success) {
-			error.value = response?.message || t('auth.login.forgot.requestFailed');
+			error_message.value = response?.message || t('auth.login.forgot.requestFailed');
 			return;
 		}
 
-		sent.value = true;
+		is_sent.value = true;
 	} catch (err: unknown) {
-		const errorPayload = err as { data?: { message?: string }; message?: string };
-		error.value =
-			errorPayload?.data?.message || errorPayload?.message || t('auth.login.forgot.requestFailed');
+		const error_payload = err as { data?: { message?: string }; message?: string };
+		error_message.value =
+			error_payload?.data?.message || error_payload?.message || t('auth.login.forgot.requestFailed');
 	} finally {
-		loading.value = false;
+		is_loading.value = false;
 	}
 }
 </script>
@@ -96,7 +96,7 @@ async function submitReset() {
 	>
 		<div
 			class="auth-forgot-body"
-			:class="sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
+			:class="is_sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
 		>
 			<button
 				type="button"
@@ -108,7 +108,7 @@ async function submitReset() {
 				<UiIcon name="regular-times" :size="24" />
 			</button>
 			<UiLoadingOverlay
-				:visible="loading"
+				:visible="is_loading"
 				:label="t('auth.login.forgot.sending')"
 				test-id="auth-login-forgot-password-loading-overlay"
 				position="absolute"
@@ -126,10 +126,10 @@ async function submitReset() {
 					class="auth-forgot-logo"
 				/>
 				<h3 class="auth-forgot-title">
-					{{ sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
+					{{ is_sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
 				</h3>
 			</div>
-			<template v-if="!sent">
+			<template v-if="!is_sent">
 				<p class="auth-forgot-description">
 					{{ t('auth.login.forgot.description') }}
 				</p>
@@ -137,7 +137,7 @@ async function submitReset() {
 				<UiFormField
 					class="auth-forgot-field"
 					:label="t('auth.login.email')"
-					:error="error"
+					:error="error_message"
 					:required="true"
 					head-class="auth-forgot-field-head"
 					label-class="auth-forgot-field-label"
@@ -150,13 +150,13 @@ async function submitReset() {
 							class="auth-forgot-input"
 							type="email"
 							size="md"
-							:model-value="resetEmail"
-							:state="error ? 'error' : 'default'"
-							:aria-invalid="error ? 'true' : 'false'"
+							:model-value="reset_email"
+							:state="error_message ? 'error' : 'default'"
+							:aria-invalid="error_message ? 'true' : 'false'"
 							:aria-describedby="describedBy || undefined"
 							:placeholder="t('auth.login.enterEmail')"
 							data-testid="auth-login-forgot-password-email-input"
-							@update:model-value="resetEmail = $event"
+							@update:model-value="reset_email = $event"
 						/>
 					</template>
 				</UiFormField>
@@ -168,10 +168,10 @@ async function submitReset() {
 						size="lg"
 						class="auth-forgot-submit"
 						data-testid="auth-login-forgot-password-submit-button"
-						:disabled="loading"
+						:disabled="is_loading"
 						@click="submitReset"
 					>
-						{{ loading ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
+						{{ is_loading ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
 					</UiButton>
 
 					<UiButton

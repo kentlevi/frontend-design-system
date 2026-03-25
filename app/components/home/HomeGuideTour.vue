@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { HOME_GUIDE_TOUR_TOTAL_STEPS } from '~/data/home/onboarding';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
@@ -9,7 +9,7 @@ import {
 } from '~/helpers/home/homeGuideTour.helper';
 import type { GuideTargetRect } from '~/types/home/guideTour';
 
-const props = withDefaults(
+const component_props = withDefaults(
 	defineProps<{
 		visible?: boolean;
 		step?: number;
@@ -21,6 +21,7 @@ const props = withDefaults(
 		targetRect: null,
 	}
 );
+const { visible, step, targetRect: target_rect } = toRefs(component_props);
 
 const emit = defineEmits<{
 	(event: 'close'): void;
@@ -30,35 +31,35 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
-const safeStep = computed(() =>
-	Math.min(Math.max(props.step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS)
+const safe_step = computed(() =>
+	Math.min(Math.max(step.value, 1), HOME_GUIDE_TOUR_TOTAL_STEPS)
 );
-const panelClass = computed(() => `home-guide-tour-panel--step-${safeStep.value}`);
-const title = computed(() => t(`home.tour.step${safeStep.value}.title`));
-const body = computed(() => t(`home.tour.step${safeStep.value}.body`));
-const ctaLabel = computed(() => t('home.tour.next'));
-const hasHeaderImage = computed(() => Boolean(HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safeStep.value]));
-const headerImagePath = computed(() => HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safeStep.value] || '');
-const stepImageUrls = computed(() => (
+const panel_class = computed(() => `home-guide-tour-panel--step-${safe_step.value}`);
+const title = computed(() => t(`home.tour.step${safe_step.value}.title`));
+const body = computed(() => t(`home.tour.step${safe_step.value}.body`));
+const cta_label = computed(() => t('home.tour.next'));
+const has_header_image = computed(() => Boolean(HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safe_step.value]));
+const header_image_path = computed(() => HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safe_step.value] || '');
+const step_image_urls = computed(() => (
 	Object.values(HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP).map((path) => resolveFileUrl(path))
 ));
-const headerImageStyle = computed(() =>
-	hasHeaderImage.value
-		? { backgroundImage: `url(${resolveFileUrl(headerImagePath.value)})` }
+const header_image_style = computed(() =>
+	has_header_image.value
+		? { backgroundImage: `url(${resolveFileUrl(header_image_path.value)})` }
 		: {}
 );
 
-const panelInlineStyle = computed(() => {
+const panel_inline_style = computed(() => {
 	return resolve_home_guide_tour_panel_style(
-		safeStep.value,
-		props.targetRect,
+		safe_step.value,
+		target_rect.value,
 		typeof window === 'undefined' ? undefined : window.innerWidth
 	);
 });
 
 onMounted(() => {
 	if (!import.meta.client) return;
-	for (const url of stepImageUrls.value) {
+	for (const url of step_image_urls.value) {
 		const img = new Image();
 		img.src = url;
 	}
@@ -78,8 +79,8 @@ onMounted(() => {
 
 			<aside
 				class="home-guide-tour-panel"
-				:class="panelClass"
-				:style="panelInlineStyle"
+				:class="panel_class"
+				:style="panel_inline_style"
 				data-testid="home-guide-tour-panel"
 			>
 				<UiButton
@@ -96,9 +97,9 @@ onMounted(() => {
 				</UiButton>
 
 				<div
-					v-if="hasHeaderImage"
+					v-if="has_header_image"
 					class="home-guide-tour-header"
-					:style="headerImageStyle"
+					:style="header_image_style"
 				/>
 
 				<div class="home-guide-tour-body">
@@ -113,7 +114,7 @@ onMounted(() => {
 
 					<div class="home-guide-tour-actions">
 						<p class="home-guide-tour-step">
-							{{ t('home.tour.stepLabel', { current: safeStep, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
+							{{ t('home.tour.stepLabel', { current: safe_step, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
 						</p>
 
 						<UiButton
@@ -124,7 +125,7 @@ onMounted(() => {
 							data-testid="home-guide-tour-next"
 							@click="emit('next')"
 						>
-							{{ ctaLabel }}
+							{{ cta_label }}
 						</UiButton>
 					</div>
 				</div>

@@ -41,9 +41,9 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const testId = useControlTestId(attrs);
-const rootAttrs = useRootAttrs(attrs, testId);
-const inputAttrs = useControlAttrs(attrs, testId);
+const test_id = useControlTestId(attrs);
+const root_attrs = useRootAttrs(attrs, test_id);
+const input_attrs = useControlAttrs(attrs, test_id);
 
 function onChange(event: Event) {
 	emit('update:modelValue', (event.target as HTMLInputElement).checked);
@@ -52,14 +52,14 @@ function onChange(event: Event) {
 
 <template>
 	<label
-		v-bind="rootAttrs"
+		v-bind="root_attrs"
 		class="ui-checkbox"
 		:data-size="props.size"
 		:data-state="props.state !== 'default' ? props.state : null"
 		:data-disabled="props.disabled || null"
 	>
 		<input
-			v-bind="inputAttrs"
+			v-bind="input_attrs"
 			class="ui-checkbox-input"
 			type="checkbox"
 			:checked="props.modelValue"

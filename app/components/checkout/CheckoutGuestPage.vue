@@ -5,38 +5,38 @@ import { useCheckoutGuestPage } from '~/composables/checkout/guest/useCheckoutGu
 const {
 	t,
 	withCountry,
-	provinceOptions,
+	province_options,
 	email,
-	fullName,
+	full_name,
 	company,
-	address1,
-	address2,
+	address_1,
+	address_2,
 	province,
 	city,
-	postalCode,
+	postal_code,
 	phone,
-	cardNumber,
+	card_number,
 	expiry,
 	cvv,
-	useShippingAsBilling,
-	selectedCheckoutItems,
-	orderTotal,
-	orderDiscount,
-	orderShippingFee,
-	orderSubtotal,
+	use_shipping_as_billing,
+	selected_checkout_items,
+	order_total,
+	order_discount,
+	order_shipping_fee,
+	order_subtotal,
 	formatPrice,
-	activeShippingMethods,
-	activePaymentMethods,
-	selectedShippingMethod,
-	selectedPaymentMethod,
-	fieldValidationByKey,
-	emailLabelText,
-	checkoutPaymentBrands,
-	completingCheckout,
-	completeLoaderRef,
+	active_shipping_methods,
+	active_payment_methods,
+	selected_shipping_method,
+	selected_payment_method,
+	field_validation_by_key,
+	email_label_text,
+	checkout_payment_brands,
+	completing_checkout,
+	complete_loader_ref,
 	completeCheckout,
 	itemMeta,
-	isLoginModalOpen,
+	is_login_modal_open,
 	openLoginModal,
 } = useCheckoutGuestPage();
 </script>
@@ -49,11 +49,11 @@ const {
 		summary-class="checkout-summary-column"
 		test-id="checkout-page"
 		loading-test-id="checkout-complete-loading-overlay"
-		:loading="completingCheckout"
+		:loading="completing_checkout"
 		:loading-label="t('checkout.guest.completeCheckout')"
 	>
 		<template #loader>
-			<div ref="completeLoaderRef" />
+			<div ref="complete_loader_ref" />
 		</template>
 
 		<template #main>
@@ -64,7 +64,7 @@ const {
 						<div class="checkout-contact-head">
 							<div class="checkout-contact-label-wrap">
 								<span class="checkout-label">
-									{{ emailLabelText }}
+									{{ email_label_text }}
 									<span class="checkout-label-required" aria-hidden="true">*</span>
 								</span>
 								<UiIcon name="regular-question-circle" size="20" color="var(--gray-90)" decorative />
@@ -89,7 +89,7 @@ const {
 							type="email"
 							size="lg"
 							class="checkout-input"
-							:maxlength="fieldValidationByKey.email?.maxLength"
+							:maxlength="field_validation_by_key.email?.maxLength"
 							:placeholder="t('checkout.guest.fields.email.placeholder')"
 						/>
 					</div>
@@ -110,7 +110,7 @@ const {
 								label-class="checkout-form-field-label"
 								label-text-class="checkout-form-field-label-text"
 							>
-								<UiInput v-model="fullName" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.fullName?.maxLength" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
+								<UiInput v-model="full_name" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.fullName?.maxLength" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
 							</UiFormField>
 							<UiFormField
 								class="checkout-field"
@@ -119,7 +119,7 @@ const {
 								label-class="checkout-form-field-label"
 								label-text-class="checkout-form-field-label-text"
 							>
-								<UiInput v-model="company" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.company?.maxLength" :placeholder="t('checkout.guest.fields.company.placeholder')" />
+								<UiInput v-model="company" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.company?.maxLength" :placeholder="t('checkout.guest.fields.company.placeholder')" />
 							</UiFormField>
 						</div>
 
@@ -132,8 +132,8 @@ const {
 							label-class="checkout-form-field-label"
 							label-text-class="checkout-form-field-label-text"
 						>
-							<UiInput v-model="address1" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
-							<UiInput v-model="address2" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
+							<UiInput v-model="address_1" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
+							<UiInput v-model="address_2" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.streetAddress?.maxLength" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
 						</UiFormField>
 
 						<div class="checkout-grid checkout-grid-2">
@@ -148,7 +148,7 @@ const {
 							>
 								<UiSelect
 									:model-value="province"
-									:options="provinceOptions"
+									:options="province_options"
 									:placeholder="t('checkout.guest.fields.province.placeholder')"
 									class="checkout-select"
 									trigger-class="checkout-select-trigger"
@@ -164,7 +164,7 @@ const {
 								label-class="checkout-form-field-label"
 								label-text-class="checkout-form-field-label-text"
 							>
-								<UiInput v-model="city" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.city?.maxLength" :placeholder="t('checkout.guest.fields.city.placeholder')" />
+								<UiInput v-model="city" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.city?.maxLength" :placeholder="t('checkout.guest.fields.city.placeholder')" />
 							</UiFormField>
 						</div>
 
@@ -178,7 +178,7 @@ const {
 								label-class="checkout-form-field-label"
 								label-text-class="checkout-form-field-label-text"
 							>
-								<UiInput v-model="postalCode" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.postalCode?.maxLength" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
+								<UiInput v-model="postal_code" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.postalCode?.maxLength" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
 							</UiFormField>
 							<UiFormField
 								class="checkout-field"
@@ -195,7 +195,7 @@ const {
 										size="lg"
 										class="checkout-input checkout-phone-input"
 										input-class="checkout-phone-input-field"
-										:maxlength="fieldValidationByKey.phone?.maxLength"
+										:maxlength="field_validation_by_key.phone?.maxLength"
 										:placeholder="t('checkout.guest.fields.phone.placeholder')"
 									/>
 								</div>
@@ -209,13 +209,13 @@ const {
 						</div>
 						<div class="checkout-grid checkout-grid-2">
 							<button
-								v-for="method in activeShippingMethods"
+								v-for="method in active_shipping_methods"
 								:key="method.key"
 								type="button"
 								class="checkout-shipping-method-card"
-								:class="{ 'is-active': selectedShippingMethod === method.key }"
-								:aria-pressed="selectedShippingMethod === method.key"
-								@click="selectedShippingMethod = method.key"
+								:class="{ 'is-active': selected_shipping_method === method.key }"
+								:aria-pressed="selected_shipping_method === method.key"
+								@click="selected_shipping_method = method.key"
 							>
 								<img :src="method.icon" :alt="t(`${method.i18nKey}.alt`)" class="checkout-shipping-method-icon">
 								<div class="checkout-shipping-method-content">
@@ -237,13 +237,13 @@ const {
 					<div class="checkout-payment-group">
 						<div class="checkout-grid checkout-grid-2">
 							<button
-								v-for="method in activePaymentMethods"
+								v-for="method in active_payment_methods"
 								:key="method.key"
 								type="button"
 								class="checkout-pay-btn"
-								:class="{ 'is-active': selectedPaymentMethod === method.key }"
-								:aria-pressed="selectedPaymentMethod === method.key"
-								@click="selectedPaymentMethod = method.key"
+								:class="{ 'is-active': selected_payment_method === method.key }"
+								:aria-pressed="selected_payment_method === method.key"
+								@click="selected_payment_method = method.key"
 							>
 								<img :src="method.icon" :alt="t(`checkout.guest.paymentMethods.${method.i18nKey}.alt`)" class="checkout-pay-btn-icon">
 								<span class="checkout-pay-btn-label">{{ t(`checkout.guest.paymentMethods.${method.i18nKey}.label`) }}</span>
@@ -252,7 +252,7 @@ const {
 						<div class="checkout-payment-meta">
 							<div class="checkout-subnote">{{ t('checkout.guest.paymentSubnote') }}</div>
 							<div class="checkout-payment-brands">
-								<span v-for="brand in checkoutPaymentBrands" :key="brand.key" class="checkout-payment-brand">
+								<span v-for="brand in checkout_payment_brands" :key="brand.key" class="checkout-payment-brand">
 									<img :src="brand.icon" :alt="brand.label" class="checkout-payment-brand-icon" loading="lazy">
 								</span>
 							</div>
@@ -268,7 +268,7 @@ const {
 							label-class="checkout-form-field-label"
 							label-text-class="checkout-form-field-label-text"
 						>
-							<UiInput v-model="cardNumber" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.cardNumber?.maxLength" :placeholder="t('checkout.guest.fields.cardNumber.placeholder')" />
+							<UiInput v-model="card_number" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.cardNumber?.maxLength" :placeholder="t('checkout.guest.fields.cardNumber.placeholder')" />
 						</UiFormField>
 						<UiFormField
 							class="checkout-field"
@@ -279,7 +279,7 @@ const {
 							label-class="checkout-form-field-label"
 							label-text-class="checkout-form-field-label-text"
 						>
-							<UiInput v-model="expiry" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.expiration?.maxLength" :placeholder="t('checkout.guest.fields.expiration.placeholder')" />
+							<UiInput v-model="expiry" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.expiration?.maxLength" :placeholder="t('checkout.guest.fields.expiration.placeholder')" />
 						</UiFormField>
 						<UiFormField
 							class="checkout-field"
@@ -290,11 +290,11 @@ const {
 							label-class="checkout-form-field-label"
 							label-text-class="checkout-form-field-label-text"
 						>
-							<UiInput v-model="cvv" type="text" size="md" class="checkout-input" :maxlength="fieldValidationByKey.cvv?.maxLength" :placeholder="t('checkout.guest.fields.cvv.placeholder')" />
+							<UiInput v-model="cvv" type="text" size="md" class="checkout-input" :maxlength="field_validation_by_key.cvv?.maxLength" :placeholder="t('checkout.guest.fields.cvv.placeholder')" />
 						</UiFormField>
 					</div>
 
-					<UiCheckbox v-model="useShippingAsBilling" class="checkout-checkbox">{{ t('checkout.guest.useShippingAsBilling') }}</UiCheckbox>
+					<UiCheckbox v-model="use_shipping_as_billing" class="checkout-checkbox">{{ t('checkout.guest.useShippingAsBilling') }}</UiCheckbox>
 				</div>
 			</section>
 		</template>
@@ -303,15 +303,15 @@ const {
 			<CheckoutSummaryCard
 				tone="guest"
 				:title="t('checkout.guest.orderSummary')"
-				:items="selectedCheckoutItems"
+				:items="selected_checkout_items"
 				:subtotal-label="t('checkout.guest.summary.subtotal')"
 				:shipping-fee-label="t('checkout.guest.summary.shippingFee')"
 				:discounts-label="t('checkout.guest.summary.discounts')"
 				:total-label="t('checkout.guest.summary.total')"
-				:subtotal-value="formatPrice(orderSubtotal)"
-				:shipping-fee-value="formatPrice(orderShippingFee)"
-				:discount-value="`-${formatPrice(orderDiscount)}`"
-				:total-value="formatPrice(orderTotal)"
+				:subtotal-value="formatPrice(order_subtotal)"
+				:shipping-fee-value="formatPrice(order_shipping_fee)"
+				:discount-value="`-${formatPrice(order_discount)}`"
+				:total-value="formatPrice(order_total)"
 				:complete-label="t('checkout.guest.completeCheckout')"
 				:agreement-prefix="t('checkout.guest.agreement.prefix')"
 				:agreement-terms="t('checkout.guest.agreement.terms')"
@@ -320,18 +320,18 @@ const {
 				:agreement-suffix="t('checkout.guest.agreement.suffix')"
 				:terms-path="withCountry('/terms-of-use')"
 				:privacy-path="withCountry('/privacy-policy')"
-				:disabled="selectedCheckoutItems.length === 0"
-				:loading="completingCheckout"
+				:disabled="selected_checkout_items.length === 0"
+				:loading="completing_checkout"
 				:size-dim-only="sizeDimOnly"
 				:format-price="formatPrice"
 				:item-meta="itemMeta"
-				@submit="completeCheckout(selectedCheckoutItems.length > 0)"
+				@submit="completeCheckout(selected_checkout_items.length > 0)"
 			/>
 		</template>
 	</CheckoutPageBase>
 
 	<CheckoutLoginModal
-		v-model="isLoginModalOpen"
+		v-model="is_login_modal_open"
 	/>
 </template>
 

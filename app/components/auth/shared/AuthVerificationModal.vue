@@ -55,12 +55,12 @@ const emit = defineEmits<{
 }>();
 
 const {
-	codeInputs,
-	inputRefs,
-	key,
-	computedSubmitLabel,
-	canResend,
-	modalAlign,
+	codeInputs: code_inputs,
+	inputRefs: input_refs,
+	key: translation_key,
+	computedSubmitLabel: computed_submit_label,
+	canResend: can_resend,
+	modalAlign: modal_align,
 	closeModal: baseCloseModal,
 	onInput,
 	onPaste,
@@ -86,16 +86,16 @@ const {
  */
 function runCloseSideEffects() {
 	/** Example cleanup */
-	emit('update:code', '')
-	emit('close')
+	emit('update:code', '');
+	emit('close');
 }
 
 /**
  * Wrapped close modal
  */
 function closeModal() {
-	runCloseSideEffects()
-	baseCloseModal()
+	runCloseSideEffects();
+	baseCloseModal();
 }
 
 /**
@@ -106,11 +106,11 @@ function closeModal() {
  */
 function handleModalModelValueUpdate(value: boolean) {
 	if (!value) {
-		closeModal()
-		return
+		closeModal();
+		return;
 	}
 
-	emit('update:modelValue', value)
+	emit('update:modelValue', value);
 }
 </script>
 
@@ -119,14 +119,14 @@ function handleModalModelValueUpdate(value: boolean) {
 		:model-value="modelValue"
 		:close-on-backdrop="false"
 		:width="width"
-		:align="modalAlign"
+		:align="modal_align"
 		:modal-class="modalClass"
 		@update:model-value="handleModalModelValueUpdate"
 	>
 		<div class="auth-verification-modal">
 			<UiLoadingOverlay
 				:visible="verifying"
-				:label="computedSubmitLabel"
+				:label="computed_submit_label"
 				test-id="auth-verification-loading-overlay"
 				position="absolute"
 				background="rgba(246, 246, 248, 0.72)"
@@ -142,8 +142,8 @@ function handleModalModelValueUpdate(value: boolean) {
 				size="24"
 				:no-hover="true"
 				class="auth-verification-close"
-				:aria-label="t(`${key}.closeModal`)"
-				:sr-label="t(`${key}.closeModal`)"
+				:aria-label="t(`${translation_key}.closeModal`)"
+				:sr-label="t(`${translation_key}.closeModal`)"
 				icon-only
 				icon="regular-times"
 				:icon-size="24"
@@ -154,32 +154,32 @@ function handleModalModelValueUpdate(value: boolean) {
 				<slot name="icon">
 					<img
 						src="/illustrations/icon-verification.svg"
-						:alt="t(`${key}.iconAlt`)"
+						:alt="t(`${translation_key}.iconAlt`)"
 						class="auth-verification-icon"
 					>
 				</slot>
 				<div class="auth-verification-copy">
 					<h3 class="auth-verification-title">
-						{{ t(`${key}.title`) }}
+						{{ t(`${translation_key}.title`) }}
 					</h3>
 					<p class="auth-verification-text">
-						{{ t(`${key}.messagePrefix`) }}
+						{{ t(`${translation_key}.messagePrefix`) }}
 						<strong class="auth-verification-email">{{ email }}</strong>
-						{{ t(`${key}.messageSuffix`) }}
+						{{ t(`${translation_key}.messageSuffix`) }}
 					</p>
 				</div>
 			</div>
 
 			<div class="auth-verification-code-group">
 				<label class="auth-verification-label" :for="`${testIdPrefix}-code-0`">
-					{{ t(`${key}.enterCode`) }}
+					{{ t(`${translation_key}.enterCode`) }}
 				</label>
 				<div class="auth-verification-grid">
 					<input
-						v-for="(value, index) in codeInputs"
+						v-for="(value, index) in code_inputs"
 						:id="`${testIdPrefix}-code-${index}`"
 						:key="`${testIdPrefix}-code-${index}`"
-						:ref="el => { if (el) inputRefs[index] = el as HTMLInputElement }"
+						:ref="el => { if (el) input_refs[index] = el as HTMLInputElement }"
 						:class="['auth-verification-input', { 'auth-verification-input--error': !!error }]"
 						type="text"
 						inputmode="numeric"
@@ -211,11 +211,11 @@ function handleModalModelValueUpdate(value: boolean) {
 					:data-testid="`${testIdPrefix}-submit`"
 					@click="emit('verify')"
 				>
-					{{ computedSubmitLabel }}
+					{{ computed_submit_label }}
 				</UiButton>
 
 				<p v-if="!resendLimitReached" class="auth-verification-resend">
-					{{ t(`${key}.resendPrefix`) }}
+					{{ t(`${translation_key}.resendPrefix`) }}
 					<UiButton
 						variant="ghost"
 						tone="neutral"
@@ -224,15 +224,15 @@ function handleModalModelValueUpdate(value: boolean) {
 						class="auth-verification-resend-btn"
 						label-class="auth-verification-resend-btn-label"
 						:data-testid="`${testIdPrefix}-resend`"
-						:disabled="!canResend"
+						:disabled="!can_resend"
 						@click="onResendClick"
 					>
-						{{ t(`${key}.resendCta`) }}
+						{{ t(`${translation_key}.resendCta`) }}
 					</UiButton>
-					{{ t(`${key}.resendSuffix`) }}
+					{{ t(`${translation_key}.resendSuffix`) }}
 				</p>
 				<p v-else class="auth-verification-resend">
-					{{ t(`${key}.resendLimitReachedPrefix`) }} <b>{{ t(`${key}.resendLimitReachedMiddle`) }}</b>{{ t(`${key}.resendLimitReachedSuffix`) }}
+					{{ t(`${translation_key}.resendLimitReachedPrefix`) }} <b>{{ t(`${translation_key}.resendLimitReachedMiddle`) }}</b>{{ t(`${translation_key}.resendLimitReachedSuffix`) }}
 				</p>
 			</div>
 		</div>

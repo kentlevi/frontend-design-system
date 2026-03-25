@@ -1,54 +1,35 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { useCountry } from '~/composables/app/country/useCountry';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
-import { getProfileFieldValue } from '~/utils/account/accountProfile';
-import type { UserIdentity, UserProfile } from '~/types/auth/user';
 import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
-import { useUsersStore } from '~/stores/users/users.store';
 import { useAuthUser } from '~/composables/auth/useAuthUser';
 import { useLoginUser } from '~/composables/auth/useLoginUser';
+import { useCountry } from '~/composables/app/country/useCountry';
+import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
-const api = useApi();
 const router = useRouter();
 const route = useRoute();
-const { withCountry, apiCountry } = useCountry();
-const userStore = useUsersStore();
+const { withCountry } = useCountry();
 
 function getRedirectCandidate() {
-	const queryRedirect = Array.isArray(route.query.redirect)
+	const query_redirect = Array.isArray(route.query.redirect)
 		? route.query.redirect[0]
 		: route.query.redirect;
-	if (queryRedirect) return queryRedirect;
+	if (query_redirect) return query_redirect;
 	if (!import.meta.client) return null;
 	return window.history.state?.back ?? null;
 }
 
-interface SocialLogin {
-	data: {
-		url: string
-	}
-}
-
-interface MeResponse {
-	success: boolean;
-	message?: string;
-	data: {
-		user?: UserIdentity & { profile: UserProfile | null };
-	};
-}
-
 async function syncSocialLoginUserState() {
 	try {
-		const { fetchAndStoreUser } = useAuthUser()
-		const response = await fetchAndStoreUser()
+		const { fetchAndStoreUser } = useAuthUser();
+		const response = await fetchAndStoreUser();
 
 		if (!response) {
-			return
+			return false;
 		}
 
 		if (import.meta.client) {
@@ -63,41 +44,43 @@ async function syncSocialLoginUserState() {
 	}
 }
 
-/* @desc social login popup */
 async function handleSocial(provider: string) {
 	try {
-		const { handleSocialLogin } = useLoginUser()
-		const response = await handleSocialLogin({provider})
+		const { handleSocialLogin } = useLoginUser();
+		const response = await handleSocialLogin({ provider });
 
-		const url = response.data?.url
+		const redirect_url = response.data?.url;
 
-		if (!url) return
+		if (!redirect_url || !import.meta.client) return;
 
-		const width = 500
-		const height = 600
-		const left = (window.screen.width - width) / 2
-		const top = (window.screen.height - height) / 2
+		const popup_width = 500;
+		const popup_height = 600;
+		const popup_left = (window.screen.width - popup_width) / 2;
+		const popup_top = (window.screen.height - popup_height) / 2;
 
-		const popup = window.open(
-			url,
+		const popup_window = window.open(
+			redirect_url,
 			'SocialLogin',
-			`width=${width},height=${height},top=${top},left=${left}`
-		)
+			`width=${popup_width},height=${popup_height},top=${popup_top},left=${popup_left}`
+		);
 
-		if (!popup) return console.error('Pop up blocked');
+		if (!popup_window) {
+			console.error('Pop up blocked');
+			return;
+		}
 
-		const pollTimer = setInterval(async () => {
-			if (popup.closed) {
-				clearInterval(pollTimer)
+		const poll_timer = setInterval(async () => {
+			if (!popup_window.closed) return;
 
-				const didLogin = await syncSocialLoginUserState()
-				if (didLogin) {
-					router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry))
-				}
+			clearInterval(poll_timer);
+
+			const did_login = await syncSocialLoginUserState();
+			if (did_login) {
+				router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry));
 			}
-		}, 500)
+		}, 500);
 	} catch (error: unknown) {
-		console.error(error)
+		console.error(error);
 	}
 }
 </script>
@@ -134,71 +117,70 @@ async function handleSocial(provider: string) {
 
 <style lang="scss">
 .auth-login-social-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 
-    .auth-login-divider {
+	.auth-login-divider {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		color: var(--text-muted);
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
 
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--text-muted);
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
+		.auth-login-social-label {
+			padding: 0 40px;
+		}
 
-        .auth-login-social-label {
-            padding: 0 40px;
-        }
+		&::before,
+		&::after {
+			content: '';
+			flex: 1;
+			height: 1px;
+			background: var(--border-default);
+		}
+	}
 
-        &::before,
-        &::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border-default);
-        }
-    }
+	.auth-login-social-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 
-    .auth-login-social-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+		.auth-login-social {
+			width: 100%;
+			border-radius: 16px;
+			color: var(--text-primary);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			font-weight: var(--font-weight-semibold);
+			box-shadow: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
-        .auth-login-social {
-            width: 100%;
-            border-radius: 16px;
-            color: var(--text-primary);
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            font-weight: var(--font-weight-semibold);
-            box-shadow: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+			.auth-login-social-label-wrap {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0;
+			}
 
-            .auth-login-social-label-wrap {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-            }
+			.auth-login-social-content {
+				display: flex;
+				height: 100%;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+			}
 
-            .auth-login-social-content {
-                display: flex;
-                height: 100%;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-            }
-
-            .auth-login-social-text {
-                display: inline-flex;
-                align-items: center;
-            }
-        }
-    }
+			.auth-login-social-text {
+				display: inline-flex;
+				align-items: center;
+			}
+		}
+	}
 }
 </style>

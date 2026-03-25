@@ -1,5 +1,7 @@
 <script setup lang="ts">
-withDefaults(
+import { toRefs } from 'vue';
+
+const component_props = withDefaults(
 	defineProps<{
 		visible?: boolean;
 	}>(),
@@ -7,6 +9,7 @@ withDefaults(
 		visible: false,
 	}
 );
+const { visible } = toRefs(component_props);
 
 const emit = defineEmits<{
 	(event: 'close'): void;

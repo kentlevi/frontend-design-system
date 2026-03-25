@@ -43,19 +43,19 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
-const sizeDropdownRef = ref<HTMLElement | null>(null);
-const qtyDropdownRef = ref<HTMLElement | null>(null);
-const customWidthInputRef = ref<HTMLInputElement | null>(null);
-const sizeMenuOpen = ref(false);
-const qtyMenuOpen = ref(false);
+const size_dropdown_ref = ref<HTMLElement | null>(null);
+const qty_dropdown_ref = ref<HTMLElement | null>(null);
+const custom_width_input_ref = ref<HTMLInputElement | null>(null);
+const size_menu_open = ref(false);
+const qty_menu_open = ref(false);
 
 const current_size_option = computed(() =>
-	props.sizeOptions.find(option => String(option.value) === props.sizeKey) ?? null
+	props.sizeOptions.find((option) => String(option.value) === props.sizeKey) ?? null
 );
 
 const parsed_size_from_option = computed(() => {
-	const label = current_size_option.value?.label ?? '';
-	const matched = label.match(/(\d+)\D+(\d+)/);
+	const label_text = current_size_option.value?.label ?? '';
+	const matched = label_text.match(/(\d+)\D+(\d+)/);
 	return {
 		width: matched?.[1] ?? '',
 		height: matched?.[2] ?? '',
@@ -99,24 +99,24 @@ const is_update_disabled = computed(() => {
 });
 
 function closeMenus() {
-	sizeMenuOpen.value = false;
-	qtyMenuOpen.value = false;
+	size_menu_open.value = false;
+	qty_menu_open.value = false;
 }
 
 function toggleSizeMenu() {
-	sizeMenuOpen.value = !sizeMenuOpen.value;
-	if (sizeMenuOpen.value) qtyMenuOpen.value = false;
+	size_menu_open.value = !size_menu_open.value;
+	if (size_menu_open.value) qty_menu_open.value = false;
 }
 
 function toggleQtyMenu() {
-	qtyMenuOpen.value = !qtyMenuOpen.value;
-	if (qtyMenuOpen.value) sizeMenuOpen.value = false;
+	qty_menu_open.value = !qty_menu_open.value;
+	if (qty_menu_open.value) size_menu_open.value = false;
 }
 
 function handlePointerDown(event: PointerEvent) {
-	const target = event.target as Node | null;
-	if (!target) return;
-	if (sizeDropdownRef.value?.contains(target) || qtyDropdownRef.value?.contains(target)) return;
+	const target_node = event.target as Node | null;
+	if (!target_node) return;
+	if (size_dropdown_ref.value?.contains(target_node) || qty_dropdown_ref.value?.contains(target_node)) return;
 	closeMenus();
 }
 
@@ -131,29 +131,29 @@ function preventNonDigitInput(event: InputEvent) {
 }
 
 function onSizeOptionSelect(value: string | number) {
-	const normalized = String(value);
-	emit('update:sizeKey', normalized);
-	if (normalized === 'custom') {
+	const normalized_value = String(value);
+	emit('update:sizeKey', normalized_value);
+	if (normalized_value === 'custom') {
 		emit('update:customSizeWidth', '');
 		emit('update:customSizeHeight', '');
 		closeMenus();
 		nextTick(() => {
-			customWidthInputRef.value?.focus();
+			custom_width_input_ref.value?.focus();
 		});
 		return;
 	}
 
-	const option = props.sizeOptions.find(item => String(item.value) === normalized);
-	const matched = option?.label.match(/(\d+)\s*(?:x|×)\s*(\d+)/i);
+	const selected_option = props.sizeOptions.find((item) => String(item.value) === normalized_value);
+	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
 	emit('update:customSizeWidth', matched?.[1] ?? '');
 	emit('update:customSizeHeight', matched?.[2] ?? '');
 	closeMenus();
 }
 
 function onQtyOptionSelect(value: string | number) {
-	const normalized = Number(value);
-	emit('update:qty', normalized);
-	if (normalized !== -1) {
+	const normalized_value = Number(value);
+	emit('update:qty', normalized_value);
+	if (normalized_value !== -1) {
 		emit('update:customQty', '');
 	}
 	closeMenus();
@@ -196,10 +196,10 @@ onBeforeUnmount(() => {
 
 watch(
 	() => [props.modelValue, props.sizeKey] as const,
-	([isOpen, sizeKey]) => {
-		if (!isOpen || sizeKey !== 'custom') return;
+	([is_open, size_key]) => {
+		if (!is_open || size_key !== 'custom') return;
 		nextTick(() => {
-			customWidthInputRef.value?.focus();
+			custom_width_input_ref.value?.focus();
 		});
 	},
 	{ immediate: true }
@@ -245,14 +245,14 @@ watch(
 						/>
 						<div
 							v-else
-							ref="sizeDropdownRef"
+							ref="size_dropdown_ref"
 							class="cart-item-edit-select-shell ui-select"
-							:data-open="sizeMenuOpen || null"
+							:data-open="size_menu_open || null"
 							data-testid="cart-item-edit-size-select"
 						>
 							<div class="cart-item-edit-size-combo">
 								<input
-									ref="customWidthInputRef"
+									ref="custom_width_input_ref"
 									:value="display_width"
 									type="text"
 									inputmode="numeric"
@@ -286,11 +286,11 @@ watch(
 									name="regular-angle-down"
 									:size="24"
 									color="var(--gray-90)"
-									:class="{ 'is-open': sizeMenuOpen }"
+									:class="{ 'is-open': size_menu_open }"
 								/>
 							</button>
 							<Transition name="ui-select-menu">
-								<div v-if="sizeMenuOpen" class="ui-select-menu" role="listbox">
+								<div v-if="size_menu_open" class="ui-select-menu" role="listbox">
 									<div class="ui-select-options">
 										<button
 											v-for="option in sizeOptions"
@@ -323,9 +323,9 @@ watch(
 						/>
 						<div
 							v-else
-							ref="qtyDropdownRef"
+							ref="qty_dropdown_ref"
 							class="cart-item-edit-select-shell ui-select"
-							:data-open="qtyMenuOpen || null"
+							:data-open="qty_menu_open || null"
 							data-testid="cart-item-edit-qty-select"
 						>
 							<input
@@ -349,11 +349,11 @@ watch(
 									name="regular-angle-down"
 									:size="24"
 									color="var(--gray-90)"
-									:class="{ 'is-open': qtyMenuOpen }"
+									:class="{ 'is-open': qty_menu_open }"
 								/>
 							</button>
 							<Transition name="ui-select-menu">
-								<div v-if="qtyMenuOpen" class="ui-select-menu" role="listbox">
+								<div v-if="qty_menu_open" class="ui-select-menu" role="listbox">
 									<div class="ui-select-options">
 										<button
 											v-for="option in quantityOptions"
@@ -488,6 +488,7 @@ watch(
 
 	.cart-item-edit-select {
 		width: 100%;
+
 		.cart-item-edit-select-trigger {
 			&:hover {
 				border: 1px solid var(--gray-50);
@@ -564,7 +565,6 @@ watch(
 	}
 
 	.cart-item-edit-select-arrow {
-
 		border: 0;
 		outline: 0;
 		background: transparent;

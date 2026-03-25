@@ -9,7 +9,7 @@ import {
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
-const defaultAvatarUrl = resolveFileUrl('products/reviews/client-avatar.png');
+const default_avatar_url = resolveFileUrl('products/reviews/client-avatar.png');
 
 const props = defineProps<{
 	card: ReviewCard;
@@ -17,17 +17,17 @@ const props = defineProps<{
 
 const title = computed(() => t(getProductReviewCopyKey(props.card.id, 'title')));
 const text = computed(() => t(getProductReviewCopyKey(props.card.id, 'text')));
-const mediaSrc = computed(() =>
+const media_src = computed(() =>
 	resolveProductReviewMediaSrc(props.card, resolveFileUrl)
 );
-const avatarSrc = computed(() =>
-	resolveProductReviewAvatarSrc(props.card, resolveFileUrl, defaultAvatarUrl)
+const avatar_src = computed(() =>
+	resolveProductReviewAvatarSrc(props.card, resolveFileUrl, default_avatar_url)
 );
 
 const onAvatarError = (event: Event) => {
 	const image = event.target as HTMLImageElement | null;
-	if (!image || image.src === defaultAvatarUrl) return;
-	image.src = defaultAvatarUrl;
+	if (!image || image.src === default_avatar_url) return;
+	image.src = default_avatar_url;
 };
 </script>
 
@@ -36,7 +36,7 @@ const onAvatarError = (event: Event) => {
 		<div class="product-reviews-body" data-testid="product-reviews-card-body">
 			<div class="product-reviews-media" :data-testid="`product-reviews-card-media-${props.card.id}`">
 				<img
-					:src="mediaSrc"
+					:src="media_src"
 					:alt="title"
 					loading="lazy"
 					class="product-reviews-media-image"
@@ -52,7 +52,7 @@ const onAvatarError = (event: Event) => {
 		<div class="product-reviews-meta" data-testid="product-reviews-card-meta">
 			<div class="product-reviews-card-author" data-testid="product-reviews-card-author">
 				<img
-					:src="avatarSrc"
+					:src="avatar_src"
 					:alt="`${props.card.author} avatar`"
 					class="product-reviews-card-avatar"
 					data-testid="product-reviews-card-avatar"

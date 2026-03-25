@@ -15,18 +15,18 @@ const CartPreview = defineAsyncComponent(
 );
 const route = useRoute();
 const {
-	accountOpen,
-	accountMenuRef,
-	localeModalOpen,
-	navLinks,
-	selectedLocale,
-	localeOptions,
-	accountLinks,
-	isMockLoggedIn,
-	isGuestLoggedIn,
-	userAvatarUrl,
-	displayEmail,
-	accountTransitionName,
+	account_open,
+	account_menu_ref,
+	locale_modal_open,
+	nav_links,
+	selected_locale,
+	locale_options,
+	account_links,
+	is_mock_logged_in,
+	is_guest_logged_in,
+	user_avatar_url,
+	display_email,
+	account_transition_name,
 	isNavLinkActive,
 	toggleAccountMenu,
 	closeAccountMenu,
@@ -39,18 +39,18 @@ const {
 } = useAppHeaderAccount();
 
 const {
-	searchModalOpen,
-	searchQuery,
-	searchLoading,
-	activeSearchNavIndex,
-	searchResultGroups,
-	searchNavIndexByResultId,
-	recentSearchEntries,
-	searchEmptySuggestedTerm,
-	showSearchRecent,
-	showSearchNoRecent,
-	showSearchNoResult,
-	showSearchResults,
+	search_modal_open,
+	search_query,
+	search_loading,
+	active_search_nav_index,
+	search_result_groups,
+	search_nav_index_by_result_id,
+	recent_search_entries,
+	search_empty_suggested_term,
+	show_search_recent,
+	show_search_no_recent,
+	show_search_no_result,
+	show_search_results,
 	setSearchModalRef,
 	setSearchInputRef,
 	focusSearchInput,
@@ -65,14 +65,14 @@ const {
 } = useAppHeaderSearch();
 
 const {
-	cartPreviewOpen,
-	cartFeaturedOpen,
-	cartFeaturedItems,
-	cartItems,
-	cartGrandTotal,
-	cartItemCount,
-	cartSizeOptionModels,
-	cartQuantityOptions,
+	cart_preview_open,
+	cart_featured_open,
+	cart_featured_items,
+	cart_items,
+	cart_grand_total,
+	cart_item_count,
+	cart_size_option_models,
+	cart_quantity_options,
 	getCartProductName,
 	formatCartPrice,
 	cartFeaturedStartPrice,
@@ -86,19 +86,19 @@ const {
 	closeLocaleModal,
 	closeSearchModal,
 });
-let bodyOverflowBeforeCartLock = '';
-let cartBodyScrollLocked = false;
-let idlePrefetchTimer: ReturnType<typeof setTimeout> | null = null;
-let idlePrefetchHandle: number | null = null;
-const prefetchedHeaderOverlays = ref(false);
-const shouldLockBodyScroll = computed(
-	() => cartPreviewOpen.value || searchModalOpen.value
+let body_overflow_before_cart_lock = '';
+let cart_body_scroll_locked = false;
+let idle_prefetch_timer: ReturnType<typeof setTimeout> | null = null;
+let idle_prefetch_handle: number | null = null;
+const prefetched_header_overlays = ref(false);
+const should_lock_body_scroll = computed(
+	() => cart_preview_open.value || search_modal_open.value
 );
 
 async function prefetchHeaderOverlayModules() {
-	if (prefetchedHeaderOverlays.value) return;
+	if (prefetched_header_overlays.value) return;
 
-	prefetchedHeaderOverlays.value = true;
+	prefetched_header_overlays.value = true;
 	await Promise.allSettled([
 		import('~/components/layout/app-header/AppHeaderLocaleModal.vue'),
 		import('~/components/cart/CartPreview.vue'),
@@ -106,7 +106,7 @@ async function prefetchHeaderOverlayModules() {
 }
 
 function setAccountMenuRef(el: HTMLElement | null) {
-	accountMenuRef.value = el;
+	account_menu_ref.value = el;
 }
 
 function openLocaleModal() {
@@ -121,7 +121,7 @@ async function openSearchModal() {
 	closeAccountMenu();
 	closeLocaleModal();
 	closeCartPreview();
-	searchModalOpen.value = true;
+	search_modal_open.value = true;
 	await focusSearchInput();
 }
 
@@ -134,22 +134,22 @@ function setCartBodyScrollLock(locked: boolean) {
 	if (typeof document === 'undefined') return;
 
 	if (locked) {
-		if (cartBodyScrollLocked) return;
-		bodyOverflowBeforeCartLock = document.body.style.overflow;
+		if (cart_body_scroll_locked) return;
+		body_overflow_before_cart_lock = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
-		cartBodyScrollLocked = true;
+		cart_body_scroll_locked = true;
 		return;
 	}
 
-	if (!cartBodyScrollLocked) return;
-	document.body.style.overflow = bodyOverflowBeforeCartLock;
-	cartBodyScrollLocked = false;
+	if (!cart_body_scroll_locked) return;
+	document.body.style.overflow = body_overflow_before_cart_lock;
+	cart_body_scroll_locked = false;
 }
 
 useAppHeaderKeyboardShortcuts({
 	handleSearchKeydown,
-	isSearchModalOpen: () => searchModalOpen.value,
-	isLocaleModalOpen: () => localeModalOpen.value,
+	isSearchModalOpen: () => search_modal_open.value,
+	isLocaleModalOpen: () => locale_modal_open.value,
 	closeSearchModal,
 	closeLocaleModal,
 	closeAccountMenu,
@@ -160,30 +160,30 @@ onMounted(() => {
 	if (typeof window === 'undefined') return;
 
 	if ('requestIdleCallback' in window) {
-		idlePrefetchHandle = window.requestIdleCallback(() => {
+		idle_prefetch_handle = window.requestIdleCallback(() => {
 			void prefetchHeaderOverlayModules();
 		});
 		return;
 	}
 
-	idlePrefetchTimer = setTimeout(() => {
+	idle_prefetch_timer = setTimeout(() => {
 		void prefetchHeaderOverlayModules();
 	}, 1200);
 });
 
-watch(shouldLockBodyScroll, (should_lock) => {
+watch(should_lock_body_scroll, (should_lock) => {
 	setCartBodyScrollLock(should_lock);
 });
 
 onBeforeUnmount(() => {
 	if (typeof window === 'undefined') return;
 
-	if (idlePrefetchHandle !== null && 'cancelIdleCallback' in window) {
-		window.cancelIdleCallback(idlePrefetchHandle);
+	if (idle_prefetch_handle !== null && 'cancelIdleCallback' in window) {
+		window.cancelIdleCallback(idle_prefetch_handle);
 	}
 
-	if (idlePrefetchTimer) {
-		clearTimeout(idlePrefetchTimer);
+	if (idle_prefetch_timer) {
+		clearTimeout(idle_prefetch_timer);
 	}
 
 	setCartBodyScrollLock(false);
@@ -194,17 +194,17 @@ onBeforeUnmount(() => {
 	<header class="home-header" data-testid="app-header">
 		<AppHeaderMainBar
 			:simple="route.meta.isSimpleHeader === true"
-			:nav-links="navLinks"
+			:nav-links="nav_links"
 			:is-nav-link-active="isNavLinkActive"
-			:selected-locale="selectedLocale"
-			:is-mock-logged-in="isMockLoggedIn"
-			:is-guest-logged-in="isGuestLoggedIn"
-			:account-open="accountOpen"
-			:user-avatar-url="userAvatarUrl"
-			:display-email="displayEmail"
-			:account-transition-name="accountTransitionName"
-			:account-links="accountLinks"
-			:cart-item-count="cartItemCount"
+			:selected-locale="selected_locale"
+			:is-mock-logged-in="is_mock_logged_in"
+			:is-guest-logged-in="is_guest_logged_in"
+			:account-open="account_open"
+			:user-avatar-url="user_avatar_url"
+			:display-email="display_email"
+			:account-transition-name="account_transition_name"
+			:account-links="account_links"
+			:cart-item-count="cart_item_count"
 			:set-account-menu-ref="setAccountMenuRef"
 			data-testid="app-header-main-bar"
 			@open-locale="openLocaleModal"
@@ -221,35 +221,35 @@ onBeforeUnmount(() => {
 		/>
 
 		<AppHeaderLocaleModal
-			v-if="localeModalOpen"
-			:open="localeModalOpen"
-			:locale-value="selectedLocale"
-			:locale-options="localeOptions"
+			v-if="locale_modal_open"
+			:open="locale_modal_open"
+			:locale-value="selected_locale"
+			:locale-options="locale_options"
 			data-testid="app-header-locale-modal"
 			@close="closeLocaleModal"
 			@select="selectLocale"
 		/>
 
 		<AppHeaderSearchModal
-			v-if="searchModalOpen"
-			:open="searchModalOpen"
-			:search-query="searchQuery"
-			:search-loading="searchLoading"
-			:show-search-recent="showSearchRecent"
-			:show-search-no-recent="showSearchNoRecent"
-			:show-search-no-result="showSearchNoResult"
-			:show-search-results="showSearchResults"
-			:recent-search-entries="recentSearchEntries"
-			:active-search-nav-index="activeSearchNavIndex"
-			:search-result-groups="searchResultGroups"
-			:search-nav-index-by-result-id="searchNavIndexByResultId"
-			:search-empty-suggested-term="searchEmptySuggestedTerm"
+			v-if="search_modal_open"
+			:open="search_modal_open"
+			:search-query="search_query"
+			:search-loading="search_loading"
+			:show-search-recent="show_search_recent"
+			:show-search-no-recent="show_search_no_recent"
+			:show-search-no-result="show_search_no_result"
+			:show-search-results="show_search_results"
+			:recent-search-entries="recent_search_entries"
+			:active-search-nav-index="active_search_nav_index"
+			:search-result-groups="search_result_groups"
+			:search-nav-index-by-result-id="search_nav_index_by_result_id"
+			:search-empty-suggested-term="search_empty_suggested_term"
 			:highlight-search-match="highlightSearchMatch"
 			:set-modal-ref="setSearchModalRef"
 			:set-input-ref="setSearchInputRef"
 			data-testid="app-header-search-modal"
 			@close="closeSearchModal"
-			@update:search-query="searchQuery = $event"
+			@update:search-query="search_query = $event"
 			@focus-input="focusSearchInput"
 			@clear-recent="clearRecentSearches"
 			@apply-recent="applyRecentSearch"
@@ -259,14 +259,14 @@ onBeforeUnmount(() => {
 		/>
 
 		<CartPreview
-			:open="cartPreviewOpen"
-			:cart-item-count="cartItemCount"
-			:cart-items="cartItems"
-			:size-option-models="cartSizeOptionModels"
-			:quantity-options="cartQuantityOptions"
-			:grand-total="cartGrandTotal"
-			:featured-open="cartFeaturedOpen"
-			:featured-items="cartFeaturedItems"
+			:open="cart_preview_open"
+			:cart-item-count="cart_item_count"
+			:cart-items="cart_items"
+			:size-option-models="cart_size_option_models"
+			:quantity-options="cart_quantity_options"
+			:grand-total="cart_grand_total"
+			:featured-open="cart_featured_open"
+			:featured-items="cart_featured_items"
 			:get-product-name="getCartProductName"
 			:format-price="formatCartPrice"
 			:featured-start-price="cartFeaturedStartPrice"

@@ -101,16 +101,16 @@ export function getProfileFieldValue(
 }
 
 export function normalizeAccountName(first: string, last: string) {
-	const firstTrimmed = first.trim();
-	const lastTrimmed = last.trim();
+	const first_trimmed = first.trim();
+	const last_trimmed = last.trim();
 
-	if (lastTrimmed || !firstTrimmed.includes(' ')) {
-		return { firstName: firstTrimmed, lastName: lastTrimmed };
+	if (last_trimmed || !first_trimmed.includes(' ')) {
+		return { firstName: first_trimmed, lastName: last_trimmed };
 	}
 
-	const parts = firstTrimmed.split(/\s+/).filter(Boolean);
+	const parts = first_trimmed.split(/\s+/).filter(Boolean);
 	if (parts.length < 2) {
-		return { firstName: firstTrimmed, lastName: lastTrimmed };
+		return { firstName: first_trimmed, lastName: last_trimmed };
 	}
 
 	return {
@@ -120,24 +120,24 @@ export function normalizeAccountName(first: string, last: string) {
 }
 
 export function getAccountInitials(firstName: string, lastName: string) {
-	const firstInitial = (firstName.charAt(0) || 'U').toUpperCase();
-	const lastInitial = (lastName.charAt(0) || '').toUpperCase();
-	return `${firstInitial}${lastInitial}`;
+	const first_initial = (firstName.charAt(0) || 'U').toUpperCase();
+	const last_initial = (lastName.charAt(0) || '').toUpperCase();
+	return `${first_initial}${last_initial}`;
 }
 
 function createImageElement(file: File): Promise<HTMLImageElement> {
 	return new Promise((resolve, reject) => {
-		const objectUrl = URL.createObjectURL(file);
+		const object_url = URL.createObjectURL(file);
 		const image = new Image();
 		image.onload = () => {
-			URL.revokeObjectURL(objectUrl);
+			URL.revokeObjectURL(object_url);
 			resolve(image);
 		};
 		image.onerror = () => {
-			URL.revokeObjectURL(objectUrl);
+			URL.revokeObjectURL(object_url);
 			reject(new Error('Failed to decode image file.'));
 		};
-		image.src = objectUrl;
+		image.src = object_url;
 	});
 }
 
@@ -161,32 +161,32 @@ export async function processAccountAvatarFile(file: File): Promise<File> {
 	const image = await createImageElement(file);
 	const width = image.naturalWidth;
 	const height = image.naturalHeight;
-	const hasLargeDimension = width > AVATAR_TARGET_SIZE_PX || height > AVATAR_TARGET_SIZE_PX;
-	const isSquare = width === height;
+	const has_large_dimension = width > AVATAR_TARGET_SIZE_PX || height > AVATAR_TARGET_SIZE_PX;
+	const is_square = width === height;
 
-	let sourceX = 0;
-	let sourceY = 0;
-	let sourceWidth = width;
-	let sourceHeight = height;
-	let targetWidth = width;
-	let targetHeight = height;
+	let source_x = 0;
+	let source_y = 0;
+	let source_width = width;
+	let source_height = height;
+	let target_width = width;
+	let target_height = height;
 
-	if (hasLargeDimension) {
-		if (!isSquare) {
-			const cropSize = Math.min(width, height);
-			sourceX = Math.floor((width - cropSize) / 2);
-			sourceY = Math.floor((height - cropSize) / 2);
-			sourceWidth = cropSize;
-			sourceHeight = cropSize;
+	if (has_large_dimension) {
+		if (!is_square) {
+			const crop_size = Math.min(width, height);
+			source_x = Math.floor((width - crop_size) / 2);
+			source_y = Math.floor((height - crop_size) / 2);
+			source_width = crop_size;
+			source_height = crop_size;
 		}
 
-		targetWidth = AVATAR_TARGET_SIZE_PX;
-		targetHeight = AVATAR_TARGET_SIZE_PX;
+		target_width = AVATAR_TARGET_SIZE_PX;
+		target_height = AVATAR_TARGET_SIZE_PX;
 	}
 
 	const canvas = document.createElement('canvas');
-	canvas.width = targetWidth;
-	canvas.height = targetHeight;
+	canvas.width = target_width;
+	canvas.height = target_height;
 	const context = canvas.getContext('2d');
 	if (!context) {
 		throw new Error('Canvas context is unavailable.');
@@ -194,27 +194,27 @@ export async function processAccountAvatarFile(file: File): Promise<File> {
 
 	context.drawImage(
 		image,
-		sourceX,
-		sourceY,
-		sourceWidth,
-		sourceHeight,
+		source_x,
+		source_y,
+		source_width,
+		source_height,
 		0,
 		0,
-		targetWidth,
-		targetHeight
+		target_width,
+		target_height
 	);
 
-	const inputType = file.type.toLowerCase();
-	const outputType = inputType === 'image/png' ? 'image/png' : 'image/jpeg';
+	const input_type = file.type.toLowerCase();
+	const output_type = input_type === 'image/png' ? 'image/png' : 'image/jpeg';
 	const blob = await canvasToBlob(
 		canvas,
-		outputType,
-		outputType === 'image/jpeg' ? AVATAR_JPEG_QUALITY : undefined
+		output_type,
+		output_type === 'image/jpeg' ? AVATAR_JPEG_QUALITY : undefined
 	);
 
-	const extension = outputType === 'image/png' ? 'png' : 'jpg';
+	const extension = output_type === 'image/png' ? 'png' : 'jpg';
 	return new File([blob], `avatar-${Date.now()}.${extension}`, {
-		type: outputType,
+		type: output_type,
 		lastModified: Date.now(),
 	});
 }

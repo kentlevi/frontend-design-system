@@ -2,42 +2,42 @@
 import ProductReviewsCard from '@/components/products/product-reviews/ProductReviewsCard.vue';
 import ProductReviewsHeader from '@/components/products/product-reviews/ProductReviewsHeader.vue';
 import { useProductReviewsCarousel } from '@/composables/products/reviewsCarousel/useProductReviewsCarousel';
-import { reviewCards } from '~/data/products/product-reviews';
+import { review_cards } from '~/data/products/product-reviews';
 
 const {
-	viewportRef,
-	trackStyle,
-	canGoPrev,
-	canGoNext,
+	viewport_ref,
+	track_style,
+	can_go_prev,
+	can_go_next,
 	setCardRef,
 	nextReview,
 	prevReview,
 	startAuto,
 	stopAuto,
-} = useProductReviewsCarousel(reviewCards.length);
+} = useProductReviewsCarousel(review_cards.length);
 </script>
 
 <template>
 	<section class="product-reviews" data-testid="product-reviews-section">
 		<div class="product-reviews-wrap" data-testid="product-reviews-wrap">
 			<ProductReviewsHeader
-				:can-go-prev="canGoPrev"
-				:can-go-next="canGoNext"
+				:can-go-prev="can_go_prev"
+				:can-go-next="can_go_next"
 				data-testid="product-reviews-header"
 				@prev="prevReview"
 				@next="nextReview"
 			/>
 
 			<div
-				ref="viewportRef"
+				ref="viewport_ref"
 				class="product-reviews-viewport"
 				data-testid="product-reviews-viewport"
 				@mouseenter="stopAuto"
 				@mouseleave="startAuto"
 			>
-				<div class="product-reviews-track" :style="trackStyle" data-testid="product-reviews-track">
+				<div class="product-reviews-track" :style="track_style" data-testid="product-reviews-track">
 					<div
-						v-for="(card, index) in reviewCards"
+						v-for="(card, index) in review_cards"
 						:key="`${card.id}-${index}`"
 						:ref="(el) => setCardRef(el as Element | null, index)"
 						class="product-reviews-card-shell"

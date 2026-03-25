@@ -28,7 +28,7 @@ export function useAppHeaderKeyboardShortcuts(params: {
 		}
 
 		const target = event.target as HTMLElement | null;
-		const isTypingTarget = Boolean(
+		const is_typing_target = Boolean(
 			target &&
 				(target.tagName === 'INPUT' ||
 					target.tagName === 'TEXTAREA' ||
@@ -36,7 +36,7 @@ export function useAppHeaderKeyboardShortcuts(params: {
 		);
 
 		if (
-			!isTypingTarget &&
+			!is_typing_target &&
 			!params.isSearchModalOpen() &&
 			(event.key === '/' || (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)))
 		) {
