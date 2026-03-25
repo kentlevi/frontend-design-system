@@ -22,6 +22,8 @@ const local_artwork_size_label = ref('');
 const local_artwork_preview_url = ref('');
 const local_special_instructions = ref('');
 const { t } = useI18n();
+const display_item_name = computed(() => local_artwork_name.value || props.item?.product.name || '');
+const display_item_image = computed(() => local_artwork_preview_url.value || props.item?.product.image || '');
 
 const file_extension_label = computed(() => {
 	const name_parts = local_artwork_name.value.split('.');
@@ -105,7 +107,7 @@ function submitChanges() {
 		@update:model-value="emit('update:modelValue', $event)"
 		@close="emit('cancel')"
 	>
-		<section v-if="props.item" class="cart-item-details-modal" data-testid="cart-item-details-modal">
+		<section class="cart-item-details-modal" data-testid="cart-item-details-modal">
 			<input
 				ref="file_input_ref"
 				type="file"
@@ -119,14 +121,14 @@ function submitChanges() {
 					<div class="cart-item-details-upload-copy">
 						<div class="cart-item-details-thumb">
 							<img
-								:src="local_artwork_preview_url || props.item.product.image"
-								:alt="local_artwork_name || props.item.product.name"
+								:src="display_item_image"
+								:alt="display_item_name"
 								class="cart-item-details-thumb-image"
 							>
 						</div>
 						<div class="cart-item-details-file-copy">
 							<p class="cart-item-details-file-name">
-								{{ local_artwork_name || props.item.product.name }}
+								{{ display_item_name }}
 							</p>
 							<p class="cart-item-details-file-meta">
 								{{ file_meta_label || t('cart.cartPage.itemDetails.noArtworkFile') }}
@@ -203,7 +205,7 @@ function submitChanges() {
 	</UiModal>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .cart-item-details-modal {
 	background: var(--contrast-light);
 	border-radius: 16px;
@@ -311,7 +313,7 @@ function submitChanges() {
 	}
 }
 
-:global(.cart-item-details-modal-shell) {
+.cart-item-details-modal-shell {
 	border-radius: 16px;
 	overflow: hidden;
 	max-width: 760px;

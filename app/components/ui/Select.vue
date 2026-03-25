@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { ButtonSize } from '~/data/ui/buttons';
 import {
 	useControlTestId,
@@ -62,6 +62,7 @@ const attrs = useAttrs();
 
 const root_ref = ref<HTMLElement | null>(null);
 const search_ref = ref<HTMLInputElement | null>(null);
+const options_ref = ref<HTMLElement | null>(null);
 const is_open = ref(false);
 const query = ref('');
 const SUPPRESS_TOGGLE_MS = 200;
@@ -112,12 +113,33 @@ function closeMenu() {
 	query.value = '';
 }
 
-function openMenu() {
+function focusSelectedOption(scroll_only = false) {
+	const options_element = options_ref.value;
+	const selected_option_element = options_ref.value?.querySelector<HTMLElement>('.ui-select-option.is-selected');
+	const fallback_option_element = options_ref.value?.querySelector<HTMLElement>('.ui-select-option');
+	const target_option_element = selected_option_element || fallback_option_element;
+	if (!target_option_element || !options_element) return;
+
+	options_element.scrollTop = target_option_element.offsetTop - options_element.offsetTop;
+
+	if (!scroll_only) {
+		target_option_element.focus();
+	}
+}
+
+async function openMenu() {
 	if (props.disabled) return;
 	is_open.value = true;
+	await nextTick();
 	if (props.searchable) {
-		requestAnimationFrame(() => search_ref.value?.focus());
+		requestAnimationFrame(() => {
+			search_ref.value?.focus();
+			focusSelectedOption(true);
+		});
+		return;
 	}
+
+	requestAnimationFrame(() => focusSelectedOption());
 }
 
 function toggleMenu() {
@@ -217,7 +239,7 @@ onBeforeUnmount(() => {
 					>
 				</div>
 
-				<div class="ui-select-options">
+				<div ref="options_ref" class="ui-select-options">
 					<button
 						v-for="option in filtered_options"
 						:key="option.value"
@@ -225,6 +247,7 @@ onBeforeUnmount(() => {
 						:class="['ui-select-option', props.optionClass, {
 							'is-selected': option.value === props.modelValue,
 						}]"
+						:tabindex="option.value === props.modelValue ? 0 : -1"
 						@mousedown.prevent="selectOption(option)"
 					>
 						<div class="ui-select-option-copy">

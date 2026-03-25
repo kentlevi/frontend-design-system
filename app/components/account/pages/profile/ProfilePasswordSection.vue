@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
+import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
+import ProfileSetupPasswordModal from './ProfileSetupPasswordModal.vue';
 
 const { t } = useI18n();
+const { social } = useSocialAccount();
 
 const {
 	current_password,
@@ -16,9 +19,23 @@ const {
 	current_password_visible,
 	new_password_visible,
 	new_password_confirmation_visible,
+	setup_password,
+	setup_password_confirmation,
+	setup_password_error,
+	setup_password_confirmation_error,
+	setup_password_visible,
+	setup_password_confirmation_visible,
+	is_setup_password_modal_open,
+	is_setup_password_submitting,
+	has_social_password_ready,
 
 	clearNewPasswordPairErrors,
+	clearSetupPasswordPairErrors,
 	onChangePassword,
+	onSetupPassword,
+	openSetupPasswordModal,
+	closeSetupPasswordModal,
+	is_setup_password_enabled,
 } = usePasswordForm()
 
 const {
@@ -37,7 +54,28 @@ const {
 			<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
 			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 		</div>
-		<div class="account-profile-stack" data-testid="account-profile-password-form">
+		<div
+			v-if="social && !has_social_password_ready"
+			class="account-profile-password-setup"
+			data-testid="account-profile-password-setup"
+		>
+			<div class="account-profile-password-setup-copy">
+				<h3 class="account-profile-password-setup-title">{{ t('account.profile.setPassword') }}</h3>
+				<p class="account-profile-password-setup-description">
+					{{ t('account.profile.socialPasswordDescription') }}
+				</p>
+			</div>
+			<UiButton
+				variant="filled"
+				tone="neutral"
+				size="md"
+				data-testid="account-profile-setup-password-button"
+				@click="openSetupPasswordModal"
+			>
+				{{ t('account.profile.setUpPassword') }}
+			</UiButton>
+		</div>
+		<div v-else class="account-profile-stack" data-testid="account-profile-password-form">
 			<UiFormField :label="t('account.profile.currentPassword')" :error="current_password_error" :required="true">
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -217,10 +255,56 @@ const {
 			</div>
 		</section>
 	</UiModal>
+
+	<ProfileSetupPasswordModal
+		:model-value="is_setup_password_modal_open"
+		:password="setup_password"
+		:password-confirmation="setup_password_confirmation"
+		:password-error="setup_password_error"
+		:password-confirmation-error="setup_password_confirmation_error"
+		:password-visible="setup_password_visible"
+		:password-confirmation-visible="setup_password_confirmation_visible"
+		:is-submit-enabled="is_setup_password_enabled"
+		:is-submitting="is_setup_password_submitting"
+		@update:model-value="$event ? (is_setup_password_modal_open = true) : closeSetupPasswordModal()"
+		@update:password="setup_password = $event"
+		@update:password-confirmation="setup_password_confirmation = $event"
+		@update:password-visible="setup_password_visible = $event"
+		@update:password-confirmation-visible="setup_password_confirmation_visible = $event"
+		@clear-errors="clearSetupPasswordPairErrors"
+		@submit="onSetupPassword"
+		@close="closeSetupPasswordModal"
+	/>
 </template>
 
 <style scoped lang="scss">
 .account-profile-section {
+	.account-profile-password-setup {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+
+		.account-profile-password-setup-copy {
+			display: grid;
+			gap: 8px;
+		}
+
+		.account-profile-password-setup-title {
+			font-size: var(--type-size-200);
+			line-height: var(--type-line-200);
+			font-weight: var(--font-weight-semibold);
+			color: var(--text-primary);
+		}
+
+		.account-profile-password-setup-description {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			color: var(--text-secondary);
+			max-width: 560px;
+		}
+	}
+
 	.account-profile-stack {
 		display: flex;
 		flex-direction: column;
