@@ -15,53 +15,38 @@ export const useAttributesStore = defineStore('attributes', () => {
 			id: 1,
 			width: 35,
 			height: 35,
-			label: 'Small'
-		},
-		{
-			id: 2,
-			width: 75,
-			height: 75,
-			label: 'Medium'
-		},
-		{
-			id: 3,
-			width: 100,
-			height: 100,
-			label: 'Large'
-		},
-		{
-			id: 4,
-			width: 125,
-			height: 125,
-			label: 'Extra'
-		}
-	])
-
-	const size_featured_cards = ref([
-		{
-			id: 1,
+			label: 'Small',
 			key: 'small30',
 			image: '/icons/custom/size-use-cases/small-helmet.svg',
 			description: 'small',
 		},
 		{
 			id: 2,
+			width: 75,
+			height: 75,
+			label: 'Medium',
 			key: 'medium75',
 			image: '/icons/custom/size-use-cases/medium-tumbler.svg',
 			description: 'medium',
 		},
 		{
 			id: 3,
+			width: 100,
+			height: 100,
+			label: 'Large',
 			key: 'large100',
 			image: '/icons/custom/size-use-cases/large-case.svg',
 			description: 'large',
 		},
 		{
 			id: 4,
+			width: 125,
+			height: 125,
+			label: 'Extra',
 			key: 'extraLarge125',
 			image: '/icons/custom/size-use-cases/extra-large-cooler.svg',
 			description: 'extraLarge',
-		},
+		}
 	])
 
 
@@ -168,6 +153,5 @@ export const useAttributesStore = defineStore('attributes', () => {
 		product_w_color,
 		product_w_font,
 		active_lettering_editor,
-		size_featured_cards,
 	}
 })

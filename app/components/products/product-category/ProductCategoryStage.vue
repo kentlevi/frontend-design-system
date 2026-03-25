@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ProductItem } from '~/types/products/catalog';
-import type { SizeOptionKey } from '~/types/products/categoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
 
@@ -12,7 +11,6 @@ const props = defineProps<{
 	hasPickedProduct: boolean;
 	selectedId: string | null;
 	selectedProduct: ProductItem | null;
-	selectedSize: SizeOptionKey;
 	quantityOptions: readonly number[];
 	selectedQty: number;
 	navigationInFlight: boolean;
@@ -26,7 +24,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	'select-product': [productId: string];
-	'update:selectedSize': [size: SizeOptionKey];
 	'update:selectedQty': [qty: number];
 	'open-upload': [];
 }>();
@@ -83,7 +80,6 @@ const {
 	letteringHeightInput,
 	updateProduct,
 	clearForm,
-	featuredCardChange,
 	onVinylSizeFocus,
 	onVinylSizeBlur,
 	onVinylFontFocus,
@@ -98,7 +94,7 @@ if ( typeof route_prod_slug === 'string' )
 else
 	clearForm()
 
-onMounted(async () => {
+onMounted(() => {
 	if ( typeof slug.value === 'string' && slug.value )
 		instatiateForm()
 })
@@ -115,9 +111,6 @@ const preventNonDigitInput = (event: InputEvent) => {
 	if (/^\d+$/.test(event.data)) return
 	event.preventDefault()
 }
-
-
-
 
 const hasValidCustomSize = computed(() =>
 	Boolean(is_custom_size.value && custom_size.value.width && custom_size.value.width > 0 && custom_size.value.height && custom_size.value.height > 0)
@@ -137,7 +130,6 @@ const shouldPlayPreviewVideo = computed(() =>
 const displayedProductTitle = computed(() =>
 	has_lettering_editor.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
-
 
 </script>
 
@@ -239,11 +231,12 @@ const displayedProductTitle = computed(() =>
 								class="mini-feature"
 								:class="{ 'is-active': !is_custom_size && !has_lettering_editor && size?.id === featured_size_cards.id }"
 								:data-testid="`product-category-feature-card-${featured_size_cards.key}`"
-								@click="featuredCardChange(featured_size_cards.id)"
+								@click="inputUpdateSize(featured_size_cards)"
 							>
 								<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.key}.label`) }}</h4>
 
 								<img
+									v-if="featured_size_cards.image"
 									:src="featured_size_cards.image"
 									:alt="t(`product.sizes.${featured_size_cards.key}.label`)"
 									loading="lazy"

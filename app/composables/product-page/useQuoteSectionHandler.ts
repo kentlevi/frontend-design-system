@@ -30,10 +30,6 @@ export const useQuoteSectionHandler = () => {
 
 	const selected_font = ref<string>('')
 
-	// const pricing_disp = ref({
-	// 	ready: false
-	// })
-
 	/**
 	 * Disable form
 	 */
@@ -330,16 +326,6 @@ export const useQuoteSectionHandler = () => {
 	}
 
 
-	const featuredCardChange = (fcard_size_id: number) => {
-		if( quoteService.slug.value == 'vinyl-lettering' )
-			return
-
-		const s_size = quoteService.featured_sizes.value.find(e => e.id == fcard_size_id)
-
-		if( s_size )
-			quoteService.changeSize(s_size)
-	}
-
 
 	const is_vinylsize_focused = ref(false)
 	const is_font_focused = ref(false)
@@ -386,7 +372,6 @@ export const useQuoteSectionHandler = () => {
 		letteringTextInput,
 		letteringWidthInput,
 		letteringHeightInput,
-		featuredCardChange,
 		onVinylSizeFocus,
 		onVinylSizeBlur,
 		onVinylFontFocus,

@@ -24,6 +24,9 @@ export interface SizeSpec {
 	height: number | null
 	label: string | null
 	custom?: boolean | null
+	key?: string | null,
+	image?: string | null,
+	description?: string | null,
 }
 
 export interface QuantitySpec {
