@@ -9,8 +9,8 @@ import { useAuthProfileSetup } from '@/composables/auth/profile/useAuthProfileSe
 const {
 	step,
 	show_welcome_toast,
-	first_name,
-	last_name,
+	profile_details_fields,
+	dynamic_profile_fields,
 	email,
 	email_error,
 	email_disabled,
@@ -32,6 +32,7 @@ const {
 	dismissToast,
 	onPhotoFilePicked,
 	removePhoto,
+	updateProfileDetailField,
 	goNext,
 	skipProfileDetails,
 	goBack,
@@ -50,8 +51,8 @@ const {
 			<main class="auth-profile-main" data-testid="auth-profile-main">
 				<AuthProfileDetailsStep
 					v-if="step === 1"
-					:first-name="first_name"
-					:last-name="last_name"
+					:fields="profile_details_fields"
+					:dynamic-fields="dynamic_profile_fields"
 					:email="email"
 					:email-error="email_error"
 					:email-disabled="email_disabled"
@@ -61,8 +62,7 @@ const {
 					:photo-error="photo_error"
 					:can-continue="can_continue_profile_details"
 					:can-skip="can_skip_profile_details"
-					@update:first-name="first_name = $event"
-					@update:last-name="last_name = $event"
+					@update:field="updateProfileDetailField($event.key, $event.value)"
 					@update:email="email = $event"
 					@photo-file-picked="onPhotoFilePicked"
 					@photo-remove="removePhoto"
