@@ -32,6 +32,8 @@ export function useProfilePhoto() {
 	async function onFilePicked(event: Event) {
 		/** Get the input element from the emitted event */
 		const input = event.target as HTMLInputElement;
+
+		/** Reset error */
 		error.value = ''
 
 		/** Get the first selected file */
