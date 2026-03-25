@@ -198,15 +198,15 @@ function handleForgotPasswordOpen() {
 
 <style lang="scss">
 .auth-login-card-shell {
+	width: 100%;
+	max-width: 588px;
 	.auth-login-card {
 		position: relative;
 		background: var(--contrast-light);
 		border: 1px solid var(--border-default);
 		border-radius: 22px;
 		box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
-		padding: 42px 54px 40px;
-		width: 100%;
-		max-width: 588px;
+		padding: 40px;
 		display: flex;
 		flex-direction: column;
 		gap: 24px;

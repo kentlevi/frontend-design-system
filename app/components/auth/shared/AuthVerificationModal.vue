@@ -228,8 +228,7 @@ function handleModalModelValueUpdate(value: boolean) {
 						@click="onResendClick"
 					>
 						{{ t(`${translation_key}.resendCta`) }}
-					</UiButton>
-					{{ t(`${translation_key}.resendSuffix`) }}
+					</UiButton>{{ t(`${translation_key}.resendSuffix`) }}
 				</p>
 				<p v-else class="auth-verification-resend">
 					{{ t(`${translation_key}.resendLimitReachedPrefix`) }} <b>{{ t(`${translation_key}.resendLimitReachedMiddle`) }}</b>{{ t(`${translation_key}.resendLimitReachedSuffix`) }}
@@ -391,7 +390,8 @@ function handleModalModelValueUpdate(value: boolean) {
                 &:disabled {
                     color: var(--text-muted);
                 }
-                .auth-verification-resend-btn-label {
+
+                :deep(.auth-verification-resend-btn-label) {
                     padding: 0;
                     text-decoration: underline;
                     font-size: inherit;
@@ -399,8 +399,8 @@ function handleModalModelValueUpdate(value: boolean) {
                     font-weight: var(--font-weight-bold);
                 }
 
-                &[disabled] {
-                    .auth-verification-resend-btn-label {
+                &:disabled {
+                    :deep(.auth-verification-resend-btn-label) {
                         text-decoration: none;
                     }
                 }

@@ -14,6 +14,8 @@ export function usePersonalForm() {
 	const toast_store = useToastStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 
+	const dynamic_profile_fields = computed(() => profile_fields_store.dynamic_profile_fields)
+
 	const field_definitions = ref<ProfileFieldDefinition[]>([])
 	const form_state = reactive(personal_form_defaults())
 	const initial_fields = ref<Record<string, string>>({})
@@ -200,6 +202,8 @@ export function usePersonalForm() {
 		is_loading,
 		is_updating,
 		field_errors,
+		dynamic_profile_fields,
+
 		loadPersonalForm,
 		submitPersonalForm,
 	}

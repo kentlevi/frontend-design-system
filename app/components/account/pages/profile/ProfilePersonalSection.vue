@@ -9,7 +9,6 @@ import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 
 const { t } = useI18n();
-const profile_field_store = useProfileFieldsStore();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
@@ -33,6 +32,8 @@ const {
 	has_changes,
 	field_errors,
 	is_updating: name_is_submitting,
+	dynamic_profile_fields,
+
 	loadPersonalForm,
 	submitPersonalForm
 } = usePersonalForm();
@@ -128,7 +129,7 @@ onMounted(() => {
 			</div>
 
 			<div class="account-profile-grid" data-testid="account-profile-form">
-				<div v-for="field in profile_field_store.dynamic_profile_fields" :key="field.id">
+				<div v-for="field in dynamic_profile_fields" :key="field.id">
 					<UiFormField
 						:error="field_errors[field.field_key]"
 						:label="field.is_required

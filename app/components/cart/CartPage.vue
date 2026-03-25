@@ -108,6 +108,24 @@ function showCartItemUpdatedToast() {
 	}, 3000);
 }
 
+function showArtworkUploadSuccessToast() {
+	toast_store.showToastWithTimer({
+		message: t('cart.cartPage.artworkUploadSuccess'),
+		tone: 'primary',
+		dismissible: true,
+		variant: 'default',
+	}, 3000);
+}
+
+function showArtworkRemovedSuccessToast() {
+	toast_store.showToastWithTimer({
+		message: t('cart.cartPage.artworkRemovedSuccess'),
+		tone: 'primary',
+		dismissible: true,
+		variant: 'default',
+	}, 3000);
+}
+
 function getArtworkActionLabel(has_artwork: boolean) {
 	return has_artwork
 		? t('cart.cartPage.replaceArtwork')
@@ -353,9 +371,15 @@ function closeItemDetails() {
 
 function saveItemDetails(payload: { artworkName: string; artworkSizeLabel: string; artworkPreviewUrl: string; specialInstructions: string }) {
 	if (!detail_item_id.value) return;
+	const has_artwork = Boolean(payload.artworkName || payload.artworkPreviewUrl);
 	updateItemArtworkDetails(detail_item_id.value, payload);
 	detail_item_id.value = null;
 	clearPendingArtworkDraft();
+	if (has_artwork) {
+		showArtworkUploadSuccessToast();
+		return;
+	}
+	showArtworkRemovedSuccessToast();
 }
 
 function clearPendingArtworkDraft() {

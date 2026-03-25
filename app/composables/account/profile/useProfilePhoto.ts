@@ -1,7 +1,7 @@
 import { deleteAvatar, saveAvatar } from "~/services/profile/avatar.service";
 import { useUsersStore } from "~/stores/users/users.store";
 import { processAvatarFile } from "~/utils/avatar/processAvatar";
-import { isImage, resolveUploadPath } from "~/utils/file/file";
+import { isValidImage, resolveUploadPath } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
@@ -39,7 +39,7 @@ export function useProfilePhoto() {
 
 		if (!file) return;
 
-		if (!isImage(file)) {
+		if (!isValidImage(file)) {
 			error.value = 'File type is invalid'
 			return;
 		}

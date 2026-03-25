@@ -15,6 +15,8 @@
             "editSize": "Edit Size",
             "removeItemSr": "Remove item",
             "itemUpdated": "Item updated successfully.",
+            "artworkUploadSuccess": "Artwork upload successfully.",
+            "artworkRemovedSuccess": "Artwork removed successfully.",
             "savingChanges": "Saving changes...",
             "deleteItemTitle": "Delete this item from your cart?",
             "deleteItemDescription": "This action will remove the selected item from your cart. You can add it again anytime if needed.",
