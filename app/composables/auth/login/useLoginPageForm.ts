@@ -143,6 +143,19 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		return getAuthErrorMessage(error) || fallbackMessage;
 	}
 
+	// Watchers
+	watch(member_type, () => {
+		clearErrors();
+		resend_limit_reached.value = '';
+	});
+
+	watch(guest_resend_cooldown_remaining, (value) => {
+		if (value <= 0) {
+			resend_limit_reached.value = '';
+		}
+	});
+
+	// Validation functions
 	function validateMember() {
 		clearErrors();
 
@@ -196,11 +209,13 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		non_member_email.value = value;
 		non_member_email_error.value = '';
 		non_member_email_has_error.value = false;
+		resend_limit_reached.value = ''
 	}
 
 	function onNonMemberOrderInput(value: string) {
 		non_member_order_number.value = value;
 		non_member_order_error.value = '';
+		resend_limit_reached.value = '';
 	}
 
 	async function onSubmitClick() {
@@ -287,12 +302,15 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			const message_code = getAuthResponseMessageCode(response);
 
 			if (!response.success) {
-				const response_code = getAuthResponseCode(response);
-				if (response_code === 'max_resend_reached') {
-					resend_limit_reached.value = response_message || t('auth.verification.invalidCode');
+				const code = getAuthResponseCode(response);
+				const message = getAuthResponseMessage(response);
+				if (code === 'max_resend_reached') {
+					resend_limit_reached.value = message || t('auth.verification.invalidCode');
+					applyGuestResendCooldownFromResponse(response);
+					guest_verification_error.value = '';
 					non_member_email_error.value = '';
 					non_member_order_error.value = '';
-					is_verification_modal_open.value = true;
+					is_verification_modal_open.value = true
 					return response;
 				}
 			}
@@ -308,6 +326,8 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				non_member_order_error.value = t('auth.login.validation.orderNotFound');
 				if (message_code === 'max_resend_reached') {
 					resend_limit_reached.value = response_message;
+					applyGuestResendCooldownFromResponse(response);
+					guest_verification_error.value = '';
 				} else {
 					guest_verification_error.value = response_message;
 				}
@@ -323,6 +343,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				token: response.data?.token || null,
 				expires_in: response.data?.expires_in || null,
 			};
+			resend_limit_reached.value = '';
 			applyGuestResendCooldownFromResponse(response);
 			is_verification_modal_open.value = true;
 		} catch (error) {
@@ -359,6 +380,8 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 				if (message_code === 'max_resend_reached') {
 					resend_limit_reached.value = response_message;
+					applyGuestResendCooldownFromResponse(response);
+					guest_verification_error.value = '';
 				} else {
 					guest_verification_error.value = response_message;
 				}
@@ -375,6 +398,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				token: response.data?.token || null,
 				expires_in: response.data?.expires_in || null,
 			};
+			resend_limit_reached.value = '';
 			applyGuestResendCooldownFromResponse(response);
 		} catch (error) {
 			console.error(error);
@@ -412,6 +436,13 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			is_guest_verifying.value = false;
 		}
 	}
+	// Modal and utility functions
+	watch(is_verification_modal_open, (open) => {
+		if (open) return;
+		guest_verification_code.value = '';
+		guest_verification_error.value = '';
+		is_guest_verifying.value = false;
+	});
 
 	function openForgotPasswordModal() {
 		is_forgot_password_modal_open.value = true;
