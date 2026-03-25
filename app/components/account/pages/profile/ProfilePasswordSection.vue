@@ -3,6 +3,7 @@ import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPa
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import ProfileSetupPasswordModal from './ProfileSetupPasswordModal.vue';
+import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
 
 const { t } = useI18n();
 const { social } = useSocialAccount();
@@ -19,24 +20,26 @@ const {
 	current_password_visible,
 	new_password_visible,
 	new_password_confirmation_visible,
+
+	clearNewPasswordPairErrors,
+	onChangePassword,
+} = usePasswordForm()
+
+const {
+	setup_password_error,
+	is_setup_password_enabled,
 	setup_password,
 	setup_password_confirmation,
-	setup_password_error,
-	setup_password_confirmation_error,
 	setup_password_visible,
 	setup_password_confirmation_visible,
 	is_setup_password_modal_open,
-	is_setup_password_submitting,
-	has_social_password_ready,
+	has_password,
 
-	clearNewPasswordPairErrors,
 	clearSetupPasswordPairErrors,
-	onChangePassword,
 	onSetupPassword,
 	openSetupPasswordModal,
 	closeSetupPasswordModal,
-	is_setup_password_enabled,
-} = usePasswordForm()
+} = useSetupPassword()
 
 const {
 	is_forgot_password_modal_open,
@@ -55,7 +58,7 @@ const {
 			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 		</div>
 		<div
-			v-if="social && !has_social_password_ready"
+			v-if="social && !has_password"
 			class="account-profile-password-setup"
 			data-testid="account-profile-password-setup"
 		>
@@ -260,11 +263,9 @@ const {
 		:password="setup_password"
 		:password-confirmation="setup_password_confirmation"
 		:password-error="setup_password_error"
-		:password-confirmation-error="setup_password_confirmation_error"
 		:password-visible="setup_password_visible"
 		:password-confirmation-visible="setup_password_confirmation_visible"
 		:is-submit-enabled="is_setup_password_enabled"
-		:is-submitting="is_setup_password_submitting"
 		@update:model-value="$event ? (is_setup_password_modal_open = true) : closeSetupPasswordModal()"
 		@update:password="setup_password = $event"
 		@update:password-confirmation="setup_password_confirmation = $event"

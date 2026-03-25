@@ -64,7 +64,9 @@ export function useProfilePhoto() {
 			})
 
 			/** Save file name in database */
-			await saveAvatar(file_name)
+			const response = await saveAvatar(file_name)
+
+			toast_store.handleApiResponse(response)
 
 			/** Set file name in store */
 			user_store.setProfileField('file_name', file_name)
