@@ -1,52 +1,52 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 export function useProductReviewsCarousel(cardCount: number, gap = 18) {
-	const currentSlide = ref(0);
-	const cardWidth = ref(0);
-	const viewportRef = ref<HTMLElement | null>(null);
-	const cardRef = ref<HTMLElement | null>(null);
-	const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
-	const autoResumeTimer = ref<ReturnType<typeof setTimeout> | null>(null);
+	const current_slide = ref(0);
+	const card_width = ref(0);
+	const viewport_ref = ref<HTMLElement | null>(null);
+	const card_ref = ref<HTMLElement | null>(null);
+	const auto_timer = ref<ReturnType<typeof setInterval> | null>(null);
+	const auto_resume_timer = ref<ReturnType<typeof setTimeout> | null>(null);
 
-	const trackStyle = computed(() => ({
-		transform: `translateX(-${currentSlide.value * (cardWidth.value + gap)}px)`,
+	const track_style = computed(() => ({
+		transform: `translateX(-${current_slide.value * (card_width.value + gap)}px)`,
 	}));
 
-	const visibleCards = computed(() => {
-		const viewportWidth = viewportRef.value?.getBoundingClientRect().width ?? 0;
-		const slideWidth = cardWidth.value + gap;
+	const visible_cards = computed(() => {
+		const viewport_width = viewport_ref.value?.getBoundingClientRect().width ?? 0;
+		const slide_width = card_width.value + gap;
 
-		if (!viewportWidth || !slideWidth) return 1;
-		return Math.max(1, Math.floor((viewportWidth + gap) / slideWidth));
+		if (!viewport_width || !slide_width) return 1;
+		return Math.max(1, Math.floor((viewport_width + gap) / slide_width));
 	});
 
-	const maxSlide = computed(() => Math.max(0, cardCount - visibleCards.value));
-	const canGoPrev = computed(() => currentSlide.value > 0);
-	const canGoNext = computed(() => currentSlide.value < maxSlide.value);
+	const max_slide = computed(() => Math.max(0, cardCount - visible_cards.value));
+	const can_go_prev = computed(() => current_slide.value > 0);
+	const can_go_next = computed(() => current_slide.value < max_slide.value);
 
 	function syncCardWidth() {
-		if (!cardRef.value) return;
-		cardWidth.value = cardRef.value.getBoundingClientRect().width;
+		if (!card_ref.value) return;
+		card_width.value = card_ref.value.getBoundingClientRect().width;
 	}
 
 	function setCardRef(el: Element | null, index: number) {
 		if (index !== 0) return;
-		cardRef.value = el as HTMLElement | null;
+		card_ref.value = el as HTMLElement | null;
 		syncCardWidth();
 	}
 
 	function moveToNextReview() {
-		if (currentSlide.value >= maxSlide.value) {
-			currentSlide.value = 0;
+		if (current_slide.value >= max_slide.value) {
+			current_slide.value = 0;
 			return;
 		}
 
-		currentSlide.value += 1;
+		current_slide.value += 1;
 	}
 
 	function moveToPrevReview() {
-		if (currentSlide.value === 0) return;
-		currentSlide.value -= 1;
+		if (current_slide.value === 0) return;
+		current_slide.value -= 1;
 	}
 
 	function nextReview() {
@@ -64,38 +64,38 @@ export function useProductReviewsCarousel(cardCount: number, gap = 18) {
 	function startAuto() {
 		clearAutoResumeTimer();
 		stopAuto();
-		autoTimer.value = setInterval(moveToNextReview, 3200);
+		auto_timer.value = setInterval(moveToNextReview, 3200);
 	}
 
 	function stopAuto() {
-		if (!autoTimer.value) return;
-		clearInterval(autoTimer.value);
-		autoTimer.value = null;
+		if (!auto_timer.value) return;
+		clearInterval(auto_timer.value);
+		auto_timer.value = null;
 	}
 
 	function clearAutoResumeTimer() {
-		if (!autoResumeTimer.value) return;
-		clearTimeout(autoResumeTimer.value);
-		autoResumeTimer.value = null;
+		if (!auto_resume_timer.value) return;
+		clearTimeout(auto_resume_timer.value);
+		auto_resume_timer.value = null;
 	}
 
 	function scheduleAutoResume() {
 		clearAutoResumeTimer();
-		autoResumeTimer.value = setTimeout(() => {
-			autoResumeTimer.value = null;
+		auto_resume_timer.value = setTimeout(() => {
+			auto_resume_timer.value = null;
 			startAuto();
 		}, 3200);
 	}
 
-	watch(maxSlide, (nextMax) => {
-		if (currentSlide.value > nextMax) {
-			currentSlide.value = nextMax;
+	watch(max_slide, (next_max) => {
+		if (current_slide.value > next_max) {
+			current_slide.value = next_max;
 		}
 	});
 
 	onMounted(() => {
 		syncCardWidth();
-		currentSlide.value = 0;
+		current_slide.value = 0;
 		startAuto();
 		window.addEventListener('resize', syncCardWidth);
 	});
@@ -107,10 +107,10 @@ export function useProductReviewsCarousel(cardCount: number, gap = 18) {
 	});
 
 	return {
-		viewportRef,
-		trackStyle,
-		canGoPrev,
-		canGoNext,
+		viewport_ref,
+		track_style,
+		can_go_prev,
+		can_go_next,
 		setCardRef,
 		nextReview,
 		prevReview,

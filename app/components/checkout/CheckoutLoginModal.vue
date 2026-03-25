@@ -12,38 +12,38 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 }>();
 
-const modalMode = ref<'login' | 'register'>('login');
-const isForgotPasswordModalOpen = ref(false);
-const forgotPasswordEmail = ref('');
-const shouldRestoreLoginModal = ref(false);
+const modal_mode = ref<'login' | 'register'>('login');
+const is_forgot_password_modal_open = ref(false);
+const forgot_password_email = ref('');
+const should_restore_login_modal = ref(false);
 
 watch(() => props.modelValue, (is_open) => {
 	if (!is_open) {
-		modalMode.value = 'login';
+		modal_mode.value = 'login';
 	}
 });
 
 async function openForgotPasswordModal(email: string) {
-	forgotPasswordEmail.value = email;
-	shouldRestoreLoginModal.value = true;
+	forgot_password_email.value = email;
+	should_restore_login_modal.value = true;
 	emit('update:modelValue', false);
 	await nextTick();
-	isForgotPasswordModalOpen.value = true;
+	is_forgot_password_modal_open.value = true;
 }
 
 function onForgotPasswordModalChange(value: boolean) {
-	isForgotPasswordModalOpen.value = value;
+	is_forgot_password_modal_open.value = value;
 
-	if (!value && shouldRestoreLoginModal.value) {
+	if (!value && should_restore_login_modal.value) {
 		restoreLoginModal();
 	}
 }
 
 async function restoreLoginModal() {
-	isForgotPasswordModalOpen.value = false;
-	shouldRestoreLoginModal.value = false;
+	is_forgot_password_modal_open.value = false;
+	should_restore_login_modal.value = false;
 	await nextTick();
-	modalMode.value = 'login';
+	modal_mode.value = 'login';
 	emit('update:modelValue', true);
 }
 </script>
@@ -58,7 +58,7 @@ async function restoreLoginModal() {
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<Transition name="checkout-auth-card" mode="out-in">
-			<div v-if="modalMode === 'login'" key="login" class="checkout-auth-card-panel">
+			<div v-if="modal_mode === 'login'" key="login" class="checkout-auth-card-panel">
 				<AuthLoginCard
 					:skip-member-redirect="true"
 					:show-close-button="true"
@@ -67,7 +67,7 @@ async function restoreLoginModal() {
 					:hide-non-member-order-number="true"
 					@member-login-success="emit('update:modelValue', false)"
 					@close="emit('update:modelValue', false)"
-					@open-register="modalMode = 'register'"
+					@open-register="modal_mode = 'register'"
 					@open-forgot-password="openForgotPasswordModal"
 				/>
 			</div>
@@ -77,15 +77,15 @@ async function restoreLoginModal() {
 					:show-close-button="true"
 					:login-as-action="true"
 					@close="emit('update:modelValue', false)"
-					@open-login="modalMode = 'login'"
+					@open-login="modal_mode = 'login'"
 				/>
 			</div>
 		</Transition>
 	</UiModal>
 
 	<AuthLoginForgotPasswordModal
-		:model-value="isForgotPasswordModalOpen"
-		:email="forgotPasswordEmail"
+		:model-value="is_forgot_password_modal_open"
+		:email="forgot_password_email"
 		@update:model-value="onForgotPasswordModalChange"
 		@return-to-login="restoreLoginModal"
 	/>

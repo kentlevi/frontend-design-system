@@ -3,9 +3,9 @@ import type { FlagCode } from '~/data/ui/flags';
 import type { SupportedCountry } from '~/constants/countries';
 import { isSupportedCountry } from '~/constants/countries';
 import {
-	headerAccountLinkConfig,
-	headerLocaleOptionConfig,
-	headerNavLinkConfig,
+	header_account_link_config,
+	header_locale_option_config,
+	header_nav_link_config,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
@@ -54,7 +54,7 @@ export function useAppHeaderAccount() {
 	let account_close_timeout: ReturnType<typeof setTimeout> | null = null;
 
 	const nav_links = computed(() =>
-		headerNavLinkConfig.map((item) => ({
+		header_nav_link_config.map((item) => ({
 			...item,
 			label: t(item.labelKey),
 			to: withCountry(item.to),
@@ -64,7 +64,7 @@ export function useAppHeaderAccount() {
 	const selected_locale = computed<FlagCode>(() => country.value as FlagCode);
 
 	const locale_options = computed(() =>
-		headerLocaleOptionConfig.map((option) => ({
+		header_locale_option_config.map((option) => ({
 			code: option.code,
 			flagCode: option.flagCode,
 			label: t(option.labelKey),
@@ -72,7 +72,7 @@ export function useAppHeaderAccount() {
 	);
 
 	const account_links = computed(() =>
-		headerAccountLinkConfig.map((item) => ({
+		header_account_link_config.map((item) => ({
 			...item,
 			label: t(item.labelKey),
 			to: item.to,
@@ -187,8 +187,8 @@ export function useAppHeaderAccount() {
 		closeAccountMenu();
 		await nextTick();
 
-		const { logoutUser } = useAuthUser()
-		await logoutUser()
+		const { logoutUser } = useAuthUser();
+		await logoutUser();
 	}
 
 	function handleAvatarUpdated(event: Event) {
@@ -234,18 +234,18 @@ export function useAppHeaderAccount() {
 	);
 
 	return {
-		accountOpen: account_open,
-		accountMenuRef: account_menu_ref,
-		localeModalOpen: locale_modal_open,
-		navLinks: nav_links,
-		selectedLocale: selected_locale,
-		localeOptions: locale_options,
-		accountLinks: account_links,
-		isMockLoggedIn: is_mock_logged_in,
-		isGuestLoggedIn: is_guest_logged_in,
-		userAvatarUrl: user_avatar_url,
-		displayEmail: display_email,
-		accountTransitionName: account_transition_name,
+		account_open,
+		account_menu_ref,
+		locale_modal_open,
+		nav_links,
+		selected_locale,
+		locale_options,
+		account_links,
+		is_mock_logged_in,
+		is_guest_logged_in,
+		user_avatar_url,
+		display_email,
+		account_transition_name,
 		isNavLinkActive: isNavLinkActive,
 		toggleAccountMenu: toggleAccountMenu,
 		closeAccountMenu: closeAccountMenu,

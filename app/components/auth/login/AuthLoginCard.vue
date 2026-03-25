@@ -32,35 +32,35 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const {
-	memberType,
-	keepSignedIn,
-	showPassword,
-	isNonMember,
+	member_type,
+	keep_signed_in,
+	show_password,
+	is_non_member,
 	setMemberType,
 	togglePassword,
 	setKeepSignedIn,
-	submitLabel,
-	isVerificationModalOpen,
-	isPageLoginBusy,
-	guestVerificationEmail,
-	guestVerificationOrderNumber,
-	guestVerificationToken,
-	guestVerificationCode,
-	guestVerificationError,
-	resendLimitReached,
-	isGuestVerifying,
-	guestResendCooldownRemaining,
-	isForgotPasswordModalOpen,
-	memberEmail,
-	memberPassword,
-	nonMemberEmail,
-	nonMemberOrderNumber,
-	memberEmailError,
-	memberPasswordError,
-	memberInvalidCredentials,
-	nonMemberEmailError,
-	nonMemberEmailHasError,
-	nonMemberOrderError,
+	submit_label,
+	is_verification_modal_open,
+	is_page_login_busy,
+	guest_verification_email,
+	guest_verification_order_number,
+	guest_verification_token,
+	guest_verification_code,
+	guest_verification_error,
+	resend_limit_reached,
+	is_guest_verifying,
+	guest_resend_cooldown_remaining,
+	is_forgot_password_modal_open,
+	member_email,
+	member_password,
+	non_member_email,
+	non_member_order_number,
+	member_email_error,
+	member_password_error,
+	member_invalid_credentials,
+	non_member_email_error,
+	non_member_email_has_error,
+	non_member_order_error,
 	onMemberEmailInput,
 	onMemberPasswordInput,
 	onNonMemberEmailInput,
@@ -77,7 +77,7 @@ const {
 
 function handleForgotPasswordOpen() {
 	if (props.forgotPasswordAsAction) {
-		emit('open-forgot-password', memberEmail.value);
+		emit('open-forgot-password', member_email.value);
 		return;
 	}
 
@@ -88,8 +88,8 @@ function handleForgotPasswordOpen() {
 <template>
 	<div class="auth-login-card-shell">
 		<UiLoadingOverlay
-			:visible="isPageLoginBusy"
-			:label="isNonMember ? t('auth.login.checkOrder') : t('auth.login.signIn')"
+			:visible="is_page_login_busy"
+			:label="is_non_member ? t('auth.login.checkOrder') : t('auth.login.signIn')"
 			test-id="auth-login-check-order-loading-overlay"
 			position="fixed"
 		/>
@@ -121,20 +121,20 @@ function handleForgotPasswordOpen() {
 				/>
 
 				<AuthLoginModeSwitch
-					:member-type="memberType"
+					:member-type="member_type"
 					@update:member-type="setMemberType"
 				/>
 			</div>
 
 			<AuthLoginMemberForm
-				v-if="!isNonMember"
-				:show-password="showPassword"
-				:keep-signed-in="keepSignedIn"
-				:email="memberEmail"
-				:password="memberPassword"
-				:email-error="memberEmailError"
-				:password-error="memberPasswordError"
-				:password-invalid="memberInvalidCredentials"
+				v-if="!is_non_member"
+				:show-password="show_password"
+				:keep-signed-in="keep_signed_in"
+				:email="member_email"
+				:password="member_password"
+				:email-error="member_email_error"
+				:password-error="member_password_error"
+				:password-invalid="member_invalid_credentials"
 				@toggle-password="togglePassword"
 				@update:keep-signed-in="setKeepSignedIn"
 				@update:email="onMemberEmailInput"
@@ -144,11 +144,11 @@ function handleForgotPasswordOpen() {
 
 			<AuthLoginNonMemberForm
 				v-else
-				:email="nonMemberEmail"
-				:order-number="nonMemberOrderNumber"
-				:email-error="nonMemberEmailError"
-				:email-has-error="nonMemberEmailHasError"
-				:order-error="nonMemberOrderError"
+				:email="non_member_email"
+				:order-number="non_member_order_number"
+				:email-error="non_member_email_error"
+				:email-has-error="non_member_email_has_error"
+				:order-error="non_member_order_error"
 				:hide-order-number="props.hideNonMemberOrderNumber"
 				@update:email="onNonMemberEmailInput"
 				@update:order-number="onNonMemberOrderInput"
@@ -159,37 +159,37 @@ function handleForgotPasswordOpen() {
 				tone="neutral"
 				size="lg"
 				class="auth-login-submit"
-				:disabled="isPageLoginBusy"
+				:disabled="is_page_login_busy"
 				:data-testid="
-					isNonMember
+					is_non_member
 						? 'auth-login-submit-non-member-button'
 						: 'auth-login-submit-member-button'
 				"
 				@click="onSubmitClick"
 			>
-				{{ submitLabel }}
+				{{ submit_label }}
 			</UiButton>
 
-			<AuthLoginSocialButtons v-if="!isNonMember" />
+			<AuthLoginSocialButtons v-if="!is_non_member" />
 		</div>
 
 		<AuthLoginForgotPasswordModal
 			v-if="!props.forgotPasswordAsAction"
-			v-model="isForgotPasswordModalOpen"
-			:email="memberEmail"
-			@return-to-login="isForgotPasswordModalOpen = false"
+			v-model="is_forgot_password_modal_open"
+			:email="member_email"
+			@return-to-login="is_forgot_password_modal_open = false"
 		/>
 		<AuthLoginVerificationModal
-			v-model="isVerificationModalOpen"
-			:email="guestVerificationEmail"
-			:order-number="guestVerificationOrderNumber"
-			:token="guestVerificationToken"
-			:code="guestVerificationCode"
-			:error="guestVerificationError"
-			:resend-limit-reached="resendLimitReached"
-			:verifying="isGuestVerifying"
-			:resend-cooldown-remaining="guestResendCooldownRemaining"
-			@update:code="guestVerificationCode = $event"
+			v-model="is_verification_modal_open"
+			:email="guest_verification_email"
+			:order-number="guest_verification_order_number"
+			:token="guest_verification_token"
+			:code="guest_verification_code"
+			:error="guest_verification_error"
+			:resend-limit-reached="resend_limit_reached"
+			:verifying="is_guest_verifying"
+			:resend-cooldown-remaining="guest_resend_cooldown_remaining"
+			@update:code="guest_verification_code = $event"
 			@verify="submitGuestVerification"
 			@resend="resendGuestVerification"
 		/>

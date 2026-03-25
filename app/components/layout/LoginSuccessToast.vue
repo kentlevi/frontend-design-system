@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import {
 	GUEST_LOGIN_TOAST_PENDING_KEY,

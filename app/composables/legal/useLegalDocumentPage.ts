@@ -216,16 +216,16 @@ export function useLegalDocumentPage(document_key: 'terms' | 'privacy') {
 	return {
 		t,
 		tm,
-		documentBaseKey: document_base_key,
-		titlePrefix: title_prefix,
-		titleSuffix: title_suffix,
-		hasSplitTitle: has_split_title,
+		document_base_key,
+		title_prefix,
+		title_suffix,
+		has_split_title,
 		resolveMessage: resolveMessage,
 		sections,
 		topics,
-		activeTopicId: active_topic_id,
-		sidebarNavElement: sidebar_nav_element,
-		activeIndicatorStyle: active_indicator_style,
+		active_topic_id,
+		sidebar_nav_element,
+		active_indicator_style,
 		handleTopicClick: handleTopicClick,
 	};
 }

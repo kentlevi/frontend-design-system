@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { toRefs } from 'vue';
 import { useHomeWelcomePopover } from '~/composables/home/welcomePopover/useHomeWelcomePopover';
 
-const props = withDefaults(
+const component_props = withDefaults(
 	defineProps<{
 		visible?: boolean;
 		rewardPoints?: number;
@@ -11,13 +12,14 @@ const props = withDefaults(
 		rewardPoints: 500,
 	}
 );
+const { visible, rewardPoints: reward_points } = toRefs(component_props);
 
 const emit = defineEmits<{
 	(event: 'close'): void;
 	(event: 'start'): void;
 }>();
 
-const { greetingName } = useHomeWelcomePopover();
+const { greeting_name } = useHomeWelcomePopover();
 </script>
 
 <template>
@@ -44,11 +46,11 @@ const { greetingName } = useHomeWelcomePopover();
 
 			<div class="home-welcome-popover-content">
 				<h3 class="home-welcome-popover-title">
-					{{ $t('home.welcome.title', { name: greetingName }) }}
+					{{ $t('home.welcome.title', { name: greeting_name }) }}
 				</h3>
 				<p class="home-welcome-popover-text">
 					<span>{{ $t('home.welcome.bodyPrefix') }}</span>
-					<strong>{{ $t('home.welcome.bodyHighlight', { points: props.rewardPoints }) }}</strong>
+					<strong>{{ $t('home.welcome.bodyHighlight', { points: reward_points }) }}</strong>
 					<span>{{ $t('home.welcome.bodySuffix') }}</span>
 				</p>
 			</div>

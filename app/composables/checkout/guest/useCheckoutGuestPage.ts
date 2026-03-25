@@ -19,56 +19,56 @@ export function useCheckoutGuestPage() {
 	const is_login_modal_open = ref(false);
 
 	const {
-		provinceOptions,
+		province_options,
 		email,
-		fullName,
+		full_name,
 		company,
-		address1,
-		address2,
+		address_1,
+		address_2,
 		province,
 		city,
-		postalCode,
+		postal_code,
 		phone,
-		cardNumber,
+		card_number,
 		expiry,
 		cvv,
-		useShippingAsBilling,
-		selectedCheckoutItems,
-		orderTotal,
-		orderDiscount,
-		orderShippingFee,
-		orderSubtotal,
+		use_shipping_as_billing,
+		selected_checkout_items,
+		order_total,
+		order_discount,
+		order_shipping_fee,
+		order_subtotal,
 		formatPrice,
 		sizeDimOnly,
 	} = useCheckoutGuest();
 
-	const activeShippingMethods = computed(() =>
+	const active_shipping_methods = computed(() =>
 		checkoutShippingMethods
 			.filter((method) => method.enabled !== false)
 			.map((method) => ({ ...method }))
 	);
 
-	const activePaymentMethods = computed(() =>
+	const active_payment_methods = computed(() =>
 		checkoutPaymentMethods
 			.filter((method) => method.enabled !== false)
 			.map((method) => ({ ...method }))
 	);
 
-	const selectedShippingMethod = ref<CheckoutShippingMethodKey>(
-		activeShippingMethods.value.find((method) => method.defaultSelected)?.key || 'express'
+	const selected_shipping_method = ref<CheckoutShippingMethodKey>(
+		active_shipping_methods.value.find((method) => method.defaultSelected)?.key || 'express'
 	);
 
-	const selectedPaymentMethod = ref<CheckoutPaymentMethodKey>(
-		activePaymentMethods.value.find((method) => method.defaultSelected)?.key || 'credit-card'
+	const selected_payment_method = ref<CheckoutPaymentMethodKey>(
+		active_payment_methods.value.find((method) => method.defaultSelected)?.key || 'credit-card'
 	);
 
-	const fieldValidationByKey = computed(() =>
+	const field_validation_by_key = computed(() =>
 		Object.fromEntries(checkoutFieldValidation.map((rule) => [rule.fieldKey, rule]))
 	);
 
-	const emailLabelText = computed(() => t('checkout.guest.fields.email.label'));
+	const email_label_text = computed(() => t('checkout.guest.fields.email.label'));
 
-	const { completingCheckout, completeLoaderRef, completeCheckout } = useCheckoutCompletion({
+	const { completing_checkout, complete_loader_ref, completeCheckout } = useCheckoutCompletion({
 		redirectPath: withCountry('/checkout/confirmation'),
 	});
 
@@ -90,38 +90,38 @@ export function useCheckoutGuestPage() {
 	return {
 		t,
 		withCountry,
-		provinceOptions,
+		province_options,
 		email,
-		fullName,
+		full_name,
 		company,
-		address1,
-		address2,
+		address_1,
+		address_2,
 		province,
 		city,
-		postalCode,
+		postal_code,
 		phone,
-		cardNumber,
+		card_number,
 		expiry,
 		cvv,
-		useShippingAsBilling,
-		selectedCheckoutItems,
-		orderTotal,
-		orderDiscount,
-		orderShippingFee,
-		orderSubtotal,
+		use_shipping_as_billing,
+		selected_checkout_items,
+		order_total,
+		order_discount,
+		order_shipping_fee,
+		order_subtotal,
 		formatPrice,
-		activeShippingMethods,
-		activePaymentMethods,
-		selectedShippingMethod,
-		selectedPaymentMethod,
-		fieldValidationByKey,
-		emailLabelText,
-		checkoutPaymentBrands,
-		completingCheckout,
-		completeLoaderRef,
+		active_shipping_methods,
+		active_payment_methods,
+		selected_shipping_method,
+		selected_payment_method,
+		field_validation_by_key,
+		email_label_text,
+		checkout_payment_brands: checkoutPaymentBrands,
+		completing_checkout,
+		complete_loader_ref,
 		completeCheckout,
 		itemMeta,
-		isLoginModalOpen: is_login_modal_open,
+		is_login_modal_open,
 		openLoginModal,
 		closeLoginModal,
 	};

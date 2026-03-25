@@ -4,18 +4,18 @@ import type {
 
 export const PRODUCT_SELECTION_NAV_DELAY_MS = 920;
 
-export const sizeOptions = [
+export const size_options = [
 	'small30',
 	'medium75',
 	'large100',
 	'extraLarge125',
 ] as const;
 
-export const quantityOptions = [
+export const quantity_options = [
 	10, 50, 100, 200, 300, 500, 1000, 2000, 5000, 10000,
 ] as const;
 
-export const sizeFeatureCards: readonly SizeFeatureCard[] = [
+export const size_feature_cards: readonly SizeFeatureCard[] = [
 	{
 		key: 'small30',
 		image: '/icons/custom/size-use-cases/small-helmet.svg',

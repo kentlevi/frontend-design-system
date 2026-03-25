@@ -24,27 +24,26 @@ const emit = defineEmits<{
 	(e: 'updated'): void;
 }>();
 
-const api = useApi();
 const router = useRouter();
-const { withCountry, apiCountry } = useCountry();
+const { withCountry } = useCountry();
 const { t } = useI18n();
 
-const password = ref('');
-const confirmPassword = ref('');
-const passwordVisible = ref(false);
-const confirmVisible = ref(false);
-const loading = ref(false);
-const error = ref('');
+const password_value = ref('');
+const confirm_password = ref('');
+const password_visible = ref(false);
+const confirm_visible = ref(false);
+const is_loading = ref(false);
+const error_message = ref('');
 
 watch(
 	() => props.modelValue,
-	(open) => {
-		if (!open) return;
-		password.value = '';
-		confirmPassword.value = '';
-		passwordVisible.value = false;
-		confirmVisible.value = false;
-		error.value = '';
+	(is_open) => {
+		if (!is_open) return;
+		password_value.value = '';
+		confirm_password.value = '';
+		password_visible.value = false;
+		confirm_visible.value = false;
+		error_message.value = '';
 	},
 	{ immediate: true }
 );
@@ -59,46 +58,46 @@ function isStrongPassword(value: string): boolean {
 }
 
 async function submitChangePassword() {
-	error.value = '';
+	error_message.value = '';
 
 	const email = props.email?.trim() || '';
 	const token = props.token?.trim() || '';
-	const newPassword = password.value.trim();
-	const confirmNewPassword = confirmPassword.value.trim();
+	const new_password = password_value.value.trim();
+	const confirm_new_password = confirm_password.value.trim();
 
 	if (!email || !token) {
-		error.value = t('auth.reset.errors.missingLink');
+		error_message.value = t('auth.reset.errors.missingLink');
 		return;
 	}
 
-	if (!newPassword || !confirmNewPassword) {
-		error.value = t('auth.reset.errors.fillBoth');
+	if (!new_password || !confirm_new_password) {
+		error_message.value = t('auth.reset.errors.fillBoth');
 		return;
 	}
 
-	if (!isStrongPassword(newPassword)) {
-		error.value = t('auth.reset.errors.passwordRequirements');
+	if (!isStrongPassword(new_password)) {
+		error_message.value = t('auth.reset.errors.passwordRequirements');
 		return;
 	}
 
-	if (newPassword !== confirmNewPassword) {
-		error.value = t('auth.reset.errors.mismatch');
+	if (new_password !== confirm_new_password) {
+		error_message.value = t('auth.reset.errors.mismatch');
 		return;
 	}
 
-	loading.value = true;
+	is_loading.value = true;
 
 	try {
 		const { submitResetPasswordHandler } = usePasswordReset()
 		const response = await submitResetPasswordHandler({
 			email,
 			token,
-			password: newPassword,
-			password_confirmation: confirmNewPassword,
+			password: new_password,
+			password_confirmation: confirm_new_password,
 		})
 
 		if (!response.success) {
-			error.value = response?.message || t('auth.reset.errors.unable');
+			error_message.value = response?.message || t('auth.reset.errors.unable');
 			return;
 		}
 
@@ -108,11 +107,11 @@ async function submitChangePassword() {
 		emit('updated');
 		router.push(withCountry('/'));
 	} catch (err: unknown) {
-		const errorPayload = err as { data?: { message?: string }; message?: string };
-		error.value =
-			errorPayload?.data?.message || errorPayload?.message || t('auth.reset.errors.unable');
+		const error_payload = err as { data?: { message?: string }; message?: string };
+		error_message.value =
+			error_payload?.data?.message || error_payload?.message || t('auth.reset.errors.unable');
 	} finally {
-		loading.value = false;
+		is_loading.value = false;
 	}
 }
 </script>
@@ -137,7 +136,7 @@ async function submitChangePassword() {
 				<UiIcon name="regular-times" :size="24" />
 			</button>
 			<UiLoadingOverlay
-				:visible="loading"
+				:visible="is_loading"
 				:label="t('auth.reset.changing')"
 				test-id="auth-reset-password-loading-overlay"
 				position="absolute"
@@ -162,21 +161,21 @@ async function submitChangePassword() {
 						<div class="auth-reset-field-head">
 							<label class="auth-reset-label">{{ t('auth.reset.newPassword') }}</label>
 							<p
-								v-if="error"
+								v-if="error_message"
 								class="auth-reset-error"
 								data-testid="auth-reset-error"
 							>
-								{{ error }}
+								{{ error_message }}
 							</p>
 						</div>
 						<UiInput
-							:model-value="password"
-							:type="passwordVisible ? 'text' : 'password'"
+							:model-value="password_value"
+							:type="password_visible ? 'text' : 'password'"
 							size="md"
-							:state="error ? 'error' : 'default'"
+							:state="error_message ? 'error' : 'default'"
 							:placeholder="t('auth.reset.enterNewPassword')"
 							data-testid="auth-reset-password-input"
-							@update:model-value="password = $event"
+							@update:model-value="password_value = $event"
 						>
 							<template #icon-right>
 								<UiButton
@@ -188,9 +187,9 @@ async function submitChangePassword() {
 									:aria-label="t('auth.reset.togglePassword')"
 									:sr-label="t('auth.reset.togglePassword')"
 									icon-only
-									:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
+									:icon="password_visible ? 'regular-eye' : 'regular-eye-slash'"
 									:icon-size="24"
-									@click="passwordVisible = !passwordVisible"
+									@click="password_visible = !password_visible"
 								/>
 							</template>
 						</UiInput>
@@ -199,13 +198,13 @@ async function submitChangePassword() {
 					<div class="auth-reset-field">
 						<label class="auth-reset-label">{{ t('auth.reset.confirmPassword') }}</label>
 						<UiInput
-							:model-value="confirmPassword"
-							:type="confirmVisible ? 'text' : 'password'"
+							:model-value="confirm_password"
+							:type="confirm_visible ? 'text' : 'password'"
 							size="md"
-							:state="error ? 'error' : 'default'"
+							:state="error_message ? 'error' : 'default'"
 							:placeholder="t('auth.reset.enterConfirmPassword')"
 							data-testid="auth-reset-password-confirm-input"
-							@update:model-value="confirmPassword = $event"
+							@update:model-value="confirm_password = $event"
 						>
 							<template #icon-right>
 								<UiButton
@@ -217,9 +216,9 @@ async function submitChangePassword() {
 									:aria-label="t('auth.reset.toggleConfirmPassword')"
 									:sr-label="t('auth.reset.toggleConfirmPassword')"
 									icon-only
-									:icon="confirmVisible ? 'regular-eye' : 'regular-eye-slash'"
+									:icon="confirm_visible ? 'regular-eye' : 'regular-eye-slash'"
 									:icon-size="24"
-									@click="confirmVisible = !confirmVisible"
+									@click="confirm_visible = !confirm_visible"
 								/>
 							</template>
 						</UiInput>
@@ -232,11 +231,11 @@ async function submitChangePassword() {
 				tone="neutral"
 				size="lg"
 				class="auth-reset-submit"
-				:disabled="loading"
+				:disabled="is_loading"
 				data-testid="auth-reset-password-submit-button"
 				@click="submitChangePassword"
 			>
-				{{ loading ? t('auth.reset.changing') : t('auth.reset.submit') }}
+				{{ is_loading ? t('auth.reset.changing') : t('auth.reset.submit') }}
 			</UiButton>
 		</div>
 	</UiModal>

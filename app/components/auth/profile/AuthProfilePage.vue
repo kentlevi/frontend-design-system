@@ -8,27 +8,27 @@ import { useAuthProfileSetup } from '@/composables/auth/profile/useAuthProfileSe
 
 const {
 	step,
-	showWelcomeToast,
-	firstName,
-	lastName,
+	show_welcome_toast,
+	first_name,
+	last_name,
 	email,
-	emailError,
-	emailDisabled,
-	emailRequired,
-	photoUrl,
-	photoError,
+	email_error,
+	email_disabled,
+	email_required,
+	photo_url,
+	photo_error,
 	promotions,
 	reviews,
 	initials,
-	canContinueProfileDetails,
-	canSkipProfileDetails,
-	isEmailVerificationModalOpen,
-	verificationEmail,
-	verificationCode,
-	verificationError,
-	resendLimitReached,
-	isVerifyingEmail,
-	verificationResendCooldownRemaining,
+	can_continue_profile_details,
+	can_skip_profile_details,
+	is_email_verification_modal_open,
+	verification_email,
+	verification_code,
+	verification_error,
+	resend_limit_reached,
+	is_verifying_email,
+	verification_resend_cooldown_remaining,
 	dismissToast,
 	onPhotoFilePicked,
 	removePhoto,
@@ -50,19 +50,19 @@ const {
 			<main class="auth-profile-main" data-testid="auth-profile-main">
 				<AuthProfileDetailsStep
 					v-if="step === 1"
-					:first-name="firstName"
-					:last-name="lastName"
+					:first-name="first_name"
+					:last-name="last_name"
 					:email="email"
-					:email-error="emailError"
-					:email-disabled="emailDisabled"
-					:email-required="emailRequired"
+					:email-error="email_error"
+					:email-disabled="email_disabled"
+					:email-required="email_required"
 					:initials="initials"
-					:photo-url="photoUrl"
-					:photo-error="photoError"
-					:can-continue="canContinueProfileDetails"
-					:can-skip="canSkipProfileDetails"
-					@update:first-name="firstName = $event"
-					@update:last-name="lastName = $event"
+					:photo-url="photo_url"
+					:photo-error="photo_error"
+					:can-continue="can_continue_profile_details"
+					:can-skip="can_skip_profile_details"
+					@update:first-name="first_name = $event"
+					@update:last-name="last_name = $event"
 					@update:email="email = $event"
 					@photo-file-picked="onPhotoFilePicked"
 					@photo-remove="removePhoto"
@@ -82,23 +82,23 @@ const {
 			</main>
 		</div>
 
-		<AuthProfileWelcomeToast :visible="showWelcomeToast" @close="dismissToast" />
+		<AuthProfileWelcomeToast :visible="show_welcome_toast" @close="dismissToast" />
 		<AuthVerificationModal
-			:model-value="isEmailVerificationModalOpen"
-			:email="verificationEmail"
-			:code="verificationCode"
-			:error="verificationError"
-			:resend-limit-reached="resendLimitReached"
-			:verifying="isVerifyingEmail"
+			:model-value="is_email_verification_modal_open"
+			:email="verification_email"
+			:code="verification_code"
+			:error="verification_error"
+			:resend-limit-reached="resend_limit_reached"
+			:verifying="is_verifying_email"
 			submit-label="Verify"
 			busy-label="Verifying..."
 			align="center"
 			width="504px"
 			:show-close-button="true"
 			test-id-prefix="auth-profile-email-verification"
-			:resend-cooldown-remaining="verificationResendCooldownRemaining"
-			@update:model-value="isEmailVerificationModalOpen = $event"
-			@update:code="verificationCode = $event"
+			:resend-cooldown-remaining="verification_resend_cooldown_remaining"
+			@update:model-value="is_email_verification_modal_open = $event"
+			@update:code="verification_code = $event"
 			@verify="submitEmailVerification"
 			@resend="resendEmailVerification"
 			@close="closeEmailVerificationModal"

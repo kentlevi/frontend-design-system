@@ -5,13 +5,13 @@ import { useCountry } from '@/composables/app/country/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest({
+const { selected_checkout_items, order_subtotal, order_shipping_fee, order_discount, order_total, formatPrice, sizeDimOnly } = useCheckoutGuest({
 	labelCountry: 'us',
 });
 
-const orderNumber = computed(() => '12405070009');
-const orderDetailsPath = computed(() => withCountry(`/orders/${orderNumber.value}`));
-const estimatedArrival = computed(() => {
+const order_number = computed(() => '12405070009');
+const order_details_path = computed(() => withCountry(`/orders/${order_number.value}`));
+const estimated_arrival = computed(() => {
 	const date = new Date();
 	date.setDate(date.getDate() + 9);
 	return date.toLocaleDateString('en-US', {
@@ -49,20 +49,20 @@ const estimatedArrival = computed(() => {
 
 			<section class="checkout-confirmation-delivery">
 				<div class="checkout-confirmation-delivery-label">{{ t('checkout.confirmation.expectedDelivery') }}</div>
-				<div class="checkout-confirmation-delivery-value">{{ t('checkout.confirmation.expectedArrival', { date: estimatedArrival }) }}</div>
+				<div class="checkout-confirmation-delivery-value">{{ t('checkout.confirmation.expectedArrival', { date: estimated_arrival }) }}</div>
 			</section>
 
 			<section class="checkout-confirmation-summary">
 				<header class="checkout-confirmation-summary-head">
 					<h2 class="checkout-confirmation-summary-title">{{ t('checkout.confirmation.orderSummary') }}</h2>
-					<NuxtLink :to="orderDetailsPath" class="checkout-confirmation-summary-order">
-						{{ t('checkout.confirmation.orderNumber', { orderNumber }) }}
+					<NuxtLink :to="order_details_path" class="checkout-confirmation-summary-order">
+						{{ t('checkout.confirmation.orderNumber', { orderNumber: order_number }) }}
 					</NuxtLink>
 				</header>
 
 				<div class="checkout-confirmation-summary-body">
 					<div
-						v-for="item in selectedCheckoutItems"
+						v-for="item in selected_checkout_items"
 						:key="item.id"
 						class="checkout-confirmation-item"
 					>
@@ -83,19 +83,19 @@ const estimatedArrival = computed(() => {
 					<div class="checkout-confirmation-totals">
 						<div class="checkout-confirmation-total-line">
 							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.subtotal') }}</span>
-							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderSubtotal) }}</strong>
+							<strong class="checkout-confirmation-total-value">{{ formatPrice(order_subtotal) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line">
 							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.shippingFee') }}</span>
-							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderShippingFee) }}</strong>
+							<strong class="checkout-confirmation-total-value">{{ formatPrice(order_shipping_fee) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line is-discount">
 							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.discounts') }}</span>
-							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderDiscount) }}</strong>
+							<strong class="checkout-confirmation-total-value">{{ formatPrice(order_discount) }}</strong>
 						</div>
 						<div class="checkout-confirmation-total-line is-final">
 							<span class="checkout-confirmation-total-label">{{ t('checkout.confirmation.summary.total') }}</span>
-							<strong class="checkout-confirmation-total-value">{{ formatPrice(orderTotal) }}</strong>
+							<strong class="checkout-confirmation-total-value">{{ formatPrice(order_total) }}</strong>
 						</div>
 					</div>
 				</div>

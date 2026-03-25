@@ -11,7 +11,7 @@ type SelectOption = {
 	label: string;
 	value: SelectValue;
 	description?: string;
-	style?: Record<string, any>;
+	style?: Record<string, string | number>;
 };
 
 defineOptions({
@@ -54,18 +54,18 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const rootRef = ref<HTMLElement | null>(null);
-const searchRef = ref<HTMLInputElement | null>(null);
-const isOpen = ref(false);
+const root_ref = ref<HTMLElement | null>(null);
+const search_ref = ref<HTMLInputElement | null>(null);
+const is_open = ref(false);
 const query = ref('');
 const SUPPRESS_TOGGLE_MS = 200;
-let suppressToggleUntil = 0;
+let suppress_toggle_until = 0;
 
-const selectedOption = computed(() =>
+const selected_option = computed(() =>
 	props.options.find((item) => item.value === props.modelValue) ?? null
 );
 
-const filteredOptions = computed(() => {
+const filtered_options = computed(() => {
 	if (!props.searchable) return props.options;
 
 	const keyword = query.value.trim().toLowerCase();
@@ -81,30 +81,30 @@ const filteredOptions = computed(() => {
 	});
 });
 
-const triggerIconName = computed(() =>
+const trigger_icon_name = computed(() =>
 	props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
-const testId = useControlTestId(attrs);
-const rootAttrs = useRootAttrs(attrs, testId);
+const test_id = useControlTestId(attrs);
+const root_attrs = useRootAttrs(attrs, test_id);
 
 function closeMenu() {
-	isOpen.value = false;
+	is_open.value = false;
 	query.value = '';
 }
 
 function openMenu() {
 	if (props.disabled) return;
-	isOpen.value = true;
+	is_open.value = true;
 	if (props.searchable) {
-		requestAnimationFrame(() => searchRef.value?.focus());
+		requestAnimationFrame(() => search_ref.value?.focus());
 	}
 }
 
 function toggleMenu() {
-	if (Date.now() < suppressToggleUntil) {
+	if (Date.now() < suppress_toggle_until) {
 		return;
 	}
-	if (isOpen.value) {
+	if (is_open.value) {
 		closeMenu();
 		return;
 	}
@@ -120,11 +120,11 @@ function selectOption(option: SelectOption) {
 function handleOutsidePointerDown(event: PointerEvent) {
 	const target = event.target as Node | null;
 	if (!target) return;
-	if (rootRef.value?.contains(target)) return;
-	if (!isOpen.value) return;
+	if (root_ref.value?.contains(target)) return;
+	if (!is_open.value) return;
 
 	closeMenu();
-	suppressToggleUntil = Date.now() + SUPPRESS_TOGGLE_MS;
+	suppress_toggle_until = Date.now() + SUPPRESS_TOGGLE_MS;
 }
 
 function handleWindowKeydown(event: KeyboardEvent) {
@@ -146,39 +146,39 @@ onBeforeUnmount(() => {
 
 <template>
 	<div
-		v-bind="rootAttrs"
-		ref="rootRef"
+		v-bind="root_attrs"
+		ref="root_ref"
 		class="ui-select"
-		:data-open="isOpen || null"
+		:data-open="is_open || null"
 		:data-disabled="props.disabled || null"
 	>
 		<button
 			type="button"
 			:class="['ui-select-trigger', props.triggerClass]"
 			:disabled="props.disabled"
-			:data-testid="testId ? `${testId}-trigger` : undefined"
+			:data-testid="test_id ? `${test_id}-trigger` : undefined"
 			@click="toggleMenu"
 		>
 			<span
-				v-if="selectedOption"
+				v-if="selected_option"
 				class="ui-select-value"
-				:style="selectedOption.style"
+				:style="selected_option.style"
 			>
-				{{ selectedOption.label }}
+				{{ selected_option.label }}
 			</span>
 			<span v-else class="ui-select-placeholder">{{ props.placeholder }}</span>
 
 			<UiIcon
-				:name="triggerIconName"
+				:name="trigger_icon_name"
 				:size="props.iconSize"
 				color="var(--gray-90)"
 				class="ui-select-trigger-icon"
-				:class="{ 'is-open': isOpen }"
+				:class="{ 'is-open': is_open }"
 			/>
 		</button>
 
 		<Transition name="ui-select-menu">
-			<div v-if="isOpen" :class="['ui-select-menu', props.menuClass]" role="listbox">
+			<div v-if="is_open" :class="['ui-select-menu', props.menuClass]" role="listbox">
 				<div v-if="props.searchable" class="ui-select-search">
 					<UiIcon
 						name="strong-search"
@@ -186,18 +186,18 @@ onBeforeUnmount(() => {
 						color="var(--text-muted)"
 					/>
 					<input
-						ref="searchRef"
+						ref="search_ref"
 						v-model="query"
 						type="text"
 						:class="['ui-select-search-input', props.searchInputClass]"
 						placeholder="Search..."
-						:data-testid="testId ? `${testId}-search` : undefined"
+						:data-testid="test_id ? `${test_id}-search` : undefined"
 					>
 				</div>
 
 				<div class="ui-select-options">
 					<button
-						v-for="option in filteredOptions"
+						v-for="option in filtered_options"
 						:key="option.value"
 						type="button"
 						:class="['ui-select-option', props.optionClass, {
@@ -213,7 +213,7 @@ onBeforeUnmount(() => {
 						</div>
 					</button>
 
-					<p v-if="filteredOptions.length === 0" class="ui-select-empty">
+					<p v-if="filtered_options.length === 0" class="ui-select-empty">
 						{{ props.emptyText }}
 					</p>
 				</div>

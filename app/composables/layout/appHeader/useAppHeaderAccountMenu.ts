@@ -136,12 +136,12 @@ export function useAppHeaderAccountMenu(params: {
 	return {
 		bindWrapRef: bindWrapRef,
 		handleAccountLinkClick: handleAccountLinkClick,
-		primaryAccountLinks: primary_account_links,
-		gettingStartedLink: getting_started_link,
-		guestOrderLink: guest_order_link,
-		guestOrderTarget: guest_order_target,
+		primary_account_links,
+		getting_started_link,
+		guest_order_link,
+		guest_order_target,
 		setAccountToggleRef: setAccountToggleRef,
 		setAccountDropdownRef: setAccountDropdownRef,
-		guestLoginTarget: guest_login_target,
+		guest_login_target,
 	};
 }

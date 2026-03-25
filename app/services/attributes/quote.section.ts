@@ -9,74 +9,74 @@ import { useFontService } from "./font.service"
 
 export const useQuoteSectionService = () => {
 
-	const attributeStore 	= useAttributesStore()
+	const attribute_store 	= useAttributesStore()
 
-	const selectionStore 	= useSelectionStore()
+	const selection_store 	= useSelectionStore()
 
-	const productService  	= useProductService()
+	const product_service  	= useProductService()
 
-	const sizesService 		= useSizeService()
+	const sizes_service 		= useSizeService()
 
-	const quantityService 	= useQuantityService()
+	const quantity_service 	= useQuantityService()
 
-	const pricingService 	= usePricingService()
+	const pricing_service 	= usePricingService()
 
-	const colorService 		= useColorService()
+	const color_service 		= useColorService()
 
-	const letteringService 	= useLetteringService()
+	const lettering_service 	= useLetteringService()
 
-	const fontService = useFontService()
+	const font_service = useFontService()
 
-	const size_featured_cards = computed(() => attributeStore.size_featured_cards )
+	const size_featured_cards = computed(() => attribute_store.size_featured_cards )
 
 
 	const clearSelection = () => {
-		selectionStore.clearSelection()
+		selection_store.clearSelection()
 	}
 
 	const recentSelection = () => {
-		if( !productService.slug.value )
+		if( !product_service.slug.value )
 			return
 
-		return selectionStore.hasSelection(productService.slug.value)
+		return selection_store.hasSelection(product_service.slug.value)
 	}
 
 	const has_lettering_editor = computed(() =>
-		attributeStore.active_lettering_editor.includes(
-			productService.slug
-			&& productService.slug.value
-				? productService.slug.value
+		attribute_store.active_lettering_editor.includes(
+			product_service.slug
+			&& product_service.slug.value
+				? product_service.slug.value
 				: ''
 		)
 	)
 
 	const has_color_selection = computed(() =>
-		attributeStore.product_w_color.includes(
-			productService.slug
-			&& productService.slug.value
-				? productService.slug.value
+		attribute_store.product_w_color.includes(
+			product_service.slug
+			&& product_service.slug.value
+				? product_service.slug.value
 				: ''
 		)
 	)
 
 	const has_font_selection = computed(() =>
-		attributeStore.product_w_font.includes(
-			productService.slug
-			&& productService.slug.value
-				? productService.slug.value
+		attribute_store.product_w_font.includes(
+			product_service.slug
+			&& product_service.slug.value
+				? product_service.slug.value
 				: ''
 		)
 	)
 
 
 	return {
-		...productService,
-		...sizesService,
-		...quantityService,
-		...pricingService,
-		...colorService,
-		...letteringService,
-		...fontService,
+		...product_service,
+		...sizes_service,
+		...quantity_service,
+		...pricing_service,
+		...color_service,
+		...lettering_service,
+		...font_service,
 		clearSelection,
 		recentSelection,
 		has_color_selection,

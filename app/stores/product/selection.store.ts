@@ -43,18 +43,18 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		if( !slug.value || !product.value || !size.value || !quantity.value)
 			return
 
-		const scolor = color && color?.value ? color.value : null
+		const selected_color = color && color?.value ? color.value : null
 
-		const slettering_text = lettering_text && lettering_text?.value ? lettering_text.value : null
+		const selected_lettering_text = lettering_text && lettering_text?.value ? lettering_text.value : null
 
-		const sfont = font && font?.value ? font.value : null
+		const selected_font = font && font?.value ? font.value : null
 
 		selections.value[slug.value] = {
 			size			: size.value,
 			quantity		: quantity.value,
-			color			: scolor,
-			font			: sfont,
-			lettering_text	: slettering_text,
+			color			: selected_color,
+			font			: selected_font,
+			lettering_text	: selected_lettering_text,
 		}
 	}
 

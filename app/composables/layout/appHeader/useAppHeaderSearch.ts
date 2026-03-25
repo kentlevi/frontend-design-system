@@ -4,7 +4,7 @@ import {
 	HEADER_MAX_RECENT_SEARCHES,
 	HEADER_SEARCH_DEBOUNCE_DELAY_MS,
 	HEADER_SEARCH_LOADING_MIN_VISIBLE_MS,
-	headerSearchCategories,
+	header_search_categories,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
@@ -109,7 +109,7 @@ export function useAppHeaderSearch() {
 		const term = normalizeSearchText(debounced_search_query.value);
 		if (!term) return [];
 
-		return headerSearchCategories.flatMap((category_key) => {
+		return header_search_categories.flatMap((category_key) => {
 			const category = productCatalog[category_key];
 			if (!category) return [];
 
@@ -191,7 +191,7 @@ export function useAppHeaderSearch() {
 		const normalized_term = normalizeSearchText(term);
 		if (!normalized_term) return null;
 
-		for (const category_key of headerSearchCategories) {
+		for (const category_key of header_search_categories) {
 			const category = productCatalog[category_key];
 			if (!category) continue;
 
@@ -518,18 +518,18 @@ export function useAppHeaderSearch() {
 	});
 
 	return {
-		searchModalOpen: search_modal_open,
-		searchQuery: search_query,
-		searchLoading: search_loading,
-		activeSearchNavIndex: active_search_nav_index,
-		searchResultGroups: search_result_groups,
-		searchNavIndexByResultId: search_nav_index_by_result_id,
-		recentSearchEntries: recent_search_entries,
-		searchEmptySuggestedTerm: search_empty_suggested_term,
-		showSearchRecent: show_search_recent,
-		showSearchNoRecent: show_search_no_recent,
-		showSearchNoResult: show_search_no_result,
-		showSearchResults: show_search_results,
+		search_modal_open,
+		search_query,
+		search_loading,
+		active_search_nav_index,
+		search_result_groups,
+		search_nav_index_by_result_id,
+		recent_search_entries,
+		search_empty_suggested_term,
+		show_search_recent,
+		show_search_no_recent,
+		show_search_no_result,
+		show_search_results,
 		setSearchModalRef: setSearchModalRef,
 		setSearchInputRef: setSearchInputRef,
 		focusSearchInput: focusSearchInput,

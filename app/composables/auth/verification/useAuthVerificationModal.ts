@@ -19,11 +19,11 @@ export function useAuthVerificationModal(params: {
 	const { codeInputs, inputRefs, setCode, getCode, handleInput, handleKeyDown, handlePaste } =
 		useVerificationCodeInput(params.otpLength.value);
 
-	const key = computed(() => params.translationBase.value);
+	const translation_key = computed(() => params.translationBase.value);
 	const computed_submit_label = computed(() =>
 		params.verifying.value
-			? params.busyLabel.value || t(`${key.value}.verifying`)
-			: params.submitLabel.value || t(`${key.value}.verify`)
+			? params.busyLabel.value || t(`${translation_key.value}.verifying`)
+			: params.submitLabel.value || t(`${translation_key.value}.verify`)
 	);
 
 	const is_resend_tap_locked = ref(false);
@@ -109,7 +109,7 @@ export function useAuthVerificationModal(params: {
 	return {
 		codeInputs: codeInputs,
 		inputRefs: inputRefs,
-		key,
+		key: translation_key,
 		computedSubmitLabel: computed_submit_label,
 		canResend: can_resend,
 		modalAlign: modal_align,

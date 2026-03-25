@@ -13,7 +13,7 @@ type MockUserCookie = {
 
 export function useHomeWelcomePopover() {
 	const { t } = useI18n();
-	const { state } = storeToRefs(useUsersStore())
+	const { state } = storeToRefs(useUsersStore());
 	const mock_user = useCookie<MockUserCookie | null>('mock_user', {
 		default: () => null,
 		sameSite: 'lax',
@@ -44,6 +44,6 @@ export function useHomeWelcomePopover() {
 	});
 
 	return {
-		greetingName: greeting_name,
+		greeting_name,
 	};
 }

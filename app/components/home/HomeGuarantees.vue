@@ -5,7 +5,7 @@ import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
-const items = [
+const guarantee_items = [
 	{
 		image: resolveFileUrl('/home/guarantees/best-value-guarantee.png'),
 		titleKey: 'quality.title',
@@ -28,7 +28,7 @@ const items = [
 	<section class="home-guarantees" data-testid="home-guarantees-section">
 		<div class="home-guarantees-container">
 			<article
-				v-for="item in items"
+				v-for="item in guarantee_items"
 				:key="item.titleKey"
 				class="home-guarantees-item"
 				:data-testid="`home-guarantee-${item.titleKey.replace('.title', '')}`"

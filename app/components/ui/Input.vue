@@ -49,24 +49,24 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const inputRef = ref<HTMLInputElement | null>(null);
+const input_ref = ref<HTMLInputElement | null>(null);
 
-const iconMap: Record<Exclude<Icon, null>, IconName> = {
+const icon_map: Record<Exclude<Icon, null>, IconName> = {
 	mail: 'strong-envelope',
 	search: 'strong-search',
 	user: 'strong-user',
 };
 
-const leftIcon = computed<IconName | null>(() =>
-	props.iconLeft ? iconMap[props.iconLeft] : null
+const left_icon = computed<IconName | null>(() =>
+	props.iconLeft ? icon_map[props.iconLeft] : null
 );
 
-const rightIcon = computed<IconName | null>(() =>
-	props.iconRight ? iconMap[props.iconRight] : null
+const right_icon = computed<IconName | null>(() =>
+	props.iconRight ? icon_map[props.iconRight] : null
 );
-const testId = useControlTestId(attrs);
-const rootAttrs = useRootAttrs(attrs, testId);
-const inputAttrs = useControlAttrs(attrs, testId);
+const test_id = useControlTestId(attrs);
+const root_attrs = useRootAttrs(attrs, test_id);
+const input_attrs = useControlAttrs(attrs, test_id);
 
 function onInput(event: Event) {
 	emit('update:modelValue', (event.target as HTMLInputElement).value);
@@ -74,13 +74,13 @@ function onInput(event: Event) {
 
 function focusInput() {
 	if (props.disabled || props.readonly) return;
-	inputRef.value?.focus();
+	input_ref.value?.focus();
 }
 </script>
 
 <template>
 	<div
-		v-bind="rootAttrs"
+		v-bind="root_attrs"
 		class="ui-input"
 		:data-size="size"
 		:data-state="state !== 'default' ? state : null"
@@ -88,15 +88,15 @@ function focusInput() {
 		:data-disabled="disabled || null"
 		@click="focusInput"
 	>
-		<span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
+		<span v-if="$slots['icon-left'] || left_icon" class="ui-input-icon">
 			<slot name="icon-left">
-				<UiIcon v-if="leftIcon" :name="leftIcon" :size="24" decorative />
+				<UiIcon v-if="left_icon" :name="left_icon" :size="24" decorative />
 			</slot>
 		</span>
 
 		<input
-			v-bind="inputAttrs"
-			ref="inputRef"
+			v-bind="input_attrs"
+			ref="input_ref"
 			:class="['ui-input-field', props.inputClass]"
 			:type="type"
 			:value="modelValue"
@@ -106,9 +106,9 @@ function focusInput() {
 			@input="onInput"
 		>
 
-		<span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
+		<span v-if="$slots['icon-right'] || right_icon" class="ui-input-icon">
 			<slot name="icon-right">
-				<UiIcon v-if="rightIcon" :name="rightIcon" :size="16" decorative />
+				<UiIcon v-if="right_icon" :name="right_icon" :size="16" decorative />
 			</slot>
 		</span>
 	</div>

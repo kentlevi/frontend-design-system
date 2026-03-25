@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { toRefs } from 'vue';
 import { split_home_guide_tour_skip_copy } from '~/helpers/home/homeGuideTour.helper';
 
 const { t } = useI18n();
 
-withDefaults(
+const component_props = withDefaults(
 	defineProps<{
 		visible?: boolean;
 	}>(),
@@ -11,13 +12,14 @@ withDefaults(
 		visible: false,
 	}
 );
+const { visible } = toRefs(component_props);
 
 const emit = defineEmits<{
 	(event: 'continue-tour'): void;
 	(event: 'skip-for-now'): void;
 }>();
 
-const skipModalBodyParts = computed(() => {
+const skip_modal_body_parts = computed(() => {
 	return split_home_guide_tour_skip_copy(t('home.tour.skipModal.body'));
 });
 </script>
@@ -47,14 +49,14 @@ const skipModalBodyParts = computed(() => {
 						{{ $t('home.tour.skipModal.title') }}
 					</h3>
 					<p class="home-guide-tour-skip-modal-text">
-						<span>{{ skipModalBodyParts.before }}</span>
+						<span>{{ skip_modal_body_parts.before }}</span>
 						<strong
-							v-if="skipModalBodyParts.highlighted"
+							v-if="skip_modal_body_parts.highlighted"
 							class="home-guide-tour-skip-modal-highlight"
 						>
-							{{ skipModalBodyParts.highlighted }}
+							{{ skip_modal_body_parts.highlighted }}
 						</strong>
-						<span>{{ skipModalBodyParts.after }}</span>
+						<span>{{ skip_modal_body_parts.after }}</span>
 					</p>
 				</div>
 			</div>
