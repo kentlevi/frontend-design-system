@@ -205,7 +205,6 @@ const {
 	<UiModal
 		:model-value="is_forgot_password_modal_open"
 		align="center"
-		width="504px"
 		padding="40px"
 		gap="8px"
 		modal-class="account-profile-forgot-password-modal-shell"
@@ -281,18 +280,20 @@ const {
 .account-profile-section {
 	.account-profile-password-setup {
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
+		flex-direction: column;
 		justify-content: space-between;
-		gap: 24px;
+		gap: 16px;
 
 		.account-profile-password-setup-copy {
+			width: 100%;
 			display: grid;
 			gap: 8px;
 		}
 
 		.account-profile-password-setup-title {
-			font-size: var(--type-size-200);
-			line-height: var(--type-line-200);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
 			font-weight: var(--font-weight-semibold);
 			color: var(--text-primary);
 		}
@@ -301,7 +302,6 @@ const {
 			font-size: var(--type-size-100);
 			line-height: var(--type-line-100);
 			color: var(--text-secondary);
-			max-width: 560px;
 		}
 	}
 

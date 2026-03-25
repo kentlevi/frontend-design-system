@@ -22,7 +22,7 @@ const props = withDefaults(
 		title: '',
 		closeOnBackdrop: true,
 		closeOnEsc: true,
-		width: '560px',
+		width: '504px',
 		padding: '40px',
 		gap: '18px',
 		align: 'top',
