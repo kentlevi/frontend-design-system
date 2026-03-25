@@ -3,10 +3,10 @@ import { useAccountAddressBook } from '~/composables/account/addressBook/useAcco
 import AddressBookCard from './AddressBookCard.vue';
 
 const { t } = useI18n();
-const { itemsBySection } = useAccountAddressBook();
+const { items_by_section } = useAccountAddressBook();
 
-const primarySections = computed(() => itemsBySection.value.filter((group) => group.section !== 'dropShipping'));
-const dropShippingSections = computed(() => itemsBySection.value.filter((group) => group.section === 'dropShipping'));
+const primary_sections = computed(() => items_by_section.value.filter((group) => group.section !== 'dropShipping'));
+const drop_shipping_sections = computed(() => items_by_section.value.filter((group) => group.section === 'dropShipping'));
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const dropShippingSections = computed(() => itemsBySection.value.filter((group) 
 				<div class="account-address-book-sections" data-testid="account-address-book-sections">
 					<div class="account-address-book-primary-group">
 						<section
-							v-for="group in primarySections"
+							v-for="group in primary_sections"
 							:key="group.section"
 							class="account-profile-section"
 							:data-testid="`account-address-book-section-${group.section}`"
@@ -62,7 +62,7 @@ const dropShippingSections = computed(() => itemsBySection.value.filter((group) 
 
 					<div class="account-address-book-drop-group">
 						<section
-							v-for="group in dropShippingSections"
+							v-for="group in drop_shipping_sections"
 							:key="group.section"
 							class="account-profile-section"
 							:data-testid="`account-address-book-section-${group.section}`"
