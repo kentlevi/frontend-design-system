@@ -385,6 +385,9 @@ const caretHandler = (event: MouseEvent) => {
 }
 
 const onEditorInput = () => {
+	if (textField.value) {
+		textField.value.innerText = getEditorValue().replace(/\n+/g, ' ')
+	}
 	editorReady.value = true
 	textHandler()
 }
@@ -392,9 +395,14 @@ const onEditorInput = () => {
 const pasteHandler = (event: ClipboardEvent) => {
 	const text = event.clipboardData?.getData('text/plain') ?? ''
 	if (textField.value) {
-		textField.value.innerText = text.replace(/(?:\r\n|\r|\n)/g, '\n')
+		textField.value.innerText = text.replace(/(?:\r\n|\r|\n)+/g, ' ')
 	}
 	textHandler()
+}
+
+const keydownHandler = (event: KeyboardEvent) => {
+	if (event.key !== 'Enter') return
+	event.preventDefault()
 }
 
 watch(
@@ -467,6 +475,7 @@ onMounted(async () => {
 						dir="ltr"
 						:style="editorTextStyle"
 						@input="onEditorInput"
+						@keydown="keydownHandler"
 						@paste.prevent="pasteHandler"
 					/>
 				</div>

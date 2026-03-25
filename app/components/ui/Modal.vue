@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
+defineOptions({
+	inheritAttrs: false,
+});
+
 const props = withDefaults(
 	defineProps<{
 		modelValue?: boolean;
@@ -30,6 +34,7 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'close'): void;
 }>();
+const attrs = useAttrs();
 
 const modalStyle = computed(() => ({
 	'--ui-modal-width': props.width,
@@ -93,6 +98,7 @@ onBeforeUnmount(() => {
 					aria-modal="true"
 					:aria-label="title || 'Modal'"
 					:style="modalStyle"
+					v-bind="attrs"
 				>
 					<header
 						v-if="title || $slots.header || $slots.actions"

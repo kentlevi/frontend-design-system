@@ -46,10 +46,6 @@ export interface SubmitNonMemberLoginVerificationPayload {
 	otp: string;
 }
 
-export interface SendResetPasswordLinkPayload {
-	email: string;
-}
-
 export interface RegisterVerificationPayload {
 	given_name: string;
 	family_name: string;

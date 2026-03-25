@@ -41,21 +41,25 @@ export const useQuoteSectionHandler = () => {
 		quoteService.clearSelection()
 	}
 
+	type InitializeFormOptions = {
+		interactive?: boolean
+	}
+
 	/**
 	 * 📌Initiate the value of all fields in form and set the default value and behaviour
 	 * @param prod_slug string — Product URL slug
 	 */
-	const instatiateForm = async () => {
+	const instatiateForm = async ({ interactive = true }: InitializeFormOptions = {}) => {
 		console.log('🔥 Preparing form...')
 
-		await assignDefault()
+		await assignDefault({ interactive })
 	}
 
 	/**
 	 * Assigning the default base on use activity
 	 * @param prod_slug string — Product URL Slug
 	 */
-	const assignDefault = async () => {
+	const assignDefault = async ({ interactive = true }: InitializeFormOptions = {}) => {
 		if( !quoteService.slug || !quoteService.slug.value )
 			return
 
@@ -64,7 +68,7 @@ export const useQuoteSectionHandler = () => {
 
 		// 🔥 If the current selected product, has already a pre-selected attributes
 		if( existing_attr ) {
-			preparingExistingSelection(existing_attr)
+			preparingExistingSelection(existing_attr, { interactive })
 		}
 		/**
 		 * 🔥 The user don't have a pre-selected or changes in default attributes
@@ -85,20 +89,23 @@ export const useQuoteSectionHandler = () => {
 		}
 	}
 
-	const preparingExistingSelection = (existing_attr : AttributeSelection) => {
+	const preparingExistingSelection = (
+		existing_attr : AttributeSelection,
+		{ interactive = true }: InitializeFormOptions = {}
+	) => {
 		/** VINYL LETTERING EDITOR */
 		if( quoteService.has_lettering_editor.value ) {
 			/** Preparing lettering editor's default value */
 			/** Which includes the size and its text value */
 			prepareLetteringEditor(existing_attr)
 		} else {
-			preparingExistingSize(existing_attr)
+			preparingExistingSize(existing_attr, { interactive })
 		}
 
 		/** QUANTITY */
 		quoteService.defaultQuantity(existing_attr.quantity)
 		if( existing_attr.quantity.custom )
-			showCustomQty()
+			setCustomQtyVisible({ interactive })
 		else
 			hideCustomQty()
 
@@ -136,13 +143,16 @@ export const useQuoteSectionHandler = () => {
 		}
 	}
 
-	const preparingExistingSize = (existing_attr: AttributeSelection) => {
+	const preparingExistingSize = (
+		existing_attr: AttributeSelection,
+		{ interactive = true }: InitializeFormOptions = {}
+	) => {
 		/** COMMON SIZE AND QUANTITY FLOW */
 
 		quoteService.defaultSize(existing_attr.size)
 		console.log(existing_attr.size.custom)
 		if( existing_attr.size.custom )
-			showCustomSize()
+			setCustomSizeVisible({ interactive })
 		else
 			hideCustomSize()
 	}
@@ -188,13 +198,20 @@ export const useQuoteSectionHandler = () => {
 		}
 	}
 
-	const showCustomSize = async () => {
+	const setCustomSizeVisible = async ({ interactive = true }: InitializeFormOptions = {}) => {
 		is_custom_size.value = true
+		quoteService.changeCustomSize()
+
+		if( !interactive )
+			return
 
 		await nextTick()
 
 		custom_width_input.value?.focus()
-		quoteService.changeCustomSize()
+	}
+
+	const showCustomSize = async () => {
+		await setCustomSizeVisible()
 	}
 
 	const hideCustomSize = () => {
@@ -205,8 +222,11 @@ export const useQuoteSectionHandler = () => {
 		custom_width_input.value?.focus()
 	}
 
-	const showCustomQty = async () => {
+	const setCustomQtyVisible = async ({ interactive = true }: InitializeFormOptions = {}) => {
 		is_custom_qty.value = true
+
+		if( !interactive )
+			return
 
 		await nextTick()
 
@@ -218,6 +238,10 @@ export const useQuoteSectionHandler = () => {
 		 */
 		if( custom_qty_input.value )
 			custom_qty_input.value?.dispatchEvent(new Event('change', { bubbles: true }))
+	}
+
+	const showCustomQty = async () => {
+		await setCustomQtyVisible()
 	}
 
 	const hideCustomQty = async () => {

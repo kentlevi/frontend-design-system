@@ -76,6 +76,7 @@ const {
 	<section class="product-experience" data-testid="product-category-experience">
 		<div class="product-experience-container" data-testid="product-category-experience-container">
 			<ProductCategoryStage
+				:category="props.category"
 				:category-products="categoryData.products"
 				:has-picked-product="hasPickedProduct"
 				:selected-id="selectedId"

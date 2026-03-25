@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAuthUser } from '~/composables/auth/useAuthUser';
+import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 const props = withDefaults(
 	defineProps<{
@@ -83,20 +84,15 @@ async function submitChangePassword() {
 	loading.value = true;
 
 	try {
-		const response = await api<{ success: boolean; message: string }>(
-			`/${apiCountry.value}/auth/password/reset`,
-			{
-				method: 'POST',
-				body: {
-					email,
-					token,
-					password: newPassword,
-					password_confirmation: confirmNewPassword,
-				},
-			}
-		);
+		const { submitResetPasswordHandler } = usePasswordReset()
+		const response = await submitResetPasswordHandler({
+			email,
+			token,
+			password: newPassword,
+			password_confirmation: confirmNewPassword,
+		})
 
-		if (!response?.success) {
+		if (!response.success) {
 			error.value = response?.message || t('auth.reset.errors.unable');
 			return;
 		}
