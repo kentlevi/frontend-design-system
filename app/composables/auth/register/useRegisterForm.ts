@@ -167,9 +167,13 @@ export function useRegisterForm() {
 		}
 	}
 
-	function isValidRegisterPassword(value: string) {
+	function isValidRegisterPassword(value: string): boolean {
 		if (value.length < 6) return false;
-		return /^(?:(?=.*[a-z])(?=.*[A-Z])|(?=.*[a-z])(?=.*\d)|(?=.*[a-z])(?=.*[\W_])|(?=.*[A-Z])(?=.*\d)|(?=.*[A-Z])(?=.*[\W_])|(?=.*\d)(?=.*[\W_])).{6,}$/.test(value);
+
+		// Reject ONLY lowercase-only passwords
+		if (/^[a-z]+$/.test(value)) return false;
+
+		return true;
 	}
 
 	function clearErrors() {

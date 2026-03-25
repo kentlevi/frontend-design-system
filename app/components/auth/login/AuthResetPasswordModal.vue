@@ -50,7 +50,12 @@ watch(
 );
 
 function isStrongPassword(value: string): boolean {
-	return /^(?:(?=.*[a-z])(?=.*[A-Z])|(?=.*[a-z])(?=.*\d)|(?=.*[a-z])(?=.*[\W_])|(?=.*[A-Z])(?=.*\d)|(?=.*[A-Z])(?=.*[\W_])|(?=.*\d)(?=.*[\W_])).{6,}$/.test(value);
+	if (value.length < 6) return false;
+
+	// Reject ONLY lowercase-only passwords
+	if (/^[a-z]+$/.test(value)) return false;
+
+	return true;
 }
 
 async function submitChangePassword() {
