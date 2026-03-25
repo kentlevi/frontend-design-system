@@ -307,7 +307,7 @@ function openEditSize(item_id: string) {
 
 	edit_size_item_id.value = item_id;
 	edit_size_draft_key.value = size_option_models.value.some((size) => size.key === row.sizeKey) ? row.sizeKey : 'custom';
-	const matched = size_dim_only(row.customSizeLabel || row.sizeLabel).match(/(\d+)\s*(?:x|Ã—)\s*(\d+)/i);
+	const matched = size_dim_only(row.customSizeLabel || row.sizeLabel).match(/(\\d+)\\s*[xX]\\s*(\\d+)/i);
 	edit_size_draft_custom_width.value = matched?.[1] ?? '';
 	edit_size_draft_custom_height.value = matched?.[2] ?? '';
 }
@@ -478,103 +478,108 @@ onBeforeUnmount(() => {
 							@update:model-value="toggleRowSelection(row.id, $event)"
 						/>
 
-						<div class="cart-item">
-							<button
-								type="button"
-								class="cart-item-thumb"
-								:class="{ 'cart-item-thumb--interactive': Boolean(row.artworkPreviewUrl) }"
-								:disabled="!row.artworkPreviewUrl"
-								@click="row.artworkPreviewUrl ? openItemDetails(row.id) : undefined"
-							>
-								<img
-									:src="row.artworkPreviewUrl || row.product.image"
-									:alt="row.product.name"
-									class="cart-item-thumb-image"
-								>
-								<span
-									v-if="row.artworkPreviewUrl"
-									class="cart-item-thumb-overlay"
-									aria-hidden="true"
-								>
-									<UiIcon name="regular-info-circle" :size="24" color="#ffffff" />
-								</span>
-							</button>
-							<div class="cart-item-copy">
-								<h3 class="cart-item-title">{{ row.product.name }}</h3>
-								<p class="cart-item-size">{{ t('cart.cartPage.sizeLabel', { size: size_dim_only(row.sizeLabel) }) }}</p>
-								<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openArtworkPicker(row.id)">
-									{{ getArtworkActionLabel(Boolean(row.artworkPreviewUrl)) }}
-								</UiButton>
-							</div>
-						</div>
-
-						<div class="cart-qty-wrap">
-							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openEditSize(row.id)">
-								{{ t('cart.cartPage.editSize') }}
-							</UiButton>
-							<UiSelect
-								v-if="custom_qty_item_id !== row.id"
-								class="cart-qty-select-control"
-								:model-value="getRowDisplayQty(row.id, row.qty)"
-								:options="getQtyOptionsForRow(getRowDisplayQty(row.id, row.qty))"
-								icon-family="regular"
-								:icon-size="24"
-								trigger-class="cart-qty-select-trigger"
-								@update:model-value="handleQtyOptionSelect(row.id, $event)"
-							/>
-							<div
-								v-else
-								ref="custom_qty_dropdown_ref"
-								class="cart-qty-select-shell ui-select"
-								:data-open="custom_qty_menu_open || null"
-							>
-								<input
-									ref="custom_qty_input_ref"
-									:value="custom_qty_draft"
-									type="text"
-									inputmode="numeric"
-									placeholder="Enter quantity"
-									class="cart-qty-inline-input"
-									@beforeinput="preventNonDigitInput"
-									@input="onCustomQtyInput(($event.target as HTMLInputElement).value)"
-									@blur="void commitCustomQty(row.id)"
-									@keydown.enter.prevent="void commitCustomQty(row.id)"
-								>
-								<button
-									type="button"
-									class="cart-qty-select-arrow"
-									aria-label="Open quantity options"
-									@click="toggleCustomQtyMenu"
-								>
-									<UiIcon
-										name="regular-angle-down"
-										:size="24"
-										color="var(--gray-90)"
-										:class="{ 'is-open': custom_qty_menu_open }"
-									/>
-								</button>
-								<Transition name="ui-select-menu">
-									<div v-if="custom_qty_menu_open" class="ui-select-menu" role="listbox">
-										<div class="ui-select-options">
-											<button
-												v-for="option in qty_select_options_with_custom"
-												:key="option.value"
-												type="button"
-												class="ui-select-option"
-												:class="{ 'is-selected': Number(option.value) === -1 }"
-												@mousedown.prevent="handleQtyOptionSelect(row.id, option.value)"
-											>
-												<div class="ui-select-option-copy">
-													<p class="ui-select-option-label">{{ option.label }}</p>
-												</div>
-											</button>
-										</div>
+						<div class="cart-row-main">
+							<div class="cart-item">
+								<div class="cart-item-main">
+									<button
+										type="button"
+										class="cart-item-thumb"
+										:class="{ 'cart-item-thumb--interactive': Boolean(row.artworkPreviewUrl) }"
+										:disabled="!row.artworkPreviewUrl"
+										@click="row.artworkPreviewUrl ? openItemDetails(row.id) : undefined"
+									>
+										<img
+											:src="row.artworkPreviewUrl || row.product.image"
+											:alt="row.product.name"
+											class="cart-item-thumb-image"
+										>
+										<span
+											v-if="row.artworkPreviewUrl"
+											class="cart-item-thumb-overlay"
+											aria-hidden="true"
+										>
+											<UiIcon name="regular-info-circle" :size="24" color="#ffffff" />
+										</span>
+									</button>
+									<div class="cart-item-copy">
+										<h3 class="cart-item-title">{{ row.product.name }}</h3>
+										<p class="cart-item-size">{{ t('cart.cartPage.sizeLabel', { size: size_dim_only(row.sizeLabel) }) }}</p>
+										<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openArtworkPicker(row.id)">
+											{{ getArtworkActionLabel(Boolean(row.artworkPreviewUrl)) }}
+										</UiButton>
 									</div>
-								</Transition>
+								</div>
+								<div class="cart-item-links">
+									<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openEditSize(row.id)">
+										{{ t('cart.cartPage.editSize') }}
+									</UiButton>
+								</div>
 							</div>
-						</div>
 
-						<strong class="cart-row-price">{{ format_price(getRowDisplayTotal(row.id, row.total)) }}</strong>
+							<div class="cart-qty-wrap">
+								<UiSelect
+									v-if="custom_qty_item_id !== row.id"
+									class="cart-qty-select-control"
+									size="40"
+									:model-value="getRowDisplayQty(row.id, row.qty)"
+									:options="getQtyOptionsForRow(getRowDisplayQty(row.id, row.qty))"
+									trigger-class="cart-qty-select-trigger"
+									@update:model-value="handleQtyOptionSelect(row.id, $event)"
+								/>
+								<div
+									v-else
+									ref="custom_qty_dropdown_ref"
+									class="cart-qty-select-shell ui-select"
+									:data-open="custom_qty_menu_open || null"
+								>
+									<input
+										ref="custom_qty_input_ref"
+										:value="custom_qty_draft"
+										type="text"
+										inputmode="numeric"
+										placeholder="Enter quantity"
+										class="cart-qty-inline-input"
+										@beforeinput="preventNonDigitInput"
+										@input="onCustomQtyInput(($event.target as HTMLInputElement).value)"
+										@blur="void commitCustomQty(row.id)"
+										@keydown.enter.prevent="void commitCustomQty(row.id)"
+									>
+									<button
+										type="button"
+										class="cart-qty-select-arrow"
+										aria-label="Open quantity options"
+										@click="toggleCustomQtyMenu"
+									>
+										<UiIcon
+											name="regular-angle-down"
+											:size="24"
+											color="var(--gray-90)"
+											:class="{ 'is-open': custom_qty_menu_open }"
+										/>
+									</button>
+									<Transition name="ui-select-menu">
+										<div v-if="custom_qty_menu_open" class="ui-select-menu" role="listbox">
+											<div class="ui-select-options">
+												<button
+													v-for="option in qty_select_options_with_custom"
+													:key="option.value"
+													type="button"
+													class="ui-select-option"
+													:class="{ 'is-selected': Number(option.value) === -1 }"
+													@mousedown.prevent="handleQtyOptionSelect(row.id, option.value)"
+												>
+													<div class="ui-select-option-copy">
+														<p class="ui-select-option-label">{{ option.label }}</p>
+													</div>
+												</button>
+											</div>
+										</div>
+									</Transition>
+								</div>
+							</div>
+
+							<strong class="cart-row-price">{{ format_price(getRowDisplayTotal(row.id, row.total)) }}</strong>
+						</div>
 
 						<UiButton
 							class="cart-delete-btn"
@@ -855,7 +860,7 @@ onBeforeUnmount(() => {
 
                 .cart-row {
                     display: grid;
-                    grid-template-columns: 24px 1fr 256px 118px 40px;
+                    grid-template-columns: 24px minmax(0, 1fr) 40px;
                     gap: 14px;
                     align-items: center;
                     padding: 20px 0;
@@ -867,10 +872,34 @@ onBeforeUnmount(() => {
                         }
                     }
 
+					.cart-row-main {
+						display: grid;
+						grid-template-columns: minmax(0, 1fr) 176px 118px;
+						align-items: center;
+						column-gap: 32px;
+						min-width: 0;
+					}
+
                     .cart-item {
                         display: flex;
                         align-items: center;
+                        justify-content: space-between;
                         gap: 16px;
+						min-width: 0;
+
+						.cart-item-main {
+							display: flex;
+							align-items: center;
+							gap: 16px;
+							min-width: 0;
+						}
+
+						.cart-item-links {
+							display: grid;
+							justify-items: start;
+							gap: 2px;
+							flex-shrink: 0;
+						}
 
                         .cart-link-btn {
                             border: 0;
@@ -899,11 +928,11 @@ onBeforeUnmount(() => {
                             }
                         }
 
-                            .cart-item-copy {
-                            .cart-item-title {
+							.cart-item-copy {
+								.cart-item-title {
 
-                                font-size: var(--type-size-100);
-                                line-height: var(--type-line-100);
+									font-size: var(--type-size-100);
+									line-height: var(--type-line-100);
                                 color: var(--text-primary);
                             }
 
@@ -927,13 +956,9 @@ onBeforeUnmount(() => {
 							min-width: 129px;
 						}
 
-						.cart-qty-select-trigger {
-                            height: 40px;
+						:deep(.cart-qty-select-trigger) {
                             border-radius: 8px;
-                            border: 1px solid var(--gray-40);
-                            background: var(--contrast-light);
                             padding: 8px 16px;
-							box-shadow: none;
 						}
 
 						.cart-qty-select-shell {
@@ -994,6 +1019,7 @@ onBeforeUnmount(() => {
                         font-size: var(--type-size-300);
                         line-height: var(--type-line-300);
                         color: var(--text-primary);
+						white-space: nowrap;
                     }
 
                     .cart-delete-btn {
@@ -1163,6 +1189,11 @@ onBeforeUnmount(() => {
                 .cart-list {
                     .cart-row {
                         grid-template-columns: 24px 1fr;
+
+						.cart-row-main {
+							grid-template-columns: 1fr;
+							row-gap: 16px;
+						}
 
                         .cart-qty-wrap,
                         .cart-row-price,

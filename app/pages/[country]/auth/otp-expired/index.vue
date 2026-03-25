@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router';
 import StatusBackgroundWrapper from '~/components/common/StatusBackgroundWrapper.vue';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 definePageMeta({
 	layout: 'home',
@@ -10,6 +12,26 @@ definePageMeta({
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+
+const route = useRoute()
+const email = computed(() => {
+    return typeof route.query.email === 'string'
+        ? route.query.email.trim()
+        : ''
+})
+
+const requestNewResetPasswordLink = async () => {
+    const { sendResetPasswordLinkHandler } = usePasswordReset()
+    const response = await sendResetPasswordLinkHandler({
+        email: email.value
+    })
+
+    if (!response.success) {
+        return
+    }
+
+    return navigateTo(withCountry('/'))
+}
 </script>
 
 <template>
@@ -35,10 +57,10 @@ const { withCountry } = useCountry();
 				</div>
 
 				<div class="auth-otp-expired-actions">
-					<NuxtLink :to="withCountry('/auth/login')" class="auth-otp-expired-cta auth-otp-expired-cta--primary">
+					<UiButton @click="requestNewResetPasswordLink" class="auth-otp-expired-cta auth-otp-expired-cta--primary">
 						<UiIcon name="strong-paper-plane" :size="24" color="var(--white-base)" />
 						{{ t('auth.otpExpired.requestNew') }}
-					</NuxtLink>
+					</UiButton>
 
 					<NuxtLink :to="withCountry('/')" class="auth-otp-expired-cta auth-otp-expired-cta--secondary">
 						{{ t('auth.otpExpired.returnHome') }}

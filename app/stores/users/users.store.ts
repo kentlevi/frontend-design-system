@@ -29,9 +29,6 @@ function createInitialUserState(): UserState {
 			user_id: 0,
 			offers_emails: false,
 			reviews_emails: false,
-			confirmations_emails: false,
-			unit_of_measurement: 'mm',
-			guided_tour_enabled: false,
 			created_at: '',
 			updated_at: ''
 		} as PreferenceState

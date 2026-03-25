@@ -43,63 +43,66 @@ watch(
 
 <template>
 	<section class="cart-empty-state" data-testid="cart-page-empty-state">
-		<div class="cart-empty-state-top">
-			<div class="cart-empty-state-hero">
-				<h2 class="cart-empty-state-title">Your cart is empty.</h2>
-				<p class="cart-empty-state-description">
-					Looks like your cart is empty. Start browsing our products and add items to your cart to begin your order. You can also explore the recommended products below to quickly find items you might like.
-				</p>
-			</div>
+		<div class="cart-empty-state-content">
+			<div class="cart-empty-state-top">
+				<div class="cart-empty-state-hero">
+					<h2 class="cart-empty-state-title">Your cart is empty.</h2>
+					<p class="cart-empty-state-description">
+						Looks like your cart is empty. Start browsing our products and add items to your cart to begin your order. You can also explore the recommended products below to quickly find items you might like.
+					</p>
+				</div>
 
-			<section class="cart-empty-state-featured" aria-label="Featured products">
-				<NuxtLink
-					v-for="item in props.featuredItems"
-					:key="item.id"
-					:to="item.to"
-					class="cart-empty-state-product cart-empty-state-product--featured"
-					:data-testid="`cart-empty-featured-${item.id}`"
-				>
-					<div class="cart-empty-state-featured-image-wrap">
-						<img :src="item.image" :alt="item.label" class="cart-empty-state-featured-image">
-					</div>
-					<p class="cart-empty-state-product-label">{{ item.label }}</p>
-				</NuxtLink>
-			</section>
+				<section class="cart-empty-state-featured" aria-label="Featured products">
+					<NuxtLink
+						v-for="item in props.featuredItems"
+						:key="item.id"
+						:to="item.to"
+						class="cart-empty-state-product cart-empty-state-product--featured"
+						:data-testid="`cart-empty-featured-${item.id}`"
+					>
+						<div class="cart-empty-state-featured-image-wrap">
+							<img :src="item.image" :alt="item.label" class="cart-empty-state-featured-image">
+						</div>
+						<p class="cart-empty-state-product-label">{{ item.label }}</p>
+					</NuxtLink>
+				</section>
+			</div>
 		</div>
 
 		<section class="cart-empty-state-discover" aria-label="Discover more products">
-			<div class="cart-empty-state-discover-head">
-				<h3 class="cart-empty-state-discover-title">Discover more products you might like.</h3>
-				<div class="cart-empty-state-controls">
-					<UiButton
-						variant="outline"
-						tone="neutral"
-						size="md"
-						:icon-only="true"
-						icon="regular-angle-left"
-						icon-size="24"
-						:disabled="!can_go_prev"
-						:sr-label="'Previous products'"
-						aria-label="Previous products"
-						class="cart-empty-state-arrow"
-						@click="prevPage"
-					/>
-					<UiButton
-						variant="outline"
-						tone="neutral"
-						size="md"
-						:icon-only="true"
-						icon="regular-angle-right"
-						icon-size="24"
-						:disabled="!can_go_next"
-						:sr-label="'Next products'"
-						aria-label="Next products"
-						class="cart-empty-state-arrow"
-						@click="nextPage"
-					/>
+			<div class="cart-empty-state-content">
+				<div class="cart-empty-state-discover-head">
+					<h3 class="cart-empty-state-discover-title">Discover more products you might like.</h3>
+					<div class="cart-empty-state-controls">
+						<UiButton
+							variant="outline"
+							tone="neutral"
+							size="md"
+							:icon-only="true"
+							icon="regular-angle-left"
+							icon-size="24"
+							:disabled="!can_go_prev"
+							:sr-label="'Previous products'"
+							aria-label="Previous products"
+							class="cart-empty-state-arrow"
+							@click="prevPage"
+						/>
+						<UiButton
+							variant="outline"
+							tone="neutral"
+							size="md"
+							:icon-only="true"
+							icon="regular-angle-right"
+							icon-size="24"
+							:disabled="!can_go_next"
+							:sr-label="'Next products'"
+							aria-label="Next products"
+							class="cart-empty-state-arrow"
+							@click="nextPage"
+						/>
+					</div>
 				</div>
 			</div>
-
 			<div class="cart-empty-state-discover-strip">
 				<div class="cart-empty-state-discover-inner">
 					<div class="cart-empty-state-discover-viewport">
@@ -137,11 +140,17 @@ watch(
 
 <style scoped lang="scss">
 .cart-empty-state {
-	max-width: 1200px;
+	width: 100%;
 	margin: 0 auto;
 	padding: 112px 0 110px;
 	display: grid;
 	gap: 80px;
+
+	.cart-empty-state-content {
+		max-width: 1200px;
+		margin: 0 auto;
+		width: 100%;
+	}
 
 	.cart-empty-state-top {
 		display: grid;
@@ -179,6 +188,7 @@ watch(
 	.cart-empty-state-discover {
 		display: grid;
 		gap: 32px;
+		width: 100%;
 	}
 
 	.cart-empty-state-discover-strip {
@@ -188,6 +198,7 @@ watch(
 		background: #f5f5f5;
 		border-top: 1px solid var(--gray-20);
 		border-bottom: 1px solid var(--gray-20);
+		overflow-x: clip;
 	}
 
 	.cart-empty-state-discover-inner {
