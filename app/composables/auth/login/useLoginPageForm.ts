@@ -118,7 +118,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		nonMemberEmailHasError.value = false;
 		nonMemberOrderError.value = '';
 		guestVerificationError.value = '';
-		resendLimitReached.value = '';
 	}
 
 	function isVerificationSessionExpired(session: NonMemberVerificationSession | null): boolean {
@@ -146,7 +145,16 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	// Watchers
-	watch(memberType, clearErrors);
+	watch(memberType, () => {
+		clearErrors();
+		resendLimitReached.value = '';
+	});
+
+	watch(guestResendCooldownRemaining, (value) => {
+		if (value <= 0) {
+			resendLimitReached.value = '';
+		}
+	});
 
 	// Validation functions
 	function validateMember() {
@@ -203,11 +211,13 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		nonMemberEmail.value = value;
 		nonMemberEmailError.value = '';
 		nonMemberEmailHasError.value = false;
+		resendLimitReached.value = '';
 	}
 
 	function onNonMemberOrderInput(value: string) {
 		nonMemberOrderNumber.value = value;
 		nonMemberOrderError.value = '';
+		resendLimitReached.value = '';
 	}
 
 	// Main handlers
@@ -292,6 +302,8 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				const message = getAuthResponseMessage(response);
 				if (code === 'max_resend_reached') {
 					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					applyGuestResendCooldownFromResponse(response);
+					guestVerificationError.value = '';
 					nonMemberEmailError.value = '';
 					nonMemberOrderError.value = '';
 					isVerificationModalOpen.value = true
@@ -310,6 +322,8 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
 				if (message_code === 'max_resend_reached') {
 					resendLimitReached.value = message;
+					applyGuestResendCooldownFromResponse(response);
+					guestVerificationError.value = '';
 				} else {
 					guestVerificationError.value = message;
 				}
@@ -326,6 +340,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				token: response.data?.token || null,
 				expires_in: response.data?.expires_in || null,
 			};
+			resendLimitReached.value = '';
 			applyGuestResendCooldownFromResponse(response);
 			isVerificationModalOpen.value = true;
 			return;
@@ -363,6 +378,8 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 				if (code === 'max_resend_reached') {
 					resendLimitReached.value = message;
+					applyGuestResendCooldownFromResponse(response);
+					guestVerificationError.value = '';
 				} else {
 					guestVerificationError.value = message;
 				}
@@ -379,6 +396,7 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 				token: response.data?.token || null,
 				expires_in: response.data?.expires_in || null,
 			};
+			resendLimitReached.value = '';
 			applyGuestResendCooldownFromResponse(response);
 
 		} catch (error) {
@@ -419,7 +437,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 		if (open) return;
 		guestVerificationCode.value = '';
 		guestVerificationError.value = '';
-		resendLimitReached.value = '';
 		isGuestVerifying.value = false;
 	});
 

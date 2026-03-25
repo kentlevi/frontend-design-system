@@ -56,6 +56,7 @@ export function useRegisterForm() {
 		expires_at?: string | number | Date;
 		resend_cooldown_until?: number;
 		register_cooldown_until?: number;
+		form_signature?: string;
 	};
 
 	const verificationExpiry = ref<VerificationExpiryCookie | null>(null);
@@ -197,11 +198,20 @@ export function useRegisterForm() {
 				emailError.value = '';
 			}
 		}
+
+		const verificationEmailNormalized = verificationEmail.value.trim().toLowerCase();
+		if (
+			verificationEmailNormalized
+			&& verificationEmailNormalized !== trimmed.toLowerCase()
+		) {
+			resendLimitReached.value = '';
+		}
 	});
 
 	watch(resendCooldownRemaining, (value) => {
 		if (value <= 0) {
 			clearResendCooldownCache();
+			resendLimitReached.value = '';
 		}
 	});
 
@@ -322,6 +332,7 @@ export function useRegisterForm() {
 		const valid = validateInputs()
 		if (!valid) return
 
+		const currentFormSignature = buildRegisterPayloadSignature();
 		const canSkipSendRequest = registerRequestCooldownRemaining.value > 0
 			&& !isVerificationCacheExpired(verificationExpiry.value);
 
@@ -335,12 +346,20 @@ export function useRegisterForm() {
 				typeof verificationExpiry.value?.token === 'string'
 					? verificationExpiry.value.token.trim()
 					: '';
+			const cachedFormSignature =
+				typeof verificationExpiry.value?.form_signature === 'string'
+					? verificationExpiry.value.form_signature
+					: '';
 
 			if (cachedEmail.toLowerCase() === normalizedEmail) {
 				verificationEmail.value = cachedEmail;
 			}
 
-			if (cachedToken && cachedEmail.toLowerCase() === normalizedEmail) {
+			if (
+				cachedToken
+				&& cachedEmail.toLowerCase() === normalizedEmail
+				&& cachedFormSignature === currentFormSignature
+			) {
 				verificationToken.value = cachedToken;
 				verificationCode.value = '';
 				verificationError.value = '';
@@ -359,6 +378,7 @@ export function useRegisterForm() {
 				const message = getAuthResponseMessage(response);
 				if (code === 'max_resend_reached') {
 					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					applyResendCooldownFromResponse(response);
 					verificationError.value = '';
 					isVerificationModalOpen.value = true
 					return response;
@@ -410,8 +430,10 @@ export function useRegisterForm() {
 			verificationExpiry.value = {
 				email: resolvedEmail,
 				token: resolvedToken,
-				expires_at: response.data?.expires_in
+				expires_at: response.data?.expires_in,
+				form_signature: currentFormSignature,
 			};
+			resendLimitReached.value = '';
 			clearResendCooldownTimer();
 			resendCooldownRemaining.value = 0;
 			clearResendCooldownCache();
@@ -499,6 +521,7 @@ export function useRegisterForm() {
 				const message = getAuthResponseMessage(response);
 				if (code === 'max_resend_reached') {
 					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					applyResendCooldownFromResponse(response);
 					verificationError.value = '';
 					return;
 				}
@@ -529,6 +552,7 @@ export function useRegisterForm() {
 				...(verificationExpiry.value || {}),
 				email: resolvedEmail,
 				token: resolvedToken,
+				form_signature: buildRegisterPayloadSignature(),
 			};
 			applyRegisterCooldownFromResponse(response);
 			applyResendCooldownFromResponse(response);
@@ -540,16 +564,27 @@ export function useRegisterForm() {
 	async function sendVerificationCode(resend: boolean) {
 		const { sendRegisterVerificationHandler } = useRegisterUser()
 		const response = await sendRegisterVerificationHandler({
+			...getCurrentRegisterPayload(),
+			is_resend: resend
+		})
+
+		return response
+	}
+
+	function getCurrentRegisterPayload() {
+		return {
 			given_name: firstName.value.trim(),
 			family_name: lastName.value.trim(),
 			email: email.value.trim(),
 			password: password.value.trim(),
 			terms_of_service: agreeTerms.value,
 			newsletter: optInPromos.value,
-			is_resend: resend
-		})
+		};
+	}
 
-		return response
+	function buildRegisterPayloadSignature(): string {
+		const payload = getCurrentRegisterPayload();
+		return JSON.stringify(payload);
 	}
 
 	function isVerificationCacheExpired(
@@ -562,6 +597,7 @@ export function useRegisterForm() {
 	function clearExpiredVerificationCache(): void {
 		if (isVerificationCacheExpired(verificationExpiry.value)) {
 			verificationExpiry.value = null;
+			resendLimitReached.value = '';
 		}
 	}
 
@@ -606,7 +642,7 @@ export function useRegisterForm() {
 		if (open) return;
 
 		// Keep resend cooldown running even if the modal is closed/re-opened.
-		resendLimitReached.value = '';
+		verificationError.value = '';
 	});
 
 	onBeforeUnmount(() => {
