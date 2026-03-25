@@ -228,8 +228,7 @@ function handleModalModelValueUpdate(value: boolean) {
 						@click="onResendClick"
 					>
 						{{ t(`${translation_key}.resendCta`) }}
-					</UiButton>
-					{{ t(`${translation_key}.resendSuffix`) }}
+					</UiButton>{{ t(`${translation_key}.resendSuffix`) }}
 				</p>
 				<p v-else class="auth-verification-resend">
 					{{ t(`${translation_key}.resendLimitReachedPrefix`) }} <b>{{ t(`${translation_key}.resendLimitReachedMiddle`) }}</b>{{ t(`${translation_key}.resendLimitReachedSuffix`) }}
