@@ -16,6 +16,8 @@ const props = withDefaults(defineProps<{
 	testId?: string;
 	transitionName?: string;
 	position?: 'fixed' | 'absolute';
+	overlayClass?: string;
+	loaderClass?: string;
 	background?: string;
 	zIndex?: number;
 	loaderWidth?: string;
@@ -28,6 +30,8 @@ const props = withDefaults(defineProps<{
 	testId: '',
 	transitionName: 'ui-loading-overlay-fade',
 	position: 'fixed',
+	overlayClass: '',
+	loaderClass: '',
 	background: 'rgba(255, 255, 255, 0.64)',
 	zIndex: 320,
 	loaderWidth: '104px',
@@ -150,13 +154,13 @@ onBeforeUnmount(() => {
 		<Transition :name="props.transitionName">
 			<div
 				v-if="props.visible"
-				class="ui-loading-overlay"
+				:class="['ui-loading-overlay', props.overlayClass]"
 				:data-testid="props.testId"
 				:style="overlay_style"
 			>
 				<div class="ui-loading-overlay-stack">
 					<div
-						class="ui-loading-overlay-loader"
+						:class="['ui-loading-overlay-loader', props.loaderClass]"
 						role="status"
 						aria-live="polite"
 						:aria-label="props.label"
@@ -179,13 +183,13 @@ onBeforeUnmount(() => {
 	<Transition v-else :name="props.transitionName">
 		<div
 			v-if="props.visible"
-			class="ui-loading-overlay"
+			:class="['ui-loading-overlay', props.overlayClass]"
 			:data-testid="props.testId"
 			:style="overlay_style"
 		>
 			<div class="ui-loading-overlay-stack">
 				<div
-					class="ui-loading-overlay-loader"
+					:class="['ui-loading-overlay-loader', props.loaderClass]"
 					role="status"
 					aria-live="polite"
 					:aria-label="props.label"

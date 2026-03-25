@@ -134,7 +134,7 @@ onMounted(() => {
 						:label="field.is_required
 							? t(`account.profile.${field.field_key}`)
 							: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
-						:required="field.is_required"
+						:required="Boolean(field.is_required)"
 					>
 						<template v-if="field.field_key === 'last_name' || field.field_key === 'family_name'" #label>
 							<span class="ui-form-field-label-text">

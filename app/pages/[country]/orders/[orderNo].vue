@@ -12,9 +12,17 @@ definePageMeta({
 const { t } = useI18n();
 const route = useRoute();
 const { withCountry } = useCountry();
-const orderNo = computed(() => String(route.params.orderNo || ''));
-const { selectedCheckoutItems, orderSubtotal, orderShippingFee, orderDiscount, orderTotal, formatPrice, sizeDimOnly } = useCheckoutGuest();
-const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
+const order_no = computed(() => String(route.params.orderNo || ''));
+const {
+	selected_checkout_items,
+	order_subtotal,
+	order_shipping_fee,
+	order_discount,
+	order_total,
+	formatPrice,
+	sizeDimOnly,
+} = useCheckoutGuest();
+const primary_item = computed(() => selected_checkout_items.value[0] || null);
 </script>
 
 <template>
@@ -30,7 +38,7 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 				</div>
 
 				<div class="order-details-title-row">
-					<h1 class="order-details-title">{{ t('checkout.orderDetails.orderNumber', { orderNumber: orderNo }) }}</h1>
+					<h1 class="order-details-title">{{ t('checkout.orderDetails.orderNumber', { orderNumber: order_no }) }}</h1>
 					<span class="order-details-chip">{{ t('checkout.orderDetails.status') }}</span>
 				</div>
 			</header>
@@ -69,8 +77,8 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 					<div class="order-details-item">
 						<div class="order-details-item-thumb">
 							<img
-								:src="primaryItem?.artworkPreviewUrl || primaryItem?.product.image || '/icons/custom/checkout/icon-box.svg'"
-								:alt="primaryItem?.product.name || t('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
+								:src="primary_item?.artworkPreviewUrl || primary_item?.product.image || '/icons/custom/checkout/icon-box.svg'"
+								:alt="primary_item?.product.name || t('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
 						</div>
 						<div class="order-details-item-copy">
 							<div class="order-details-item-heading">
@@ -83,10 +91,10 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 							</div>
 							<div class="order-details-item-meta-group">
 								<p class="order-details-item-meta">{{ t('checkout.orderDetails.size', {
-									size: primaryItem ? sizeDimOnly(primaryItem.sizeLabel) : '100x100mm',
+									size: primary_item ? sizeDimOnly(primary_item.sizeLabel) : '100x100mm',
 								}) }}</p>
 								<p class="order-details-item-meta">{{ t('checkout.orderDetails.quantity', {
-									quantity: primaryItem ? primaryItem.qty.toLocaleString() : '10,000',
+									quantity: primary_item ? primary_item.qty.toLocaleString() : '10,000',
 								}) }}</p>
 							</div>
 						</div>
@@ -96,7 +104,7 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 								class="order-details-upload-btn">
 								{{ t('checkout.orderDetails.uploadArtwork') }}
 							</UiButton>
-							<strong class="order-details-item-price">{{ formatPrice(primaryItem?.total || orderTotal)
+							<strong class="order-details-item-price">{{ formatPrice(primary_item?.total || order_total)
 							}}</strong>
 						</div>
 					</div>
@@ -105,19 +113,19 @@ const primaryItem = computed(() => selectedCheckoutItems.value[0] || null);
 				<div class="order-details-totals">
 					<div class="order-details-total-line">
 						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.subtotal') }}</span>
-						<strong class="order-details-total-value">{{ formatPrice(orderSubtotal) }}</strong>
+						<strong class="order-details-total-value">{{ formatPrice(order_subtotal) }}</strong>
 					</div>
 					<div class="order-details-total-line">
 						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.shippingFee', { method: t('checkout.orderDetails.shippingMethod') }) }}</span>
-						<strong class="order-details-total-value">{{ formatPrice(orderShippingFee) }}</strong>
+						<strong class="order-details-total-value">{{ formatPrice(order_shipping_fee) }}</strong>
 					</div>
 					<div class="order-details-total-line is-discount">
 						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.discounts') }}</span>
-						<strong class="order-details-total-value">-{{ formatPrice(orderDiscount) }}</strong>
+						<strong class="order-details-total-value">-{{ formatPrice(order_discount) }}</strong>
 					</div>
 					<div class="order-details-total-line is-final">
 						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.total') }}</span>
-						<strong class="order-details-total-value">{{ formatPrice(orderTotal) }}</strong>
+						<strong class="order-details-total-value">{{ formatPrice(order_total) }}</strong>
 					</div>
 				</div>
 			</section>
