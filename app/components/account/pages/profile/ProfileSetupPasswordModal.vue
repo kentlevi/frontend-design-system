@@ -34,7 +34,6 @@ function closeModal() {
 	<UiModal
 		:model-value="props.modelValue"
 		align="center"
-		width="420px"
 		padding="0"
 		gap="0"
 		modal-class="account-profile-setup-password-modal-shell"
