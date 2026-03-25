@@ -313,7 +313,7 @@ async function openInitialHomeModalFromRoute() {
 		})
 
 		if (!response.success) {
-			navigateTo(withCountry('/auth/otp-expired'));
+			navigateTo(withCountry('/auth/otp-expired?email=' + resetEmail.value));
 			return
 		}
 
@@ -321,7 +321,7 @@ async function openInitialHomeModalFromRoute() {
 			const expiry = parseInt(resetExpiry.value, 10);
 			const now = Math.floor(Date.now() / 1000);
 			if (now > expiry) {
-				navigateTo(withCountry('/auth/otp-expired'));
+				navigateTo(withCountry('/auth/otp-expired?email=' + resetEmail.value));
 				return;
 			}
 		}
