@@ -20,6 +20,7 @@ function createInitialUserState(): UserState {
 		email: '',
 		country_id: 0,
 		social: null,
+		has_password: false,
 
 		onboardingProfile: null,
 		profile: null,
@@ -60,6 +61,7 @@ export const useUsersStore = defineStore('users', () => {
 		state.value.country_id = user.country_id
 		state.value.profile = user.profile
 		state.value.social = user.social
+		state.value.has_password = user.has_password
 	}
 
 	/**
@@ -71,6 +73,8 @@ export const useUsersStore = defineStore('users', () => {
 		if (user.email !== undefined) state.value.email = user.email
 		if (user.country_id !== undefined) state.value.country_id = user.country_id
 		if (user.profile !== undefined) state.value.profile = user.profile
+		if (user.social !== undefined) state.value.social = user.social
+		if (user.has_password !== undefined) state.value.has_password = user.has_password
 	}
 
 	/**
