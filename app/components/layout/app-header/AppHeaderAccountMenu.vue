@@ -37,13 +37,13 @@ const emit = defineEmits<{
 const {
 	bindWrapRef,
 	handleAccountLinkClick,
-	primaryAccountLinks,
-	gettingStartedLink,
-	guestOrderLink,
-	guestOrderTarget,
+	primary_account_links,
+	getting_started_link,
+	guest_order_link,
+	guest_order_target,
 	setAccountToggleRef,
 	setAccountDropdownRef,
-	guestLoginTarget,
+	guest_login_target,
 } = useAppHeaderAccountMenu({
 	accountOpen: toRef(props, 'accountOpen'),
 	isMockLoggedIn: toRef(props, 'isMockLoggedIn'),
@@ -140,7 +140,7 @@ const {
 					class="home-account-link-group home-account-link-group--primary"
 				>
 					<NuxtLink
-						v-for="link in primaryAccountLinks"
+						v-for="link in primary_account_links"
 						:key="link.to"
 						:to="withCountry(link.to)"
 						class="home-account-link"
@@ -160,20 +160,20 @@ const {
 
 				<div class="home-account-link-group home-account-link-group--secondary">
 					<NuxtLink
-						v-if="!props.simple && gettingStartedLink"
-						:to="withCountry(gettingStartedLink.to)"
+						v-if="!props.simple && getting_started_link"
+						:to="withCountry(getting_started_link.to)"
 						class="home-account-link home-account-link--section-start"
 						role="menuitem"
-						:data-testid="`app-header-account-link-${gettingStartedLink.to.replace('/', '').replace('/', '-') || 'root'}`"
-						@click="handleAccountLinkClick($event, gettingStartedLink.to)"
+						:data-testid="`app-header-account-link-${getting_started_link.to.replace('/', '').replace('/', '-') || 'root'}`"
+						@click="handleAccountLinkClick($event, getting_started_link.to)"
 					>
 						<UiIcon
-							:name="gettingStartedLink.icon"
+							:name="getting_started_link.icon"
 							:size="24"
 							color="var(--text-primary)"
 							class="home-account-link-icon"
 						/>
-						<span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
+						<span class="home-account-link-label">{{ getting_started_link.label }}</span>
 					</NuxtLink>
 
 					<UiButton
@@ -218,20 +218,20 @@ const {
 					class="home-account-link-group home-account-link-group--primary"
 				>
 					<NuxtLink
-						v-if="guestOrderLink"
-						:to="guestOrderTarget"
+						v-if="guest_order_link"
+						:to="guest_order_target"
 						class="home-account-link"
 						role="menuitem"
 						data-testid="app-header-account-link-account-orders"
 						@click="emit('close')"
 					>
 						<UiIcon
-							:name="guestOrderLink.icon"
+							:name="guest_order_link.icon"
 							:size="22"
 							color="var(--text-primary)"
 							class="home-account-link-icon"
 						/>
-						<span class="home-account-link-label">{{ guestOrderLink.label }}</span>
+						<span class="home-account-link-label">{{ guest_order_link.label }}</span>
 					</NuxtLink>
 				</div>
 
@@ -265,7 +265,7 @@ const {
 				data-testid="app-header-account-dropdown-guest"
 			>
 				<NuxtLink
-					:to="guestLoginTarget"
+					:to="guest_login_target"
 					class="home-account-link home-account-link--guest"
 					role="menuitem"
 					data-testid="app-header-account-login"

@@ -6,9 +6,9 @@ import {
 import { homeProductTypes } from '~/data/products/homeTypes';
 import {
 	PRODUCT_SELECTION_NAV_DELAY_MS,
-	quantityOptions,
-	sizeFeatureCards,
-	sizeOptions,
+	quantity_options,
+	size_feature_cards,
+	size_options,
 } from '~/data/products/categoryExperience';
 import { defaultStartPriceByProductId } from '~/data/products/pricing';
 import type {
@@ -21,6 +21,7 @@ import {
 	writeStoredCartStateToStorage,
 	type StoredCartState,
 } from '~/helpers/cart/cartState.helper';
+import { useSelectionStore } from '~/stores/product';
 import {
 	formatProductFileSize,
 	generateProductCartItemId,
@@ -39,40 +40,47 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	const route = useRoute();
 	const router = useRouter();
 	const { withCountry, country } = useCountry();
+	const selectionStore = useSelectionStore();
+	const size_key_by_attribute_id = {
+		1: 'small30',
+		2: 'medium75',
+		3: 'large100',
+		4: 'extraLarge125',
+	} as const;
 
-	const categoryData = computed<ProductCategory>(() => {
-		const catalogCategory = productCatalog[category.value];
-		const responseProducts = apiProducts?.value?.products ?? [];
+	const category_data = computed<ProductCategory>(() => {
+		const catalog_category = productCatalog[category.value];
+		const response_products = apiProducts?.value?.products ?? [];
 
-		if (!responseProducts.length) {
-			return catalogCategory;
+		if (!response_products.length) {
+			return catalog_category;
 		}
 
-		const mappedProducts = responseProducts
-			.map((product) => resolveCatalogProductByApiSlug(product.url_slug, catalogCategory.products))
+		const mapped_products = response_products
+			.map((product) => resolveCatalogProductByApiSlug(product.url_slug, catalog_category.products))
 			.filter((product): product is ProductItem => Boolean(product));
 
-		if (!mappedProducts.length) {
-			return catalogCategory;
+		if (!mapped_products.length) {
+			return catalog_category;
 		}
 
 		return {
-			...catalogCategory,
-			products: dedupeProductsById(mappedProducts),
+			...catalog_category,
+			products: dedupeProductsById(mapped_products),
 		};
 	});
-	const selectedId = ref<string | null>(null);
-	const selectedSize = ref<(typeof sizeOptions)[number]>(sizeOptions[0]);
-	const selectedQty = ref<number>(quantityOptions[0]);
-	const hasPickedProduct = ref(false);
-	const uploadModalOpen = ref(false);
-	const addToCartLoading = ref(false);
-	const cartPreviewOpen = ref(false);
-	const featuredOpen = ref(true);
-	const specialInstructions = ref('');
-	const artworkFile = ref<File | null>(null);
-	const artworkPreviewUrl = ref('');
-	const artworkInputRef = ref<HTMLInputElement | null>(null);
+	const selected_id = ref<string | null>(null);
+	const selected_size = ref<(typeof size_options)[number]>(size_options[0]);
+	const selected_qty = ref<number>(quantity_options[0]);
+	const has_picked_product = ref(false);
+	const upload_modal_open = ref(false);
+	const add_to_cart_loading = ref(false);
+	const cart_preview_open = ref(false);
+	const featured_open = ref(true);
+	const special_instructions = ref('');
+	const artwork_file = ref<File | null>(null);
+	const artwork_preview_url = ref('');
+	const artwork_input_ref = ref<HTMLInputElement | null>(null);
 
 	function resolveCartSizeLabel(entry: Pick<StoredCartState, 'sizeKey' | 'customSizeLabel'>) {
 		if (entry.customSizeLabel) return entry.customSizeLabel;
@@ -80,45 +88,45 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		return t(`product.sizes.${entry.sizeKey}.label`);
 	}
 
-	const sizeOptionModels = computed(() =>
-		sizeOptions.map((size) => ({
+	const size_option_models = computed(() =>
+		size_options.map((size) => ({
 			key: size,
 			...sizeLabelParts(size),
 		}))
 	);
 
-	const selectedProduct = computed(() => {
-		if (!selectedId.value) return null;
+	const selected_product = computed(() => {
+		if (!selected_id.value) return null;
 		return (
-			categoryData.value.products.find((item) => item.id === selectedId.value) ||
+			category_data.value.products.find((item) => item.id === selected_id.value) ||
             null
 		);
 	});
 
-	const unitPrice = computed(() => {
+	const unit_price = computed(() => {
 		const base =
 			category.value === 'stickers'
 				? 2.4
 				: category.value === 'roll-stickers'
 					? 1.7
 					: 1.9;
-		return Math.max(0.18, base - selectedQty.value / 5000);
+		return Math.max(0.18, base - selected_qty.value / 5000);
 	});
 
-	const subtotal = computed(() => unitPrice.value * selectedQty.value);
-	const discountRate = computed(() =>
-		selectedQty.value >= 1000 ? 0.2 : selectedQty.value >= 300 ? 0.12 : 0.06
+	const subtotal = computed(() => unit_price.value * selected_qty.value);
+	const discount_rate = computed(() =>
+		selected_qty.value >= 1000 ? 0.2 : selected_qty.value >= 300 ? 0.12 : 0.06
 	);
-	const total = computed(() => subtotal.value * (1 - discountRate.value));
-	const hasUploadedArtwork = computed(
-		() => Boolean(artworkFile.value || artworkPreviewUrl.value)
+	const total = computed(() => subtotal.value * (1 - discount_rate.value));
+	const has_uploaded_artwork = computed(
+		() => Boolean(artwork_file.value || artwork_preview_url.value)
 	);
-	const selectedSizeLabel = computed(() =>
-		t(`product.sizes.${selectedSize.value}.label`)
+	const selected_size_label = computed(() =>
+		t(`product.sizes.${selected_size.value}.label`)
 	);
-	const cartState = ref<StoredCartState[]>([]);
-	const cartItems = computed(() =>
-		cartState.value
+	const cart_state = ref<StoredCartState[]>([]);
+	const cart_items = computed(() =>
+		cart_state.value
 			.map((entry) => {
 				const product = productCatalog[entry.category]?.products.find(
 					(item) => item.id === entry.productId
@@ -139,44 +147,100 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			})
 			.filter((item): item is NonNullable<typeof item> => Boolean(item))
 	);
-	const cartGrandTotal = computed(() =>
-		cartItems.value.reduce((sum, item) => sum + item.total, 0)
+	const cart_grand_total = computed(() =>
+		cart_items.value.reduce((sum, item) => sum + item.total, 0)
 	);
-	const featuredItems = computed(() => {
+	const featured_items = computed(() => {
 		return getFeaturedProducts(
 			homeProductTypes.map((item) => item.productId),
-			selectedId.value
+			selected_id.value
 		);
 	});
-	const cartItemCount = computed(() => cartItems.value.length);
-	const cartArtworkName = computed(
-		() => cartItems.value[0]?.artworkName || artworkFile.value?.name || ''
+	const cart_item_count = computed(() => cart_items.value.length);
+	const cart_artwork_name = computed(
+		() => cart_items.value[0]?.artworkName || artwork_file.value?.name || ''
 	);
-	const cartArtworkSize = computed(() =>
-		artworkFile.value ? formatProductFileSize(artworkFile.value.size) : ''
+	const cart_artwork_size = computed(() =>
+		artwork_file.value ? formatProductFileSize(artwork_file.value.size) : ''
 	);
-	const cartArtworkExtension = computed(() => {
-		const fileName = artworkFile.value?.name || '';
-		const parts = fileName.split('.');
+	const cart_artwork_extension = computed(() => {
+		const file_name = artwork_file.value?.name || '';
+		const parts = file_name.split('.');
 		const extension = parts.at(-1);
 		return parts.length > 1 && extension ? extension.toLowerCase() : 'file';
 	});
 
-	let selectionNavigationTimer: ReturnType<typeof setTimeout> | null = null;
-	let selectionScrollLocked = false;
-	let bodyOverflowBeforeSelectionLock = '';
-	let overlayBodyScrollLocked = false;
-	const selectionNavigationInFlight = ref(false);
-	const editingCartItemId = ref<string | null>(null);
-	let preserveUploadModalOnNextRouteSync = false;
+	function resolveUnitPriceForQty(qty: number) {
+		const base =
+			category.value === 'stickers'
+				? 2.4
+				: category.value === 'roll-stickers'
+					? 1.7
+					: 1.9;
+		return Math.max(0.18, base - qty / 5000);
+	}
+
+	function resolveDiscountRateForQty(qty: number) {
+		return qty >= 1000 ? 0.2 : qty >= 300 ? 0.12 : 0.06;
+	}
+
+	function resolveCartSizeSelection() {
+		const live_size = selectionStore.size;
+		const width = live_size?.width ?? null;
+		const height = live_size?.height ?? null;
+		const has_dimensions =
+			typeof width === 'number'
+			&& width > 0
+			&& typeof height === 'number'
+			&& height > 0;
+
+		if (live_size?.custom) {
+			return {
+				sizeKey: 'custom',
+				customSizeLabel: has_dimensions ? `${width}x${height}mm` : '',
+			};
+		}
+
+		const mapped_size_key =
+			typeof live_size?.id === 'number'
+				? size_key_by_attribute_id[live_size.id as keyof typeof size_key_by_attribute_id]
+				: undefined;
+
+		if (mapped_size_key) {
+			return {
+				sizeKey: mapped_size_key,
+				customSizeLabel: '',
+			};
+		}
+
+		if (has_dimensions) {
+			return {
+				sizeKey: 'custom',
+				customSizeLabel: `${width}x${height}mm`,
+			};
+		}
+
+		return {
+			sizeKey: selected_size.value,
+			customSizeLabel: '',
+		};
+	}
+
+	let selection_navigation_timer: ReturnType<typeof setTimeout> | null = null;
+	let selection_scroll_locked = false;
+	let body_overflow_before_selection_lock = '';
+	let overlay_body_scroll_locked = false;
+	const selection_navigation_in_flight = ref(false);
+	const editing_cart_item_id = ref<string | null>(null);
+	let preserve_upload_modal_on_next_route_sync = false;
 
 	watch(
 		() => category.value,
 		() => {
-			selectedId.value = null;
-			selectedSize.value = sizeOptions[0];
-			selectedQty.value = quantityOptions[0];
-			hasPickedProduct.value = false;
+			selected_id.value = null;
+			selected_size.value = size_options[0];
+			selected_qty.value = quantity_options[0];
+			has_picked_product.value = false;
 		}
 	);
 
@@ -185,8 +249,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		() => {
 			applySelectionFromRoute();
 			setSelectionScrollLock(false);
-			if (preserveUploadModalOnNextRouteSync) {
-				preserveUploadModalOnNextRouteSync = false;
+			if (preserve_upload_modal_on_next_route_sync) {
+				preserve_upload_modal_on_next_route_sync = false;
 			} else {
 				closeUploadModal();
 			}
@@ -196,9 +260,9 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	);
 
 	watch(
-		() => uploadModalOpen.value || cartPreviewOpen.value,
-		(isOpen) => {
-			setOverlayBodyScrollLock(isOpen);
+		() => upload_modal_open.value || cart_preview_open.value,
+		(is_open) => {
+			setOverlayBodyScrollLock(is_open);
 		}
 	);
 
@@ -207,78 +271,86 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		artworkPreviewUrlValue = '',
 		replaceItemId: string | null = null
 	) {
-		if (!selectedProduct.value) {
+		if (!selected_product.value) {
 			applySelectionFromRoute();
 		}
 
-		if (!selectedProduct.value) return false;
+		if (!selected_product.value) return false;
 
-		const nextItem: StoredCartState = {
-			id: generateProductCartItemId(selectedProduct.value.id),
+		const resolved_qty = selectionStore.quantity?.nr && selectionStore.quantity.nr > 0
+			? selectionStore.quantity.nr
+			: selected_qty.value;
+		const resolved_size = resolveCartSizeSelection();
+		const resolved_subtotal = resolveUnitPriceForQty(resolved_qty) * resolved_qty;
+		const resolved_total = resolved_subtotal * (1 - resolveDiscountRateForQty(resolved_qty));
+
+		const next_item: StoredCartState = {
+			id: generateProductCartItemId(selected_product.value.id),
 			category: category.value,
-			productId: selectedProduct.value.id,
-			sizeKey: selectedSize.value,
-			qty: selectedQty.value,
-			total: total.value,
+			productId: selected_product.value.id,
+			sizeKey: resolved_size.sizeKey,
+			customSizeLabel: resolved_size.customSizeLabel,
+			qty: resolved_qty,
+			total: resolved_total,
 			artworkName,
-			artworkSizeLabel: cartArtworkSize.value,
-			specialInstructions: specialInstructions.value,
+			artworkSizeLabel: cart_artwork_size.value,
+			specialInstructions: special_instructions.value,
 			artworkPreviewUrl: artworkPreviewUrlValue,
 		};
 
-		const baseState = replaceItemId
-			? cartState.value.filter((item) => item.id !== replaceItemId)
-			: cartState.value;
-		const nextState = mergePlainProductCartItems([nextItem, ...baseState]);
-		cartState.value = nextState;
-		writeStoredCartStateToStorage(nextState);
+		const base_state = replaceItemId
+			? cart_state.value.filter((item) => item.id !== replaceItemId)
+			: cart_state.value;
+		const next_state = mergePlainProductCartItems([next_item, ...base_state]);
+		cart_state.value = next_state;
+		writeStoredCartStateToStorage(next_state);
 		return true;
 	}
 
 	onMounted(() => {
 		if (typeof window === 'undefined') return;
-		cartState.value = mergePlainProductCartItems(
+		cart_state.value = mergePlainProductCartItems(
 			normalizeProductCartState(readStoredCartStateFromStorage())
 		);
 	});
 
 	function selectProduct(productId: string) {
-		selectedId.value = productId;
-		hasPickedProduct.value = true;
+		selected_id.value = productId;
+		has_picked_product.value = true;
 
-		const productSlug = productIdToSlug(productId);
-		const targetPath = withCountry(`/${category.value}/${productSlug}`);
-		if (route.path === targetPath) {
-			selectionNavigationInFlight.value = false;
+		const product_slug = productIdToSlug(productId);
+		const target_path = withCountry(`/${category.value}/${product_slug}`);
+		if (route.path === target_path) {
+			selection_navigation_in_flight.value = false;
 			return;
 		}
 
-		const routeProduct = route.params.product;
-		const hasRouteProduct = Array.isArray(routeProduct)
-			? routeProduct.length > 0
-			: Boolean(routeProduct);
+		const route_product = route.params.product;
+		const has_route_product = Array.isArray(route_product)
+			? route_product.length > 0
+			: Boolean(route_product);
 
-		if (selectionNavigationTimer) {
-			clearTimeout(selectionNavigationTimer);
-			selectionNavigationTimer = null;
+		if (selection_navigation_timer) {
+			clearTimeout(selection_navigation_timer);
+			selection_navigation_timer = null;
 		}
 
-		if (hasRouteProduct) {
-			selectionNavigationInFlight.value = true;
-			void router.push(targetPath).finally(() => {
-				selectionNavigationInFlight.value = false;
+		if (has_route_product) {
+			selection_navigation_in_flight.value = true;
+			void router.push(target_path).finally(() => {
+				selection_navigation_in_flight.value = false;
 			});
 			return;
 		}
 
 		setSelectionScrollLock(true);
-		selectionNavigationInFlight.value = true;
-		selectionNavigationTimer = setTimeout(() => {
-			void router.push(targetPath).finally(() => {
-				selectionNavigationInFlight.value = false;
+		selection_navigation_in_flight.value = true;
+		selection_navigation_timer = setTimeout(() => {
+			void router.push(target_path).finally(() => {
+				selection_navigation_in_flight.value = false;
 				setSelectionScrollLock(false);
 			});
-			selectionNavigationTimer = null;
+			selection_navigation_timer = null;
 		}, PRODUCT_SELECTION_NAV_DELAY_MS);
 	}
 
@@ -286,61 +358,61 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		if (typeof document === 'undefined') return;
 
 		if (locked) {
-			if (selectionScrollLocked) return;
-			bodyOverflowBeforeSelectionLock = document.body.style.overflow;
+			if (selection_scroll_locked) return;
+			body_overflow_before_selection_lock = document.body.style.overflow;
 			document.body.style.overflow = 'hidden';
-			selectionScrollLocked = true;
+			selection_scroll_locked = true;
 			return;
 		}
 
-		if (!selectionScrollLocked) return;
-		document.body.style.overflow = bodyOverflowBeforeSelectionLock;
-		selectionScrollLocked = false;
+		if (!selection_scroll_locked) return;
+		document.body.style.overflow = body_overflow_before_selection_lock;
+		selection_scroll_locked = false;
 	}
 
 	function setOverlayBodyScrollLock(locked: boolean) {
 		if (typeof document === 'undefined') return;
 
 		if (locked) {
-			if (overlayBodyScrollLocked) return;
+			if (overlay_body_scroll_locked) return;
 			document.body.style.overflow = 'hidden';
-			overlayBodyScrollLocked = true;
+			overlay_body_scroll_locked = true;
 			return;
 		}
 
-		if (!overlayBodyScrollLocked) return;
-		if (!selectionScrollLocked) {
-			document.body.style.overflow = bodyOverflowBeforeSelectionLock;
+		if (!overlay_body_scroll_locked) return;
+		if (!selection_scroll_locked) {
+			document.body.style.overflow = body_overflow_before_selection_lock;
 		}
-		overlayBodyScrollLocked = false;
+		overlay_body_scroll_locked = false;
 	}
 
 	function openUploadModal() {
-		if (!selectedProduct.value) return;
-		if (selectionNavigationInFlight.value) {
-			preserveUploadModalOnNextRouteSync = true;
+		if (!selected_product.value) return;
+		if (selection_navigation_in_flight.value) {
+			preserve_upload_modal_on_next_route_sync = true;
 		}
-		uploadModalOpen.value = true;
+		upload_modal_open.value = true;
 	}
 
 	function closeUploadModal() {
-		uploadModalOpen.value = false;
-		editingCartItemId.value = null;
+		upload_modal_open.value = false;
+		editing_cart_item_id.value = null;
 	}
 
 	function closeCartPreview() {
-		cartPreviewOpen.value = false;
+		cart_preview_open.value = false;
 	}
 
 	function openFilePicker() {
-		artworkInputRef.value?.click();
+		artwork_input_ref.value?.click();
 	}
 
 	function removeArtwork() {
-		artworkPreviewUrl.value = '';
-		artworkFile.value = null;
-		if (artworkInputRef.value) {
-			artworkInputRef.value.value = '';
+		artwork_preview_url.value = '';
+		artwork_file.value = null;
+		if (artwork_input_ref.value) {
+			artwork_input_ref.value.value = '';
 		}
 	}
 
@@ -349,114 +421,114 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		const file = target.files?.[0];
 		if (!file) return;
 
-		artworkFile.value = file;
-		artworkPreviewUrl.value = file.type.startsWith('image/')
+		artwork_file.value = file;
+		artwork_preview_url.value = file.type.startsWith('image/')
 			? await readProductArtworkAsDataUrl(file)
 			: '';
 	}
 
 	async function proceedToCart() {
-		if (addToCartLoading.value) return;
-		addToCartLoading.value = true;
+		if (add_to_cart_loading.value) return;
+		add_to_cart_loading.value = true;
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 450));
 			const appended = appendCurrentSelectionToCart(
-				artworkFile.value?.name || '',
-				artworkPreviewUrl.value,
-				editingCartItemId.value
+				artwork_file.value?.name || '',
+				artwork_preview_url.value,
+				editing_cart_item_id.value
 			);
 			if (appended) {
-				editingCartItemId.value = null;
+				editing_cart_item_id.value = null;
 				removeArtwork();
 				openCartPreview();
 			}
 		} finally {
-			addToCartLoading.value = false;
+			add_to_cart_loading.value = false;
 		}
 	}
 
 	function removeCartItem(itemId: string) {
-		const nextState = cartState.value.filter((item) => item.id !== itemId);
-		cartState.value = nextState;
-		writeStoredCartStateToStorage(nextState);
+		const next_state = cart_state.value.filter((item) => item.id !== itemId);
+		cart_state.value = next_state;
+		writeStoredCartStateToStorage(next_state);
 	}
 
 	function updateCartItem(itemId: string, nextSizeKey: string, nextQty: number, customSizeLabel = '') {
 		const qty = Number(nextQty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
-		const normalizedSizeKey = sizeOptions.includes(
-			nextSizeKey as (typeof sizeOptions)[number]
+		const normalized_size_key = size_options.includes(
+			nextSizeKey as (typeof size_options)[number]
 		)
 			? nextSizeKey
 			: 'custom';
 
-		const nextState = mergePlainProductCartItems(
-			cartState.value.map((item) => {
+		const next_state = mergePlainProductCartItems(
+			cart_state.value.map((item) => {
 				if (item.id !== itemId) return item;
-				const unitPrice = item.qty > 0 ? item.total / item.qty : 0;
+				const unit_price = item.qty > 0 ? item.total / item.qty : 0;
 				return {
 					...item,
-					sizeKey: normalizedSizeKey,
-					customSizeLabel: normalizedSizeKey === 'custom' ? customSizeLabel : '',
+					sizeKey: normalized_size_key,
+					customSizeLabel: normalized_size_key === 'custom' ? customSizeLabel : '',
 					qty,
-					total: unitPrice * qty,
+					total: unit_price * qty,
 				};
 			})
 		);
 
-		cartState.value = nextState;
-		writeStoredCartStateToStorage(nextState);
+		cart_state.value = next_state;
+		writeStoredCartStateToStorage(next_state);
 	}
 
 	async function editCartItem(itemId: string) {
-		const entry = cartState.value.find((item) => item.id === itemId);
+		const entry = cart_state.value.find((item) => item.id === itemId);
 		if (!entry) return;
-		editingCartItemId.value = itemId;
+		editing_cart_item_id.value = itemId;
 
-		if (sizeOptions.includes(entry.sizeKey as (typeof sizeOptions)[number])) {
-			selectedSize.value = entry.sizeKey as (typeof sizeOptions)[number];
+		if (size_options.includes(entry.sizeKey as (typeof size_options)[number])) {
+			selected_size.value = entry.sizeKey as (typeof size_options)[number];
 		}
-		selectedQty.value = entry.qty;
-		selectedId.value = entry.productId;
-		hasPickedProduct.value = true;
+		selected_qty.value = entry.qty;
+		selected_id.value = entry.productId;
+		has_picked_product.value = true;
 
-		const targetSlug = getProductSlugByCategory(entry.productId, entry.category);
-		const targetPath = withCountry(`/${entry.category}/${targetSlug}`);
+		const target_slug = getProductSlugByCategory(entry.productId, entry.category);
+		const target_path = withCountry(`/${entry.category}/${target_slug}`);
 
-		if (route.path !== targetPath) {
-			preserveUploadModalOnNextRouteSync = true;
-			await router.push(targetPath);
+		if (route.path !== target_path) {
+			preserve_upload_modal_on_next_route_sync = true;
+			await router.push(target_path);
 		}
 
 		if (entry.artworkPreviewUrl) {
-			artworkPreviewUrl.value = entry.artworkPreviewUrl;
-			artworkFile.value = null;
+			artwork_preview_url.value = entry.artworkPreviewUrl;
+			artwork_file.value = null;
 		} else {
 			removeArtwork();
 		}
 
-		uploadModalOpen.value = true;
-		cartPreviewOpen.value = false;
+		upload_modal_open.value = true;
+		cart_preview_open.value = false;
 	}
 
 	function openCartPreview() {
-		uploadModalOpen.value = false;
-		featuredOpen.value = true;
-		cartPreviewOpen.value = true;
+		upload_modal_open.value = false;
+		featured_open.value = true;
+		cart_preview_open.value = true;
 	}
 
 	function skipAndUploadLater() {
-		const appended = appendCurrentSelectionToCart('', '', editingCartItemId.value);
+		const appended = appendCurrentSelectionToCart('', '', editing_cart_item_id.value);
 		if (appended) {
-			editingCartItemId.value = null;
+			editing_cart_item_id.value = null;
 			removeArtwork();
 			openCartPreview();
 		}
 	}
 
 	function closeFeaturedItems() {
-		featuredOpen.value = false;
+		featured_open.value = false;
 	}
 
 	function featuredStartPrice(product: ProductItem) {
@@ -464,7 +536,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function quantityPrice(qty: number) {
-		return unitPrice.value * qty;
+		return unit_price.value * qty;
 	}
 
 	function getProductName(product: ProductItem) {
@@ -491,13 +563,13 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	function resolveCatalogProductByApiSlug(slug: string, catalogProducts: ProductItem[]) {
 		if (!slug) return null;
 
-		const slugWithStickerSuffix =
+		const slug_with_sticker_suffix =
 			category.value === 'stickers' && !slug.endsWith('-sticker')
 				? `${slug}-sticker`
 				: slug;
 
 		return (
-			catalogProducts.find((item) => item.id === slugWithStickerSuffix) ||
+			catalogProducts.find((item) => item.id === slug_with_sticker_suffix) ||
 			catalogProducts.find((item) => item.id === slug) ||
 			null
 		);
@@ -517,68 +589,68 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function applySelectionFromRoute() {
-		const routeProduct = route.params.product;
-		const slug = Array.isArray(routeProduct) ? routeProduct[0] : routeProduct;
+		const route_product = route.params.product;
+		const slug = Array.isArray(route_product) ? route_product[0] : route_product;
 
 		if (!slug) {
-			selectedId.value = null;
-			hasPickedProduct.value = false;
+			selected_id.value = null;
+			has_picked_product.value = false;
 			return;
 		}
 
-		const resolvedId = productSlugToId(slug);
-		if (!resolvedId) {
-			selectedId.value = null;
-			hasPickedProduct.value = false;
+		const resolved_id = productSlugToId(slug);
+		if (!resolved_id) {
+			selected_id.value = null;
+			has_picked_product.value = false;
 			return;
 		}
 
-		selectedId.value = resolvedId;
-		hasPickedProduct.value = true;
+		selected_id.value = resolved_id;
+		has_picked_product.value = true;
 	}
 
 	onBeforeUnmount(() => {
-		if (selectionNavigationTimer) {
-			clearTimeout(selectionNavigationTimer);
-			selectionNavigationTimer = null;
+		if (selection_navigation_timer) {
+			clearTimeout(selection_navigation_timer);
+			selection_navigation_timer = null;
 		}
-		selectionNavigationInFlight.value = false;
-		preserveUploadModalOnNextRouteSync = false;
+		selection_navigation_in_flight.value = false;
+		preserve_upload_modal_on_next_route_sync = false;
 		setSelectionScrollLock(false);
 		setOverlayBodyScrollLock(false);
 	});
 
 	return {
-		sizeFeatureCards,
-		quantityOptions,
-		categoryData,
-		selectedId,
-		selectedSize,
-		selectedQty,
-		selectionNavigationInFlight,
-		hasPickedProduct,
-		uploadModalOpen,
-		addToCartLoading,
-		cartPreviewOpen,
-		featuredOpen,
-		specialInstructions,
-		artworkFile,
-		artworkPreviewUrl,
-		artworkInputRef,
-		sizeOptionModels,
-		selectedProduct,
-		cartItems,
-		cartGrandTotal,
+		size_feature_cards,
+		quantity_options,
+		category_data,
+		selected_id,
+		selected_size,
+		selected_qty,
+		selection_navigation_in_flight,
+		has_picked_product,
+		upload_modal_open,
+		add_to_cart_loading,
+		cart_preview_open,
+		featured_open,
+		special_instructions,
+		artwork_file,
+		artwork_preview_url,
+		artwork_input_ref,
+		size_option_models,
+		selected_product,
+		cart_items,
+		cart_grand_total,
 		subtotal,
-		discountRate,
+		discount_rate,
 		total,
-		hasUploadedArtwork,
-		selectedSizeLabel,
-		featuredItems,
-		cartItemCount,
-		cartArtworkName,
-		cartArtworkSize,
-		cartArtworkExtension,
+		has_uploaded_artwork,
+		selected_size_label,
+		featured_items,
+		cart_item_count,
+		cart_artwork_name,
+		cart_artwork_size,
+		cart_artwork_extension,
 		selectProduct,
 		openUploadModal,
 		closeUploadModal,

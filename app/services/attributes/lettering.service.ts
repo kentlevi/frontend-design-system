@@ -3,7 +3,7 @@ import type { LetteringSpec, SizeSpec } from "~/types/products/attributes"
 
 export const useLetteringService = () => {
 
-	const selectionStore = useSelectionStore()
+	const selection_store = useSelectionStore()
 
 
 	const lettering = ref<LetteringSpec>({
@@ -31,7 +31,7 @@ export const useLetteringService = () => {
 
 
 	const letteringUpdate = () => {
-		const ssize = ref<SizeSpec>({
+		const size_spec = ref<SizeSpec>({
 			id: null,
 			custom: false,
 			label: 'Vinyl-Lettering',
@@ -39,9 +39,9 @@ export const useLetteringService = () => {
 			height: lettering.value.height
 		})
 
-		selectionStore.updateSize(ssize.value)
+		selection_store.updateSize(size_spec.value)
 
-		selectionStore.updateLetteringText(lettering.value.text)
+		selection_store.updateLetteringText(lettering.value.text)
 	}
 
 	const letteringTextUpdate = (value: string) => {

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const props = withDefaults(
+import { toRefs } from 'vue';
+
+const component_props = withDefaults(
 	defineProps<{
 		testId?: string;
 		fullHeight?: boolean;
@@ -9,13 +11,15 @@ const props = withDefaults(
 		fullHeight: false,
 	}
 );
+
+const { testId: test_id, fullHeight: full_height } = toRefs(component_props);
 </script>
 
 <template>
 	<section
 		class="status-background-page"
-		:class="{ 'status-background-page--full': props.fullHeight }"
-		:data-testid="props.testId"
+		:class="{ 'status-background-page--full': full_height }"
+		:data-testid="test_id"
 	>
 		<div class="status-background-shell">
 			<div class="status-background-grid">

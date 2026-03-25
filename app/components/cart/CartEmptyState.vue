@@ -7,35 +7,35 @@ const props = defineProps<{
 	discoverItems: CartEmptyProduct[];
 }>();
 
-const itemsPerPage = 6;
-const pageIndex = ref(0);
+const items_per_page = 6;
+const page_index = ref(0);
 
-const pageCount = computed(() => Math.max(1, Math.ceil(props.discoverItems.length / itemsPerPage)));
-const discoverPages = computed(() => {
+const page_count = computed(() => Math.max(1, Math.ceil(props.discoverItems.length / items_per_page)));
+const discover_pages = computed(() => {
 	const pages: CartEmptyProduct[][] = [];
-	for (let index = 0; index < props.discoverItems.length; index += itemsPerPage) {
-		pages.push(props.discoverItems.slice(index, index + itemsPerPage));
+	for (let index = 0; index < props.discoverItems.length; index += items_per_page) {
+		pages.push(props.discoverItems.slice(index, index + items_per_page));
 	}
 	return pages.length ? pages : [[]];
 });
-const canGoPrev = computed(() => pageIndex.value > 0);
-const canGoNext = computed(() => pageIndex.value < pageCount.value - 1);
+const can_go_prev = computed(() => page_index.value > 0);
+const can_go_next = computed(() => page_index.value < page_count.value - 1);
 
 function prevPage() {
-	if (!canGoPrev.value) return;
-	pageIndex.value -= 1;
+	if (!can_go_prev.value) return;
+	page_index.value -= 1;
 }
 
 function nextPage() {
-	if (!canGoNext.value) return;
-	pageIndex.value += 1;
+	if (!can_go_next.value) return;
+	page_index.value += 1;
 }
 
 watch(
 	() => props.discoverItems.length,
 	() => {
-		if (pageIndex.value > pageCount.value - 1) {
-			pageIndex.value = Math.max(0, pageCount.value - 1);
+		if (page_index.value > page_count.value - 1) {
+			page_index.value = Math.max(0, page_count.value - 1);
 		}
 	}
 );
@@ -78,7 +78,7 @@ watch(
 						:icon-only="true"
 						icon="regular-angle-left"
 						icon-size="24"
-						:disabled="!canGoPrev"
+						:disabled="!can_go_prev"
 						:sr-label="'Previous products'"
 						aria-label="Previous products"
 						class="cart-empty-state-arrow"
@@ -91,7 +91,7 @@ watch(
 						:icon-only="true"
 						icon="regular-angle-right"
 						icon-size="24"
-						:disabled="!canGoNext"
+						:disabled="!can_go_next"
 						:sr-label="'Next products'"
 						aria-label="Next products"
 						class="cart-empty-state-arrow"
@@ -105,11 +105,11 @@ watch(
 					<div class="cart-empty-state-discover-viewport">
 						<div
 							class="cart-empty-state-discover-track"
-							:style="{ transform: `translateX(-${pageIndex * 100}%)` }"
+							:style="{ transform: `translateX(-${page_index * 100}%)` }"
 						>
 							<div
-								v-for="(page, pageNumber) in discoverPages"
-								:key="`discover-page-${pageNumber}`"
+								v-for="(page, page_number) in discover_pages"
+								:key="`discover-page-${page_number}`"
 								class="cart-empty-state-discover-page"
 							>
 								<div class="cart-empty-state-discover-grid">

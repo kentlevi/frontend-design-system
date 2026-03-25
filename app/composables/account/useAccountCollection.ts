@@ -7,10 +7,10 @@ export function useAccountCollection<T>(items: readonly T[]) {
 }
 
 export function useAccountCollectionWithActive<T>(items: readonly T[]) {
-	const activeItem = computed(() => items[0] ?? null);
+	const active_item = computed(() => items[0] ?? null);
 
 	return {
 		items,
-		activeItem,
+		active_item,
 	};
 }

@@ -386,7 +386,15 @@ const caretHandler = (event: MouseEvent) => {
 
 const onEditorInput = () => {
 	if (textField.value) {
-		textField.value.innerText = getEditorValue().replace(/\n+/g, ' ')
+		const rawValue = textField.value.innerText.replace(/\u00A0/g, ' ').replace(/\r/g, '')
+		const normalizedValue = rawValue.replace(/\n+/g, ' ')
+
+		if (rawValue !== normalizedValue) {
+			textField.value.innerText = normalizedValue
+			nextTick(() => {
+				focusAtEnd()
+			})
+		}
 	}
 	editorReady.value = true
 	textHandler()

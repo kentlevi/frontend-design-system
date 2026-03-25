@@ -2,7 +2,7 @@ import { useUsersStore } from '~/stores/users/users.store';
 import { getCurrentAuthenticatedUser, logout } from '~/services/auth/auth.service'
 
 export function useAuthUser() {
-	const userStore = useUsersStore()
+	const user_store = useUsersStore()
 
 	/**
      * Fetch authenticated user and store it
@@ -15,18 +15,18 @@ export function useAuthUser() {
 			const profile = response.data?.profile ?? null
 
 			if (!user) {
-				userStore.clearUser()
+				user_store.clearUser()
 				return false
 			}
 
-			userStore.setUser({
+			user_store.setUser({
 				...user,
 				profile
 			})
 
 			return true
 		} catch {
-			userStore.clearUser()
+			user_store.clearUser()
 			return false
 		}
 	}
@@ -42,7 +42,7 @@ export function useAuthUser() {
 				return false
 			}
 
-			userStore.clearUser()
+			user_store.clearUser()
 
 			await navigateTo('/')
 

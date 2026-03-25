@@ -39,10 +39,10 @@ const emit = defineEmits<{
 }>();
 
 const attrs = useAttrs();
-const testId = useControlTestId(attrs);
-const rootAttrs = useRootAttrs(attrs, testId);
-const inputAttrs = useControlAttrs(attrs, testId);
-const isChecked = computed(() => props.modelValue === props.value);
+const test_id = useControlTestId(attrs);
+const root_attrs = useRootAttrs(attrs, test_id);
+const input_attrs = useControlAttrs(attrs, test_id);
+const is_checked = computed(() => props.modelValue === props.value);
 
 function onChange() {
 	emit('update:modelValue', props.value);
@@ -52,19 +52,19 @@ function onChange() {
 
 <template>
 	<label
-		v-bind="rootAttrs"
+		v-bind="root_attrs"
 		class="ui-radio"
 		:data-size="props.size"
 		:data-state="props.state !== 'default' ? props.state : null"
 		:data-disabled="props.disabled || null"
-		:data-checked="isChecked || null"
+		:data-checked="is_checked || null"
 	>
 		<input
-			v-bind="inputAttrs"
+			v-bind="input_attrs"
 			class="ui-radio-input"
 			type="radio"
 			:name="props.name || undefined"
-			:checked="isChecked"
+			:checked="is_checked"
 			:value="props.value"
 			:disabled="props.disabled"
 			@change="onChange"

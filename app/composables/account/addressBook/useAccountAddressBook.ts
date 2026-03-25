@@ -5,9 +5,9 @@ import type { AddressSection } from '~/types/account/addressBook';
 
 export function useAccountAddressBook() {
 	const collection = useAccountCollection(accountAddressBookItems);
-	const sectionOrder: AddressSection[] = ['shipping', 'billing', 'dropShipping'];
-	const itemsBySection = computed(() => {
-		return sectionOrder.map((section) => ({
+	const section_order: AddressSection[] = ['shipping', 'billing', 'dropShipping'];
+	const items_by_section = computed(() => {
+		return section_order.map((section) => ({
 			section,
 			items: collection.items.filter((item) => item.section === section),
 		})).filter((group) => group.items.length > 0);
@@ -15,6 +15,6 @@ export function useAccountAddressBook() {
 
 	return {
 		...collection,
-		itemsBySection,
+		items_by_section,
 	}
 }

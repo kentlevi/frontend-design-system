@@ -4,34 +4,34 @@ import { useCheckoutMemberPage } from '~/composables/checkout/member/useCheckout
 const {
 	withCountry,
 	t,
-	selectedCheckoutItems,
-	orderTotal,
-	orderDiscount,
-	orderShippingFee,
-	orderSubtotal,
+	selected_checkout_items,
+	order_total,
+	order_discount,
+	order_shipping_fee,
+	order_subtotal,
 	formatPrice,
 	sizeDimOnly,
-	savedShippingAddresses,
-	selectedShippingAddressId,
-	shipToAnotherAddress,
-	selectedShippingMethod,
-	selectedPaymentMethod,
-	activeShippingMethods,
-	activePaymentMethods,
-	paymentBrands,
-	dropShippingEnabled,
-	useShippingAsBilling,
-	pointsAvailable,
-	pointsToUse,
-	couponCode,
-	cardNumber,
+	saved_shipping_addresses,
+	selected_shipping_address_id,
+	ship_to_another_address,
+	selected_shipping_method,
+	selected_payment_method,
+	active_shipping_methods,
+	active_payment_methods,
+	payment_brands,
+	drop_shipping_enabled,
+	use_shipping_as_billing,
+	points_available,
+	points_to_use,
+	coupon_code,
+	card_number,
 	expiry,
 	cvv,
 	useAllPoints,
-	completingCheckout,
-	completeLoaderRef,
+	completing_checkout,
+	complete_loader_ref,
 	completeCheckout,
-	shippingMethodDetails,
+	shipping_method_details,
 	itemMeta,
 } = useCheckoutMemberPage();
 </script>
@@ -44,11 +44,11 @@ const {
 		summary-class="checkout-member-summary"
 		test-id="checkout-member-page"
 		loading-test-id="checkout-member-complete-loading-overlay"
-		:loading="completingCheckout"
+		:loading="completing_checkout"
 		:loading-label="t('checkout.member.completeCheckout')"
 	>
 		<template #loader>
-			<div ref="completeLoaderRef" />
+			<div ref="complete_loader_ref" />
 		</template>
 
 		<template #main>
@@ -62,18 +62,18 @@ const {
 
 				<div class="checkout-member-shipping-group">
 					<div class="checkout-member-address-group">
-						<UiRadio v-model="shipToAnotherAddress" :value="false" name="shipping-mode" class="checkout-member-radio-line">
+						<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 							{{ t('checkout.member.myShippingAddress') }}
 						</UiRadio>
 
 						<div class="checkout-member-address-grid">
 							<button
-								v-for="address in savedShippingAddresses"
+								v-for="address in saved_shipping_addresses"
 								:key="address.id"
 								type="button"
 								class="checkout-member-address-card"
-								:class="{ 'is-active': selectedShippingAddressId === address.id }"
-								@click="selectedShippingAddressId = address.id"
+								:class="{ 'is-active': selected_shipping_address_id === address.id }"
+								@click="selected_shipping_address_id = address.id"
 							>
 								<div class="checkout-member-address-top">
 									<strong class="checkout-member-address-name">{{ address.recipient }}</strong>
@@ -90,7 +90,7 @@ const {
 						</div>
 					</div>
 
-					<UiRadio v-model="shipToAnotherAddress" :value="true" name="shipping-mode" class="checkout-member-radio-line">
+					<UiRadio v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
 						{{ t('checkout.member.shipToAnotherAddress') }}
 					</UiRadio>
 
@@ -101,25 +101,25 @@ const {
 						</div>
 						<div class="checkout-member-card-grid">
 							<button
-								v-for="method in activeShippingMethods"
+								v-for="method in active_shipping_methods"
 								:key="method.key"
 								type="button"
 								class="checkout-member-choice-card"
-								:class="{ 'is-active': selectedShippingMethod === method.key }"
-								@click="selectedShippingMethod = method.key"
+								:class="{ 'is-active': selected_shipping_method === method.key }"
+								@click="selected_shipping_method = method.key"
 							>
-								<img :src="method.icon" :alt="shippingMethodDetails[method.key]?.name" class="checkout-member-choice-icon">
+								<img :src="method.icon" :alt="shipping_method_details[method.key]?.name" class="checkout-member-choice-icon">
 								<div class="checkout-member-choice-copy">
-									<div class="checkout-member-choice-title">{{ shippingMethodDetails[method.key]?.name }}</div>
-									<div class="checkout-member-choice-subtitle">{{ shippingMethodDetails[method.key]?.date }}</div>
+									<div class="checkout-member-choice-title">{{ shipping_method_details[method.key]?.name }}</div>
+									<div class="checkout-member-choice-subtitle">{{ shipping_method_details[method.key]?.date }}</div>
 								</div>
-								<div class="checkout-member-choice-price">{{ shippingMethodDetails[method.key]?.price }}</div>
+								<div class="checkout-member-choice-price">{{ shipping_method_details[method.key]?.price }}</div>
 							</button>
 						</div>
 					</div>
 
 					<div class="checkout-member-inline-row">
-						<UiCheckbox v-model="dropShippingEnabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
+						<UiCheckbox v-model="drop_shipping_enabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
 						<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted" :no-hover="true">
 							{{ t('checkout.member.viewDropShippingAddresses') }}
 						</UiButton>
@@ -133,12 +133,12 @@ const {
 				<div class="checkout-member-payment-group">
 					<div class="checkout-member-card-grid checkout-member-card-grid--payments">
 						<button
-							v-for="method in activePaymentMethods"
+							v-for="method in active_payment_methods"
 							:key="method.key"
 							type="button"
 							class="checkout-member-choice-card checkout-member-choice-card--payment"
-							:class="{ 'is-active': selectedPaymentMethod === method.key }"
-							@click="selectedPaymentMethod = method.key"
+							:class="{ 'is-active': selected_payment_method === method.key }"
+							@click="selected_payment_method = method.key"
 						>
 							<img :src="method.icon" :alt="t(`checkout.guest.paymentMethods.${method.i18nKey}.alt`)" class="checkout-member-choice-icon">
 							<div class="checkout-member-choice-title">{{ t(`checkout.guest.paymentMethods.${method.i18nKey}.label`) }}</div>
@@ -148,7 +148,7 @@ const {
 					<div class="checkout-member-payment-meta">
 						<div class="checkout-member-subnote">{{ t('checkout.member.paymentSubnote') }}</div>
 						<div class="checkout-member-payment-brands">
-							<div v-for="brand in paymentBrands" :key="brand.key" class="checkout-member-payment-brand">
+							<div v-for="brand in payment_brands" :key="brand.key" class="checkout-member-payment-brand">
 								<img :src="brand.icon" :alt="brand.label" class="checkout-member-payment-brand-icon">
 							</div>
 						</div>
@@ -164,7 +164,7 @@ const {
 						label-class="checkout-form-field-label"
 						label-text-class="checkout-form-field-label-text"
 					>
-						<UiInput v-model="cardNumber" size="lg" :placeholder="t('checkout.member.fields.cardNumber.placeholder')" />
+						<UiInput v-model="card_number" size="lg" :placeholder="t('checkout.member.fields.cardNumber.placeholder')" />
 					</UiFormField>
 					<div class="checkout-member-field-grid">
 						<UiFormField
@@ -191,7 +191,7 @@ const {
 				</div>
 
 				<div class="checkout-member-inline-row">
-					<UiCheckbox v-model="useShippingAsBilling">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
+					<UiCheckbox v-model="use_shipping_as_billing">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
 					<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link is-muted" :no-hover="true">
 						{{ t('checkout.member.viewBillingAddresses') }}
 					</UiButton>
@@ -203,15 +203,15 @@ const {
 			<CheckoutSummaryCard
 				tone="member"
 				:title="t('checkout.member.orderSummary')"
-				:items="selectedCheckoutItems"
+				:items="selected_checkout_items"
 				:subtotal-label="t('checkout.member.summary.subtotal')"
-				:shipping-fee-label="t('checkout.member.summary.shippingFee', { method: shippingMethodDetails[selectedShippingMethod]?.name })"
+				:shipping-fee-label="t('checkout.member.summary.shippingFee', { method: shipping_method_details[selected_shipping_method]?.name })"
 				:discounts-label="t('checkout.member.summary.discounts')"
 				:total-label="t('checkout.member.summary.total')"
-				:subtotal-value="formatPrice(orderSubtotal)"
-				:shipping-fee-value="formatPrice(orderShippingFee)"
-				:discount-value="`-${formatPrice(orderDiscount)}`"
-				:total-value="formatPrice(orderTotal)"
+				:subtotal-value="formatPrice(order_subtotal)"
+				:shipping-fee-value="formatPrice(order_shipping_fee)"
+				:discount-value="`-${formatPrice(order_discount)}`"
+				:total-value="formatPrice(order_total)"
 				:complete-label="t('checkout.member.completeCheckout')"
 				:agreement-prefix="t('checkout.member.agreement.prefix')"
 				:agreement-terms="t('checkout.member.agreement.terms')"
@@ -220,12 +220,12 @@ const {
 				:agreement-suffix="t('checkout.member.agreement.suffix')"
 				:terms-path="withCountry('/terms-of-use')"
 				:privacy-path="withCountry('/privacy-policy')"
-				:disabled="selectedCheckoutItems.length === 0"
-				:loading="completingCheckout"
+				:disabled="selected_checkout_items.length === 0"
+				:loading="completing_checkout"
 				:size-dim-only="sizeDimOnly"
 				:format-price="formatPrice"
 				:item-meta="itemMeta"
-				@submit="completeCheckout(selectedCheckoutItems.length > 0)"
+				@submit="completeCheckout(selected_checkout_items.length > 0)"
 			>
 				<template #after-items>
 					<div class="checkout-member-perks">
@@ -240,10 +240,10 @@ const {
 										<span class="checkout-member-perk-label-primary">{{ t('checkout.member.points') }}</span>
 										<UiIcon name="regular-question-circle" size="20" color="var(--text-secondary)" decorative />
 									</div>
-									<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: pointsAvailable.toFixed(2) }) }}</span>
+									<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: points_available.toFixed(2) }) }}</span>
 								</div>
 								<div class="checkout-member-perk-control">
-									<UiInput v-model="pointsToUse" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
+									<UiInput v-model="points_to_use" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
 									<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="useAllPoints">
 										{{ t('checkout.member.useAll') }}
 									</UiButton>
@@ -255,7 +255,7 @@ const {
 									<span class="checkout-member-perk-label-primary">{{ t('checkout.member.coupon') }}</span>
 								</div>
 								<div class="checkout-member-perk-control">
-									<UiInput v-model="couponCode" size="md" :placeholder="t('checkout.member.couponPlaceholder')" />
+									<UiInput v-model="coupon_code" size="md" :placeholder="t('checkout.member.couponPlaceholder')" />
 									<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button">
 										{{ t('checkout.member.applyCoupon') }}
 									</UiButton>

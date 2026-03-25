@@ -9,7 +9,7 @@ import {
 	getAuthResponseCode,
 } from '~/helpers/auth/auth.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useAuthUser } from '~/composables/auth/useAuthUser'
+import { useAuthUser } from '~/composables/auth/useAuthUser';
 import {
 	GUEST_LOGIN_TOAST_PENDING_KEY,
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
@@ -25,66 +25,59 @@ interface UseLoginPageFormOptions {
 	onMemberLoginSuccess?: () => void;
 }
 
+type NonMemberVerificationSession = {
+	email?: string | null;
+	order_number?: string | null;
+	token?: string | null;
+	expires_in?: string | number | Date | null;
+};
+
 export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	const route = useRoute();
-
 	const { t } = useI18n();
-
 	const { withCountry } = useCountry();
 
 	const {
-		memberType,
-		keepSignedIn,
-		showPassword,
-		isNonMember,
+		member_type,
+		keep_signed_in,
+		show_password,
+		is_non_member,
 		setMemberType,
 		togglePassword,
 		setKeepSignedIn,
 	} = useLoginForm();
 
-	// Reactive state
-	const isVerificationModalOpen = ref(false);
-	const isForgotPasswordModalOpen = ref(false);
-	const isCheckingGuestOrder = ref(false);
-	const isSigningInMember = ref(false);
-	const guestVerificationEmail = ref('');
-	const guestVerificationOrderNumber = ref('');
-	const guestVerificationToken = ref('');
-	const guestVerificationCode = ref('');
-	const guestVerificationError = ref('');
-	const resendLimitReached = ref('');
-	const isGuestVerifying = ref(false);
-	const guestResendCooldown = useVerificationCooldown();
-	const guestResendCooldownRemaining = guestResendCooldown.remaining;
-	type NonMemberVerificationSession = {
-		email?: string | null;
-		order_number?: string | null;
-		token?: string | null;
-		expires_in?: string | number | Date | null;
-	};
-	const guestVerificationSession = ref<NonMemberVerificationSession | null>(null);
+	const is_verification_modal_open = ref(false);
+	const is_forgot_password_modal_open = ref(false);
+	const is_checking_guest_order = ref(false);
+	const is_signing_in_member = ref(false);
+	const guest_verification_email = ref('');
+	const guest_verification_order_number = ref('');
+	const guest_verification_token = ref('');
+	const guest_verification_code = ref('');
+	const guest_verification_error = ref('');
+	const resend_limit_reached = ref('');
+	const is_guest_verifying = ref(false);
+	const guest_resend_cooldown = useVerificationCooldown();
+	const guest_resend_cooldown_remaining = guest_resend_cooldown.remaining;
+	const guest_verification_session = ref<NonMemberVerificationSession | null>(null);
 
-	function clearGuestResendCooldownTimer() {
-		guestResendCooldown.clear();
-	}
+	const member_email = ref('');
+	const member_password = ref('');
+	const non_member_email = ref('');
+	const non_member_order_number = ref('');
 
-	const memberEmail = ref('');
-	const memberPassword = ref('');
-	const nonMemberEmail = ref('');
-	const nonMemberOrderNumber = ref('');
+	const member_email_error = ref('');
+	const member_password_error = ref('');
+	const member_invalid_credentials = ref(false);
+	const non_member_email_error = ref('');
+	const non_member_email_has_error = ref(false);
+	const non_member_order_error = ref('');
 
-	const memberEmailError = ref('');
-	const memberPasswordError = ref('');
-	const memberInvalidCredentials = ref(false);
-	const nonMemberEmailError = ref('');
-	const nonMemberEmailHasError = ref(false);
-	const nonMemberOrderError = ref('');
-
-	// Computed
-	const submitLabel = computed(() => {
+	const submit_label = computed(() => {
 		const is_login_page = route.path === withCountry('/auth/login');
 
-		if (isNonMember.value) {
+		if (is_non_member.value) {
 			return is_login_page
 				? t('auth.login.checkOrder')
 				: t('auth.login.signIn');
@@ -92,32 +85,37 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 
 		return t('auth.login.signIn');
 	});
-	const isPageLoginBusy = computed(() =>
-		isCheckingGuestOrder.value || isSigningInMember.value
+
+	const is_page_login_busy = computed(() =>
+		is_checking_guest_order.value || is_signing_in_member.value
 	);
 
-	const postLoginRedirect = computed(() =>
+	const post_login_redirect = computed(() =>
 		resolvePostLoginRedirect(getRedirectCandidate(), withCountry)
 	);
 
-	// Helper functions
 	function getRedirectCandidate() {
-		const queryRedirect = Array.isArray(route.query.redirect)
+		const query_redirect = Array.isArray(route.query.redirect)
 			? route.query.redirect[0]
 			: route.query.redirect;
-		if (queryRedirect) return queryRedirect;
+		if (query_redirect) return query_redirect;
 		if (!import.meta.client) return null;
 		return window.history.state?.back ?? null;
 	}
 
+	function clearGuestResendCooldownTimer() {
+		guest_resend_cooldown.clear();
+	}
+
 	function clearErrors() {
-		memberEmailError.value = '';
-		memberPasswordError.value = '';
-		memberInvalidCredentials.value = false;
-		nonMemberEmailError.value = '';
-		nonMemberEmailHasError.value = false;
-		nonMemberOrderError.value = '';
-		guestVerificationError.value = '';
+		member_email_error.value = '';
+		member_password_error.value = '';
+		member_invalid_credentials.value = false;
+		non_member_email_error.value = '';
+		non_member_email_has_error.value = false;
+		non_member_order_error.value = '';
+		guest_verification_error.value = '';
+		resend_limit_reached.value = '';
 	}
 
 	function isVerificationSessionExpired(session: NonMemberVerificationSession | null): boolean {
@@ -126,8 +124,9 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	function applyGuestResendCooldownFromResponse(response: unknown) {
-		guestResendCooldown.applyFromResponse(response);
+		guest_resend_cooldown.applyFromResponse(response);
 	}
+
 	function setGuestLoginToastPending() {
 		if (!import.meta.client) return;
 		window.localStorage.setItem(GUEST_LOGIN_TOAST_PENDING_KEY, '1');
@@ -135,9 +134,9 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	async function fetchUserProfile() {
-		const { fetchAndStoreUser } = useAuthUser()
-		setGuestLoginToastPending()
-		await fetchAndStoreUser()
+		const { fetchAndStoreUser } = useAuthUser();
+		setGuestLoginToastPending();
+		await fetchAndStoreUser();
 	}
 
 	function handleApiError(error: unknown, fallbackMessage: string) {
@@ -145,14 +144,14 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	// Watchers
-	watch(memberType, () => {
+	watch(member_type, () => {
 		clearErrors();
-		resendLimitReached.value = '';
+		resend_limit_reached.value = '';
 	});
 
-	watch(guestResendCooldownRemaining, (value) => {
+	watch(guest_resend_cooldown_remaining, (value) => {
 		if (value <= 0) {
-			resendLimitReached.value = '';
+			resend_limit_reached.value = '';
 		}
 	});
 
@@ -160,212 +159,215 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	function validateMember() {
 		clearErrors();
 
-		if (!memberEmail.value.trim()) {
-			memberEmailError.value = t('auth.login.validation.fieldBlank');
-		} else if (!isValidAuthEmail(memberEmail.value.trim())) {
-			memberEmailError.value = t('auth.login.validation.emailInvalid');
+		if (!member_email.value.trim()) {
+			member_email_error.value = t('auth.login.validation.fieldBlank');
+		} else if (!isValidAuthEmail(member_email.value.trim())) {
+			member_email_error.value = t('auth.login.validation.emailInvalid');
 		}
 
-		if (!memberPassword.value.trim()) {
-			memberPasswordError.value = t('auth.login.validation.fieldBlank');
+		if (!member_password.value.trim()) {
+			member_password_error.value = t('auth.login.validation.fieldBlank');
 		}
 
-		return !memberEmailError.value && !memberPasswordError.value;
+		return !member_email_error.value && !member_password_error.value;
 	}
 
 	function validateNonMember() {
-		nonMemberEmailError.value = '';
-		nonMemberEmailHasError.value = false;
-		nonMemberOrderError.value = '';
+		non_member_email_error.value = '';
+		non_member_email_has_error.value = false;
+		non_member_order_error.value = '';
 
-		if (!nonMemberEmail.value.trim()) {
-			nonMemberEmailError.value = t('auth.login.validation.fieldBlank');
-			nonMemberEmailHasError.value = true;
-		} else if (!isValidAuthEmail(nonMemberEmail.value.trim())) {
-			nonMemberEmailError.value = t('auth.login.validation.emailInvalid');
-			nonMemberEmailHasError.value = true;
+		if (!non_member_email.value.trim()) {
+			non_member_email_error.value = t('auth.login.validation.fieldBlank');
+			non_member_email_has_error.value = true;
+		} else if (!isValidAuthEmail(non_member_email.value.trim())) {
+			non_member_email_error.value = t('auth.login.validation.emailInvalid');
+			non_member_email_has_error.value = true;
 		}
 
-		if (!options.allowNonMemberEmailOnly && !nonMemberOrderNumber.value.trim()) {
-			nonMemberOrderError.value = t('auth.login.validation.fieldBlank');
+		if (!options.allowNonMemberEmailOnly && !non_member_order_number.value.trim()) {
+			non_member_order_error.value = t('auth.login.validation.fieldBlank');
 		}
 
-		return !nonMemberEmailError.value && !nonMemberOrderError.value;
+		return !non_member_email_error.value && !non_member_order_error.value;
 	}
 
-	// Input handlers
 	function onMemberEmailInput(value: string) {
-		memberEmail.value = value;
-		memberEmailError.value = '';
-		memberInvalidCredentials.value = false;
+		member_email.value = value;
+		member_email_error.value = '';
+		member_invalid_credentials.value = false;
 	}
 
 	function onMemberPasswordInput(value: string) {
-		memberPassword.value = value;
-		memberPasswordError.value = '';
-		memberEmailError.value = '';
-		memberInvalidCredentials.value = false;
+		member_password.value = value;
+		member_password_error.value = '';
+		member_email_error.value = '';
+		member_invalid_credentials.value = false;
 	}
 
 	function onNonMemberEmailInput(value: string) {
-		nonMemberEmail.value = value;
-		nonMemberEmailError.value = '';
-		nonMemberEmailHasError.value = false;
-		resendLimitReached.value = '';
+		non_member_email.value = value;
+		non_member_email_error.value = '';
+		non_member_email_has_error.value = false;
+		resend_limit_reached.value = ''
 	}
 
 	function onNonMemberOrderInput(value: string) {
-		nonMemberOrderNumber.value = value;
-		nonMemberOrderError.value = '';
-		resendLimitReached.value = '';
+		non_member_order_number.value = value;
+		non_member_order_error.value = '';
+		resend_limit_reached.value = '';
 	}
 
-	// Main handlers
 	async function onSubmitClick() {
-		clearErrors()
-		if (isNonMember.value === false) {
+		clearErrors();
+		if (!is_non_member.value) {
 			await memberLoginHandler();
-		} else {
-			await nonMemberLoginHandler();
+			return;
 		}
+
+		await nonMemberLoginHandler();
 	}
 
 	async function memberLoginHandler() {
 		if (!validateMember()) return;
 
-		const { handleMemberLogin } = useLoginUser();
-		const response = await handleMemberLogin({
-			email: memberEmail.value.trim(),
-			password: memberPassword.value.trim(),
-			remember_me: keepSignedIn.value
-		});
+		try {
+			is_signing_in_member.value = true;
+			const { handleMemberLogin } = useLoginUser();
+			const response = await handleMemberLogin({
+				email: member_email.value.trim(),
+				password: member_password.value.trim(),
+				remember_me: keep_signed_in.value,
+			});
 
-		if (!response.success) {
-			memberEmailError.value = t('auth.login.validation.credentialsMismatch');
-			memberPasswordError.value = '';
-			memberInvalidCredentials.value = true;
-			return response;
+			if (!response.success) {
+				member_email_error.value = t('auth.login.validation.credentialsMismatch');
+				member_password_error.value = '';
+				member_invalid_credentials.value = true;
+				return response;
+			}
+
+			member_invalid_credentials.value = false;
+
+			if (import.meta.client) {
+				window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
+				window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
+				window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
+			}
+
+			options.onMemberLoginSuccess?.();
+
+			if (options.skipMemberRedirect) return response;
+
+			return await navigateTo(post_login_redirect.value);
+		} finally {
+			is_signing_in_member.value = false;
 		}
-
-		memberInvalidCredentials.value = false;
-
-		if (import.meta.client) {
-			window.localStorage.setItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY, '1');
-			window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
-			window.dispatchEvent(new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT));
-		}
-
-		options.onMemberLoginSuccess?.();
-
-		if (options.skipMemberRedirect) return response;
-
-		return await navigateTo(postLoginRedirect.value);
 	}
 
 	async function nonMemberLoginHandler() {
 		if (!validateNonMember()) return;
 
-		const email = nonMemberEmail.value.trim();
-		const order_number = nonMemberOrderNumber.value.trim();
-		const session_email = (guestVerificationSession.value?.email || '').trim().toLowerCase();
-		const session_order_number = (guestVerificationSession.value?.order_number || '').trim();
-		const session_token = (guestVerificationSession.value?.token || '').trim();
+		const email_value = non_member_email.value.trim();
+		const order_number = non_member_order_number.value.trim();
+		const session_email = (guest_verification_session.value?.email || '').trim().toLowerCase();
+		const session_order_number = (guest_verification_session.value?.order_number || '').trim();
+		const session_token = (guest_verification_session.value?.token || '').trim();
 		const can_skip_verification_request =
-			guestResendCooldownRemaining.value > 0
-			&& !isVerificationSessionExpired(guestVerificationSession.value)
-			&& session_email === email.toLowerCase()
+			guest_resend_cooldown_remaining.value > 0
+			&& !isVerificationSessionExpired(guest_verification_session.value)
+			&& session_email === email_value.toLowerCase()
 			&& session_order_number === order_number
 			&& session_token !== '';
 
 		if (can_skip_verification_request) {
-			guestVerificationEmail.value = email;
-			guestVerificationOrderNumber.value = order_number;
-			guestVerificationToken.value = session_token;
-			isVerificationModalOpen.value = true;
+			guest_verification_email.value = email_value;
+			guest_verification_order_number.value = order_number;
+			guest_verification_token.value = session_token;
+			is_verification_modal_open.value = true;
 			return;
 		}
 
 		try {
-			isGuestVerifying.value = true;
+			is_checking_guest_order.value = true;
+			is_guest_verifying.value = true;
 			const { handleNonMemberVerification } = useLoginUser();
 			const response = await handleNonMemberVerification({
-				email,
+				email: email_value,
 				order_number,
 				is_resend: false,
 			});
 
-			const message = getAuthResponseMessage(response);
+			const response_message = getAuthResponseMessage(response);
 			const message_code = getAuthResponseMessageCode(response);
 
 			if (!response.success) {
 				const code = getAuthResponseCode(response);
 				const message = getAuthResponseMessage(response);
 				if (code === 'max_resend_reached') {
-					resendLimitReached.value = message || t('auth.verification.invalidCode');
+					resend_limit_reached.value = message || t('auth.verification.invalidCode');
 					applyGuestResendCooldownFromResponse(response);
-					guestVerificationError.value = '';
-					nonMemberEmailError.value = '';
-					nonMemberOrderError.value = '';
-					isVerificationModalOpen.value = true
+					guest_verification_error.value = '';
+					non_member_email_error.value = '';
+					non_member_order_error.value = '';
+					is_verification_modal_open.value = true
 					return response;
 				}
 			}
 
 			if (response.success && message_code === 'login_success') {
 				await fetchUserProfile();
-				return await navigateTo(postLoginRedirect.value);
+				return await navigateTo(post_login_redirect.value);
 			}
 
 			if (!response.success) {
-				nonMemberEmailError.value = '';
-				nonMemberEmailHasError.value = true;
-				nonMemberOrderError.value = t('auth.login.validation.orderNotFound');
+				non_member_email_error.value = '';
+				non_member_email_has_error.value = true;
+				non_member_order_error.value = t('auth.login.validation.orderNotFound');
 				if (message_code === 'max_resend_reached') {
-					resendLimitReached.value = message;
+					resend_limit_reached.value = response_message;
 					applyGuestResendCooldownFromResponse(response);
-					guestVerificationError.value = '';
+					guest_verification_error.value = '';
 				} else {
-					guestVerificationError.value = message;
+					guest_verification_error.value = response_message;
 				}
-
 				return;
 			}
 
-			guestVerificationEmail.value = email;
-			guestVerificationOrderNumber.value = order_number;
-			guestVerificationToken.value = (response.data?.token || '').trim();
-			guestVerificationSession.value = {
-				email,
+			guest_verification_email.value = email_value;
+			guest_verification_order_number.value = order_number;
+			guest_verification_token.value = (response.data?.token || '').trim();
+			guest_verification_session.value = {
+				email: email_value,
 				order_number,
 				token: response.data?.token || null,
 				expires_in: response.data?.expires_in || null,
 			};
-			resendLimitReached.value = '';
+			resend_limit_reached.value = '';
 			applyGuestResendCooldownFromResponse(response);
-			isVerificationModalOpen.value = true;
-			return;
+			is_verification_modal_open.value = true;
 		} catch (error) {
-			guestVerificationError.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
+			guest_verification_error.value = handleApiError(error, t('auth.guestVerification.invalidCode'));
 			console.error(error);
-			return;
 		} finally {
-			isGuestVerifying.value = false;
+			is_checking_guest_order.value = false;
+			is_guest_verifying.value = false;
 		}
 	}
-	async function resendGuestVerification() {
-		if (guestResendCooldownRemaining.value > 0) return;
 
-		const session_email = (guestVerificationSession.value?.email || '').trim();
-		const session_order_number = (guestVerificationSession.value?.order_number || '').trim();
+	async function resendGuestVerification() {
+		if (guest_resend_cooldown_remaining.value > 0) return;
+
+		const session_email = (guest_verification_session.value?.email || '').trim();
+		const session_order_number = (guest_verification_session.value?.order_number || '').trim();
 		if (!session_email || !session_order_number) {
-			guestVerificationError.value = t('auth.guestVerification.sessionExpired');
+			guest_verification_error.value = t('auth.guestVerification.sessionExpired');
 			return;
 		}
 
 		try {
-			isGuestVerifying.value = true;
+			is_guest_verifying.value = true;
 			const { handleNonMemberVerification } = useLoginUser();
-
 			const response = await handleNonMemberVerification({
 				email: session_email,
 				order_number: session_order_number,
@@ -373,132 +375,145 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 			});
 
 			if (!response.success) {
-				const message = getAuthResponseMessage(response);
-				const code = getAuthResponseMessageCode(response);
+				const response_message = getAuthResponseMessage(response);
+				const message_code = getAuthResponseMessageCode(response);
 
-				if (code === 'max_resend_reached') {
-					resendLimitReached.value = message;
+				if (message_code === 'max_resend_reached') {
+					resend_limit_reached.value = response_message;
 					applyGuestResendCooldownFromResponse(response);
-					guestVerificationError.value = '';
+					guest_verification_error.value = '';
 				} else {
-					guestVerificationError.value = message;
+					guest_verification_error.value = response_message;
 				}
 
 				return;
 			}
 
-			guestVerificationEmail.value = session_email;
-			guestVerificationOrderNumber.value = session_order_number;
-			guestVerificationToken.value = (response.data?.token || '').trim();
-			guestVerificationSession.value = {
+			guest_verification_email.value = session_email;
+			guest_verification_order_number.value = session_order_number;
+			guest_verification_token.value = (response.data?.token || '').trim();
+			guest_verification_session.value = {
 				email: session_email,
 				order_number: session_order_number,
 				token: response.data?.token || null,
 				expires_in: response.data?.expires_in || null,
 			};
-			resendLimitReached.value = '';
+			resend_limit_reached.value = '';
 			applyGuestResendCooldownFromResponse(response);
-
 		} catch (error) {
 			console.error(error);
 		} finally {
-			isGuestVerifying.value = false;
+			is_guest_verifying.value = false;
 		}
 	}
+
 	async function submitGuestVerification() {
-		guestVerificationError.value = '';
+		guest_verification_error.value = '';
 
 		try {
+			is_guest_verifying.value = true;
 			const { handleSubmitNonMemberLoginVerification } = useLoginUser();
 			const response = await handleSubmitNonMemberLoginVerification({
-				email: guestVerificationEmail.value.trim() || null,
-				order_number: guestVerificationOrderNumber.value.trim() || null,
-				login_token: guestVerificationToken.value.trim() || null,
-				otp: guestVerificationCode.value.trim()
+				email: guest_verification_email.value.trim() || null,
+				order_number: guest_verification_order_number.value.trim() || null,
+				login_token: guest_verification_token.value.trim() || null,
+				otp: guest_verification_code.value.trim(),
 			});
 
 			if (!response.success) {
-				guestVerificationError.value = response.message || t('auth.guestVerification.invalidCode');
+				guest_verification_error.value = response.message || t('auth.guestVerification.invalidCode');
 				return;
 			}
 
 			await fetchUserProfile();
-
-			guestVerificationSession.value = null;
-			guestVerificationToken.value = '';
-			return navigateTo(postLoginRedirect.value);
+			guest_verification_session.value = null;
+			guest_verification_token.value = '';
+			return navigateTo(post_login_redirect.value);
 		} catch (error) {
 			console.error(error);
 			return;
+		} finally {
+			is_guest_verifying.value = false;
 		}
 	}
 	// Modal and utility functions
-	watch(isVerificationModalOpen, (open) => {
+	watch(is_verification_modal_open, (open) => {
 		if (open) return;
-		guestVerificationCode.value = '';
-		guestVerificationError.value = '';
-		isGuestVerifying.value = false;
+		guest_verification_code.value = '';
+		guest_verification_error.value = '';
+		is_guest_verifying.value = false;
 	});
 
 	function openForgotPasswordModal() {
-		isForgotPasswordModalOpen.value = true;
+		is_forgot_password_modal_open.value = true;
 	}
 
+	watch(member_type, clearErrors);
+
+	watch(is_verification_modal_open, (is_open) => {
+		if (is_open) return;
+		guest_verification_code.value = '';
+		guest_verification_error.value = '';
+		resend_limit_reached.value = '';
+		is_guest_verifying.value = false;
+	});
+
 	onMounted(() => {
-		const modalQuery = Array.isArray(route.query.modal)
+		const modal_query = Array.isArray(route.query.modal)
 			? route.query.modal[0]
 			: route.query.modal;
-		const shouldOpenForgotPassword =
-			modalQuery === 'forgot-password' || modalQuery === 'reset-password';
+		const should_open_forgot_password =
+			modal_query === 'forgot-password' || modal_query === 'reset-password';
 
-		if (!shouldOpenForgotPassword) return;
+		if (!should_open_forgot_password) return;
 
-		const emailQuery = Array.isArray(route.query.email)
+		const email_query = Array.isArray(route.query.email)
 			? route.query.email[0]
 			: route.query.email;
 
-		if (typeof emailQuery === 'string' && emailQuery.trim().length > 0) {
-			memberEmail.value = emailQuery;
+		if (typeof email_query === 'string' && email_query.trim().length > 0) {
+			member_email.value = email_query;
 		}
 
-		isForgotPasswordModalOpen.value = true;
+		is_forgot_password_modal_open.value = true;
 	});
+
 	onBeforeUnmount(() => {
 		clearGuestResendCooldownTimer();
 	});
 
 	return {
-		memberType,
-		keepSignedIn,
-		showPassword,
-		isNonMember,
+		member_type,
+		keep_signed_in,
+		show_password,
+		is_non_member,
 		setMemberType,
 		togglePassword,
 		setKeepSignedIn,
-		submitLabel,
-		isVerificationModalOpen,
-		isForgotPasswordModalOpen,
-		isCheckingGuestOrder,
-		isSigningInMember,
-		isPageLoginBusy,
-		memberEmail,
-		memberPassword,
-		guestVerificationEmail,
-		guestVerificationOrderNumber,
-		guestVerificationToken,
-		guestVerificationCode,
-		guestVerificationError,
-		resendLimitReached,
-		isGuestVerifying,
-		guestResendCooldownRemaining,
-		nonMemberEmail,
-		nonMemberOrderNumber,
-		memberEmailError,
-		memberPasswordError,
-		memberInvalidCredentials,
-		nonMemberEmailError,
-		nonMemberEmailHasError,
-		nonMemberOrderError,
+		submit_label,
+		is_verification_modal_open,
+		is_forgot_password_modal_open,
+		is_checking_guest_order,
+		is_signing_in_member,
+		is_page_login_busy,
+		member_email,
+		member_password,
+		guest_verification_email,
+		guest_verification_order_number,
+		guest_verification_token,
+		guest_verification_code,
+		guest_verification_error,
+		resend_limit_reached,
+		is_guest_verifying,
+		guest_resend_cooldown_remaining,
+		non_member_email,
+		non_member_order_number,
+		member_email_error,
+		member_password_error,
+		member_invalid_credentials,
+		non_member_email_error,
+		non_member_email_has_error,
+		non_member_order_error,
 		onMemberEmailInput,
 		onMemberPasswordInput,
 		onNonMemberEmailInput,

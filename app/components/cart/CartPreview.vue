@@ -37,34 +37,34 @@ const emit = defineEmits<{
 	'remove-item': [itemId: string];
 }>();
 
-const deletingItemId = ref<string | null>(null);
+const deleting_item_id = ref<string | null>(null);
 
-function openDeleteModal(itemId: string) {
-	deletingItemId.value = itemId;
+function openDeleteModal(item_id: string) {
+	deleting_item_id.value = item_id;
 }
 
 function closeDeleteModal() {
-	deletingItemId.value = null;
+	deleting_item_id.value = null;
 }
 
 function confirmDeleteItem() {
-	if (!deletingItemId.value) return;
-	emit('remove-item', deletingItemId.value);
-	deletingItemId.value = null;
+	if (!deleting_item_id.value) return;
+	emit('remove-item', deleting_item_id.value);
+	deleting_item_id.value = null;
 }
 
 const { t } = useI18n();
 const {
-	editingItemId,
-	editingItem,
-	draftSizeKey,
-	draftCustomSizeWidth,
-	draftCustomSizeHeight,
-	draftQty,
-	draftCustomQty,
-	redirectingToCart,
-	savingInlineEdit,
-	redirectLoaderRef,
+	editingItemId: editing_item_id,
+	editingItem: editing_item,
+	draftSizeKey: draft_size_key,
+	draftCustomSizeWidth: draft_custom_size_width,
+	draftCustomSizeHeight: draft_custom_size_height,
+	draftQty: draft_qty,
+	draftCustomQty: draft_custom_qty,
+	redirectingToCart: redirecting_to_cart,
+	savingInlineEdit: saving_inline_edit,
+	redirectLoaderRef: redirect_loader_ref,
 	openInlineEdit,
 	cancelInlineEdit,
 	saveInlineEdit,
@@ -90,14 +90,14 @@ const {
 		<Transition name="cart-preview-slide">
 			<div v-if="props.open" class="cart-preview-shell" data-testid="product-category-cart-overlay" @click.self="emit('close')">
 				<UiLoadingOverlay
-					:visible="redirectingToCart || savingInlineEdit"
-					:label="redirectingToCart ? t('cart.cartPreview.redirectingToCart') : t('cart.cartPage.savingChanges')"
+					:visible="redirecting_to_cart || saving_inline_edit"
+					:label="redirecting_to_cart ? t('cart.cartPreview.redirectingToCart') : t('cart.cartPage.savingChanges')"
 					test-id="product-category-cart-redirect-loading"
 					transition-name="cart-redirect-fade"
 					position="absolute"
 					:z-index="2"
 				>
-					<div ref="redirectLoaderRef" aria-hidden="true" />
+					<div ref="redirect_loader_ref" aria-hidden="true" />
 				</UiLoadingOverlay>
 				<aside class="cart-preview-panel" role="dialog" aria-modal="true" data-testid="product-category-cart-dialog">
 					<header class="cart-preview-header" data-testid="product-category-cart-header">
@@ -275,7 +275,7 @@ const {
 								size="md"
 								height="48px"
 								class="cart-preview-view-btn"
-								:disabled="redirectingToCart"
+								:disabled="redirecting_to_cart"
 								data-testid="product-category-cart-view-button"
 								@click="goToCart"
 							>
@@ -292,27 +292,27 @@ const {
 		</Transition>
 	</Teleport>
 	<CartItemEditModal
-		v-if="editingItem"
-		:model-value="Boolean(editingItemId)"
-		:item="editingItem"
-		:size-options="getInlineSizeOptions(editingItem)"
-		:quantity-options="getInlineQtyOptions(editingItem)"
-		:size-key="draftSizeKey"
-		:custom-size-width="draftCustomSizeWidth"
-		:custom-size-height="draftCustomSizeHeight"
-		:qty="draftQty"
-		:custom-qty="draftCustomQty"
+		v-if="editing_item"
+		:model-value="Boolean(editing_item_id)"
+		:item="editing_item"
+		:size-options="getInlineSizeOptions(editing_item)"
+		:quantity-options="getInlineQtyOptions(editing_item)"
+		:size-key="draft_size_key"
+		:custom-size-width="draft_custom_size_width"
+		:custom-size-height="draft_custom_size_height"
+		:qty="draft_qty"
+		:custom-qty="draft_custom_qty"
 		@update:model-value="!$event ? cancelInlineEdit() : undefined"
-		@update:size-key="draftSizeKey = $event"
-		@update:custom-size-width="draftCustomSizeWidth = $event"
-		@update:custom-size-height="draftCustomSizeHeight = $event"
-		@update:qty="draftQty = $event"
-		@update:custom-qty="draftCustomQty = $event"
+		@update:size-key="draft_size_key = $event"
+		@update:custom-size-width="draft_custom_size_width = $event"
+		@update:custom-size-height="draft_custom_size_height = $event"
+		@update:qty="draft_qty = $event"
+		@update:custom-qty="draft_custom_qty = $event"
 		@cancel="cancelInlineEdit"
-		@save="saveInlineEdit(editingItem.id)"
+		@save="saveInlineEdit(editing_item.id)"
 	/>
 	<DeleteConfirmModal
-		:model-value="Boolean(deletingItemId)"
+		:model-value="Boolean(deleting_item_id)"
 		:title="t('cart.cartPage.deleteItemTitle')"
 		:description="t('cart.cartPage.deleteItemDescription')"
 		:confirm-label="t('cart.cartPage.removeConfirm')"

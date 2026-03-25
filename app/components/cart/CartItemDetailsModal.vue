@@ -16,38 +16,38 @@ const emit = defineEmits<{
 	save: [payload: { artworkName: string; artworkSizeLabel: string; artworkPreviewUrl: string; specialInstructions: string }];
 }>();
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
-const localArtworkName = ref('');
-const localArtworkSizeLabel = ref('');
-const localArtworkPreviewUrl = ref('');
-const localSpecialInstructions = ref('');
+const file_input_ref = ref<HTMLInputElement | null>(null);
+const local_artwork_name = ref('');
+const local_artwork_size_label = ref('');
+const local_artwork_preview_url = ref('');
+const local_special_instructions = ref('');
 const { t } = useI18n();
 
-const fileExtensionLabel = computed(() => {
-	const parts = localArtworkName.value.split('.');
-	const extension = parts.length > 1 ? parts.at(-1)?.toLowerCase() : '';
-	return extension ? `.${extension}` : '';
+const file_extension_label = computed(() => {
+	const name_parts = local_artwork_name.value.split('.');
+	const file_extension = name_parts.length > 1 ? name_parts.at(-1)?.toLowerCase() : '';
+	return file_extension ? `.${file_extension}` : '';
 });
 
-const fileMetaLabel = computed(() => {
-	const parts = [fileExtensionLabel.value, localArtworkSizeLabel.value].filter(Boolean);
-	return parts.join(' | ');
+const file_meta_label = computed(() => {
+	const meta_parts = [file_extension_label.value, local_artwork_size_label.value].filter(Boolean);
+	return meta_parts.join(' | ');
 });
 
-const artworkActionLabel = computed(() => (
-	localArtworkPreviewUrl.value || localArtworkName.value
+const artwork_action_label = computed(() => (
+	local_artwork_preview_url.value || local_artwork_name.value
 		? t('cart.uploadArtwork.replaceImage')
 		: t('cart.cartPage.itemDetails.uploadImage')
 ));
 
 watch(
 	() => [props.modelValue, props.item] as const,
-	([isOpen, item]) => {
-		if (!isOpen || !item) return;
-		localArtworkName.value = item.artworkName || '';
-		localArtworkSizeLabel.value = item.artworkSizeLabel || '';
-		localArtworkPreviewUrl.value = item.artworkPreviewUrl || '';
-		localSpecialInstructions.value = item.specialInstructions || '';
+	([is_open, item]) => {
+		if (!is_open || !item) return;
+		local_artwork_name.value = item.artworkName || '';
+		local_artwork_size_label.value = item.artworkSizeLabel || '';
+		local_artwork_preview_url.value = item.artworkPreviewUrl || '';
+		local_special_instructions.value = item.specialInstructions || '';
 	},
 	{ immediate: true }
 );
@@ -58,36 +58,36 @@ function closeModal() {
 }
 
 function openFilePicker() {
-	fileInputRef.value?.click();
+	file_input_ref.value?.click();
 }
 
 function removeArtwork() {
-	localArtworkName.value = '';
-	localArtworkSizeLabel.value = '';
-	localArtworkPreviewUrl.value = '';
-	if (fileInputRef.value) {
-		fileInputRef.value.value = '';
+	local_artwork_name.value = '';
+	local_artwork_size_label.value = '';
+	local_artwork_preview_url.value = '';
+	if (file_input_ref.value) {
+		file_input_ref.value.value = '';
 	}
 }
 
 async function onFileSelected(event: Event) {
-	const target = event.target as HTMLInputElement;
-	const file = target.files?.[0];
-	if (!file) return;
+	const input_target = event.target as HTMLInputElement;
+	const selected_file = input_target.files?.[0];
+	if (!selected_file) return;
 
-	localArtworkName.value = file.name;
-	localArtworkSizeLabel.value = formatProductFileSize(file.size);
-	localArtworkPreviewUrl.value = file.type.startsWith('image/')
-		? await readProductArtworkAsDataUrl(file)
+	local_artwork_name.value = selected_file.name;
+	local_artwork_size_label.value = formatProductFileSize(selected_file.size);
+	local_artwork_preview_url.value = selected_file.type.startsWith('image/')
+		? await readProductArtworkAsDataUrl(selected_file)
 		: '';
 }
 
 function submitChanges() {
 	emit('save', {
-		artworkName: localArtworkName.value,
-		artworkSizeLabel: localArtworkSizeLabel.value,
-		artworkPreviewUrl: localArtworkPreviewUrl.value,
-		specialInstructions: localSpecialInstructions.value.trim(),
+		artworkName: local_artwork_name.value,
+		artworkSizeLabel: local_artwork_size_label.value,
+		artworkPreviewUrl: local_artwork_preview_url.value,
+		specialInstructions: local_special_instructions.value.trim(),
 	});
 	emit('update:modelValue', false);
 }
@@ -107,7 +107,7 @@ function submitChanges() {
 	>
 		<section v-if="props.item" class="cart-item-details-modal" data-testid="cart-item-details-modal">
 			<input
-				ref="fileInputRef"
+				ref="file_input_ref"
 				type="file"
 				class="cart-item-details-file-input"
 				accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg"
@@ -119,17 +119,17 @@ function submitChanges() {
 					<div class="cart-item-details-upload-copy">
 						<div class="cart-item-details-thumb">
 							<img
-								:src="localArtworkPreviewUrl || props.item.product.image"
-								:alt="localArtworkName || props.item.product.name"
+								:src="local_artwork_preview_url || props.item.product.image"
+								:alt="local_artwork_name || props.item.product.name"
 								class="cart-item-details-thumb-image"
 							>
 						</div>
 						<div class="cart-item-details-file-copy">
 							<p class="cart-item-details-file-name">
-								{{ localArtworkName || props.item.product.name }}
+								{{ local_artwork_name || props.item.product.name }}
 							</p>
 							<p class="cart-item-details-file-meta">
-								{{ fileMetaLabel || t('cart.cartPage.itemDetails.noArtworkFile') }}
+								{{ file_meta_label || t('cart.cartPage.itemDetails.noArtworkFile') }}
 							</p>
 						</div>
 					</div>
@@ -144,7 +144,7 @@ function submitChanges() {
 							@click="openFilePicker"
 						>
 							<UiIcon name="regular-image" :size="20" color="var(--text-primary)" />
-							{{ artworkActionLabel }}
+							{{ artwork_action_label }}
 						</UiButton>
 						<UiButton
 							type="button"
@@ -166,12 +166,12 @@ function submitChanges() {
 				<div class="cart-item-details-field">
 					<label class="cart-item-details-label">{{ t('cart.uploadArtwork.specialInstructions') }}</label>
 					<UiTextarea
-						:model-value="localSpecialInstructions"
+						:model-value="local_special_instructions"
 						:rows="4"
 						resize="none"
 						field-class="cart-item-details-textarea-field"
 						:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
-						@update:model-value="localSpecialInstructions = $event"
+						@update:model-value="local_special_instructions = $event"
 					/>
 				</div>
 			</div>
@@ -280,7 +280,8 @@ function submitChanges() {
 		flex-shrink: 0;
 	}
 
-	.cart-item-details-replace-btn, .cart-item-details-delete-btn {
+	.cart-item-details-replace-btn,
+	.cart-item-details-delete-btn {
 		border-radius: 16px;
 		border-color: var(--gray-80);
 	}
@@ -314,35 +315,35 @@ function submitChanges() {
 	border-radius: 16px;
 	overflow: hidden;
 	max-width: 760px;
-}
 
-:global(.cart-item-details-modal-shell .ui-modal-header) {
-	padding: 18px 24px;
-	min-height: 62px;
-	border-bottom: 1px solid var(--gray-30);
-	align-items: center;
-}
+	.ui-modal-header {
+		padding: 18px 24px;
+		min-height: 62px;
+		border-bottom: 1px solid var(--gray-30);
+		align-items: center;
+	}
 
-:global(.cart-item-details-modal-shell .ui-modal-title) {
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-primary);
-}
+	.ui-modal-title {
+		font-size: var(--type-size-300);
+		line-height: var(--type-line-300);
+		font-weight: var(--font-weight-semibold);
+		color: var(--text-primary);
+	}
 
-:global(.cart-item-details-modal-shell .ui-modal-header-actions) {
-	align-items: center;
-}
+	.ui-modal-header-actions {
+		align-items: center;
+	}
 
-:global(.cart-item-details-modal-shell .ui-modal-close) {
-	width: 24px;
-	height: 24px;
-	min-width: 24px;
-	border-radius: 0;
-	padding: 0;
-}
+	.ui-modal-close {
+		width: 24px;
+		height: 24px;
+		min-width: 24px;
+		border-radius: 0;
+		padding: 0;
+	}
 
-:global(.cart-item-details-modal-shell .ui-modal-body) {
-	padding: 0;
+	.ui-modal-body {
+		padding: 0;
+	}
 }
 </style>
