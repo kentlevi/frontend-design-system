@@ -4,11 +4,9 @@ const props = defineProps<{
 	password: string;
 	passwordConfirmation: string;
 	passwordError?: string;
-	passwordConfirmationError?: string;
 	passwordVisible: boolean;
 	passwordConfirmationVisible: boolean;
 	isSubmitEnabled: boolean;
-	isSubmitting: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -41,12 +39,6 @@ function closeModal() {
 		@close="emit('close')"
 	>
 		<section class="account-profile-setup-password-modal" data-testid="account-profile-setup-password-modal">
-			<UiLoadingOverlay
-				:visible="props.isSubmitting"
-				:label="t('account.profile.setUpPassword')"
-				position="absolute"
-				test-id="account-profile-setup-password-modal-overlay"
-			/>
 			<button
 				type="button"
 				class="account-profile-setup-password-modal-close"
@@ -110,7 +102,6 @@ function closeModal() {
 
 					<UiFormField
 						:label="t('account.profile.confirmPassword')"
-						:error="props.passwordConfirmationError"
 						:required="true"
 					>
 						<template #default="{ inputId, describedBy }">
@@ -119,7 +110,7 @@ function closeModal() {
 								:model-value="props.passwordConfirmation"
 								:type="props.passwordConfirmationVisible ? 'text' : 'password'"
 								:aria-describedby="describedBy || undefined"
-								:state="props.passwordConfirmationError ? 'error' : 'default'"
+								:state="props.passwordError ? 'error' : 'default'"
 								:placeholder="t('account.profile.confirmPasswordPlaceholder')"
 								data-testid="account-profile-setup-password-confirm-input"
 								@update:model-value="emit('update:passwordConfirmation', $event); emit('clear-errors')"
@@ -151,7 +142,7 @@ function closeModal() {
 						size="lg"
 						class="account-profile-setup-password-modal-confirm"
 						data-testid="account-profile-setup-password-modal-confirm"
-						:disabled="!props.isSubmitEnabled || props.isSubmitting"
+						:disabled="!props.isSubmitEnabled"
 						@click="emit('submit')"
 					>
 						{{ t('account.profile.confirmSetupPassword') }}
