@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { ButtonSize } from '~/data/ui/buttons';
 import {
 	useControlTestId,
 	useRootAttrs,
@@ -14,6 +15,9 @@ type SelectOption = {
 	style?: Record<string, string | number>;
 };
 
+type SelectSizeValue = ButtonSize | number | `${number}`;
+const select_sizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
+
 defineOptions({
 	inheritAttrs: false,
 });
@@ -22,6 +26,7 @@ const props = withDefaults(
 	defineProps<{
 		modelValue?: SelectValue | null;
 		options?: SelectOption[];
+		size?: SelectSizeValue;
 		placeholder?: string;
 		searchable?: boolean;
 		disabled?: boolean;
@@ -36,6 +41,7 @@ const props = withDefaults(
 	{
 		modelValue: null,
 		options: () => [],
+		size: 'md',
 		placeholder: 'Select option',
 		searchable: false,
 		disabled: false,
@@ -84,6 +90,20 @@ const filtered_options = computed(() => {
 const trigger_icon_name = computed(() =>
 	props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
+const trigger_style = computed<Record<string, string> | undefined>(() => {
+	let numeric_size: number | null = null;
+	if (typeof props.size === 'number') {
+		numeric_size = props.size;
+	} else if (typeof props.size === 'string' && !select_sizes.has(props.size as ButtonSize)) {
+		const parsed = Number(props.size);
+		if (Number.isFinite(parsed)) numeric_size = parsed;
+	}
+
+	if (!numeric_size) return undefined;
+	return {
+		height: `${numeric_size}px`,
+	};
+});
 const test_id = useControlTestId(attrs);
 const root_attrs = useRootAttrs(attrs, test_id);
 
@@ -151,12 +171,14 @@ onBeforeUnmount(() => {
 		class="ui-select"
 		:data-open="is_open || null"
 		:data-disabled="props.disabled || null"
+		:data-size="props.size"
 	>
 		<button
 			type="button"
 			:class="['ui-select-trigger', props.triggerClass]"
 			:disabled="props.disabled"
 			:data-testid="test_id ? `${test_id}-trigger` : undefined"
+			:style="trigger_style"
 			@click="toggleMenu"
 		>
 			<span

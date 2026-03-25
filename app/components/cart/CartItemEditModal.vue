@@ -237,6 +237,7 @@ watch(
 						<UiSelect
 							v-if="sizeKey !== 'custom'"
 							:model-value="sizeKey"
+							size="40"
 							class="cart-item-edit-select"
 							trigger-class="cart-item-edit-select-trigger"
 							:options="sizeOptions"
@@ -315,6 +316,7 @@ watch(
 						<UiSelect
 							v-if="qty !== -1"
 							:model-value="qty"
+							size="40"
 							class="cart-item-edit-select"
 							trigger-class="cart-item-edit-select-trigger"
 							:options="quantityOptions"
@@ -490,10 +492,8 @@ watch(
 		width: 100%;
 
 		.cart-item-edit-select-trigger {
-			&:hover {
-				border: 1px solid var(--gray-50);
-				background-color: var(--gray-20);
-			}
+			border-radius: 8px;
+			padding: 8px 16px;
 		}
 	}
 
