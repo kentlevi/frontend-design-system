@@ -5,63 +5,30 @@ import {
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
-import { searchProducts } from '~/services/search/search.service';
+import {
+	getRecentSearchedProducts,
+	saveRecentSearchedProducts,
+	searchProducts,
+} from '~/services/search/search.service';
+import { useUsersStore } from '~/stores/users/users.store';
 import type {
 	RecentSearchEntry,
+	RecentSearchRecord,
+	RecentSearchStorageEntry,
+	RecentSearchStorageProduct,
 	SearchApiMeta,
 	SearchApiProduct,
 	SearchItem,
+	SearchNavItem,
+	SearchPagination,
+	SearchRecentApiProduct,
 	SearchResultGroup,
 } from '~/types/layout/appHeaderSearch';
-
-type RecentSearchCookieEntry =
-	| string
-	| {
-		type?: 'product' | 'term';
-		value?: unknown;
-	};
-
-type RecentSearchCookieProduct = {
-	id?: unknown;
-	product_id?: unknown;
-	category_key?: unknown;
-	category_label?: unknown;
-	name?: unknown;
-	blurb?: unknown;
-	image?: unknown;
-	to?: unknown;
-};
-
-type RecentSearchRecord = {
-	key: string;
-	type: 'product' | 'term';
-	value: string;
-	item: SearchItem | null;
-};
-
-type SearchNavItem =
-	| {
-		id: string;
-		type: 'recent';
-		entry_key: string;
-	}
-	| {
-		id: string;
-		type: 'result';
-		item: SearchItem;
-	};
-
-type SearchPagination = {
-	current_page: number;
-	last_page: number;
-	per_page: number;
-	total: number;
-	has_more: boolean;
-};
 
 const search_page_size = 10;
 const search_result_scroll_threshold = 56;
 const search_default_image = '/illustrations/products/stickers/die-cut.svg';
+const search_recent_storage_key = 'search_recent_terms';
 
 function normalizeText(value: unknown): string {
 	return typeof value === 'string' ? value.trim() : '';
@@ -91,10 +58,10 @@ function toPositiveInteger(value: unknown, fallback: number): number {
 	return normalized_value > 0 ? normalized_value : fallback;
 }
 
-function createRecentSearchCookieEntry(
+function createRecentSearchStorageEntry(
 	type: 'product' | 'term',
-	value: string | RecentSearchCookieProduct
-): RecentSearchCookieEntry {
+	value: string | RecentSearchStorageProduct
+): RecentSearchStorageEntry {
 	return {
 		type,
 		value,
@@ -121,19 +88,13 @@ export function useAppHeaderSearch(params: {
 	const router = useRouter();
 	const { withCountry } = useCountry();
 	const { resolveFileUrl } = useFileBaseUrl();
-	const search_recent_terms_cookie = useCookie<RecentSearchCookieEntry[]>(
-		'search_recent_terms',
-		{
-			default: () => [],
-			sameSite: 'lax',
-			path: '/',
-		}
-	);
+	const users_store = useUsersStore();
 
 	const search_query = ref('');
 	const debounced_search_query = ref('');
 	const search_loading = ref(false);
 	const search_loading_more = ref(false);
+	const recent_search_loading = ref(false);
 	const search_results = ref<SearchItem[]>([]);
 	const active_search_nav_index = ref(-1);
 	const search_input_ref = ref<HTMLInputElement | null>(null);
@@ -142,7 +103,10 @@ export function useAppHeaderSearch(params: {
 		createEmptyPagination(search_page_size)
 	);
 	const search_request_id = ref(0);
+	const recent_search_storage_entries = ref<RecentSearchStorageEntry[]>([]);
 	let search_debounce_timeout: ReturnType<typeof setTimeout> | null = null;
+
+	const is_authenticated = computed(() => users_store.state.id > 0);
 
 	function clearSearchDebounceTimeout() {
 		if (!search_debounce_timeout) return;
@@ -181,7 +145,7 @@ export function useAppHeaderSearch(params: {
 	}
 
 	function mapApiProductToSearchItem(api_product: SearchApiProduct): SearchItem | null {
-		const product_id = String(api_product.id ?? '').trim();
+		const product_id = Number(api_product.id ?? '');
 		const product_slug = normalizeText(api_product.url_slug);
 		const category_slug = normalizeText(api_product.category_url_slug);
 		const product_name = normalizeText(api_product.name);
@@ -224,9 +188,9 @@ export function useAppHeaderSearch(params: {
 	function normalizeRecentProduct(value: unknown): SearchItem | null {
 		if (!value || typeof value !== 'object') return null;
 
-		const product_value = value as RecentSearchCookieProduct;
+		const product_value = value as RecentSearchStorageProduct;
 		const id = normalizeText(product_value.id);
-		const product_id = normalizeText(product_value.product_id) || id;
+		const product_id = product_value.product_id;
 		const category_key = normalizeText(product_value.category_key);
 		const category_label = normalizeText(product_value.category_label) || category_key;
 		const name = normalizeText(product_value.name);
@@ -250,10 +214,64 @@ export function useAppHeaderSearch(params: {
 		};
 	}
 
-	const normalized_recent_searches = computed<RecentSearchRecord[]>(() => {
-		const entries = search_recent_terms_cookie.value || [];
+	function mapSearchItemToStorageProduct(item: SearchItem): RecentSearchStorageProduct {
+		return {
+			id: item.id,
+			product_id: item.product_id,
+			category_key: item.category_key,
+			category_label: item.category_label,
+			name: item.name,
+			blurb: item.blurb,
+			image: item.image,
+			to: item.to,
+		};
+	}
 
-		return entries
+	function mapRecentApiProductToStorageEntry(product: SearchRecentApiProduct): RecentSearchStorageEntry | null {
+		const mapped_item = mapApiProductToSearchItem(product);
+		if (!mapped_item) return null;
+
+		return createRecentSearchStorageEntry('product', mapSearchItemToStorageProduct(mapped_item));
+	}
+
+	function loadRecentSearchesFromLocalStorage(): RecentSearchStorageEntry[] {
+		if (!import.meta.client) return [];
+
+		try {
+			const raw_value = window.localStorage.getItem(search_recent_storage_key);
+			if (!raw_value) return [];
+
+			const parsed_value = JSON.parse(raw_value);
+			return Array.isArray(parsed_value)
+				? parsed_value as RecentSearchStorageEntry[]
+				: [];
+		} catch {
+			return [];
+		}
+	}
+
+	function writeRecentSearchesToLocalStorage(entries: RecentSearchStorageEntry[]) {
+		if (!import.meta.client) return;
+
+		try {
+			if (!entries.length) {
+				window.localStorage.removeItem(search_recent_storage_key);
+				return;
+			}
+
+			window.localStorage.setItem(search_recent_storage_key, JSON.stringify(entries));
+		} catch {
+			// ignore storage failures
+		}
+	}
+
+	function setRecentSearchStorageEntries(entries: RecentSearchStorageEntry[]) {
+		recent_search_storage_entries.value = entries;
+		writeRecentSearchesToLocalStorage(entries);
+	}
+
+	const normalized_recent_searches = computed<RecentSearchRecord[]>(() => {
+		return recent_search_storage_entries.value
 			.map((entry) => {
 				if (typeof entry === 'string') {
 					const term = normalizeText(entry);
@@ -349,29 +367,33 @@ export function useAppHeaderSearch(params: {
 
 	const search_empty_suggested_term = computed(resolveSearchEmptySuggestedTerm);
 
+	const is_search_loading = computed(
+		() => search_loading.value || (recent_search_loading.value && !search_query.value.trim())
+	);
+
 	const show_search_recent = computed(
 		() =>
-			!search_loading.value
+			!is_search_loading.value
 			&& !search_query.value.trim()
 			&& recent_search_entries.value.length > 0
 	);
 
 	const show_search_no_recent = computed(
 		() =>
-			!search_loading.value
+			!is_search_loading.value
 			&& !search_query.value.trim()
 			&& recent_search_entries.value.length === 0
 	);
 
 	const show_search_no_result = computed(
 		() =>
-			!search_loading.value
+			!is_search_loading.value
 			&& Boolean(search_query.value.trim())
 			&& search_results.value.length === 0
 	);
 
 	const show_search_results = computed(
-		() => !search_loading.value && search_results.value.length > 0
+		() => !is_search_loading.value && search_results.value.length > 0
 	);
 
 	const search_nav_items = computed<SearchNavItem[]>(() => {
@@ -412,17 +434,8 @@ export function useAppHeaderSearch(params: {
 	function persistRecentSearch(item: { type: 'product'; value: SearchItem } | { type: 'term'; value: string }) {
 		const next_entries = [
 			item.type === 'product'
-				? createRecentSearchCookieEntry('product', {
-					id: item.value.id,
-					product_id: item.value.product_id,
-					category_key: item.value.category_key,
-					category_label: item.value.category_label,
-					name: item.value.name,
-					blurb: item.value.blurb,
-					image: item.value.image,
-					to: item.value.to,
-				})
-				: createRecentSearchCookieEntry('term', item.value),
+				? createRecentSearchStorageEntry('product', mapSearchItemToStorageProduct(item.value))
+				: createRecentSearchStorageEntry('term', item.value),
 			...normalized_recent_searches.value
 				.filter((entry) => {
 					if (item.type === 'product') {
@@ -433,23 +446,39 @@ export function useAppHeaderSearch(params: {
 				})
 				.map((entry) => {
 					if (entry.type === 'product' && entry.item) {
-						return createRecentSearchCookieEntry('product', {
-							id: entry.item.id,
-							product_id: entry.item.product_id,
-							category_key: entry.item.category_key,
-							category_label: entry.item.category_label,
-							name: entry.item.name,
-							blurb: entry.item.blurb,
-							image: entry.item.image,
-							to: entry.item.to,
-						});
+						return createRecentSearchStorageEntry('product', mapSearchItemToStorageProduct(entry.item));
 					}
 
-					return createRecentSearchCookieEntry('term', entry.value);
+					return createRecentSearchStorageEntry('term', entry.value);
 				}),
 		].slice(0, HEADER_MAX_RECENT_SEARCHES);
 
-		search_recent_terms_cookie.value = next_entries;
+		setRecentSearchStorageEntries(next_entries);
+	}
+
+	async function syncRecentSearchesFromDatabase() {
+		if (!is_authenticated.value) return;
+
+		recent_search_loading.value = true;
+
+		try {
+			const response = await getRecentSearchedProducts();
+			if (!response.success) return;
+
+			const products = Array.isArray(response.data?.products)
+				? response.data.products
+				: [];
+			const mapped_entries = products
+				.map(mapRecentApiProductToStorageEntry)
+				.filter((entry): entry is RecentSearchStorageEntry => Boolean(entry))
+				.slice(0, HEADER_MAX_RECENT_SEARCHES);
+
+			setRecentSearchStorageEntries(mapped_entries);
+		} catch {
+			// keep local state on failure
+		} finally {
+			recent_search_loading.value = false;
+		}
 	}
 
 	async function focusSearchInput() {
@@ -466,34 +495,32 @@ export function useAppHeaderSearch(params: {
 	}
 
 	function clearRecentSearches() {
-		search_recent_terms_cookie.value = [];
+		setRecentSearchStorageEntries([]);
 		resetSearchNavigation();
 	}
 
 	function removeRecentSearch(entry_key: string) {
-		search_recent_terms_cookie.value = normalized_recent_searches.value
+		const next_entries = normalized_recent_searches.value
 			.filter((entry) => entry.key !== entry_key)
 			.map((entry) => {
 				if (entry.type === 'product' && entry.item) {
-					return createRecentSearchCookieEntry('product', {
-						id: entry.item.id,
-						product_id: entry.item.product_id,
-						category_key: entry.item.category_key,
-						category_label: entry.item.category_label,
-						name: entry.item.name,
-						blurb: entry.item.blurb,
-						image: entry.item.image,
-						to: entry.item.to,
-					});
+					return createRecentSearchStorageEntry('product', mapSearchItemToStorageProduct(entry.item));
 				}
 
-				return createRecentSearchCookieEntry('term', entry.value);
+				return createRecentSearchStorageEntry('term', entry.value);
 			});
 
+		setRecentSearchStorageEntries(next_entries);
 		resetSearchNavigation();
 	}
 
 	async function selectSearchResult(item: SearchItem) {
+		if (is_authenticated.value) {
+			const response = saveRecentSearchedProducts({
+				product_id: item.product_id
+			})
+		}
+
 		persistRecentSearch({
 			type: 'product',
 			value: item,
@@ -687,8 +714,18 @@ export function useAppHeaderSearch(params: {
 		void fetchSearchResults(1);
 	});
 
+	watch(is_authenticated, (next_state, previous_state) => {
+		if (!next_state || previous_state === next_state) return;
+		void syncRecentSearchesFromDatabase();
+	});
+
 	onMounted(() => {
+		recent_search_storage_entries.value = loadRecentSearchesFromLocalStorage();
 		void focusSearchInput();
+
+		if (is_authenticated.value) {
+			void syncRecentSearchesFromDatabase();
+		}
 	});
 
 	onBeforeUnmount(() => {
@@ -697,7 +734,7 @@ export function useAppHeaderSearch(params: {
 
 	return {
 		search_query,
-		search_loading,
+		search_loading: is_search_loading,
 		search_loading_more,
 		active_search_nav_index,
 		search_result_groups,

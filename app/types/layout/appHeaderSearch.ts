@@ -2,7 +2,7 @@ import type { ApiResponse } from '~/types/config/api';
 
 export type SearchItem = {
 	id: string;
-	product_id: string;
+	product_id: number;
 	category_key: string;
 	category_label: string;
 	name: string;
@@ -38,8 +38,17 @@ export type SearchApiProduct = {
 	category_name: string;
 };
 
+export type SearchRecentApiProduct = SearchApiProduct & {
+	last_viewed_at?: string;
+	view_count?: number;
+};
+
 export type SearchApiData = {
 	products: SearchApiProduct[];
+};
+
+export type SearchRecentApiData = {
+	products: SearchRecentApiProduct[];
 };
 
 export type SearchApiMeta = {
@@ -50,4 +59,50 @@ export type SearchApiMeta = {
 	has_more: boolean;
 };
 
+export type RecentSearchStorageProduct = {
+	id?: unknown;
+	product_id?: number;
+	category_key?: unknown;
+	category_label?: unknown;
+	name?: unknown;
+	blurb?: unknown;
+	image?: unknown;
+	to?: unknown;
+};
+
+export type RecentSearchStorageEntry =
+	| string
+	| {
+		type?: 'product' | 'term';
+		value?: unknown;
+	};
+
 export type SearchApiResponse = ApiResponse<SearchApiData>;
+export type SearchRecentApiResponse = ApiResponse<SearchRecentApiData>;
+
+export type RecentSearchRecord = {
+	key: string;
+	type: 'product' | 'term';
+	value: string;
+	item: SearchItem | null;
+};
+
+export type SearchNavItem =
+	| {
+		id: string;
+		type: 'recent';
+		entry_key: string;
+	}
+	| {
+		id: string;
+		type: 'result';
+		item: SearchItem;
+	};
+
+export type SearchPagination = {
+	current_page: number;
+	last_page: number;
+	per_page: number;
+	total: number;
+	has_more: boolean;
+};
