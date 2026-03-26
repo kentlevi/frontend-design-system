@@ -34,6 +34,8 @@ export function isValidImage(file: File) {
 		'image/gif',
 		'image/svg+xml',
 		'image/bmp',
+		'image/tiff',
+		'image/heif',
 	]
 
 	return !blocked_types.includes(file.type)
