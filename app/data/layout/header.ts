@@ -9,7 +9,7 @@ import type { FlagCode } from '~/data/ui/flags';
 import type { SupportedCountry } from '~/constants/countries';
 
 export const HEADER_MAX_RECENT_SEARCHES = 5;
-export const HEADER_SEARCH_DEBOUNCE_DELAY_MS = 480;
+export const HEADER_SEARCH_DEBOUNCE_DELAY_MS = 500;
 export const HEADER_SEARCH_LOADING_MIN_VISIBLE_MS = 300;
 
 export const header_search_categories: ProductCategoryKey[] = [
