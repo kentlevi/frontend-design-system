@@ -6,7 +6,7 @@
     width: 100%;
     height: 36px;
     border-radius: 32px;
-    border: 1px solid var(--gray-60);
+    border: 1px solid var(--border-default);
     background: var(--white-base);
     padding: 0 20px;
     display: flex;
@@ -30,7 +30,7 @@
 }
 
 .ui-select[data-size='md'] .ui-select-trigger {
-    height: 36px;
+    height: 40px;
 }
 
 .ui-select[data-size='sm'] .ui-select-trigger {

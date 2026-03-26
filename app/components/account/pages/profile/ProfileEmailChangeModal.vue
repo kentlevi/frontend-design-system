@@ -36,7 +36,6 @@ const { t } = useI18n();
 	<UiModal
 		:model-value="modelValue"
 		align="center"
-		width="504px"
 		padding="0"
 		gap="0"
 		modal-class="account-profile-email-change-modal-shell"

@@ -5,6 +5,7 @@ import { isValidImage, resolveUploadPath } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
+	const { t } = useI18n()
 
 	/** State */
 	const user_store = useUsersStore()
@@ -72,6 +73,13 @@ export function useProfilePhoto() {
 
 			/** Set file name in store */
 			user_store.setProfileField('file_name', file_name)
+
+			toast_store.showToastWithTimer({
+				message: t('account.profile.photoUploadSuccess'),
+				tone: 'primary',
+				dismissible: true,
+				variant: 'default',
+			})
 		} catch {
 			toast_store.showUpdateError()
 			return

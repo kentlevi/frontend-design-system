@@ -8,6 +8,7 @@ import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
+const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
 type IconName = keyof typeof icons;
 
 type AccountLink = {
@@ -125,7 +126,7 @@ const {
 						>
 						<template v-else>{{ user_initial }}</template>
 					</span>
-					<div>
+					<div class="home-account-summary-copy">
 						<p class="home-account-summary-name">
 							{{ display_name }}
 						</p>
@@ -133,6 +134,11 @@ const {
 							{{ displayEmail }}
 						</p>
 					</div>
+					<img
+						:src="account_level_badge_src"
+						:alt="t('account.shell.level')"
+						class="home-account-summary-badge"
+					>
 				</div>
 
 				<div
@@ -208,7 +214,7 @@ const {
 					<span class="home-account-summary-avatar">
 						<UiIcon name="strong-user" :size="18" color="var(--text-primary)" />
 					</span>
-					<div>
+					<div class="home-account-summary-copy">
 						<p class="home-account-summary-email">{{ displayEmail }}</p>
 					</div>
 				</div>
@@ -353,6 +359,9 @@ const {
         &.is-open {
             --btn-soft: var(--gold-10);
             background: var(--gold-10);
+			:deep(.ui-button-label){
+				z-index: 1;
+			}
         }
 
         &.is-open::after {
@@ -369,8 +378,8 @@ const {
         }
 
         .home-header-avatar {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--gray-40);
             color: var(--black-base);
@@ -379,10 +388,11 @@ const {
             font-weight: var(--font-weight-bold);
             display: grid;
             place-items: center;
+			padding: 4px;
 
             .home-header-avatar-image {
-                width: 100%;
-                height: 100%;
+                width: inherit;
+                height: inherit;
                 border-radius: 50%;
                 object-fit: cover;
             }
@@ -406,7 +416,7 @@ const {
         outline: none;
 
         &.home-account-dropdown--member {
-            width: 320px;
+            width: 328px;
             right: auto;
             left: 50%;
             transform: translateX(-50%);
@@ -421,15 +431,16 @@ const {
         }
 
         .home-account-summary {
-            display: flex;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
             align-items: center;
-            gap: 10px;
-            padding: 12px;
+            gap: 12px;
+            padding: 20px;
             border-bottom: 1px solid var(--border-default);
 
             .home-account-summary-avatar {
-                width: 36px;
-                height: 36px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 background: var(--gray-40);
                 color: var(--black-base);
@@ -445,19 +456,36 @@ const {
                 }
             }
 
-            .home-account-summary-name {
+            .home-account-summary-copy {
+                min-width: 0;
+                display: grid;
+                gap: 2px;
+            }
 
-                font-size: var(--type-size-200);
-                font-weight: var(--font-weight-bold);
-                line-height: var(--type-line-200);
+            .home-account-summary-name {
+                font-size: var(--type-size-100);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-100);
                 color: var(--text-primary);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .home-account-summary-email {
-                margin: 2px 0 0;
                 font-size: var(--type-size-100);
                 color: var(--text-secondary);
                 line-height: var(--type-line-100);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .home-account-summary-badge {
+                width: 48px;
+                height: 48px;
+                display: block;
+                flex-shrink: 0;
             }
         }
         .home-account-link-group {

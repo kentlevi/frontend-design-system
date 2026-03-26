@@ -6,7 +6,7 @@ interface CouponItem {
 	tag: string;
 }
 
-const props = defineProps<{
+defineProps<{
 	item: CouponItem;
 }>();
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { AccountOrderSection } from '~/types/account/orders';
+import type { AccountOrder, AccountOrderSection } from '~/types/account/orders';
 
 interface OrderGroup {
 	section: AccountOrderSection;
-	items: any[];
+	items: AccountOrder[];
 }
 
 defineProps<{

@@ -8,7 +8,7 @@ interface AddressItem {
 	isDefault?: boolean;
 }
 
-const props = defineProps<{
+defineProps<{
 	item: AddressItem;
 	section: string;
 	index: number;

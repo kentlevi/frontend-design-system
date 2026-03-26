@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { useAccountAddressBook } from '~/composables/account/addressBook/useAccountAddressBook';
-import AddressBookCard from './AddressBookCard.vue';
+import AddressBookAddModal from './AddressBookAddModal.vue';
+import AddressBookSection from './AddressBookSection.vue';
 
 const { t } = useI18n();
 const { items_by_section } = useAccountAddressBook();
+const is_add_modal_open = ref(false);
 
 const primary_sections = computed(() => items_by_section.value.filter((group) => group.section !== 'dropShipping'));
 const drop_shipping_sections = computed(() => items_by_section.value.filter((group) => group.section === 'dropShipping'));
+
+function openAddModal() {
+	is_add_modal_open.value = true;
+}
 </script>
 
 <template>
@@ -24,6 +30,7 @@ const drop_shipping_sections = computed(() => items_by_section.value.filter((gro
 						icon="regular-plus"
 						icon-position="left"
 						data-testid="account-address-book-add-button"
+						@click="openAddModal"
 					>
 						{{ t('account.addressBook.addNew') }}
 					</UiButton>
@@ -31,66 +38,26 @@ const drop_shipping_sections = computed(() => items_by_section.value.filter((gro
 
 				<div class="account-address-book-sections" data-testid="account-address-book-sections">
 					<div class="account-address-book-primary-group">
-						<section
+						<AddressBookSection
 							v-for="group in primary_sections"
 							:key="group.section"
-							class="account-profile-section"
-							:data-testid="`account-address-book-section-${group.section}`"
-						>
-							<div class="account-profile-section-copy" data-testid="account-address-book-info">
-								<h2 class="account-profile-section-title">
-									{{ t(`account.addressBook.${group.section}Title`) }}
-								</h2>
-								<p class="account-profile-section-description">
-									{{ t(`account.addressBook.${group.section}Description`) }}
-								</p>
-							</div>
-
-							<div class="account-profile-section-main" data-testid="account-address-book-list">
-								<div class="account-address-book-card-grid">
-									<AddressBookCard
-										v-for="(item, index) in group.items"
-										:key="`${group.section}-${item.name}-${index}`"
-										:item="item"
-										:section="group.section"
-										:index="index"
-									/>
-								</div>
-							</div>
-						</section>
+							:section="group.section"
+							:items="group.items"
+						/>
 					</div>
 
 					<div class="account-address-book-drop-group">
-						<section
+						<AddressBookSection
 							v-for="group in drop_shipping_sections"
 							:key="group.section"
-							class="account-profile-section"
-							:data-testid="`account-address-book-section-${group.section}`"
-						>
-							<div class="account-profile-section-copy" data-testid="account-address-book-info">
-								<h2 class="account-profile-section-title">
-									{{ t(`account.addressBook.${group.section}Title`) }}
-								</h2>
-								<p class="account-profile-section-description">
-									{{ t(`account.addressBook.${group.section}Description`) }}
-								</p>
-							</div>
-
-							<div class="account-profile-section-main" data-testid="account-address-book-list">
-								<div class="account-address-book-card-grid">
-									<AddressBookCard
-										v-for="(item, index) in group.items"
-										:key="`${group.section}-${item.name}-${index}`"
-										:item="item"
-										:section="group.section"
-										:index="index"
-									/>
-								</div>
-							</div>
-						</section>
+							:section="group.section"
+							:items="group.items"
+						/>
 					</div>
 				</div>
 			</div>
+
+			<AddressBookAddModal v-model="is_add_modal_open" />
 		</AccountShell>
 	</section>
 </template>
@@ -130,11 +97,6 @@ const drop_shipping_sections = computed(() => items_by_section.value.filter((gro
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
-	}
-
-	.account-address-book-card-grid {
-		display: grid;
-		gap: 16px;
 	}
 }
 
