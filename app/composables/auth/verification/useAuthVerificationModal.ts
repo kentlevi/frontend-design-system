@@ -35,7 +35,7 @@ export function useAuthVerificationModal(params: {
 		resend_tap_lock_timer = null;
 	}
 
-	function lockResendTap(ms = 2000) {
+	function lockResendTap(ms = 10000) {
 		clearResendTapLockTimer();
 		is_resend_tap_locked.value = true;
 		resend_tap_lock_timer = setTimeout(() => {
@@ -45,7 +45,7 @@ export function useAuthVerificationModal(params: {
 	}
 
 	const can_resend = computed(
-		() => params.resendCooldownRemaining.value <= 0 && !is_resend_tap_locked.value
+		() => params.resendCooldownRemaining.value <= 0 && !is_resend_tap_locked.value && !params.verifying.value
 	);
 	const modal_align = computed<'top' | 'center' | 'bottom'>(() =>
 		params.align.value === 'start' ? 'top' : params.align.value
@@ -71,7 +71,7 @@ export function useAuthVerificationModal(params: {
 
 	function onResendClick() {
 		if (!can_resend.value) return;
-		lockResendTap(params.resendCooldownRemaining.value);
+		lockResendTap();
 		params.emitResend();
 	}
 
