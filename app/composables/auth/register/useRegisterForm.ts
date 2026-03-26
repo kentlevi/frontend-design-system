@@ -17,7 +17,7 @@ import { useAuthUser } from '../useAuthUser';
 import { useRegisterUser } from '../useRegisterUser';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 
-type ValidationPayload = Record<string, unknown> | null | undefined | any;
+type ValidationPayload = Record<string, unknown> | null | undefined;
 
 type VerificationExpiryCookie = {
 	email?: string;

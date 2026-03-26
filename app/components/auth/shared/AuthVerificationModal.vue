@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { toRef } from 'vue';
+import { computed, toRef } from 'vue';
 import { useAuthVerificationModal } from '~/composables/auth/verification/useAuthVerificationModal';
 import { authVerificationConfig, type AuthVerificationI18nBase } from '~/data/auth/verification';
 
@@ -112,6 +112,21 @@ function handleModalModelValueUpdate(value: boolean) {
 
 	emit('update:modelValue', value);
 }
+
+const formatted_error_parts = computed(() => {
+	if (!props.error) return [];
+
+	return props.error
+		.split(/(<b>.*?<\/b>)/g)
+		.filter(Boolean)
+		.map(part => {
+			const match = part.match(/^<b>(.*?)<\/b>$/);
+			return {
+				text: match ? match[1] : part,
+				is_bold: Boolean(match),
+			};
+		});
+});
 </script>
 
 <template>
@@ -164,8 +179,7 @@ function handleModalModelValueUpdate(value: boolean) {
 					</h3>
 					<p class="auth-verification-text">
 						{{ t(`${translation_key}.messagePrefix`) }}
-						<strong class="auth-verification-email">{{ email }}</strong>
-						{{ t(`${translation_key}.messageSuffix`) }}
+						<strong class="auth-verification-email">{{ email }}</strong>{{ t(`${translation_key}.messageSuffix`) }}
 					</p>
 				</div>
 			</div>
@@ -198,7 +212,10 @@ function handleModalModelValueUpdate(value: boolean) {
 					class="auth-verification-error"
 					data-testid="auth-verification-error"
 				>
-					{{ error }}
+					<template v-for="(part, index) in formatted_error_parts" :key="`${part.text}-${index}`">
+						<strong v-if="part.is_bold">{{ part.text }}</strong>
+						<template v-else>{{ part.text }}</template>
+					</template>
 				</p>
 			</div>
 

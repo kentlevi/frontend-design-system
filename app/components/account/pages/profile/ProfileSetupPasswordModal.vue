@@ -142,7 +142,6 @@ function closeModal() {
 						size="lg"
 						class="account-profile-setup-password-modal-confirm"
 						data-testid="account-profile-setup-password-modal-confirm"
-						:disabled="!props.isSubmitEnabled"
 						@click="emit('submit')"
 					>
 						{{ t('account.profile.confirmSetupPassword') }}
@@ -227,6 +226,14 @@ function closeModal() {
 
 	&-confirm {
 		width: 100%;
+
+		&:disabled {
+			background: var(--text-primary);
+			color: var(--contrast-light);
+			border-color: transparent;
+			box-shadow: none;
+			opacity: 0.4;
+		}
 	}
 }
 </style>

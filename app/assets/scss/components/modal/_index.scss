@@ -20,7 +20,7 @@
 
 .ui-modal {
     width: 100%;
-    max-width: 504px;
+    width: min(var(--ui-modal-width, 504px), calc(100vw - 32px));
     border-radius: 14px;
     background: var(--contrast-light);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
