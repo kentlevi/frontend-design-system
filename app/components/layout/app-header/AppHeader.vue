@@ -4,7 +4,6 @@ import AppHeaderSearchModal from '~/components/layout/app-header/AppHeaderSearch
 import { useAppHeaderAccount } from '~/composables/layout/appHeader/useAppHeaderAccount';
 import { useAppHeaderCartPreview } from '~/composables/layout/appHeader/useAppHeaderCartPreview';
 import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/appHeader/useAppHeaderKeyboardShortcuts';
-import { useAppHeaderSearch } from '~/composables/layout/appHeader/useAppHeaderSearch';
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const AppHeaderLocaleModal = defineAsyncComponent(
@@ -37,32 +36,7 @@ const {
 	selectLocale,
 	logoutMock,
 } = useAppHeaderAccount();
-
-const {
-	search_modal_open,
-	search_query,
-	search_loading,
-	active_search_nav_index,
-	search_result_groups,
-	search_nav_index_by_result_id,
-	recent_search_entries,
-	search_empty_suggested_term,
-	show_search_recent,
-	show_search_no_recent,
-	show_search_no_result,
-	show_search_results,
-	setSearchModalRef,
-	setSearchInputRef,
-	focusSearchInput,
-	closeSearchModal,
-	applySuggestedSearch,
-	clearRecentSearches,
-	applyRecentSearch,
-	removeRecentSearch,
-	selectSearchResult,
-	highlightSearchMatch,
-	handleSearchKeydown,
-} = useAppHeaderSearch();
+const search_modal_open = ref(false);
 
 const {
 	cart_preview_open,
@@ -116,13 +90,16 @@ function openLocaleModal() {
 	openLocaleModalBase();
 }
 
-async function openSearchModal() {
+function closeSearchModal() {
+	search_modal_open.value = false;
+}
+
+function openSearchModal() {
 	void prefetchHeaderOverlayModules();
 	closeAccountMenu();
 	closeLocaleModal();
 	closeCartPreview();
 	search_modal_open.value = true;
-	await focusSearchInput();
 }
 
 function openCartPreview() {
@@ -147,7 +124,7 @@ function setCartBodyScrollLock(locked: boolean) {
 }
 
 useAppHeaderKeyboardShortcuts({
-	handleSearchKeydown,
+	handleSearchKeydown: () => false,
 	isSearchModalOpen: () => search_modal_open.value,
 	isLocaleModalOpen: () => locale_modal_open.value,
 	closeSearchModal,
@@ -174,6 +151,13 @@ onMounted(() => {
 watch(should_lock_body_scroll, (should_lock) => {
 	setCartBodyScrollLock(should_lock);
 });
+
+watch(
+	() => route.fullPath,
+	() => {
+		closeSearchModal();
+	}
+);
 
 onBeforeUnmount(() => {
 	if (typeof window === 'undefined') return;
@@ -233,29 +217,8 @@ onBeforeUnmount(() => {
 		<AppHeaderSearchModal
 			v-if="search_modal_open"
 			:open="search_modal_open"
-			:search-query="search_query"
-			:search-loading="search_loading"
-			:show-search-recent="show_search_recent"
-			:show-search-no-recent="show_search_no_recent"
-			:show-search-no-result="show_search_no_result"
-			:show-search-results="show_search_results"
-			:recent-search-entries="recent_search_entries"
-			:active-search-nav-index="active_search_nav_index"
-			:search-result-groups="search_result_groups"
-			:search-nav-index-by-result-id="search_nav_index_by_result_id"
-			:search-empty-suggested-term="search_empty_suggested_term"
-			:highlight-search-match="highlightSearchMatch"
-			:set-modal-ref="setSearchModalRef"
-			:set-input-ref="setSearchInputRef"
 			data-testid="app-header-search-modal"
 			@close="closeSearchModal"
-			@update:search-query="search_query = $event"
-			@focus-input="focusSearchInput"
-			@clear-recent="clearRecentSearches"
-			@apply-recent="applyRecentSearch"
-			@remove-recent="removeRecentSearch"
-			@apply-suggested="applySuggestedSearch"
-			@select-result="selectSearchResult"
 		/>
 
 		<CartPreview
