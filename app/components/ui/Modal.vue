@@ -86,6 +86,7 @@ onBeforeUnmount(() => {
 				v-if="modelValue"
 				class="ui-modal-overlay"
 				:class="{
+					'ui-modal-overlay--top': align === 'top',
 					'ui-modal-overlay--center': align === 'center',
 					'ui-modal-overlay--bottom': align === 'bottom',
 				}"
