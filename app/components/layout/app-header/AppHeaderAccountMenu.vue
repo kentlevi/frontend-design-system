@@ -388,7 +388,6 @@ const {
             font-weight: var(--font-weight-bold);
             display: grid;
             place-items: center;
-			padding: 4px;
 
             .home-header-avatar-image {
                 width: inherit;
@@ -449,8 +448,8 @@ const {
                 font-weight: var(--font-weight-bold);
 
                 .home-account-summary-avatar-image {
-                    width: 100%;
-                    height: 100%;
+                    width: inherit;
+                    height: inherit;
                     border-radius: 50%;
                     object-fit: cover;
                 }
