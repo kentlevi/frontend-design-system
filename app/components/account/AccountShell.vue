@@ -207,7 +207,6 @@ const tabs = [
         height: 72px;
         border-radius: 50%;
         background: var(--gray-40);
-        box-shadow: inset 0 0 0 4px var(--gray-40);
         color: var(--black-base);
         display: grid;
         place-items: center;
@@ -216,10 +215,11 @@ const tabs = [
         line-height: var(--type-line-400);
 
         .account-shell-avatar-image {
-            width: 100%;
-            height: 100%;
+            width: inherit;
+            height: inherit;
             border-radius: 50%;
             object-fit: cover;
+			border: 4px solid var(--gray-40);
         }
 
         .account-shell-avatar-badge {
