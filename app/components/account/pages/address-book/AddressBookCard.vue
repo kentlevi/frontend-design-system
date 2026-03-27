@@ -61,16 +61,19 @@ const tagBadgeColors = {
 					<p v-if="props.item.type === 'shipping' && props.item.phone_number" class="account-address-book-card-phone">
 						{{ props.item.phone_number }}
 					</p>
-					<p v-if="props.item.type !== 'drop'" class="account-address-book-card-address">{{ props.item.address_line_1 }}</p>
-					<p v-if="props.item.type !== 'drop'" class="account-address-book-card-address">{{ props.item.address_line_2 }}</p>
-					<p
-						v-for="(dynamic_field, y_index) in props.item.dynamic_fields"
-						:key="y_index"
-						class="account-address-book-card-address"
-					>
-						{{ dynamic_field.value }}
-					</p>
-					<span v-if="props.item.type !== 'drop'" class="account-address-book-card-company">{{ props.item.postcode}}</span>
+					<div style="display: flex; gap: 4px;">
+						<p v-if="props.item.type !== 'drop'" class="account-address-book-card-address">{{ props.item.address_line_1 }}</p>
+						<p v-if="props.item.type !== 'drop'" class="account-address-book-card-address">{{ props.item.address_line_2 }}</p>
+						<p
+							v-for="(dynamic_field, y_index) in props.item.dynamic_fields"
+							:key="y_index"
+							class="account-address-book-card-address"
+						>
+							{{ dynamic_field.value }}
+						</p>
+						<span v-if="props.item.type !== 'drop'" class="account-address-book-card-company">{{ props.item.postcode}}</span>
+					</div>
+
 					<span class="account-address-book-card-company">{{ props.item.company }}</span>
 				</div>
 				<UiBadge
