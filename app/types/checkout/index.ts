@@ -17,3 +17,9 @@ export type MemberAddress = {
 	line2: string;
 	isDefault?: boolean;
 };
+
+export type CheckoutResponse = {
+  payment_information?: {
+    redirect_url?: string
+  }
+}
