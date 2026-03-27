@@ -133,13 +133,13 @@ onMounted(() => {
 					<UiFormField
 						:error="field_errors[field.field_key]"
 						:label="field.is_required
-							? t(`account.profile.${field.field_key}`)
-							: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
+							? field.field_label
+							: `${field.field_label} (${t('account.profile.optional')})`"
 						:required="Boolean(field.is_required)"
 					>
-						<template v-if="field.field_key === 'last_name' || field.field_key === 'family_name'" #label>
+						<template v-if="!field.is_required" #label>
 							<span class="ui-form-field-label-text">
-								{{ t(`account.profile.${field.field_key}`) }}
+								{{ field.field_label }}
 							</span>
 							<span class="account-profile-optional">
 								({{ t('account.profile.optional') }})
