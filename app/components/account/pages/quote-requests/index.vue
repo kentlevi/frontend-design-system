@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { useAccountQuoteRequests } from '~/composables/account/quoteRequests/useAccountQuoteRequests';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 const { requests, activeRequest } = useAccountQuoteRequests();
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-quote-requests-page">
-		<AccountShell active-tab="quote-requests">
+		<AccountShellSection :embedded="embedded" active-tab="quote-requests">
 			<div class="account-content" data-testid="account-quote-requests-content">
 				<header class="account-quote-header" data-testid="account-quote-requests-header">
 					<h1 class="account-quote-title" data-testid="account-quote-requests-title">{{ t('account.quoteRequests.title') }}</h1>
@@ -71,7 +77,7 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 					</section>
 				</div>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 	</section>
 </template>
 

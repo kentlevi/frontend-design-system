@@ -2,13 +2,19 @@
 import { useAccountCoupons } from '~/composables/account/coupons/useAccountCoupons';
 import CouponsCard from './CouponsCard.vue';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 const { coupons } = useAccountCoupons();
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-coupons-page">
-		<AccountShell active-tab="coupons">
+		<AccountShellSection :embedded="embedded" active-tab="coupons">
 			<div class="account-content" data-testid="account-coupons-content">
 				<header class="account-coupons-header" data-testid="account-coupons-header">
 					<h1 class="account-coupons-title" data-testid="account-coupons-title">{{ t('account.coupons.title') }}</h1>
@@ -34,7 +40,7 @@ const { coupons } = useAccountCoupons();
 					/>
 				</div>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 	</section>
 </template>
 

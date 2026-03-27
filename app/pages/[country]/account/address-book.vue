@@ -7,5 +7,5 @@ definePageMeta({
 </script>
 
 <template>
-	<AccountAddressBookPage />
+	<AccountAddressBookPage embedded />
 </template>

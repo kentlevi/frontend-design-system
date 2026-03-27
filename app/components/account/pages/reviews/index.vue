@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { useAccountReviews } from '~/composables/account/reviews/useAccountReviews';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 const { reviews } = useAccountReviews();
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-reviews-page">
-		<AccountShell active-tab="reviews">
+		<AccountShellSection :embedded="embedded" active-tab="reviews">
 			<div class="account-content" data-testid="account-reviews-content">
 				<h1 class="account-reviews-title" data-testid="account-reviews-title">{{ t('account.reviews.title') }}</h1>
 				<div class="account-reviews-list" data-testid="account-reviews-list">
@@ -26,7 +32,7 @@ const { reviews } = useAccountReviews();
 					</article>
 				</div>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 	</section>
 </template>
 

@@ -452,6 +452,7 @@ const {
                     height: inherit;
                     border-radius: 50%;
                     object-fit: cover;
+					border: 1px solid var(--gray-40);
                 }
             }
 

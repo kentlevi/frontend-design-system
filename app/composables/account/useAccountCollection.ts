@@ -1,8 +1,10 @@
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 export function useAccountCollection<T>(items: readonly T[]) {
+	const collection_items = ref(items.map((item) => ({ ...item })) as T[]);
+
 	return {
-		items,
+		items: collection_items,
 	};
 }
 
