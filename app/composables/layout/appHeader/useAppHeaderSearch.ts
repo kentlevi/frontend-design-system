@@ -10,6 +10,7 @@ import {
 	saveRecentSearchedProducts,
 	searchProducts,
 } from '~/services/search/search.service';
+import { useRecentSearchStore } from '~/stores/search/recent-search.store';
 import { useUsersStore } from '~/stores/users/users.store';
 import type {
 	RecentSearchEntry,
@@ -28,7 +29,6 @@ import type {
 const search_page_size = 10;
 const search_result_scroll_threshold = 56;
 const search_default_image = '/illustrations/products/stickers/die-cut.svg';
-const search_recent_storage_key = 'search_recent_terms';
 
 function normalizeText(value: unknown): string {
 	return typeof value === 'string' ? value.trim() : '';
@@ -89,6 +89,9 @@ export function useAppHeaderSearch(params: {
 	const { withCountry } = useCountry();
 	const { resolveFileUrl } = useFileBaseUrl();
 	const users_store = useUsersStore();
+	const recent_search_store = useRecentSearchStore();
+
+	recent_search_store.hydrateState();
 
 	const search_query = ref('');
 	const debounced_search_query = ref('');
@@ -103,7 +106,6 @@ export function useAppHeaderSearch(params: {
 		createEmptyPagination(search_page_size)
 	);
 	const search_request_id = ref(0);
-	const recent_search_storage_entries = ref<RecentSearchStorageEntry[]>([]);
 	let search_debounce_timeout: ReturnType<typeof setTimeout> | null = null;
 
 	const is_authenticated = computed(() => users_store.state.id > 0);
@@ -234,44 +236,12 @@ export function useAppHeaderSearch(params: {
 		return createRecentSearchStorageEntry('product', mapSearchItemToStorageProduct(mapped_item));
 	}
 
-	function loadRecentSearchesFromLocalStorage(): RecentSearchStorageEntry[] {
-		if (!import.meta.client) return [];
-
-		try {
-			const raw_value = window.localStorage.getItem(search_recent_storage_key);
-			if (!raw_value) return [];
-
-			const parsed_value = JSON.parse(raw_value);
-			return Array.isArray(parsed_value)
-				? parsed_value as RecentSearchStorageEntry[]
-				: [];
-		} catch {
-			return [];
-		}
-	}
-
-	function writeRecentSearchesToLocalStorage(entries: RecentSearchStorageEntry[]) {
-		if (!import.meta.client) return;
-
-		try {
-			if (!entries.length) {
-				window.localStorage.removeItem(search_recent_storage_key);
-				return;
-			}
-
-			window.localStorage.setItem(search_recent_storage_key, JSON.stringify(entries));
-		} catch {
-			// ignore storage failures
-		}
-	}
-
 	function setRecentSearchStorageEntries(entries: RecentSearchStorageEntry[]) {
-		recent_search_storage_entries.value = entries;
-		writeRecentSearchesToLocalStorage(entries);
+		recent_search_store.setRecentSearchStorageEntries(entries);
 	}
 
 	const normalized_recent_searches = computed<RecentSearchRecord[]>(() => {
-		return recent_search_storage_entries.value
+		return recent_search_store.state.recent_search_storage_entries
 			.map((entry) => {
 				if (typeof entry === 'string') {
 					const term = normalizeText(entry);
@@ -456,8 +426,11 @@ export function useAppHeaderSearch(params: {
 		setRecentSearchStorageEntries(next_entries);
 	}
 
-	async function syncRecentSearchesFromDatabase() {
+	async function syncRecentSearchesFromDatabase(options: { force?: boolean } = {}) {
 		if (!is_authenticated.value) return;
+		const should_sync = options.force === true
+			|| recent_search_store.state.should_refetch_recent_products;
+		if (!should_sync) return;
 
 		recent_search_loading.value = true;
 
@@ -473,11 +446,32 @@ export function useAppHeaderSearch(params: {
 				.filter((entry): entry is RecentSearchStorageEntry => Boolean(entry))
 				.slice(0, HEADER_MAX_RECENT_SEARCHES);
 
-			setRecentSearchStorageEntries(mapped_entries);
+			recent_search_store.setRecentSearchStorageEntriesFromRemote(mapped_entries);
 		} catch {
 			// keep local state on failure
 		} finally {
 			recent_search_loading.value = false;
+		}
+	}
+
+	async function syncRecentSearchesInBackground() {
+		if (!is_authenticated.value) return;
+
+		try {
+			const response = await getRecentSearchedProducts();
+			if (!response.success) return;
+
+			const products = Array.isArray(response.data?.products)
+				? response.data.products
+				: [];
+			const mapped_entries = products
+				.map(mapRecentApiProductToStorageEntry)
+				.filter((entry): entry is RecentSearchStorageEntry => Boolean(entry))
+				.slice(0, HEADER_MAX_RECENT_SEARCHES);
+
+			recent_search_store.setRecentSearchStorageEntriesFromRemote(mapped_entries);
+		} catch {
+			// keep local state on failure
 		}
 	}
 
@@ -495,7 +489,7 @@ export function useAppHeaderSearch(params: {
 	}
 
 	function clearRecentSearches() {
-		setRecentSearchStorageEntries([]);
+		recent_search_store.clearRecentSearchStorageEntries();
 		resetSearchNavigation();
 	}
 
@@ -514,19 +508,34 @@ export function useAppHeaderSearch(params: {
 		resetSearchNavigation();
 	}
 
-	async function selectSearchResult(item: SearchItem) {
+	function saveRecentSearchInBackground(item: SearchItem) {
 		if (is_authenticated.value) {
-			const response = saveRecentSearchedProducts({
-				product_id: item.product_id
-			})
+			void (async () => {
+				try {
+					const response = await saveRecentSearchedProducts({
+						product_id: item.product_id
+					});
+
+					if (!response.success) return;
+
+					recent_search_store.markRecentSearchesDirty();
+					await syncRecentSearchesInBackground();
+				} catch {
+					// keep local state on save failure
+				}
+			})();
 		}
+	}
+
+	function selectSearchResult(item: SearchItem) {
+		saveRecentSearchInBackground(item);
 
 		persistRecentSearch({
 			type: 'product',
 			value: item,
 		});
 		params.closeModal();
-		await router.push(item.to);
+		void router.push(item.to);
 	}
 
 	async function applyRecentSearch(entry_key: string) {
@@ -536,7 +545,7 @@ export function useAppHeaderSearch(params: {
 		if (!entry) return;
 
 		if (entry.item) {
-			await selectSearchResult(entry.item);
+			selectSearchResult(entry.item);
 			return;
 		}
 
@@ -684,11 +693,13 @@ export function useAppHeaderSearch(params: {
 	}
 
 	watch(search_query, (value) => {
+		const had_pending_debounce = Boolean(search_debounce_timeout);
 		clearSearchDebounceTimeout();
 		resetSearchNavigation();
-		search_request_id.value += 1;
+		const trimmed_value = value.trim();
 
-		if (!value.trim()) {
+		if (!trimmed_value) {
+			search_request_id.value += 1;
 			debounced_search_query.value = '';
 			search_loading.value = false;
 			search_loading_more.value = false;
@@ -696,9 +707,18 @@ export function useAppHeaderSearch(params: {
 			return;
 		}
 
+		if (trimmed_value === debounced_search_query.value.trim()) {
+			if (had_pending_debounce) {
+				search_loading.value = false;
+				search_loading_more.value = false;
+			}
+			return;
+		}
+
+		search_request_id.value += 1;
 		search_loading.value = true;
 		search_debounce_timeout = setTimeout(() => {
-			debounced_search_query.value = value.trim();
+			debounced_search_query.value = trimmed_value;
 		}, HEADER_SEARCH_DEBOUNCE_DELAY_MS);
 	});
 
@@ -720,7 +740,6 @@ export function useAppHeaderSearch(params: {
 	});
 
 	onMounted(() => {
-		recent_search_storage_entries.value = loadRecentSearchesFromLocalStorage();
 		void focusSearchInput();
 
 		if (is_authenticated.value) {
