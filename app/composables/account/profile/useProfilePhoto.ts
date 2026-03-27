@@ -74,12 +74,7 @@ export function useProfilePhoto() {
 			/** Set file name in store */
 			user_store.setProfileField('file_name', file_name)
 
-			toast_store.showToastWithTimer({
-				message: t('account.profile.photoUploadSuccess'),
-				tone: 'primary',
-				dismissible: true,
-				variant: 'default',
-			})
+			toast_store.handleApiResponse(response)
 		} catch {
 			toast_store.showUpdateError()
 			return
