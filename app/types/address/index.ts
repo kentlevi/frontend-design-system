@@ -2,11 +2,13 @@ import type { CountryField } from "../country_field"
 
 export type AddressType = keyof AddressMap
 
+export type AddressLabel = 'home' | 'office' | 'client'
+
 export interface BaseAddress {
 	id: number
 	user_id: number
 	country_id: number
-	label: 'home' | 'office' | 'client'
+	label: AddressLabel
 	contact_name: string
 	company?: string
 	is_default: boolean

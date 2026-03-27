@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCheckoutFlow } from '~/composables/checkout/useCheckoutFlow';
+import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 type SummaryItem = {
 	id: string;
 	product: {
@@ -41,6 +43,23 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'submit'): void;
 }>();
+
+const {
+    submitCheckout
+} = useCheckoutFlow()
+
+const {
+    listenPaymentResult
+} = useTossPayment()
+
+onMounted(() => {
+	
+	/** For toss payment integration */
+    const cleanup = listenPaymentResult()
+    onUnmounted(() => {
+        cleanup()
+    })
+})
 </script>
 
 <template>
@@ -136,7 +155,7 @@ const emit = defineEmits<{
 				size="lg"
 				class="checkout-summary-submit"
 				:disabled="props.disabled || props.loading"
-				@click="emit('submit')"
+				@click="submitCheckout"
 			>
 				{{ props.completeLabel }}
 			</UiButton>

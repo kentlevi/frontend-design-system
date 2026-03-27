@@ -5,7 +5,6 @@ import { isValidImage, resolveUploadPath } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
-	const { t } = useI18n()
 
 	/** State */
 	const user_store = useUsersStore()

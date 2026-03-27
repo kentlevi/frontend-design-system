@@ -3,6 +3,12 @@ import AccountPointsRankingModal from './AccountPointsRankingModal.vue';
 import { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 import type { AccountPointLogFilter } from '~/types/account/points';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 const {
 	summary,
@@ -27,7 +33,7 @@ function openRankingModal() {
 
 <template>
 	<section class="account-page" data-testid="account-points-page">
-		<AccountShell active-tab="points">
+		<AccountShellSection :embedded="embedded" active-tab="points">
 			<div class="account-content" data-testid="account-points-content">
 				<div class="account-points-grid">
 					<div class="account-points-copy-column">
@@ -199,7 +205,7 @@ function openRankingModal() {
 					</div>
 				</div>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 
 		<AccountPointsRankingModal
 			v-model="is_ranking_modal_open"

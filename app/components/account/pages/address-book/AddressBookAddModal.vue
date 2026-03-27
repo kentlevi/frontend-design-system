@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
-import type { AddressSection, AddressType } from '~/types/account/addressBook';
+import type { AddressLabel, AddressType } from '~/types/address';
 
 type IconName = keyof typeof icons;
 type SelectOption = {
@@ -18,8 +18,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const address_type = ref<AddressSection>('shipping');
-const address_label = ref<AddressType>('Home');
+const address_type = ref<AddressType>('shipping');
+const address_label = ref<AddressLabel>('home');
 const full_name = ref('');
 const company = ref('');
 const address_line_1 = ref('');
@@ -38,28 +38,44 @@ const province_options: SelectOption[] = [
 ];
 
 const address_type_options: Array<{
-	value: AddressSection;
+	value: AddressType;
 	label_key: string;
 	icon: IconName;
 }> = [
 	{ value: 'shipping', label_key: 'shippingTitle', icon: 'regular-truck' },
 	{ value: 'billing', label_key: 'billingTitle', icon: 'regular-invoice-check' },
-	{ value: 'dropShipping', label_key: 'dropShippingTitle', icon: 'strong-boxes-full' },
+	{ value: 'drop', label_key: 'dropTitle', icon: 'strong-boxes-full' },
 ];
 
 const address_label_options: Array<{
-	value: AddressType;
+	value: AddressLabel;
 	label_key: string;
 	icon: IconName;
 }> = [
-	{ value: 'Home', label_key: 'Home', icon: 'regular-home' },
-	{ value: 'Office', label_key: 'Office', icon: 'regular-building' },
-	{ value: 'Client', label_key: 'Client', icon: 'regular-user-circle' },
+	{ value: 'home', label_key: 'home', icon: 'regular-home' },
+	{ value: 'office', label_key: 'office', icon: 'regular-building' },
+	{ value: 'client', label_key: 'client', icon: 'regular-user-circle' },
 ];
 
-const shows_full_address_fields = computed(() => address_type.value !== 'dropShipping');
+const shows_full_address_fields = computed(() => address_type.value !== 'drop');
 const shows_phone_and_default = computed(() => address_type.value === 'shipping');
-const keeps_two_column_postal_row = computed(() => address_type.value !== 'dropShipping');
+const keeps_two_column_postal_row = computed(() => address_type.value !== 'drop');
+const modal_title = computed(() => t('account.addressBook.addNew'));
+const save_label = computed(() => t('account.addressBook.save'));
+
+function resetForm() {
+	address_type.value = 'shipping';
+	address_label.value = 'home';
+	full_name.value = '';
+	company.value = '';
+	address_line_1.value = '';
+	address_line_2.value = '';
+	province.value = null;
+	city.value = '';
+	postal_code.value = '';
+	phone.value = '';
+	is_default.value = false;
+}
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -68,6 +84,15 @@ function closeModal() {
 function handleSave() {
 	closeModal();
 }
+
+watch(
+	() => props.modelValue,
+	(is_open) => {
+		if (!is_open) return;
+		resetForm();
+	},
+	{ immediate: true }
+);
 </script>
 
 <template>
@@ -83,7 +108,7 @@ function handleSave() {
 		<section class="account-address-book-add-modal" data-testid="account-address-book-add-modal">
 			<header class="account-address-book-add-modal-header">
 				<h3 class="account-address-book-add-modal-title">
-					{{ t('account.addressBook.addNew') }}
+					{{ modal_title }}
 				</h3>
 
 				<button
@@ -323,7 +348,7 @@ function handleSave() {
 								class="account-address-book-add-modal-save"
 								@click="handleSave"
 							>
-								{{ t('account.addressBook.save') }}
+								{{ save_label }}
 							</UiButton>
 						</div>
 					</div>

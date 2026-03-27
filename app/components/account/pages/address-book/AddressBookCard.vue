@@ -89,7 +89,7 @@ const address_lines = computed(() => {
 			<div class="account-address-book-card-title-row">
 				<h3 class="account-address-book-card-name">{{ props.item.contact_name }}</h3>
 				<UiBadge
-					v-if="item.is_default"
+					v-if="props.item.is_default"
 					variant="outline"
 					tone="default"
 					size="md"
