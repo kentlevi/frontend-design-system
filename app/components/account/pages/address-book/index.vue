@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { useAccountAddressBook } from '~/composables/account/addressBook/useAccountAddressBook';
-// import AddressBookAddModal from './AddressBookAddModal.vue';
 import AddressBookSection from './AddressBookSection.vue';
+import AddressBookAddModal from './AddressBookAddModal.vue';
 
 const { t } = useI18n();
-// const { items_by_section } = useAccountAddressBook();
-// const is_add_modal_open = ref(false);
-
-// const primary_sections = computed(() => items_by_section.value.filter((group) => group.section !== 'dropShipping'));
-// const drop_shipping_sections = computed(() => items_by_section.value.filter((group) => group.section === 'dropShipping'));
-
-// function openAddModal() {
-// 	is_add_modal_open.value = true;
-// }
 
 const {
 	shipping_address,
 	billing_address,
 	drop_address,
 
-	getAddresses
+	is_add_modal_open,
+
+	getAddresses,
+	openAddModal
 } = useAccountAddressBook()
 
 onMounted(() => {
@@ -44,6 +38,7 @@ onMounted(() => {
 						icon="regular-plus"
 						icon-position="left"
 						data-testid="account-address-book-add-button"
+						@click="openAddModal"
 					>
 						{{ t('account.addressBook.addNew') }}
 					</UiButton>
@@ -67,7 +62,7 @@ onMounted(() => {
 				</div>
 			</div>
 
-			<!-- <AddressBookAddModal v-model="is_add_modal_open" /> -->
+			<AddressBookAddModal v-model="is_add_modal_open" />
 		</AccountShell>
 	</section>
 </template>
