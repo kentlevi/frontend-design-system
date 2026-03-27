@@ -1,20 +1,35 @@
-import { computed } from 'vue'
-import { useAccountCollection } from '~/composables/account/useAccountCollection'
-import { accountAddressBookItems } from '~/data/account/addressBook'
-import type { AddressSection } from '~/types/account/addressBook';
+import { fetchUserAddresses } from "~/services/profile/address.service";
+import { useAddressStore } from "~/stores/address/address.store";
+import type { AddressType } from "~/types/address";
 
 export function useAccountAddressBook() {
-	const collection = useAccountCollection(accountAddressBookItems);
-	const section_order: AddressSection[] = ['shipping', 'billing', 'dropShipping'];
-	const items_by_section = computed(() => {
-		return section_order.map((section) => ({
-			section,
-			items: collection.items.filter((item) => item.section === section),
-		})).filter((group) => group.items.length > 0);
-	});
+	const address_store = useAddressStore()
+
+	const shipping_address = computed(() => address_store.shipping_address)
+	const billing_address = computed(() => address_store.billing_address)
+	const drop_address = computed(() => address_store.drop_address)
+
+	async function getAddresses(type: AddressType) {
+		try {
+			const params = { type }
+
+			const response = await fetchUserAddresses(params)
+
+			if (response.success) {
+				if (response.data) {
+					address_store.setAddresses(type, response.data)
+				}
+			}
+		} catch {
+			console.log('error');
+		}
+	}
 
 	return {
-		...collection,
-		items_by_section,
+		shipping_address,
+		billing_address,
+		drop_address,
+
+		getAddresses
 	}
 }

@@ -1,0 +1,1 @@
+export { useAddressStore } from "~/stores/address/address.store";

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import type { AccountAddressBookItem, AddressSection } from '~/types/account/addressBook';
+import type { AddressMap, AddressType } from '~/types/address';
 import AddressBookCard from './AddressBookCard.vue';
 
-defineProps<{
-	section: AddressSection;
-	items: AccountAddressBookItem[];
-}>();
+type SectionProps = {
+	section: AddressType;
+	items: AddressMap[AddressType][];
+};
+
+const props = defineProps<SectionProps>();
 
 const { t } = useI18n();
 </script>
@@ -13,24 +15,23 @@ const { t } = useI18n();
 <template>
 	<section
 		class="account-profile-section"
-		:data-testid="`account-address-book-section-${section}`"
+		:data-testid="`account-address-book-section-${props.section}`"
 	>
 		<div class="account-profile-section-copy" data-testid="account-address-book-info">
 			<h2 class="account-profile-section-title">
-				{{ t(`account.addressBook.${section}Title`) }}
+				{{ t(`account.addressBook.${props.section}Title`) }}
 			</h2>
 			<p class="account-profile-section-description">
-				{{ t(`account.addressBook.${section}Description`) }}
+				{{ t(`account.addressBook.${props.section}Description`) }}
 			</p>
 		</div>
 
 		<div class="account-profile-section-main" data-testid="account-address-book-list">
 			<div class="account-address-book-card-grid">
 				<AddressBookCard
-					v-for="(item, index) in items"
-					:key="`${section}-${item.name}-${index}`"
+					v-for="(item, index) in props.items"
+					:key="`${props.section}-${item.id}-${index}`"
 					:item="item"
-					:section="section"
 					:index="index"
 				/>
 			</div>

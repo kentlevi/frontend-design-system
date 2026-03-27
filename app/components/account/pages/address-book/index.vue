@@ -1,18 +1,32 @@
 <script setup lang="ts">
 import { useAccountAddressBook } from '~/composables/account/addressBook/useAccountAddressBook';
-import AddressBookAddModal from './AddressBookAddModal.vue';
+// import AddressBookAddModal from './AddressBookAddModal.vue';
 import AddressBookSection from './AddressBookSection.vue';
 
 const { t } = useI18n();
-const { items_by_section } = useAccountAddressBook();
-const is_add_modal_open = ref(false);
+// const { items_by_section } = useAccountAddressBook();
+// const is_add_modal_open = ref(false);
 
-const primary_sections = computed(() => items_by_section.value.filter((group) => group.section !== 'dropShipping'));
-const drop_shipping_sections = computed(() => items_by_section.value.filter((group) => group.section === 'dropShipping'));
+// const primary_sections = computed(() => items_by_section.value.filter((group) => group.section !== 'dropShipping'));
+// const drop_shipping_sections = computed(() => items_by_section.value.filter((group) => group.section === 'dropShipping'));
 
-function openAddModal() {
-	is_add_modal_open.value = true;
-}
+// function openAddModal() {
+// 	is_add_modal_open.value = true;
+// }
+
+const {
+	shipping_address,
+	billing_address,
+	drop_address,
+
+	getAddresses
+} = useAccountAddressBook()
+
+onMounted(() => {
+	getAddresses('shipping')
+	getAddresses('billing')
+	getAddresses('drop')
+})
 </script>
 
 <template>
@@ -30,7 +44,6 @@ function openAddModal() {
 						icon="regular-plus"
 						icon-position="left"
 						data-testid="account-address-book-add-button"
-						@click="openAddModal"
 					>
 						{{ t('account.addressBook.addNew') }}
 					</UiButton>
@@ -39,25 +52,22 @@ function openAddModal() {
 				<div class="account-address-book-sections" data-testid="account-address-book-sections">
 					<div class="account-address-book-primary-group">
 						<AddressBookSection
-							v-for="group in primary_sections"
-							:key="group.section"
-							:section="group.section"
-							:items="group.items"
+							section="shipping"
+							:items="shipping_address"
 						/>
-					</div>
-
-					<div class="account-address-book-drop-group">
 						<AddressBookSection
-							v-for="group in drop_shipping_sections"
-							:key="group.section"
-							:section="group.section"
-							:items="group.items"
+							section="billing"
+							:items="billing_address"
+						/>
+						<AddressBookSection
+							section="drop"
+							:items="drop_address"
 						/>
 					</div>
 				</div>
 			</div>
 
-			<AddressBookAddModal v-model="is_add_modal_open" />
+			<!-- <AddressBookAddModal v-model="is_add_modal_open" /> -->
 		</AccountShell>
 	</section>
 </template>

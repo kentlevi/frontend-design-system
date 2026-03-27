@@ -57,6 +57,10 @@ const address_label_options: Array<{
 	{ value: 'Client', label_key: 'Client', icon: 'regular-user-circle' },
 ];
 
+const shows_full_address_fields = computed(() => address_type.value !== 'dropShipping');
+const shows_phone_and_default = computed(() => address_type.value === 'shipping');
+const keeps_two_column_postal_row = computed(() => address_type.value !== 'dropShipping');
+
 function closeModal() {
 	emit('update:modelValue', false);
 }
@@ -69,7 +73,7 @@ function handleSave() {
 <template>
 	<UiModal
 		:model-value="props.modelValue"
-		align="center"
+		align="top"
 		padding="0"
 		gap="0"
 		width="710px"
@@ -107,7 +111,7 @@ function handleSave() {
 									:key="option.value"
 									type="button"
 									variant="ghost"
-									tone="default"
+									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
 									:selected="address_type === option.value"
@@ -164,7 +168,7 @@ function handleSave() {
 									:key="option.value"
 									type="button"
 									variant="ghost"
-									tone="default"
+									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
 									:selected="address_label === option.value"
@@ -175,112 +179,127 @@ function handleSave() {
 								</UiButton>
 							</div>
 						</div>
-						<UiFormField
-							:label="t('account.addressBook.streetAddress')"
-							:required="true"
-							:show-required-mark="true"
-						>
-							<template #default="{ inputId, describedBy }">
-								<div class="account-address-book-add-modal-stack">
-									<UiInput
-										:id="inputId"
-										v-model="address_line_1"
-										:aria-describedby="describedBy || undefined"
-										:placeholder="t('account.addressBook.addressLine1Placeholder')"
-									/>
-									<UiInput
-										v-model="address_line_2"
-										:placeholder="t('account.addressBook.addressLine2Placeholder')"
-									/>
-								</div>
-							</template>
-						</UiFormField>
 
-						<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
+						<template v-if="shows_full_address_fields">
 							<UiFormField
-								:label="t('account.addressBook.province')"
-								:required="true"
-								:show-required-mark="true"
-							>
-								<template #default>
-									<UiSelect
-										v-model="province"
-										:options="province_options"
-										:placeholder="t('account.addressBook.provincePlaceholder')"
-										trigger-class="account-address-book-add-modal-province-trigger"
-									/>
-								</template>
-							</UiFormField>
-
-							<UiFormField
-								:label="t('account.addressBook.city')"
+								:label="t('account.addressBook.streetAddress')"
 								:required="true"
 								:show-required-mark="true"
 							>
 								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="city"
-										:aria-describedby="describedBy || undefined"
-										:placeholder="t('account.addressBook.cityPlaceholder')"
-									/>
-								</template>
-							</UiFormField>
-						</div>
-
-						<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
-							<UiFormField
-								:label="t('account.addressBook.postalCode')"
-								:required="true"
-								:show-required-mark="true"
-							>
-								<template #default="{ inputId, describedBy }">
-									<UiInput
-										:id="inputId"
-										v-model="postal_code"
-										:aria-describedby="describedBy || undefined"
-										:placeholder="t('account.addressBook.postalCodePlaceholder')"
-									/>
-								</template>
-							</UiFormField>
-
-							<UiFormField
-								:label="t('account.addressBook.phoneNumber')"
-								:required="true"
-								:show-required-mark="true"
-							>
-								<template #default="{ inputId, describedBy }">
-									<div class="account-address-book-add-modal-phone">
-										<div class="account-address-book-add-modal-phone-prefix">+82</div>
+									<div class="account-address-book-add-modal-stack">
 										<UiInput
 											:id="inputId"
-											v-model="phone"
-											type="text"
-											size="lg"
+											v-model="address_line_1"
 											:aria-describedby="describedBy || undefined"
-											:placeholder="t('account.addressBook.phonePlaceholder')"
-											class="account-address-book-add-modal-phone-input-wrap"
-											input-class="account-address-book-add-modal-phone-input"
+											:placeholder="t('account.addressBook.addressLine1Placeholder')"
+										/>
+										<UiInput
+											v-model="address_line_2"
+											:placeholder="t('account.addressBook.addressLine2Placeholder')"
 										/>
 									</div>
 								</template>
 							</UiFormField>
-						</div>
 
-						<label class="account-address-book-add-modal-switch">
-							<input
-								v-model="is_default"
-								type="checkbox"
-								class="account-address-book-add-modal-switch-input"
+							<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
+								<UiFormField
+									:label="t('account.addressBook.province')"
+									:required="true"
+									:show-required-mark="true"
+								>
+									<template #default>
+										<UiSelect
+											v-model="province"
+											:options="province_options"
+											:placeholder="t('account.addressBook.provincePlaceholder')"
+											trigger-class="account-address-book-add-modal-province-trigger"
+										/>
+									</template>
+								</UiFormField>
+
+								<UiFormField
+									:label="t('account.addressBook.city')"
+									:required="true"
+									:show-required-mark="true"
+								>
+									<template #default="{ inputId, describedBy }">
+										<UiInput
+											:id="inputId"
+											v-model="city"
+											:aria-describedby="describedBy || undefined"
+											:placeholder="t('account.addressBook.cityPlaceholder')"
+										/>
+									</template>
+								</UiFormField>
+							</div>
+
+							<div
+								class="account-address-book-add-modal-grid"
+								:class="{
+									'account-address-book-add-modal-grid--two': keeps_two_column_postal_row,
+								}"
 							>
-							<span class="account-address-book-add-modal-switch-track" />
-							<span class="account-address-book-add-modal-switch-copy-group">
-								<span class="account-address-book-add-modal-switch-copy">
-									{{ t('account.addressBook.saveAsDefault') }}
+								<UiFormField
+									:label="t('account.addressBook.postalCode')"
+									:required="true"
+									:show-required-mark="true"
+								>
+									<template #default="{ inputId, describedBy }">
+										<UiInput
+											:id="inputId"
+											v-model="postal_code"
+											:aria-describedby="describedBy || undefined"
+											:placeholder="t('account.addressBook.postalCodePlaceholder')"
+										/>
+									</template>
+								</UiFormField>
+
+								<UiFormField
+									v-if="shows_phone_and_default"
+									:label="t('account.addressBook.phoneNumber')"
+									:required="true"
+									:show-required-mark="true"
+								>
+									<template #default="{ inputId, describedBy }">
+										<div class="account-address-book-add-modal-phone">
+											<div class="account-address-book-add-modal-phone-prefix">+82</div>
+											<UiInput
+												:id="inputId"
+												v-model="phone"
+												type="text"
+												size="lg"
+												:aria-describedby="describedBy || undefined"
+												:placeholder="t('account.addressBook.phonePlaceholder')"
+												class="account-address-book-add-modal-phone-input-wrap"
+												input-class="account-address-book-add-modal-phone-input"
+											/>
+										</div>
+									</template>
+								</UiFormField>
+
+								<div
+									v-else-if="keeps_two_column_postal_row"
+									aria-hidden="true"
+									class="account-address-book-add-modal-grid-spacer"
+								/>
+							</div>
+
+							<label v-if="shows_phone_and_default" class="account-address-book-add-modal-switch">
+								<input
+									v-model="is_default"
+									type="checkbox"
+									class="account-address-book-add-modal-switch-input"
+								>
+								<span class="account-address-book-add-modal-switch-track" />
+								<span class="account-address-book-add-modal-switch-copy-group">
+									<span class="account-address-book-add-modal-switch-copy">
+										{{ t('account.addressBook.saveAsDefault') }}
+									</span>
+									<UiIcon name="regular-question-circle" :size="20" />
 								</span>
-								<UiIcon name="regular-question-circle" :size="20" />
-							</span>
-						</label>
+							</label>
+						</template>
 					</div>
 
 					<div class="account-address-book-add-modal-footer-row">
@@ -432,6 +451,10 @@ function handleSave() {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
+
+	.account-address-book-add-modal-grid-spacer {
+		min-height: 1px;
 	}
 
 	.account-address-book-add-modal-phone {
