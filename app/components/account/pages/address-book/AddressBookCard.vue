@@ -1,18 +1,12 @@
 <script setup lang="ts">
-interface AddressItem {
-	name: string;
-	phone?: string;
-	address: string;
-	company: string;
-	tag: string;
-	isDefault?: boolean;
-}
+import type { AddressMap, AddressType } from '~/types/address';
 
-defineProps<{
-	item: AddressItem;
-	section: string;
+type CardProps = {
+	item: AddressMap[AddressType];
 	index: number;
-}>();
+};
+
+const props = defineProps<CardProps>()
 
 const { t } = useI18n();
 
@@ -35,13 +29,13 @@ const tagBadgeColors = {
 <template>
 	<article
 		class="account-address-book-card"
-		:data-testid="`account-address-book-item-${section}-${index}`"
+		:data-testid="`account-address-book-item-${props.item.type}-${props.index}`"
 	>
 		<header class="account-address-book-card-header">
 			<div class="account-address-book-card-title-row">
-				<h3 class="account-address-book-card-name">{{ item.name }}</h3>
+				<h3 class="account-address-book-card-name">{{ props.item.contact_name }}</h3>
 				<UiBadge
-					v-if="item.isDefault"
+					v-if="item.is_default"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -56,7 +50,7 @@ const tagBadgeColors = {
 				width="40px"
 				:no-hover="true"
 				class="account-address-book-menu-button"
-				:data-testid="`account-address-book-item-menu-${section}-${index}-button`"
+				:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-button`"
 			>
 				<UiIcon name="regular-ellipsis-horizontal" :size="24" />
 			</UiButton>
@@ -64,21 +58,30 @@ const tagBadgeColors = {
 		<div class="account-address-book-card-body">
 			<div class="account-address-book-card-footer">
 				<div class="account-address-book-card-copy">
-					<p v-if="item.phone" class="account-address-book-card-phone">
-						{{ item.phone }}
+					<p v-if="props.item.type === 'shipping' && props.item.phone_number" class="account-address-book-card-phone">
+						{{ props.item.phone_number }}
 					</p>
-					<p class="account-address-book-card-address">{{ item.address }}</p>
-					<span class="account-address-book-card-company">{{ item.company }}</span>
+					<p v-if="props.item.type !== 'drop'" class="account-address-book-card-address">{{ props.item.address_line_1 }}</p>
+					<p v-if="props.item.type !== 'drop'" class="account-address-book-card-address">{{ props.item.address_line_2 }}</p>
+					<p
+						v-for="(dynamic_field, y_index) in props.item.dynamic_fields"
+						:key="y_index"
+						class="account-address-book-card-address"
+					>
+						{{ dynamic_field.value }}
+					</p>
+					<span v-if="props.item.type !== 'drop'" class="account-address-book-card-company">{{ props.item.postcode}}</span>
+					<span class="account-address-book-card-company">{{ props.item.company }}</span>
 				</div>
 				<UiBadge
-					v-if="item.tag"
+					v-if="props.item.label"
 					variant="tonal"
 					tone="default"
 					size="md"
-					:bg-color="tagBadgeColors[item.tag.toLowerCase() as keyof typeof tagBadgeColors]?.bgColor || 'var(--gray-10)'"
-					:text-color="tagBadgeColors[item.tag.toLowerCase() as keyof typeof tagBadgeColors]?.textColor || 'var(--gray-60)'"
+					:bg-color="tagBadgeColors[props.item.label.toLowerCase() as keyof typeof tagBadgeColors]?.bgColor || 'var(--gray-10)'"
+					:text-color="tagBadgeColors[props.item.label.toLowerCase() as keyof typeof tagBadgeColors]?.textColor || 'var(--gray-60)'"
 				>
-					{{ t(`account.addressBook.tags.${item.tag}`) }}
+					{{ t(`account.addressBook.tags.${props.item.label}`) }}
 				</UiBadge>
 			</div>
 		</div>
