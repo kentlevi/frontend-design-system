@@ -319,6 +319,8 @@ watch(
 							size="40"
 							class="cart-item-edit-select"
 							trigger-class="cart-item-edit-select-trigger"
+							menu-class="cart-item-edit-qty-menu"
+							:pin-last-option="true"
 							:options="quantityOptions"
 							data-testid="cart-item-edit-qty-select"
 							@update:model-value="onQtyOptionSelect($event)"
@@ -355,7 +357,7 @@ watch(
 								/>
 							</button>
 							<Transition name="ui-select-menu">
-								<div v-if="qty_menu_open" class="ui-select-menu" role="listbox">
+								<div v-if="qty_menu_open" class="ui-select-menu cart-item-edit-qty-menu" role="listbox">
 									<div class="ui-select-options">
 										<button
 											v-for="option in quantityOptions"
@@ -453,7 +455,7 @@ watch(
 
 	.cart-item-edit-modal-image {
 		width: 100%;
-		height: 100%;
+		height: inherit;
 		object-fit: contain;
 		padding: 18px;
 	}
@@ -562,6 +564,28 @@ watch(
 
 	.cart-item-edit-inline-input--qty {
 		padding-right: 10px;
+	}
+
+	.cart-item-edit-qty-menu {
+		.ui-select-option.is-selected {
+			background: transparent;
+		}
+
+		.ui-select-option.is-selected:hover,
+		.ui-select-option.is-selected:focus-visible {
+			background: var(--surface-subtle);
+		}
+
+		.ui-select-option--pinned {
+			background: transparent;
+		}
+
+		.ui-select-option--pinned:hover,
+		.ui-select-option--pinned:focus-visible,
+		.ui-select-option--pinned.is-selected:hover,
+		.ui-select-option--pinned.is-selected:focus-visible {
+			background: var(--surface-subtle);
+		}
 	}
 
 	.cart-item-edit-select-arrow {

@@ -90,6 +90,7 @@
     background: var(--contrast-light);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    display: grid;
 }
 
 
@@ -195,4 +196,8 @@
     .ui-select-placeholder {
         color: var(--text-muted);
     }
+}
+
+.ui-select-option--pinned {
+    border-top: 1px solid var(--border-default);
 }
