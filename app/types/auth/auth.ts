@@ -46,10 +46,6 @@ export interface SubmitNonMemberLoginVerificationPayload {
 	otp: string;
 }
 
-export interface SendResetPasswordLinkPayload {
-	email: string;
-}
-
 export interface RegisterVerificationPayload {
 	given_name: string;
 	family_name: string;
@@ -91,8 +87,7 @@ export interface SocialLoginPayload {
 }
 
 export interface OnboardingPayload {
-	given_name?: string;
-	family_name?: string;
+	fields?: Record<string, string>;
 	email?: string;
 	offers_emails?: boolean;
 	reviews_emails?: boolean;

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
+defineOptions({
+	inheritAttrs: false,
+});
+
 const props = withDefaults(
 	defineProps<{
 		modelValue?: boolean;
@@ -18,7 +22,7 @@ const props = withDefaults(
 		title: '',
 		closeOnBackdrop: true,
 		closeOnEsc: true,
-		width: '560px',
+		width: '504px',
 		padding: '40px',
 		gap: '18px',
 		align: 'top',
@@ -30,8 +34,9 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'close'): void;
 }>();
+const attrs = useAttrs();
 
-const modalStyle = computed(() => ({
+const modal_style = computed(() => ({
 	'--ui-modal-width': props.width,
 	'--ui-modal-padding': props.padding,
 	'--ui-modal-gap': props.gap,
@@ -81,6 +86,7 @@ onBeforeUnmount(() => {
 				v-if="modelValue"
 				class="ui-modal-overlay"
 				:class="{
+					'ui-modal-overlay--top': align === 'top',
 					'ui-modal-overlay--center': align === 'center',
 					'ui-modal-overlay--bottom': align === 'bottom',
 				}"
@@ -92,7 +98,8 @@ onBeforeUnmount(() => {
 					role="dialog"
 					aria-modal="true"
 					:aria-label="title || 'Modal'"
-					:style="modalStyle"
+					:style="modal_style"
+					v-bind="attrs"
 				>
 					<header
 						v-if="title || $slots.header || $slots.actions"

@@ -6,7 +6,7 @@ import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const { resolveFileUrl } = useFileBaseUrl();
-const ctaBackgroundImage = resolveFileUrl('/home/cta/home-cta-bg.png');
+const cta_background_image = resolveFileUrl('/home/cta/home-cta-bg.png');
 
 async function onOrderNowClick() {
 	await navigateTo(withCountry('/stickers/die-cut'));
@@ -19,7 +19,7 @@ async function onProductionInquiryClick() {
 
 <template>
 	<section class="home-cta" data-testid="home-cta-section">
-		<div class="home-cta-panel" :style="{ backgroundImage: `url(${ctaBackgroundImage})` }">
+		<div class="home-cta-panel" :style="{ backgroundImage: `url(${cta_background_image})` }">
 			<div class="home-cta-inner">
 				<h2 class="home-cta-title">
 					{{ t('home.cta.titleLine1') }}<br >

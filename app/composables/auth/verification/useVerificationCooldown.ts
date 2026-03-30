@@ -62,7 +62,7 @@ export function getCooldownSecondsFromResponse(response: unknown): number {
 }
 
 export function useVerificationCooldown() {
-	const remaining = ref(0);
+	const remaining_seconds = ref(0);
 	let timer: ReturnType<typeof setInterval> | null = null;
 
 	function clear() {
@@ -73,20 +73,20 @@ export function useVerificationCooldown() {
 
 	function start(seconds: number) {
 		clear();
-		remaining.value = normalizeCooldownSeconds(seconds);
+		remaining_seconds.value = normalizeCooldownSeconds(seconds);
 
-		if (remaining.value <= 0) {
+		if (remaining_seconds.value <= 0) {
 			return;
 		}
 
 		timer = setInterval(() => {
-			if (remaining.value <= 1) {
+			if (remaining_seconds.value <= 1) {
 				clear();
-				remaining.value = 0;
+				remaining_seconds.value = 0;
 				return;
 			}
 
-			remaining.value -= 1;
+			remaining_seconds.value -= 1;
 		}, 1000);
 	}
 
@@ -94,7 +94,7 @@ export function useVerificationCooldown() {
 		const seconds = getCooldownSecondsFromResponse(response);
 		if (seconds <= 0) {
 			clear();
-			remaining.value = 0;
+			remaining_seconds.value = 0;
 			return 0;
 		}
 
@@ -107,7 +107,7 @@ export function useVerificationCooldown() {
 	});
 
 	return {
-		remaining,
+		remaining: remaining_seconds,
 		start,
 		clear,
 		applyFromResponse,

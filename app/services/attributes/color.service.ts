@@ -2,25 +2,33 @@ import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import type { ColorSpec } from "~/types/products/attributes"
 
 export const useColorService = () => {
-	const attributeStore = useAttributesStore()
+	const attribute_store = useAttributesStore()
 
-	const selectionStore = useSelectionStore()
+	const selection_store = useSelectionStore()
 
-	const color = ref<ColorSpec | null>(selectionStore.color ?? null)
+	const color = ref<ColorSpec | null>(selection_store.color ?? null)
 
-	const featured_colors = ref<ColorSpec []>(attributeStore.colors ?? [])
+	const featured_colors = computed<ColorSpec[]>(() => {
+		const active_slug = selection_store.slug ?? ''
+
+		if (active_slug === 'vinyl-lettering') {
+			return (attribute_store.colors ?? []).filter((entry) => entry.key !== 'full-color')
+		}
+
+		return attribute_store.colors ?? []
+	})
 
 	const defaultColor = (selected_color: ColorSpec) => {
 		color.value = selected_color
 
-		selectionStore.updateColor(selected_color, true)
+		selection_store.updateColor(selected_color, true)
 	}
 
 
 	const changeColor = (selected_color: ColorSpec) => {
 		color.value = selected_color
 
-		selectionStore.updateColor(selected_color)
+		selection_store.updateColor(selected_color)
 	}
 
 	return {

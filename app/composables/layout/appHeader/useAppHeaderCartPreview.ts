@@ -1,6 +1,6 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { CART_UPDATED_EVENT } from '~/data/cart/page';
-import { quantityOptions, sizeOptions } from '~/data/products/categoryExperience';
+import { quantity_options, size_options } from '~/data/products/categoryExperience';
 import { productCatalog } from '~/data/products/catalog';
 import { homeProductTypes } from '~/data/products/homeTypes';
 import { defaultStartPriceByProductId } from '~/data/products/pricing';
@@ -73,7 +73,7 @@ export function useAppHeaderCartPreview(params: {
 		() => normalizeAppPath(route.path) === normalizeAppPath(withCountry('/cart'))
 	);
 	const cart_size_option_models = computed(() =>
-		sizeOptions.map((size) => {
+		size_options.map((size) => {
 			const label = t(`product.sizes.${size}.label`);
 			const [name, ...rest] = label.split(' ');
 
@@ -84,7 +84,7 @@ export function useAppHeaderCartPreview(params: {
 			};
 		})
 	);
-	const cart_quantity_options = computed<number[]>(() => [...quantityOptions]);
+	const cart_quantity_options = computed<number[]>(() => [...quantity_options]);
 
 	function formatCartPrice(value: number) {
 		return formatCurrencyByCountry(value, country.value);
@@ -138,8 +138,8 @@ export function useAppHeaderCartPreview(params: {
 		const qty = Number(next_qty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
-		const normalized_size_key = sizeOptions.includes(
-			next_size_key as (typeof sizeOptions)[number]
+		const normalized_size_key = size_options.includes(
+			next_size_key as (typeof size_options)[number]
 		)
 			? next_size_key
 			: 'custom';
@@ -187,14 +187,14 @@ export function useAppHeaderCartPreview(params: {
 	});
 
 	return {
-		cartPreviewOpen: cart_preview_open,
-		cartFeaturedOpen: cart_featured_open,
-		cartFeaturedItems: cart_featured_items,
-		cartItems: cart_items,
-		cartGrandTotal: cart_grand_total,
-		cartItemCount: cart_item_count,
-		cartSizeOptionModels: cart_size_option_models,
-		cartQuantityOptions: cart_quantity_options,
+		cart_preview_open,
+		cart_featured_open,
+		cart_featured_items,
+		cart_items,
+		cart_grand_total,
+		cart_item_count,
+		cart_size_option_models,
+		cart_quantity_options,
 		getCartProductName: getCartProductName,
 		formatCartPrice: formatCartPrice,
 		cartFeaturedStartPrice: cartFeaturedStartPrice,

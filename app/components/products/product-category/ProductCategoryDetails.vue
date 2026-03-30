@@ -48,7 +48,7 @@ function resolveStoryMedia(media: StoryMedia): StoryMedia {
 	};
 }
 
-const navigationStoryRowsByCategory: Record<ProductCategoryKey, StoryRow[]> = {
+const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> = {
 	stickers: [
 		{
 			title: t('product.story.navigation.stickers.row1.title'),
@@ -146,12 +146,12 @@ function selectedProductBlurb() {
 	return t(`product.items.${props.selectedProductId}.blurb`);
 }
 
-const storyRows = computed<StoryRow[]>(() => {
-	const navigationRows = (navigationStoryRowsByCategory[props.category] || []).map((row) => ({
+const story_rows = computed<StoryRow[]>(() => {
+	const navigation_rows = (navigation_story_rows_by_category[props.category] || []).map((row) => ({
 		...row,
 		media: resolveStoryMedia(row.media),
 	}));
-	if (!props.selectedProductId) return navigationRows;
+	if (!props.selectedProductId) return navigation_rows;
 
 	const name = selectedProductName();
 	const blurb = selectedProductBlurb();
@@ -209,7 +209,7 @@ const storyRows = computed<StoryRow[]>(() => {
 	<div class="product-experience-container" data-testid="product-category-story-container">
 		<section class="product-story" data-testid="product-category-story">
 			<article
-				v-for="(row, index) in storyRows"
+				v-for="(row, index) in story_rows"
 				:key="`product-story-row-${index}`"
 				class="story-row"
 				:class="{ reverse: row.reverse }"

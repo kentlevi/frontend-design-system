@@ -26,7 +26,7 @@ const props = withDefaults(
 	}
 );
 
-const badgeStyle = computed<Record<string, string> | undefined>(() => {
+const badge_style = computed<Record<string, string> | undefined>(() => {
 	const style = {
 		...(props.bgColor ? { background: props.bgColor } : {}),
 		...(props.textColor ? { color: props.textColor } : {}),
@@ -43,7 +43,7 @@ const badgeStyle = computed<Record<string, string> | undefined>(() => {
 		:data-variant="variant"
 		:data-tone="tone"
 		:data-size="size"
-		:style="badgeStyle"
+		:style="badge_style"
 	>
 		<slot />
 	</span>

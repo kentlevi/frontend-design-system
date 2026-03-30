@@ -16,8 +16,10 @@ import {
 	processAccountAvatarFile,
 	readFileAsDataUrl,
 } from '~/utils/account/accountProfile';
+import { mapProfileToPersonalFormState } from '~/mappers/account/profile/personalForm.mapper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { sendEmailChangeOTP, verifyEmailChangeOtp } from '~/services/profile/changeEmail.service';
+import { fetchPersonalFieldDefinitions } from '~/services/profile/personalForm.service';
 import { useUsersStore } from '~/stores/users/users.store';
 import { useProfileFieldsStore } from '~/stores/profile_field';
 import type { AccountMockUser } from '~/types/account/profile';
@@ -35,13 +37,16 @@ type EmailVerificationSession = {
 	request_cooldown_until?: number;
 };
 
-const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
+type OnboardingDraft = {
+	fields?: Record<string, string>;
+	email?: string;
+};
+
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 const ACCEPTED_IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/png']);
 
 export function useAuthProfileSetup() {
-	const { withCountry, apiCountry } = useCountry();
-	const api = useApi();
+	const { withCountry } = useCountry();
 	const { t } = useI18n();
 	const mock_user = useCookie<AccountMockUser | null>('mock_user', {
 		default: () => null,
@@ -58,7 +63,7 @@ export function useAuthProfileSetup() {
 		sameSite: 'lax',
 	});
 	const is_new_onboarding_flow = Boolean(state.value.onboardingProfile?.onboarding);
-	const showWelcomeToast = ref(is_new_onboarding_flow);
+	const show_welcome_toast = ref(is_new_onboarding_flow);
 	let toast_timeout: ReturnType<typeof setTimeout> | null = null;
 
 	const email_verification_session = ref<EmailVerificationSession | null>(null);
@@ -74,28 +79,30 @@ export function useAuthProfileSetup() {
 	const resend_cooldown_remaining = resend_cooldown.remaining;
 	const request_cooldown_remaining = request_cooldown.remaining;
 
-	const profile_field_values = computed(
-		() => state.value.profile?.user_field_values ?? []
+	const profile_field_values = computed(() =>
+		state.value.profile?.user_field_values ?? []
 	);
-	const dynamic_profile_fields = computed(
-		() => profile_fields_store.dynamic_profile_fields
+	const dynamic_profile_fields = computed(() =>
+		Array.isArray(profile_fields_store.dynamic_profile_fields)
+			? profile_fields_store.dynamic_profile_fields
+			: []
 	);
-	const store_first_name = computed(
-		() => getProfileFieldValue(
+	const store_first_name = computed(() =>
+		getProfileFieldValue(
 			profile_field_values.value,
 			'first_name',
 			dynamic_profile_fields.value
 		)
 	);
-	const store_last_name = computed(
-		() => getProfileFieldValue(
+	const store_last_name = computed(() =>
+		getProfileFieldValue(
 			profile_field_values.value,
 			'last_name',
 			dynamic_profile_fields.value
 		)
 	);
-	const has_saved_email = computed(
-		() => Boolean((state.value.email ?? '').trim())
+	const has_saved_email = computed(() =>
+		Boolean((state.value.email ?? '').trim())
 	);
 	const email_disabled = computed(() => has_saved_email.value);
 	const email_required = computed(() => !has_saved_email.value);
@@ -110,78 +117,180 @@ export function useAuthProfileSetup() {
 	}
 
 	const first_name_source = computed(() =>
-		store_first_name.value ||
-		state.value.onboardingProfile?.firstName ||
-		mock_user.value?.firstName ||
-		accountProfileDefaults.firstName
+		store_first_name.value
+		|| state.value.onboardingProfile?.firstName
+		|| mock_user.value?.firstName
+		|| accountProfileDefaults.firstName
 	);
 	const last_name_source = computed(() =>
-		store_last_name.value ||
-		state.value.onboardingProfile?.lastName ||
-		mock_user.value?.lastName ||
-		accountProfileDefaults.lastName
+		store_last_name.value
+		|| state.value.onboardingProfile?.lastName
+		|| mock_user.value?.lastName
+		|| accountProfileDefaults.lastName
 	);
 	const email_source = computed(() =>
-		state.value.email ||
-		state.value.onboardingProfile?.email ||
-		mock_user.value?.email ||
-		accountProfileDefaults.email
+		state.value.email
+		|| state.value.onboardingProfile?.email
+		|| mock_user.value?.email
+		|| accountProfileDefaults.email
 	);
-	const onboardingDraft = useCookie<Record<string, any>>('auth_onboarding_draft', {
-		default: () => ({}),
+	const onboarding_draft = useCookie<OnboardingDraft>('auth_onboarding_draft', {
+		default: () => ({
+			fields: {},
+			email: '',
+		}),
 		path: '/',
 		sameSite: 'lax',
 	});
 
-	const firstName = ref(onboardingDraft.value.firstName || first_name_source.value);
-	const lastName = ref(onboardingDraft.value.lastName || last_name_source.value);
-	const email = ref(onboardingDraft.value.email || email_source.value);
+	const profile_details_fields = ref<Record<string, string>>({});
+	const initial_profile_details_fields = ref<Record<string, string>>({});
+	const has_initialized_profile_fields = ref(false);
+	const email = ref(onboarding_draft.value.email || email_source.value);
 	const original_email_from_state = ref(normalizeEmail(state.value.email));
 	const is_syncing_from_state = ref(false);
-	const has_first_name_manual_input = ref(Boolean(onboardingDraft.value.firstName));
-	const has_last_name_manual_input = ref(Boolean(onboardingDraft.value.lastName));
-	const has_email_manual_input = ref(Boolean(onboardingDraft.value.email));
+	const has_profile_fields_manual_input = ref(
+		Object.keys(onboarding_draft.value.fields || {}).length > 0
+	);
+	const has_email_manual_input = ref(Boolean(onboarding_draft.value.email));
 
-	watch([firstName, lastName, email], ([f, l, e]) => {
-		onboardingDraft.value = { ...onboardingDraft.value, firstName: f, lastName: l, email: e };
+	function getNameFieldKey(possible_keys: string[]) {
+		const matched_field = dynamic_profile_fields.value.find((field) =>
+			possible_keys.includes(field.field_key)
+		);
+		return matched_field?.field_key || '';
+	}
+
+	function buildSourceProfileDetailsFields() {
+		const source_fields: Record<string, string> = {};
+
+		for (const field of dynamic_profile_fields.value) {
+			source_fields[field.field_key] = '';
+		}
+
+		const mapped_fields = mapProfileToPersonalFormState(
+			dynamic_profile_fields.value,
+			state.value.profile
+		).fields;
+		Object.assign(source_fields, mapped_fields);
+
+		const first_name_key = getNameFieldKey(['first_name', 'given_name']);
+		if (first_name_key && !source_fields[first_name_key]) {
+			source_fields[first_name_key] = first_name_source.value;
+		}
+
+		const last_name_key = getNameFieldKey(['last_name', 'family_name']);
+		if (last_name_key && !source_fields[last_name_key]) {
+			source_fields[last_name_key] = last_name_source.value;
+		}
+
+		return source_fields;
+	}
+
+	function buildProfileDetailsFieldsFromDefinitions(
+		source_fields: Record<string, string>,
+		draft_fields: Record<string, string> = {}
+	) {
+		const next_fields: Record<string, string> = {};
+
+		for (const field of dynamic_profile_fields.value) {
+			const field_key = field.field_key;
+			const draft_value = draft_fields[field_key];
+			next_fields[field_key] = typeof draft_value === 'string'
+				? draft_value
+				: (source_fields[field_key] || '');
+		}
+
+		return next_fields;
+	}
+
+	function syncProfileDetailsFromSource(force = false) {
+		if (!dynamic_profile_fields.value.length) return;
+		if (has_profile_fields_manual_input.value && !force) return;
+
+		const source_fields = buildSourceProfileDetailsFields();
+		const synced_fields = buildProfileDetailsFieldsFromDefinitions(source_fields);
+
+		profile_details_fields.value = synced_fields;
+		initial_profile_details_fields.value = { ...synced_fields };
+	}
+
+	function updateProfileDetailField(field_key: string, value: string) {
+		profile_details_fields.value = {
+			...profile_details_fields.value,
+			[field_key]: value,
+		};
+		has_profile_fields_manual_input.value = true;
+	}
+
+	watch(
+		[profile_details_fields, email],
+		([fields_value, email_value]) => {
+			onboarding_draft.value = {
+				fields: { ...fields_value },
+				email: email_value,
+			};
+		},
+		{ deep: true }
+	);
+
+	const first_name_field_key = computed(() =>
+		getNameFieldKey(['first_name', 'given_name'])
+	);
+	const last_name_field_key = computed(() =>
+		getNameFieldKey(['last_name', 'family_name'])
+	);
+	const first_name = computed(() => {
+		const field_key = first_name_field_key.value;
+		if (!field_key) return first_name_source.value.trim();
+		return (profile_details_fields.value[field_key] || '').trim();
 	});
+	const last_name = computed(() => {
+		const field_key = last_name_field_key.value;
+		if (!field_key) return last_name_source.value.trim();
+		return (profile_details_fields.value[field_key] || '').trim();
+	});
+
 	const has_required_email = computed(() => {
 		if (!email_required.value) return true;
 		return isValidEmail(email.value);
 	});
-	const email_changed_from_state = computed(() => {
-		return normalizeEmail(email.value) !== original_email_from_state.value;
-	});
+	const email_changed_from_state = computed(() =>
+		normalizeEmail(email.value) !== original_email_from_state.value
+	);
 	const requires_email_verification = computed(() => {
 		if (!state.value.id) return false;
 		if (!has_required_email.value) return false;
 		return email_changed_from_state.value;
 	});
 
-	const photoUrl = ref<string | null>(null);
-	const photoError = ref('');
+	const photo_url = ref<string | null>(null);
+	const photo_error = ref('');
 
 	const promotions = ref(true);
 	const reviews = ref(true);
-	const useShippingAsBilling = ref(true);
+	const use_shipping_as_billing = ref(true);
 	const unit = ref<ProfileUnit>('millimeter');
 
-	const initial_first_name = ref(firstName.value.trim());
-	const initial_last_name = ref(lastName.value.trim());
-
-	const initials = computed(() => {
-		return getAccountInitials(firstName.value.trim(), lastName.value.trim());
-	});
+	const initials = computed(() =>
+		getAccountInitials(first_name.value, last_name.value)
+	);
 
 	const has_edited_profile_details = computed(() => {
-		return (
-			firstName.value.trim() !== initial_first_name.value
-			|| lastName.value.trim() !== initial_last_name.value
-		);
+		const current_keys = Object.keys(profile_details_fields.value).sort();
+		const initial_keys = Object.keys(initial_profile_details_fields.value).sort();
+
+		if (current_keys.length !== initial_keys.length) return true;
+
+		return current_keys.some((key, index) => {
+			if (key !== initial_keys[index]) return true;
+			return (profile_details_fields.value[key] || '').trim()
+				!== (initial_profile_details_fields.value[key] || '').trim();
+		});
 	});
 
-	const has_uploaded_photo = computed(() => Boolean(photoUrl.value));
-	const canContinueProfileDetails = computed(() => {
+	const has_uploaded_photo = computed(() => Boolean(photo_url.value));
+	const can_continue_profile_details = computed(() => {
 		if (email_required.value) {
 			return has_required_email.value;
 		}
@@ -190,10 +299,10 @@ export function useAuthProfileSetup() {
 	});
 
 	function dismissToast() {
-		showWelcomeToast.value = false;
+		show_welcome_toast.value = false;
 	}
 
-	function syncFieldFromState(target: typeof firstName, value: string) {
+	function syncFieldFromState(target: { value: string }, value: string) {
 		is_syncing_from_state.value = true;
 		target.value = value;
 		queueMicrotask(() => {
@@ -210,45 +319,45 @@ export function useAuthProfileSetup() {
 	function startToastTimeout() {
 		clearToastTimeout();
 		toast_timeout = setTimeout(() => {
-			showWelcomeToast.value = false;
+			show_welcome_toast.value = false;
 		}, 3500);
 	}
 
 	function revokePhotoUrl() {
-		if (photoUrl.value?.startsWith('blob:')) {
-			URL.revokeObjectURL(photoUrl.value);
+		if (photo_url.value?.startsWith('blob:')) {
+			URL.revokeObjectURL(photo_url.value);
 		}
 	}
 
 	async function onPhotoFilePicked(file: File | null) {
-		photoError.value = '';
+		photo_error.value = '';
 		if (!file) return;
 		if (!ACCEPTED_IMAGE_MIME_TYPES.has(file.type.toLowerCase())) {
-			photoError.value = t('auth.profile.details.photoInvalidType');
+			photo_error.value = t('auth.profile.details.photoInvalidType');
 			return;
 		}
 
-		let processedFile: File;
+		let processed_file: File;
 		try {
-			processedFile = await processAccountAvatarFile(file);
+			processed_file = await processAccountAvatarFile(file);
 		} catch {
-			photoError.value = t('auth.profile.details.photoProcessFailed');
+			photo_error.value = t('auth.profile.details.photoProcessFailed');
 			return;
 		}
 
 		revokePhotoUrl();
 		try {
-			photoUrl.value = await readFileAsDataUrl(processedFile);
+			photo_url.value = await readFileAsDataUrl(processed_file);
 		} catch {
-			photoError.value = t('auth.profile.details.photoProcessFailed');
+			photo_error.value = t('auth.profile.details.photoProcessFailed');
 			return;
 		}
 	}
 
 	function removePhoto() {
 		revokePhotoUrl();
-		photoUrl.value = null;
-		photoError.value = '';
+		photo_url.value = null;
+		photo_error.value = '';
 	}
 
 	function getFirstError(payload: Record<string, unknown> | null | undefined, key: string): string {
@@ -423,19 +532,13 @@ export function useAuthProfileSetup() {
 	}
 
 	function resetFirstStepDraftToOriginalState() {
-		syncFieldFromState(firstName, first_name_source.value);
-		syncFieldFromState(lastName, last_name_source.value);
+		syncProfileDetailsFromSource(true);
 		syncFieldFromState(email, email_source.value);
 
-		initial_first_name.value = first_name_source.value.trim();
-		initial_last_name.value = last_name_source.value.trim();
-
-		has_first_name_manual_input.value = false;
-		has_last_name_manual_input.value = false;
+		has_profile_fields_manual_input.value = false;
 		has_email_manual_input.value = false;
 		email_input_error.value = '';
 
-		// Skip means "discard first-step edits", including temporary avatar choice.
 		removePhoto();
 		clearVerificationState();
 		is_email_verification_modal_open.value = false;
@@ -461,51 +564,46 @@ export function useAuthProfileSetup() {
 
 		if (state.value.id) {
 			try {
-				if (import.meta.client && photoUrl.value) {
-					window.localStorage.setItem(ACCOUNT_LOCAL_AVATAR_KEY, photoUrl.value);
+				if (import.meta.client && photo_url.value) {
 					window.dispatchEvent(
-						new CustomEvent(ACCOUNT_AVATAR_UPDATED_EVENT, { detail: photoUrl.value })
+						new CustomEvent(ACCOUNT_AVATAR_UPDATED_EVENT, { detail: photo_url.value })
 					);
 				}
-
 				const payload: OnboardingPayload = {
-					given_name: firstName.value.trim(),
-					family_name: lastName.value.trim(),
+					fields: { ...profile_details_fields.value },
 					offers_emails: promotions.value,
 					reviews_emails: reviews.value,
 				};
 
-				if (email_required.value) payload.email = email.value.trim()
+				if (email_required.value) payload.email = email.value.trim();
 
-				const response = await completeOnboarding(payload)
+				const response = await completeOnboarding(payload);
 
 				if (!response.success) {
-					return
+					return;
 				}
 
-				const { fetchAndStoreUser } = useAuthUser()
-				await fetchAndStoreUser()
+				const { fetchAndStoreUser } = useAuthUser();
+				await fetchAndStoreUser();
 				await navigateTo(withCountry('/'));
-		
-				// Clear Draft State
+
 				step.value = 1;
-				onboardingDraft.value = {};
+				onboarding_draft.value = {};
 				user_store.clearOnboardingProfile();
 			} catch (error) {
 				console.warn('Failed to finalize onboarding.', error);
 			}
 		} else {
 			mock_user.value = {
-				firstName: firstName.value.trim() || accountProfileDefaults.firstName,
-				lastName: lastName.value.trim() || accountProfileDefaults.lastName,
+				firstName: first_name.value || accountProfileDefaults.firstName,
+				lastName: last_name.value || accountProfileDefaults.lastName,
 				email: email.value.trim() || accountProfileDefaults.email,
 			};
 		}
 		await navigateTo(withCountry('/'));
 
-		// Clear Draft State
 		step.value = 1;
-		onboardingDraft.value = {};
+		onboarding_draft.value = {};
 		user_store.clearOnboardingProfile();
 	}
 
@@ -568,9 +666,9 @@ export function useAuthProfileSetup() {
 	}
 
 	watch(
-		showWelcomeToast,
-		(isVisible) => {
-			if (isVisible) {
+		show_welcome_toast,
+		(is_visible) => {
+			if (is_visible) {
 				startToastTimeout();
 			} else {
 				clearToastTimeout();
@@ -578,31 +676,43 @@ export function useAuthProfileSetup() {
 		},
 		{ immediate: true }
 	);
-	watch(first_name_source, (value) => {
-		if (has_first_name_manual_input.value) return;
-		syncFieldFromState(firstName, value);
-		initial_first_name.value = value.trim();
-	}, { immediate: true });
-	watch(last_name_source, (value) => {
-		if (has_last_name_manual_input.value) return;
-		syncFieldFromState(lastName, value);
-		initial_last_name.value = value.trim();
-	}, { immediate: true });
+	watch(
+		dynamic_profile_fields,
+		() => {
+			if (!dynamic_profile_fields.value.length) return;
+
+			if (!has_initialized_profile_fields.value) {
+				const source_fields = buildSourceProfileDetailsFields();
+				const draft_fields = onboarding_draft.value.fields || {};
+				const has_draft_fields = Object.keys(draft_fields).length > 0;
+
+				const initial_fields = buildProfileDetailsFieldsFromDefinitions(
+					source_fields,
+					has_draft_fields ? draft_fields : {}
+				);
+
+				profile_details_fields.value = initial_fields;
+				initial_profile_details_fields.value = { ...initial_fields };
+				has_profile_fields_manual_input.value = has_draft_fields;
+				has_initialized_profile_fields.value = true;
+				return;
+			}
+
+			syncProfileDetailsFromSource();
+		},
+		{ immediate: true }
+	);
+	watch(
+		[first_name_source, last_name_source],
+		() => {
+			syncProfileDetailsFromSource();
+		}
+	);
 	watch(email_source, (value) => {
 		if (email_disabled.value || !has_email_manual_input.value) {
 			syncFieldFromState(email, value);
 		}
 	}, { immediate: true });
-	watch(firstName, () => {
-		if (!is_syncing_from_state.value) {
-			has_first_name_manual_input.value = true;
-		}
-	});
-	watch(lastName, () => {
-		if (!is_syncing_from_state.value) {
-			has_last_name_manual_input.value = true;
-		}
-	});
 	watch(email, () => {
 		if (!is_syncing_from_state.value && !email_disabled.value) {
 			has_email_manual_input.value = true;
@@ -623,10 +733,45 @@ export function useAuthProfileSetup() {
 			clearRequestCooldownCache();
 		}
 	});
-	watch(is_email_verification_modal_open, (open) => {
-		if (open) return;
+	watch(is_email_verification_modal_open, (is_open) => {
+		if (is_open) return;
 		clearVerificationState();
 	});
+
+	async function loadDynamicProfileFields() {
+		if (profile_fields_store.dynamic_profile_fields.length > 0) {
+			return;
+		}
+
+		const country_id = state.value.country_id;
+		if (country_id) {
+			try {
+				await profile_fields_store.ensureLoaded(country_id);
+				if (profile_fields_store.dynamic_profile_fields.length > 0) {
+					return;
+				}
+			} catch {
+				// Fall through to direct fetch for parity with profile personal section.
+			}
+		}
+
+		try {
+			const response = await fetchPersonalFieldDefinitions();
+			if (Array.isArray(response.data) && response.data.length > 0) {
+				profile_fields_store.setDynamicProfileFields(response.data);
+			}
+		} catch {
+			// Keep onboarding non-blocking if dynamic field metadata cannot be loaded.
+		}
+	}
+
+	watch(
+		() => state.value.country_id,
+		() => {
+			void loadDynamicProfileFields();
+		},
+		{ immediate: true }
+	);
 
 	onBeforeUnmount(() => {
 		clearToastTimeout();
@@ -636,49 +781,42 @@ export function useAuthProfileSetup() {
 	});
 
 	onMounted(() => {
-		const country_id = state.value.country_id;
-		if (country_id && profile_fields_store.dynamic_profile_fields.length === 0) {
-			void profile_fields_store.ensureLoaded(country_id).catch(() => {
-				// Keep onboarding non-blocking if dynamic field metadata cannot be loaded.
-			});
-		}
-
+		void loadDynamicProfileFields();
 		restoreCooldownsFromCache();
 	});
 
-
-
 	return {
 		step,
-		showWelcomeToast,
-		firstName,
-		lastName,
+		show_welcome_toast,
+		profile_details_fields,
+		dynamic_profile_fields,
 		email,
-		emailError: email_input_error,
-		emailDisabled: email_disabled,
-		emailRequired: email_required,
-		photoUrl,
-		photoError,
+		email_error: email_input_error,
+		email_disabled,
+		email_required,
+		photo_url,
+		photo_error,
 		promotions,
 		reviews,
-		useShippingAsBilling,
+		use_shipping_as_billing,
 		unit,
 		initials,
-		canContinueProfileDetails,
-		canSkipProfileDetails: can_skip_profile_details,
+		can_continue_profile_details,
+		can_skip_profile_details,
 		dismissToast,
 		onPhotoFilePicked,
 		removePhoto,
+		updateProfileDetailField,
 		goNext,
 		skipProfileDetails,
 		goBack,
-		isEmailVerificationModalOpen: is_email_verification_modal_open,
-		verificationEmail: verification_email,
-		verificationCode: verification_code,
-		verificationError: verification_error,
-		resendLimitReached: resend_limit_reached,
-		isVerifyingEmail: is_verifying_email,
-		verificationResendCooldownRemaining: resend_cooldown_remaining,
+		is_email_verification_modal_open,
+		verification_email,
+		verification_code,
+		verification_error,
+		resend_limit_reached,
+		is_verifying_email,
+		verification_resend_cooldown_remaining: resend_cooldown_remaining,
 		closeEmailVerificationModal,
 		submitEmailVerification,
 		resendEmailVerification,

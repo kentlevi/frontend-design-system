@@ -1,45 +1,47 @@
 <script setup lang="ts">
+import { useAppHeaderSearch } from '~/composables/layout/appHeader/useAppHeaderSearch';
 import { useAppHeaderSearchModal } from '~/composables/layout/appHeader/useAppHeaderSearchModal';
-import type { SearchItem } from '~/composables/layout/appHeader/useAppHeaderSearch';
-import type {
-	RecentSearchEntry,
-	SearchResultGroup,
-} from '~/types/layout/appHeaderSearch';
 
 const props = defineProps<{
 	open: boolean;
-	searchQuery: string;
-	searchLoading: boolean;
-	showSearchRecent: boolean;
-	showSearchNoRecent: boolean;
-	showSearchNoResult: boolean;
-	showSearchResults: boolean;
-	recentSearchEntries: RecentSearchEntry[];
-	activeSearchNavIndex: number;
-	searchResultGroups: SearchResultGroup[];
-	searchNavIndexByResultId: Record<string, number>;
-	searchEmptySuggestedTerm: string;
-	highlightSearchMatch: (value: string) => string;
-	setModalRef: (el: HTMLElement | null) => void;
-	setInputRef: (el: HTMLInputElement | null) => void;
 }>();
 
 const emit = defineEmits<{
 	close: [];
-	'update:searchQuery': [value: string];
-	'focus-input': [];
-	'clear-recent': [];
-	'apply-recent': [entryKey: string];
-	'remove-recent': [entryKey: string];
-	'apply-suggested': [];
-	'select-result': [item: SearchItem];
 }>();
 
 const { t } = useI18n();
+const {
+	search_query,
+	search_loading,
+	search_loading_more,
+	active_search_nav_index,
+	search_result_groups,
+	search_nav_index_by_result_id,
+	recent_search_entries,
+	search_empty_suggested_term,
+	show_search_recent,
+	show_search_no_recent,
+	show_search_no_result,
+	show_search_results,
+	setSearchModalRef,
+	setSearchInputRef,
+	focusSearchInput,
+	clearRecentSearches,
+	applyRecentSearch,
+	removeRecentSearch,
+	applySuggestedSearch,
+	selectSearchResult,
+	handleSearchKeydown,
+	handleSearchResultsScroll,
+} = useAppHeaderSearch({
+	closeModal: () => emit('close'),
+});
+
 const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModal({
-	searchQuery: () => props.searchQuery,
-	setModalRef: props.setModalRef,
-	setInputRef: props.setInputRef,
+	searchQuery: () => search_query.value,
+	setModalRef: setSearchModalRef,
+	setInputRef: setSearchInputRef,
 });
 </script>
 
@@ -58,6 +60,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 				aria-modal="true"
 				:aria-label="t('layout.header.search.modal.title')"
 				data-testid="app-header-search-dialog"
+				@keydown="handleSearchKeydown"
 			>
 				<div class="home-search-head" data-testid="app-header-search-head">
 					<div class="home-search-input-group" data-testid="app-header-search-input-group">
@@ -66,7 +69,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 							class="home-search-head-action"
 							:aria-label="t('layout.header.search')"
 							data-testid="app-header-search-focus-button"
-							@click="emit('focus-input')"
+							@click="focusSearchInput"
 						>
 							<UiIcon
 								name="strong-search"
@@ -77,24 +80,23 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						</button>
 						<input
 							:ref="bindInputRef"
-							:value="props.searchQuery"
+							:value="search_query"
 							type="search"
 							:placeholder="t('layout.header.search.modal.placeholder')"
 							class="home-search-input"
 							autocomplete="off"
 							data-testid="app-header-search-input"
-							@input="
-								emit(
-									'update:searchQuery',
-									($event.target as HTMLInputElement).value
-								)
-							"
+							@input="search_query = ($event.target as HTMLInputElement).value"
 						>
 					</div>
 				</div>
 
-				<div class="home-search-body" data-testid="app-header-search-body">
-					<div v-if="props.searchLoading" class="home-search-skeleton" data-testid="app-header-search-loading">
+				<div
+					class="home-search-body"
+					data-testid="app-header-search-body"
+					@scroll.passive="handleSearchResultsScroll"
+				>
+					<div v-if="search_loading" class="home-search-skeleton" data-testid="app-header-search-loading">
 						<div
 							v-for="index in 3"
 							:key="index"
@@ -109,7 +111,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						</div>
 					</div>
 
-					<div v-else-if="props.showSearchRecent" class="home-search-recent" data-testid="app-header-search-recent">
+					<div v-else-if="show_search_recent" class="home-search-recent" data-testid="app-header-search-recent">
 						<div class="home-search-recent-head" data-testid="app-header-search-recent-head">
 							<h4 class="home-search-heading">{{ t('layout.header.search.modal.recent.title') }}</h4>
 							<UiButton
@@ -118,17 +120,17 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 								size="sm"
 								class="home-search-recent-clear"
 								data-testid="app-header-search-recent-clear-button"
-								@click="emit('clear-recent')"
+								@click="clearRecentSearches"
 							>
 								{{ t('layout.header.search.modal.recent.clearAll') }}
 							</UiButton>
 						</div>
 						<ul class="home-search-recent-list" data-testid="app-header-search-recent-list">
 							<li
-								v-for="(entry, index) in props.recentSearchEntries"
+								v-for="(entry, index) in recent_search_entries"
 								:key="entry.key"
 								class="home-search-recent-item"
-								:class="{ 'is-active': props.activeSearchNavIndex === index }"
+								:class="{ 'is-active': active_search_nav_index === index }"
 								:data-testid="`app-header-search-recent-item-${index}`"
 							>
 								<button
@@ -136,7 +138,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									class="home-search-recent-term"
 									:data-search-nav-index="index"
 									:data-testid="`app-header-search-recent-apply-${index}-button`"
-									@click="emit('apply-recent', entry.key)"
+									@click="applyRecentSearch(entry.key)"
 								>
 									<div class="home-search-recent-icon">
 										<img
@@ -168,7 +170,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									class="home-search-recent-remove"
 									:aria-label="t('layout.header.search.modal.recent.remove')"
 									:data-testid="`app-header-search-recent-remove-${index}-button`"
-									@click="emit('remove-recent', entry.key)"
+									@click="removeRecentSearch(entry.key)"
 								>
 									<UiIcon name="regular-times" :size="24" color="var(--gray-80)" />
 								</button>
@@ -176,7 +178,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						</ul>
 					</div>
 
-					<div v-else-if="props.showSearchNoRecent" class="home-search-empty" data-testid="app-header-search-empty-recent">
+					<div v-else-if="show_search_no_recent" class="home-search-empty" data-testid="app-header-search-empty-recent">
 						<div class="home-search-empty-icon home-search-empty-icon--no-recent">
 							<img
 								src="/icons/custom/search/no-recent-searches.svg"
@@ -194,15 +196,15 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									size="sm"
 									class="home-search-suggest"
 									data-testid="app-header-search-suggest-empty-recent-button"
-									@click="emit('apply-suggested')"
+									@click="applySuggestedSearch"
 								>
-									"{{ props.searchEmptySuggestedTerm }}"
+									"{{ search_empty_suggested_term }}"
 								</UiButton>
 							</p>
 						</div>
 					</div>
 
-					<div v-else-if="props.showSearchNoResult" class="home-search-empty" data-testid="app-header-search-empty-result">
+					<div v-else-if="show_search_no_result" class="home-search-empty" data-testid="app-header-search-empty-result">
 						<div class="home-search-empty-icon home-search-empty-icon--no-recent">
 							<img
 								src="/icons/custom/search/no-recent-searches.svg"
@@ -220,17 +222,17 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									size="sm"
 									class="home-search-suggest"
 									data-testid="app-header-search-suggest-empty-result-button"
-									@click="emit('apply-suggested')"
+									@click="applySuggestedSearch"
 								>
-									"{{ props.searchEmptySuggestedTerm }}"
+									"{{ search_empty_suggested_term }}"
 								</UiButton>
 							</p>
 						</div>
 					</div>
 
-					<div v-else-if="props.showSearchResults" class="home-search-results" data-testid="app-header-search-results">
+					<div v-else-if="show_search_results" class="home-search-results" data-testid="app-header-search-results">
 						<section
-							v-for="group in props.searchResultGroups"
+							v-for="group in search_result_groups"
 							:key="group.key"
 							class="home-search-group"
 							:data-testid="`app-header-search-group-${group.key}`"
@@ -243,12 +245,12 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 								class="home-search-result-item"
 								:class="{
 									'is-active':
-										props.activeSearchNavIndex ===
-										props.searchNavIndexByResultId[item.id],
+										active_search_nav_index ===
+										search_nav_index_by_result_id[item.id],
 								}"
-								:data-search-nav-index="props.searchNavIndexByResultId[item.id]"
+								:data-search-nav-index="search_nav_index_by_result_id[item.id]"
 								:data-testid="`app-header-search-result-${item.id}-button`"
-								@click="emit('select-result', item)"
+								@click="selectSearchResult(item)"
 							>
 								<div class="home-search-result-icon">
 									<img :src="item.image" :alt="item.name" loading="lazy" class="home-search-image" >
@@ -271,6 +273,14 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 								</div>
 							</button>
 						</section>
+					</div>
+
+					<div
+						v-if="search_loading_more"
+						class="home-search-pagination-loading"
+						data-testid="app-header-search-loading-more"
+					>
+						<div class="home-search-pagination-loader" />
 					</div>
 				</div>
 
@@ -726,6 +736,21 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
                 text-underline-offset: 2px;
             }
         }
+
+        .home-search-pagination-loading {
+            display: flex;
+            justify-content: center;
+            padding: 4px 0 20px;
+        }
+
+        .home-search-pagination-loader {
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            border: 2px solid var(--gray-30);
+            border-top-color: var(--gray-80);
+            animation: home-search-loader-rotate 0.7s linear infinite;
+        }
     }
 
         .home-search-footer {
@@ -815,6 +840,16 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 
     to {
         background-position: 0 0;
+    }
+}
+
+@keyframes home-search-loader-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
     }
 }
 

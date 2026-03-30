@@ -1,0 +1,21 @@
+<svg width="330" height="120" viewBox="0 0 330 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_2_3363" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="330" height="120">
+<rect width="330" height="120" fill="#CDE5FE"/>
+</mask>
+<g mask="url(#mask0_2_3363)">
+<rect width="330" height="120" fill="#CDE5FE"/>
+<rect y="108.997" width="330" height="1" fill="#ABD4FD"/>
+<rect y="113.997" width="330" height="1" fill="#BEDDFC"/>
+<rect y="103.997" width="330" height="1" fill="#81BFFC"/>
+<rect y="98.9968" width="330" height="1" fill="#57AAFB"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M165 11.7891C165 61.1245 98.8318 129.605 47 129.605C99.1994 129.605 165 196.245 165 247.789C165 196.245 230.801 129.605 283 129.605C231.168 129.605 165 61.1245 165 11.7891Z" fill="#F9FBFB"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M123.053 34.6375C123.053 37.0644 119.798 40.4331 117.248 40.4331C119.816 40.4331 123.053 43.7112 123.053 46.2468C123.053 43.7112 126.29 40.4331 128.857 40.4331C126.308 40.4331 123.053 37.0644 123.053 34.6375Z" fill="#F9FBFB"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M112.967 42.8252C112.967 46.4156 108.151 51.3992 104.379 51.3992C108.178 51.3992 112.967 56.2489 112.967 60C112.967 56.2489 117.755 51.3992 121.554 51.3992C117.782 51.3992 112.967 46.4156 112.967 42.8252Z" fill="#F9FBFB"/>
+<rect x="200.247" y="-11.1907" width="184.023" height="67.1875" rx="33.5938" fill="#BEDDFC"/>
+<rect x="61" y="-89.0032" width="151" height="81" rx="40.5" transform="rotate(90 61 -89.0032)" fill="#CDE5FE" stroke="#ABD4FD" stroke-width="20"/>
+<rect x="51.5" y="-79.5032" width="132" height="62" rx="31" transform="rotate(90 51.5 -79.5032)" stroke="#2D94FA"/>
+<rect x="271.87" y="77.4968" width="132.194" height="60.3673" rx="30.1836" transform="rotate(-90 271.87 77.4968)" fill="#ABD4FD"/>
+<rect x="232" y="38.3159" width="130.264" height="61.3673" rx="30.6836" transform="rotate(-90 232 38.3159)" fill="#CDE5FE" stroke="#2D94FA"/>
+<rect x="308.224" y="54.8081" width="48.026" height="26.6381" rx="13.319" fill="#CDE5FE" stroke="#81BFFC" stroke-width="8"/>
+</g>
+</svg>

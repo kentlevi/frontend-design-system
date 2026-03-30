@@ -3,7 +3,7 @@ import { useAttributesStore } from '~/stores/product'
 export const usePricingService = () => {
 	// const { $api } = useNuxtApp()
 
-	const attributesStore = useAttributesStore()
+	const attributes_store = useAttributesStore()
 
 	const pricing_ready = ref<boolean>(true)
 
@@ -17,7 +17,7 @@ export const usePricingService = () => {
 
 	const unit_price = ref(3.5)
 
-	const product_base_price = computed(() => attributesStore.quantities && attributesStore.quantities?.length ? attributesStore.quantities[0] : null)
+	const product_base_price = computed(() => attributes_store.quantities && attributes_store.quantities?.length ? attributes_store.quantities[0] : null)
 
 
 	const updatePricing = (s_fee : number, p: number) => {

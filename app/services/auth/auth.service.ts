@@ -4,7 +4,6 @@ import type {
 	NonMemberLoginVerificationPayload,
 	NonMemberLoginVerificationResponse,
 	SubmitNonMemberLoginVerificationPayload,
-	SendResetPasswordLinkPayload,
 	RegisterVerificationPayload,
 	RegisterPayload,
 	RegisterVerificationResponse,
@@ -49,15 +48,6 @@ export async function nonMemberSubmitVerification(payload: SubmitNonMemberLoginV
 	const { $api } = useNuxtApp()
 
 	return await $api.post('auth/login/guest', { ...payload })
-}
-
-/**
- * Send reset password link
- */
-export async function sendResetPasswordLink(payload: SendResetPasswordLinkPayload): Promise<ApiResponse> {
-	const { $api } = useNuxtApp()
-
-	return await $api.post('auth/password/reset-link', { ...payload })
 }
 
 /**

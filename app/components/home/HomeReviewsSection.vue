@@ -17,7 +17,7 @@ type ReviewItem = {
 	image: string;
 };
 
-const reviewIds = [
+const review_ids = [
 	'football',
 	'service',
 	'market',
@@ -27,7 +27,7 @@ const reviewIds = [
 ] as const;
 
 const reviews = computed<ReviewItem[]>(() =>
-	reviewIds.map((id, index) => ({
+	review_ids.map((id, index) => ({
 		id,
 		title: t(`home.reviews.items.${id}.title`),
 		text: t(`home.reviews.items.${id}.text`),
@@ -43,11 +43,11 @@ const reviews = computed<ReviewItem[]>(() =>
 );
 
 const {
-	sectionRef,
-	viewportRef,
-	trackStyle,
-	canGoPrev,
-	canGoNext,
+	section_ref,
+	viewport_ref,
+	track_style,
+	can_go_prev,
+	can_go_next,
 	nextSlide,
 	prevSlide,
 	startAuto,
@@ -57,12 +57,12 @@ const {
 	gap: 24,
 	intervalMs: 3200,
 });
-const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
+const carousel_label = computed(() => t('home.reviews.carouselLabel'));
 </script>
 
 <template>
 	<section
-		ref="sectionRef"
+		ref="section_ref"
 		class="home-reviews"
 		data-testid="home-reviews-section"
 		:aria-label="t('home.reviews.carouselLabel')"
@@ -86,7 +86,7 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
 						:aria-label="t('home.reviews.controls.previous')"
 						class="home-reviews-arrow"
 						data-testid="home-reviews-prev-button"
-						:disabled="!canGoPrev"
+						:disabled="!can_go_prev"
 						@click="prevSlide"
 					/>
 					<UiButton
@@ -100,23 +100,23 @@ const carouselLabel = computed(() => t('home.reviews.carouselLabel'));
 						:aria-label="t('home.reviews.controls.next')"
 						class="home-reviews-arrow"
 						data-testid="home-reviews-next-button"
-						:disabled="!canGoNext"
+						:disabled="!can_go_next"
 						@click="nextSlide"
 					/>
 				</div>
 			</div>
 
 			<div
-				ref="viewportRef"
+				ref="viewport_ref"
 				class="home-reviews-viewport"
 				data-testid="home-reviews-viewport"
 				role="region"
 				aria-roledescription="carousel"
-				:aria-label="carouselLabel"
+				:aria-label="carousel_label"
 				@mouseenter="stopAuto"
 				@mouseleave="startAuto"
 			>
-				<div class="home-reviews-row" :style="trackStyle">
+				<div class="home-reviews-row" :style="track_style">
 					<article
 						v-for="(review, idx) in reviews"
 						:key="`${review.title}-${review.author}-${idx}`"

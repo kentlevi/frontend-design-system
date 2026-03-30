@@ -1,16 +1,18 @@
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 export function useAccountCollection<T>(items: readonly T[]) {
+	const collection_items = ref(items.map((item) => ({ ...item })) as T[]);
+
 	return {
-		items,
+		items: collection_items,
 	};
 }
 
 export function useAccountCollectionWithActive<T>(items: readonly T[]) {
-	const activeItem = computed(() => items[0] ?? null);
+	const active_item = computed(() => items[0] ?? null);
 
 	return {
 		items,
-		activeItem,
+		active_item,
 	};
 }

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
+import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
+import ProfileSetupPasswordModal from './ProfileSetupPasswordModal.vue';
+import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
 
 const { t } = useI18n();
+const { social } = useSocialAccount();
 
 const {
 	current_password,
@@ -22,6 +26,22 @@ const {
 } = usePasswordForm()
 
 const {
+	setup_password_error,
+	is_setup_password_enabled,
+	setup_password,
+	setup_password_confirmation,
+	setup_password_visible,
+	setup_password_confirmation_visible,
+	is_setup_password_modal_open,
+	has_password,
+
+	clearSetupPasswordPairErrors,
+	onSetupPassword,
+	openSetupPasswordModal,
+	closeSetupPasswordModal,
+} = useSetupPassword()
+
+const {
 	is_forgot_password_modal_open,
 	forgot_password_request_send,
 
@@ -37,7 +57,28 @@ const {
 			<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
 			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 		</div>
-		<div class="account-profile-stack" data-testid="account-profile-password-form">
+		<div
+			v-if="social && !has_password"
+			class="account-profile-password-setup"
+			data-testid="account-profile-password-setup"
+		>
+			<div class="account-profile-password-setup-copy">
+				<h3 class="account-profile-password-setup-title">{{ t('account.profile.setPassword') }}</h3>
+				<p class="account-profile-password-setup-description">
+					{{ t('account.profile.socialPasswordDescription') }}
+				</p>
+			</div>
+			<UiButton
+				variant="filled"
+				tone="neutral"
+				size="md"
+				data-testid="account-profile-setup-password-button"
+				@click="openSetupPasswordModal"
+			>
+				{{ t('account.profile.setUpPassword') }}
+			</UiButton>
+		</div>
+		<div v-else class="account-profile-stack" data-testid="account-profile-password-form">
 			<UiFormField :label="t('account.profile.currentPassword')" :error="current_password_error" :required="true">
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -151,8 +192,7 @@ const {
 				<UiButton
 					variant="ghost"
 					tone="neutral"
-					size="sm"
-					:no-hover="true"
+					size="md"
 					class="account-profile-forgot-password-link"
 					label-class="account-profile-forgot-password-link-label"
 					data-testid="account-profile-forgot-password"
@@ -168,7 +208,6 @@ const {
 	<UiModal
 		:model-value="is_forgot_password_modal_open"
 		align="center"
-		width="504px"
 		padding="40px"
 		gap="8px"
 		modal-class="account-profile-forgot-password-modal-shell"
@@ -193,14 +232,16 @@ const {
 					:size="40"
 					class="account-profile-forgot-password-modal-logo"
 				/>
-				<h3 class="account-profile-forgot-password-modal-title">
-					{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
-				</h3>
-			</div>
+				<div class="account-profile-forgot-password-modal-copy">
+					<h3 class="account-profile-forgot-password-modal-title">
+						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+					</h3>
 
-			<p class="account-profile-forgot-password-modal-description">
-				{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
-			</p>
+					<p class="account-profile-forgot-password-modal-description">
+						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
+					</p>
+				</div>
+			</div>
 
 			<div class="account-profile-forgot-password-modal-actions">
 				<UiButton
@@ -216,10 +257,55 @@ const {
 			</div>
 		</section>
 	</UiModal>
+
+	<ProfileSetupPasswordModal
+		:model-value="is_setup_password_modal_open"
+		:password="setup_password"
+		:password-confirmation="setup_password_confirmation"
+		:password-error="setup_password_error"
+		:password-visible="setup_password_visible"
+		:password-confirmation-visible="setup_password_confirmation_visible"
+		:is-submit-enabled="is_setup_password_enabled"
+		@update:model-value="$event ? (is_setup_password_modal_open = true) : closeSetupPasswordModal()"
+		@update:password="setup_password = $event"
+		@update:password-confirmation="setup_password_confirmation = $event"
+		@update:password-visible="setup_password_visible = $event"
+		@update:password-confirmation-visible="setup_password_confirmation_visible = $event"
+		@clear-errors="clearSetupPasswordPairErrors"
+		@submit="onSetupPassword"
+		@close="closeSetupPasswordModal"
+	/>
 </template>
 
 <style scoped lang="scss">
 .account-profile-section {
+	.account-profile-password-setup {
+		display: flex;
+		align-items: flex-end;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 16px;
+
+		.account-profile-password-setup-copy {
+			width: 100%;
+			display: grid;
+			gap: 8px;
+		}
+
+		.account-profile-password-setup-title {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			font-weight: var(--font-weight-semibold);
+			color: var(--text-primary);
+		}
+
+		.account-profile-password-setup-description {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			color: var(--text-secondary);
+		}
+	}
+
 	.account-profile-stack {
 		display: flex;
 		flex-direction: column;
@@ -232,18 +318,18 @@ const {
 			justify-content: flex-end;
 
 			.account-profile-forgot-password-link {
-				min-height: auto;
-				padding: 0;
 				color: var(--text-primary);
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
-				text-decoration: underline;
-
+				text-decoration: none;
+					&:hover {
+						--btn-soft: var(--gray-20);
+					}
 				:deep(.account-profile-forgot-password-link-label) {
 					color: inherit;
 					font-size: var(--type-size-100);
 					line-height: var(--type-line-100);
-					text-decoration: underline;
+
 				}
 			}
 		}
@@ -266,7 +352,7 @@ const {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 40px;
 
 	.account-profile-forgot-password-modal-close {
 		position: absolute;
@@ -289,8 +375,15 @@ const {
 		gap: 24px;
 	}
 
+	.account-profile-forgot-password-modal-copy {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
 	.account-profile-forgot-password-modal-title {
 		font-size: var(--type-size-500);
+		font-weight: var(--font-weight-semibold);
 		line-height: var(--type-line-500);
 		color: var(--text-primary);
 	}

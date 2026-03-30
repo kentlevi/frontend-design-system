@@ -5,11 +5,19 @@
             "tierName": "Bumper Boss",
             "lastTierUpgrade": "Last Tier Upgrade",
             "pointsUnit": "points",
-            "logs": {
-                "earned": "Points Earned (Order # 12405077220)",
-                "used": "Points Used (Order # 12405077220)",
-                "quest": "Sticker Quest (Sticker Explorer)"
-            }
+            "pointsSystemTitle": "Points System",
+            "pointsSystemDescription": "Collect and redeem points in our loyalty program to unlock exciting rewards and exclusive perks. Earned points can be used for payment of future purchases.",
+            "questTitle": "The Great Sticker Quest",
+            "questDescription": "Our loyalty program turns your shopping into a rewarding journey. Earn points and unlock challenges with every order or interaction!",
+            "historyTitle": "Points History",
+            "historyDescription": "Detailed record of all the points you've earned or redeemed through the loyalty program.",
+            "challengesTitle": "Challenges",
+            "viewAll": "View All",
+            "filter": "Filter",
+            "logsTitle": "Logs",
+            "expiry": "Expiry",
+            "nextTierRequirementPrefix": "You need at least",
+            "nextTierRequirementSuffix": "total spent on completed order to unlock next level."
         }
     }
 }

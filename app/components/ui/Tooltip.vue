@@ -2,41 +2,41 @@
 import type { PropType } from 'vue';
 import { toRef } from 'vue';
 import { useTooltip } from '~/composables/ui/useTooltip';
-import type { UiTooltipProps , tooltipSides, tooltipTones} from '~/data/ui/tooltip';
-import { uiTooltipDefaults } from '~/data/ui/tooltip';
+import type { UiTooltipProps, tooltip_sides, tooltip_tones } from '~/data/ui/tooltip';
+import { ui_tooltip_defaults } from '~/data/ui/tooltip';
 
 const props = defineProps({
 	open: {
 		type: Boolean,
-		default: uiTooltipDefaults.open,
+		default: ui_tooltip_defaults.open,
 	},
 	side: {
-		type: String as PropType<(typeof tooltipSides)[number]>,
-		default: uiTooltipDefaults.side,
+		type: String as PropType<(typeof tooltip_sides)[number]>,
+		default: ui_tooltip_defaults.side,
 	},
 	mobileSide: {
-		type: String as PropType<(typeof tooltipSides)[number] | null>,
-		default: uiTooltipDefaults.mobileSide,
+		type: String as PropType<(typeof tooltip_sides)[number] | null>,
+		default: ui_tooltip_defaults.mobileSide,
 	},
 	tone: {
-		type: String as PropType<(typeof tooltipTones)[number]>,
-		default: uiTooltipDefaults.tone,
+		type: String as PropType<(typeof tooltip_tones)[number]>,
+		default: ui_tooltip_defaults.tone,
 	},
 	offset: {
 		type: [Number, String] as PropType<UiTooltipProps['offset']>,
-		default: uiTooltipDefaults.offset,
+		default: ui_tooltip_defaults.offset,
 	},
 	slideDistance: {
 		type: [Number, String] as PropType<UiTooltipProps['slideDistance']>,
-		default: uiTooltipDefaults.slideDistance,
+		default: ui_tooltip_defaults.slideDistance,
 	},
 	role: {
 		type: String,
-		default: uiTooltipDefaults.role,
+		default: ui_tooltip_defaults.role,
 	},
 	contentTestid: {
 		type: String,
-		default: uiTooltipDefaults.contentTestid,
+		default: ui_tooltip_defaults.contentTestid,
 	},
 	contentClass: {
 		type: String,
@@ -44,7 +44,7 @@ const props = defineProps({
 	},
 });
 
-const { cssVars } = useTooltip({
+const { css_vars } = useTooltip({
 	offset: toRef(props, 'offset'),
 	slideDistance: toRef(props, 'slideDistance'),
 });
@@ -56,7 +56,7 @@ const { cssVars } = useTooltip({
 		:data-side="props.side"
 		:data-mobile-side="props.mobileSide || null"
 		:data-tone="props.tone"
-		:style="cssVars"
+		:style="css_vars"
 	>
 		<slot name="trigger" />
 

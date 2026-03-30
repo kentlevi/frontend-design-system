@@ -385,6 +385,17 @@ const caretHandler = (event: MouseEvent) => {
 }
 
 const onEditorInput = () => {
+	if (textField.value) {
+		const rawValue = textField.value.innerText.replace(/\u00A0/g, ' ').replace(/\r/g, '')
+		const normalizedValue = rawValue.replace(/\n+/g, ' ')
+
+		if (rawValue !== normalizedValue) {
+			textField.value.innerText = normalizedValue
+			nextTick(() => {
+				focusAtEnd()
+			})
+		}
+	}
 	editorReady.value = true
 	textHandler()
 }
@@ -392,9 +403,14 @@ const onEditorInput = () => {
 const pasteHandler = (event: ClipboardEvent) => {
 	const text = event.clipboardData?.getData('text/plain') ?? ''
 	if (textField.value) {
-		textField.value.innerText = text.replace(/(?:\r\n|\r|\n)/g, '\n')
+		textField.value.innerText = text.replace(/(?:\r\n|\r|\n)+/g, ' ')
 	}
 	textHandler()
+}
+
+const keydownHandler = (event: KeyboardEvent) => {
+	if (event.key !== 'Enter') return
+	event.preventDefault()
 }
 
 watch(
@@ -467,6 +483,7 @@ onMounted(async () => {
 						dir="ltr"
 						:style="editorTextStyle"
 						@input="onEditorInput"
+						@keydown="keydownHandler"
 						@paste.prevent="pasteHandler"
 					/>
 				</div>

@@ -30,6 +30,7 @@ const { withCountry } = useCountry();
 const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
 const localAvatarDataUrl = ref<string | null>(null);
 
 const accountStats = computed<AccountStat[]>(() => [
@@ -117,6 +118,11 @@ const tabs = [
 						class="account-shell-avatar-image"
 					>
 					<template v-else>{{ user_initial }}</template>
+					<img
+						:src="account_level_badge_src"
+						:alt="t('account.shell.level')"
+						class="account-shell-avatar-badge"
+					>
 				</div>
 				<div class="account-shell-user-copy">
 					<p class="account-shell-name">{{ display_name }}</p>
@@ -196,8 +202,9 @@ const tabs = [
 	}
 
     .account-shell-avatar {
-        width: 56px;
-        height: 56px;
+        position: relative;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
         background: var(--gray-40);
         color: var(--black-base);
@@ -208,23 +215,34 @@ const tabs = [
         line-height: var(--type-line-400);
 
         .account-shell-avatar-image {
-            width: 100%;
-            height: 100%;
+            width: inherit;
+            height: inherit;
             border-radius: 50%;
             object-fit: cover;
+			border: 4px solid var(--gray-40);
+        }
+
+        .account-shell-avatar-badge {
+            position: absolute;
+			bottom: 0;
+            right: -14px;
+            width: 42px;
+            height: 36px;
+            display: block;
         }
     }
 
 	.account-shell-user-copy {
+		display: grid;
+		gap: 4px;
 		.account-shell-name {
-			font-size: var(--type-size-300);
-			line-height: var(--type-line-300);
+			font-size: var(--type-size-400);
+			line-height: var(--type-line-400);
 			font-weight: var(--font-weight-bold);
 			color: var(--text-primary);
 		}
 
 		.account-shell-level {
-			margin: 4px 0 0;
 			font-size: var(--type-size-100);
 			font-weight: var(--font-weight-regular);
 			line-height: var(--type-line-100);

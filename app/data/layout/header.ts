@@ -9,16 +9,16 @@ import type { FlagCode } from '~/data/ui/flags';
 import type { SupportedCountry } from '~/constants/countries';
 
 export const HEADER_MAX_RECENT_SEARCHES = 5;
-export const HEADER_SEARCH_DEBOUNCE_DELAY_MS = 480;
+export const HEADER_SEARCH_DEBOUNCE_DELAY_MS = 500;
 export const HEADER_SEARCH_LOADING_MIN_VISIBLE_MS = 300;
 
-export const headerSearchCategories: ProductCategoryKey[] = [
+export const header_search_categories: ProductCategoryKey[] = [
 	'stickers',
 	'roll-stickers',
 	'sheet-stickers',
 ];
 
-export const headerNavLinkConfig = [
+export const header_nav_link_config = [
 	{
 		key: 'stickers',
 		labelKey: 'layout.header.nav.stickers',
@@ -64,7 +64,7 @@ export async function fetchNavigationCategories(
 	}
 }
 
-export const headerLocaleOptionConfig: Array<{
+export const header_locale_option_config: Array<{
 	code: SupportedCountry;
 	flagCode: FlagCode;
 	labelKey: string;
@@ -73,7 +73,7 @@ export const headerLocaleOptionConfig: Array<{
 	{ code: 'kr', flagCode: 'kr', labelKey: 'layout.header.locale.kr' },
 ];
 
-export const headerAccountLinkConfig = [
+export const header_account_link_config = [
 	{
 		labelKey: 'layout.header.accountLinks.profile',
 		to: '/account/profile',
@@ -121,7 +121,7 @@ export const headerAccountLinkConfig = [
 	},
 ] as const;
 
-export const headerCheckoutConfig = {
+export const header_checkout_config = {
 	title: 'Secure Checkout',
 	phone: '+1 551 236 4533',
 	email: 'info@mustickers.com',

@@ -8,9 +8,11 @@
             "photoHint1": "권장 파일 크기: 최소 800x800px",
             "photoHint2": "지원 파일 형식: .jpg, .png",
             "uploadNewPhoto": "새 사진 업로드",
+            "uploadPhoto": "사진 업로드",
+            "photoUploadSuccess": "프로필 사진이 성공적으로 업로드되었습니다.",
             "delete": "삭제",
-            "firstName": "이름",
-            "lastName": "성",
+            "first_name": "이름",
+            "last_name": "성",
             "optional": "선택",
             "emailAddress": "이메일 주소",
             "saveChanges": "변경사항 저장",
@@ -23,6 +25,16 @@
             "newPasswordPlaceholder": "새 비밀번호를 입력하세요",
             "confirmNewPassword": "새 비밀번호 확인",
             "confirmNewPasswordPlaceholder": "새 비밀번호를 다시 입력하세요",
+            "setPassword": "비밀번호 설정",
+            "setUpPassword": "비밀번호 설정하기",
+            "setupPasswordTitle": "비밀번호 설정",
+            "socialPasswordDescription": "현재 계정은 소셜 로그인으로 접속 중입니다. 이메일과 비밀번호로도 로그인할 수 있도록 비밀번호를 설정하세요.",
+            "passwordLabel": "비밀번호",
+            "enterPassword": "비밀번호를 입력하세요",
+            "confirmPassword": "비밀번호 확인",
+            "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
+            "confirmSetupPassword": "확인",
+            "closeSetupPasswordModal": "비밀번호 설정 대화상자 닫기",
             "changePassword": "비밀번호 변경",
             "forgotPassword": "비밀번호를 잊으셨나요?",
             "forgotPasswordModalClose": "비밀번호 재설정 안내 닫기",
@@ -43,7 +55,9 @@
             "unitDesc": "기본으로 사용할 측정 단위를 선택하세요.",
             "millimeter": "밀리미터",
             "inch": "인치",
-            "signOut": "로그아웃"
+            "signOut": "로그아웃",
+            "given_name": "이름",
+            "family_name": "성"
         }
     }
 }

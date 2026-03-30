@@ -80,7 +80,8 @@ export const useProfileFieldsStore = defineStore('profile_fields', {
 				this.error_message = ''
 
 				try {
-					const fields = await fetchPersonalFieldDefinitions()
+					const response = await fetchPersonalFieldDefinitions()
+					const fields = Array.isArray(response.data) ? response.data : []
 
 					this.dynamic_profile_fields = fields
 					this.loaded_country_id = country_id

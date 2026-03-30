@@ -15,9 +15,9 @@ export function sanitizeExistingRedirect(
 	rawRedirect: unknown,
 	withCountry: (path: string) => string
 ) {
-	const homePath = normalizeAppPath(withCountry('/'));
-	const loginPath = normalizeAppPath(withCountry('/auth/login'));
-	const registerPath = normalizeAppPath(withCountry('/auth/register'));
+	const home_path = normalizeAppPath(withCountry('/'));
+	const login_path = normalizeAppPath(withCountry('/auth/login'));
+	const register_path = normalizeAppPath(withCountry('/auth/register'));
 
 	if (typeof rawRedirect !== 'string') return '';
 
@@ -25,8 +25,8 @@ export function sanitizeExistingRedirect(
 	if (!candidate.startsWith('/') || candidate.startsWith('//')) return '';
 
 	const parsed = new URL(candidate, 'http://localhost');
-	const targetPath = normalizeAppPath(parsed.pathname);
-	if (targetPath === homePath || targetPath === loginPath || targetPath === registerPath) {
+	const target_path = normalizeAppPath(parsed.pathname);
+	if (target_path === home_path || target_path === login_path || target_path === register_path) {
 		return '';
 	}
 
@@ -40,9 +40,9 @@ export function resolvePostLoginRedirect(
 	withCountry: (path: string) => string
 ) {
 	const fallback = withCountry('/');
-	const homePath = normalizeAppPath(withCountry('/'));
-	const loginPath = normalizeAppPath(withCountry('/auth/login'));
-	const registerPath = normalizeAppPath(withCountry('/auth/register'));
+	const home_path = normalizeAppPath(withCountry('/'));
+	const login_path = normalizeAppPath(withCountry('/auth/login'));
+	const register_path = normalizeAppPath(withCountry('/auth/register'));
 
 	if (typeof rawRedirect !== 'string') return fallback;
 
@@ -53,26 +53,26 @@ export function resolvePostLoginRedirect(
 	const segments = parsed.pathname.split('/').filter(Boolean);
 	if (segments.length === 0) return fallback;
 
-	const currentCountryPath = normalizeAppPath(withCountry('/'));
-	const currentCountry = currentCountryPath.split('/').filter(Boolean)[0] || DEFAULT_COUNTRY;
-	const hasCountryPrefix = Boolean(resolveSupportedCountry(segments[0]));
-	const targetSegments = hasCountryPrefix ? segments.slice(1) : segments;
+	const current_country_path = normalizeAppPath(withCountry('/'));
+	const current_country = current_country_path.split('/').filter(Boolean)[0] || DEFAULT_COUNTRY;
+	const has_country_prefix = Boolean(resolveSupportedCountry(segments[0]));
+	const target_segments = has_country_prefix ? segments.slice(1) : segments;
 
-	const normalizedPath =
-		targetSegments.length > 0
-			? `/${currentCountry}/${targetSegments.join('/')}`
-			: `/${currentCountry}`;
+	const normalized_path =
+		target_segments.length > 0
+			? `/${current_country}/${target_segments.join('/')}`
+			: `/${current_country}`;
 
-	const normalizedTargetPath = normalizeAppPath(normalizedPath);
+	const normalized_target_path = normalizeAppPath(normalized_path);
 	if (
-		normalizedTargetPath === homePath ||
-		normalizedTargetPath === loginPath ||
-		normalizedTargetPath === registerPath
+		normalized_target_path === home_path ||
+		normalized_target_path === login_path ||
+		normalized_target_path === register_path
 	) {
 		return fallback;
 	}
 
 	parsed.searchParams.delete('redirect');
-	const normalizedSearch = parsed.searchParams.toString();
-	return `${normalizedPath}${normalizedSearch ? `?${normalizedSearch}` : ''}${parsed.hash}`;
+	const normalized_search = parsed.searchParams.toString();
+	return `${normalized_path}${normalized_search ? `?${normalized_search}` : ''}${parsed.hash}`;
 }

@@ -3,14 +3,19 @@ import ProfilePersonalSection from './ProfilePersonalSection.vue';
 import ProfilePasswordSection from './ProfilePasswordSection.vue';
 import ProfileSettingsSection from './ProfileSettingsSection.vue';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
-
-		<AccountShell active-tab="profile">
+		<AccountShellSection :embedded="embedded" active-tab="profile">
 			<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
 			<div class="account-content account-profile" data-testid="account-profile-content">
 				<ProfilePersonalSection/>
@@ -19,7 +24,7 @@ const { t } = useI18n();
 
 				<ProfileSettingsSection/>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 	</section>
 </template>
 

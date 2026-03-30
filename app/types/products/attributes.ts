@@ -1,4 +1,6 @@
 
+import type { CSSProperties } from 'vue'
+
 export interface FontSpec {
 	id: number
 	label: string
@@ -6,10 +8,7 @@ export interface FontSpec {
 	style: { fontFamily: string }
 }
 
-export interface SwatchStyleSpec {
-	background: string
-	border?: string
-}
+export type SwatchStyleSpec = CSSProperties
 
 export interface ColorSpec {
 	id: number

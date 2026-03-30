@@ -2,13 +2,19 @@
 import { useAccountGallery } from '~/composables/account/gallery/useAccountGallery';
 import GalleryCard from './GalleryCard.vue';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 const { items } = useAccountGallery();
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-gallery-page">
-		<AccountShell active-tab="gallery">
+		<AccountShellSection :embedded="embedded" active-tab="gallery">
 			<div class="account-content" data-testid="account-gallery-content">
 				<header class="account-gallery-header" data-testid="account-gallery-header">
 					<h1 class="account-gallery-title" data-testid="account-gallery-title">{{ t('account.gallery.title') }}</h1>
@@ -34,7 +40,7 @@ const { items } = useAccountGallery();
 					/>
 				</div>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 	</section>
 </template>
 

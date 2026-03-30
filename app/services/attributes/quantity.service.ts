@@ -3,13 +3,13 @@ import type { QuantitySpec } from '~/types/products/attributes'
 
 export const useQuantityService = () => {
 
-	const attributesStore = useAttributesStore()
+	const attributes_store = useAttributesStore()
 
-	const selectionStore = useSelectionStore()
+	const selection_store = useSelectionStore()
 
-	const featured_quantities = computed(() => attributesStore.quantities)
+	const featured_quantities = computed(() => attributes_store.quantities)
 
-	const quantity = ref<QuantitySpec | null>(selectionStore.quantity ?? null)
+	const quantity = ref<QuantitySpec | null>(selection_store.quantity ?? null)
 
 	const custom_quantity = ref<QuantitySpec>({
 		custom: true,
@@ -24,26 +24,26 @@ export const useQuantityService = () => {
 			quantity.value = selected_qty
 		}
 
-		selectionStore.updateQuantity(selected_qty, true)
+		selection_store.updateQuantity(selected_qty, true)
 	}
 
 	/**
-	 * 📌Handles the changes of quantity
-	 * @param selected_qty number — selected/inputed quantity
-	 * @param custom boolean — [OPTIONAL] True if the source of selected_qty is from custom field
+	 * ðŸ“ŒHandles the changes of quantity
+	 * @param selected_qty number â€” selected/inputed quantity
+	 * @param custom boolean â€” [OPTIONAL] True if the source of selected_qty is from custom field
 	 */
 	function changeQuantity(selected_qty: QuantitySpec) {
 		quantity.value = selected_qty
 
 		// Updating state
-		selectionStore.updateQuantity(quantity.value)
+		selection_store.updateQuantity(quantity.value)
 	}
 
 
 	const changeCustomQuantity = (nr: number) => {
 		custom_quantity.value.nr = nr
 
-		selectionStore.updateQuantity(custom_quantity.value)
+		selection_store.updateQuantity(custom_quantity.value)
 	}
 
 	return {

@@ -3,6 +3,12 @@ import { useAccountOrders } from '~/composables/account/orders/useAccountOrders'
 import OrdersSidebar from './OrdersSidebar.vue';
 import OrderDetailSection from './OrderDetailSection.vue';
 
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
 const { t } = useI18n();
 const {
 	lifecycle,
@@ -24,7 +30,7 @@ const accent_class_map = {
 
 <template>
 	<section class="account-page" data-testid="account-orders-page">
-		<AccountShell active-tab="orders">
+		<AccountShellSection :embedded="embedded" active-tab="orders">
 			<div class="account-content" data-testid="account-orders-content">
 				<div class="account-orders-topbar" data-testid="account-orders-topbar">
 					<h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
@@ -117,7 +123,7 @@ const accent_class_map = {
 					/>
 				</div>
 			</div>
-		</AccountShell>
+		</AccountShellSection>
 	</section>
 </template>
 

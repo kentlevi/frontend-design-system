@@ -9,7 +9,6 @@ import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 
 const { t } = useI18n();
-const profile_field_store = useProfileFieldsStore();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
@@ -33,6 +32,8 @@ const {
 	has_changes,
 	field_errors,
 	is_updating: name_is_submitting,
+	dynamic_profile_fields,
+
 	loadPersonalForm,
 	submitPersonalForm
 } = usePersonalForm();
@@ -80,7 +81,7 @@ onMounted(() => {
 					<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
 				</div>
 				<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-					<div class="account-profile-avatar">
+					<div :class="['account-profile-avatar', { 'account-profile-avatar--error': photo_inline_error }]">
 						<img
 							v-if="display_avatar"
 							:src="display_avatar"
@@ -128,17 +129,17 @@ onMounted(() => {
 			</div>
 
 			<div class="account-profile-grid" data-testid="account-profile-form">
-				<div v-for="field in profile_field_store.dynamic_profile_fields" :key="field.id">
+				<div v-for="field in dynamic_profile_fields" :key="field.id">
 					<UiFormField
 						:error="field_errors[field.field_key]"
 						:label="field.is_required
-							? t(`account.profile.${field.field_key}`)
-							: `${t(`account.profile.${field.field_key}`)} (${t('account.profile.optional')})`"
-						:required="field.is_required"
+							? field.field_label
+							: `${field.field_label} (${t('account.profile.optional')})`"
+						:required="Boolean(field.is_required)"
 					>
-						<template v-if="field.field_key === 'last_name' || field.field_key === 'family_name'" #label>
+						<template v-if="!field.is_required" #label>
 							<span class="ui-form-field-label-text">
-								{{ t(`account.profile.${field.field_key}`) }}
+								{{ field.field_label }}
 							</span>
 							<span class="account-profile-optional">
 								({{ t('account.profile.optional') }})
@@ -271,9 +272,7 @@ onMounted(() => {
 
 	.account-profile-photo-head {
 		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 6px;
+		justify-content: space-between;
 
 		.account-profile-label {
 			margin-bottom: 0;
@@ -289,18 +288,20 @@ onMounted(() => {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+		max-width: 427px;
 	}
 
 	.account-profile-photo-row {
 		display: grid;
-		grid-template-columns: 98px 1fr;
-		gap: 18px;
+		grid-template-columns: 120px 1fr;
+		gap: 32px;
 		align-items: center;
 
 		.account-profile-avatar {
-			width: 98px;
-			height: 98px;
+			width: 120px;
+			height: 120px;
 			border-radius: 50%;
+			border: 1px solid transparent;
 			background: var(--gray-40);
 			color: var(--black-base);
 			display: grid;
@@ -315,6 +316,10 @@ onMounted(() => {
 				height: 100%;
 				object-fit: cover;
 			}
+		}
+
+		.account-profile-avatar--error {
+			border-color: var(--error);
 		}
 	}
 
@@ -334,7 +339,6 @@ onMounted(() => {
 		font-size: var(--type-size-100);
 		font-weight: var(--font-weight-semibold);
 		line-height: var(--type-line-100);
-		margin: 8px 0 0;
 	}
 
 	.account-profile-file-input {

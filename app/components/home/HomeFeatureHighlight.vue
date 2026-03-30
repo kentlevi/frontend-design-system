@@ -4,8 +4,8 @@ import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
-const featureHighlightVideo = resolveFileUrl('/home/feature/home-feature-highlight-video-initial.mp4');
-const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highlight-poster-initial.png');
+const feature_highlight_video = resolveFileUrl('/home/feature/home-feature-highlight-video-initial.mp4');
+const feature_highlight_poster = resolveFileUrl('/home/feature/home-feature-highlight-poster-initial.png');
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highli
 		<div class="home-feature-card">
 			<div class="home-feature-media" aria-hidden="true">
 				<video
-					:poster="featureHighlightPoster"
+					:poster="feature_highlight_poster"
 					class="home-feature-media-image"
 					autoplay
 					muted
@@ -21,7 +21,7 @@ const featureHighlightPoster = resolveFileUrl('/home/feature/home-feature-highli
 					playsinline
 					preload="metadata"
 				>
-					<source :src="featureHighlightVideo" type="video/mp4">
+					<source :src="feature_highlight_video" type="video/mp4">
 				</video>
 			</div>
 

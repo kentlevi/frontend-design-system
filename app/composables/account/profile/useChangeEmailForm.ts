@@ -44,6 +44,19 @@ export function useChangeEmailForm() {
 	const limit_reached_error = ref('')
 
 	/**
+     * Clear limit reached error once cooldown ends
+     */
+	watch(remaining, (new_remaining) => {
+	/** Stop if there is no active limit error */
+		if (!limit_reached_error.value) return
+
+		/** Clear error once cooldown is finished */
+		if (new_remaining <= 0) {
+			limit_reached_error.value = ''
+		}
+	})
+
+	/**
 	 * Open email change modal
 	 */
 	function openEmailChangeModal() {
@@ -140,7 +153,6 @@ export function useChangeEmailForm() {
 	async function verifyOtp() {
 		clearResponseState()
 		email_change_otp_error.value = ''
-		limit_reached_error.value = ''
 
 		closeOtpModal(false)
 		startVerifyOverlay()

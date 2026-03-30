@@ -5,7 +5,7 @@ interface GalleryItem {
 	tag: string;
 }
 
-const props = defineProps<{
+defineProps<{
 	item: GalleryItem;
 }>();
 

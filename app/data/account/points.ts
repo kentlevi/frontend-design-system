@@ -1,10 +1,215 @@
-import type { AccountPointLog } from '~/types/account/points';
+import type {
+	AccountPointChallenge,
+	AccountPointHistoryFilter,
+	AccountPointLog,
+	AccountPointRank,
+	AccountPointSummary,
+} from '~/types/account/points';
 
-export const accountPointLogs: AccountPointLog[] = [
-	{ titleKey: 'earned', date: '11/05/2024', value: '+0.36 P', positive: true },
-	{ titleKey: 'used', date: '11/05/2024', value: '-25.00 P', positive: false },
-	{ titleKey: 'quest', date: '10/22/2024', value: '+5.00 P', positive: true },
+export const account_point_summary: AccountPointSummary = {
+	tier_name_key: 'tierName',
+	badge_src: '/icons/custom/account/points/badges/badge-bumper-boss.svg',
+	last_tier_upgrade_date: '01/11/2025',
+	balance: '13.90',
+	expiry_date: '03/31/2025',
+	progress_percent: 28,
+	remaining_spend: '5,828,670.20',
+	conversion_rate_label: '1 Point = 1 KRW',
+};
+
+export const account_point_challenges: AccountPointChallenge[] = [
+	{
+		id: 'first-order-victory',
+		name: 'First Order Victory',
+		state: 'active',
+		icon_src: '/icons/custom/account/points/challenges/active/first-order-victory.svg',
+		reward_copy: 'Earn 10 points.',
+	},
+	{
+		id: 'sticker-explorer',
+		name: 'Sticker Explorer',
+		state: 'active',
+		icon_src: '/icons/custom/account/points/challenges/active/sticker-explorer.svg',
+		reward_copy: 'Earn 5 points.',
+	},
+	{
+		id: 'mystery-hunter',
+		name: 'Mystery Hunter',
+		state: 'active',
+		icon_src: '/icons/custom/account/points/challenges/active/mystery-hunter.svg',
+		reward_copy: 'Earn 10% discount on your next order.',
+	},
+	{
+		id: 'speedy-checkout',
+		name: 'Speedy Checkout',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/speedy-checkout.svg',
+		reward_copy: 'Get free express shipping.',
+	},
+	{
+		id: 'review-master',
+		name: 'Review Master',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/review-master.svg',
+		reward_copy: 'Earn 8 points.',
+	},
+	{
+		id: 'share-your-creativity',
+		name: 'Share Your Creativity',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/share-your-creativity.svg',
+		reward_copy: 'Earn 8 points.',
+	},
+	{
+		id: 'the-royal-referral',
+		name: 'The Royal Referral',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/the-royal-referral.svg',
+		reward_copy: 'Earn 10 points and a $5 discount.',
+	},
+	{
+		id: 'frequent-buyer',
+		name: 'Frequent Buyer',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/frequent-buyer.svg',
+		reward_copy: 'Earn 10% discount and free express shipping.',
+	},
+	{
+		id: 'sticktastic-anniversary',
+		name: 'Sticktastic Anniversary',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/sticktastic-anniversary.svg',
+		reward_copy: 'Earn 25 points.',
+	},
+	{
+		id: 'big-spender-bonus',
+		name: 'Big Spender Bonus',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/big-spender-bonus.svg',
+		reward_copy: 'Earn $20 discount voucher and 20 points.',
+	},
+	{
+		id: 'social-sharing',
+		name: 'Social Sharing',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/social-sharing.svg',
+		reward_copy: 'Earn 5 points.',
+	},
+	{
+		id: 'charm',
+		name: 'Charm',
+		state: 'locked',
+		icon_src: '/icons/custom/account/points/challenges/locked/charm.svg',
+		reward_copy: 'Earn 5 points.',
+	},
 ];
 
-export const accountPointLastTierUpgradeDate = '01/11/2025';
-export const accountPointBalance = '13.90';
+export const account_point_logs: AccountPointLog[] = [
+	{
+		id: 'earned-order-12405077220',
+		title: 'Points Earned (Order # 12405077220)',
+		date: '11/05/2024',
+		value: '+0.36 P',
+		positive: true,
+		filter: 'earned',
+	},
+	{
+		id: 'used-order-12405077220',
+		title: 'Points Used (Order # 12405077220)',
+		date: '11/05/2024',
+		value: '-25.00 P',
+		positive: false,
+		filter: 'deducted',
+	},
+	{
+		id: 'quest-sticker-explorer',
+		title: 'Sticker Quest (Sticker Explorer)',
+		date: '10/22/2024',
+		value: '+5.00 P',
+		positive: true,
+		filter: 'earned',
+	},
+	{
+		id: 'quest-first-order-victory',
+		title: 'Sticker Quest (First Order Victory)',
+		date: '10/15/2024',
+		value: '+5.00 P',
+		positive: true,
+		filter: 'earned',
+	},
+	{
+		id: 'rank-level-up',
+		title: 'Rank level up (Bumper Boss)',
+		date: '10/05/2024',
+		value: 'Free Express Shipping (1-Time Use)',
+		positive: true,
+		filter: 'earned',
+	},
+];
+
+export const account_point_filters: AccountPointHistoryFilter[] = [
+	{ id: 'all', label: 'All' },
+	{ id: 'earned', label: 'Earned' },
+	{ id: 'deducted', label: 'Deducted' },
+];
+
+export const account_point_ranks: AccountPointRank[] = [
+	{
+		id: 'rank-1',
+		rank_label: 'Rank 1',
+		name: 'MuScout',
+		badge_src: '/icons/custom/account/points/ranking-system/mu-scout-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-scout-bg.svg',
+		spend_requirement: 'Newly Registered Account',
+		perks: ['Earn 0.5% point on every purchase.'],
+		level_up_bonus_gifts: ['Earn 4 points just by registering your account.'],
+		theme: 'scout',
+	},
+	{
+		id: 'rank-2',
+		rank_label: 'Rank 2',
+		name: 'MuLeader',
+		badge_src: '/icons/custom/account/points/ranking-system/mu-leader-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-leader-bg.svg',
+		spend_requirement: '720,070 KRW Total Spent on Completed',
+		perks: ['Earn 1% point on every purchase.'],
+		level_up_bonus_gifts: [
+			'Earn 8 points as reward for reaching this tier.',
+			'7,212 KRW Discount on next order (1-Time Use)',
+		],
+		theme: 'leader',
+	},
+	{
+		id: 'rank-3',
+		rank_label: 'Rank 3 - Current',
+		name: 'MuBoss',
+		badge_src: '/icons/custom/account/points/ranking-system/mu-boss-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-boss-bg.svg',
+		spend_requirement: '1,440,140 KRW Total Spent on Completed',
+		perks: ['Earn 1.5% point on every purchase.'],
+		level_up_bonus_gifts: [
+			'Earn 12 points as reward for reaching this tier.',
+			'10% Off Discount on next order (1-Time Use)',
+			'Free Express Shipping (1-Time Use)',
+		],
+		is_current: true,
+		theme: 'boss',
+	},
+	{
+		id: 'rank-4',
+		rank_label: 'Rank 4',
+		name: 'MuDynamo',
+		badge_src: '/icons/custom/account/points/ranking-system/mu-dynamo-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-dynamo-bg.svg',
+		spend_requirement: '7,200,700 KRW Total Spent on Completed',
+		perks: ['Earn 2% point on every purchase.'],
+		level_up_bonus_gifts: [
+			'Earn 16 points as reward for reaching this tier.',
+			'15% Off Discount on next order (1-Time Use)',
+			'Free Express Shipping (Unlimited Uses)',
+			'Free Artwork Revisions',
+			'Double Points Accumulation for 1 Month',
+		],
+		theme: 'dynamo',
+	},
+];

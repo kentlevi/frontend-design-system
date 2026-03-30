@@ -13,53 +13,53 @@ type UseHomeReviewsCarouselOptions = {
 };
 
 export function useHomeReviewsCarousel(
-	itemCount: Ref<number>,
+	item_count: Ref<number>,
 	options: UseHomeReviewsCarouselOptions = {}
 ) {
 	const gap = options.gap ?? 24;
-	const intervalMs = options.intervalMs ?? 3200;
+	const interval_ms = options.intervalMs ?? 3200;
 
-	const currentSlide = ref(0);
-	const cardWidth = ref(0);
-	const viewportRef = ref<HTMLElement | null>(null);
-	const cardRef = ref<HTMLElement | null>(null);
-	const sectionRef = ref<HTMLElement | null>(null);
-	const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
-	const autoResumeTimer = ref<ReturnType<typeof setTimeout> | null>(null);
-	const viewportObserver = ref<IntersectionObserver | null>(null);
+	const current_slide = ref(0);
+	const card_width = ref(0);
+	const viewport_ref = ref<HTMLElement | null>(null);
+	const card_ref = ref<HTMLElement | null>(null);
+	const section_ref = ref<HTMLElement | null>(null);
+	const auto_timer = ref<ReturnType<typeof setInterval> | null>(null);
+	const auto_resume_timer = ref<ReturnType<typeof setTimeout> | null>(null);
+	const viewport_observer = ref<IntersectionObserver | null>(null);
 
-	const trackStyle = computed(() => ({
-		transform: `translateX(-${currentSlide.value * (cardWidth.value + gap)}px)`,
+	const track_style = computed(() => ({
+		transform: `translateX(-${current_slide.value * (card_width.value + gap)}px)`,
 	}));
 
-	const visibleCards = computed(() => {
-		const viewportWidth = viewportRef.value?.getBoundingClientRect().width ?? 0;
-		const slideWidth = cardWidth.value + gap;
-		if (!viewportWidth || !slideWidth) return 1;
-		return Math.max(1, Math.floor((viewportWidth + gap) / slideWidth));
+	const visible_cards = computed(() => {
+		const viewport_width = viewport_ref.value?.getBoundingClientRect().width ?? 0;
+		const slide_width = card_width.value + gap;
+		if (!viewport_width || !slide_width) return 1;
+		return Math.max(1, Math.floor((viewport_width + gap) / slide_width));
 	});
 
-	const maxSlide = computed(() => Math.max(0, itemCount.value - visibleCards.value));
-	const canGoPrev = computed(() => currentSlide.value > 0);
-	const canGoNext = computed(() => currentSlide.value < maxSlide.value);
+	const max_slide = computed(() => Math.max(0, item_count.value - visible_cards.value));
+	const can_go_prev = computed(() => current_slide.value > 0);
+	const can_go_next = computed(() => current_slide.value < max_slide.value);
 
 	function syncCardWidth() {
-		if (!cardRef.value) return;
-		cardWidth.value = cardRef.value.getBoundingClientRect().width;
+		if (!card_ref.value) return;
+		card_width.value = card_ref.value.getBoundingClientRect().width;
 	}
 
 	function moveToNextSlide() {
-		if (currentSlide.value >= maxSlide.value) {
-			currentSlide.value = 0;
+		if (current_slide.value >= max_slide.value) {
+			current_slide.value = 0;
 			return;
 		}
 
-		currentSlide.value += 1;
+		current_slide.value += 1;
 	}
 
 	function moveToPrevSlide() {
-		if (currentSlide.value === 0) return;
-		currentSlide.value -= 1;
+		if (current_slide.value === 0) return;
+		current_slide.value -= 1;
 	}
 
 	function nextSlide() {
@@ -77,27 +77,27 @@ export function useHomeReviewsCarousel(
 	function startAuto() {
 		clearAutoResumeTimer();
 		stopAuto();
-		autoTimer.value = setInterval(moveToNextSlide, intervalMs);
+		auto_timer.value = setInterval(moveToNextSlide, interval_ms);
 	}
 
 	function stopAuto() {
-		if (!autoTimer.value) return;
-		clearInterval(autoTimer.value);
-		autoTimer.value = null;
+		if (!auto_timer.value) return;
+		clearInterval(auto_timer.value);
+		auto_timer.value = null;
 	}
 
 	function clearAutoResumeTimer() {
-		if (!autoResumeTimer.value) return;
-		clearTimeout(autoResumeTimer.value);
-		autoResumeTimer.value = null;
+		if (!auto_resume_timer.value) return;
+		clearTimeout(auto_resume_timer.value);
+		auto_resume_timer.value = null;
 	}
 
 	function scheduleAutoResume() {
 		clearAutoResumeTimer();
-		autoResumeTimer.value = setTimeout(() => {
-			autoResumeTimer.value = null;
+		auto_resume_timer.value = setTimeout(() => {
+			auto_resume_timer.value = null;
 			startAuto();
-		}, intervalMs);
+		}, interval_ms);
 	}
 
 	function setCardRef(el: Element | ComponentPublicInstance | null) {
@@ -105,15 +105,15 @@ export function useHomeReviewsCarousel(
 			el && '$el' in el
 				? (el.$el as Element | null)
 				: (el as Element | null);
-		cardRef.value = (resolved as HTMLElement | null) ?? null;
+		card_ref.value = (resolved as HTMLElement | null) ?? null;
 	}
 
 	onMounted(() => {
 		syncCardWidth();
-		currentSlide.value = 0;
+		current_slide.value = 0;
 
-		if ('IntersectionObserver' in window && sectionRef.value) {
-			viewportObserver.value = new IntersectionObserver(
+		if ('IntersectionObserver' in window && section_ref.value) {
+			viewport_observer.value = new IntersectionObserver(
 				(entries) => {
 					const [entry] = entries;
 					if (entry?.isIntersecting) {
@@ -127,7 +127,7 @@ export function useHomeReviewsCarousel(
 				{ threshold: 0.2 }
 			);
 
-			viewportObserver.value.observe(sectionRef.value);
+			viewport_observer.value.observe(section_ref.value);
 		} else {
 			startAuto();
 		}
@@ -138,16 +138,16 @@ export function useHomeReviewsCarousel(
 	onBeforeUnmount(() => {
 		stopAuto();
 		clearAutoResumeTimer();
-		viewportObserver.value?.disconnect();
+		viewport_observer.value?.disconnect();
 		window.removeEventListener('resize', syncCardWidth);
 	});
 
 	return {
-		sectionRef,
-		viewportRef,
-		trackStyle,
-		canGoPrev,
-		canGoNext,
+		section_ref,
+		viewport_ref,
+		track_style,
+		can_go_prev,
+		can_go_next,
 		nextSlide,
 		prevSlide,
 		startAuto,

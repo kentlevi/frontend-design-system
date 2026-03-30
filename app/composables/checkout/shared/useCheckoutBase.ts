@@ -36,7 +36,7 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 			return t(`product.sizes.${sizeKey}.label`);
 		}
 
-		const localizedLabel =
+		const localized_label =
 			typeof $i18n?.getLocaleMessage === 'function'
 				? readNestedString($i18n.getLocaleMessage(options.labelCountry), [
 					'product',
@@ -46,20 +46,20 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 				])
 				: null;
 
-		return localizedLabel || t(`product.sizes.${sizeKey}.label`);
+		return localized_label || t(`product.sizes.${sizeKey}.label`);
 	}
 
-	const cartState = ref<StoredCartState[]>([]);
-	const selectedItemIds = ref<string[]>([]);
+	const cart_state = ref<StoredCartState[]>([]);
+	const selected_item_ids = ref<string[]>([]);
 
 	// Generic Payment Refs (shared by all)
-	const cardNumber = ref('');
+	const card_number = ref('');
 	const expiry = ref('');
 	const cvv = ref('');
-	const useShippingAsBilling = ref(true);
+	const use_shipping_as_billing = ref(true);
 
-	const checkoutItems = computed<CheckoutItem[]>(() =>
-		cartState.value
+	const checkout_items = computed<CheckoutItem[]>(() =>
+		cart_state.value
 			.map((entry) => {
 				const product = resolveStoredCartProduct(
 					entry,
@@ -79,44 +79,44 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 			.filter((item): item is CheckoutItem => Boolean(item))
 	);
 
-	const selectedCheckoutItems = computed(() => {
-		if (!selectedItemIds.value.length) return checkoutItems.value;
-		const selected = checkoutItems.value.filter((item) =>
-			selectedItemIds.value.includes(item.id)
+	const selected_checkout_items = computed(() => {
+		if (!selected_item_ids.value.length) return checkout_items.value;
+		const selected = checkout_items.value.filter((item) =>
+			selected_item_ids.value.includes(item.id)
 		);
-		return selected.length ? selected : checkoutItems.value;
+		return selected.length ? selected : checkout_items.value;
 	});
 
-	const orderTotal = computed(() =>
-		selectedCheckoutItems.value.reduce((sum, item) => sum + item.total, 0)
+	const order_total = computed(() =>
+		selected_checkout_items.value.reduce((sum, item) => sum + item.total, 0)
 	);
-	const orderDiscount = computed(() => 0);
-	const orderShippingFee = computed(() => 0);
-	const orderSubtotal = computed(
-		() => orderTotal.value + orderDiscount.value - orderShippingFee.value
+	const order_discount = computed(() => 0);
+	const order_shipping_fee = computed(() => 0);
+	const order_subtotal = computed(
+		() => order_total.value + order_discount.value - order_shipping_fee.value
 	);
 
 	const formatPrice = (value: number) => formatCurrencyByCountry(value, country.value);
 
 	onMounted(() => {
-		cartState.value = readStoredCartStateFromStorage();
-		selectedItemIds.value = readCheckoutSelectionIdsFromStorage();
+		cart_state.value = readStoredCartStateFromStorage();
+		selected_item_ids.value = readCheckoutSelectionIdsFromStorage();
 	});
 
 	return {
 		t,
 		country,
-		selectedCheckoutItems,
-		orderTotal,
-		orderDiscount,
-		orderShippingFee,
-		orderSubtotal,
+		selected_checkout_items,
+		order_total,
+		order_discount,
+		order_shipping_fee,
+		order_subtotal,
 		formatPrice,
 		sizeDimOnly,
 		resolveSizeLabel,
-		cardNumber,
+		card_number,
 		expiry,
 		cvv,
-		useShippingAsBilling,
+		use_shipping_as_billing,
 	};
 }

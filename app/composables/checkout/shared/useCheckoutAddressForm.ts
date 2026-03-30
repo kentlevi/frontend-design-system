@@ -4,16 +4,16 @@ import { checkoutProvinceOptions } from '~/data/checkout/options';
 export function useCheckoutAddressForm() {
 	const { t } = useI18n();
 
-	const fullName = ref('');
+	const full_name = ref('');
 	const company = ref('');
-	const address1 = ref('');
-	const address2 = ref('');
+	const address_1 = ref('');
+	const address_2 = ref('');
 	const province = ref('');
 	const city = ref('');
-	const postalCode = ref('');
+	const postal_code = ref('');
 	const phone = ref('');
 
-	const provinceOptions = computed(() =>
+	const province_options = computed(() =>
 		checkoutProvinceOptions
 			.filter((option) => option.enabled !== false)
 			.map((option) => ({
@@ -23,14 +23,14 @@ export function useCheckoutAddressForm() {
 	);
 
 	return {
-		fullName,
+		full_name,
 		company,
-		address1,
-		address2,
+		address_1,
+		address_2,
 		province,
 		city,
-		postalCode,
+		postal_code,
 		phone,
-		provinceOptions,
+		province_options,
 	};
 }

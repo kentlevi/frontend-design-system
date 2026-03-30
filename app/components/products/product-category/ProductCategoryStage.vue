@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { ProductItem } from '~/types/products/catalog';
+import type { ProductItem, ProductCategoryKey  } from '~/types/products/catalog';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
+import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 
 
 const props = defineProps<{
+	category?: ProductCategoryKey;
 	categoryProducts: ProductItem[];
 	hasPickedProduct: boolean;
 	selectedId: string | null;
@@ -30,7 +32,6 @@ const emit = defineEmits<{
 
 // 🔥 Functionality Implementation
 const {
-	slug,
 	product,
 	size,
 	featured_sizes,
@@ -87,47 +88,92 @@ const {
 } = useQuoteSectionHandler();
 
 const route = useRoute()
-const route_prod_slug = route.params?.product
+const resolved_category = computed<ProductCategoryKey>(() => {
+	if (props.category) {
+		return props.category
+	}
 
-if ( typeof route_prod_slug === 'string' )
-	updateProduct(route_prod_slug)
-else
-	clearForm()
+	const route_category = route.params?.category
+	if (route_category === 'stickers' || route_category === 'roll-stickers' || route_category === 'sheet-stickers') {
+		return route_category
+	}
 
-onMounted(() => {
-	if ( typeof slug.value === 'string' && slug.value )
-		instatiateForm()
+	return 'stickers'
 })
+const route_product_slug = computed(() => {
+	const route_product = route.params?.product
+	return typeof route_product === 'string'
+		? route_product
+		: Array.isArray(route_product)
+			? route_product[0] ?? null
+			: null
+})
+
+watch(
+	route_product_slug,
+	(next_slug) => {
+		console.log(1)
+		if (typeof next_slug === 'string' && next_slug) {
+			updateProduct(next_slug)
+			void instatiateForm({ interactive: false })
+			return
+		}
+
+		clearForm()
+	},
+	{ immediate: true }
+)
+
+watch(
+	() => props.selectedProduct?.id,
+	(next_product_id) => {
+		if (!next_product_id) return
+
+		console.log(2)
+		const next_slug = getProductSlugByCategory(next_product_id, resolved_category.value)
+		updateProduct(next_slug)
+		void instatiateForm({ interactive: false })
+	},
+	{ immediate: true }
+)
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
-const demoHeroVideoUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
-const demoHeroPosterUrl = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const demo_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
+const demo_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const has_hydrated = ref(false)
+
+onMounted(() => {
+	has_hydrated.value = true
+})
 
 
 
-const preventNonDigitInput = (event: InputEvent) => {
+const prevent_non_digit_input = (event: InputEvent) => {
 	if (!event.data) return
 	if (/^\d+$/.test(event.data)) return
 	event.preventDefault()
 }
 
-const hasValidCustomSize = computed(() =>
+
+
+
+const has_valid_custom_size = computed(() =>
 	Boolean(is_custom_size.value && custom_size.value.width && custom_size.value.width > 0 && custom_size.value.height && custom_size.value.height > 0)
 )
 
-const hasPendingCustomSelection = computed(() =>
-	(is_custom_size.value && !hasValidCustomSize.value)
+const has_pending_custom_selection = computed(() =>
+	(is_custom_size.value && !has_valid_custom_size.value)
 	|| (is_custom_size.value && !quantity.value?.nr)
 	|| (quantity.value && quantity.value?.nr && quantity.value?.nr <= 0 )
-	|| !lettering.value.text
+	|| (has_lettering_editor.value && !lettering.value.text)
 )
 
-const shouldPlayPreviewVideo = computed(() =>
-	Boolean(props.selectedProduct) && !has_lettering_editor.value && !props.navigationInFlight
+const should_play_preview_video = computed(() =>
+	has_hydrated.value && Boolean(props.selectedProduct) && !has_lettering_editor.value && !props.navigationInFlight
 )
 
-const displayedProductTitle = computed(() =>
+const displayed_product_title = computed(() =>
 	has_lettering_editor.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
 
@@ -170,7 +216,7 @@ const displayedProductTitle = computed(() =>
 
 						<div class="product-preview-header">
 							<h1 class="product-preview-title" data-testid="product-category-preview-title">
-								{{ displayedProductTitle }}
+								{{ displayed_product_title }}
 							</h1>
 
 							<p class="product-preview-blurb" data-testid="product-category-preview-blurb">
@@ -184,15 +230,15 @@ const displayedProductTitle = computed(() =>
 							data-testid="product-category-preview-media"
 						>
 							<img
-								v-if="!shouldPlayPreviewVideo"
-								:src="demoHeroPosterUrl"
-								:alt="`${displayedProductTitle || 'Product'} preview poster`"
+								v-if="!should_play_preview_video"
+								:src="demo_hero_poster_url"
+								:alt="`${displayed_product_title || 'Product'} preview poster`"
 								class="product-preview-media-image"
 							>
 							<video
 								v-else
 								:key="props.selectedId ?? 'preview-video'"
-								:poster="demoHeroPosterUrl"
+								:poster="demo_hero_poster_url"
 								class="product-preview-media-image"
 								autoplay
 								muted
@@ -200,7 +246,7 @@ const displayedProductTitle = computed(() =>
 								playsinline
 								preload="metadata"
 							>
-								<source :src="demoHeroVideoUrl" type="video/mp4">
+								<source :src="demo_hero_video_url" type="video/mp4">
 							</video>
 						</div>
 
@@ -215,7 +261,7 @@ const displayedProductTitle = computed(() =>
 								:height="lettering.height"
 								:font="selected_font"
 								:color-key="color?.key ?? 'black'"
-								:redirecting="lettering_navigation_flight"
+								:redirecting="props.navigationInFlight || lettering_navigation_flight"
 								:active-size="lettering.active"
 								@update:text="letteringTextInput($event)"
 								@update:width="letteringWidthUpdate($event)"
@@ -229,6 +275,7 @@ const displayedProductTitle = computed(() =>
 								:key="'sizes-cards-'+featured_size_cards.key+'-'+featured_size_cards.id"
 								type="button"
 								class="mini-feature"
+								:disabled="has_lettering_editor"
 								:class="{ 'is-active': !is_custom_size && !has_lettering_editor && size?.id === featured_size_cards.id }"
 								:data-testid="`product-category-feature-card-${featured_size_cards.key}`"
 								@click="inputUpdateSize(featured_size_cards)"
@@ -327,7 +374,7 @@ const displayedProductTitle = computed(() =>
 										pattern="[0-9]*"
 										placeholder="Width"
 										class="custom-size-input"
-										@beforeinput="preventNonDigitInput"
+										@beforeinput="prevent_non_digit_input"
 										@input="inputUpdateCustomSize"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
@@ -342,7 +389,7 @@ const displayedProductTitle = computed(() =>
 										pattern="[0-9]*"
 										placeholder="Height"
 										class="custom-size-input"
-										@beforeinput="preventNonDigitInput"
+										@beforeinput="prevent_non_digit_input"
 										@input="inputUpdateCustomSize"
 										@focus="onCustomSizeFocus"
 										@blur="onCustomSizeBlur"
@@ -394,7 +441,7 @@ const displayedProductTitle = computed(() =>
 										pattern="[0-9]*"
 										placeholder="Enter Quantity"
 										class="custom-size-input custom-quantity-input"
-										@beforeinput="preventNonDigitInput"
+										@beforeinput="prevent_non_digit_input"
 										@input="inputUpdateCustomQuantity($event)"
 										@focus="onCustomQtyFocus"
 										@blur="onCustomQtyBlur"
@@ -425,7 +472,7 @@ const displayedProductTitle = computed(() =>
 											inputmode="numeric"
 											pattern="[0-9]*"
 											class="custom-size-input"
-											@beforeinput="preventNonDigitInput"
+											@beforeinput="prevent_non_digit_input"
 											@input="letteringWidthInput"
 											@focus="onVinylSizeFocus"
 											@blur="onVinylSizeBlur"
@@ -437,7 +484,7 @@ const displayedProductTitle = computed(() =>
 											inputmode="numeric"
 											pattern="[0-9]*"
 											class="custom-size-input"
-											@beforeinput="preventNonDigitInput"
+											@beforeinput="prevent_non_digit_input"
 											@input="letteringHeightInput"
 											@focus="onVinylSizeFocus"
 											@blur="onVinylSizeBlur"
@@ -504,7 +551,7 @@ const displayedProductTitle = computed(() =>
 											pattern="[0-9]*"
 											placeholder="Enter Quantity"
 											class="custom-size-input custom-quantity-input"
-											@beforeinput="preventNonDigitInput"
+											@beforeinput="prevent_non_digit_input"
 											@input="inputUpdateCustomQuantity($event)"
 											@focus="onCustomQtyFocus"
 											@blur="onCustomQtyBlur"
@@ -546,7 +593,7 @@ const displayedProductTitle = computed(() =>
 								size="md"
 								height="48px"
 								class="next-step-btn"
-								:disabled="props.navigationInFlight || hasPendingCustomSelection"
+								:disabled="props.navigationInFlight || has_pending_custom_selection"
 								data-testid="product-category-next-step-button"
 								@click="emit('open-upload')"
 							>
@@ -776,11 +823,15 @@ const displayedProductTitle = computed(() =>
 						background: var(--gold-base);
 					}
 				}
+
+				&:disabled {
+					cursor: default;
+				}
 			}
 		}
 	}
 
-    .product-options {
+	.product-options {
         background: transparent;
         border: 0;
         border-radius: 0;

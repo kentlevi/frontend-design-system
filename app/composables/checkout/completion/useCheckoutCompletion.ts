@@ -8,28 +8,28 @@ type UseCheckoutCompletionOptions = {
 
 export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 	const router = useRouter();
-	const completingCheckout = ref(false);
-	const completeLoaderRef = ref<HTMLElement | null>(null);
-	let completeLoaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
+	const completing_checkout = ref(false);
+	const complete_loader_ref = ref<HTMLElement | null>(null);
+	let complete_loader_animation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 	function destroyCompleteAnimation() {
-		if (!completeLoaderAnimation) return;
-		completeLoaderAnimation.destroy();
-		completeLoaderAnimation = null;
+		if (!complete_loader_animation) return;
+		complete_loader_animation.destroy();
+		complete_loader_animation = null;
 	}
 
 	async function mountCompleteAnimation() {
-		if (typeof window === 'undefined' || !completeLoaderRef.value) return;
+		if (typeof window === 'undefined' || !complete_loader_ref.value) return;
 		destroyCompleteAnimation();
 		const response = await fetch('/animations/musticker-loader.json');
 		if (!response.ok) return;
-		const animationData = await response.json();
-		completeLoaderAnimation = lottie.loadAnimation({
-			container: completeLoaderRef.value,
+		const animation_data = await response.json();
+		complete_loader_animation = lottie.loadAnimation({
+			container: complete_loader_ref.value,
 			renderer: 'svg',
 			loop: true,
 			autoplay: true,
-			animationData,
+			animationData: animation_data,
 			rendererSettings: {
 				preserveAspectRatio: 'xMidYMid meet',
 			},
@@ -37,14 +37,14 @@ export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 	}
 
 	async function completeCheckout(canComplete: boolean) {
-		if (completingCheckout.value || !canComplete) return;
-		completingCheckout.value = true;
+		if (completing_checkout.value || !canComplete) return;
+		completing_checkout.value = true;
 		await nextTick();
 		await mountCompleteAnimation();
 		await new Promise((resolve) => setTimeout(resolve, options.delayMs ?? 1000));
 		await router.push(options.redirectPath);
 		destroyCompleteAnimation();
-		completingCheckout.value = false;
+		completing_checkout.value = false;
 	}
 
 	onBeforeUnmount(() => {
@@ -52,8 +52,8 @@ export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 	});
 
 	return {
-		completingCheckout,
-		completeLoaderRef,
+		completing_checkout,
+		complete_loader_ref,
 		completeCheckout,
 	};
 }
