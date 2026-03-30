@@ -11,10 +11,11 @@ export async function getProductCategories(): Promise<CategoriesResponse> {
 
 export async function getProductsByCategory(url_slug: string, clear_cache: boolean = false): Promise<ProductsResponse> {
 	const { $api } = useNuxtApp()
+	const params = clear_cache
+		? { 'clear-cache': 'true' }
+		: undefined
 
 	return await $api.get(`/navigation/products/${url_slug}`, {
-		params: {
-			'clear-cache': clear_cache
-		}
+		params
 	})
 }
