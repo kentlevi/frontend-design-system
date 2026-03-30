@@ -16,6 +16,7 @@ export interface Product {
 	id: number
 	name: string
 	url_slug: string
+	description: string
 }
 
 export interface Categories {
