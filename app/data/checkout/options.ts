@@ -30,7 +30,7 @@ export const checkoutShippingMethods: ReadonlyArray<{
 export const checkoutPaymentMethods: ReadonlyArray<{
 	key: CheckoutPaymentMethodKey;
 	icon: string;
-	i18nKey: 'creditCard' | 'paypal' | 'bankTransfer';
+	i18nKey: 'creditCard' | 'paypal' | 'bankTransfer' | 'tossPayment';
 	defaultSelected?: boolean;
 	enabled?: boolean;
 }> = [
@@ -45,6 +45,12 @@ export const checkoutPaymentMethods: ReadonlyArray<{
 		key: 'bank-transfer',
 		icon: '/icons/custom/checkout/bank-transfer.svg',
 		i18nKey: 'bankTransfer',
+		enabled: true,
+	},
+	{
+		key: 'toss-payment',
+		icon: '/icons/custom/checkout/toss-payment.png',
+		i18nKey: 'tossPayment',
 		enabled: true,
 	},
 ];
@@ -74,6 +80,44 @@ export const checkoutPaymentBrands = [
 		key: 'unionpay',
 		label: 'UnionPay',
 		icon: '/icons/custom/payment-methods/unionpay.svg',
+	},
+] as const;
+
+export const checkoutMemberPaymentBrands = [
+	{
+		key: 'shinhan-card',
+		label: 'Shinhan Card',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/shinhan-card.svg',
+	},
+	{
+		key: 'samsung-card',
+		label: 'Samsung Card',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/samsung-card.svg',
+	},
+	{
+		key: 'nh-nonghyup-card',
+		label: 'NH Nonghyup Card',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/nh-nonghyup-card.svg',
+	},
+	{
+		key: 'kb-kookmin-bank',
+		label: 'KB Kookmin Bank',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/kb-kookmin-bank.svg',
+	},
+	{
+		key: 'kakao-bank',
+		label: 'Kakao Bank',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/kakao-bank.svg',
+	},
+	{
+		key: 'hyundai-card',
+		label: 'Hyundai Card',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/hyundai-card.svg',
+	},
+	{
+		key: 'bc-card',
+		label: 'BC Card',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/bc-card.svg',
 	},
 ] as const;
 

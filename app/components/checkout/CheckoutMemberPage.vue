@@ -21,6 +21,15 @@ const {
 	active_payment_methods,
 	payment_brands,
 	drop_shipping_enabled,
+	full_name,
+	company,
+	address_1,
+	address_2,
+	province,
+	city,
+	postal_code,
+	phone,
+	province_options,
 	use_shipping_as_billing,
 	points_available,
 	points_to_use,
@@ -100,28 +109,142 @@ onBeforeUnmount(() => {
 							{{ t('checkout.member.myShippingAddress') }}
 						</UiRadio>
 
-						<div class="checkout-member-address-grid">
-							<button
-								v-for="address in saved_shipping_addresses"
-								:key="address.id"
-								type="button"
-								class="checkout-member-address-card"
-								:class="{ 'is-active': selected_shipping_address_id === address.id }"
-								@click="selected_shipping_address_id = address.id"
-							>
-								<div class="checkout-member-address-top">
-									<strong class="checkout-member-address-name">{{ address.recipient }}</strong>
-									<span v-if="address.isDefault" class="checkout-member-address-badge">{{ t('checkout.member.defaultBadge') }}</span>
-								</div>
-								<div class="checkout-member-address-content">
-									<UiIcon name="regular-map-marker" size="24" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
-									<div class="checkout-member-address-lines">
-										<p class="checkout-member-address-line">{{ address.line1 }}</p>
-										<p class="checkout-member-address-line">{{ address.line2 }}</p>
+						<Transition name="checkout-member-shipping-swap" mode="out-in">
+							<div v-if="!ship_to_another_address" key="saved-address" class="checkout-member-address-grid">
+								<button
+									v-for="address in saved_shipping_addresses"
+									:key="address.id"
+									type="button"
+									class="checkout-member-address-card"
+									:class="{ 'is-active': selected_shipping_address_id === address.id }"
+									@click="selected_shipping_address_id = address.id"
+								>
+									<div class="checkout-member-address-top">
+										<div class="checkout-member-address-title-group">
+											<strong class="checkout-member-address-name">{{ address.recipient }}</strong>
+											<span v-if="address.isDefault" class="checkout-member-address-badge">Default Shipping</span>
+										</div>
 									</div>
+									<div class="checkout-member-address-content">
+										<div v-if="address.phone" class="checkout-member-address-row">
+											<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
+											<p class="checkout-member-address-line checkout-member-address-line--strong">{{ address.phone }}</p>
+										</div>
+										<div class="checkout-member-address-row checkout-member-address-row--split">
+											<div class="checkout-member-address-row-main">
+												<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
+												<div class="checkout-member-address-lines">
+													<p class="checkout-member-address-line">{{ address.line1 }}</p>
+													<p class="checkout-member-address-line">{{ address.line2 }}</p>
+												</div>
+											</div>
+											<span v-if="address.label" class="checkout-member-address-tag">{{ address.label }}</span>
+										</div>
+										<div v-if="address.company" class="checkout-member-address-row">
+											<UiIcon name="regular-building" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
+											<p class="checkout-member-address-line">{{ address.company }}</p>
+										</div>
+									</div>
+								</button>
+							</div>
+							<div v-else key="another-address" class="checkout-member-address-form">
+								<UiRadio v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+									{{ t('checkout.member.shipToAnotherAddress') }}
+								</UiRadio>
+								<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
+								<div class="checkout-member-field-grid">
+									<UiFormField
+										:label="t('checkout.guest.fields.fullName.label')"
+										:required="true"
+										:show-required-mark="true"
+										head-class="checkout-form-field-head"
+										label-class="checkout-form-field-label"
+										label-text-class="checkout-form-field-label-text"
+									>
+										<UiInput v-model="full_name" size="lg" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
+									</UiFormField>
+									<UiFormField
+										:label="t('checkout.guest.fields.company.label')"
+										head-class="checkout-form-field-head"
+										label-class="checkout-form-field-label"
+										label-text-class="checkout-form-field-label-text"
+									>
+										<UiInput v-model="company" size="lg" :placeholder="t('checkout.guest.fields.company.placeholder')" />
+									</UiFormField>
 								</div>
-							</button>
-						</div>
+								<UiFormField
+									:label="t('checkout.guest.fields.streetAddress.label')"
+									:required="true"
+									:show-required-mark="true"
+									head-class="checkout-form-field-head"
+									label-class="checkout-form-field-label"
+									label-text-class="checkout-form-field-label-text"
+								>
+									<div class="checkout-member-field-stack">
+										<UiInput v-model="address_1" size="lg" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
+										<UiInput v-model="address_2" size="lg" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
+									</div>
+								</UiFormField>
+								<div class="checkout-member-field-grid">
+									<UiFormField
+										:label="t('checkout.guest.fields.province.label')"
+										:required="true"
+										:show-required-mark="true"
+										head-class="checkout-form-field-head"
+										label-class="checkout-form-field-label"
+										label-text-class="checkout-form-field-label-text"
+									>
+										<UiSelect
+											:model-value="province"
+											:options="province_options"
+											:placeholder="t('checkout.guest.fields.province.placeholder')"
+											class="checkout-member-select"
+											trigger-class="checkout-member-select-trigger"
+											@update:model-value="province = String($event)"
+										/>
+									</UiFormField>
+									<UiFormField
+										:label="t('checkout.guest.fields.city.label')"
+										:required="true"
+										:show-required-mark="true"
+										head-class="checkout-form-field-head"
+										label-class="checkout-form-field-label"
+										label-text-class="checkout-form-field-label-text"
+									>
+										<UiInput v-model="city" size="lg" :placeholder="t('checkout.guest.fields.city.placeholder')" />
+									</UiFormField>
+								</div>
+								<div class="checkout-member-field-grid">
+									<UiFormField
+										:label="t('checkout.guest.fields.postalCode.label')"
+										:required="true"
+										:show-required-mark="true"
+										head-class="checkout-form-field-head"
+										label-class="checkout-form-field-label"
+										label-text-class="checkout-form-field-label-text"
+									>
+										<UiInput v-model="postal_code" size="lg" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
+									</UiFormField>
+									<UiFormField
+										:label="t('checkout.guest.fields.phone.label')"
+										head-class="checkout-form-field-head"
+										label-class="checkout-form-field-label"
+										label-text-class="checkout-form-field-label-text"
+									>
+										<div class="checkout-member-phone-field">
+											<div class="checkout-member-phone-prefix">+82</div>
+											<UiInput
+												v-model="phone"
+												size="lg"
+												class="checkout-member-phone-input"
+												input-class="checkout-member-phone-input-field"
+												:placeholder="t('checkout.guest.fields.phone.placeholder')"
+											/>
+										</div>
+									</UiFormField>
+								</div>
+							</div>
+						</Transition>
 					</div>
 
 					<UiRadio v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
@@ -397,18 +520,43 @@ onBeforeUnmount(() => {
 
 			.checkout-member-radio-line {
 				align-self: start;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-semibold);
+				color: var(--text-primary);
+
+				&.checkout-member-radio-line--inline {
+					margin-bottom: 2px;
+				}
 			}
 
 			.checkout-member-shipping-group {
 				display: grid;
-				gap: 16px;
+				gap: 14px;
 
 				.checkout-member-address-group {
 					display: grid;
 					gap: 8px;
 				}
 
-				.checkout-member-address-grid,
+				.checkout-member-address-grid {
+					display: grid;
+					grid-template-columns: 1fr;
+					gap: 12px;
+				}
+
+				.checkout-member-address-form {
+					display: grid;
+					gap: 14px;
+				}
+
+				.checkout-member-address-form-note {
+					color: var(--text-secondary);
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
+					text-align: right;
+				}
+
 				.checkout-member-card-grid {
 					display: grid;
 					grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -420,11 +568,8 @@ onBeforeUnmount(() => {
 					border: 1px solid var(--gray-40);
 					border-radius: 12px;
 					background: var(--contrast-light);
-					padding: 18px 20px;
 					text-align: left;
 					cursor: pointer;
-					display: grid;
-					gap: 8px;
 
 					&.is-active {
 						border-color: var(--gray-60);
@@ -432,44 +577,99 @@ onBeforeUnmount(() => {
 					}
 				}
 
+				.checkout-member-address-card {
+					padding: 0;
+					overflow: hidden;
+				}
+
 				.checkout-member-address-top {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 					gap: 12px;
+					padding: 14px 16px;
+					border-bottom: 1px solid var(--gray-40);
+				}
+
+				.checkout-member-address-title-group {
+					display: inline-flex;
+					align-items: center;
+					flex-wrap: wrap;
+					gap: 8px;
 				}
 
 				.checkout-member-address-name {
-					font-size: var(--type-size-200);
-					line-height: var(--type-line-200);
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
 					font-weight: var(--font-weight-bold);
 					color: var(--text-primary);
 				}
 
 				.checkout-member-address-badge {
-					padding: 0 12px;
+					padding: 3px 10px;
 					border-radius: 999px;
-					background: var(--white-base);
-					box-shadow: var(--shadow-base);
+					border: 1px solid var(--gray-40);
+					background: var(--contrast-light);
 					font-size: var(--type-size-50);
 					line-height: var(--type-line-50);
 					font-weight: var(--font-weight-semibold);
+					color: var(--text-secondary);
 				}
 
 				.checkout-member-address-content {
+					display: grid;
+					gap: 10px;
+					padding: 14px 16px;
+				}
+
+				.checkout-member-address-row {
 					display: flex;
 					align-items: flex-start;
 					gap: 8px;
 				}
 
+				.checkout-member-address-row--split {
+					justify-content: space-between;
+					gap: 16px;
+				}
+
+				.checkout-member-address-row-main {
+					display: flex;
+					align-items: flex-start;
+					gap: 8px;
+					min-width: 0;
+				}
+
 				.checkout-member-address-icon {
 					flex-shrink: 0;
+					margin-top: 1px;
 				}
 
 				.checkout-member-address-lines {
+					min-width: 0;
+				}
+
+				.checkout-member-address-line {
 					color: var(--text-secondary);
 					font-size: var(--type-size-100);
-					line-height: var(--type-line-100);
+					line-height: 1.35;
+				}
+
+				.checkout-member-address-line--strong {
+					color: var(--text-primary);
+					font-weight: var(--font-weight-semibold);
+				}
+
+				.checkout-member-address-tag {
+					flex-shrink: 0;
+					align-self: center;
+					padding: 3px 10px;
+					border-radius: 999px;
+					background: var(--aloha-10);
+					color: var(--aloha-60);
+					font-size: var(--type-size-50);
+					line-height: var(--type-line-50);
+					font-weight: var(--font-weight-semibold);
 				}
 
 				.checkout-member-block {
@@ -491,14 +691,15 @@ onBeforeUnmount(() => {
 					}
 
 					.checkout-member-choice-card {
-						min-height: 102px;
+						min-height: 62px;
 						display: flex;
 						align-items: center;
-						gap: 18px;
+						gap: 12px;
+						padding: 14px 16px;
 
 						.checkout-member-choice-icon {
-							width: 48px;
-							height: 48px;
+							width: 36px;
+							height: 36px;
 							object-fit: contain;
 							flex-shrink: 0;
 						}
@@ -510,8 +711,8 @@ onBeforeUnmount(() => {
 						}
 
 						.checkout-member-choice-title {
-							font-size: var(--type-size-200);
-							line-height: var(--type-line-200);
+							font-size: var(--type-size-100);
+							line-height: var(--type-line-100);
 							font-weight: var(--font-weight-semibold);
 							color: var(--text-primary);
 						}
@@ -521,6 +722,13 @@ onBeforeUnmount(() => {
 							font-size: var(--type-size-100);
 							line-height: var(--type-line-100);
 						}
+
+						.checkout-member-choice-price {
+							font-size: var(--type-size-100);
+							line-height: var(--type-line-100);
+							font-weight: var(--font-weight-semibold);
+							color: var(--text-primary);
+						}
 					}
 				}
 			}
@@ -529,6 +737,10 @@ onBeforeUnmount(() => {
 				display: grid;
 				grid-template-columns: repeat(2, minmax(0, 1fr));
 				gap: 12px;
+
+				&.checkout-member-card-grid--payments {
+					grid-template-columns: repeat(3, minmax(0, 1fr));
+				}
 			}
 
 			.checkout-member-choice-card {
@@ -550,19 +762,20 @@ onBeforeUnmount(() => {
 
 				&.checkout-member-choice-card--payment {
 					justify-content: center;
-					padding: 24px 28px;
+					padding: 20px 22px;
+					min-height: 62px;
 				}
 
 				.checkout-member-choice-icon {
-					width: 48px;
-					height: 48px;
+					width: 38px;
+					height: 38px;
 					object-fit: contain;
 					flex-shrink: 0;
 				}
 
 				.checkout-member-choice-title {
-					font-size: var(--type-size-200);
-					line-height: var(--type-line-200);
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
 					font-weight: var(--font-weight-semibold);
 					color: var(--text-primary);
 				}
@@ -581,31 +794,26 @@ onBeforeUnmount(() => {
 				.checkout-member-payment-meta {
 					display: flex;
 					align-items: center;
+					justify-content: space-between;
 					gap: 16px;
 
 					.checkout-member-payment-brands {
 						display: flex;
 						align-items: center;
-						gap: 12px;
 						flex-wrap: nowrap;
 
 						.checkout-member-payment-brand {
-							flex: 0 0 58px;
-							width: 58px;
-							height: 36px;
-							display: grid;
-							place-items: center;
-							border: 1px solid var(--gray-40);
-							border-radius: 10px;
-							background: var(--contrast-light);
-							padding: 4px 8px;
+							display: inline-flex;
+							align-items: center;
+							justify-content: center;
+						}
 
-							.checkout-member-payment-brand-icon {
-								max-width: 100%;
-								width: 36px;
-								height: 20px;
-								object-fit: contain;
-							}
+						.checkout-member-payment-brand-icon {
+							display: block;
+							height: 28px;
+							width: auto;
+							max-width: 76px;
+							object-fit: contain;
 						}
 					}
 				}
@@ -630,6 +838,56 @@ onBeforeUnmount(() => {
 
 			.checkout-member-field-grid {
 				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+
+			.checkout-member-select {
+				width: 100%;
+			}
+
+			.checkout-member-select-trigger {
+				height: 44px;
+				border-radius: 8px;
+				box-shadow: none;
+			}
+
+			.checkout-member-phone-field {
+				display: grid;
+				grid-template-columns: 54px minmax(0, 1fr);
+				border: 1px solid var(--gray-40);
+				border-radius: 8px;
+				overflow: hidden;
+				background: var(--contrast-light);
+			}
+
+			.checkout-member-phone-prefix {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: var(--gray-20);
+				border-right: 1px solid var(--gray-40);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-primary);
+				min-height: 44px;
+				padding: 0 12px;
+			}
+
+			.checkout-member-phone-input {
+				width: 100%;
+				border: 0;
+				border-radius: 0;
+				box-shadow: none;
+				background: transparent;
+				min-height: 44px;
+				padding-inline: 0;
+
+				.checkout-member-phone-input-field {
+					height: 100%;
+					min-height: 44px;
+					padding: 0 16px;
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
+				}
 			}
 		}
 	}
@@ -764,6 +1022,18 @@ onBeforeUnmount(() => {
 	word-break: break-word;
 }
 
+.checkout-member-shipping-swap-enter-active,
+.checkout-member-shipping-swap-leave-active {
+	transition: opacity 0.24s ease, transform 0.24s ease;
+	transform-origin: top;
+}
+
+.checkout-member-shipping-swap-enter-from,
+.checkout-member-shipping-swap-leave-to {
+	opacity: 0;
+	transform: translateY(-10px);
+}
+
 @media (max-width: 1100px) {
 	.checkout-member-page {
 		.checkout-member-shell {
@@ -794,6 +1064,11 @@ onBeforeUnmount(() => {
 						grid-template-columns: 1fr;
 					}
 
+					.checkout-member-address-row--split {
+						align-items: flex-start;
+						flex-direction: column;
+					}
+
 					.checkout-member-block {
 						.checkout-member-block-head {
 							align-items: flex-start;
@@ -814,6 +1089,10 @@ onBeforeUnmount(() => {
 				.checkout-member-payment-meta {
 					align-items: flex-start;
 					flex-direction: column;
+				}
+
+				.checkout-member-address-form-note {
+					text-align: left;
 				}
 			}
 		}
