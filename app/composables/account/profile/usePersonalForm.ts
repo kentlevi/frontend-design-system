@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue'
-import { personal_form_defaults } from '~/constants/account/profile'
+import { personal_form_defaults } from '~/constants/profile'
 import { mapPersonalFormToUserFieldValues } from '~/helpers/account/profile/personalForm.helper'
 import { mapProfileToPersonalFormState, mapPersonalFormToPayload } from '~/mappers/account/profile/personalForm.mapper'
 import { fetchPersonalFieldDefinitions, updatePersonalForm } from '~/services/profile/personalForm.service'

@@ -10,7 +10,7 @@ const props = defineProps<CardProps>()
 
 const { t } = useI18n();
 
-const tagBadgeColors = {
+const tag_badge_colors = {
 	home: {
 		bgColor: 'var(--aloha-10)',
 		textColor: 'var(--aloha-60)',
@@ -135,8 +135,8 @@ const address_lines = computed(() => {
 					variant="tonal"
 					tone="default"
 					size="md"
-					:bg-color="tagBadgeColors[props.item.label.toLowerCase() as keyof typeof tagBadgeColors]?.bgColor || 'var(--gray-10)'"
-					:text-color="tagBadgeColors[props.item.label.toLowerCase() as keyof typeof tagBadgeColors]?.textColor || 'var(--gray-60)'"
+					:bg-color="tag_badge_colors[props.item.label.toLowerCase() as keyof typeof tag_badge_colors]?.bgColor || 'var(--gray-10)'"
+					:text-color="tag_badge_colors[props.item.label.toLowerCase() as keyof typeof tag_badge_colors]?.textColor || 'var(--gray-60)'"
 				>
 					{{ t(`account.addressBook.tags.${props.item.label}`) }}
 				</UiBadge>
