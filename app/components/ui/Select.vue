@@ -37,6 +37,7 @@ const props = withDefaults(
 		menuClass?: string;
 		optionClass?: string;
 		searchInputClass?: string;
+		pinLastOption?: boolean;
 	}>(),
 	{
 		modelValue: null,
@@ -52,6 +53,7 @@ const props = withDefaults(
 		menuClass: '',
 		optionClass: '',
 		searchInputClass: '',
+		pinLastOption: false,
 	}
 );
 
@@ -88,6 +90,22 @@ const filtered_options = computed(() => {
 	});
 });
 
+const scrollable_options = computed(() => {
+	if (!props.pinLastOption || filtered_options.value.length === 0) {
+		return filtered_options.value;
+	}
+
+	return filtered_options.value.slice(0, -1);
+});
+
+const pinned_option = computed(() => {
+	if (!props.pinLastOption || filtered_options.value.length === 0) {
+		return null;
+	}
+
+	return filtered_options.value[filtered_options.value.length - 1] ?? null;
+});
+
 const trigger_icon_name = computed(() =>
 	props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
@@ -115,12 +133,14 @@ function closeMenu() {
 
 function focusSelectedOption(scroll_only = false) {
 	const options_element = options_ref.value;
-	const selected_option_element = options_ref.value?.querySelector<HTMLElement>('.ui-select-option.is-selected');
-	const fallback_option_element = options_ref.value?.querySelector<HTMLElement>('.ui-select-option');
+	const selected_option_element = root_ref.value?.querySelector<HTMLElement>('.ui-select-option.is-selected');
+	const fallback_option_element = root_ref.value?.querySelector<HTMLElement>('.ui-select-option');
 	const target_option_element = selected_option_element || fallback_option_element;
-	if (!target_option_element || !options_element) return;
+	if (!target_option_element) return;
 
-	options_element.scrollTop = target_option_element.offsetTop - options_element.offsetTop;
+	if (options_element?.contains(target_option_element)) {
+		options_element.scrollTop = target_option_element.offsetTop - options_element.offsetTop;
+	}
 
 	if (!scroll_only) {
 		target_option_element.focus();
@@ -139,7 +159,7 @@ async function openMenu() {
 		return;
 	}
 
-	requestAnimationFrame(() => focusSelectedOption());
+	requestAnimationFrame(() => focusSelectedOption(props.pinLastOption));
 }
 
 function toggleMenu() {
@@ -241,7 +261,7 @@ onBeforeUnmount(() => {
 
 				<div ref="options_ref" class="ui-select-options">
 					<button
-						v-for="option in filtered_options"
+						v-for="option in scrollable_options"
 						:key="option.value"
 						type="button"
 						:class="['ui-select-option', props.optionClass, {
@@ -258,10 +278,27 @@ onBeforeUnmount(() => {
 						</div>
 					</button>
 
-					<p v-if="filtered_options.length === 0" class="ui-select-empty">
+					<p v-if="scrollable_options.length === 0 && !pinned_option" class="ui-select-empty">
 						{{ props.emptyText }}
 					</p>
 				</div>
+
+				<button
+					v-if="pinned_option"
+					type="button"
+					:class="['ui-select-option', 'ui-select-option--pinned', props.optionClass, {
+						'is-selected': pinned_option.value === props.modelValue,
+					}]"
+					:tabindex="pinned_option.value === props.modelValue ? 0 : -1"
+					@mousedown.prevent="selectOption(pinned_option)"
+				>
+					<div class="ui-select-option-copy">
+						<p class="ui-select-option-label" :style="pinned_option.style">{{ pinned_option.label }}</p>
+						<p v-if="pinned_option.description" class="ui-select-option-description">
+							{{ pinned_option.description }}
+						</p>
+					</div>
+				</button>
 			</div>
 		</Transition>
 	</div>

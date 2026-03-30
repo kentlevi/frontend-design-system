@@ -325,7 +325,7 @@ function openEditSize(item_id: string) {
 
 	edit_size_item_id.value = item_id;
 	edit_size_draft_key.value = size_option_models.value.some((size) => size.key === row.sizeKey) ? row.sizeKey : 'custom';
-	const matched = size_dim_only(row.customSizeLabel || row.sizeLabel).match(/(\\d+)\\s*[xX]\\s*(\\d+)/i);
+	const matched = size_dim_only(row.customSizeLabel || row.sizeLabel).match(/(\d+)\s*(?:x|\u00d7)\s*(\d+)/i);
 	edit_size_draft_custom_width.value = matched?.[1] ?? '';
 	edit_size_draft_custom_height.value = matched?.[2] ?? '';
 }
@@ -548,6 +548,8 @@ onBeforeUnmount(() => {
 									:model-value="getRowDisplayQty(row.id, row.qty)"
 									:options="getQtyOptionsForRow(getRowDisplayQty(row.id, row.qty))"
 									trigger-class="cart-qty-select-trigger"
+									menu-class="cart-qty-menu"
+									:pin-last-option="true"
 									@update:model-value="handleQtyOptionSelect(row.id, $event)"
 								/>
 								<div
@@ -582,7 +584,7 @@ onBeforeUnmount(() => {
 										/>
 									</button>
 									<Transition name="ui-select-menu">
-										<div v-if="custom_qty_menu_open" class="ui-select-menu" role="listbox">
+										<div v-if="custom_qty_menu_open" class="ui-select-menu cart-qty-menu" role="listbox">
 											<div class="ui-select-options">
 												<button
 													v-for="option in qty_select_options_with_custom"
@@ -1035,6 +1037,28 @@ onBeforeUnmount(() => {
 
 							.ui-icon.is-open {
 								transform: rotate(180deg);
+							}
+						}
+
+						.cart-qty-menu {
+							.ui-select-option.is-selected {
+								background: transparent;
+							}
+
+							.ui-select-option.is-selected:hover,
+							.ui-select-option.is-selected:focus-visible {
+								background: var(--surface-subtle);
+							}
+
+							.ui-select-option--pinned {
+								background: transparent;
+							}
+
+							.ui-select-option--pinned:hover,
+							.ui-select-option--pinned:focus-visible,
+							.ui-select-option--pinned.is-selected:hover,
+							.ui-select-option--pinned.is-selected:focus-visible {
+								background: var(--surface-subtle);
 							}
 						}
                     }
