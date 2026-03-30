@@ -1174,24 +1174,18 @@ onBeforeUnmount(() => {
 
                     .cart-payment-grid {
                         display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        gap: 8px;
-                        flex-wrap: nowrap;
+						gap: 12px;
+						flex-wrap: wrap;
 
                         .cart-payment-chip {
-                            flex: 1 1 0;
-                            min-width: 0;
-                            height: 40px;
-                            width: 50px;
-                            border: 1px solid var(--gray-40);
-                            border-radius: 8px;
+                            width: 24px;
+                            height: 24px;
                             display: grid;
                             place-items: center;
-                            background: var(--contrast-light);
-                            box-sizing: border-box;
 
                             .cart-payment-chip-icon {
+                                width: 24px;
+                                height: 24px;
                                 object-fit: contain;
                                 display: block;
                             }

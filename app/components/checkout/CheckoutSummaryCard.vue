@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useCheckoutFlow } from '~/composables/checkout/useCheckoutFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 type SummaryItem = {
@@ -19,6 +20,8 @@ const props = defineProps<{
 	items: SummaryItem[];
 	subtotalLabel: string;
 	shippingFeeLabel: string;
+	shippingFeeTooltipTitle?: string;
+	shippingFeeTooltipText?: string;
 	discountsLabel: string;
 	totalLabel: string;
 	subtotalValue: string;
@@ -44,22 +47,56 @@ const emit = defineEmits<{
 	(e: 'submit'): void;
 }>();
 
+const shipping_fee_tooltip_open = ref(false);
+const shipping_fee_tooltip_ref = ref<HTMLElement | null>(null);
+const has_shipping_fee_tooltip = computed(() =>
+	Boolean(props.shippingFeeTooltipTitle && props.shippingFeeTooltipText)
+);
+
+function toggleShippingFeeTooltip() {
+	if (!has_shipping_fee_tooltip.value) return;
+	shipping_fee_tooltip_open.value = !shipping_fee_tooltip_open.value;
+}
+
+function closeShippingFeeTooltip() {
+	shipping_fee_tooltip_open.value = false;
+}
+
+function handleShippingFeeTooltipPointerDown(event: PointerEvent) {
+	const target = event.target as Node | null;
+	if (!target) return;
+	if (shipping_fee_tooltip_ref.value?.contains(target)) return;
+	closeShippingFeeTooltip();
+}
+
+function handleShippingFeeTooltipEscape(event: KeyboardEvent) {
+	if (event.key !== 'Escape') return;
+	closeShippingFeeTooltip();
+}
+
 const {
-    submitCheckout
+	submitCheckout
 } = useCheckoutFlow()
 
 const {
-    listenPaymentResult
+	listenPaymentResult
 } = useTossPayment()
 
 onMounted(() => {
-	
 	/** For toss payment integration */
-    const cleanup = listenPaymentResult()
-    onUnmounted(() => {
-        cleanup()
-    })
+	const cleanup = listenPaymentResult()
+	onUnmounted(() => {
+		cleanup()
+	})
+
+	window.addEventListener('pointerdown', handleShippingFeeTooltipPointerDown, true);
+	window.addEventListener('keydown', handleShippingFeeTooltipEscape);
 })
+
+onBeforeUnmount(() => {
+	window.removeEventListener('pointerdown', handleShippingFeeTooltipPointerDown, true);
+	window.removeEventListener('keydown', handleShippingFeeTooltipEscape);
+});
 </script>
 
 <template>
@@ -136,7 +173,46 @@ onMounted(() => {
 					<div class="checkout-summary-line-value">{{ props.subtotalValue }}</div>
 				</div>
 				<div class="checkout-summary-line">
-					<div class="checkout-summary-line-label">{{ props.shippingFeeLabel }}</div>
+					<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
+						<span>{{ props.shippingFeeLabel }}</span>
+						<UiTooltip
+							v-if="has_shipping_fee_tooltip"
+							:open="shipping_fee_tooltip_open"
+							side="right"
+							align="center"
+							mobile-side="bottom"
+							tone="neutral"
+							:offset="10"
+							:slide-distance="24"
+							role="dialog"
+							content-class="checkout-summary-tooltip-content"
+							class="checkout-summary-tooltip"
+						>
+							<template #trigger>
+								<button
+									type="button"
+									class="checkout-summary-tooltip-trigger"
+									:class="{ 'is-active': shipping_fee_tooltip_open }"
+									:aria-expanded="shipping_fee_tooltip_open"
+									aria-haspopup="dialog"
+									aria-label="Show shipping fee information"
+									@click="toggleShippingFeeTooltip"
+								>
+									<UiIcon
+										:name="shipping_fee_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
+										size="20"
+										color="var(--gray-90)"
+										decorative
+									/>
+								</button>
+							</template>
+
+							<div class="checkout-summary-tooltip-copy">
+								<strong class="checkout-summary-tooltip-title">{{ props.shippingFeeTooltipTitle }}</strong>
+								<p class="checkout-summary-tooltip-text">{{ props.shippingFeeTooltipText }}</p>
+							</div>
+						</UiTooltip>
+					</div>
 					<div class="checkout-summary-line-value">{{ props.shippingFeeValue }}</div>
 				</div>
 				<div class="checkout-summary-line">
@@ -176,7 +252,6 @@ onMounted(() => {
 	border: 1px solid var(--gray-50);
 	border-radius: 10px;
 	background: var(--contrast-light);
-	overflow: hidden;
 
 	.checkout-summary-title {
 
@@ -315,6 +390,12 @@ onMounted(() => {
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
 
+				.checkout-summary-line-label--with-tooltip {
+					display: inline-flex;
+					align-items: center;
+					gap: 4px;
+				}
+
 				.checkout-summary-line-value {
 					color: var(--text-primary);
 					font-weight: var(--font-weight-semibold);
@@ -394,6 +475,72 @@ onMounted(() => {
 				}
 			}
 		}
+	}
+}
+
+.checkout-summary-tooltip {
+	display: inline-flex;
+	align-items: center;
+	align-self: center;
+	line-height: 1;
+}
+
+.checkout-summary-tooltip-trigger {
+	border: 0;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	background: transparent;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	border-radius: 999px;
+	transition: transform 0.16s ease;
+
+	&:active {
+		transform: scale(0.96);
+	}
+}
+
+:deep(.checkout-summary-tooltip-content) {
+	width: min(420px, calc(100vw - 32px));
+	max-width: calc(100vw - 32px);
+	display: flex;
+	align-items: flex-start;
+	padding: 16px 20px;
+	border-radius: 12px;
+	white-space: normal;
+	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+}
+
+.checkout-summary-tooltip-copy {
+	display: grid;
+	gap: 10px;
+}
+
+.checkout-summary-tooltip-title {
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: var(--font-weight-semibold);
+	color: inherit;
+}
+
+.checkout-summary-tooltip-text {
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: var(--font-weight-regular);
+	color: inherit;
+}
+
+@media (max-width: 760px) {
+	:deep(.checkout-summary-tooltip-content) {
+		width: min(320px, calc(100vw - 32px));
+	}
+
+	.checkout-summary-tooltip-title,
+	.checkout-summary-tooltip-text {
+		line-height: 20px;
 	}
 }
 

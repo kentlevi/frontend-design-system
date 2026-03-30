@@ -12,7 +12,7 @@
             "enterEmail": "Enter Email Address",
             "password": "Password",
             "enterPassword": "Enter Password",
-            "passwordHint": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
+            "passwordHint": "Password must be at least 6 characters and include at least one uppercase letter, number, or special character.",
             "agreePrefix": "I agree with Musticker's",
             "terms": "Terms of Service",
             "and": "and",

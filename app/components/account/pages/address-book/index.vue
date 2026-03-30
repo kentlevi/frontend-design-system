@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useAccountAddressBook } from '~/composables/account/addressBook/useAccountAddressBook';
 import AddressBookSection from './AddressBookSection.vue';
 import AddressBookAddModal from './AddressBookAddModal.vue';
+import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
+import { useAddressAddForm } from '~/composables/account/addressBook/useAddressAddForm';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -16,11 +17,22 @@ const {
 	billing_address,
 	drop_address,
 
+	getAddresses,
+} = useAddressBookList()
+
+const {
+	add_form_type,
+	active_add_form,
+
 	is_add_modal_open,
 
-	getAddresses,
-	openAddModal
-} = useAccountAddressBook()
+	addAddress,
+	openAddModal,
+	closeAddModal,
+	setAddFormType,
+	resetAddForm,
+	updateActiveAddFormField,
+} = useAddressAddForm()
 
 const has_addresses = computed(() => {
 	return shipping_address.value.length > 0
@@ -111,7 +123,13 @@ onMounted(() => {
 				</section>
 			</div>
 
-			<AddressBookAddModal v-model="is_add_modal_open" />
+			<AddressBookAddModal
+				v-model="is_add_modal_open"
+				:add-form-type="add_form_type"
+				:active-add-form="active_add_form"
+				@set-form-type="setAddFormType"
+				@update-field="updateActiveAddFormField"
+			/>
 		</AccountShellSection>
 	</section>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useCheckoutMemberPage } from '~/composables/checkout/member/useCheckoutMemberPage';
 
 const {
@@ -34,6 +35,39 @@ const {
 	shipping_method_details,
 	itemMeta,
 } = useCheckoutMemberPage();
+
+const points_tooltip_open = ref(false);
+const points_tooltip_ref = ref<HTMLElement | null>(null);
+
+function togglePointsTooltip() {
+	points_tooltip_open.value = !points_tooltip_open.value;
+}
+
+function closePointsTooltip() {
+	points_tooltip_open.value = false;
+}
+
+function handlePointsTooltipPointerDown(event: PointerEvent) {
+	const target = event.target as Node | null;
+	if (!target) return;
+	if (points_tooltip_ref.value?.contains(target)) return;
+	closePointsTooltip();
+}
+
+function handlePointsTooltipEscape(event: KeyboardEvent) {
+	if (event.key !== 'Escape') return;
+	closePointsTooltip();
+}
+
+onMounted(() => {
+	window.addEventListener('pointerdown', handlePointsTooltipPointerDown, true);
+	window.addEventListener('keydown', handlePointsTooltipEscape);
+});
+
+onBeforeUnmount(() => {
+	window.removeEventListener('pointerdown', handlePointsTooltipPointerDown, true);
+	window.removeEventListener('keydown', handlePointsTooltipEscape);
+});
 </script>
 
 <template>
@@ -206,6 +240,8 @@ const {
 				:items="selected_checkout_items"
 				:subtotal-label="t('checkout.member.summary.subtotal')"
 				:shipping-fee-label="t('checkout.member.summary.shippingFee', { method: shipping_method_details[selected_shipping_method]?.name })"
+				shipping-fee-tooltip-title="Shipping Fee"
+				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location. Standard shipping offers a more affordable option, while express shipping delivers your order faster at a higher cost."
 				:discounts-label="t('checkout.member.summary.discounts')"
 				:total-label="t('checkout.member.summary.total')"
 				:subtotal-value="formatPrice(order_subtotal)"
@@ -236,9 +272,46 @@ const {
 						<div class="checkout-member-perks-body">
 							<div class="checkout-member-perk-field">
 								<div class="checkout-member-perk-label-row">
-									<div class="checkout-member-perk-label-group">
+									<div ref="points_tooltip_ref" class="checkout-member-perk-label-group">
 										<span class="checkout-member-perk-label-primary">{{ t('checkout.member.points') }}</span>
-										<UiIcon name="regular-question-circle" size="20" color="var(--text-secondary)" decorative />
+										<UiTooltip
+											:open="points_tooltip_open"
+											side="right"
+											align="start"
+											mobile-side="bottom"
+											tone="neutral"
+											:offset="10"
+											:slide-distance="24"
+											role="dialog"
+											content-class="checkout-member-points-tooltip-content"
+											class="checkout-member-points-tooltip"
+										>
+											<template #trigger>
+												<button
+													type="button"
+													class="checkout-member-points-tooltip-trigger"
+													:class="{ 'is-active': points_tooltip_open }"
+													:aria-expanded="points_tooltip_open"
+													aria-haspopup="dialog"
+													aria-label="Show points information"
+													@click="togglePointsTooltip"
+												>
+													<UiIcon
+														:name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
+														size="20"
+														color="var(--text-secondary)"
+														decorative
+													/>
+												</button>
+											</template>
+
+											<div class="checkout-member-points-tooltip-copy">
+												<strong class="checkout-member-points-tooltip-title">How Points Work</strong>
+												<p class="checkout-member-points-tooltip-text">
+													Use your points to reduce your total at checkout. 1 point is equivalent to 1 won, and the applied points will be deducted directly from your order amount.
+												</p>
+											</div>
+										</UiTooltip>
 									</div>
 									<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: points_available.toFixed(2) }) }}</span>
 								</div>
@@ -604,6 +677,7 @@ const {
 						align-items: center;
 						gap: 6px;
 						min-width: 0;
+						position: relative;
 					}
 
 					.checkout-member-perk-label-primary {
@@ -631,6 +705,63 @@ const {
 			}
 		}
 	}
+}
+
+.checkout-member-points-tooltip {
+	display: inline-flex;
+	align-items: center;
+	line-height: 1;
+}
+
+.checkout-member-points-tooltip-trigger {
+	border: 0;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	background: transparent;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	border-radius: 999px;
+	transition: transform 0.16s ease;
+
+	&:active {
+		transform: scale(0.96);
+	}
+}
+
+.checkout-member-points-tooltip-content {
+	width: min(480px, calc(100vw - 32px));
+	max-width: calc(100vw - 32px);
+	display: flex;
+	align-items: flex-start;
+	padding: 16px 20px;
+	border-radius: 12px;
+	white-space: normal;
+	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+}
+
+.checkout-member-points-tooltip-copy {
+	display: grid;
+	gap: 10px;
+	width: 100%;
+	min-width: 0;
+}
+
+.checkout-member-points-tooltip-title {
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: var(--font-weight-semibold);
+	color: inherit;
+}
+
+.checkout-member-points-tooltip-text {
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: var(--font-weight-regular);
+	color: inherit;
+	word-break: break-word;
 }
 
 @media (max-width: 1100px) {
@@ -701,6 +832,15 @@ const {
 				}
 			}
 		}
+	}
+
+	:deep(.checkout-member-points-tooltip-content) {
+		width: min(320px, calc(100vw - 32px));
+	}
+
+	.checkout-member-points-tooltip-title,
+	.checkout-member-points-tooltip-text {
+		line-height: 20px;
 	}
 }
 </style>

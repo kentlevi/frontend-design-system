@@ -10,13 +10,13 @@ import { useCountry } from '../app/country/useCountry'
 export const useQuoteSectionHandler = () => {
 
 	// 🔥 Quote section service
-	const quoteService = useQuoteSectionService()
+	const quote_service = useQuoteSectionService()
 
 	const { country } = useCountry();
 
-	const is_custom_qty = ref<boolean>(!!quoteService.quantity.value?.custom)
+	const is_custom_qty = ref<boolean>(!!quote_service.quantity.value?.custom)
 
-	const is_custom_size = ref<boolean>(!!quoteService.size.value?.custom)
+	const is_custom_size = ref<boolean>(!!quote_service.size.value?.custom)
 
 	const custom_qty_input = ref<HTMLInputElement | null>(null)
 
@@ -30,15 +30,11 @@ export const useQuoteSectionHandler = () => {
 
 	const selected_font = ref<string>('')
 
-	// const pricing_disp = ref({
-	// 	ready: false
-	// })
-
 	/**
 	 * Disable form
 	 */
 	const clearForm = () => {
-		quoteService.clearSelection()
+		quote_service.clearSelection()
 	}
 
 	type InitializeFormOptions = {
@@ -60,11 +56,11 @@ export const useQuoteSectionHandler = () => {
 	 * @param prod_slug string — Product URL Slug
 	 */
 	const assignDefault = async ({ interactive = true }: InitializeFormOptions = {}) => {
-		if( !quoteService.slug || !quoteService.slug.value )
+		if( !quote_service.slug || !quote_service.slug.value )
 			return
 
 		// 📌 Existing attributes
-		const existing_attr = quoteService.recentSelection()
+		const existing_attr = quote_service.recentSelection()
 
 		// 🔥 If the current selected product, has already a pre-selected attributes
 		if( existing_attr ) {
@@ -81,10 +77,10 @@ export const useQuoteSectionHandler = () => {
 			prepareDefaultQty()
 			hideCustomQty()
 
-			if( quoteService.has_color_selection.value )
+			if( quote_service.has_color_selection.value )
 				prepareDefaultColor()
 
-			if( quoteService.has_font_selection.value)
+			if( quote_service.has_font_selection.value)
 				prepareDefaultFont()
 		}
 	}
@@ -94,7 +90,7 @@ export const useQuoteSectionHandler = () => {
 		{ interactive = true }: InitializeFormOptions = {}
 	) => {
 		/** VINYL LETTERING EDITOR */
-		if( quoteService.has_lettering_editor.value ) {
+		if( quote_service.has_lettering_editor.value ) {
 			/** Preparing lettering editor's default value */
 			/** Which includes the size and its text value */
 			prepareLetteringEditor(existing_attr)
@@ -103,31 +99,31 @@ export const useQuoteSectionHandler = () => {
 		}
 
 		/** QUANTITY */
-		quoteService.defaultQuantity(existing_attr.quantity)
+		quote_service.defaultQuantity(existing_attr.quantity)
 		if( existing_attr.quantity.custom )
 			setCustomQtyVisible({ interactive })
 		else
 			hideCustomQty()
 
 		/** COLOR */
-		if( quoteService.has_color_selection.value ) {
+		if( quote_service.has_color_selection.value ) {
 			if(
 				'color' in existing_attr
 				&& existing_attr.color
 			) {
-				quoteService.defaultColor(existing_attr.color)
+				quote_service.defaultColor(existing_attr.color)
 			} else {
 				prepareDefaultColor()
 			}
 		}
 		/** FONT */
-		if( quoteService.has_font_selection.value ) {
+		if( quote_service.has_font_selection.value ) {
 			if(
 				'font' in existing_attr
 				&& existing_attr.font
 			) {
 				selected_font.value = existing_attr.font.value
-				quoteService.defaultFont(existing_attr.font)
+				quote_service.defaultFont(existing_attr.font)
 			} else {
 				prepareDefaultFont()
 			}
@@ -136,10 +132,10 @@ export const useQuoteSectionHandler = () => {
 
 	const prepareLetteringEditor = (existing_attr : AttributeSelection) => {
 		if(  existing_attr.lettering_text ) {
-			quoteService.defaultLettering(existing_attr.size, existing_attr.lettering_text)
+			quote_service.defaultLettering(existing_attr.size, existing_attr.lettering_text)
 		}
 		else {
-			quoteService.defaultSize(existing_attr.size)
+			quote_service.defaultSize(existing_attr.size)
 		}
 	}
 
@@ -149,7 +145,7 @@ export const useQuoteSectionHandler = () => {
 	) => {
 		/** COMMON SIZE AND QUANTITY FLOW */
 
-		quoteService.defaultSize(existing_attr.size)
+		quote_service.defaultSize(existing_attr.size)
 		console.log(existing_attr.size.custom)
 		if( existing_attr.size.custom )
 			setCustomSizeVisible({ interactive })
@@ -159,48 +155,48 @@ export const useQuoteSectionHandler = () => {
 
 	const prepareDefaultSize = () => {
 		// Get first size as default
-		const default_size = quoteService.featured_sizes.value[0]
+		const default_size = quote_service.featured_sizes.value[0]
 
 		if( default_size )
-			quoteService.defaultSize(default_size)
+			quote_service.defaultSize(default_size)
 	}
 
 	const prepareDefaultQty = () => {
 		// Get first quantity as default
-		const default_qty = quoteService.featured_quantities.value[0]
+		const default_qty = quote_service.featured_quantities.value[0]
 
 		if( default_qty )
-			quoteService.defaultQuantity({
+			quote_service.defaultQuantity({
 				...default_qty,
 				custom: false
 			})
 	}
 
 	const prepareDefaultColor = () => {
-		if( !quoteService.has_color_selection?.value )
+		if( !quote_service.has_color_selection?.value )
 			return
 
-		const default_color = quoteService.featured_colors.value[0]
+		const default_color = quote_service.featured_colors.value[0]
 
 		if( default_color ) {
-			quoteService.defaultColor(default_color)
+			quote_service.defaultColor(default_color)
 		}
 	}
 
 	const prepareDefaultFont = () => {
-		if( !quoteService.has_font_selection.value && !quoteService.featured_fonts.value.length )
+		if( !quote_service.has_font_selection.value && !quote_service.featured_fonts.value.length )
 			return
 
-		const default_font = quoteService.featured_fonts.value[0]
+		const default_font = quote_service.featured_fonts.value[0]
 		if( default_font ) {
 			selected_font.value = default_font.value
-			quoteService.defaultFont(default_font)
+			quote_service.defaultFont(default_font)
 		}
 	}
 
 	const setCustomSizeVisible = async ({ interactive = true }: InitializeFormOptions = {}) => {
 		is_custom_size.value = true
-		quoteService.changeCustomSize()
+		quote_service.changeCustomSize()
 
 		if( !interactive )
 			return
@@ -249,10 +245,10 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	const formatted_custom_qty = computed(() => {
-		if (!quoteService.custom_quantity.value.nr)
+		if (!quote_service.custom_quantity.value.nr)
 			return ''
 
-		return quoteService.custom_quantity.value.nr.toLocaleString()
+		return quote_service.custom_quantity.value.nr.toLocaleString()
 	})
 
 	const formatPrice = (price: number) => { return formatCurrencyByCountry(price, country.value) }
@@ -276,17 +272,17 @@ export const useQuoteSectionHandler = () => {
 
 	const inputUpdateSize = async (ssize: SizeSpec) => {
 		hideCustomSize()
-		await quoteService.changeSize(ssize)
+		await quote_service.changeSize(ssize)
 	}
 
 	const inputUpdateCustomSize = async () => {
-		await quoteService.changeCustomSize()
+		await quote_service.changeCustomSize()
 	}
 
 	const inputUpdateQuantity = async (sqty: QuantitySpec) => {
 		hideCustomQty()
 
-		await quoteService.changeQuantity(sqty)
+		await quote_service.changeQuantity(sqty)
 	}
 
 	const inputUpdateCustomQuantity = async (event: Event) => {
@@ -295,7 +291,7 @@ export const useQuoteSectionHandler = () => {
 		const filtered_char = input.value.replace(/[^0-9]/g, '')
 
 		if( filtered_char === '' ) {
-			quoteService.custom_quantity.value.nr = null
+			quote_service.custom_quantity.value.nr = null
 			return
 		}
 
@@ -304,19 +300,19 @@ export const useQuoteSectionHandler = () => {
 		const n = Number(raw)
 
 		if (!isNaN(n))
-			await quoteService.changeCustomQuantity(n)
+			await quote_service.changeCustomQuantity(n)
 	}
 
 
 	const inputUpdateColor = async (scolor: ColorSpec) => {
-		await quoteService.changeColor(scolor)
+		await quote_service.changeColor(scolor)
 	}
 
 
 	const letteringTextInput = ($event : string) => {
-		if( quoteService.has_lettering_editor.value ) {
-			quoteService.lettering.value.text = $event
-			quoteService.letteringUpdate()
+		if( quote_service.has_lettering_editor.value ) {
+			quote_service.lettering.value.text = $event
+			quote_service.letteringUpdate()
 		}
 	}
 
@@ -326,8 +322,8 @@ export const useQuoteSectionHandler = () => {
 
 		if (!Number.isFinite(next_w) || next_w <= 0) return
 
-		quoteService.lettering.value.active = 'width'
-		quoteService.lettering.value.width = next_w
+		quote_service.lettering.value.active = 'width'
+		quote_service.lettering.value.width = next_w
 	}
 
 	const letteringHeightInput = (event: Event) => {
@@ -336,8 +332,8 @@ export const useQuoteSectionHandler = () => {
 
 		if (!Number.isFinite(next_h) || next_h <= 0) return
 
-		quoteService.lettering.value.active = 'height'
-		quoteService.lettering.value.height = next_h
+		quote_service.lettering.value.active = 'height'
+		quote_service.lettering.value.height = next_h
 	}
 
 
@@ -347,22 +343,12 @@ export const useQuoteSectionHandler = () => {
 	})
 
 	const fontChange = (new_value : string) => {
-		const s_font = quoteService.featured_fonts.value.find(e => e.value == new_value);
+		const s_font = quote_service.featured_fonts.value.find(e => e.value == new_value);
 
 		if( s_font )
-			quoteService.changeFont(s_font)
+			quote_service.changeFont(s_font)
 	}
 
-
-	const featuredCardChange = (fcard_size_id: number) => {
-		if( quoteService.slug.value == 'vinyl-lettering' )
-			return
-
-		const s_size = quoteService.featured_sizes.value.find(e => e.id == fcard_size_id)
-
-		if( s_size )
-			quoteService.changeSize(s_size)
-	}
 
 
 	const is_vinylsize_focused = ref(false)
@@ -376,7 +362,7 @@ export const useQuoteSectionHandler = () => {
 
 
 	return {
-		...quoteService,
+		...quote_service,
 		is_custom_size,
 		custom_width_input,
 		is_custom_qty,
@@ -410,7 +396,6 @@ export const useQuoteSectionHandler = () => {
 		letteringTextInput,
 		letteringWidthInput,
 		letteringHeightInput,
-		featuredCardChange,
 		onVinylSizeFocus,
 		onVinylSizeBlur,
 		onVinylFontFocus,

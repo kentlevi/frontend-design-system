@@ -20,7 +20,7 @@
             "passwordDesc": "Strengthen your account by ensuring your password is strong.",
             "currentPassword": "Current Password",
             "currentPasswordPlaceholder": "Enter Current Password",
-            "passwordHint": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
+            "passwordHint": "Password must be at least 6 characters and include at least one uppercase letter, number, or special character.",
             "newPassword": "New Password",
             "newPasswordPlaceholder": "Enter New Password",
             "confirmNewPassword": "Confirm New Password",

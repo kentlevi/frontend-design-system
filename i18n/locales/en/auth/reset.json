@@ -2,7 +2,7 @@
     "auth": {
         "reset": {
             "title": "Change Password",
-            "description": "Password must be at least 6 characters and include an uppercase letter, number, or special character.",
+            "description": "Password must be at least 6 characters and include at least one uppercase letter, number, or special character.",
             "newPassword": "New Password",
             "enterNewPassword": "Enter New Password",
             "confirmPassword": "Confirm Password",

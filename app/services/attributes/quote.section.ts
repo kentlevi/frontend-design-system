@@ -27,7 +27,7 @@ export const useQuoteSectionService = () => {
 
 	const font_service = useFontService()
 
-	const size_featured_cards = computed(() => attribute_store.size_featured_cards )
+	const size_featured_cards = computed(() => attribute_store.sizes )
 
 
 	const clearSelection = () => {

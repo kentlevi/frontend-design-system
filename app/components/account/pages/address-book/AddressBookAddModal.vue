@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
-import type { AddressLabel, AddressType } from '~/types/address';
+import type { AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
 
 type IconName = keyof typeof icons;
 type SelectOption = {
@@ -8,27 +8,7 @@ type SelectOption = {
 	value: string;
 };
 
-const props = defineProps<{
-	modelValue: boolean;
-}>();
-
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void;
-}>();
-
 const { t } = useI18n();
-
-const address_type = ref<AddressType>('shipping');
-const address_label = ref<AddressLabel>('home');
-const full_name = ref('');
-const company = ref('');
-const address_line_1 = ref('');
-const address_line_2 = ref('');
-const province = ref<string | null>(null);
-const city = ref('');
-const postal_code = ref('');
-const phone = ref('');
-const is_default = ref(false);
 
 const province_options: SelectOption[] = [
 	{ label: 'Seoul', value: 'seoul' },
@@ -36,6 +16,93 @@ const province_options: SelectOption[] = [
 	{ label: 'Incheon', value: 'incheon' },
 	{ label: 'Gyeonggi-do', value: 'gyeonggi-do' },
 ];
+
+const props = defineProps<{
+	modelValue: boolean;
+	addFormType: AddressType;
+	activeAddForm: AddressFormMap[AddressType]
+}>();
+
+const emit = defineEmits<{
+	(e: 'update:modelValue', value: boolean): void;
+	(e: 'set-form-type', value: AddressType): void;
+	(e: 'update-field', payload: { field: AddressFormField; value: string }): void;
+}>();
+
+/** Check whether the form supports address lines */
+function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
+	return form.type !== 'drop'
+}
+
+/** Check whether the form supports phone number */
+function hasPhoneNumber(form: AddressFormMap[AddressType]): form is AddressFormMap['shipping'] {
+	return form.type === 'shipping'
+}
+
+/** Generic helper to build a string model */
+function createStringFieldModel(
+	field: AddressFormField,
+	get_value: () => string
+) {
+	return computed({
+		/** Read current value from prop */
+		get: get_value,
+
+		/** Send changed value to parent */
+		set: (value: string) => {
+			emit('update-field', {
+				field,
+				value,
+			})
+		},
+	})
+}
+
+/** Shared fields */
+const contact_name_model = createStringFieldModel(
+	'contact_name',
+	() => props.activeAddForm.contact_name
+)
+
+const company_model = createStringFieldModel(
+	'company',
+	() => props.activeAddForm.company ?? ''
+)
+
+const is_default_model = createStringFieldModel(
+	'is_default',
+	() => props.activeAddForm.notes ?? ''
+)
+
+/** Address line fields */
+const address_line_1_model = createStringFieldModel(
+	'address_line_1',
+	() => hasAddressLines(props.activeAddForm)
+		? props.activeAddForm.address_line_1
+		: ''
+)
+
+const address_line_2_model = createStringFieldModel(
+	'address_line_2',
+	() => hasAddressLines(props.activeAddForm)
+		? props.activeAddForm.address_line_2 ?? ''
+		: ''
+)
+
+const postcode_model = createStringFieldModel(
+	'postcode',
+	() => hasAddressLines(props.activeAddForm)
+		? props.activeAddForm.postcode
+		: ''
+)
+
+/** Shipping-only field */
+const phone_number_model = createStringFieldModel(
+	'phone_number',
+	() => hasPhoneNumber(props.activeAddForm)
+		? props.activeAddForm.phone_number
+		: ''
+)
 
 const address_type_options: Array<{
 	value: AddressType;
@@ -57,25 +124,8 @@ const address_label_options: Array<{
 	{ value: 'client', label_key: 'client', icon: 'regular-user-circle' },
 ];
 
-const shows_full_address_fields = computed(() => address_type.value !== 'drop');
-const shows_phone_and_default = computed(() => address_type.value === 'shipping');
-const keeps_two_column_postal_row = computed(() => address_type.value !== 'drop');
 const modal_title = computed(() => t('account.addressBook.addNew'));
 const save_label = computed(() => t('account.addressBook.save'));
-
-function resetForm() {
-	address_type.value = 'shipping';
-	address_label.value = 'home';
-	full_name.value = '';
-	company.value = '';
-	address_line_1.value = '';
-	address_line_2.value = '';
-	province.value = null;
-	city.value = '';
-	postal_code.value = '';
-	phone.value = '';
-	is_default.value = false;
-}
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -84,15 +134,6 @@ function closeModal() {
 function handleSave() {
 	closeModal();
 }
-
-watch(
-	() => props.modelValue,
-	(is_open) => {
-		if (!is_open) return;
-		resetForm();
-	},
-	{ immediate: true }
-);
 </script>
 
 <template>
@@ -139,8 +180,8 @@ watch(
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="address_type === option.value"
-									@click="address_type = option.value"
+									:selected="props.addFormType === option.value"
+									@click="emit('set-form-type', option.value)"
 								>
 									<UiIcon :name="option.icon" :size="24" />
 									<span>{{ t(`account.addressBook.${option.label_key}`) }}</span>
@@ -159,7 +200,7 @@ watch(
 								<template #default="{ inputId, describedBy }">
 									<UiInput
 										:id="inputId"
-										v-model="full_name"
+										v-model="contact_name_model"
 										:aria-describedby="describedBy || undefined"
 										:placeholder="t('account.addressBook.fullNamePlaceholder')"
 									/>
@@ -170,7 +211,7 @@ watch(
 								<template #default="{ inputId, describedBy }">
 									<UiInput
 										:id="inputId"
-										v-model="company"
+										v-model="company_model"
 										:aria-describedby="describedBy || undefined"
 										:placeholder="t('account.addressBook.companyPlaceholder')"
 									/>
@@ -196,8 +237,8 @@ watch(
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="address_label === option.value"
-									@click="address_label = option.value"
+									:selected="props.activeAddForm.label === option.value"
+									@click="emit('update-field', { field: 'label', value: option.value })"
 								>
 									<UiIcon :name="option.icon" :size="24" />
 									<span>{{ t(`account.addressBook.tags.${option.label_key}`) }}</span>
@@ -205,7 +246,7 @@ watch(
 							</div>
 						</div>
 
-						<template v-if="shows_full_address_fields">
+						<template v-if="hasAddressLines(props.activeAddForm)">
 							<UiFormField
 								:label="t('account.addressBook.streetAddress')"
 								:required="true"
@@ -215,19 +256,19 @@ watch(
 									<div class="account-address-book-add-modal-stack">
 										<UiInput
 											:id="inputId"
-											v-model="address_line_1"
+											v-model="address_line_1_model"
 											:aria-describedby="describedBy || undefined"
 											:placeholder="t('account.addressBook.addressLine1Placeholder')"
 										/>
 										<UiInput
-											v-model="address_line_2"
+											v-model="address_line_2_model"
 											:placeholder="t('account.addressBook.addressLine2Placeholder')"
 										/>
 									</div>
 								</template>
 							</UiFormField>
 
-							<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
+							<!-- <div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
 								<UiFormField
 									:label="t('account.addressBook.province')"
 									:required="true"
@@ -257,13 +298,10 @@ watch(
 										/>
 									</template>
 								</UiFormField>
-							</div>
+							</div> -->
 
 							<div
-								class="account-address-book-add-modal-grid"
-								:class="{
-									'account-address-book-add-modal-grid--two': keeps_two_column_postal_row,
-								}"
+								class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two"
 							>
 								<UiFormField
 									:label="t('account.addressBook.postalCode')"
@@ -273,7 +311,7 @@ watch(
 									<template #default="{ inputId, describedBy }">
 										<UiInput
 											:id="inputId"
-											v-model="postal_code"
+											v-model="postcode_model"
 											:aria-describedby="describedBy || undefined"
 											:placeholder="t('account.addressBook.postalCodePlaceholder')"
 										/>
@@ -281,7 +319,7 @@ watch(
 								</UiFormField>
 
 								<UiFormField
-									v-if="shows_phone_and_default"
+									v-if="hasPhoneNumber(props.activeAddForm)"
 									:label="t('account.addressBook.phoneNumber')"
 									:required="true"
 									:show-required-mark="true"
@@ -291,7 +329,7 @@ watch(
 											<div class="account-address-book-add-modal-phone-prefix">+82</div>
 											<UiInput
 												:id="inputId"
-												v-model="phone"
+												v-model="phone_number_model"
 												type="text"
 												size="lg"
 												:aria-describedby="describedBy || undefined"
@@ -302,17 +340,11 @@ watch(
 										</div>
 									</template>
 								</UiFormField>
-
-								<div
-									v-else-if="keeps_two_column_postal_row"
-									aria-hidden="true"
-									class="account-address-book-add-modal-grid-spacer"
-								/>
 							</div>
 
-							<label v-if="shows_phone_and_default" class="account-address-book-add-modal-switch">
+							<label class="account-address-book-add-modal-switch">
 								<input
-									v-model="is_default"
+									v-model="is_default_model"
 									type="checkbox"
 									class="account-address-book-add-modal-switch-input"
 								>

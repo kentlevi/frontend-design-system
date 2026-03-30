@@ -2,24 +2,35 @@ import { fetchUserAddresses } from "~/services/profile/address.service";
 import { useAddressStore } from "~/stores/address/address.store";
 import type { AddressType } from "~/types/address";
 
-export function useAccountAddressBook() {
+export function useAddressBookList() {
+
 	/**
      * Store
      */
 	const address_store = useAddressStore()
 
 	/**
-     * Addresses
+     * Variables
      */
+
+	/** Addresses */
 	const shipping_address = computed(() => address_store.shipping_address)
 	const billing_address = computed(() => address_store.billing_address)
 	const drop_address = computed(() => address_store.drop_address)
 
-	const is_add_modal_open = ref(false)
+
+
+
+
+
+
+
 
 	/**
-     * Fetch user addresses
+     * Functions
      */
+
+	/** Fetch user addresses */
 	async function getAddresses(type: AddressType) {
 		try {
 			const params = { type }
@@ -36,24 +47,11 @@ export function useAccountAddressBook() {
 		}
 	}
 
-	async function addAddress() {
-
-	}
-
-
-	function openAddModal() {
-		is_add_modal_open.value = true
-	}
-
 	return {
 		shipping_address,
 		billing_address,
 		drop_address,
 
-		is_add_modal_open,
-
 		getAddresses,
-		addAddress,
-		openAddModal
 	}
 }

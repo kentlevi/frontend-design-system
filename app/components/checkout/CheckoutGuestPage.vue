@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import CheckoutLoginModal from '~/components/checkout/CheckoutLoginModal.vue';
 import { useCheckoutGuestPage } from '~/composables/checkout/guest/useCheckoutGuestPage';
 
@@ -39,6 +40,39 @@ const {
 	is_login_modal_open,
 	openLoginModal,
 } = useCheckoutGuestPage();
+
+const email_tooltip_open = ref(false);
+const email_tooltip_ref = ref<HTMLElement | null>(null);
+
+function toggleEmailTooltip() {
+	email_tooltip_open.value = !email_tooltip_open.value;
+}
+
+function closeEmailTooltip() {
+	email_tooltip_open.value = false;
+}
+
+function handleEmailTooltipPointerDown(event: PointerEvent) {
+	const target = event.target as Node | null;
+	if (!target) return;
+	if (email_tooltip_ref.value?.contains(target)) return;
+	closeEmailTooltip();
+}
+
+function handleEmailTooltipEscape(event: KeyboardEvent) {
+	if (event.key !== 'Escape') return;
+	closeEmailTooltip();
+}
+
+onMounted(() => {
+	window.addEventListener('pointerdown', handleEmailTooltipPointerDown, true);
+	window.addEventListener('keydown', handleEmailTooltipEscape);
+});
+
+onBeforeUnmount(() => {
+	window.removeEventListener('pointerdown', handleEmailTooltipPointerDown, true);
+	window.removeEventListener('keydown', handleEmailTooltipEscape);
+});
 </script>
 
 <template>
@@ -62,12 +96,48 @@ const {
 				<div class="checkout-section-body checkout-section-body--compact">
 					<div class="checkout-contact-group">
 						<div class="checkout-contact-head">
-							<div class="checkout-contact-label-wrap">
+							<div ref="email_tooltip_ref" class="checkout-contact-label-wrap">
 								<span class="checkout-label">
 									{{ email_label_text }}
 									<span class="checkout-label-required" aria-hidden="true">*</span>
 								</span>
-								<UiIcon name="regular-question-circle" size="20" color="var(--gray-90)" decorative />
+								<UiTooltip
+									:open="email_tooltip_open"
+									side="right"
+									align="start"
+									mobile-side="left"
+									tone="neutral"
+									:offset="10"
+									:slide-distance="24"
+									role="dialog"
+									content-class="checkout-email-tooltip-content"
+									class="checkout-email-tooltip"
+								>
+									<template #trigger>
+										<button
+											type="button"
+											:class="['checkout-email-tooltip-trigger', { 'is-active': email_tooltip_open }]"
+											:aria-expanded="email_tooltip_open"
+											aria-haspopup="dialog"
+											aria-label="Show email verification help"
+											@click="toggleEmailTooltip"
+										>
+											<UiIcon
+												:name="email_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
+												size="20"
+												:color="email_tooltip_open ? 'var(--gray-90)' : 'var(--gray-90)'"
+												decorative
+											/>
+										</button>
+									</template>
+
+									<div class="checkout-email-tooltip-copy">
+										<strong class="checkout-email-tooltip-title">Email for Verification &amp; Updates</strong>
+										<p class="checkout-email-tooltip-text">
+											Enter your email address to continue. We'll use it to check if you already have an account and to send updates about your order.
+										</p>
+									</div>
+								</UiTooltip>
 							</div>
 							<div class="checkout-login-link">
 								<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
@@ -306,6 +376,8 @@ const {
 				:items="selected_checkout_items"
 				:subtotal-label="t('checkout.guest.summary.subtotal')"
 				:shipping-fee-label="t('checkout.guest.summary.shippingFee')"
+				shipping-fee-tooltip-title="Shipping Fee"
+				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location. Standard shipping offers a more affordable option, while express shipping delivers your order faster at a higher cost."
 				:discounts-label="t('checkout.guest.summary.discounts')"
 				:total-label="t('checkout.guest.summary.total')"
 				:subtotal-value="formatPrice(order_subtotal)"
@@ -413,6 +485,68 @@ const {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
+	}
+
+	.checkout-email-tooltip {
+		display: inline-flex;
+		align-items: center;
+		align-self: center;
+		line-height: 1;
+	}
+
+	.checkout-email-tooltip-trigger {
+		border: 0;
+		padding: 0;
+		width: 20px;
+		height: 20px;
+		background: transparent;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		border-radius: 999px;
+		transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+
+		&:hover,
+		&.is-active {
+			background: transparent;
+		}
+
+		&:active {
+			transform: scale(0.96);
+		}
+	}
+
+	.checkout-email-tooltip-content {
+		width: 480px !important;
+		min-width: 480px !important;
+		max-width: min(480px, calc(100vw - 32px)) !important;
+		display: flex;
+		white-space: normal;
+		align-items: flex-start;
+		padding: 16px 20px;
+		border-radius: 12px;
+		box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+	}
+
+
+	.checkout-email-tooltip-copy {
+		display: grid;
+		gap: 8px;
+	}
+
+	.checkout-email-tooltip-title {
+		font-size: 14px;
+		line-height: 24px;
+		font-weight: var(--font-weight-semibold);
+		color: inherit;
+	}
+
+	.checkout-email-tooltip-text {
+		font-size: 14px;
+		line-height: 24px;
+		font-weight: var(--font-weight-regular);
+		color: inherit;
 	}
 
 	.checkout-label-required {
