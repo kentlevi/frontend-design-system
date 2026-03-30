@@ -13,8 +13,11 @@ export type CheckoutItem = {
 export type MemberAddress = {
 	id: string;
 	recipient: string;
+	phone?: string;
 	line1: string;
 	line2: string;
+	company?: string;
+	label?: string;
 	isDefault?: boolean;
 };
 

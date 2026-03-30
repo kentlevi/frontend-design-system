@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import { useCheckoutBase } from '../shared/useCheckoutBase';
 import { useCheckoutAddressForm } from '../shared/useCheckoutAddressForm';
-import { checkoutPaymentBrands, checkoutPaymentMethods, checkoutShippingMethods } from '~/data/checkout/options';
+import { checkoutMemberPaymentBrands, checkoutPaymentMethods, checkoutShippingMethods } from '~/data/checkout/options';
 import { getProfileFieldValue, normalizeAccountName } from '~/utils/account/accountProfile';
 import type {
 	CheckoutPaymentMethodKey,
@@ -31,15 +31,12 @@ export function useCheckoutMember() {
 		{
 			id: 'addr-default',
 			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			line1: '176-6, Yusan-ri, Gusan-myeon',
+			phone: '+82 (551) 236-4533',
+			line1: '176-6, Yusan-ri, Gusan-myeon,',
 			line2: 'Gaseong-si, Incheon 01000, Republic of Korea',
+			company: 'Summit Inc.',
+			label: 'Home',
 			isDefault: true,
-		},
-		{
-			id: 'addr-2',
-			recipient: 'Kevin Love',
-			line1: '1485-3 U-dong, 15th Floor, Room 1502',
-			line2: 'Haeundae-gu, Busan 48160, Republic of Korea',
 		},
 	]);
 
@@ -90,7 +87,7 @@ export function useCheckoutMember() {
 		selected_payment_method,
 		active_shipping_methods,
 		active_payment_methods,
-		payment_brands: checkoutPaymentBrands,
+		payment_brands: checkoutMemberPaymentBrands,
 		drop_shipping_enabled,
 		points_available,
 		points_to_use,
