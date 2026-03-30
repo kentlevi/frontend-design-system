@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import type { SizeSpec, QuantitySpec, AttributeSelection, ColorSpec, FontSpec } from '../../types/products/attributes'
+import type { Product } from '~/types/navigation/navgiation'
 
 export const useSelectionStore = defineStore('attr-selection', () => {
 
 
 	const selections = ref<Record<string, AttributeSelection>>({})
 
-	const product = ref<string>()
+	const product = ref<Product>()
 
 	const slug = ref<string>()
 
@@ -30,9 +31,9 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 	const unit_price = ref<number>(0)
 
-	const updateProduct = (prod_slug: string) => {
-		slug.value = prod_slug
-		product.value = prod_slug
+	const updateProduct = (p: Product) => {
+		slug.value = p.url_slug
+		product.value = p
 	}
 
 	const hasSelection = (slug: string): AttributeSelection | null => {

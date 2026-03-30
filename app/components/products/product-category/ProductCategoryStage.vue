@@ -88,18 +88,7 @@ const {
 } = useQuoteSectionHandler();
 
 const route = useRoute()
-const resolved_category = computed<ProductCategoryKey>(() => {
-	if (props.category) {
-		return props.category
-	}
 
-	const route_category = route.params?.category
-	if (route_category === 'stickers' || route_category === 'roll-stickers' || route_category === 'sheet-stickers') {
-		return route_category
-	}
-
-	return 'stickers'
-})
 const route_product_slug = computed(() => {
 	const route_product = route.params?.product
 	return typeof route_product === 'string'
@@ -112,27 +101,15 @@ const route_product_slug = computed(() => {
 watch(
 	route_product_slug,
 	(next_slug) => {
-		console.log(1)
 		if (typeof next_slug === 'string' && next_slug) {
-			updateProduct(next_slug)
-			void instatiateForm({ interactive: false })
+
+			if( updateProduct(next_slug) )
+				void instatiateForm({ interactive: false })
+
 			return
 		}
 
 		clearForm()
-	},
-	{ immediate: true }
-)
-
-watch(
-	() => props.selectedProduct?.id,
-	(next_product_id) => {
-		if (!next_product_id) return
-
-		console.log(2)
-		const next_slug = getProductSlugByCategory(next_product_id, resolved_category.value)
-		updateProduct(next_slug)
-		void instatiateForm({ interactive: false })
 	},
 	{ immediate: true }
 )
@@ -147,16 +124,11 @@ onMounted(() => {
 	has_hydrated.value = true
 })
 
-
-
 const prevent_non_digit_input = (event: InputEvent) => {
 	if (!event.data) return
 	if (/^\d+$/.test(event.data)) return
 	event.preventDefault()
 }
-
-
-
 
 const has_valid_custom_size = computed(() =>
 	Boolean(is_custom_size.value && custom_size.value.width && custom_size.value.width > 0 && custom_size.value.height && custom_size.value.height > 0)
@@ -177,6 +149,13 @@ const displayed_product_title = computed(() =>
 	has_lettering_editor.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
 
+const switchProduct = (prod : ProductItem) => {
+	emit('select-product', prod.id)
+
+	if( updateProduct(prod.id) )
+		void instatiateForm({ interactive: false })
+}
+
 </script>
 
 <template>
@@ -189,7 +168,7 @@ const displayed_product_title = computed(() =>
 				class="product-picker-item"
 				:class="{ 'is-active': props.selectedId === prod.id }"
 				:data-testid="`product-category-picker-item-${prod.id}`"
-				@click="emit('select-product', prod.id)"
+				@click="switchProduct(prod)"
 			>
 				<div class="product-picker-icon" :class="`is-${prod.id}`">
 					<img
