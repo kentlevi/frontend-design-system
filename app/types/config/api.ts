@@ -1,8 +1,8 @@
 export interface ApiResponse<T = unknown> {
 	success: boolean
 	message: string | null
-	data: T | null
-	meta: Record<string, unknown> |null
+	data?: T
+	meta?: Record<string, unknown> |null
 	error?: unknown
 }
 export interface ApiOptions {

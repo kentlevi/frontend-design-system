@@ -1,6 +1,12 @@
 
 import type { CSSProperties } from 'vue'
 
+export interface ProductSpec {
+	url_slug: string
+	name: string
+	description: string
+}
+
 export interface FontSpec {
 	id: number
 	label: string
@@ -14,18 +20,17 @@ export interface ColorSpec {
 	id: number
 	name: string
 	key: string
-	code: string
-	swatch_style: SwatchStyleSpec
+	hex_code: string
+	style: SwatchStyleSpec
 }
 export interface SizeSpec {
-	id: number | null
 	width: number | null
 	height: number | null
 	label: string | null
 	custom?: boolean | null
-	key?: string | null,
+	code?: string | null,
 	image?: string | null,
-	description?: string | null,
+	desc_key?: string | null,
 }
 
 export interface QuantitySpec {

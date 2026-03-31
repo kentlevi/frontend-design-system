@@ -9,7 +9,7 @@ export const useColorService = () => {
 	const color = ref<ColorSpec | null>(selection_store.color ?? null)
 
 	const featured_colors = computed<ColorSpec[]>(() => {
-		const active_slug = selection_store.slug ?? ''
+		const active_slug = selection_store.url_slug ?? ''
 
 		if (active_slug === 'vinyl-lettering') {
 			return (attribute_store.colors ?? []).filter((entry) => entry.key !== 'full-color')

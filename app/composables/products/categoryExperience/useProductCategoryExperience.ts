@@ -318,7 +318,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		selected_id.value = productId;
 		has_picked_product.value = true;
 
-		const product_slug = productIdToSlug(productId);
+		const product_slug = productId;
 		const target_path = withCountry(`/${category.value}/${product_slug}`);
 		if (route.path === target_path) {
 			selection_navigation_in_flight.value = false;

@@ -1,37 +1,94 @@
-import { useNavigationStore } from "~/stores/navigation/navigation.store"
-import { useSelectionStore } from "~/stores/product"
+import { useAttributesStore, useSelectionStore } from "~/stores/product"
+import type { ColorSpec, FontSpec, QuantitySpec, SizeSpec } from "~/types/products/attributes"
 export const useProductService = () => {
-	const selectionStore = useSelectionStore()
+	const { $api } = useNuxtApp()
 
-	const navigation_store = useNavigationStore()
+	const selection_store = useSelectionStore()
 
-	const product = computed(() => selectionStore.product)
+	const attribute_store = useAttributesStore()
 
-	const slug = computed(() => selectionStore.slug)
+	const product = computed(() => attribute_store.product)
 
-	function updateProduct(prod_slug: string) {
-		if(product && product.value && product.value.url_slug == prod_slug)
-			return
+	const url_slug = computed(() => selection_store.url_slug)
 
-		console.log('Updating product:', prod_slug)
+	type FeaturedDataResponse = {
+		product: {
+			pcm_id: number
+			url_slug: string
+			name: string
+			description: string
+		}
+		featured_sizes: SizeSpec[]
+		variants: {
+			colors: ColorSpec[],
+			fonts: {
+				id: number,
+				name: string,
+				code: string,
+				style: Record<string, unknown>
+			}[],
+		},
+		quantities: QuantitySpec[]
+	}
 
-		const products = navigation_store.product_state.products
 
-		const p = products.find(e => e.url_slug == prod_slug);
-		if(!p) {
-			console.warn('No product found store state.')
-			
-			return
+	const updateFeaturedData = async (prod_slug: string) => {
+		selection_store.updateProductSlug(prod_slug)
+
+		const featured_data = await getFeaturedData(prod_slug)
+
+		if( featured_data ) {
+
+			await setupFeaturedData(featured_data)
+
 		}
 
-		selectionStore.updateProduct(p)
 
 		return true;
 	}
 
+	const getFeaturedData = async (prod_slug: string) => {
+		const { success, message, data} = await $api.get<FeaturedDataResponse>(
+			`quote/${prod_slug}/featured-data`
+		)
+
+		if (!success || !data) {
+			console.warn(message)
+			return
+		}
+
+		return data
+	}
+
+	const setupFeaturedData = async (featured_data: FeaturedDataResponse) => {
+
+		selection_store.updateMappingID(featured_data.product.pcm_id)
+
+		attribute_store.updateProduct({
+			url_slug: featured_data.product.url_slug,
+			name: featured_data.product.name,
+			description: featured_data.product.description
+		})
+
+		attribute_store.updateSizes(featured_data.featured_sizes)
+
+		attribute_store.updateQuantites(featured_data.quantities)
+
+		attribute_store.updateColors(featured_data.variants.colors)
+
+		const f = featured_data.variants.fonts.map(font => ({
+			id: font.id,
+			label: font.name,
+			value: font.code,
+			style: font.style
+		})) as FontSpec[]
+
+		attribute_store.updateFonts(f)
+	}
+
 	return {
-		slug,
+		url_slug,
 		product,
-		updateProduct,
+		updateFeaturedData,
 	}
 }
