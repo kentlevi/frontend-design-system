@@ -87,6 +87,10 @@
                 "bankTransfer": {
                     "alt": "계좌이체",
                     "label": "계좌이체"
+                },
+                "tossPayment": {
+                    "alt": "토스 결제",
+                    "label": "토스 결제"
                 }
             },
             "provinceOptions": {

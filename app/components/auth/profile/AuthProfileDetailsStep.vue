@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
-import { useUsersStore } from '~/stores/users/users.store';
+import PersonalDetails from '~/components/profile/PersonalDetails.vue';
 import type { ProfileFieldDefinition } from '~/types/account/profile';
-import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
-
-const { t } = useI18n();
 
 const props = withDefaults(
 	defineProps<{
@@ -45,20 +41,6 @@ const emit = defineEmits<{
 	(event: 'photo-remove'): void;
 }>();
 
-const user_store = useUsersStore();
-const { display_avatar } = useProfilePhotoDisplay();
-
-const {
-	file_input,
-	error: upload_photo_error,
-	openFilePicker,
-	onFilePicked: uploadPhoto,
-	deletePhoto,
-} = useProfilePhoto();
-
-const has_photo = computed(() => Boolean(props.photoUrl || display_avatar.value));
-const displayed_photo_url = computed(() => props.photoUrl || display_avatar.value || null);
-const displayed_photo_error = computed(() => upload_photo_error.value || props.photoError);
 const visible_dynamic_fields = computed(() => props.dynamicFields.filter((field) => Boolean(field.field_key)));
 const first_name_field_aliases = new Set(['first_name', 'given_name']);
 
@@ -76,66 +58,6 @@ const welcome_name = computed(() => {
 
 	return '';
 });
-
-function getFieldLabel(field: ProfileFieldDefinition) {
-	const translation_key = `account.profile.${field.field_key}`;
-	const translated_label = t(translation_key);
-	return translated_label === translation_key
-		? field.field_label
-		: translated_label;
-}
-
-function updateEmail(value: string) {
-	emit('update:email', value);
-}
-
-function updateField(field_key: string, value: string) {
-	emit('update:field', {
-		key: field_key,
-		value,
-	});
-}
-
-async function onPhotoPicked(event: Event) {
-	const input = event.target as HTMLInputElement;
-	const file = input.files?.[0];
-
-	if (!file) return;
-
-	const previous_file_name = user_store.state.profile?.file_name || null;
-	await uploadPhoto(event);
-
-	if (upload_photo_error.value) return;
-
-	if (!user_store.state.profile) {
-		emit('photo-file-picked', file);
-		return;
-	}
-
-	const current_file_name = user_store.state.profile.file_name || null;
-	const has_new_store_avatar = Boolean(current_file_name)
-		&& current_file_name !== previous_file_name;
-
-	if (has_new_store_avatar) {
-		emit('photo-file-picked', file);
-	}
-}
-
-async function removePhoto() {
-	const had_local_preview = Boolean(props.photoUrl);
-	const had_store_avatar = Boolean(user_store.state.profile?.file_name);
-
-	await deletePhoto();
-
-	const has_store_avatar = Boolean(user_store.state.profile?.file_name);
-	const removed_store_avatar = had_store_avatar && !has_store_avatar;
-	const had_only_local_preview = had_local_preview && !had_store_avatar;
-	const should_clear_local_preview = removed_store_avatar || had_only_local_preview;
-
-	if (should_clear_local_preview) {
-		emit('photo-remove');
-	}
-}
 </script>
 
 <template>
@@ -152,138 +74,22 @@ async function removePhoto() {
 				<p class="auth-profile-head-subtitle">{{ $t('auth.profile.details.subtitle') }}</p>
 			</header>
 
-			<div class="auth-profile-content" data-testid="auth-profile-details-content">
-				<div class="auth-profile-block" data-testid="auth-profile-photo-block">
-					<label class="auth-profile-label">
-						{{ $t('auth.profile.details.photoTitle') }}
-					</label>
-					<div class="auth-profile-photo-row" data-testid="auth-profile-photo-row">
-						<div class="auth-profile-avatar">
-							<img
-								v-if="displayed_photo_url"
-								:src="displayed_photo_url"
-								alt="Profile photo"
-								class="auth-profile-avatar-image"
-							>
-							<span v-else class="auth-profile-avatar-initials">{{ initials }}</span>
-						</div>
-
-						<div class="auth-profile-photo-meta">
-							<div class="auth-profile-photo-meta-text-group">
-								<p class="auth-profile-photo-meta-text">
-									{{ $t('auth.profile.details.photoHint1') }}
-								</p>
-								<p class="auth-profile-photo-meta-text">
-									{{ $t('auth.profile.details.photoHint2') }}
-								</p>
-							</div>
-							<div class="auth-profile-photo-actions">
-								<input
-									ref="file_input"
-									type="file"
-									class="auth-profile-file-input"
-									accept=".jpg,.jpeg,.png"
-									data-testid="auth-profile-photo-input"
-									@change="onPhotoPicked"
-								>
-								<UiButton
-									variant="outline"
-									tone="neutral"
-									size="md"
-									class="auth-profile-outline-btn"
-									data-testid="auth-profile-photo-upload-button"
-									@click="openFilePicker"
-								>
-									{{ $t('auth.profile.details.upload') }}
-								</UiButton>
-								<UiButton
-									v-if="has_photo"
-									variant="ghost"
-									tone="danger"
-									size="md"
-									class="auth-profile-delete-btn"
-									data-testid="auth-profile-photo-delete-button"
-									@click="removePhoto"
-								>
-									{{ $t('auth.profile.details.delete') }}
-								</UiButton>
-							</div>
-							<p
-								v-if="displayed_photo_error"
-								class="auth-profile-photo-error"
-								data-testid="auth-profile-photo-error"
-							>
-								{{ displayed_photo_error }}
-							</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="auth-profile-form-grid" data-testid="auth-profile-details-form">
-					<div
-						v-for="field in visible_dynamic_fields"
-						:key="field.id"
-						class="auth-profile-field"
-					>
-						<label class="auth-profile-field-label">
-							{{ getFieldLabel(field) }}
-							<span
-								v-if="field.is_required"
-								class="auth-profile-field-label-required"
-								aria-hidden="true"
-							>
-								*
-							</span>
-							<span
-								v-else
-								class="auth-profile-field-label-optional"
-							>
-								({{ $t('auth.register.optional') }})
-							</span>
-						</label>
-						<UiInput
-							:model-value="props.fields[field.field_key] || ''"
-							type="text"
-							size="md"
-							class="auth-profile-field-input"
-							:data-testid="`auth-profile-${field.field_key}`"
-							@update:model-value="updateField(field.field_key, $event)"
-						/>
-					</div>
-					<div class="auth-profile-field auth-profile-field-full">
-						<label class="auth-profile-field-label">
-							{{ $t('auth.profile.details.email') }}
-							<span
-								v-if="props.emailRequired"
-								class="auth-profile-field-label-required"
-								aria-hidden="true"
-							>
-								*
-							</span>
-						</label>
-						<UiInput
-							:model-value="props.email"
-							type="email"
-							size="md"
-							class="auth-profile-field-input"
-							data-testid="auth-profile-email"
-							:disabled="props.emailDisabled"
-							:required="props.emailRequired"
-							@update:model-value="updateEmail"
-						/>
-						<p v-if="props.emailDisabled" class="auth-profile-field-help">
-							{{ $t('auth.profile.details.emailDisabledHint') }}
-						</p>
-						<p
-							v-if="props.emailError"
-							class="auth-profile-field-help auth-profile-field-help-error"
-							data-testid="auth-profile-email-error"
-						>
-							{{ props.emailError }}
-						</p>
-					</div>
-				</div>
-			</div>
+			<PersonalDetails
+				mode="auth"
+				:fields="props.fields"
+				:dynamic-fields="props.dynamicFields"
+				:email="props.email"
+				:email-error="props.emailError"
+				:email-disabled="props.emailDisabled"
+				:email-required="props.emailRequired"
+				:initials="props.initials"
+				:photo-url="props.photoUrl"
+				:photo-error="props.photoError"
+				@update:field="emit('update:field', $event)"
+				@update:email="emit('update:email', $event)"
+				@photo-file-picked="emit('photo-file-picked', $event)"
+				@photo-remove="emit('photo-remove')"
+			/>
 		</div>
 
 		<div class="auth-profile-actions" data-testid="auth-profile-details-actions">

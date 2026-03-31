@@ -3,44 +3,19 @@ import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModa
 import ProfileEmailChangeModal from './ProfileEmailChangeModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
-import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
-import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
-import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
+import PersonalDetails from '~/components/profile/PersonalDetails.vue';
 
 const { t } = useI18n();
-const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
-	social
-} = useSocialAccount()
-
-const {
-	file_input,
 	is_delete_photo_modal_open,
-	error: photo_inline_error,
 
-	openFilePicker,
-	onFilePicked,
-	openDeletePhotoModal,
 	closeDeletePhotoModal,
 	deletePhoto,
 } = useProfilePhoto()
 
 const {
-	form_state: personal_form_state,
-	has_changes,
-	field_errors,
-	is_updating: name_is_submitting,
-	dynamic_profile_fields,
-
-	loadPersonalForm,
-	submitPersonalForm
-} = usePersonalForm();
-
-const {
-	email,
-
 	pending_email,
 	is_email_change_modal,
 	email_change_error,
@@ -52,7 +27,6 @@ const {
 
 	remaining,
 
-	openEmailChangeModal,
 	closeEmailChangeModal,
 	confirmEmailChange,
 
@@ -60,10 +34,6 @@ const {
 	resendOtp,
 	closeOtpModal,
 } = useChangeEmailForm()
-
-onMounted(() => {
-	loadPersonalForm()
-})
 </script>
 
 <template>
@@ -75,137 +45,7 @@ onMounted(() => {
 			</p>
 		</div>
 		<div class="account-profile-section-main">
-			<div class="account-profile-photo-group">
-				<div class="account-profile-photo-head">
-					<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
-					<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
-				</div>
-				<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-					<div :class="['account-profile-avatar', { 'account-profile-avatar--error': photo_inline_error }]">
-						<img
-							v-if="display_avatar"
-							:src="display_avatar"
-							:alt="t('account.profile.profilePhoto')"
-							class="account-profile-avatar-image"
-						>
-						<span v-else class="account-profile-avatar-text">{{ user_initial }}</span>
-					</div>
-					<div class="account-profile-photo-copy">
-						<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
-						<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
-						<div class="account-profile-photo-actions">
-							<input
-								ref="file_input"
-								type="file"
-								class="account-profile-file-input"
-								accept=".jpg,.jpeg,.png"
-								data-testid="account-profile-photo-input"
-								@change="onFilePicked"
-							>
-							<UiButton
-								variant="outline"
-								tone="neutral"
-								size="md"
-								class="account-profile-outline-button"
-								data-testid="account-profile-photo-upload-button"
-								@click="openFilePicker"
-							>
-								{{ display_avatar ? t('account.profile.uploadNewPhoto') : t('account.profile.uploadPhoto') }}
-							</UiButton>
-							<UiButton
-								v-if="display_avatar"
-								variant="ghost"
-								tone="danger"
-								size="md"
-								class="account-profile-delete-button"
-								data-testid="account-profile-photo-delete-button"
-								@click="openDeletePhotoModal"
-							>
-								{{ t('account.profile.delete') }}
-							</UiButton>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="account-profile-grid" data-testid="account-profile-form">
-				<div v-for="field in dynamic_profile_fields" :key="field.id">
-					<UiFormField
-						:error="field_errors[field.field_key]"
-						:label="field.is_required
-							? field.field_label
-							: `${field.field_label} (${t('account.profile.optional')})`"
-						:required="Boolean(field.is_required)"
-					>
-						<template v-if="!field.is_required" #label>
-							<span class="ui-form-field-label-text">
-								{{ field.field_label }}
-							</span>
-							<span class="account-profile-optional">
-								({{ t('account.profile.optional') }})
-							</span>
-						</template>
-						<template #default="{ inputId, describedBy }">
-							<UiInput
-								:id="inputId"
-								v-model="personal_form_state.fields[field.field_key]"
-								:state="field_errors[field.field_key] ? 'error' : 'default'"
-								type="text"
-								:aria-describedby="describedBy || undefined"
-								:data-testid="`account-profile-${field.field_key}`"
-							/>
-						</template>
-					</UiFormField>
-				</div>
-
-				<UiFormField
-					class="account-profile-grid-full"
-					:label="t('account.profile.emailAddress')"
-					:required="true"
-				>
-					<template #default="{ inputId, describedBy }">
-						<div class="account-profile-email-input-wrap">
-							<UiInput
-								:id="inputId"
-								:model-value="email"
-								type="email"
-								:aria-describedby="describedBy || undefined"
-								:disabled="true"
-								input-class="account-profile-email-input-field--locked"
-								data-testid="account-profile-email"
-							/>
-							<UiButton
-								type="button"
-								variant="ghost"
-								tone="neutral"
-								size="sm"
-								:no-hover="true"
-								class="account-profile-email-change-button"
-								data-testid="account-profile-email-change-button"
-								@click="openEmailChangeModal"
-							>
-								Change
-							</UiButton>
-						</div>
-						<p v-if="social" class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-social-text">{{ capitalizeFirst(social) }}</span> login.
-						</p>
-					</template>
-				</UiFormField>
-			</div>
-
-			<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
-				<UiButton
-					variant="filled"
-					tone="neutral"
-					size="md"
-					:disabled="!has_changes || name_is_submitting"
-					data-testid="account-profile-save-button"
-					@click="submitPersonalForm"
-				>
-					{{ t('account.profile.saveChanges') }}
-				</UiButton>
-			</div>
+			<PersonalDetails />
 		</div>
 	</div>
 
@@ -259,159 +99,3 @@ onMounted(() => {
 	</AuthVerificationModal>
 
 </template>
-
-<style scoped lang="scss">
-.account-profile-section {
-	.account-profile-label {
-		display: block;
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		margin-bottom: 10px;
-	}
-
-	.account-profile-photo-head {
-		display: flex;
-		justify-content: space-between;
-
-		.account-profile-label {
-			margin-bottom: 0;
-		}
-
-		.account-profile-photo-error {
-			text-align: left;
-			max-width: 100%;
-		}
-	}
-
-	.account-profile-photo-group {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		max-width: 427px;
-	}
-
-	.account-profile-photo-row {
-		display: grid;
-		grid-template-columns: 120px 1fr;
-		gap: 32px;
-		align-items: center;
-
-		.account-profile-avatar {
-			width: 120px;
-			height: 120px;
-			border-radius: 50%;
-			border: 1px solid transparent;
-			background: var(--gray-40);
-			color: var(--black-base);
-			display: grid;
-			place-items: center;
-			overflow: hidden;
-			font-size: var(--type-size-550);
-			line-height: var(--type-line-550);
-			font-weight: var(--font-weight-bold);
-
-			.account-profile-avatar-image {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-			}
-		}
-
-		.account-profile-avatar--error {
-			border-color: var(--error);
-		}
-	}
-
-	.account-profile-photo-copy {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.account-profile-muted {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-	}
-
-	.account-profile-photo-error {
-		color: var(--error);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-100);
-	}
-
-	.account-profile-file-input {
-		display: none;
-	}
-
-	.account-profile-photo-actions {
-		margin-top: 10px;
-		display: flex;
-		gap: 14px;
-		align-items: center;
-
-		.account-profile-outline-button {
-			min-height: 38px;
-		}
-
-		.account-profile-delete-button {
-			color: var(--error);
-		}
-	}
-
-	.account-profile-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-
-		.account-profile-grid-full {
-			grid-column: 1 / -1;
-		}
-
-		.account-profile-optional {
-			color: var(--text-muted);
-			font-weight: var(--font-weight-regular);
-		}
-	}
-
-	.account-profile-email-helper-text {
-		margin: 0;
-		color: var(--text-secondary);
-	}
-
-	.account-profile-social-text {
-		color: var(--azure-base);
-		font-weight: var(--font-weight-semibold);
-	}
-
-	.account-profile-email-input-wrap {
-		position: relative;
-	}
-
-	.account-profile-email-change-button {
-		position: absolute;
-		top: 50%;
-		right: 12px;
-		transform: translateY(-50%);
-		z-index: 1;
-		min-height: 32px;
-		padding: 0 8px;
-		color: var(--text-primary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		--btn-border: transparent;
-	}
-
-	:deep(.ui-input[data-disabled="true"] .ui-input-field.account-profile-email-input-field--locked) {
-		padding-right: 92px;
-		color: var(--text-primary);
-	}
-
-	.account-profile-actions-right {
-		display: flex;
-		justify-content: flex-end;
-	}
-}
-</style>

@@ -66,5 +66,10 @@ export type UpdateFieldPayload = {
 	value: string
 }
 
+export type UpdateDynamicFieldPayload = {
+	field_key: string
+	value: string | number
+}
+
 /** Concrete forms that have address lines */
 export type AddressLineForm = ShippingAddressForm | BillingAddressForm

@@ -87,6 +87,10 @@
                 "bankTransfer": {
                     "alt": "Bank transfer",
                     "label": "Bank Transfer"
+                },
+                "tossPayment": {
+                    "alt": "Toss payment",
+                    "label": "Toss Payment"
                 }
             },
             "provinceOptions": {

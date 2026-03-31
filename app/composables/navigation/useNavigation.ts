@@ -26,9 +26,9 @@ export function useNavigation() {
 		}
 	}
 
-	async function fetchAndStoreProducts(url_slug: string): Promise<boolean> {
+	async function fetchAndStoreProducts(url_slug: string, clear_cache: boolean = false): Promise<boolean> {
 		try {
-			const response = await getProductsByCategory(url_slug)
+			const response = await getProductsByCategory(url_slug, clear_cache)
 			const products = response.data
 
 			if(!products || products.length === 0) {

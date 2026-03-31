@@ -1,5 +1,5 @@
 export type CheckoutShippingMethodKey = 'standard' | 'express';
-export type CheckoutPaymentMethodKey = 'credit-card' | 'paypal' | 'bank-transfer';
+export type CheckoutPaymentMethodKey = 'credit-card' | 'paypal' | 'bank-transfer' | 'toss-payment';
 export type CheckoutProvinceKey = '' | 'california' | 'new-york' | 'texas' | 'florida';
 export type CheckoutFieldKey =
 	| 'email'

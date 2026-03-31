@@ -21,7 +21,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { sendEmailChangeOTP, verifyEmailChangeOtp } from '~/services/profile/changeEmail.service';
 import { fetchPersonalFieldDefinitions } from '~/services/profile/personalForm.service';
 import { useUsersStore } from '~/stores/users/users.store';
-import { useProfileFieldsStore } from '~/stores/profile_field';
+import { useProfileFieldsStore } from '~/stores/users/profile_field';
 import type { AccountMockUser } from '~/types/account/profile';
 import { useAuthUser } from '../useAuthUser';
 import { completeOnboarding } from '~/services/auth/auth.service';

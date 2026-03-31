@@ -563,15 +563,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	function resolveCatalogProductByApiSlug(slug: string, catalogProducts: ProductItem[]) {
 		if (!slug) return null;
 
-		const slug_with_sticker_suffix =
-			category.value === 'stickers' && !slug.endsWith('-sticker')
-				? `${slug}-sticker`
-				: slug;
-
 		return (
-			catalogProducts.find((item) => item.id === slug_with_sticker_suffix) ||
-			catalogProducts.find((item) => item.id === slug) ||
-			null
+			catalogProducts.find((item) => item.id === slug)
 		);
 	}
 
