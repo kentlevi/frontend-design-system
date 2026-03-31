@@ -1,4 +1,5 @@
 import { addressFormDefaults } from "~/factories/address";
+import { addUserAddress } from "~/services/profile/address.service";
 import { useAddressFieldStore } from "~/stores/address";
 import type { AddFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
 
@@ -41,7 +42,7 @@ export function useAddressAddForm() {
 	/** Transform store fields into form fields with empty values */
 	function populateDynamicFields(target_type: AddressType) {
 		// Check if object is empty (not array length)
-		if (Object.keys(add_form_state[target_type].dynamic_fields).length !== 0) return;
+		if (Object.keys(add_form_state[target_type].fields).length !== 0) return;
 
 		// Use reduce to create object, not map for array
 		const mappedFields = address_field_store.dynamic_address_fields.reduce((acc, field) => {
@@ -49,7 +50,7 @@ export function useAddressAddForm() {
 			return acc
 		}, {} as DynamicFieldDefinition)
 
-		add_form_state[target_type].dynamic_fields = mappedFields
+		add_form_state[target_type].fields = mappedFields
 	}
 
 	function resetAddForm(type?: AddressType) {
@@ -75,7 +76,7 @@ export function useAddressAddForm() {
 	/** Update one dynamic field value in the active form */
 	function updateActiveDynamicField(payload: UpdateDynamicFieldPayload) {
 
-		active_add_form.value.dynamic_fields[payload.field_key] = payload.value
+		active_add_form.value.fields[payload.field_key] = payload.value
 	}
 
 	/** Change the active add form type */
@@ -85,7 +86,13 @@ export function useAddressAddForm() {
 	}
 
 	async function addAddress() {
-		console.log(active_add_form.value);
+		try {
+			const response = await addUserAddress(active_add_form.value)
+
+			console.log(response);
+		} catch (_error: unknown) {
+			console.log(_error);
+		}
 	}
 
 
