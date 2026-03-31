@@ -1,3 +1,5 @@
+import type { CountryFieldOption } from "../country_field_option"
+
 /** Supported backend input types */
 export type InputType =
 	| 'text'
@@ -16,4 +18,5 @@ export interface CountryField {
 	type: 'address' | 'user_detail'
 	input_type: InputType
 	is_required: boolean
+	options?: CountryFieldOption[]
 }

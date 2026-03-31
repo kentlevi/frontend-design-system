@@ -3,6 +3,7 @@ import AddressBookSection from './AddressBookSection.vue';
 import AddressBookAddModal from './AddressBookAddModal.vue';
 import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
 import { useAddressAddForm } from '~/composables/account/addressBook/useAddressAddForm';
+import { useAddressFieldStore } from '~/stores/address';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -11,6 +12,10 @@ withDefaults(defineProps<{
 });
 
 const { t } = useI18n();
+
+/** Store */
+const address_field_store = useAddressFieldStore()
+const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 
 const {
 	shipping_address,
@@ -26,12 +31,13 @@ const {
 
 	is_add_modal_open,
 
-	addAddress,
+	// addAddress,
 	openAddModal,
-	closeAddModal,
+	// closeAddModal,
 	setAddFormType,
-	resetAddForm,
+	// resetAddForm,
 	updateActiveAddFormField,
+	updateActiveDynamicField,
 } = useAddressAddForm()
 
 const has_addresses = computed(() => {
@@ -44,6 +50,7 @@ onMounted(() => {
 	getAddresses('shipping')
 	getAddresses('billing')
 	getAddresses('drop')
+	address_field_store.getDynamicFields()
 })
 </script>
 
@@ -127,8 +134,10 @@ onMounted(() => {
 				v-model="is_add_modal_open"
 				:add-form-type="add_form_type"
 				:active-add-form="active_add_form"
+				:dynamic-fields="dynamic_fields"
 				@set-form-type="setAddFormType"
 				@update-field="updateActiveAddFormField"
+				@update-dynamic-field="updateActiveDynamicField"
 			/>
 		</AccountShellSection>
 	</section>
