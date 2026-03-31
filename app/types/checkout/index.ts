@@ -19,10 +19,19 @@ export type MemberAddress = {
 	company?: string;
 	label?: string;
 	isDefault?: boolean;
+	badgeLabel?: string;
+};
+
+export type MemberDropShippingAddress = {
+	id: string;
+	recipient: string;
+	company?: string;
+	label?: string;
+	isDefault?: boolean;
 };
 
 export type CheckoutResponse = {
-  payment_information?: {
-    redirect_url?: string
-  }
+	payment_information?: {
+		redirect_url?: string
+	}
 }

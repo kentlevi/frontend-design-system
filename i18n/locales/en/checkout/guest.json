@@ -9,7 +9,7 @@
             "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
             "payment": "Payment",
             "paymentSubnote": "Pay with your credit card:",
-            "useShippingAsBilling": "Use shipping address as billing address",
+            "useShippingAsBilling": "Use Shipping Address for Billing",
             "viewBillingAddresses": "View Billing Addresses",
             "orderSummary": "Order Summary",
             "noItemsSelected": "No items selected for checkout.",

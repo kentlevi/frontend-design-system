@@ -41,7 +41,10 @@ export interface AddressMap {
 	drop: DropAddress
 }
 
-export interface AddressFieldDefinition extends CountryField {
+export interface AddressDynamicFields extends CountryField {
 	type: 'address'
+}
+
+export interface AddressFieldDefinition extends AddressDynamicFields {
 	value: string
 }

@@ -37,7 +37,11 @@
           "placeholder": "CVV"
         }
       },
-      "useShippingAsBilling": "Use shipping address as billing address",
+      "useShippingAsBilling": "Use Shipping Address for Billing",
+      "billingTooltip": {
+        "title": "Use Shipping Address for Billing",
+        "text": "Use your selected shipping address as your billing address to save time during checkout. When both addresses are the same, this option automatically applies your shipping details to billing, so you won't need to enter the same information twice."
+      },
       "agreement": {
         "prefix": "By clicking \"Complete Checkout\", you agree with our",
         "terms": "Terms of Service",

@@ -1,5 +1,6 @@
 import { nextTick, onBeforeUnmount, ref } from 'vue';
 import lottie from 'lottie-web';
+import type {CheckoutData } from '~/types/checkout/index'
 
 type UseCheckoutCompletionOptions = {
 	redirectPath: string;
@@ -36,13 +37,15 @@ export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 		});
 	}
 
-	async function completeCheckout(canComplete: boolean) {
+	async function completeCheckout(canComplete: boolean, data :CheckoutData) {
 		if (completing_checkout.value || !canComplete) return;
 		completing_checkout.value = true;
+		const redirect_path = `${options.redirectPath}?order_id=${data.id}`
+
 		await nextTick();
 		await mountCompleteAnimation();
 		await new Promise((resolve) => setTimeout(resolve, options.delayMs ?? 1000));
-		await router.push(options.redirectPath);
+		await router.push(redirect_path);
 		destroyCompleteAnimation();
 		completing_checkout.value = false;
 	}

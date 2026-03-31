@@ -1,32 +1,24 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
-import type { AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
+import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
 
 type IconName = keyof typeof icons;
-type SelectOption = {
-	label: string;
-	value: string;
-};
 
 const { t } = useI18n();
-
-const province_options: SelectOption[] = [
-	{ label: 'Seoul', value: 'seoul' },
-	{ label: 'Busan', value: 'busan' },
-	{ label: 'Incheon', value: 'incheon' },
-	{ label: 'Gyeonggi-do', value: 'gyeonggi-do' },
-];
 
 const props = defineProps<{
 	modelValue: boolean;
 	addFormType: AddressType;
-	activeAddForm: AddressFormMap[AddressType]
+	activeAddForm: AddressFormMap[AddressType];
+	dynamicFields: AddressDynamicFields[]
 }>();
 
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'set-form-type', value: AddressType): void;
 	(e: 'update-field', payload: { field: AddressFormField; value: string }): void;
+	(e: 'update-dynamic-field', paylod: { field_key: string; value: string | number }): void;
+	(e: 'add-address'): void;
 }>();
 
 /** Check whether the form supports address lines */
@@ -104,6 +96,37 @@ const phone_number_model = createStringFieldModel(
 		: ''
 )
 
+/** Send one dynamic field change to the parent */
+function updateDynamicField(field_key: string, value: string | number) {
+	emit('update-dynamic-field', {
+		field_key,
+		value,
+	})
+}
+
+function getDynamicFieldValue(field_key: string) {
+	const value = props.activeAddForm.dynamic_fields?.[field_key]
+	const field = props.dynamicFields?.find(f => f.field_key === field_key)
+
+	// If it's a select field, return the option label
+	if (field?.options?.length) {
+		return field.options.find(opt => opt.id === value)?.value ?? ''
+	}
+
+	return value ?? ''
+}
+
+function onDynamicSelectChange(field_key: string, selected_value: string | number) {
+
+	// if options carry `id` and `value`, transform:
+	const option = props.dynamicFields
+		.find(f => f.field_key === field_key)
+		?.options?.find(opt => opt.value === selected_value)
+
+	const id = option?.id ?? selected_value
+	updateDynamicField(field_key, id)
+}
+
 const address_type_options: Array<{
 	value: AddressType;
 	label_key: string;
@@ -131,9 +154,6 @@ function closeModal() {
 	emit('update:modelValue', false);
 }
 
-function handleSave() {
-	closeModal();
-}
 </script>
 
 <template>
@@ -268,37 +288,34 @@ function handleSave() {
 								</template>
 							</UiFormField>
 
-							<!-- <div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
+							<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
 								<UiFormField
-									:label="t('account.addressBook.province')"
-									:required="true"
-									:show-required-mark="true"
-								>
-									<template #default>
-										<UiSelect
-											v-model="province"
-											:options="province_options"
-											:placeholder="t('account.addressBook.provincePlaceholder')"
-											trigger-class="account-address-book-add-modal-province-trigger"
-										/>
-									</template>
-								</UiFormField>
-
-								<UiFormField
-									:label="t('account.addressBook.city')"
-									:required="true"
-									:show-required-mark="true"
+									v-for="(dynamic_field, index) in props.dynamicFields"
+									:key="index"
+									:label="dynamic_field.field_label"
+									:required="dynamic_field.is_required"
+									:show-required-mark="dynamic_field.is_required"
 								>
 									<template #default="{ inputId, describedBy }">
+										<UiSelect
+											v-if="dynamic_field.input_type === 'select'"
+											:options="dynamic_field.options"
+											:placeholder="dynamic_field.field_label"
+											:model-value="getDynamicFieldValue(dynamic_field.field_key)"
+											@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
+										/>
+
 										<UiInput
+											v-if="dynamic_field.input_type === 'text'"
 											:id="inputId"
-											v-model="city"
 											:aria-describedby="describedBy || undefined"
-											:placeholder="t('account.addressBook.cityPlaceholder')"
+											:placeholder="dynamic_field.field_label"
+											:model-value="getDynamicFieldValue(dynamic_field.field_key)"
+											@update:model-value="updateDynamicField(dynamic_field.field_key, $event)"
 										/>
 									</template>
 								</UiFormField>
-							</div> -->
+							</div>
 
 							<div
 								class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two"
@@ -378,7 +395,7 @@ function handleSave() {
 								tone="neutral"
 								size="md"
 								class="account-address-book-add-modal-save"
-								@click="handleSave"
+								@click="emit('add-address')"
 							>
 								{{ save_label }}
 							</UiButton>

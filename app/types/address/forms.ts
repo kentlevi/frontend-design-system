@@ -1,4 +1,4 @@
-import type { AddressFieldDefinition, AddressLabel } from "./address"
+import type { AddressLabel } from "./address"
 
 /** Shared fields for all address forms */
 export interface BaseAddressForm {
@@ -9,7 +9,7 @@ export interface BaseAddressForm {
 	email: string
 	is_default: boolean
 	notes: string
-	dynamic_fields: AddressFieldDefinition[]
+	dynamic_fields: DynamicFieldDefinition
 }
 
 /** Shared fields for forms with address lines */
@@ -66,5 +66,12 @@ export type UpdateFieldPayload = {
 	value: string
 }
 
+export type UpdateDynamicFieldPayload = {
+	field_key: string
+	value: string | number
+}
+
 /** Concrete forms that have address lines */
 export type AddressLineForm = ShippingAddressForm | BillingAddressForm
+
+export type DynamicFieldDefinition = Record<string, string | number>

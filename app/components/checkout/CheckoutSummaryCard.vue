@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useCountry } from '~/composables/app/country/useCountry';
 import { useCheckoutFlow } from '~/composables/checkout/useCheckoutFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 type SummaryItem = {
@@ -43,9 +44,7 @@ const props = defineProps<{
 	itemMeta: (sizeLabel: string, qty: number) => string;
 }>();
 
-const emit = defineEmits<{
-	(e: 'submit'): void;
-}>();
+const { withCountry } = useCountry();
 
 const shipping_fee_tooltip_open = ref(false);
 const shipping_fee_tooltip_ref = ref<HTMLElement | null>(null);
@@ -72,6 +71,14 @@ function handleShippingFeeTooltipPointerDown(event: PointerEvent) {
 function handleShippingFeeTooltipEscape(event: KeyboardEvent) {
 	if (event.key !== 'Escape') return;
 	closeShippingFeeTooltip();
+}
+
+function goToCart() {
+	void navigateTo(withCountry('/cart'));
+}
+
+function goToInvoice() {
+	void navigateTo(withCountry('/checkout/invoice'));
 }
 
 const {
@@ -112,8 +119,9 @@ onBeforeUnmount(() => {
 					:no-hover="true"
 					class="checkout-summary-title-action"
 					aria-label="Edit order summary"
+					@click="goToCart"
 				>
-					<UiIcon name="regular-edit" size="24" color="var(--text-primary)" decorative />
+					<UiIcon name="regular-edit" size="24px" color="var(--text-primary)" decorative />
 				</UiButton>
 				<UiButton
 					type="button"
@@ -123,8 +131,9 @@ onBeforeUnmount(() => {
 					:no-hover="true"
 					class="checkout-summary-title-action"
 					aria-label="Print order summary"
+					@click="goToInvoice"
 				>
-					<UiIcon name="regular-print" size="24" color="var(--text-primary)" decorative />
+					<UiIcon name="regular-print" size="24px" color="var(--text-primary)" decorative />
 				</UiButton>
 			</div>
 		</div>
@@ -272,15 +281,19 @@ onBeforeUnmount(() => {
 				gap: 12px;
 
 				.checkout-summary-title-action {
-					width: 24px;
-					height: 24px;
-					padding: 0;
+					width: 32px;
+					height: 32px;
+					padding: 4px;
 					min-height: auto;
 					color: var(--text-primary);
 					display: inline-flex;
 					align-items: center;
 					justify-content: center;
 					box-shadow: none;
+					&:hover {
+						background: var(--gray-20);
+						border-radius: var(--radius-md);
+					}
 				}
 			}
 		}

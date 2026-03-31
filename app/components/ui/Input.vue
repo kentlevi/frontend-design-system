@@ -19,7 +19,7 @@ defineOptions({
 
 const props = withDefaults(
 	defineProps<{
-		modelValue?: string;
+		modelValue?: string | number;
 		type?: 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 		placeholder?: string;
 		size?: Size;
