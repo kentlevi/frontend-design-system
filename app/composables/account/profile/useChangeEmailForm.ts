@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import { useVerificationCooldown } from '~/composables/auth/verification/useVerificationCooldown'
 import { sendEmailChangeOTP, verifyEmailChangeOtp } from '~/services/profile/changeEmail.service'
 import { useLoadingOverlayStore } from '~/stores/loading_overlay'
 import { useToastStore } from '~/stores/toast'
@@ -11,6 +12,13 @@ import {
 } from '~/utils/response/response'
 
 export function useChangeEmailForm() {
+
+	/** OTP Cooldown handler */
+	const {
+		remaining,
+		applyFromResponse
+	} = useVerificationCooldown()
+
 	/** Store */
 	const user_store = useUsersStore()
 	const toast_store = useToastStore()
@@ -26,7 +34,6 @@ export function useChangeEmailForm() {
 	/** Email change modal state */
 	const pending_email = ref('')
 	const is_email_change_modal = ref(false)
-	const email_change_field_ref = ref<HTMLElement | null>(null)
 	const email_change_error = ref('')
 	const request_sent = ref(false)
 
@@ -35,19 +42,25 @@ export function useChangeEmailForm() {
 	const email_change_otp_code = ref('')
 	const email_change_otp_error = ref('')
 	const limit_reached_error = ref('')
-	const resend_cooldown = ref(0)
+
+	/**
+     * Clear limit reached error once cooldown ends
+     */
+	watch(remaining, (new_remaining) => {
+	/** Stop if there is no active limit error */
+		if (!limit_reached_error.value) return
+
+		/** Clear error once cooldown is finished */
+		if (new_remaining <= 0) {
+			limit_reached_error.value = ''
+		}
+	})
 
 	/**
 	 * Open email change modal
 	 */
 	function openEmailChangeModal() {
 		is_email_change_modal.value = true
-
-		/** Focus input after modal is rendered */
-		void nextTick(() => {
-			const input_element = email_change_field_ref.value?.querySelector('input') as HTMLInputElement | null
-			input_element?.focus()
-		})
 	}
 
 	/**
@@ -97,6 +110,9 @@ export function useChangeEmailForm() {
 			const payload = { email: next_email }
 			const response = await sendEmailChangeOTP(payload)
 
+			/** Get cooldown_remaining from api response */
+			applyFromResponse(response)
+
 			/** Success: move user to OTP step */
 			if (response.success) {
 				pending_email.value = next_email
@@ -137,7 +153,6 @@ export function useChangeEmailForm() {
 	async function verifyOtp() {
 		clearResponseState()
 		email_change_otp_error.value = ''
-		limit_reached_error.value = ''
 
 		closeOtpModal(false)
 		startVerifyOverlay()
@@ -152,7 +167,7 @@ export function useChangeEmailForm() {
 
 			if (response.success) {
 				/** Show success toast */
-				toast_store.handleApiResponse(response, 3000)
+				toast_store.handleApiResponse(response)
 
 				/** Sync user store */
 				user_store.patchUser({ email: payload.email })
@@ -195,10 +210,14 @@ export function useChangeEmailForm() {
 		limit_reached_error.value = ''
 
 		try {
-			const payload = { email: pending_email.value }
+			/** Set initial cooldown value */
+			remaining.value = 60
+
+			const payload = { email: pending_email.value, is_resend: true }
 			const response = await sendEmailChangeOTP(payload)
 
-			getResendCooldown(response)
+			/** Get cooldown_remaining from api response */
+			applyFromResponse(response)
 
 			if (response.success) {
 				request_sent.value = true
@@ -270,12 +289,6 @@ export function useChangeEmailForm() {
 		return true
 	}
 
-	/**
-	 * Read resend cooldown if present
-	 */
-	function getResendCooldown(response: ApiResponse<SendEmailChangeOtpSuccessData>) {
-		resend_cooldown.value = response.data?.cooldown_remaining ?? 0
-	}
 
 	/**
 	 * Check whether response is max resend reached
@@ -310,7 +323,6 @@ export function useChangeEmailForm() {
 		email_change_otp_code.value = ''
 		email_change_otp_error.value = ''
 		limit_reached_error.value = ''
-		resend_cooldown.value = 0
 	}
 
 	/**
@@ -366,7 +378,6 @@ export function useChangeEmailForm() {
 
 		pending_email,
 		is_email_change_modal,
-		email_change_field_ref,
 		email_change_error,
 
 		request_sent,
@@ -374,7 +385,8 @@ export function useChangeEmailForm() {
 		email_change_otp_code,
 		email_change_otp_error,
 		limit_reached_error,
-		resend_cooldown,
+
+		remaining,
 
 		openEmailChangeModal,
 		closeEmailChangeModal,

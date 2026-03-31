@@ -7,7 +7,7 @@ import type { ButtonVariant, ButtonSize, ButtonTone } from '~/data/ui/buttons';
 type IconPosition = 'left' | 'right';
 type IconName = keyof typeof icons;
 type IconSizeValue = ButtonSize | number | `${number}`;
-const buttonSizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
+const button_sizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
 
 const props = withDefaults(
 	defineProps<{
@@ -53,19 +53,23 @@ const props = withDefaults(
 	}
 );
 
-const mergedStyle = computed<Record<string, string> | undefined>(() => {
-	let numericSize: number | null = null;
+const emit = defineEmits<{
+	click: [event: MouseEvent];
+}>();
+
+const merged_style = computed<Record<string, string> | undefined>(() => {
+	let numeric_size: number | null = null;
 	if (typeof props.size === 'number') {
-		numericSize = props.size;
-	} else if (typeof props.size === 'string' && !buttonSizes.has(props.size as ButtonSize)) {
+		numeric_size = props.size;
+	} else if (typeof props.size === 'string' && !button_sizes.has(props.size as ButtonSize)) {
 		const parsed = Number(props.size);
-		if (Number.isFinite(parsed)) numericSize = parsed;
+		if (Number.isFinite(parsed)) numeric_size = parsed;
 	}
 
 	const style = {
 		...(props.style ?? {}),
-		...(numericSize && !props.height ? { height: `${numericSize}px` } : {}),
-		...(numericSize && props.iconOnly && !props.width ? { width: `${numericSize}px` } : {}),
+		...(numeric_size && !props.height ? { height: `${numeric_size}px` } : {}),
+		...(numeric_size && props.iconOnly && !props.width ? { width: `${numeric_size}px` } : {}),
 		...(props.width ? { width: props.width } : {}),
 		...(props.height ? { height: props.height } : {}),
 	};
@@ -73,10 +77,10 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
 	return Object.keys(style).length ? style : undefined;
 });
 
-const normalizedIconSize = computed<ButtonSize | number>(() => {
+const normalized_icon_size = computed<ButtonSize | number>(() => {
 	if (typeof props.iconSize === 'number') return props.iconSize;
 	if (typeof props.iconSize === 'string') {
-		if (buttonSizes.has(props.iconSize as ButtonSize)) {
+		if (button_sizes.has(props.iconSize as ButtonSize)) {
 			return props.iconSize as ButtonSize;
 		}
 		const parsed = Number(props.iconSize);
@@ -98,7 +102,8 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		:data-no-hover="noHover ? 'true' : 'false'"
 		:disabled="disabled || loading"
 		:aria-busy="loading || undefined"
-		:style="mergedStyle"
+		:style="merged_style"
+		@click="emit('click', $event)"
 	>
 		<span v-if="selected && !loading" class="ui-button-indicator" />
 
@@ -107,7 +112,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		<UiIcon
 			v-if="!loading && icon && iconPosition === 'left' && !iconOnly"
 			:name="icon"
-			:size="normalizedIconSize"
+			:size="normalized_icon_size"
 			decorative
 			class="ui-button-icon"
 		/>
@@ -115,7 +120,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		<UiIcon
 			v-if="!loading && iconOnly && icon"
 			:name="icon"
-			:size="normalizedIconSize"
+			:size="normalized_icon_size"
 			decorative
 			class="ui-button-icon"
 		/>
@@ -134,23 +139,9 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		<UiIcon
 			v-if="!loading && icon && iconPosition === 'right' && !iconOnly"
 			:name="icon"
-			:size="normalizedIconSize"
+			:size="normalized_icon_size"
 			decorative
 			class="ui-button-icon"
 		/>
 	</button>
 </template>
-
-<style scoped lang="scss">
-.ui-button-sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-</style>

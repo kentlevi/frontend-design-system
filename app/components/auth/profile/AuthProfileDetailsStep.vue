@@ -1,47 +1,141 @@
 <script setup lang="ts">
-import { useAuthProfileDetailsStep } from '~/composables/auth/profile/useAuthProfileDetailsStep';
+import { computed } from 'vue';
+import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
+import { useUsersStore } from '~/stores/users/users.store';
+import type { ProfileFieldDefinition } from '~/types/account/profile';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
+
+const { t } = useI18n();
 
 const props = withDefaults(
 	defineProps<{
-		firstName?: string;
-		lastName?: string;
+		fields?: Record<string, string>;
+		dynamicFields?: ProfileFieldDefinition[];
 		email?: string;
+		emailError?: string;
+		emailDisabled?: boolean;
+		emailRequired?: boolean;
 		initials?: string;
 		photoUrl?: string | null;
 		photoError?: string;
 		canContinue?: boolean;
+		canSkip?: boolean;
 	}>(),
 	{
-		firstName: '',
-		lastName: '',
+		fields: () => ({}),
+		dynamicFields: () => [],
 		email: '',
+		emailError: '',
+		emailDisabled: true,
+		emailRequired: false,
 		initials: '',
 		photoUrl: null,
 		photoError: '',
 		canContinue: false,
+		canSkip: true,
 	}
 );
 
 const emit = defineEmits<{
-	(event: 'update:firstName', value: string): void;
-	(event: 'update:lastName', value: string): void;
+	(event: 'update:field', payload: { key: string; value: string }): void;
+	(event: 'update:email', value: string): void;
 	(event: 'next'): void;
+	(event: 'skip'): void;
 	(event: 'photo-file-picked', file: File): void;
 	(event: 'photo-remove'): void;
 }>();
 
+const user_store = useUsersStore();
+const { display_avatar } = useProfilePhotoDisplay();
+
 const {
-	fileInput,
+	file_input,
+	error: upload_photo_error,
 	openFilePicker,
-	onFilePicked,
-	updateFirstName,
-	updateLastName,
-} = useAuthProfileDetailsStep({
-	emitUpdateFirstName: (value) => emit('update:firstName', value),
-	emitUpdateLastName: (value) => emit('update:lastName', value),
-	emitPhotoFilePicked: (file) => emit('photo-file-picked', file),
+	onFilePicked: uploadPhoto,
+	deletePhoto,
+} = useProfilePhoto();
+
+const has_photo = computed(() => Boolean(props.photoUrl || display_avatar.value));
+const displayed_photo_url = computed(() => props.photoUrl || display_avatar.value || null);
+const displayed_photo_error = computed(() => upload_photo_error.value || props.photoError);
+const visible_dynamic_fields = computed(() => props.dynamicFields.filter((field) => Boolean(field.field_key)));
+const first_name_field_aliases = new Set(['first_name', 'given_name']);
+
+const welcome_name = computed(() => {
+	for (const field of visible_dynamic_fields.value) {
+		if (!first_name_field_aliases.has(field.field_key)) continue;
+		const value = props.fields[field.field_key]?.trim();
+		if (value) return value;
+	}
+
+	for (const field of visible_dynamic_fields.value) {
+		const value = props.fields[field.field_key]?.trim();
+		if (value) return value;
+	}
+
+	return '';
 });
 
+function getFieldLabel(field: ProfileFieldDefinition) {
+	const translation_key = `account.profile.${field.field_key}`;
+	const translated_label = t(translation_key);
+	return translated_label === translation_key
+		? field.field_label
+		: translated_label;
+}
+
+function updateEmail(value: string) {
+	emit('update:email', value);
+}
+
+function updateField(field_key: string, value: string) {
+	emit('update:field', {
+		key: field_key,
+		value,
+	});
+}
+
+async function onPhotoPicked(event: Event) {
+	const input = event.target as HTMLInputElement;
+	const file = input.files?.[0];
+
+	if (!file) return;
+
+	const previous_file_name = user_store.state.profile?.file_name || null;
+	await uploadPhoto(event);
+
+	if (upload_photo_error.value) return;
+
+	if (!user_store.state.profile) {
+		emit('photo-file-picked', file);
+		return;
+	}
+
+	const current_file_name = user_store.state.profile.file_name || null;
+	const has_new_store_avatar = Boolean(current_file_name)
+		&& current_file_name !== previous_file_name;
+
+	if (has_new_store_avatar) {
+		emit('photo-file-picked', file);
+	}
+}
+
+async function removePhoto() {
+	const had_local_preview = Boolean(props.photoUrl);
+	const had_store_avatar = Boolean(user_store.state.profile?.file_name);
+
+	await deletePhoto();
+
+	const has_store_avatar = Boolean(user_store.state.profile?.file_name);
+	const removed_store_avatar = had_store_avatar && !has_store_avatar;
+	const had_only_local_preview = had_local_preview && !had_store_avatar;
+	const should_clear_local_preview = removed_store_avatar || had_only_local_preview;
+
+	if (should_clear_local_preview) {
+		emit('photo-remove');
+	}
+}
 </script>
 
 <template>
@@ -51,7 +145,7 @@ const {
 				<h1 class="auth-profile-head-title">
 					{{
 						$t('auth.profile.details.title', {
-							name: firstName || 'User',
+							name: welcome_name || 'User',
 						})
 					}}
 				</h1>
@@ -66,8 +160,8 @@ const {
 					<div class="auth-profile-photo-row" data-testid="auth-profile-photo-row">
 						<div class="auth-profile-avatar">
 							<img
-								v-if="photoUrl"
-								:src="photoUrl"
+								v-if="displayed_photo_url"
+								:src="displayed_photo_url"
 								alt="Profile photo"
 								class="auth-profile-avatar-image"
 							>
@@ -85,12 +179,12 @@ const {
 							</div>
 							<div class="auth-profile-photo-actions">
 								<input
-									ref="fileInput"
+									ref="file_input"
 									type="file"
 									class="auth-profile-file-input"
 									accept=".jpg,.jpeg,.png"
 									data-testid="auth-profile-photo-input"
-									@change="onFilePicked"
+									@change="onPhotoPicked"
 								>
 								<UiButton
 									variant="outline"
@@ -103,70 +197,89 @@ const {
 									{{ $t('auth.profile.details.upload') }}
 								</UiButton>
 								<UiButton
-									v-if="photoUrl"
+									v-if="has_photo"
 									variant="ghost"
 									tone="danger"
 									size="md"
 									class="auth-profile-delete-btn"
 									data-testid="auth-profile-photo-delete-button"
-									@click="emit('photo-remove')"
+									@click="removePhoto"
 								>
 									{{ $t('auth.profile.details.delete') }}
 								</UiButton>
 							</div>
 							<p
-								v-if="props.photoError"
+								v-if="displayed_photo_error"
 								class="auth-profile-photo-error"
 								data-testid="auth-profile-photo-error"
 							>
-								{{ props.photoError }}
+								{{ displayed_photo_error }}
 							</p>
 						</div>
 					</div>
 				</div>
 
 				<div class="auth-profile-form-grid" data-testid="auth-profile-details-form">
-					<div class="auth-profile-field">
-						<label class="auth-profile-field-label">{{
-							$t('auth.profile.details.firstName')
-						}}</label>
-						<UiInput
-							:model-value="props.firstName"
-							type="text"
-							size="md"
-							class="auth-profile-field-input"
-							data-testid="auth-profile-first-name"
-							@update:model-value="updateFirstName"
-						/>
-					</div>
-					<div class="auth-profile-field">
+					<div
+						v-for="field in visible_dynamic_fields"
+						:key="field.id"
+						class="auth-profile-field"
+					>
 						<label class="auth-profile-field-label">
-							{{ $t('auth.profile.details.lastName') }}
-							<span class="auth-profile-field-label-optional">({{ $t('auth.register.optional') }})</span>
+							{{ getFieldLabel(field) }}
+							<span
+								v-if="field.is_required"
+								class="auth-profile-field-label-required"
+								aria-hidden="true"
+							>
+								*
+							</span>
+							<span
+								v-else
+								class="auth-profile-field-label-optional"
+							>
+								({{ $t('auth.register.optional') }})
+							</span>
 						</label>
 						<UiInput
-							:model-value="props.lastName"
+							:model-value="props.fields[field.field_key] || ''"
 							type="text"
 							size="md"
 							class="auth-profile-field-input"
-							data-testid="auth-profile-last-name"
-							@update:model-value="updateLastName"
+							:data-testid="`auth-profile-${field.field_key}`"
+							@update:model-value="updateField(field.field_key, $event)"
 						/>
 					</div>
 					<div class="auth-profile-field auth-profile-field-full">
-						<label class="auth-profile-field-label">{{
-							$t('auth.profile.details.email')
-						}}</label>
+						<label class="auth-profile-field-label">
+							{{ $t('auth.profile.details.email') }}
+							<span
+								v-if="props.emailRequired"
+								class="auth-profile-field-label-required"
+								aria-hidden="true"
+							>
+								*
+							</span>
+						</label>
 						<UiInput
 							:model-value="props.email"
 							type="email"
 							size="md"
 							class="auth-profile-field-input"
 							data-testid="auth-profile-email"
-							disabled
+							:disabled="props.emailDisabled"
+							:required="props.emailRequired"
+							@update:model-value="updateEmail"
 						/>
-						<p class="auth-profile-field-help">
+						<p v-if="props.emailDisabled" class="auth-profile-field-help">
 							{{ $t('auth.profile.details.emailDisabledHint') }}
+						</p>
+						<p
+							v-if="props.emailError"
+							class="auth-profile-field-help auth-profile-field-help-error"
+							data-testid="auth-profile-email-error"
+						>
+							{{ props.emailError }}
 						</p>
 					</div>
 				</div>
@@ -175,12 +288,13 @@ const {
 
 		<div class="auth-profile-actions" data-testid="auth-profile-details-actions">
 			<UiButton
+				v-if="props.canSkip"
 				variant="ghost"
 				tone="neutral"
 				size="md"
 				class="auth-profile-link-btn"
 				data-testid="auth-profile-skip-button"
-				@click="emit('next')"
+				@click="emit('skip')"
 			>
 				{{ $t('auth.profile.details.skip') }}
 			</UiButton>
@@ -349,6 +463,11 @@ const {
                         font-weight: var(--font-weight-semibold);
                         color: var(--text-primary);
 
+                        .auth-profile-field-label-required {
+                            color: var(--error);
+                            margin-left: 2px;
+                        }
+
                         .auth-profile-field-label-optional {
                             color: var(--text-secondary);
                             font-weight: var(--font-weight-regular);
@@ -365,6 +484,11 @@ const {
                         color: var(--text-secondary);
                         font-size: var(--type-size-100);
                         line-height: var(--type-line-100);
+                    }
+
+                    .auth-profile-field-help-error {
+                        color: var(--error);
+                        font-weight: var(--font-weight-semibold);
                     }
                 }
 

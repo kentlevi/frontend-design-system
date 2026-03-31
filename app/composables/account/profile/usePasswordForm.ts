@@ -21,7 +21,9 @@ export function usePasswordForm() {
 	const new_password_confirmation_visible = ref(false)
 
 	const is_change_password_enabled = computed(() => (
-		Boolean(current_password.value.trim())
+		Boolean(current_password.value.trim()) &&
+		Boolean(new_password.value.trim()) &&
+		Boolean(new_password_confirmation.value.trim())
 	))
 
 
@@ -39,7 +41,7 @@ export function usePasswordForm() {
 			const response = await changePassword(payload)
 
 			if (response.success) {
-				toast_store.handleApiResponse(response, 3000)
+				toast_store.handleApiResponse(response)
 
 				clearPasswordState()
 			} else {

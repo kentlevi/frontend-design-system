@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { useCountry } from '~/composables/app/country/useCountry';
 import type { icons } from '~/data/ui/icons';
-import { useUsersStore } from '~/stores/users/users.store';
-import {
-	getAccountInitials,
-	getProfileFieldValue,
-	normalizeAccountName,
-} from '~/utils/account/accountProfile';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 type IconName = keyof typeof icons;
 type AccountStat = {
@@ -32,54 +27,12 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const userStore = useUsersStore();
-const mockUser = useCookie<{
-	firstName: string;
-	lastName: string;
-	email: string;
-} | null>('mock_user');
+const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
+const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
 const localAvatarDataUrl = ref<string | null>(null);
 
-const profileFieldValues = computed(
-	() => userStore.state.profile?.user_field_values ?? []
-);
-const storeFirstName = computed(
-	() => getProfileFieldValue(profileFieldValues.value, 'first_name')
-);
-const storeLastName = computed(
-	() => getProfileFieldValue(profileFieldValues.value, 'last_name')
-);
-const emailLocalPart = computed(() => {
-	const source = (userStore.state.email || mockUser.value?.email || '').trim();
-	if (!source.includes('@')) return '';
-	return source.split('@')[0] || '';
-});
-const normalizedName = computed(() =>
-	normalizeAccountName(
-		storeFirstName.value || mockUser.value?.firstName || emailLocalPart.value || 'User',
-		storeLastName.value || mockUser.value?.lastName || ''
-	)
-);
-
-const fullName = computed(() => {
-	return [normalizedName.value.firstName, normalizedName.value.lastName]
-		.filter(Boolean)
-		.join(' ')
-		.trim();
-});
-
-const userEmail = computed(() => userStore.state.email || mockUser.value?.email || '');
-const initials = computed(() => {
-	return getAccountInitials(
-		normalizedName.value.firstName || 'User',
-		normalizedName.value.lastName
-	);
-});
-const avatarDisplayUrl = computed(
-	() => localAvatarDataUrl.value
-);
 const accountStats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
@@ -159,17 +112,21 @@ const tabs = [
 			<div class="account-shell-user" data-testid="account-shell-user">
 				<div class="account-shell-avatar">
 					<img
-						v-if="avatarDisplayUrl"
-						:src="avatarDisplayUrl"
-						:alt="fullName"
+						v-if="display_avatar"
+						:src="display_avatar"
+						:alt="display_name"
 						class="account-shell-avatar-image"
 					>
-					<template v-else>{{ initials }}</template>
+					<template v-else>{{ user_initial }}</template>
+					<img
+						:src="account_level_badge_src"
+						:alt="t('account.shell.level')"
+						class="account-shell-avatar-badge"
+					>
 				</div>
 				<div class="account-shell-user-copy">
-					<p class="account-shell-name">{{ fullName }}</p>
+					<p class="account-shell-name">{{ display_name }}</p>
 					<p class="account-shell-level">{{ t('account.shell.level') }}</p>
-					<p class="account-shell-email">{{ userEmail }}</p>
 				</div>
 			</div>
 
@@ -224,7 +181,7 @@ const tabs = [
 .account-shell {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 0;
+    padding: 40px 0 104px;
 
     .account-shell-top {
         display: flex;
@@ -245,8 +202,9 @@ const tabs = [
 	}
 
     .account-shell-avatar {
-        width: 56px;
-        height: 56px;
+        position: relative;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
         background: var(--gray-40);
         color: var(--black-base);
@@ -257,23 +215,34 @@ const tabs = [
         line-height: var(--type-line-400);
 
         .account-shell-avatar-image {
-            width: 100%;
-            height: 100%;
+            width: inherit;
+            height: inherit;
             border-radius: 50%;
             object-fit: cover;
+			border: 4px solid var(--gray-40);
+        }
+
+        .account-shell-avatar-badge {
+            position: absolute;
+			bottom: 0;
+            right: -14px;
+            width: 42px;
+            height: 36px;
+            display: block;
         }
     }
 
 	.account-shell-user-copy {
+		display: grid;
+		gap: 4px;
 		.account-shell-name {
-			font-size: var(--type-size-300);
-			line-height: var(--type-line-300);
+			font-size: var(--type-size-400);
+			line-height: var(--type-line-400);
 			font-weight: var(--font-weight-bold);
 			color: var(--text-primary);
 		}
 
 		.account-shell-level {
-			margin: 4px 0 0;
 			font-size: var(--type-size-100);
 			font-weight: var(--font-weight-regular);
 			line-height: var(--type-line-100);

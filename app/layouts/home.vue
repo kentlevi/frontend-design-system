@@ -41,6 +41,7 @@ const backgroundVariant = computed(() =>
     .home-layout-main {
         flex: 1;
         width: 100%;
+        background: var(--bg-page);
     }
 
     .home-layout-compact-footer {

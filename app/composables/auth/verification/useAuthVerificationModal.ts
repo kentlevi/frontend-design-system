@@ -19,11 +19,11 @@ export function useAuthVerificationModal(params: {
 	const { codeInputs, inputRefs, setCode, getCode, handleInput, handleKeyDown, handlePaste } =
 		useVerificationCodeInput(params.otpLength.value);
 
-	const key = computed(() => params.translationBase.value);
+	const translation_key = computed(() => params.translationBase.value);
 	const computed_submit_label = computed(() =>
 		params.verifying.value
-			? params.busyLabel.value || t(`${key.value}.verifying`)
-			: params.submitLabel.value || t(`${key.value}.verify`)
+			? params.busyLabel.value || t(`${translation_key.value}.verifying`)
+			: params.submitLabel.value || t(`${translation_key.value}.verify`)
 	);
 
 	const is_resend_tap_locked = ref(false);
@@ -35,8 +35,7 @@ export function useAuthVerificationModal(params: {
 		resend_tap_lock_timer = null;
 	}
 
-	function lockResendTap(ms = 2000) {
-		console.log('ms: ', ms);
+	function lockResendTap(ms = 10000) {
 		clearResendTapLockTimer();
 		is_resend_tap_locked.value = true;
 		resend_tap_lock_timer = setTimeout(() => {
@@ -46,7 +45,7 @@ export function useAuthVerificationModal(params: {
 	}
 
 	const can_resend = computed(
-		() => params.resendCooldownRemaining.value <= 0 && !is_resend_tap_locked.value
+		() => params.resendCooldownRemaining.value <= 0 && !is_resend_tap_locked.value && !params.verifying.value
 	);
 	const modal_align = computed<'top' | 'center' | 'bottom'>(() =>
 		params.align.value === 'start' ? 'top' : params.align.value
@@ -71,10 +70,8 @@ export function useAuthVerificationModal(params: {
 	}
 
 	function onResendClick() {
-		console.log('on resend click');
-		console.log(can_resend.value);
 		if (!can_resend.value) return;
-		lockResendTap(params.resendCooldownRemaining.value);
+		lockResendTap();
 		params.emitResend();
 	}
 
@@ -112,7 +109,7 @@ export function useAuthVerificationModal(params: {
 	return {
 		codeInputs: codeInputs,
 		inputRefs: inputRefs,
-		key,
+		key: translation_key,
 		computedSubmitLabel: computed_submit_label,
 		canResend: can_resend,
 		modalAlign: modal_align,

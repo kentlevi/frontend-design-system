@@ -3,45 +3,45 @@ import type { RegisterPayload, RegisterVerificationPayload, RegisterVerification
 import type { ApiResponse } from '~/types/config/api';
 
 export function useRegisterUser() {
-    /**
+	/**
      * send verification otp
      */
-    async function sendRegisterVerificationHandler(payload: RegisterVerificationPayload): Promise<RegisterVerificationResponse> {
-        try {
-            const response = await sendRegisterVerification(payload)
+	async function sendRegisterVerificationHandler(payload: RegisterVerificationPayload): Promise<RegisterVerificationResponse> {
+		try {
+			const response = await sendRegisterVerification(payload)
 
-            return response
-        } catch {
-            return {
-                success: false,
-                message: 'send_verification_error',
-                data: null,
-                meta: null
-            } as RegisterVerificationResponse
-        }
-    }
+			return response
+		} catch {
+			return {
+				success: false,
+				message: 'send_verification_error',
+				data: null,
+				meta: null
+			} as RegisterVerificationResponse
+		}
+	}
 
-    /**
+	/**
      * submit verification otp
      */
-    async function submitRegisterVerificationHandler(payload: RegisterPayload): Promise<ApiResponse> {
-        try {
-            const response = await submitRegisterVerification(payload)
+	async function submitRegisterVerificationHandler(payload: RegisterPayload): Promise<ApiResponse> {
+		try {
+			const response = await submitRegisterVerification(payload)
 
-            return response
-        } catch (error) {
-            console.error(error)
-            return {
-                success: false,
-                message: 'submit_verification_error',
-                data: null,
-                meta: null
-            } as ApiResponse
-        }
-    }
+			return response
+		} catch (error) {
+			console.error(error)
+			return {
+				success: false,
+				message: 'submit_verification_error',
+				data: null,
+				meta: null
+			} as ApiResponse
+		}
+	}
 
-    return {
-        sendRegisterVerificationHandler,
-        submitRegisterVerificationHandler
-    }
+	return {
+		sendRegisterVerificationHandler,
+		submitRegisterVerificationHandler
+	}
 }

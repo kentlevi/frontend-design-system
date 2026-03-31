@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { toRefs } from 'vue';
 import { useCountry } from '@/composables/app/country/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
 
-defineProps<{
+const component_props = defineProps<{
 	year: number;
 }>();
+const { year } = toRefs(component_props);
 </script>
 
 <template>

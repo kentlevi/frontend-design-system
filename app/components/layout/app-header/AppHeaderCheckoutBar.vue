@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCountry } from '~/composables/app/country/useCountry';
-import { headerCheckoutConfig } from '~/data/layout/header';
+import { header_checkout_config } from '~/data/layout/header';
 
 const { withCountry } = useCountry();
 </script>
@@ -15,18 +15,18 @@ const { withCountry } = useCountry();
 				<span class="checkout-header-divider" aria-hidden="true" />
 				<p class="checkout-header-title">
 					<UiIcon name="regular-shield" :size="32" color="var(--text-primary)" />
-					{{ headerCheckoutConfig.title }}
+					{{ header_checkout_config.title }}
 				</p>
 			</div>
 
 			<div class="checkout-header-contact">
-				<a :href="`tel:${headerCheckoutConfig.phone.replace(/\\s+/g, '')}`" class="checkout-header-link">
+				<a :href="`tel:${header_checkout_config.phone.replace(/\\s+/g, '')}`" class="checkout-header-link">
 					<UiIcon name="regular-phone" :size="24" color="var(--text-primary)" />
-					{{ headerCheckoutConfig.phone }}
+					{{ header_checkout_config.phone }}
 				</a>
-				<a :href="`mailto:${headerCheckoutConfig.email}`" class="checkout-header-link">
+				<a :href="`mailto:${header_checkout_config.email}`" class="checkout-header-link">
 					<UiIcon name="regular-envelope" :size="24" color="var(--text-primary)" />
-					{{ headerCheckoutConfig.email }}
+					{{ header_checkout_config.email }}
 				</a>
 			</div>
 		</div>

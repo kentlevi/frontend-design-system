@@ -2,7 +2,7 @@ import { useNavigationStore } from '@/stores/navigation/navigation.store'
 import { getProductCategories, getProductsByCategory } from '~/services/navigation/navigation.service'
 
 export function useNavigation() {
-	const navigationStore = useNavigationStore()
+	const navigation_store = useNavigationStore()
 
 	/**
 	 * Fetch navigation categories from API and store them
@@ -13,15 +13,15 @@ export function useNavigation() {
 			const categories = response.data
 
 			if (!categories || categories.length === 0) {
-				navigationStore?.clearCategories()
+				navigation_store?.clearCategories()
 				return false
 			}
 
-			navigationStore.setCategories(categories)
+			navigation_store.setCategories(categories)
 			return true
 		} catch (err) {
 			console.error('Navigation fetch failed:', err)
-			navigationStore?.clearCategories()
+			navigation_store?.clearCategories()
 			return false
 		}
 	}
@@ -32,15 +32,15 @@ export function useNavigation() {
 			const products = response.data
 
 			if(!products || products.length === 0) {
-				navigationStore?.clearProducts()
+				navigation_store?.clearProducts()
 				return false
 			}
 
-			navigationStore.setProducts(products)
+			navigation_store.setProducts(products)
 			return true
 		} catch (error) {
 			console.error('Products fetch failed:', error)
-			navigationStore?.clearProducts()
+			navigation_store?.clearProducts()
 			return false
 		}
 	}

@@ -1,15 +1,23 @@
-{
+﻿{
     "account": {
         "points": {
             "title": "포인트",
             "tierName": "범퍼 보스",
             "lastTierUpgrade": "최근 등급 갱신일",
             "pointsUnit": "포인트",
-            "logs": {
-                "earned": "포인트 적립 (주문 #12405077220)",
-                "used": "포인트 사용 (주문 #12405077220)",
-                "quest": "스티커 퀘스트 (스티커 탐험가)"
-            }
+            "pointsSystemTitle": "포인트 시스템",
+            "pointsSystemDescription": "로열티 프로그램에서 포인트를 수집하고 사용하여 다양한 혜택과 특별한 리워드를 해제하세요. 적립된 포인트는 향후 구매 시 결제에 사용할 수 있습니다.",
+            "questTitle": "위대한 스티커 퀘스트",
+            "questDescription": "쇼핑을 더 보람 있는 여정으로 만드는 로열티 프로그램입니다. 주문과 활동마다 포인트를 적립하고 챌린지를 해제하세요!",
+            "historyTitle": "포인트 히스토리",
+            "historyDescription": "로열티 프로그램을 통해 적립하거나 사용한 포인트 내역을 자세히 확인하세요.",
+            "challengesTitle": "챌린지",
+            "viewAll": "전체 보기",
+            "filter": "필터",
+            "logsTitle": "로그",
+            "expiry": "만료",
+            "nextTierRequirementPrefix": "다음 레벨 해제를 위해 최소",
+            "nextTierRequirementSuffix": "의 완료된 주문 결제금액이 필요합니다."
         }
     }
 }

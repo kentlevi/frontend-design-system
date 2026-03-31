@@ -6,6 +6,7 @@ defineOptions({
 withDefaults(
 	defineProps<{
 		visible?: boolean;
+		title?: string | null;
 		message?: string | null;
 		tone?: 'primary' | 'success' | 'warning' | 'error' | 'info';
 		dismissible?: boolean;
@@ -13,6 +14,7 @@ withDefaults(
 	}>(),
 	{
 		visible: false,
+		title: '',
 		message: '',
 		tone: 'primary',
 		dismissible: true,
@@ -30,7 +32,7 @@ const iconByTone = {
 	primary: 'strong-check-circle',
 	success: 'strong-check-circle',
 	warning: 'strong-exclamation-triangle',
-	error: 'strong-exclamation-circle',
+	error: 'strong-times-circle',
 	info: 'strong-info-circle',
 } as const;
 </script>
@@ -51,7 +53,15 @@ const iconByTone = {
 				<div class="ui-toast-main">
 					<UiIcon :name="iconByTone[tone]" :size="24" />
 					<span class="ui-toast-text">
-						<slot>{{ message }}</slot>
+						<slot>
+							<template v-if="title">
+								<strong>{{ title }}</strong>
+								<span v-if="message"> - {{ message }}</span>
+							</template>
+							<template v-else>
+								{{ message }}
+							</template>
+						</slot>
 					</span>
 				</div>
 				<UiButton
@@ -61,6 +71,7 @@ const iconByTone = {
 					tone="neutral"
 					size="24"
 					:no-hover="true"
+					:style="tone === 'error' ? { '--btn-bg': 'var(--white-base)' } : undefined"
 					class="ui-toast-close"
 					aria-label="Close"
 					data-testid="ui-toast-close-button"
@@ -72,99 +83,3 @@ const iconByTone = {
 		</Transition>
 	</Teleport>
 </template>
-
-<style lang="scss">
-.ui-toast {
-    position: fixed;
-    left: 50%;
-    bottom: 32px;
-    transform: translateX(-50%);
-    z-index: 1100;
-    width: fit-content;
-    max-width: calc(100vw - 24px);
-    padding: 10px 14px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    box-shadow: var(--shadow-md);
-
-    &[data-tone='primary'] {
-        background: var(--brand-primary);
-        color: var(--text-primary);
-        border: 1px solid color-mix(in srgb, var(--brand-primary) 72%, #111827 28%);
-    }
-
-    &[data-tone='success'] {
-        background: var(--success-bg);
-        color: var(--success-90);
-        border: 1px solid color-mix(in srgb, var(--success) 40%, var(--success-bg));
-    }
-
-    &[data-tone='warning'] {
-        background: #ffedd5;
-        color: #7c2d12;
-        border: 1px solid #fdba74;
-    }
-
-    &[data-tone='error'] {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fca5a5;
-    }
-
-    &[data-tone='info'] {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border: 1px solid #93c5fd;
-    }
-
-    &[data-variant='outlined'] {
-        border: 2px solid var(--white-base);
-    }
-
-    .ui-toast-main {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        min-width: 0;
-    }
-
-    .ui-toast-text {
-        flex: 0 1 auto;
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
-        font-weight: var(--font-weight-semibold);
-    }
-
-    .ui-toast-close {
-        color: inherit;
-        display: grid;
-        place-items: center;
-        min-height: auto;
-        padding: 0;
-        box-shadow: none;
-    }
-}
-
-.ui-toast-enter-active {
-    transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ui-toast-leave-active {
-    transition: opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1), transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.ui-toast-enter-from,
-.ui-toast-leave-to {
-    opacity: 0;
-    transform: translate(-50%, 18px) scale(0.96);
-}
-
-@media (max-width: 860px) {
-    .ui-toast {
-        width: calc(100vw - 24px);
-        bottom: 32px;
-    }
-}
-</style>

@@ -3,19 +3,16 @@ const props = withDefaults(
 	defineProps<{
 		promotions?: boolean;
 		reviews?: boolean;
-		confirmations?: boolean;
 	}>(),
 	{
 		promotions: true,
 		reviews: true,
-		confirmations: true,
 	}
 );
 
 const emit = defineEmits<{
 	(event: 'update:promotions', value: boolean): void;
 	(event: 'update:reviews', value: boolean): void;
-	(event: 'update:confirmations', value: boolean): void;
 	(event: 'back'): void;
 	(event: 'complete'): void;
 }>();
@@ -36,7 +33,7 @@ const emit = defineEmits<{
 			<div class="auth-profile-settings-content" data-testid="auth-profile-settings-content">
 				<div class="auth-profile-setting-list" data-testid="auth-profile-settings-list">
 					<div class="auth-profile-setting-row" data-testid="auth-profile-setting-promotions">
-						<div>
+						<div class="auth-profile-setting-copy">
 							<p class="auth-profile-setting-title">
 								{{ $t('auth.profile.settings.promotions') }}
 							</p>
@@ -57,7 +54,7 @@ const emit = defineEmits<{
 					</div>
 
 					<div class="auth-profile-setting-row" data-testid="auth-profile-setting-reviews">
-						<div>
+						<div class="auth-profile-setting-copy">
 							<p class="auth-profile-setting-title">
 								{{ $t('auth.profile.settings.reviews') }}
 							</p>
@@ -77,26 +74,6 @@ const emit = defineEmits<{
 						</label>
 					</div>
 
-					<div class="auth-profile-setting-row" data-testid="auth-profile-setting-confirmations">
-						<div>
-							<p class="auth-profile-setting-title">
-								{{ $t('auth.profile.settings.confirmations') }}
-							</p>
-							<p class="auth-profile-setting-text">
-								{{ $t('auth.profile.settings.confirmationsDesc') }}
-							</p>
-						</div>
-						<label class="auth-profile-switch">
-							<input
-								class="auth-profile-switch-input"
-								:checked="props.confirmations"
-								type="checkbox"
-								data-testid="auth-profile-toggle-confirmations"
-								@change="emit('update:confirmations', ($event.target as HTMLInputElement).checked)"
-							>
-							<span class="auth-profile-switch-track" />
-						</label>
-					</div>
 				</div>
 
 			</div>
@@ -181,11 +158,17 @@ const emit = defineEmits<{
                 gap: 20px;
 
                 .auth-profile-setting-title {
-
+                    margin: 0;
                     font-size: var(--type-size-100);
                     line-height: var(--type-line-100);
-                    font-weight: var(--font-weight-bold);
+                    font-weight: var(--font-weight-semibold);
                     color: var(--text-primary);
+                }
+
+                .auth-profile-setting-copy {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
                 }
 
                 .auth-profile-setting-text {

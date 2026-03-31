@@ -13,16 +13,16 @@ const props = defineProps<{
 const {
 	t,
 	tm,
-	documentBaseKey,
-	titlePrefix,
-	titleSuffix,
-	hasSplitTitle,
+	document_base_key,
+	title_prefix,
+	title_suffix,
+	has_split_title,
 	resolveMessage,
 	sections,
 	topics,
-	activeTopicId,
-	sidebarNavElement,
-	activeIndicatorStyle,
+	active_topic_id,
+	sidebar_nav_element,
+	active_indicator_style,
 	handleTopicClick,
 } = useLegalDocumentPage(props.documentKey);
 
@@ -58,22 +58,22 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 				<div class="legal-hero-copy">
 					<div class="legal-heading-group">
 						<h1 class="legal-title">
-							<template v-if="hasSplitTitle">
-								<span class="legal-title-primary">{{ titlePrefix }}</span>
-								<span class="legal-title-secondary">{{ titleSuffix }}</span>
+							<template v-if="has_split_title">
+								<span class="legal-title-primary">{{ title_prefix }}</span>
+								<span class="legal-title-secondary">{{ title_suffix }}</span>
 							</template>
 							<template v-else>
-								{{ t(`${documentBaseKey}.title`) }}
+								{{ t(`${document_base_key}.title`) }}
 							</template>
 						</h1>
 						<p class="legal-updated">
-							{{ t(`${documentBaseKey}.lastUpdatedLabel`) }}
-							<span class="legal-updated-date">{{ t(`${documentBaseKey}.lastUpdatedDate`) }}</span>
+							{{ t(`${document_base_key}.lastUpdatedLabel`) }}
+							<span class="legal-updated-date">{{ t(`${document_base_key}.lastUpdatedDate`) }}</span>
 						</p>
 					</div>
 					<div class="legal-introduction">
 						<p
-							v-for="(paragraph, index) in toMessageArray(tm(`${documentBaseKey}.introduction`))"
+							v-for="(paragraph, index) in toMessageArray(tm(`${document_base_key}.introduction`))"
 							:key="`${documentKey}-intro-${index}`"
 							class="legal-introduction-copy"
 						>
@@ -94,15 +94,15 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 			<div class="legal-content-shell">
 				<aside class="legal-sidebar" :data-testid="`${documentKey}-sidebar`">
 					<div class="legal-sidebar-card">
-						<p class="legal-sidebar-title">{{ t(`${documentBaseKey}.topicsLabel`) }}</p>
+						<p class="legal-sidebar-title">{{ t(`${document_base_key}.topicsLabel`) }}</p>
 						<nav
-							ref="sidebarNavElement"
+							ref="sidebar_nav_element"
 							class="legal-sidebar-nav"
-							:aria-label="t(`${documentBaseKey}.topicsLabel`)"
+							:aria-label="t(`${document_base_key}.topicsLabel`)"
 						>
 							<span
 								class="legal-sidebar-indicator"
-								:style="activeIndicatorStyle"
+								:style="active_indicator_style"
 								aria-hidden="true"
 							/>
 							<a
@@ -110,7 +110,7 @@ function hasRenderableBulletLabel(sectionId: string, value: string) {
 								:key="topic.id"
 								:href="`#${topic.id}`"
 								class="legal-sidebar-link"
-								:class="{ 'is-active': activeTopicId === topic.id }"
+								:class="{ 'is-active': active_topic_id === topic.id }"
 								@click="handleTopicClick($event, topic.id)"
 							>
 								{{ topic.title }}

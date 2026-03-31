@@ -6,13 +6,13 @@ export const useApi = () => {
 		credentials: 'include',
 		onRequest({ options }) {
 			const headers = new Headers(options.headers || {})
-			const deviceUuid = useCookie('device_uuid').value
-			const requestFrom = 'client-panel'
+			const device_uuid = useCookie('device_uuid').value
+			const request_from = 'client-panel'
 
-			headers.set('request-from', requestFrom)
+			headers.set('request-from', request_from)
 
-			if (deviceUuid) {
-				headers.set('x-device-uuid', deviceUuid)
+			if (device_uuid) {
+				headers.set('x-device-uuid', device_uuid)
 			}
 
 			if (import.meta.server) {

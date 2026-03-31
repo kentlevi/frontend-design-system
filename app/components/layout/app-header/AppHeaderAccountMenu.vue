@@ -3,9 +3,12 @@ import { toRef } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
 import type { icons } from '~/data/ui/icons';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
+const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
+const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
 type IconName = keyof typeof icons;
 
 type AccountLink = {
@@ -15,12 +18,10 @@ type AccountLink = {
 };
 
 const props = defineProps<{
+	simple?: boolean;
 	accountOpen: boolean;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
-	userInitial: string;
-	userAvatarUrl?: string | null;
-	displayName: string;
 	displayEmail: string;
 	accountTransitionName: string;
 	accountLinks: AccountLink[];
@@ -37,13 +38,13 @@ const emit = defineEmits<{
 const {
 	bindWrapRef,
 	handleAccountLinkClick,
-	primaryAccountLinks,
-	gettingStartedLink,
-	guestOrderLink,
-	guestOrderTarget,
+	primary_account_links,
+	getting_started_link,
+	guest_order_link,
+	guest_order_target,
 	setAccountToggleRef,
 	setAccountDropdownRef,
-	guestLoginTarget,
+	guest_login_target,
 } = useAppHeaderAccountMenu({
 	accountOpen: toRef(props, 'accountOpen'),
 	isMockLoggedIn: toRef(props, 'isMockLoggedIn'),
@@ -81,12 +82,12 @@ const {
 		>
 			<span v-if="isMockLoggedIn && !isGuestLoggedIn" class="home-header-avatar">
 				<img
-					v-if="props.userAvatarUrl"
-					:src="props.userAvatarUrl"
-					:alt="displayName"
+					v-if="display_avatar"
+					:src="display_avatar"
+					:alt="display_name"
 					class="home-header-avatar-image"
 				>
-				<template v-else>{{ userInitial }}</template>
+				<template v-else>{{ user_initial }}</template>
 			</span>
 			<span v-else-if="isGuestLoggedIn" class="home-header-avatar home-header-avatar--guest">
 				<UiIcon name="strong-user" :size="16" color="var(--text-primary)" />
@@ -118,26 +119,34 @@ const {
 				<div class="home-account-summary" data-testid="app-header-account-summary">
 					<span class="home-account-summary-avatar">
 						<img
-							v-if="props.userAvatarUrl"
-							:src="props.userAvatarUrl"
-							:alt="displayName"
+							v-if="display_avatar"
+							:src="display_avatar"
+							:alt="display_name"
 							class="home-account-summary-avatar-image"
 						>
-						<template v-else>{{ userInitial }}</template>
+						<template v-else>{{ user_initial }}</template>
 					</span>
-					<div>
+					<div class="home-account-summary-copy">
 						<p class="home-account-summary-name">
-							{{ displayName }}
+							{{ display_name }}
 						</p>
 						<p class="home-account-summary-email">
 							{{ displayEmail }}
 						</p>
 					</div>
+					<img
+						:src="account_level_badge_src"
+						:alt="t('account.shell.level')"
+						class="home-account-summary-badge"
+					>
 				</div>
 
-				<div class="home-account-link-group home-account-link-group--primary">
+				<div
+					v-if="!props.simple"
+					class="home-account-link-group home-account-link-group--primary"
+				>
 					<NuxtLink
-						v-for="link in primaryAccountLinks"
+						v-for="link in primary_account_links"
 						:key="link.to"
 						:to="withCountry(link.to)"
 						class="home-account-link"
@@ -157,20 +166,20 @@ const {
 
 				<div class="home-account-link-group home-account-link-group--secondary">
 					<NuxtLink
-						v-if="gettingStartedLink"
-						:to="withCountry(gettingStartedLink.to)"
+						v-if="!props.simple && getting_started_link"
+						:to="withCountry(getting_started_link.to)"
 						class="home-account-link home-account-link--section-start"
 						role="menuitem"
-						:data-testid="`app-header-account-link-${gettingStartedLink.to.replace('/', '').replace('/', '-') || 'root'}`"
-						@click="handleAccountLinkClick($event, gettingStartedLink.to)"
+						:data-testid="`app-header-account-link-${getting_started_link.to.replace('/', '').replace('/', '-') || 'root'}`"
+						@click="handleAccountLinkClick($event, getting_started_link.to)"
 					>
 						<UiIcon
-							:name="gettingStartedLink.icon"
+							:name="getting_started_link.icon"
 							:size="24"
 							color="var(--text-primary)"
 							class="home-account-link-icon"
 						/>
-						<span class="home-account-link-label">{{ gettingStartedLink.label }}</span>
+						<span class="home-account-link-label">{{ getting_started_link.label }}</span>
 					</NuxtLink>
 
 					<UiButton
@@ -205,27 +214,30 @@ const {
 					<span class="home-account-summary-avatar">
 						<UiIcon name="strong-user" :size="18" color="var(--text-primary)" />
 					</span>
-					<div>
+					<div class="home-account-summary-copy">
 						<p class="home-account-summary-email">{{ displayEmail }}</p>
 					</div>
 				</div>
 
-				<div class="home-account-link-group home-account-link-group--primary">
+				<div
+					v-if="!props.simple"
+					class="home-account-link-group home-account-link-group--primary"
+				>
 					<NuxtLink
-						v-if="guestOrderLink"
-						:to="guestOrderTarget"
+						v-if="guest_order_link"
+						:to="guest_order_target"
 						class="home-account-link"
 						role="menuitem"
 						data-testid="app-header-account-link-account-orders"
 						@click="emit('close')"
 					>
 						<UiIcon
-							:name="guestOrderLink.icon"
+							:name="guest_order_link.icon"
 							:size="22"
 							color="var(--text-primary)"
 							class="home-account-link-icon"
 						/>
-						<span class="home-account-link-label">{{ guestOrderLink.label }}</span>
+						<span class="home-account-link-label">{{ guest_order_link.label }}</span>
 					</NuxtLink>
 				</div>
 
@@ -259,7 +271,7 @@ const {
 				data-testid="app-header-account-dropdown-guest"
 			>
 				<NuxtLink
-					:to="guestLoginTarget"
+					:to="guest_login_target"
 					class="home-account-link home-account-link--guest"
 					role="menuitem"
 					data-testid="app-header-account-login"
@@ -347,6 +359,9 @@ const {
         &.is-open {
             --btn-soft: var(--gold-10);
             background: var(--gold-10);
+			:deep(.ui-button-label){
+				z-index: 1;
+			}
         }
 
         &.is-open::after {
@@ -363,8 +378,8 @@ const {
         }
 
         .home-header-avatar {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--gray-40);
             color: var(--black-base);
@@ -375,10 +390,11 @@ const {
             place-items: center;
 
             .home-header-avatar-image {
-                width: 100%;
-                height: 100%;
+                width: inherit;
+                height: inherit;
                 border-radius: 50%;
                 object-fit: cover;
+				border: 1px solid var(--gray-40);
             }
         }
 
@@ -400,7 +416,7 @@ const {
         outline: none;
 
         &.home-account-dropdown--member {
-            width: 320px;
+            width: 328px;
             right: auto;
             left: 50%;
             transform: translateX(-50%);
@@ -415,15 +431,16 @@ const {
         }
 
         .home-account-summary {
-            display: flex;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
             align-items: center;
-            gap: 10px;
-            padding: 12px;
+            gap: 12px;
+            padding: 20px;
             border-bottom: 1px solid var(--border-default);
 
             .home-account-summary-avatar {
-                width: 36px;
-                height: 36px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 background: var(--gray-40);
                 color: var(--black-base);
@@ -432,26 +449,44 @@ const {
                 font-weight: var(--font-weight-bold);
 
                 .home-account-summary-avatar-image {
-                    width: 100%;
-                    height: 100%;
+                    width: inherit;
+                    height: inherit;
                     border-radius: 50%;
                     object-fit: cover;
+					border: 1px solid var(--gray-40);
                 }
             }
 
-            .home-account-summary-name {
+            .home-account-summary-copy {
+                min-width: 0;
+                display: grid;
+                gap: 2px;
+            }
 
-                font-size: var(--type-size-200);
-                font-weight: var(--font-weight-bold);
-                line-height: var(--type-line-200);
+            .home-account-summary-name {
+                font-size: var(--type-size-100);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--type-line-100);
                 color: var(--text-primary);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .home-account-summary-email {
-                margin: 2px 0 0;
                 font-size: var(--type-size-100);
                 color: var(--text-secondary);
                 line-height: var(--type-line-100);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .home-account-summary-badge {
+                width: 48px;
+                height: 48px;
+                display: block;
+                flex-shrink: 0;
             }
         }
         .home-account-link-group {

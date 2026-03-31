@@ -28,6 +28,8 @@ export interface UserIdentity {
 	code: string
 	email: string
 	country_id: number
+	social: 'google' | 'facebook' | null,
+	has_password: boolean,
 }
 
 /**
@@ -37,12 +39,13 @@ export interface UserFieldValue {
 	id: number
 	user_profile_id: number
 	country_field_id: number
-	country_field_ids?: number | null
-	country_fields_id?: number | null
-	country_field?: {
-		field_key?: string | null
-	} | null
 	value?: string
+	sort_order: number
+}
+
+export interface FilePathValue {
+	code: string
+	file_path: string
 }
 
 /**
@@ -52,6 +55,7 @@ export interface UserProfile {
 	id: number
 	user_id: number
 	file_path_id: number
+	file_path: FilePathValue
 	file_name: string | null
 	user_field_values: UserFieldValue[]
 }

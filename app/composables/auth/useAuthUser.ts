@@ -1,8 +1,8 @@
 import { useUsersStore } from '~/stores/users/users.store';
-import { getCurrentAuthenticatedUser } from '~/services/auth/auth.service'
+import { getCurrentAuthenticatedUser, logout } from '~/services/auth/auth.service'
 
 export function useAuthUser() {
-	const userStore = useUsersStore()
+	const user_store = useUsersStore()
 
 	/**
      * Fetch authenticated user and store it
@@ -15,23 +15,46 @@ export function useAuthUser() {
 			const profile = response.data?.profile ?? null
 
 			if (!user) {
-				userStore.clearUser()
+				user_store.clearUser()
 				return false
 			}
 
-			userStore.setUser({
+			user_store.setUser({
 				...user,
 				profile
 			})
 
 			return true
 		} catch {
-			userStore.clearUser()
+			user_store.clearUser()
+			return false
+		}
+	}
+
+	/**
+	 * Logout user
+	 */
+	async function logoutUser(): Promise<boolean> {
+		try {
+			const response = await logout()
+
+			if (!response.success) {
+				return false
+			}
+
+			user_store.clearUser()
+
+			await navigateTo('/')
+
+			return true
+		} catch (error) {
+			console.error(error)
 			return false
 		}
 	}
 
 	return {
-		fetchAndStoreUser
+		fetchAndStoreUser,
+		logoutUser
 	}
 }

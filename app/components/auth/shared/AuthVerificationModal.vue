@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { toRef } from 'vue';
+import { computed, toRef } from 'vue';
 import { useAuthVerificationModal } from '~/composables/auth/verification/useAuthVerificationModal';
 import { authVerificationConfig, type AuthVerificationI18nBase } from '~/data/auth/verification';
 
@@ -55,12 +55,12 @@ const emit = defineEmits<{
 }>();
 
 const {
-	codeInputs,
-	inputRefs,
-	key,
-	computedSubmitLabel,
-	canResend,
-	modalAlign,
+	codeInputs: code_inputs,
+	inputRefs: input_refs,
+	key: translation_key,
+	computedSubmitLabel: computed_submit_label,
+	canResend: can_resend,
+	modalAlign: modal_align,
 	closeModal: baseCloseModal,
 	onInput,
 	onPaste,
@@ -86,16 +86,16 @@ const {
  */
 function runCloseSideEffects() {
 	/** Example cleanup */
-	emit('update:code', '')
-	emit('close')
+	emit('update:code', '');
+	emit('close');
 }
 
 /**
  * Wrapped close modal
  */
 function closeModal() {
-	runCloseSideEffects()
-	baseCloseModal()
+	runCloseSideEffects();
+	baseCloseModal();
 }
 
 /**
@@ -106,12 +106,27 @@ function closeModal() {
  */
 function handleModalModelValueUpdate(value: boolean) {
 	if (!value) {
-		closeModal()
-		return
+		closeModal();
+		return;
 	}
 
-	emit('update:modelValue', value)
+	emit('update:modelValue', value);
 }
+
+const formatted_error_parts = computed(() => {
+	if (!props.error) return [];
+
+	return props.error
+		.split(/(<b>.*?<\/b>)/g)
+		.filter(Boolean)
+		.map(part => {
+			const match = part.match(/^<b>(.*?)<\/b>$/);
+			return {
+				text: match ? match[1] : part,
+				is_bold: Boolean(match),
+			};
+		});
+});
 </script>
 
 <template>
@@ -119,14 +134,14 @@ function handleModalModelValueUpdate(value: boolean) {
 		:model-value="modelValue"
 		:close-on-backdrop="false"
 		:width="width"
-		:align="modalAlign"
+		:align="modal_align"
 		:modal-class="modalClass"
 		@update:model-value="handleModalModelValueUpdate"
 	>
 		<div class="auth-verification-modal">
 			<UiLoadingOverlay
 				:visible="verifying"
-				:label="computedSubmitLabel"
+				:label="computed_submit_label"
 				test-id="auth-verification-loading-overlay"
 				position="absolute"
 				background="rgba(246, 246, 248, 0.72)"
@@ -142,8 +157,8 @@ function handleModalModelValueUpdate(value: boolean) {
 				size="24"
 				:no-hover="true"
 				class="auth-verification-close"
-				:aria-label="t(`${key}.closeModal`)"
-				:sr-label="t(`${key}.closeModal`)"
+				:aria-label="t(`${translation_key}.closeModal`)"
+				:sr-label="t(`${translation_key}.closeModal`)"
 				icon-only
 				icon="regular-times"
 				:icon-size="24"
@@ -152,30 +167,33 @@ function handleModalModelValueUpdate(value: boolean) {
 
 			<div class="auth-verification-head">
 				<slot name="icon">
-					<UiIcon name="strong-shield" :size="46" color="var(--brand-primary)" />
+					<img
+						src="/illustrations/icon-verification.svg"
+						:alt="t(`${translation_key}.iconAlt`)"
+						class="auth-verification-icon"
+					>
 				</slot>
 				<div class="auth-verification-copy">
 					<h3 class="auth-verification-title">
-						{{ t(`${key}.title`) }}
+						{{ t(`${translation_key}.title`) }}
 					</h3>
 					<p class="auth-verification-text">
-						{{ t(`${key}.messagePrefix`) }}
-						<strong class="auth-verification-email">{{ email }}</strong>
-						{{ t(`${key}.messageSuffix`) }}
+						{{ t(`${translation_key}.messagePrefix`) }}
+						<strong class="auth-verification-email">{{ email }}</strong>{{ t(`${translation_key}.messageSuffix`) }}
 					</p>
 				</div>
 			</div>
 
 			<div class="auth-verification-code-group">
 				<label class="auth-verification-label" :for="`${testIdPrefix}-code-0`">
-					{{ t(`${key}.enterCode`) }}
+					{{ t(`${translation_key}.enterCode`) }}
 				</label>
 				<div class="auth-verification-grid">
 					<input
-						v-for="(value, index) in codeInputs"
+						v-for="(value, index) in code_inputs"
 						:id="`${testIdPrefix}-code-${index}`"
 						:key="`${testIdPrefix}-code-${index}`"
-						:ref="el => { if (el) inputRefs[index] = el as HTMLInputElement }"
+						:ref="el => { if (el) input_refs[index] = el as HTMLInputElement }"
 						:class="['auth-verification-input', { 'auth-verification-input--error': !!error }]"
 						type="text"
 						inputmode="numeric"
@@ -193,8 +211,11 @@ function handleModalModelValueUpdate(value: boolean) {
 					v-if="error"
 					class="auth-verification-error"
 					data-testid="auth-verification-error"
-					v-html="error"
 				>
+					<template v-for="(part, index) in formatted_error_parts" :key="`${part.text}-${index}`">
+						<strong v-if="part.is_bold">{{ part.text }}</strong>
+						<template v-else>{{ part.text }}</template>
+					</template>
 				</p>
 			</div>
 
@@ -207,11 +228,11 @@ function handleModalModelValueUpdate(value: boolean) {
 					:data-testid="`${testIdPrefix}-submit`"
 					@click="emit('verify')"
 				>
-					{{ computedSubmitLabel }}
+					{{ computed_submit_label }}
 				</UiButton>
 
 				<p v-if="!resendLimitReached" class="auth-verification-resend">
-					{{ t(`${key}.resendPrefix`) }}
+					{{ t(`${translation_key}.resendPrefix`) }}
 					<UiButton
 						variant="ghost"
 						tone="neutral"
@@ -220,15 +241,14 @@ function handleModalModelValueUpdate(value: boolean) {
 						class="auth-verification-resend-btn"
 						label-class="auth-verification-resend-btn-label"
 						:data-testid="`${testIdPrefix}-resend`"
-						:disabled="!canResend"
+						:disabled="!can_resend"
 						@click="onResendClick"
 					>
-						{{ t(`${key}.resendCta`) }}
-					</UiButton>
-					{{ t(`${key}.resendSuffix`) }}
+						{{ t(`${translation_key}.resendCta`) }}
+					</UiButton>{{ t(`${translation_key}.resendSuffix`) }}
 				</p>
 				<p v-else class="auth-verification-resend">
-					{{ t(`${key}.resendLimitReachedPrefix`) }} <b>{{ t(`${key}.resendLimitReachedMiddle`) }}</b>{{ t(`${key}.resendLimitReachedSuffix`) }}
+					{{ t(`${translation_key}.resendLimitReachedPrefix`) }} <b>{{ t(`${translation_key}.resendLimitReachedMiddle`) }}</b>{{ t(`${translation_key}.resendLimitReachedSuffix`) }}
 				</p>
 			</div>
 		</div>
@@ -266,11 +286,11 @@ function handleModalModelValueUpdate(value: boolean) {
         align-items: start;
         gap: 16px;
 
-        :deep(img),
-        :deep(svg) {
+        .auth-verification-icon {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
             display: block;
-            width: 48px;
-            height: 48px;
         }
 
         .auth-verification-copy {
@@ -387,7 +407,8 @@ function handleModalModelValueUpdate(value: boolean) {
                 &:disabled {
                     color: var(--text-muted);
                 }
-                .auth-verification-resend-btn-label {
+
+                :deep(.auth-verification-resend-btn-label) {
                     padding: 0;
                     text-decoration: underline;
                     font-size: inherit;
@@ -395,14 +416,25 @@ function handleModalModelValueUpdate(value: boolean) {
                     font-weight: var(--font-weight-bold);
                 }
 
-                &[disabled] {
-                    .auth-verification-resend-btn-label {
+                &:disabled {
+                    :deep(.auth-verification-resend-btn-label) {
                         text-decoration: none;
                     }
                 }
             }
         }
 
+    }
+}
+
+@media (max-width: 900px) {
+    .auth-verification-modal {
+        .auth-verification-head {
+            .auth-verification-icon {
+                width: 46px;
+                height: 46px;
+            }
+        }
     }
 }
 

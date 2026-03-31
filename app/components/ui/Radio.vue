@@ -39,10 +39,10 @@ const emit = defineEmits<{
 }>();
 
 const attrs = useAttrs();
-const testId = useControlTestId(attrs);
-const rootAttrs = useRootAttrs(attrs, testId);
-const inputAttrs = useControlAttrs(attrs, testId);
-const isChecked = computed(() => props.modelValue === props.value);
+const test_id = useControlTestId(attrs);
+const root_attrs = useRootAttrs(attrs, test_id);
+const input_attrs = useControlAttrs(attrs, test_id);
+const is_checked = computed(() => props.modelValue === props.value);
 
 function onChange() {
 	emit('update:modelValue', props.value);
@@ -52,19 +52,19 @@ function onChange() {
 
 <template>
 	<label
-		v-bind="rootAttrs"
+		v-bind="root_attrs"
 		class="ui-radio"
 		:data-size="props.size"
 		:data-state="props.state !== 'default' ? props.state : null"
 		:data-disabled="props.disabled || null"
-		:data-checked="isChecked || null"
+		:data-checked="is_checked || null"
 	>
 		<input
-			v-bind="inputAttrs"
+			v-bind="input_attrs"
 			class="ui-radio-input"
 			type="radio"
 			:name="props.name || undefined"
-			:checked="isChecked"
+			:checked="is_checked"
 			:value="props.value"
 			:disabled="props.disabled"
 			@change="onChange"
@@ -77,93 +77,3 @@ function onChange() {
 		</span>
 	</label>
 </template>
-
-<style scoped lang="scss">
-.ui-radio {
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	color: var(--text-primary);
-	cursor: pointer;
-
-	.ui-radio-input {
-		position: absolute;
-		opacity: 0;
-		pointer-events: none;
-	}
-
-	.ui-radio-control {
-		width: 20px;
-		height: 20px;
-		border-radius: 999px;
-		border: 1px solid var(--gray-50);
-		background: var(--contrast-light);
-		display: inline-grid;
-		place-items: center;
-		flex-shrink: 0;
-		transition: background-color 0.18s ease, border-color 0.18s ease;
-
-		.ui-radio-dot {
-			width: 8px;
-			height: 8px;
-			border-radius: 999px;
-			background: transparent;
-			transition: background-color 0.18s ease;
-		}
-	}
-
-	.ui-radio-label {
-		font-size: var(--type-size-200);
-		line-height: var(--type-line-200);
-		font-weight: var(--font-weight-semibold);
-	}
-
-	&[data-size='sm'] {
-		gap: 8px;
-
-		.ui-radio-control {
-			width: 16px;
-			height: 16px;
-
-			.ui-radio-dot {
-				width: 6px;
-				height: 6px;
-			}
-		}
-
-		.ui-radio-label {
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-		}
-	}
-
-	&[data-checked='true'] {
-		.ui-radio-control {
-			border-color: var(--gray-100);
-			background: var(--gray-100);
-
-			.ui-radio-dot {
-				background: var(--contrast-light);
-			}
-		}
-	}
-
-	&[data-disabled='true'] {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	&[data-state='error'] {
-		.ui-radio-control {
-			border-color: var(--error);
-		}
-	}
-
-	&:focus-within {
-		.ui-radio-control {
-			outline: 2px solid rgb(42, 47, 61, 0.16);
-			outline-offset: 2px;
-		}
-	}
-}
-</style>

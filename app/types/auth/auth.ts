@@ -46,10 +46,6 @@ export interface SubmitNonMemberLoginVerificationPayload {
 	otp: string;
 }
 
-export interface SendResetPasswordLinkPayload {
-	email: string;
-}
-
 export interface RegisterVerificationPayload {
 	given_name: string;
 	family_name: string;
@@ -78,4 +74,21 @@ export interface RegisterPayload {
 	email?: string | null;
 	registration_token?: string | null;
 	otp: string;
+}
+
+export type SocialRedirectResponse = ApiResponse<SocialRedirect>
+
+export interface SocialRedirect {
+	url: string
+}
+
+export interface SocialLoginPayload {
+	provider: string
+}
+
+export interface OnboardingPayload {
+	fields?: Record<string, string>;
+	email?: string;
+	offers_emails?: boolean;
+	reviews_emails?: boolean;
 }

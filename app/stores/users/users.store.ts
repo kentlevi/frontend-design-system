@@ -19,6 +19,8 @@ function createInitialUserState(): UserState {
 		code: '',
 		email: '',
 		country_id: 0,
+		social: null,
+		has_password: false,
 
 		onboardingProfile: null,
 		profile: null,
@@ -28,9 +30,6 @@ function createInitialUserState(): UserState {
 			user_id: 0,
 			offers_emails: false,
 			reviews_emails: false,
-			confirmations_emails: false,
-			unit_of_measurement: 'mm',
-			guided_tour_enabled: false,
 			created_at: '',
 			updated_at: ''
 		} as PreferenceState
@@ -61,6 +60,8 @@ export const useUsersStore = defineStore('users', () => {
 		state.value.email = user.email
 		state.value.country_id = user.country_id
 		state.value.profile = user.profile
+		state.value.social = user.social
+		state.value.has_password = user.has_password
 	}
 
 	/**
@@ -72,6 +73,8 @@ export const useUsersStore = defineStore('users', () => {
 		if (user.email !== undefined) state.value.email = user.email
 		if (user.country_id !== undefined) state.value.country_id = user.country_id
 		if (user.profile !== undefined) state.value.profile = user.profile
+		if (user.social !== undefined) state.value.social = user.social
+		if (user.has_password !== undefined) state.value.has_password = user.has_password
 	}
 
 	/**
@@ -123,6 +126,17 @@ export const useUsersStore = defineStore('users', () => {
 		}
 	}
 
+	function setProfileField<K extends keyof UserProfile>(
+		field_name: K,
+		field_value: UserProfile[K]
+	): void {
+		/** Stop if profile is not yet available */
+		if (!state.value.profile) return
+
+		/** Update only the requested profile field */
+		state.value.profile[field_name] = field_value
+	}
+
 	/* --------------------------------------------------------------------------
      * Expose
      * -------------------------------------------------------------------------- */
@@ -140,6 +154,8 @@ export const useUsersStore = defineStore('users', () => {
 		setProfileUserFieldValues,
 
 		setPreferenceField,
-		setPreferenceFields
+		setPreferenceFields,
+
+		setProfileField
 	}
 })

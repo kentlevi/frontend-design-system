@@ -3,29 +3,29 @@ import { computed, ref } from 'vue';
 export type LoginMemberType = 'member' | 'non-member';
 
 export function useLoginForm() {
-	const memberType = ref<LoginMemberType>('member');
-	const keepSignedIn = ref(false);
-	const showPassword = ref(false);
+	const member_type = ref<LoginMemberType>('member');
+	const keep_signed_in = ref(false);
+	const show_password = ref(false);
 
-	const isNonMember = computed(() => memberType.value === 'non-member');
+	const is_non_member = computed(() => member_type.value === 'non-member');
 
 	function setMemberType(nextType: LoginMemberType) {
-		memberType.value = nextType;
+		member_type.value = nextType;
 	}
 
 	function togglePassword() {
-		showPassword.value = !showPassword.value;
+		show_password.value = !show_password.value;
 	}
 
 	function setKeepSignedIn(nextValue: boolean) {
-		keepSignedIn.value = nextValue;
+		keep_signed_in.value = nextValue;
 	}
 
 	return {
-		memberType,
-		keepSignedIn,
-		showPassword,
-		isNonMember,
+		member_type,
+		keep_signed_in,
+		show_password,
+		is_non_member,
 		setMemberType,
 		togglePassword,
 		setKeepSignedIn,

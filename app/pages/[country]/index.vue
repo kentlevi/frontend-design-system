@@ -15,6 +15,7 @@ import {
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import { usePasswordReset } from '~/composables/auth/usePasswordReset';
 
 const HomeFeatureHighlight = defineAsyncComponent(
 	() => import('~/components/home/HomeFeatureHighlight.vue')
@@ -285,7 +286,7 @@ function runDeferredHomeInit() {
 	}
 }
 
-function openInitialHomeModalFromRoute() {
+async function openInitialHomeModalFromRoute() {
 	const modalQuery = Array.isArray(route.query.modal)
 		? route.query.modal[0]
 		: route.query.modal;
@@ -305,11 +306,22 @@ function openInitialHomeModalFromRoute() {
 		resetToken.value = typeof tokenQuery === 'string' ? tokenQuery : '';
 		resetExpiry.value = typeof expiryQuery === 'string' ? expiryQuery : '';
 
+		const { validateTokenHandler } = usePasswordReset()
+		const response = await validateTokenHandler({
+			email: resetEmail.value,
+			token: resetToken.value
+		})
+
+		if (!response.success) {
+			navigateTo(withCountry('/auth/otp-expired?email=' + resetEmail.value));
+			return
+		}
+
 		if (resetExpiry.value !== '') {
 			const expiry = parseInt(resetExpiry.value, 10);
 			const now = Math.floor(Date.now() / 1000);
 			if (now > expiry) {
-				navigateTo(withCountry('/auth/otp-expired'));
+				navigateTo(withCountry('/auth/otp-expired?email=' + resetEmail.value));
 				return;
 			}
 		}

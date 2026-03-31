@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import { toRefs } from 'vue';
 import { useCountry } from '@/composables/app/country/useCountry';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
 
-defineProps<{
+const component_props = defineProps<{
 	year: number;
 	isProduct: boolean;
 }>();
+const { year, isProduct: is_product } = toRefs(component_props);
 </script>
 
 <template>
-	<div class="home-footer-inner" :class="{ 'is-product': isProduct }" data-testid="app-footer-main-container">
+	<div class="home-footer-inner" :class="{ 'is-product': is_product }" data-testid="app-footer-main-container">
 		<div class="home-footer-left" data-testid="app-footer-main-left">
 			<h2 class="home-footer-brand">MUSTICKER</h2>
 			<p class="home-footer-meta">

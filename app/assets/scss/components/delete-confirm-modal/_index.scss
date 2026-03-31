@@ -1,0 +1,69 @@
+.delete-confirm-modal {
+    width: 100%;
+    background: var(--contrast-light);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .delete-confirm-modal-copy {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        align-items: center;
+        column-gap: 24px;
+    }
+
+    .delete-confirm-modal-icon-wrap {
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+    }
+
+    .delete-confirm-modal-icon {
+        display: block;
+        width: 48px;
+        height: 48px;
+    }
+
+    .delete-confirm-modal-text-wrap {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .delete-confirm-modal-title {
+        font-size: var(--type-size-300);
+        line-height: var(--type-line-300);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+    }
+
+    .delete-confirm-modal-text {
+        color: var(--text-secondary);
+        font-size: var(--type-size-100);
+        line-height: var(--type-line-100);
+    }
+
+    .delete-confirm-modal-actions {
+        width: 100%;
+        box-sizing: border-box;
+        border-top: 1px solid var(--border-default);
+        padding: 16px 24px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 18px;
+    }
+}
+
+.delete-confirm-modal-shell {
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 520px;
+}

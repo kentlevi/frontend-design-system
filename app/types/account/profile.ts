@@ -1,25 +1,8 @@
-/** Supported backend field group */
-export type ProfileFieldGroup = 'user_detail' | 'address'
-
-/** Supported backend input types */
-export type ProfileInputType =
-	| 'text'
-	| 'select'
-	| 'radio'
-	| 'checkbox'
-	| 'date'
-	| 'number'
+import type { CountryField } from "../country_field"
 
 /** Field definition returned by backend */
-export interface ProfileFieldDefinition {
-	id: number
-	country_id: number
-	field_key: string
-	field_label: string
-	type: ProfileFieldGroup
-	input_type: ProfileInputType
-	sort_order: number
-	is_required: boolean
+export interface ProfileFieldDefinition extends CountryField {
+	type: 'user_detail'
 }
 
 /** Saved user field value from the profile payload */

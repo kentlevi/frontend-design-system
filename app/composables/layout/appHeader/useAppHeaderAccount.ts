@@ -3,13 +3,14 @@ import type { FlagCode } from '~/data/ui/flags';
 import type { SupportedCountry } from '~/constants/countries';
 import { isSupportedCountry } from '~/constants/countries';
 import {
-	headerAccountLinkConfig,
-	headerLocaleOptionConfig,
-	headerNavLinkConfig,
+	header_account_link_config,
+	header_locale_option_config,
+	header_nav_link_config,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
 import { normalizeAppPath } from '~/utils/auth/redirect';
+import { useAuthUser } from '~/composables/auth/useAuthUser';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -24,10 +25,8 @@ type MockUserCookie = {
 export function useAppHeaderAccount() {
 	const { t, setLocale } = useI18n();
 	const route = useRoute();
-	const api = useApi();
-	const { withCountry, apiCountry, country } = useCountry();
-	const user_store = useUsersStore();
-	const { state } = storeToRefs(useUsersStore())
+	const { withCountry, country } = useCountry();
+	const { state } = storeToRefs(useUsersStore());
 
 
 	const preferred_locale = useCookie<SupportedCountry | null>('preferred_locale', {
@@ -55,7 +54,7 @@ export function useAppHeaderAccount() {
 	let account_close_timeout: ReturnType<typeof setTimeout> | null = null;
 
 	const nav_links = computed(() =>
-		headerNavLinkConfig.map((item) => ({
+		header_nav_link_config.map((item) => ({
 			...item,
 			label: t(item.labelKey),
 			to: withCountry(item.to),
@@ -65,7 +64,7 @@ export function useAppHeaderAccount() {
 	const selected_locale = computed<FlagCode>(() => country.value as FlagCode);
 
 	const locale_options = computed(() =>
-		headerLocaleOptionConfig.map((option) => ({
+		header_locale_option_config.map((option) => ({
 			code: option.code,
 			flagCode: option.flagCode,
 			label: t(option.labelKey),
@@ -73,7 +72,7 @@ export function useAppHeaderAccount() {
 	);
 
 	const account_links = computed(() =>
-		headerAccountLinkConfig.map((item) => ({
+		header_account_link_config.map((item) => ({
 			...item,
 			label: t(item.labelKey),
 			to: item.to,
@@ -90,23 +89,6 @@ export function useAppHeaderAccount() {
 		() => String(guest_login_mode.value || '') === '1' && !is_mock_logged_in.value
 	);
 
-	const display_name = computed(() => {
-		const mock_first_name = mock_user.value?.firstName?.trim() || '';
-		const mock_last_name = mock_user.value?.lastName?.trim() || '';
-		const onboarding_first_name = state.value.onboardingProfile?.firstName?.trim() || '';
-		const onboarding_last_name = state.value.onboardingProfile?.lastName?.trim() || '';
-		const profile_name = [onboarding_first_name, onboarding_last_name]
-			.filter(Boolean)
-			.join(' ')
-			.trim();
-		const mock_name = [mock_first_name, mock_last_name].filter(Boolean).join(' ').trim();
-
-		if (profile_name) return profile_name;
-		if (mock_name) return mock_name;
-		if (display_email.value) return display_email.value;
-		return t('layout.header.account');
-	});
-
 	const display_email = computed(() => {
 		return (
 			state.value.email ||
@@ -114,20 +96,6 @@ export function useAppHeaderAccount() {
 			state.value.onboardingProfile?.email?.trim() ||
 			''
 		);
-	});
-
-	const user_initial = computed(() => {
-		const source_name = display_name.value.trim();
-		if (!source_name) return 'MU';
-
-		const initials = source_name
-			.split(/\s+/)
-			.filter(Boolean)
-			.slice(0, 2)
-			.map((part) => part.charAt(0).toUpperCase())
-			.join('');
-
-		return initials || source_name.charAt(0).toUpperCase() || 'MU';
 	});
 
 	const account_transition_name = computed(() =>
@@ -219,18 +187,8 @@ export function useAppHeaderAccount() {
 		closeAccountMenu();
 		await nextTick();
 
-		void api(`/${apiCountry.value}/auth/logout`, {
-			method: 'POST',
-		}).catch(() => {
-			// Ignore logout request failures and keep local sign-out immediate.
-		});
-
-		auth_token.value = null;
-		guest_login_mode.value = null;
-		mock_user.value = null;
-		user_store.clearUser();
-		user_store.clearOnboardingProfile();
-		await navigateTo(withCountry('/'));
+		const { logoutUser } = useAuthUser();
+		await logoutUser();
 	}
 
 	function handleAvatarUpdated(event: Event) {
@@ -276,20 +234,18 @@ export function useAppHeaderAccount() {
 	);
 
 	return {
-		accountOpen: account_open,
-		accountMenuRef: account_menu_ref,
-		localeModalOpen: locale_modal_open,
-		navLinks: nav_links,
-		selectedLocale: selected_locale,
-		localeOptions: locale_options,
-		accountLinks: account_links,
-		isMockLoggedIn: is_mock_logged_in,
-		isGuestLoggedIn: is_guest_logged_in,
-		userInitial: user_initial,
-		userAvatarUrl: user_avatar_url,
-		displayName: display_name,
-		displayEmail: display_email,
-		accountTransitionName: account_transition_name,
+		account_open,
+		account_menu_ref,
+		locale_modal_open,
+		nav_links,
+		selected_locale,
+		locale_options,
+		account_links,
+		is_mock_logged_in,
+		is_guest_logged_in,
+		user_avatar_url,
+		display_email,
+		account_transition_name,
 		isNavLinkActive: isNavLinkActive,
 		toggleAccountMenu: toggleAccountMenu,
 		closeAccountMenu: closeAccountMenu,

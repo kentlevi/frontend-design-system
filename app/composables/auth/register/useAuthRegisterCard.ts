@@ -1,8 +1,8 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
 
 export function useAuthRegisterCard(params: {
-	termsError: Ref<string>;
-	agreeTerms: Ref<boolean>;
+	terms_error: Ref<string>;
+	agree_terms: Ref<boolean>;
 }) {
 	const terms_error_popover_pinned = ref(false);
 	const terms_error_popover_hovered = ref(false);
@@ -48,7 +48,7 @@ export function useAuthRegisterCard(params: {
 	}
 
 	watch(
-		() => Boolean(params.termsError.value && !params.agreeTerms.value),
+		() => Boolean(params.terms_error.value && !params.agree_terms.value),
 		(has_terms_error) => {
 			if (!has_terms_error) {
 				clearTermsErrorHoverCloseTimer();
@@ -68,11 +68,11 @@ export function useAuthRegisterCard(params: {
 	});
 
 	return {
-		termsErrorPopoverOpen: terms_error_popover_open,
-		termsErrorIconStrong: terms_error_icon_strong,
-		termsErrorRef: terms_error_ref,
-		toggleTermsErrorPopover: toggleTermsErrorPopover,
-		onTermsErrorHoverStart: onTermsErrorHoverStart,
-		onTermsErrorHoverEnd: onTermsErrorHoverEnd,
+		terms_error_popover_open,
+		terms_error_icon_strong,
+		terms_error_ref,
+		toggleTermsErrorPopover,
+		onTermsErrorHoverStart,
+		onTermsErrorHoverEnd,
 	};
 }

@@ -1,8 +1,8 @@
 {
     "auth": {
         "otpExpired": {
-            "title": "Your Reset Link Has Expired",
-            "description": "No worries — for security purposes, password reset links are only available for a limited time. Click below to request a new one and continue resetting your password.",
+            "title": "Link No Longer Valid",
+            "description": "For security reasons, this password reset link is no longer valid. You can request a new link below to continue resetting your password.",
             "requestNew": "Request New Reset Link",
             "returnHome": "Return to Homepage"
         }

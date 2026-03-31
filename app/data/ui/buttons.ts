@@ -4,10 +4,10 @@
    Controls physical dimensions of the button component.
 ========================================================= */
 
-export const buttonSizes = ['lg', 'md', 'sm'] as const;
+export const button_sizes = ['lg', 'md', 'sm'] as const;
 
 /** Union type: "lg" | "md" | "sm" */
-export type ButtonSize = (typeof buttonSizes)[number];
+export type ButtonSize = (typeof button_sizes)[number];
 
 /* =========================================================
    BUTTON VARIANTS
@@ -15,7 +15,7 @@ export type ButtonSize = (typeof buttonSizes)[number];
    Defines visual style of the button surface.
 ========================================================= */
 
-export const buttonVariants = [
+export const button_variants = [
 	'filled',
 	'subtle',
 	'outline',
@@ -24,7 +24,7 @@ export const buttonVariants = [
 ] as const;
 
 /** Union type of all variants */
-export type ButtonVariant = (typeof buttonVariants)[number];
+export type ButtonVariant = (typeof button_variants)[number];
 
 /* =========================================================
    BUTTON TONES
@@ -32,12 +32,12 @@ export type ButtonVariant = (typeof buttonVariants)[number];
    Semantic meaning of the action represented by the button.
 ========================================================= */
 
-export const buttonTones = [
+export const button_tones = [
 	{
 		label: 'Primary',
 		value: 'default',
 		description:
-            'Primary buttons use the brand’s main color to create strong visual recognition.',
+            'Primary buttons use the brandâ€™s main color to create strong visual recognition.',
 	},
 	{
 		label: 'Accent',
@@ -66,7 +66,7 @@ export const buttonTones = [
 ] as const;
 
 /** Union type of tone values */
-export type ButtonTone = (typeof buttonTones)[number]['value'];
+export type ButtonTone = (typeof button_tones)[number]['value'];
 
 /* =========================================================
    BUTTON OPTIONS TYPE
@@ -89,8 +89,8 @@ export interface ButtonOptions {
    Useful for importing a single object across the system.
 ========================================================= */
 
-export const buttonConfig = {
-	sizes: buttonSizes,
-	variants: buttonVariants,
-	tones: buttonTones,
+export const button_config = {
+	sizes: button_sizes,
+	variants: button_variants,
+	tones: button_tones,
 } as const;

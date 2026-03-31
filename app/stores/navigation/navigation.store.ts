@@ -7,57 +7,57 @@ import type { Categories, Category, Product, Products } from '~/types/navigation
  * Initial categories state factory
  */
 function initialCategoriesState(): Categories {
-    return {
-        categories: []
-    }
+	return {
+		categories: []
+	}
 }
 
 /**
  * Initial products state factory
  */
 function initialProductsState(): Products {
-    return {
-        products: []
-    }
+	return {
+		products: []
+	}
 }
 
 export const useNavigationStore = defineStore('navigation', () => {
 
-    /* --------------------------------------------------------------------------
+	/* --------------------------------------------------------------------------
      * State
      * -------------------------------------------------------------------------- */
 
-    const category_state = ref<Categories>(initialCategoriesState())
-    const product_state = ref<Products>(initialProductsState())
+	const category_state = ref<Categories>(initialCategoriesState())
+	const product_state = ref<Products>(initialProductsState())
 
-    /* --------------------------------------------------------------------------
+	/* --------------------------------------------------------------------------
      * Actions
      * -------------------------------------------------------------------------- */
 
-    function setCategories(categories: Category[]) {
-        category_state.value.categories = categories
-    }
+	function setCategories(categories: Category[]) {
+		category_state.value.categories = categories
+	}
 
-    function setProducts(products: Product[]) {
-        product_state.value.products = products
-    }
+	function setProducts(products: Product[]) {
+		product_state.value.products = products
+	}
 
-    function clearCategories() {
-        category_state.value = initialCategoriesState()
-    }
+	function clearCategories() {
+		category_state.value = initialCategoriesState()
+	}
 
-    function clearProducts() {
-        product_state.value = initialProductsState()
-    }
+	function clearProducts() {
+		product_state.value = initialProductsState()
+	}
 
-    return {
-        category_state,
-        product_state,
+	return {
+		category_state,
+		product_state,
 
-        setCategories,
-        setProducts,
+		setCategories,
+		setProducts,
 
-        clearCategories,
-        clearProducts
-    }
+		clearCategories,
+		clearProducts
+	}
 })
