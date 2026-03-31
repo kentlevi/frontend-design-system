@@ -20,6 +20,12 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const skipUpload = () => {
+	console.warn('Skip-Uploading')
+	emit('skip-upload-later')
+}
+
 </script>
 
 <template>
@@ -154,7 +160,7 @@ const { t } = useI18n();
 					class="upload-skip-btn"
 					:disabled="props.addToCartLoading"
 					data-testid="product-category-upload-skip-button"
-					@click="emit('skip-upload-later')"
+					@click="skipUpload()"
 				>
 					{{ t('cart.uploadArtwork.skipUploadLater') }}
 				</UiButton>

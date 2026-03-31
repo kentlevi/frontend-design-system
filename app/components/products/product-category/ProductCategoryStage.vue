@@ -2,7 +2,6 @@
 import type { ProductItem, ProductCategoryKey  } from '~/types/products/catalog';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
-import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 
@@ -32,6 +31,7 @@ const emit = defineEmits<{
 
 // 🔥 Functionality Implementation
 const {
+	url_slug,
 	product,
 	size,
 	featured_sizes,
@@ -79,27 +79,16 @@ const {
 	letteringHeightUpdate,
 	letteringWidthInput,
 	letteringHeightInput,
-	updateProduct,
 	clearForm,
 	onVinylSizeFocus,
 	onVinylSizeBlur,
 	onVinylFontFocus,
 	onVinylFontBlur,
+	updateSelectedSlug,
 } = useQuoteSectionHandler();
 
 const route = useRoute()
-const resolved_category = computed<ProductCategoryKey>(() => {
-	if (props.category) {
-		return props.category
-	}
 
-	const route_category = route.params?.category
-	if (route_category === 'stickers' || route_category === 'roll-stickers' || route_category === 'sheet-stickers') {
-		return route_category
-	}
-
-	return 'stickers'
-})
 const route_product_slug = computed(() => {
 	const route_product = route.params?.product
 	return typeof route_product === 'string'
@@ -109,33 +98,25 @@ const route_product_slug = computed(() => {
 			: null
 })
 
+
 watch(
 	route_product_slug,
-	(next_slug) => {
-		console.log(1)
-		if (typeof next_slug === 'string' && next_slug) {
-			updateProduct(next_slug)
-			void instatiateForm({ interactive: false })
-			return
+	() => {
+		if( route_product_slug.value ) {
+			if( route_product_slug.value == url_slug.value || (!url_slug.value && route_product_slug.value) )
+				void instatiateForm(route_product_slug.value, { interactive: false })
+		} else {
+			clearForm()
 		}
-
-		clearForm()
 	},
 	{ immediate: true }
 )
 
-watch(
-	() => props.selectedProduct?.id,
-	(next_product_id) => {
-		if (!next_product_id) return
+const switchProduct = (prod : ProductItem) => {
+	emit('select-product', prod.id)
+	updateSelectedSlug(prod.id)
+}
 
-		console.log(2)
-		const next_slug = getProductSlugByCategory(next_product_id, resolved_category.value)
-		updateProduct(next_slug)
-		void instatiateForm({ interactive: false })
-	},
-	{ immediate: true }
-)
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
@@ -147,16 +128,11 @@ onMounted(() => {
 	has_hydrated.value = true
 })
 
-
-
 const prevent_non_digit_input = (event: InputEvent) => {
 	if (!event.data) return
 	if (/^\d+$/.test(event.data)) return
 	event.preventDefault()
 }
-
-
-
 
 const has_valid_custom_size = computed(() =>
 	Boolean(is_custom_size.value && custom_size.value.width && custom_size.value.width > 0 && custom_size.value.height && custom_size.value.height > 0)
@@ -174,8 +150,10 @@ const should_play_preview_video = computed(() =>
 )
 
 const displayed_product_title = computed(() =>
-	has_lettering_editor.value ? 'Vinyl Lettering Sticker' : props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
+	props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
+
+
 
 </script>
 
@@ -189,7 +167,7 @@ const displayed_product_title = computed(() =>
 				class="product-picker-item"
 				:class="{ 'is-active': props.selectedId === prod.id }"
 				:data-testid="`product-category-picker-item-${prod.id}`"
-				@click="emit('select-product', prod.id)"
+				@click="switchProduct(prod)"
 			>
 				<div class="product-picker-icon" :class="`is-${prod.id}`">
 					<img
@@ -214,7 +192,7 @@ const displayed_product_title = computed(() =>
 				<section class="product-configurator" data-testid="product-category-configurator">
 					<div class="product-preview" data-testid="product-category-preview">
 
-						<div class="product-preview-header">
+						<div v-if="displayed_product_title" class="product-preview-header">
 							<h1 class="product-preview-title" data-testid="product-category-preview-title">
 								{{ displayed_product_title }}
 							</h1>
@@ -251,7 +229,7 @@ const displayed_product_title = computed(() =>
 						</div>
 
 						<div
-							v-else
+							v-else-if="has_lettering_editor"
 							class="vinyl-preview-board"
 							data-testid="product-category-vinyl-preview"
 						>
@@ -271,27 +249,27 @@ const displayed_product_title = computed(() =>
 
 						<div class="product-preview-features" data-testid="product-category-preview-features">
 							<button
-								v-for="featured_size_cards in size_featured_cards"
-								:key="'sizes-cards-'+featured_size_cards.key+'-'+featured_size_cards.id"
+								v-for="(featured_size_cards, fsc_key) in size_featured_cards"
+								:key="'sizes-cards-'+fsc_key+'-'+featured_size_cards.code"
 								type="button"
 								class="mini-feature"
 								:disabled="has_lettering_editor"
-								:class="{ 'is-active': !is_custom_size && !has_lettering_editor && size?.id === featured_size_cards.id }"
-								:data-testid="`product-category-feature-card-${featured_size_cards.key}`"
+								:class="{ 'is-active': !is_custom_size && !has_lettering_editor && size?.code === featured_size_cards.code }"
+								:data-testid="`product-category-feature-card-${featured_size_cards.code}`"
 								@click="inputUpdateSize(featured_size_cards)"
 							>
-								<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.key}.label`) }}</h4>
+								<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
 
 								<img
 									v-if="featured_size_cards.image"
 									:src="featured_size_cards.image"
-									:alt="t(`product.sizes.${featured_size_cards.key}.label`)"
+									:alt="t(`product.sizes.${featured_size_cards.code}.label`)"
 									loading="lazy"
 									class="mini-feature-image"
 								>
 
 								<p class="mini-feature-description">
-									{{ t(`product.featureCards.${featured_size_cards.description}.description`) }}
+									{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 								</p>
 							</button>
 						</div>
@@ -312,13 +290,13 @@ const displayed_product_title = computed(() =>
 									@click="inputUpdateColor(fcolor)"
 								>
 									<span class="color-swatch-tooltip">{{ fcolor.name }}</span>
-									<span class="color-swatch-core" :style="fcolor.swatch_style">
+									<span class="color-swatch-core" :style="fcolor.style">
 										<UiIcon
 											v-if="color?.id === fcolor.id"
 											name="regular-check"
 											:size="24"
 											class="color-swatch-check"
-											:color="fcolor.code"
+											:color="fcolor.hex_code"
 										/>
 									</span>
 								</button>
@@ -333,11 +311,11 @@ const displayed_product_title = computed(() =>
 							<div class="option-grid option-grid-size" data-testid="product-category-size-options">
 								<button
 									v-for="(fsize, key) in featured_sizes"
-									:key="'size-'+key+'-'+fsize.id"
+									:key="'size-'+key+'-'+fsize.code"
 									type="button"
 									class="option-pill"
-									:class="{ 'is-active': !is_custom_size && size?.id === fsize.id }"
-									:data-testid="`product-category-size-option-${fsize.id}`"
+									:class="{ 'is-active': !is_custom_size && size?.code === fsize.code }"
+									:data-testid="`product-category-size-option-${fsize.code}`"
 									@click="inputUpdateSize(fsize)"
 								>
 									<span class="size-pill-name">{{ fsize.label }}</span>
