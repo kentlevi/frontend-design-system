@@ -44,11 +44,7 @@ export const useTossPayment = () => {
             if (data?.type === 'TOSS_PAYMENT_SUCCESS') {
                 console.log('Payment Success:', data.data)
                 closePaymentPopup()
-                //call something like checkout confirmation here-----
-                //call order-completion request here
-
-                //then
-                completeCheckout(true)
+                completeCheckout(true,data.data);
             }
 
             if (data?.type === 'TOSS_PAYMENT_FAIL') {
