@@ -50,6 +50,7 @@ export const i18nLocales = [
 			'en/checkout/member.json',
 			'en/checkout/confirmation.json',
 			'en/checkout/orderDetails.json',
+			'en/profile/profileDetails.json',
 		],
 	},
 	{
@@ -103,6 +104,7 @@ export const i18nLocales = [
 			'kr/checkout/member.json',
 			'kr/checkout/confirmation.json',
 			'kr/checkout/orderDetails.json',
+			'kr/profile/profileDetails.json',
 		],
 	},
 ];

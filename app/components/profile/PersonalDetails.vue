@@ -6,6 +6,11 @@ import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import { useUsersStore } from '~/stores/users/users.store';
+
+import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
+import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
+import ProfileEmailChangeModal from '~/components/account/pages/profile/ProfileEmailChangeModal.vue';
+
 import type { ProfileFieldDefinition } from '~/types/account/profile';
 
 const { t } = useI18n();
@@ -51,12 +56,37 @@ const { social } = useSocialAccount();
 
 const {
 	file_input,
+	is_delete_photo_modal_open,
 	error: photo_inline_error,
 	openFilePicker,
 	onFilePicked: uploadPhoto,
+	closeDeletePhotoModal,
 	openDeletePhotoModal,
 	deletePhoto,
 } = useProfilePhoto();
+
+const {
+	pending_email,
+	is_email_change_modal,
+	email_change_error,
+
+	is_otp_open,
+	email_change_otp_code,
+	email_change_otp_error,
+	limit_reached_error,
+
+	remaining,
+
+	closeEmailChangeModal,
+	confirmEmailChange,
+
+	verifyOtp,
+	resendOtp,
+	closeOtpModal,
+
+	openEmailChangeModal,
+	 email: account_email
+} = useChangeEmailForm();
 
 const {
 	form_state: personal_form_state,
@@ -67,8 +97,6 @@ const {
 	loadPersonalForm,
 	submitPersonalForm,
 } = usePersonalForm();
-
-const { email: account_email, openEmailChangeModal } = useChangeEmailForm();
 
 onMounted(() => {
 	if (!is_auth_mode.value) {
@@ -226,22 +254,6 @@ async function onAuthPhotoPicked(event: Event) {
 	}
 }
 
-async function removeAuthPhoto() {
-	const had_local_preview = Boolean(props.photoUrl);
-	const had_store_avatar = Boolean(user_store.state.profile?.file_name);
-
-	await deletePhoto();
-
-	const has_store_avatar = Boolean(user_store.state.profile?.file_name);
-	const removed_store_avatar = had_store_avatar && !has_store_avatar;
-	const had_only_local_preview = had_local_preview && !had_store_avatar;
-	const should_clear_local_preview = removed_store_avatar || had_only_local_preview;
-
-	if (should_clear_local_preview) {
-		emit('photo-remove');
-	}
-}
-
 async function handlePhotoPicked(event: Event) {
 	if (is_auth_mode.value) {
 		await onAuthPhotoPicked(event);
@@ -252,11 +264,6 @@ async function handlePhotoPicked(event: Event) {
 }
 
 function handlePhotoDelete() {
-	if (is_auth_mode.value) {
-		void removeAuthPhoto();
-		return;
-	}
-
 	openDeletePhotoModal();
 }
 </script>
@@ -405,7 +412,7 @@ function handlePhotoDelete() {
 						</p>
 					</template>
 					<template v-else>
-						<div class="account-profile-email-input-wrap">
+						<div class="account-profile-email-input-wrap" :class="!social ? 'account-profile-conditional-margin' : ''">
 							<UiInput
 								:id="inputId"
 								:model-value="account_email"
@@ -425,15 +432,16 @@ function handlePhotoDelete() {
 								data-testid="account-profile-email-change-button"
 								@click="openEmailChangeModal"
 							>
-								Change
+								{{ t('profile.details.changeEmailButtonLabel') }}
 							</UiButton>
 						</div>
+
 						<p v-if="social" class="account-profile-email-helper-text">
-							This account is linked to your
+							{{ t('profile.details.emailLinkedHintPrefix') }}
 							<span class="account-profile-social-text">{{
 								capitalizeFirst(social)
 							}}</span>
-							login.
+							{{ t('profile.details.emailLinkedHintSuffix') }}
 						</p>
 					</template>
 				</template>
@@ -457,6 +465,52 @@ function handlePhotoDelete() {
 			</UiButton>
 		</div>
 	</div>
+
+	<!-- MODALS -->
+	<DeleteConfirmModal
+		:model-value="is_delete_photo_modal_open"
+		title="Are you sure you want to delete this photo?"
+		description="This action cannot be undone. Please confirm to proceed."
+		modal-class="account-profile-delete-photo-modal-shell"
+		test-id="account-profile-delete-photo-modal"
+		@cancel="closeDeletePhotoModal"
+		@confirm="deletePhoto"
+	/>
+	<ProfileEmailChangeModal
+		v-model="is_email_change_modal"
+		:pending-email="pending_email"
+		:email-change-error="email_change_error"
+		:close-email-change-modal="closeEmailChangeModal"
+		:confirm-email-change="confirmEmailChange"
+		@update:pending-email="pending_email = $event"
+		@input-change="email_change_error = ''"
+	/>
+	<AuthVerificationModal
+		:email="pending_email"
+		:model-value="is_otp_open"
+		:code="email_change_otp_code"
+		:error="email_change_otp_error"
+		:resend-limit-reached="limit_reached_error"
+		:resend-cooldown-remaining="remaining"
+		submit-label="Verify"
+		busy-label="Verifying..."
+		align="center"
+		:show-close-button="true"
+		test-id-prefix="account-profile-email-change-verification"
+		@update:model-value="is_otp_open = $event"
+		@update:code="email_change_otp_code = $event"
+		@verify="verifyOtp"
+		@resend="resendOtp"
+		@close="closeOtpModal"
+	>
+		<template #icon>
+			<img
+				src="/illustrations/icon-verification.svg"
+				:alt="t('auth.verification.iconAlt')"
+				class="account-profile-email-change-verification-icon"
+			>
+		</template>
+	</AuthVerificationModal>
 </template>
 
 <style scoped lang="scss">
@@ -586,6 +640,10 @@ function handlePhotoDelete() {
 
 	.account-profile-email-input-wrap {
 		position: relative;
+	}
+
+	.account-profile-conditional-margin {
+		margin-bottom: 16px;
 	}
 
 	.account-profile-email-change-button {
