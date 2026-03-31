@@ -4,21 +4,21 @@ import type {CheckoutResponse} from "~/types/checkout/index"
 
 export const useCheckoutFlow = () => {
 
-    const payment = usePaymentStrategy()
+	const payment = usePaymentStrategy()
 
-    const submitCheckout = async () => {
-        try {
-            const request  = await checkoutRequest() as { data: CheckoutResponse }
+	const submitCheckout = async () => {
+		try {
+			const request  = await checkoutRequest() as { data: CheckoutResponse }
 
-            payment.execute("TOSS", "process", request.data)
+			payment.execute("TOSS", "process", request.data)
 
-        } catch (error) {
-            console.error(error)
-            payment.execute("TOSS", "error", error)
-        }
-    }
+		} catch (error) {
+			console.error(error)
+			payment.execute("TOSS", "error", error)
+		}
+	}
 
-    return {
-        submitCheckout
-    }
+	return {
+		submitCheckout
+	}
 }
