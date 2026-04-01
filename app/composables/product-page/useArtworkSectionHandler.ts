@@ -1,8 +1,10 @@
 import { useCartService } from "~/services/cart/cart.service"
 import { useArtworkStore } from "~/stores/cart"
-import { useSelectionStore } from "~/stores/product"
+import { useAttributesStore, useSelectionStore } from "~/stores/product"
 
 export const useArtworkSectionHandler = () => {
+
+	const attribute_store = useAttributesStore()
 
 	const selection_store = useSelectionStore()
 
@@ -18,7 +20,7 @@ export const useArtworkSectionHandler = () => {
 
 		cart_service.store({
 			product_config_mapping_id: selection_store.product_config_mapping_id,
-			url_slug: selection_store.url_slug,
+			product: attribute_store.product,
 			size: selection_store.size,
 			quantity: selection_store.quantity,
 			lettering_text: selection_store.lettering_text,
