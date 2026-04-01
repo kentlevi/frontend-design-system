@@ -1,6 +1,6 @@
 import { addressFormDefaults } from "~/factories/address";
-import { addUserAddress } from "~/services/profile/address.service";
-import { useAddressFieldStore } from "~/stores/address";
+import { addUserAddress, fetchUserAddresses } from "~/services/profile/address.service";
+import { useAddressFieldStore, useAddressStore } from "~/stores/address";
 import type { AddFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
 
 export function useAddressAddForm() {
@@ -10,6 +10,9 @@ export function useAddressAddForm() {
      */
 	// const address_store = useAddressStore()
 	const address_field_store = useAddressFieldStore()
+	const address_store = useAddressStore()
+	const toast_store = useToastStore()
+	const loading_overlay_store = useLoadingOverlayStore()
 
 	/**
      * Variables
@@ -86,29 +89,55 @@ export function useAddressAddForm() {
 	}
 
 	async function addAddress() {
-		try {
-			const response = await addUserAddress(active_add_form.value)
+		closeAddModal()
+		startRequestOverlay()
 
-			console.log(response);
+
+		const type = add_form_type.value;
+		const payload = { ...active_add_form.value };
+		try {
+			const response = await addUserAddress(payload)
+
+			if (response?.success) {
+				const list_response = await fetchUserAddresses({ type });
+
+				if (list_response.success && Array.isArray(list_response.data)) {
+					address_store.setAddresses(type, list_response.data);
+				}
+
+				resetAddForm(type);
+			} else {
+				openAddModal();
+			}
+
+			toast_store.handleApiResponse(response)
 		} catch (_error: unknown) {
 			console.log(_error);
+			openAddModal();
+		} finally {
+			loading_overlay_store.stopLoading('add_address')
 		}
 	}
 
 
 	function openAddModal() {
-		resetAddForm()
 		is_add_modal_open.value = true
 	}
 
-	/** Close add modal and optionally reset the current active form */
-	function closeAddModal(should_reset = false) {
+	function closeAddModal() {
 		is_add_modal_open.value = false
+	}
 
-		/** Reset only when requested */
-		if (should_reset) {
-			resetAddForm()
-		}
+
+
+
+	/** Overlays */
+	function startRequestOverlay() {
+		loading_overlay_store.startLoading('add_address', {
+			showCopy: true,
+			testId: 'account-profile-upload-avatar-overlay',
+			position: 'fixed'
+		})
 	}
 
 	return {
