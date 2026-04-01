@@ -259,6 +259,7 @@ export function useAuthProfileSetup() {
 		normalizeEmail(email.value) !== original_email_from_state.value
 	);
 	const requires_email_verification = computed(() => {
+		if (!email_required.value) return false;
 		if (!state.value.id) return false;
 		if (!has_required_email.value) return false;
 		return email_changed_from_state.value;
