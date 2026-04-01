@@ -526,6 +526,20 @@ export function useAuthProfileSetup() {
 				is_email_verification_modal_open.value = true;
 				return;
 			}
+
+			clearVerificationState();
+			const response = await requestEmailVerification(false);
+
+			if (!response?.success) {
+				const meta_code = (response.meta as { code?: string } | null)?.code || '';
+				if (meta_code === 'max_resend_reached') {
+					is_email_verification_modal_open.value = true;
+				}
+				return;
+			}
+
+			is_email_verification_modal_open.value = true;
+			return;
 		}
 
 		step.value = 2;

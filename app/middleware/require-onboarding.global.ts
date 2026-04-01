@@ -16,8 +16,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	const { state } = storeToRefs(users_store);
 
 	/**
-     * Skip callback routes
-     */
+	 * Skip callback routes
+	 */
 	if (isCallbackPath(to.path)) {
 		return;
 	}
@@ -28,41 +28,20 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	const onboarding_path = `/${country}/auth/profile`;
 
 	/**
-     * Prevent redirect loop
-     */
+	 * Prevent redirect loop
+	 */
 	if (to.path === onboarding_path) {
 		return;
 	}
 
-	/**
-     * If user is already loaded in store
-     */
-	if (state.value.id) {
-		if (!hasEmailValue(state.value.email)) {
-			return navigateTo(
-				{
-					path: onboarding_path,
-					query: {
-						redirect: to.fullPath,
-					},
-				},
-				{ replace: true }
-			);
-		}
 
+	if (!state.value.id) {
 		return;
 	}
 
 	/**
-     * If user is not yet loaded, fetch /me first
-     */
-	const { fetchAndStoreUser } = useAuthUser();
-	const is_authenticated = await fetchAndStoreUser();
-
-	if (!is_authenticated) {
-		return;
-	}
-
+	 * If user is already loaded in store
+	 */
 	if (!hasEmailValue(state.value.email)) {
 		return navigateTo(
 			{
@@ -74,4 +53,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 			{ replace: true }
 		);
 	}
+
+	return;
 });
