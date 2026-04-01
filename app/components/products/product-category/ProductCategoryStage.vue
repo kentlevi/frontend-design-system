@@ -154,6 +154,14 @@ const displayed_product_title = computed(() =>
 )
 
 
+const openArworkUpload = () => {
+	if( props.navigationInFlight || has_pending_custom_selection.value ) {
+		console.log(props.navigationInFlight, has_pending_custom_selection.value)
+		return
+	}
+
+	emit('open-upload')
+}
 
 </script>
 
@@ -573,7 +581,7 @@ const displayed_product_title = computed(() =>
 								class="next-step-btn"
 								:disabled="props.navigationInFlight || has_pending_custom_selection"
 								data-testid="product-category-next-step-button"
-								@click="emit('open-upload')"
+								@click="openArworkUpload()"
 							>
 								{{ t('product.price.nextStep') }}
 							</UiButton>

@@ -11,7 +11,6 @@ export const useSizeService = () => {
 	const size = ref<SizeSpec |  null>(selection_store.size ?? null)
 
 	const custom_size = ref<SizeSpec>({
-		id		: null,
 		width	: null,
 		height	: null,
 		label	: null,
@@ -37,11 +36,12 @@ export const useSizeService = () => {
 	}
 
 	const changeCustomSize = () => {
-		const matched_size = featured_sizes.value.find(e => e.width == custom_size.value.width &&  e.height == custom_size.value.height)
+		if( featured_sizes && featured_sizes.value ) {
+			const matched_size = featured_sizes.value.find(e => e.width == custom_size.value.width &&  e.height == custom_size.value.height)
 
-		if( matched_size ) {
-			custom_size.value.id = matched_size.id
-			custom_size.value.label = matched_size.label
+			if( matched_size ) {
+				custom_size.value.label = matched_size.label
+			}
 		}
 
 		selection_store.updateSize(custom_size.value)
