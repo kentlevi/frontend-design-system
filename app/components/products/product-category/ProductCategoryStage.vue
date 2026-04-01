@@ -167,7 +167,7 @@ const openArworkUpload = () => {
 
 <template>
 	<section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
-		<section class="product-picker product-picker-layer" data-testid="product-category-picker">
+		<section :key="resolved_category" class="product-picker product-picker-layer" data-testid="product-category-picker">
 			<button
 				v-for="(prod, index) in props.categoryProducts"
 				:key="prod.id"
@@ -621,6 +621,7 @@ const openArworkUpload = () => {
 		align-items: center;
 		cursor: pointer;
 		transition: background-color 0.2s ease;
+		animation: fadeInUp 0.4s cubic-bezier(0.2, 0, 0.2, 1) both;
 
 		&:hover,
 		&.is-active {
@@ -647,7 +648,7 @@ const openArworkUpload = () => {
 			object-fit: contain;
 			display: block;
 			transform-origin: center;
-			transition: transform 0.24s ease;
+			transition: transform 0.24s ease, opacity 0.3s ease;
 		}
 	}
 
@@ -1295,6 +1296,25 @@ const openArworkUpload = () => {
 			font-size: var(--type-size-500);
 			line-height: var(--type-line-500);
 		}
+	}
+}
+
+.product-picker-item {
+	@for $i from 1 through 12 {
+		&:nth-child(#{$i}) {
+			animation-delay: #{$i * 0.03}s;
+		}
+	}
+}
+
+@keyframes fadeInUp {
+	0% {
+		opacity: 0;
+		transform: translateY(12px) scale(0.98);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
 	}
 }
 </style>

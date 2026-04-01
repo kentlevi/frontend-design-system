@@ -12,15 +12,6 @@ function initialCategoriesState(): Categories {
 	}
 }
 
-/**
- * Initial products state factory
- */
-function initialProductsState(): Products {
-	return {
-		products: []
-	}
-}
-
 export const useNavigationStore = defineStore('navigation', () => {
 
 	/* --------------------------------------------------------------------------
@@ -28,7 +19,7 @@ export const useNavigationStore = defineStore('navigation', () => {
      * -------------------------------------------------------------------------- */
 
 	const category_state = ref<Categories>(initialCategoriesState())
-	const product_state = ref<Products>(initialProductsState())
+	const product_state = ref<Record<string, Product[]>>({})
 
 	/* --------------------------------------------------------------------------
      * Actions
@@ -38,8 +29,8 @@ export const useNavigationStore = defineStore('navigation', () => {
 		category_state.value.categories = categories
 	}
 
-	function setProducts(products: Product[]) {
-		product_state.value.products = products
+	function setProducts(url_slug: string, products: Product[]) {
+		product_state.value[url_slug] = products
 	}
 
 	function clearCategories() {
@@ -47,7 +38,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 	}
 
 	function clearProducts() {
-		product_state.value = initialProductsState()
+		product_state.value = {}
 	}
 
 	return {

@@ -28,7 +28,10 @@ export const useProductService = () => {
 				style: Record<string, unknown>
 			}[],
 		},
-		quantities: QuantitySpec[]
+		quantities: {
+			product_variant_id: number,
+			data: QuantitySpec[],
+		}
 	}
 
 
@@ -72,7 +75,7 @@ export const useProductService = () => {
 
 		attribute_store.updateSizes(featured_data.featured_sizes)
 
-		attribute_store.updateQuantites(featured_data.quantities)
+		attribute_store.updateQuantites(featured_data.quantities?.data)
 
 		attribute_store.updateColors(featured_data.variants.colors)
 

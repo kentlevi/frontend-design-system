@@ -1,26 +1,68 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { useCheckoutMemberPage } from '~/composables/checkout/member/useCheckoutMemberPage';
+import { useCheckoutExperience } from '~/composables/checkout/useCheckoutExperience';
+import CheckoutAddressForm from '~/components/checkout/shared/CheckoutAddressForm.vue';
+import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
 
 const {
-	withCountry,
+	is_member,
 	t,
-	selected_checkout_items,
+	withCountry,
+	formatPrice,
+	sizeDimOnly,
+	completing_checkout,
+	completeCheckout,
+	email,
 	order_total,
 	order_discount,
 	order_shipping_fee,
 	order_subtotal,
-	formatPrice,
-	sizeDimOnly,
+	selected_checkout_items,
+	itemMeta,
+
+	// Identifiers & UI State
+	is_login_modal_open,
+	email_tooltip_open,
+	points_tooltip_open,
+	drop_shipping_tooltip_open,
+	billing_tooltip_open,
+	is_drop_shipping_address_modal_open,
+	is_accredited_banks_modal_open,
+	is_billing_address_modal_open,
+	is_shipping_address_modal_open,
+
+	// Methods
+	openLoginModal,
+	useAllPoints,
+	clearPoints,
+	togglePointsTooltip,
+	toggleDropShippingTooltip,
+	toggleBillingTooltip,
+	toggleEmailTooltip,
+	getAddressTagClass,
+
+	// Data
+	active_shipping_methods,
+	active_payment_methods,
+	selected_shipping_method,
+	selected_payment_method,
+	shipping_method_details,
+	payment_brands,
+	field_validation_by_key,
+
+	// Transition Refs
+	shipping_swap_wrapper_ref,
+	billing_swap_wrapper_ref,
+	drop_shipping_swap_wrapper_ref,
+	drop_shipping_mode_swap_wrapper_ref,
+	billing_mode_swap_wrapper_ref,
+	payment_meta_swap_wrapper_ref,
+
+	// Member Specifics (Available via spread)
 	saved_shipping_addresses,
 	selected_shipping_address,
 	selected_shipping_address_id,
 	ship_to_another_address,
-	selected_shipping_method,
-	selected_payment_method,
-	active_shipping_methods,
-	active_payment_methods,
-	payment_brands,
 	drop_shipping_enabled,
 	drop_shipping_ship_to_another_address,
 	drop_shipping_name,
@@ -55,115 +97,18 @@ const {
 	card_number,
 	expiry,
 	cvv,
-	useAllPoints,
-	clearPoints,
-	completing_checkout,
-	complete_loader_ref,
-	completeCheckout,
-	shipping_method_details,
-	itemMeta,
-} = useCheckoutMemberPage();
+} = useCheckoutExperience();
 
-const points_tooltip_open = ref(false);
+// Local UI state for Tooltips
+const email_tooltip_ref = ref<HTMLElement | null>(null);
 const points_tooltip_ref = ref<HTMLElement | null>(null);
-const drop_shipping_tooltip_open = ref(false);
 const drop_shipping_tooltip_ref = ref<HTMLElement | null>(null);
-const billing_tooltip_open = ref(false);
 const billing_tooltip_ref = ref<HTMLElement | null>(null);
-const is_drop_shipping_address_modal_open = ref(false);
-const is_accredited_banks_modal_open = ref(false);
-const is_billing_address_modal_open = ref(false);
-const is_shipping_address_modal_open = ref(false);
-const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const drop_shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const drop_shipping_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const payment_meta_swap_wrapper_ref = ref<HTMLElement | null>(null);
+
+// Animation Logic
 const shipping_swap_enter_duration_ms = 1000;
 const shipping_swap_leave_duration_ms = 360;
-const shipping_swap_direction = ref<'up' | 'down'>('down');
-let shipping_swap_wrapper_timeout: number | null = null;
-let billing_swap_wrapper_timeout: number | null = null;
-let drop_shipping_swap_wrapper_timeout: number | null = null;
-let drop_shipping_mode_swap_wrapper_timeout: number | null = null;
-let billing_mode_swap_wrapper_timeout: number | null = null;
-let payment_meta_swap_wrapper_timeout: number | null = null;
 
-function togglePointsTooltip() {
-	points_tooltip_open.value = !points_tooltip_open.value;
-}
-
-function closePointsTooltip() {
-	points_tooltip_open.value = false;
-}
-
-function toggleDropShippingTooltip() {
-	drop_shipping_tooltip_open.value = !drop_shipping_tooltip_open.value;
-}
-
-function closeDropShippingTooltip() {
-	drop_shipping_tooltip_open.value = false;
-}
-
-function toggleBillingTooltip() {
-	billing_tooltip_open.value = !billing_tooltip_open.value;
-}
-
-function closeBillingTooltip() {
-	billing_tooltip_open.value = false;
-}
-
-function getAddressTagClass(label?: string) {
-	if (!label) return '';
-	return `checkout-member-address-tag--${label.toLowerCase()}`;
-}
-
-function handlePointsTooltipPointerDown(event: PointerEvent) {
-	const target = event.target as Node | null;
-	if (!target) return;
-	if (points_tooltip_ref.value?.contains(target)) return;
-	closePointsTooltip();
-	if (drop_shipping_tooltip_ref.value?.contains(target)) return;
-	closeDropShippingTooltip();
-	if (billing_tooltip_ref.value?.contains(target)) return;
-	closeBillingTooltip();
-}
-
-function handlePointsTooltipEscape(event: KeyboardEvent) {
-	if (event.key !== 'Escape') return;
-	closePointsTooltip();
-	closeDropShippingTooltip();
-	closeBillingTooltip();
-}
-
-onMounted(() => {
-	window.addEventListener('pointerdown', handlePointsTooltipPointerDown, true);
-	window.addEventListener('keydown', handlePointsTooltipEscape);
-});
-
-onBeforeUnmount(() => {
-	window.removeEventListener('pointerdown', handlePointsTooltipPointerDown, true);
-	window.removeEventListener('keydown', handlePointsTooltipEscape);
-	if (shipping_swap_wrapper_timeout !== null) {
-		window.clearTimeout(shipping_swap_wrapper_timeout);
-	}
-	if (billing_swap_wrapper_timeout !== null) {
-		window.clearTimeout(billing_swap_wrapper_timeout);
-	}
-	if (drop_shipping_swap_wrapper_timeout !== null) {
-		window.clearTimeout(drop_shipping_swap_wrapper_timeout);
-	}
-	if (drop_shipping_mode_swap_wrapper_timeout !== null) {
-		window.clearTimeout(drop_shipping_mode_swap_wrapper_timeout);
-	}
-	if (billing_mode_swap_wrapper_timeout !== null) {
-		window.clearTimeout(billing_mode_swap_wrapper_timeout);
-	}
-	if (payment_meta_swap_wrapper_timeout !== null) {
-		window.clearTimeout(payment_meta_swap_wrapper_timeout);
-	}
-});
 
 function beforeShippingSwapEnter(element: Element) {
 	const node = element as HTMLElement;
@@ -174,15 +119,11 @@ function beforeShippingSwapEnter(element: Element) {
 
 function enterShippingSwap(element: Element, done: () => void) {
 	const node = element as HTMLElement;
-
 	requestAnimationFrame(() => {
 		node.style.opacity = '1';
 		node.style.clipPath = 'inset(0 0 0 0)';
 	});
-
-	window.setTimeout(() => {
-		done();
-	}, shipping_swap_enter_duration_ms);
+	window.setTimeout(() => done(), shipping_swap_enter_duration_ms);
 }
 
 function afterShippingSwapEnter(element: Element) {
@@ -204,15 +145,11 @@ function beforeShippingSwapLeave(element: Element) {
 
 function leaveShippingSwap(element: Element, done: () => void) {
 	const node = element as HTMLElement;
-
 	requestAnimationFrame(() => {
 		node.style.opacity = '0';
 		node.style.clipPath = 'inset(0 0 100% 0)';
 	});
-
-	window.setTimeout(() => {
-		done();
-	}, shipping_swap_leave_duration_ms);
+	window.setTimeout(() => done(), shipping_swap_leave_duration_ms);
 }
 
 function afterShippingSwapLeave(element: Element) {
@@ -225,190 +162,66 @@ function afterShippingSwapLeave(element: Element) {
 	node.style.width = '';
 }
 
-watch(ship_to_another_address, (is_another_address) => {
-	shipping_swap_direction.value = is_another_address ? 'up' : 'down';
+// Watchers for transitions
+useHeightTransition(shipping_swap_wrapper_ref, ship_to_another_address,
+	() => ship_to_another_address.value ? '[data-shipping-panel="another-address"]' : '[data-shipping-panel="saved-address"]',
+	{ enterDurationMs: shipping_swap_enter_duration_ms, leaveDurationMs: shipping_swap_leave_duration_ms }
+);
+
+useHeightTransition(drop_shipping_swap_wrapper_ref, drop_shipping_enabled,
+	() => drop_shipping_enabled.value ? '[data-drop-shipping-panel="form"]' : null,
+	{ enterDurationMs: shipping_swap_enter_duration_ms, leaveDurationMs: shipping_swap_leave_duration_ms }
+);
+
+useHeightTransition(billing_swap_wrapper_ref, use_shipping_as_billing,
+	() => use_shipping_as_billing.value ? null : '[data-billing-panel="content"]',
+	{ enterDurationMs: shipping_swap_enter_duration_ms, leaveDurationMs: shipping_swap_leave_duration_ms }
+);
+
+useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_another_address,
+	() => drop_shipping_ship_to_another_address.value ? '[data-drop-shipping-mode-panel="another-address"]' : '[data-drop-shipping-mode-panel="saved-address"]',
+	{ enabled: () => drop_shipping_enabled.value, enterDurationMs: shipping_swap_enter_duration_ms, leaveDurationMs: shipping_swap_leave_duration_ms }
+);
+
+useHeightTransition(billing_mode_swap_wrapper_ref, billing_use_different_address,
+	() => billing_use_different_address.value ? '[data-billing-mode-panel="different-address"]' : '[data-billing-mode-panel="saved-address"]',
+	{ enabled: () => !use_shipping_as_billing.value, enterDurationMs: shipping_swap_enter_duration_ms, leaveDurationMs: shipping_swap_leave_duration_ms }
+);
+
+useHeightTransition(payment_meta_swap_wrapper_ref, selected_payment_method,
+	() => selected_payment_method.value === 'credit-card' ? '[data-payment-panel="credit-card"]' : (selected_payment_method.value === 'bank-transfer' ? '[data-payment-panel="bank-transfer"]' : null),
+	{ enterDurationMs: shipping_swap_enter_duration_ms, leaveDurationMs: shipping_swap_leave_duration_ms }
+);
+
+function handleDocumentClick(event: MouseEvent) {
+	const target = event.target as HTMLElement;
+	if (!target) return;
+
+	// Helper to check if a ref contains the target
+	const isOutside = (ref: { value: HTMLElement | null }) => 
+		ref.value && !ref.value.contains(target);
+
+	// If any tooltip is open, close it if clicking outside its trigger area
+	if (email_tooltip_open.value && isOutside(email_tooltip_ref)) {
+		email_tooltip_open.value = false;
+	}
+	if (points_tooltip_open.value && isOutside(points_tooltip_ref)) {
+		points_tooltip_open.value = false;
+	}
+	if (drop_shipping_tooltip_open.value && isOutside(drop_shipping_tooltip_ref)) {
+		drop_shipping_tooltip_open.value = false;
+	}
+	if (billing_tooltip_open.value && isOutside(billing_tooltip_ref)) {
+		billing_tooltip_open.value = false;
+	}
+}
+
+onMounted(() => {
+	document.addEventListener('click', handleDocumentClick, true);
 });
 
-watch(ship_to_another_address, async () => {
-	const wrapper = shipping_swap_wrapper_ref.value;
-	if (!wrapper) return;
-
-	const start_height = wrapper.offsetHeight;
-	wrapper.style.height = `${start_height}px`;
-	wrapper.style.overflow = 'hidden';
-
-	await nextTick();
-
-	const active_panel = wrapper.querySelector<HTMLElement>(
-		ship_to_another_address.value
-			? '[data-shipping-panel="another-address"]'
-			: '[data-shipping-panel="saved-address"]'
-	);
-	const end_height = active_panel?.scrollHeight ?? wrapper.scrollHeight;
-	requestAnimationFrame(() => {
-		wrapper.style.height = `${end_height}px`;
-	});
-
-	if (shipping_swap_wrapper_timeout !== null) {
-		window.clearTimeout(shipping_swap_wrapper_timeout);
-	}
-
-	shipping_swap_wrapper_timeout = window.setTimeout(() => {
-		wrapper.style.height = '';
-		wrapper.style.overflow = '';
-		shipping_swap_wrapper_timeout = null;
-	}, Math.max(shipping_swap_enter_duration_ms, shipping_swap_leave_duration_ms) + 40);
-});
-
-watch(drop_shipping_enabled, async () => {
-	const wrapper = drop_shipping_swap_wrapper_ref.value;
-	if (!wrapper) return;
-
-	const start_height = wrapper.offsetHeight;
-	wrapper.style.height = `${start_height}px`;
-	wrapper.style.overflow = 'hidden';
-
-	await nextTick();
-
-	const active_panel = wrapper.querySelector<HTMLElement>('[data-drop-shipping-panel="form"]');
-	const end_height = drop_shipping_enabled.value ? (active_panel?.scrollHeight ?? wrapper.scrollHeight) : 0;
-	requestAnimationFrame(() => {
-		wrapper.style.height = `${end_height}px`;
-	});
-
-	if (drop_shipping_swap_wrapper_timeout !== null) {
-		window.clearTimeout(drop_shipping_swap_wrapper_timeout);
-	}
-
-	drop_shipping_swap_wrapper_timeout = window.setTimeout(() => {
-		wrapper.style.height = '';
-		wrapper.style.overflow = '';
-		drop_shipping_swap_wrapper_timeout = null;
-	}, Math.max(shipping_swap_enter_duration_ms, shipping_swap_leave_duration_ms) + 40);
-});
-
-watch(use_shipping_as_billing, async () => {
-	const wrapper = billing_swap_wrapper_ref.value;
-	if (!wrapper) return;
-
-	const start_height = wrapper.offsetHeight;
-	wrapper.style.height = `${start_height}px`;
-	wrapper.style.overflow = 'hidden';
-
-	await nextTick();
-
-	const active_panel = wrapper.querySelector<HTMLElement>('[data-billing-panel="content"]');
-	const end_height = use_shipping_as_billing.value ? 0 : (active_panel?.scrollHeight ?? wrapper.scrollHeight);
-	requestAnimationFrame(() => {
-		wrapper.style.height = `${end_height}px`;
-	});
-
-	if (billing_swap_wrapper_timeout !== null) {
-		window.clearTimeout(billing_swap_wrapper_timeout);
-	}
-
-	billing_swap_wrapper_timeout = window.setTimeout(() => {
-		wrapper.style.height = '';
-		wrapper.style.overflow = '';
-		billing_swap_wrapper_timeout = null;
-	}, Math.max(shipping_swap_enter_duration_ms, shipping_swap_leave_duration_ms) + 40);
-});
-
-watch(drop_shipping_ship_to_another_address, async () => {
-	const wrapper = drop_shipping_mode_swap_wrapper_ref.value;
-	if (!wrapper || !drop_shipping_enabled.value) return;
-
-	const start_height = wrapper.offsetHeight;
-	wrapper.style.height = `${start_height}px`;
-	wrapper.style.overflow = 'hidden';
-
-	await nextTick();
-
-	const active_panel = wrapper.querySelector<HTMLElement>(
-		drop_shipping_ship_to_another_address.value
-			? '[data-drop-shipping-mode-panel="another-address"]'
-			: '[data-drop-shipping-mode-panel="saved-address"]'
-	);
-	const end_height = active_panel?.scrollHeight ?? wrapper.scrollHeight;
-	requestAnimationFrame(() => {
-		wrapper.style.height = `${end_height}px`;
-	});
-
-	if (drop_shipping_mode_swap_wrapper_timeout !== null) {
-		window.clearTimeout(drop_shipping_mode_swap_wrapper_timeout);
-	}
-
-	drop_shipping_mode_swap_wrapper_timeout = window.setTimeout(() => {
-		wrapper.style.height = '';
-		wrapper.style.overflow = '';
-		drop_shipping_mode_swap_wrapper_timeout = null;
-	}, Math.max(shipping_swap_enter_duration_ms, shipping_swap_leave_duration_ms) + 40);
-});
-
-watch(billing_use_different_address, async () => {
-	const wrapper = billing_mode_swap_wrapper_ref.value;
-	if (!wrapper || use_shipping_as_billing.value) return;
-
-	const start_height = wrapper.offsetHeight;
-	wrapper.style.height = `${start_height}px`;
-	wrapper.style.overflow = 'hidden';
-
-	await nextTick();
-
-	const active_panel = wrapper.querySelector<HTMLElement>(
-		billing_use_different_address.value
-			? '[data-billing-mode-panel="different-address"]'
-			: '[data-billing-mode-panel="saved-address"]'
-	);
-	const end_height = active_panel?.scrollHeight ?? wrapper.scrollHeight;
-
-	requestAnimationFrame(() => {
-		wrapper.style.height = `${end_height}px`;
-	});
-
-	if (billing_mode_swap_wrapper_timeout !== null) {
-		window.clearTimeout(billing_mode_swap_wrapper_timeout);
-	}
-
-	billing_mode_swap_wrapper_timeout = window.setTimeout(() => {
-		wrapper.style.height = '';
-		wrapper.style.overflow = '';
-		billing_mode_swap_wrapper_timeout = null;
-	}, Math.max(shipping_swap_enter_duration_ms, shipping_swap_leave_duration_ms) + 40);
-});
-
-watch(selected_payment_method, async () => {
-	const wrapper = payment_meta_swap_wrapper_ref.value;
-	if (!wrapper) return;
-
-	const start_height = wrapper.offsetHeight;
-	wrapper.style.height = `${start_height}px`;
-	wrapper.style.overflow = 'hidden';
-
-	await nextTick();
-
-	const selector =
-		selected_payment_method.value === 'credit-card'
-			? '[data-payment-panel="credit-card"]'
-			: selected_payment_method.value === 'bank-transfer'
-				? '[data-payment-panel="bank-transfer"]'
-				: null;
-	const active_panel = selector ? wrapper.querySelector<HTMLElement>(selector) : null;
-	const end_height = active_panel?.scrollHeight ?? 0;
-
-	requestAnimationFrame(() => {
-		wrapper.style.height = `${end_height}px`;
-	});
-
-	if (payment_meta_swap_wrapper_timeout !== null) {
-		window.clearTimeout(payment_meta_swap_wrapper_timeout);
-	}
-
-	payment_meta_swap_wrapper_timeout = window.setTimeout(() => {
-		wrapper.style.height = '';
-		wrapper.style.overflow = '';
-		payment_meta_swap_wrapper_timeout = null;
-	}, Math.max(shipping_swap_enter_duration_ms, shipping_swap_leave_duration_ms) + 40);
+onBeforeUnmount(() => {
+	document.removeEventListener('click', handleDocumentClick, true);
 });
 </script>
 
@@ -421,53 +234,85 @@ watch(selected_payment_method, async () => {
 		test-id="checkout-member-page"
 		loading-test-id="checkout-member-complete-loading-overlay"
 		:loading="completing_checkout"
-		:loading-label="t('checkout.member.completeCheckout')"
+		:loading-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
 	>
 		<template #loader>
 			<div ref="complete_loader_ref" />
 		</template>
 
 		<template #main>
-			<section class="checkout-member-section">
-				<div class="checkout-member-section-head">
-					<h1 class="checkout-member-section-title">{{ t('checkout.member.shippingDetails') }}</h1>
+			<!-- Guest Contact Information (Unified with member section style) -->
+			<section v-if="!is_member" class="checkout-member-section">
+				<h2 class="checkout-member-section-title">{{ t('checkout.guest.contactInformation') }}</h2>
+				<div class="checkout-member-shipping-group">
+					<div class="checkout-contact-group">
+						<div class="checkout-contact-head">
+							<div ref="email_tooltip_ref" class="checkout-contact-label-wrap">
+								<span class="checkout-label">
+									Email
+									<span class="checkout-label-required" aria-hidden="true">*</span>
+								</span>
+								<UiTooltip
+									:open="email_tooltip_open"
+									side="right"
+									align="start"
+									mobile-side="left"
+									tone="neutral"
+									:offset="10"
+									:slide-distance="24"
+									role="dialog"
+									content-class="checkout-email-tooltip-content"
+									class="checkout-email-tooltip"
+								>
+									<template #trigger>
+										<button
+											type="button"
+											:class="['checkout-email-tooltip-trigger', { 'is-active': email_tooltip_open }]"
+											@click="toggleEmailTooltip"
+										>
+											<UiIcon :name="email_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
+										</button>
+									</template>
+									<div class="checkout-email-tooltip-copy">
+										<strong class="checkout-email-tooltip-title">Email for Verification &amp; Updates</strong>
+										<p class="checkout-email-tooltip-text">
+											Enter your email address to continue. We'll use it to check if you already have an account and to send updates about your order.
+										</p>
+									</div>
+								</UiTooltip>
+							</div>
+							<div class="checkout-login-link">
+								<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
+								<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-login-link-action" @click="openLoginModal">
+									{{ t('checkout.guest.login') }}
+								</UiButton>
+							</div>
+						</div>
+						<UiInput v-model="email" type="email" class="checkout-input" :placeholder="t('checkout.guest.fields.email.placeholder')" />
+					</div>
 				</div>
+			</section>
 
+			<!-- Shipping Details Section (Unified Member-Style) -->
+			<section class="checkout-member-section">
+ 
 				<div class="checkout-member-shipping-group">
 					<div class="checkout-member-address-group">
-						<div class="checkout-member-radio-row">
+						<!-- Member: Address Selection / Toggle -->
+						<div v-if="is_member" class="checkout-member-radio-row">
 							<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 								{{ t('checkout.member.myShippingAddress') }}
 							</UiRadio>
-							<UiButton
-								type="button"
-								variant="ghost"
-								tone="neutral"
-								size="sm"
-								class="checkout-member-link"
-								:no-hover="true"
-								@click="is_shipping_address_modal_open = true"
-							>
+							<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_shipping_address_modal_open = true">
 								{{ t('checkout.member.viewShippingAddresses') }}
 							</UiButton>
 						</div>
 
 						<div ref="shipping_swap_wrapper_ref" class="checkout-member-shipping-swap-wrap">
-							<Transition
-								@before-enter="beforeShippingSwapEnter"
-								@enter="enterShippingSwap"
-								@after-enter="afterShippingSwapEnter"
-								@before-leave="beforeShippingSwapLeave"
-								@leave="leaveShippingSwap"
-								@after-leave="afterShippingSwapLeave"
-							>
-								<div v-if="!ship_to_another_address" key="saved-address" data-shipping-panel="saved-address" class="checkout-member-address-grid">
-									<button
-										v-if="selected_shipping_address"
-										type="button"
-										class="checkout-member-address-card is-active"
-										@click="is_shipping_address_modal_open = true"
-									>
+							<Transition @before-enter="beforeShippingSwapEnter" @enter="enterShippingSwap" @after-enter="afterShippingSwapEnter" @before-leave="beforeShippingSwapLeave" @leave="leaveShippingSwap" @after-leave="afterShippingSwapLeave">
+								<!-- Saved Address (Member Only) -->
+								<div v-if="is_member && !ship_to_another_address" key="saved-address" data-shipping-panel="saved-address" class="checkout-member-address-grid">
+									<button v-if="selected_shipping_address" type="button" class="checkout-member-address-card is-active" @click="is_shipping_address_modal_open = true">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
 												<strong class="checkout-member-address-name">{{ selected_shipping_address.recipient }}</strong>
@@ -487,11 +332,7 @@ watch(selected_payment_method, async () => {
 														<p class="checkout-member-address-line">{{ selected_shipping_address.line2 }}</p>
 													</div>
 												</div>
-												<span
-													v-if="selected_shipping_address.label"
-													class="checkout-member-address-tag"
-													:class="getAddressTagClass(selected_shipping_address.label)"
-												>
+												<span v-if="selected_shipping_address.label" class="checkout-member-address-tag" :class="getAddressTagClass(selected_shipping_address.label)">
 													{{ selected_shipping_address.label }}
 												</span>
 											</div>
@@ -502,127 +343,43 @@ watch(selected_payment_method, async () => {
 										</div>
 									</button>
 								</div>
-								<div v-else key="another-address" data-shipping-panel="another-address" class="checkout-member-address-form">
-									<div class="checkout-member-address-form-head">
+
+								<!-- Manual Form (Guest or Member Another Address) -->
+								<div v-else key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
+									<div v-if="is_member" class="checkout-member-address-form-head">
 										<UiRadio v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
 											{{ t('checkout.member.shipToAnotherAddress') }}
 										</UiRadio>
 										<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
 									</div>
-									<div class="checkout-member-field-grid">
-										<UiFormField
-											:label="t('checkout.guest.fields.fullName.label')"
-											:required="true"
-											:show-required-mark="true"
-											head-class="checkout-form-field-head"
-											label-class="checkout-form-field-label"
-											label-text-class="checkout-form-field-label-text"
-										>
-											<UiInput v-model="full_name" size="lg" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
-										</UiFormField>
-										<UiFormField
-											:label="t('checkout.guest.fields.company.label')"
-											head-class="checkout-form-field-head"
-											label-class="checkout-form-field-label"
-											label-text-class="checkout-form-field-label-text"
-										>
-											<UiInput v-model="company" size="lg" :placeholder="t('checkout.guest.fields.company.placeholder')" />
-										</UiFormField>
-									</div>
-									<UiFormField
-										:label="t('checkout.guest.fields.streetAddress.label')"
-										:required="true"
-										:show-required-mark="true"
-										head-class="checkout-form-field-head"
-										label-class="checkout-form-field-label"
-										label-text-class="checkout-form-field-label-text"
-									>
-										<div class="checkout-member-field-stack">
-											<UiInput v-model="address_1" size="lg" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
-											<UiInput v-model="address_2" size="lg" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
-										</div>
-									</UiFormField>
-									<div class="checkout-member-field-grid">
-										<UiFormField
-											:label="t('checkout.guest.fields.province.label')"
-											:required="true"
-											:show-required-mark="true"
-											head-class="checkout-form-field-head"
-											label-class="checkout-form-field-label"
-											label-text-class="checkout-form-field-label-text"
-										>
-											<UiSelect
-												:model-value="province"
-												:options="province_options"
-												:placeholder="t('checkout.guest.fields.province.placeholder')"
-												class="checkout-member-select"
-												trigger-class="checkout-member-select-trigger"
-												@update:model-value="province = String($event)"
-											/>
-										</UiFormField>
-										<UiFormField
-											:label="t('checkout.guest.fields.city.label')"
-											:required="true"
-											:show-required-mark="true"
-											head-class="checkout-form-field-head"
-											label-class="checkout-form-field-label"
-											label-text-class="checkout-form-field-label-text"
-										>
-											<UiInput v-model="city" size="lg" :placeholder="t('checkout.guest.fields.city.placeholder')" />
-										</UiFormField>
-									</div>
-									<div class="checkout-member-field-grid">
-										<UiFormField
-											:label="t('checkout.guest.fields.postalCode.label')"
-											:required="true"
-											:show-required-mark="true"
-											head-class="checkout-form-field-head"
-											label-class="checkout-form-field-label"
-											label-text-class="checkout-form-field-label-text"
-										>
-											<UiInput v-model="postal_code" size="lg" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
-										</UiFormField>
-										<UiFormField
-											:label="t('checkout.guest.fields.phone.label')"
-											head-class="checkout-form-field-head"
-											label-class="checkout-form-field-label"
-											label-text-class="checkout-form-field-label-text"
-										>
-											<div class="checkout-member-phone-field">
-												<div class="checkout-member-phone-prefix">+82</div>
-												<UiInput
-													v-model="phone"
-													size="lg"
-													class="checkout-member-phone-input"
-													input-class="checkout-member-phone-input-field"
-													:placeholder="t('checkout.guest.fields.phone.placeholder')"
-												/>
-											</div>
-										</UiFormField>
-									</div>
+									<CheckoutAddressForm
+										v-model:fullName="full_name"
+										v-model:company="company"
+										v-model:address1="address_1"
+										v-model:address2="address_2"
+										v-model:province="province"
+										v-model:city="city"
+										v-model:postalCode="postal_code"
+										v-model:phone="phone"
+										:province-options="province_options"
+										size="md"
+									/>
 								</div>
 							</Transition>
 						</div>
 					</div>
-
-					<UiRadio v-if="!ship_to_another_address" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
+					<UiRadio v-if="is_member && !ship_to_another_address" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
 						{{ t('checkout.member.shipToAnotherAddress') }}
 					</UiRadio>
 
+					<!-- Shipping Method Section -->
 					<div class="checkout-member-block">
 						<div class="checkout-member-block-head">
 							<div class="checkout-member-block-title">{{ t('checkout.member.shippingMethod') }}</div>
 							<div class="checkout-member-block-note">{{ t('checkout.member.shippingNote') }}</div>
 						</div>
 						<div class="checkout-member-card-grid">
-							<button
-								v-for="method in active_shipping_methods"
-								:key="method.key"
-								type="button"
-								class="checkout-member-choice-card"
-								:class="{ 'is-active': selected_shipping_method === method.key }"
-								@click="selected_shipping_method = method.key"
-							>
+							<button v-for="method in active_shipping_methods" :key="method.key" type="button" class="checkout-member-choice-card" :class="{ 'is-active': selected_shipping_method === method.key }" @click="selected_shipping_method = method.key">
 								<img :src="method.icon" :alt="shipping_method_details[method.key]?.name" class="checkout-member-choice-icon">
 								<div class="checkout-member-choice-copy">
 									<div class="checkout-member-choice-title">{{ shipping_method_details[method.key]?.name }}</div>
@@ -633,191 +390,115 @@ watch(selected_payment_method, async () => {
 						</div>
 					</div>
 
+					<!-- Drop Shipping Section (Member Only in Original Screenshot but let's keep it shareable if enabled) -->
 					<div class="checkout-member-inline-row">
 						<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-							<UiCheckbox v-model="drop_shipping_enabled">
-								{{ t('checkout.member.enableDropShipping') }}
-							</UiCheckbox>
-							<UiTooltip
-								:open="drop_shipping_tooltip_open"
-								side="right"
-								align="start"
-								mobile-side="bottom"
-								tone="neutral"
-								:offset="10"
-								:slide-distance="24"
-								role="dialog"
-								content-class="checkout-member-drop-shipping-tooltip-content"
-								class="checkout-member-points-tooltip"
-							>
+							<UiCheckbox v-model="drop_shipping_enabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
+							<UiTooltip :open="drop_shipping_tooltip_open" side="right" align="start" mobile-side="bottom" tone="neutral" :offset="10" content-class="checkout-member-drop-shipping-tooltip-content" class="checkout-member-points-tooltip">
 								<template #trigger>
-									<button
-										type="button"
-										class="checkout-member-points-tooltip-trigger"
-										:class="{ 'is-active': drop_shipping_tooltip_open }"
-										:aria-expanded="drop_shipping_tooltip_open"
-										aria-haspopup="dialog"
-										aria-label="Show drop shipping information"
-										@click.stop.prevent="toggleDropShippingTooltip"
-									>
-										<UiIcon
-											:name="drop_shipping_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
-											size="20"
-											color="var(--text-secondary)"
-											decorative
-										/>
+									<button type="button" class="checkout-member-points-tooltip-trigger" @click.stop.prevent="toggleDropShippingTooltip">
+										<UiIcon :name="drop_shipping_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
 									</button>
 								</template>
-
 								<div class="checkout-member-points-tooltip-copy">
 									<strong class="checkout-member-points-tooltip-title">Enable Drop Shipping</strong>
 									<p class="checkout-member-points-tooltip-text">
-										Ship orders directly to your customer without handling the delivery. We will produce, pack, and ship the order on your behalf, so you don't need to manage inventory or logistics. This allows you to focus on selling while we take care of fulfillment and shipping.
+										Ship orders directly to your customer without handling the delivery. We will produce, pack, and ship the order on your behalf.
 									</p>
 								</div>
 							</UiTooltip>
 						</div>
-						<div v-if="drop_shipping_enabled" class="checkout-member-drop-shipping-form-note">
-							This will be saved as your default drop shipping address.
+						<div v-if="drop_shipping_enabled" class="checkout-member-drop-shipping-form-note" :class="{ 'is-muted': !is_member }">
+							{{ is_member ? 'This will be saved as your default drop shipping address.' : 'Only available for members to save addresses.' }}
 						</div>
 					</div>
 
+					<!-- Drop Shipping Selection Row (Member Only) -->
+					<div v-if="is_member && drop_shipping_enabled" class="checkout-member-address-group">
+						<div class="checkout-member-radio-row">
+							<UiRadio v-model="drop_shipping_ship_to_another_address" :value="false" name="drop-shipping-mode" class="checkout-member-radio-line">
+								My Drop Shipping Address
+							</UiRadio>
+							<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_drop_shipping_address_modal_open = true">
+								View Drop Shipping Addresses
+							</UiButton>
+						</div>
+					</div>
+
+					<!-- Drop Shipping Swap Wrapper (Unified) -->
 					<div ref="drop_shipping_swap_wrapper_ref" class="checkout-member-drop-shipping-swap-wrap">
-						<Transition
-							@before-enter="beforeShippingSwapEnter"
-							@enter="enterShippingSwap"
-							@after-enter="afterShippingSwapEnter"
-							@before-leave="beforeShippingSwapLeave"
-							@leave="leaveShippingSwap"
-							@after-leave="afterShippingSwapLeave"
-						>
+						<Transition @before-enter="beforeShippingSwapEnter" @enter="enterShippingSwap" @after-enter="afterShippingSwapEnter" @before-leave="beforeShippingSwapLeave" @leave="leaveShippingSwap" @after-leave="afterShippingSwapLeave">
+							<!-- Only show if enabled -->
 							<div v-if="drop_shipping_enabled" data-drop-shipping-panel="form" class="checkout-member-drop-shipping-form">
-								<div class="checkout-member-address-group">
-									<div class="checkout-member-radio-row">
-										<UiRadio
-											v-model="drop_shipping_ship_to_another_address"
-											:value="false"
-											name="drop-shipping-mode"
-											class="checkout-member-radio-line"
-										>
-											My Drop Shipping Address
-										</UiRadio>
-										<UiButton
-											variant="ghost"
-											tone="neutral"
-											size="sm"
-											class="checkout-member-link"
-											:no-hover="true"
-											:disabled="drop_shipping_ship_to_another_address"
-											@click="is_drop_shipping_address_modal_open = true"
-										>
-											View Drop Shipping Addresses
-										</UiButton>
-									</div>
-								</div>
-
-								<div ref="drop_shipping_mode_swap_wrapper_ref" class="checkout-member-drop-shipping-mode-swap-wrap">
-									<Transition
-										@before-enter="beforeShippingSwapEnter"
-										@enter="enterShippingSwap"
-										@after-enter="afterShippingSwapEnter"
-										@before-leave="beforeShippingSwapLeave"
-										@leave="leaveShippingSwap"
-										@after-leave="afterShippingSwapLeave"
-									>
-										<div
-											v-if="!drop_shipping_ship_to_another_address"
-											key="drop-shipping-saved-address"
-											data-drop-shipping-mode-panel="saved-address"
-											class="checkout-member-drop-shipping-mode-panel"
-										>
-											<div class="checkout-member-address-grid">
-												<button type="button" class="checkout-member-address-card is-active">
-													<div class="checkout-member-address-top">
-														<div class="checkout-member-address-title-group">
-															<strong class="checkout-member-address-name">{{ selected_drop_shipping_address?.recipient }}</strong>
-															<span v-if="selected_drop_shipping_address?.isDefault" class="checkout-member-address-badge">Default Drop Shipping</span>
-														</div>
-													</div>
-													<div class="checkout-member-address-content">
-														<div class="checkout-member-address-row checkout-member-address-row--split">
-															<div class="checkout-member-address-row-main">
-																<p class="checkout-member-address-line">
-																	{{ selected_drop_shipping_address?.company || 'No company provided' }}
-																</p>
+								<!-- Member: with saved or another address options -->
+								<template v-if="is_member">
+									<div ref="drop_shipping_mode_swap_wrapper_ref" class="checkout-member-drop-shipping-mode-swap-wrap">
+										<Transition @before-enter="beforeShippingSwapEnter" @enter="enterShippingSwap" @after-enter="afterShippingSwapEnter" @before-leave="beforeShippingSwapLeave" @leave="leaveShippingSwap" @after-leave="afterShippingSwapLeave">
+											<div v-if="!drop_shipping_ship_to_another_address" key="drop-shipping-saved" data-drop-shipping-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
+												<div class="checkout-member-address-grid">
+													<button type="button" class="checkout-member-address-card is-active">
+														<div class="checkout-member-address-top">
+															<div class="checkout-member-address-title-group">
+																<strong class="checkout-member-address-name">{{ selected_drop_shipping_address?.recipient }}</strong>
+																<span v-if="selected_drop_shipping_address?.isDefault" class="checkout-member-address-badge">Default Drop Shipping</span>
 															</div>
-															<span
-																v-if="selected_drop_shipping_address?.label"
-																class="checkout-member-address-tag"
-																:class="getAddressTagClass(selected_drop_shipping_address.label)"
-															>
-																{{ selected_drop_shipping_address.label }}
-															</span>
 														</div>
-													</div>
-												</button>
+														<div class="checkout-member-address-content">
+															<div class="checkout-member-address-row checkout-member-address-row--split">
+																<div class="checkout-member-address-row-main">
+																	<p class="checkout-member-address-line">{{ selected_drop_shipping_address?.company || 'No company provided' }}</p>
+																</div>
+																<span v-if="selected_drop_shipping_address?.label" class="checkout-member-address-tag" :class="getAddressTagClass(selected_drop_shipping_address.label)">
+																	{{ selected_drop_shipping_address.label }}
+																</span>
+															</div>
+														</div>
+													</button>
+												</div>
+												<div class="checkout-member-address-form-head is-solo">
+													<UiRadio v-model="drop_shipping_ship_to_another_address" :value="true" name="drop-shipping-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+														Ship to Another Drop Shipping Address
+													</UiRadio>
+												</div>
 											</div>
-
-											<div class="checkout-member-address-form-head is-solo">
-												<UiRadio
-													v-model="drop_shipping_ship_to_another_address"
-													:value="true"
-													name="drop-shipping-mode"
-													class="checkout-member-radio-line checkout-member-radio-line--inline"
-												>
-													Ship to Another Drop Shipping Address
-												</UiRadio>
+											<div v-else key="drop-shipping-another-address" data-drop-shipping-mode-panel="another-address" class="checkout-member-drop-shipping-mode-panel">
+												<div class="checkout-member-address-form-head">
+													<UiRadio v-model="drop_shipping_ship_to_another_address" :value="true" name="drop-shipping-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+														Ship to Another Drop Shipping Address
+													</UiRadio>
+													<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
+												</div>
+												<div class="checkout-member-field-grid">
+													<UiFormField label="Name" :required="true" :show-required-mark="true">
+														<UiInput v-model="drop_shipping_name" placeholder="Enter Full Name" />
+													</UiFormField>
+													<UiFormField label="Company (Optional)">
+														<UiInput v-model="drop_shipping_company" placeholder="Enter Company Name" />
+													</UiFormField>
+												</div>
 											</div>
-										</div>
+										</Transition>
+									</div>
+								</template>
 
-										<div
-											v-else
-											key="drop-shipping-another-address"
-											data-drop-shipping-mode-panel="another-address"
-											class="checkout-member-drop-shipping-mode-panel"
-										>
-											<div class="checkout-member-address-form-head">
-												<UiRadio
-													v-model="drop_shipping_ship_to_another_address"
-													:value="true"
-													name="drop-shipping-mode"
-													class="checkout-member-radio-line checkout-member-radio-line--inline"
-												>
-													Ship to Another Drop Shipping Address
-												</UiRadio>
-												<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
-											</div>
-
-											<div class="checkout-member-field-grid">
-												<UiFormField
-													label="Name"
-													:required="true"
-													:show-required-mark="true"
-													head-class="checkout-form-field-head"
-													label-class="checkout-form-field-label"
-													label-text-class="checkout-form-field-label-text"
-												>
-													<UiInput v-model="drop_shipping_name" size="lg" placeholder="Enter Full Name" />
-												</UiFormField>
-
-												<UiFormField
-													label="Company (Optional)"
-													head-class="checkout-form-field-head"
-													label-class="checkout-form-field-label"
-													label-text-class="checkout-form-field-label-text"
-												>
-													<UiInput v-model="drop_shipping_company" size="lg" placeholder="Enter Company Name" />
-												</UiFormField>
-											</div>
-										</div>
-									</Transition>
-								</div>
+								<!-- Guest Always sees the manual form -->
+								<template v-else>
+									<div class="checkout-member-field-grid">
+										<UiFormField label="Name" :required="true" :show-required-mark="true">
+											<UiInput v-model="drop_shipping_name" placeholder="Enter Full Name" />
+										</UiFormField>
+										<UiFormField label="Company (Optional)">
+											<UiInput v-model="drop_shipping_company" placeholder="Enter Company Name" />
+										</UiFormField>
+									</div>
+								</template>
 							</div>
 						</Transition>
 					</div>
 				</div>
 			</section>
 
+			<!-- Payment Section (Unified Member-Style) -->
 			<section class="checkout-member-section">
 				<h2 class="checkout-member-section-title">{{ t('checkout.member.payment') }}</h2>
 
@@ -879,7 +560,8 @@ watch(selected_payment_method, async () => {
 					</div>
 				</div>
 
-				<div class="checkout-member-field-stack">
+				<!-- Credit Card Fields -->
+				<div v-if="selected_payment_method === 'credit-card'" class="checkout-member-field-stack">
 					<UiFormField
 						:label="t('checkout.member.fields.cardNumber.label')"
 						:required="true"
@@ -888,7 +570,7 @@ watch(selected_payment_method, async () => {
 						label-class="checkout-form-field-label"
 						label-text-class="checkout-form-field-label-text"
 					>
-						<UiInput v-model="card_number" size="lg" :placeholder="t('checkout.member.fields.cardNumber.placeholder')" />
+						<UiInput v-model="card_number" size="md" :placeholder="t('checkout.member.fields.cardNumber.placeholder')" />
 					</UiFormField>
 					<div class="checkout-member-field-grid">
 						<UiFormField
@@ -899,7 +581,7 @@ watch(selected_payment_method, async () => {
 							label-class="checkout-form-field-label"
 							label-text-class="checkout-form-field-label-text"
 						>
-							<UiInput v-model="expiry" size="lg" :placeholder="t('checkout.member.fields.expiration.placeholder')" />
+							<UiInput v-model="expiry" size="md" :placeholder="t('checkout.member.fields.expiration.placeholder')" />
 						</UiFormField>
 						<UiFormField
 							:label="t('checkout.member.fields.cvv.label')"
@@ -909,7 +591,7 @@ watch(selected_payment_method, async () => {
 							label-class="checkout-form-field-label"
 							label-text-class="checkout-form-field-label-text"
 						>
-							<UiInput v-model="cvv" size="lg" :placeholder="t('checkout.member.fields.cvv.placeholder')" />
+							<UiInput v-model="cvv" size="md" :placeholder="t('checkout.member.fields.cvv.placeholder')" />
 						</UiFormField>
 					</div>
 				</div>
@@ -917,33 +599,10 @@ watch(selected_payment_method, async () => {
 				<div class="checkout-member-inline-row">
 					<div ref="billing_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
 						<UiCheckbox v-model="use_shipping_as_billing">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
-						<UiTooltip
-							:open="billing_tooltip_open"
-							side="right"
-							align="center"
-							mobile-side="bottom"
-							tone="neutral"
-							:offset="10"
-							:slide-distance="24"
-							role="dialog"
-							content-class="checkout-member-billing-tooltip-content"
-						>
+						<UiTooltip :open="billing_tooltip_open" side="right" align="center" mobile-side="bottom" tone="neutral" :offset="10" :slide-distance="24" content-class="checkout-member-billing-tooltip-content" class="checkout-member-points-tooltip">
 							<template #trigger>
-								<button
-									type="button"
-									class="checkout-member-points-tooltip-trigger"
-									:class="{ 'is-active': billing_tooltip_open }"
-									:aria-expanded="billing_tooltip_open"
-									aria-haspopup="dialog"
-									aria-label="Show billing address information"
-									@click.stop.prevent="toggleBillingTooltip"
-								>
-									<UiIcon
-										:name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
-										size="20"
-										color="var(--text-secondary)"
-										decorative
-									/>
+								<button type="button" class="checkout-member-points-tooltip-trigger" @click.stop.prevent="toggleBillingTooltip">
+									<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
 								</button>
 							</template>
 
@@ -956,65 +615,27 @@ watch(selected_payment_method, async () => {
 				</div>
 
 				<div ref="billing_swap_wrapper_ref" class="checkout-member-billing-swap-wrap">
-					<Transition
-						@before-enter="beforeShippingSwapEnter"
-						@enter="enterShippingSwap"
-						@after-enter="afterShippingSwapEnter"
-						@before-leave="beforeShippingSwapLeave"
-						@leave="leaveShippingSwap"
-						@after-leave="afterShippingSwapLeave"
-					>
+					<Transition @before-enter="beforeShippingSwapEnter" @enter="enterShippingSwap" @after-enter="afterShippingSwapEnter" @before-leave="beforeShippingSwapLeave" @leave="leaveShippingSwap" @after-leave="afterShippingSwapLeave">
 						<div v-if="!use_shipping_as_billing" data-billing-panel="content" class="checkout-member-billing-panel">
 							<div class="checkout-member-billing-group">
-								<div class="checkout-member-radio-row">
-									<UiRadio
-										v-model="billing_use_different_address"
-										:value="false"
-										name="billing-mode"
-										class="checkout-member-radio-line"
-									>
+								<div v-if="is_member" class="checkout-member-radio-row">
+									<UiRadio v-model="billing_use_different_address" :value="false" name="billing-mode" class="checkout-member-radio-line">
 										My Billing Address
 									</UiRadio>
-									<UiButton
-										type="button"
-										variant="ghost"
-										tone="neutral"
-										size="sm"
-										class="checkout-member-link"
-										:no-hover="true"
-										@click="is_billing_address_modal_open = true"
-									>
+									<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_billing_address_modal_open = true">
 										View Billing Addresses
 									</UiButton>
 								</div>
 
 								<div ref="billing_mode_swap_wrapper_ref" class="checkout-member-drop-shipping-mode-swap-wrap">
-									<Transition
-										@before-enter="beforeShippingSwapEnter"
-										@enter="enterShippingSwap"
-										@after-enter="afterShippingSwapEnter"
-										@before-leave="beforeShippingSwapLeave"
-										@leave="leaveShippingSwap"
-										@after-leave="afterShippingSwapLeave"
-									>
-										<div
-											v-if="!billing_use_different_address"
-											key="billing-saved-address"
-											data-billing-mode-panel="saved-address"
-											class="checkout-member-drop-shipping-mode-panel"
-										>
+									<Transition @before-enter="beforeShippingSwapEnter" @enter="enterShippingSwap" @after-enter="afterShippingSwapEnter" @before-leave="beforeShippingSwapLeave" @leave="leaveShippingSwap" @after-leave="afterShippingSwapLeave">
+										<div v-if="!billing_use_different_address && is_member" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 											<div class="checkout-member-address-grid">
-												<button
-													v-if="selected_billing_address"
-													type="button"
-													class="checkout-member-address-card is-active"
-												>
+												<button v-if="selected_billing_address" type="button" class="checkout-member-address-card is-active" @click="is_billing_address_modal_open = true">
 													<div class="checkout-member-address-top">
 														<div class="checkout-member-address-title-group">
 															<strong class="checkout-member-address-name">{{ selected_billing_address.recipient }}</strong>
-															<span v-if="selected_billing_address.isDefault" class="checkout-member-address-badge">
-																{{ selected_billing_address.badgeLabel || 'Default Billing' }}
-															</span>
+															<span v-if="selected_billing_address.isDefault" class="checkout-member-address-badge">Default Billing</span>
 														</div>
 													</div>
 													<div class="checkout-member-address-content">
@@ -1030,11 +651,7 @@ watch(selected_payment_method, async () => {
 																	<p v-if="selected_billing_address.line2" class="checkout-member-address-line">{{ selected_billing_address.line2 }}</p>
 																</div>
 															</div>
-															<span
-																v-if="selected_billing_address.label"
-																class="checkout-member-address-tag"
-																:class="getAddressTagClass(selected_billing_address.label)"
-															>
+															<span v-if="selected_billing_address.label" class="checkout-member-address-tag" :class="getAddressTagClass(selected_billing_address.label)">
 																{{ selected_billing_address.label }}
 															</span>
 														</div>
@@ -1045,117 +662,30 @@ watch(selected_payment_method, async () => {
 													</div>
 												</button>
 											</div>
-
 											<div class="checkout-member-address-form-head is-solo">
-												<UiRadio
-													v-model="billing_use_different_address"
-													:value="true"
-													name="billing-mode"
-													class="checkout-member-radio-line checkout-member-radio-line--inline"
-												>
-													Use a Different Billing Address
+												<UiRadio v-model="billing_use_different_address" :value="true" name="billing-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+													Use Another Billing Address
 												</UiRadio>
 											</div>
 										</div>
-
-										<div
-											v-else
-											key="billing-different-address"
-											data-billing-mode-panel="different-address"
-											class="checkout-member-drop-shipping-mode-panel"
-										>
-											<div class="checkout-member-address-form-head is-solo">
-												<UiRadio
-													v-model="billing_use_different_address"
-													:value="true"
-													name="billing-mode"
-													class="checkout-member-radio-line checkout-member-radio-line--inline"
-												>
-													Use a Different Billing Address
+										<div v-else key="billing-manual" data-billing-mode-panel="manual-address" class="checkout-member-drop-shipping-mode-panel">
+											<div v-if="is_member" class="checkout-member-address-form-head">
+												<UiRadio v-model="billing_use_different_address" :value="true" name="billing-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+													Ship to Another Billing Address
 												</UiRadio>
-												<div class="checkout-member-address-form-note">
-													This will be saved as your default billing address.
-												</div>
 											</div>
-
-											<div class="checkout-member-field-stack">
-												<div class="checkout-member-field-grid">
-													<UiFormField
-														:label="t('checkout.guest.fields.fullName.label')"
-														:required="true"
-														:show-required-mark="true"
-														head-class="checkout-form-field-head"
-														label-class="checkout-form-field-label"
-														label-text-class="checkout-form-field-label-text"
-													>
-														<UiInput v-model="billing_full_name" size="lg" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
-													</UiFormField>
-													<UiFormField
-														:label="t('checkout.guest.fields.company.label')"
-														head-class="checkout-form-field-head"
-														label-class="checkout-form-field-label"
-														label-text-class="checkout-form-field-label-text"
-													>
-														<UiInput v-model="billing_company" size="lg" :placeholder="t('checkout.guest.fields.company.placeholder')" />
-													</UiFormField>
-												</div>
-
-												<UiFormField
-													:label="t('checkout.guest.fields.streetAddress.label')"
-													:required="true"
-													:show-required-mark="true"
-													head-class="checkout-form-field-head"
-													label-class="checkout-form-field-label"
-													label-text-class="checkout-form-field-label-text"
-												>
-													<UiInput v-model="billing_address_1" size="lg" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
-												</UiFormField>
-
-												<UiInput v-model="billing_address_2" size="lg" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
-
-												<div class="checkout-member-field-grid">
-													<UiFormField
-														:label="t('checkout.guest.fields.province.label')"
-														:required="true"
-														:show-required-mark="true"
-														head-class="checkout-form-field-head"
-														label-class="checkout-form-field-label"
-														label-text-class="checkout-form-field-label-text"
-													>
-														<UiSelect
-															:model-value="billing_province"
-															:options="province_options"
-															:placeholder="t('checkout.guest.fields.province.placeholder')"
-															class="checkout-member-select"
-															trigger-class="checkout-member-select-trigger"
-															@update:model-value="billing_province = String($event)"
-														/>
-													</UiFormField>
-													<UiFormField
-														:label="t('checkout.guest.fields.city.label')"
-														:required="true"
-														:show-required-mark="true"
-														head-class="checkout-form-field-head"
-														label-class="checkout-form-field-label"
-														label-text-class="checkout-form-field-label-text"
-													>
-														<UiInput v-model="billing_city" size="lg" :placeholder="t('checkout.guest.fields.city.placeholder')" />
-													</UiFormField>
-												</div>
-
-												<div class="checkout-member-field-grid">
-													<UiFormField
-														:label="t('checkout.guest.fields.postalCode.label')"
-														:required="true"
-														:show-required-mark="true"
-														head-class="checkout-form-field-head"
-														label-class="checkout-form-field-label"
-														label-text-class="checkout-form-field-label-text"
-													>
-														<UiInput v-model="billing_postal_code" size="lg" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
-													</UiFormField>
-												</div>
-											</div>
+											<CheckoutAddressForm
+												v-model:fullName="billing_full_name"
+												v-model:company="billing_company"
+												v-model:address1="billing_address_1"
+												v-model:address2="billing_address_2"
+												v-model:province="billing_province"
+												v-model:city="billing_city"
+												v-model:postalCode="billing_postal_code"
+												:province-options="province_options"
+												size="md"
+												:hide-phone="true"
+											/>
 										</div>
 									</Transition>
 								</div>
@@ -1168,25 +698,25 @@ watch(selected_payment_method, async () => {
 
 		<template #summary>
 			<CheckoutSummaryCard
-				tone="member"
-				:title="t('checkout.member.orderSummary')"
+				:tone="is_member ? 'member' : 'guest'"
+				:title="t(is_member ? 'checkout.member.orderSummary' : 'checkout.guest.orderSummary')"
 				:items="selected_checkout_items"
-				:subtotal-label="t('checkout.member.summary.subtotal')"
-				:shipping-fee-label="t('checkout.member.summary.shippingFee', { method: shipping_method_details[selected_shipping_method]?.name })"
+				:subtotal-label="t(is_member ? 'checkout.member.summary.subtotal' : 'checkout.guest.summary.subtotal')"
+				:shipping-fee-label="is_member ? t('checkout.member.summary.shippingFee', { method: shipping_method_details[selected_shipping_method]?.name }) : t('checkout.guest.summary.shippingFee')"
 				shipping-fee-tooltip-title="Shipping Fee"
-				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location. Standard shipping offers a more affordable option, while express shipping delivers your order faster at a higher cost."
-				:discounts-label="t('checkout.member.summary.discounts')"
-				:total-label="t('checkout.member.summary.total')"
+				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location."
+				:discounts-label="t(is_member ? 'checkout.member.summary.discounts' : 'checkout.guest.summary.discounts')"
+				:total-label="t(is_member ? 'checkout.member.summary.total' : 'checkout.guest.summary.total')"
 				:subtotal-value="formatPrice(order_subtotal)"
 				:shipping-fee-value="formatPrice(order_shipping_fee)"
 				:discount-value="`-${formatPrice(order_discount)}`"
 				:total-value="formatPrice(order_total)"
-				:complete-label="t('checkout.member.completeCheckout')"
-				:agreement-prefix="t('checkout.member.agreement.prefix')"
-				:agreement-terms="t('checkout.member.agreement.terms')"
-				:agreement-and="t('checkout.member.agreement.and')"
-				:agreement-privacy="t('checkout.member.agreement.privacy')"
-				:agreement-suffix="t('checkout.member.agreement.suffix')"
+				:complete-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
+				:agreement-prefix="t(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
+				:agreement-terms="t(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"
+				:agreement-and="t(is_member ? 'checkout.member.agreement.and' : 'checkout.guest.agreement.and')"
+				:agreement-privacy="t(is_member ? 'checkout.member.agreement.privacy' : 'checkout.guest.agreement.privacy')"
+				:agreement-suffix="t(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
 				:terms-path="withCountry('/terms-of-use')"
 				:privacy-path="withCountry('/privacy-policy')"
 				:disabled="selected_checkout_items.length === 0"
@@ -1197,52 +727,24 @@ watch(selected_payment_method, async () => {
 				@submit="completeCheckout(selected_checkout_items.length > 0)"
 			>
 				<template #after-items>
-					<div class="checkout-member-perks">
+					<div v-if="is_member" class="checkout-member-perks">
 						<div class="checkout-member-perks-head">
-							<span>{{ t('checkout.member.pointsAndCoupons') }}</span>
-							<UiIcon name="light-angle-up" size="24" decorative />
+							{{ t('checkout.member.discountsAndPerks') }}
 						</div>
 						<div class="checkout-member-perks-body">
 							<div class="checkout-member-perk-field">
 								<div class="checkout-member-perk-label-row">
 									<div ref="points_tooltip_ref" class="checkout-member-perk-label-group">
 										<span class="checkout-member-perk-label-primary">{{ t('checkout.member.points') }}</span>
-										<UiTooltip
-											:open="points_tooltip_open"
-											side="right"
-											align="start"
-											mobile-side="bottom"
-											tone="neutral"
-											:offset="10"
-											:slide-distance="24"
-											role="dialog"
-											content-class="checkout-member-points-tooltip-content"
-											class="checkout-member-points-tooltip"
-										>
+										<UiTooltip :open="points_tooltip_open" side="right" align="start" mobile-side="bottom" tone="neutral" :offset="10" content-class="checkout-member-points-tooltip-content" class="checkout-member-points-tooltip">
 											<template #trigger>
-												<button
-													type="button"
-													class="checkout-member-points-tooltip-trigger"
-													:class="{ 'is-active': points_tooltip_open }"
-													:aria-expanded="points_tooltip_open"
-													aria-haspopup="dialog"
-													aria-label="Show points information"
-													@click="togglePointsTooltip"
-												>
-													<UiIcon
-														:name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
-														size="20"
-														color="var(--text-secondary)"
-														decorative
-													/>
+												<button type="button" class="checkout-member-points-tooltip-trigger" @click="togglePointsTooltip">
+													<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
 												</button>
 											</template>
-
 											<div class="checkout-member-points-tooltip-copy">
 												<strong class="checkout-member-points-tooltip-title">How Points Work</strong>
-												<p class="checkout-member-points-tooltip-text">
-													Use your points to reduce your total at checkout. 1 point is equivalent to 1 won, and the applied points will be deducted directly from your order amount.
-												</p>
+												<p class="checkout-member-points-tooltip-text">Use your points to reduce your total at checkout. 1 point = 1 won.</p>
 											</div>
 										</UiTooltip>
 									</div>
@@ -1250,18 +752,11 @@ watch(selected_payment_method, async () => {
 								</div>
 								<div class="checkout-member-perk-control">
 									<UiInput v-model="points_to_use" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
-									<UiButton
-										variant="outline"
-										tone="neutral"
-										size="md"
-										class="checkout-member-inline-button"
-										@click="points_to_use ? clearPoints() : useAllPoints()"
-									>
+									<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="points_to_use ? clearPoints() : useAllPoints()">
 										{{ points_to_use ? 'Remove' : t('checkout.member.useAll') }}
 									</UiButton>
 								</div>
 							</div>
-
 							<div class="checkout-member-perk-field">
 								<div class="checkout-member-perk-label-row">
 									<span class="checkout-member-perk-label-primary">{{ t('checkout.member.coupon') }}</span>
@@ -1278,33 +773,14 @@ watch(selected_payment_method, async () => {
 				</template>
 			</CheckoutSummaryCard>
 		</template>
-
 	</CheckoutPageBase>
 
-	<CheckoutMemberShippingAddressModal
-		v-model="is_shipping_address_modal_open"
-		:addresses="saved_shipping_addresses"
-		:selected-address-id="selected_shipping_address_id"
-		@select="selected_shipping_address_id = $event"
-	/>
-
-	<CheckoutMemberDropShippingAddressModal
-		v-model="is_drop_shipping_address_modal_open"
-		:addresses="drop_shipping_addresses"
-		:selected-address-id="selected_drop_shipping_address_id"
-		@select="selected_drop_shipping_address_id = $event"
-	/>
-
-	<CheckoutMemberBillingAddressModal
-		v-model="is_billing_address_modal_open"
-		:addresses="billing_addresses"
-		:selected-address-id="selected_billing_address_id"
-		@select="selected_billing_address_id = $event"
-	/>
-
-	<CheckoutMemberAccreditedBanksModal
-		v-model="is_accredited_banks_modal_open"
-	/>
+	<!-- Modals -->
+	<CheckoutLoginModal v-model="is_login_modal_open" />
+	<CheckoutMemberShippingAddressModal v-model="is_shipping_address_modal_open" :addresses="saved_shipping_addresses" :selected-address-id="selected_shipping_address_id" @select="selected_shipping_address_id = $event" />
+	<CheckoutMemberDropShippingAddressModal v-model="is_drop_shipping_address_modal_open" :addresses="drop_shipping_addresses" :selected-address-id="selected_drop_shipping_address_id" @select="selected_drop_shipping_address_id = $event" />
+	<CheckoutMemberBillingAddressModal v-model="is_billing_address_modal_open" :addresses="billing_addresses" :selected-address-id="selected_billing_address_id" @select="selected_billing_address_id = $event" />
+	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
 </template>
 
 <style lang="scss">
@@ -1915,50 +1391,11 @@ watch(selected_payment_method, async () => {
 			}
 
 			.checkout-member-select-trigger {
-				height: 44px;
 				border-radius: 8px;
 				box-shadow: none;
 			}
 
-			.checkout-member-phone-field {
-				display: grid;
-				grid-template-columns: 54px minmax(0, 1fr);
-				border: 1px solid var(--gray-40);
-				border-radius: 8px;
-				overflow: hidden;
-				background: var(--contrast-light);
-			}
 
-			.checkout-member-phone-prefix {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				background: var(--gray-20);
-				border-right: 1px solid var(--gray-40);
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-				color: var(--text-primary);
-				min-height: 44px;
-				padding: 0 12px;
-			}
-
-			.checkout-member-phone-input {
-				width: 100%;
-				border: 0;
-				border-radius: 0;
-				box-shadow: none;
-				background: transparent;
-				min-height: 44px;
-				padding-inline: 0;
-
-				.checkout-member-phone-input-field {
-					height: 100%;
-					min-height: 44px;
-					padding: 0 16px;
-					font-size: var(--type-size-100);
-					line-height: var(--type-line-100);
-				}
-			}
 		}
 	}
 
@@ -2033,6 +1470,102 @@ watch(selected_payment_method, async () => {
 			}
 		}
 	}
+
+	/* Guest Contact Specific Styles (Literal port from CheckoutGuestPage.vue) */
+	.checkout-contact-group {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		.checkout-contact-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+	}
+
+	.checkout-contact-label-wrap {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.checkout-email-tooltip {
+		display: inline-flex;
+		align-items: center;
+		align-self: center;
+		line-height: 1;
+	}
+
+	.checkout-email-tooltip-trigger {
+		border: 0;
+		padding: 0;
+		width: 20px;
+		height: 20px;
+		background: transparent;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		border-radius: 999px;
+		transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+
+		&:hover,
+		&.is-active {
+			background: transparent;
+		}
+
+		&:active {
+			transform: scale(0.96);
+		}
+	}
+
+
+
+	.checkout-label-required {
+		color: var(--error);
+	}
+
+	.checkout-login-link {
+		display: inline-flex;
+		align-items: center;
+		color: var(--text-primary);
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
+
+		.checkout-login-link-action {
+			--btn-soft: transparent;
+			--btn-border: transparent;
+			--btn-bg: transparent;
+			margin-left: 4px;
+			min-height: auto;
+			height: auto;
+			padding: 0;
+			border-radius: 0;
+			box-shadow: none;
+			color: var(--gold-60);
+			font-weight: var(--font-weight-semibold);
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			text-decoration-thickness: 2px;
+
+			.checkout-login-link-action-label {
+				padding: 0;
+			}
+		}
+	}
+
+	.checkout-section-title {
+		font-size: var(--type-size-300);
+		font-weight: var(--font-weight-semibold);
+		line-height: var(--type-line-200);
+		color: var(--text-primary);
+	}
+
+	.checkout-panel {
+		padding: 0;
+	}
 }
 
 .checkout-member-points-tooltip {
@@ -2058,7 +1591,7 @@ watch(selected_payment_method, async () => {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	border-radius: 999px;
+	border-radius: 9999px;
 	transition: transform 0.16s ease;
 
 	&:active {
@@ -2066,9 +1599,9 @@ watch(selected_payment_method, async () => {
 	}
 }
 
-.checkout-member-points-tooltip-content {
-	width: min(480px, calc(100vw - 32px));
-	max-width: calc(100vw - 32px);
+.checkout-member-drop-shipping-tooltip-content {
+	width: min(620px, calc(100vw - 32px)) !important;
+	max-width: calc(100vw - 32px) !important;
 	display: flex;
 	align-items: flex-start;
 	padding: 16px 20px;
@@ -2077,9 +1610,48 @@ watch(selected_payment_method, async () => {
 	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
 }
 
-.checkout-member-drop-shipping-tooltip-content {
-	width: min(620px, calc(100vw - 32px));
-	max-width: calc(100vw - 32px);
+.checkout-email-tooltip-content {
+	width: min(420px, calc(100vw - 32px)) !important;
+	max-width: calc(100vw - 32px) !important;
+	display: flex;
+	align-items: flex-start;
+	padding: 16px 20px;
+	border-radius: 12px;
+	white-space: normal;
+	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+}
+
+.checkout-email-tooltip-copy {
+	display: grid;
+	gap: 8px;
+}
+
+.checkout-email-tooltip-title {
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: var(--font-weight-semibold);
+	color: inherit;
+}
+
+.checkout-email-tooltip-text {
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: var(--font-weight-regular);
+	color: inherit;
+}
+
+.checkout-member-billing-tooltip-content {
+	width: min(420px, calc(100vw - 32px)) !important;
+	max-width: calc(100vw - 32px) !important;
+	padding: 16px 20px;
+	border-radius: 12px;
+	white-space: normal;
+	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+}
+
+.checkout-member-points-tooltip-content {
+	width: min(480px, calc(100vw - 32px)) !important;
+	max-width: calc(100vw - 32px) !important;
 	display: flex;
 	align-items: flex-start;
 	padding: 16px 20px;
@@ -2212,6 +1784,15 @@ watch(selected_payment_method, async () => {
 				.checkout-member-drop-shipping-form-note,
 				.checkout-member-address-form-note {
 					text-align: left;
+				}
+			}
+
+			/* Guest specific responsive styles */
+			.checkout-contact-group {
+				.checkout-contact-head {
+					align-items: flex-start;
+					flex-direction: column;
+					gap: 4px;
 				}
 			}
 		}

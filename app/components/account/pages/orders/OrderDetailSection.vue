@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import type { AccountOrder } from '~/types/account/orders';
+import { ref } from 'vue';
+import type { AccountOrder, AccountOrderLineItem } from '~/types/account/orders';
+import { useCountry } from '~/composables/app/country/useCountry';
+import OrderUploadArtworkModal from './OrderUploadArtworkModal.vue';
 
 const props = defineProps<{
 	order: AccountOrder;
@@ -8,6 +11,12 @@ const props = defineProps<{
 
 const emit = defineEmits(['toggle-detail']);
 const { t } = useI18n();
+const { withCountry } = useCountry();
+const active_upload_item = ref<AccountOrderLineItem | null>(null);
+const is_upload_modal_open = ref(false);
+const upload_toast_visible = ref(false);
+const upload_toast_message = ref('');
+let upload_toast_timeout: ReturnType<typeof setTimeout> | null = null;
 
 const action_icon_map = {
 	invoice: 'regular-file-dollar',
@@ -29,6 +38,39 @@ const summary_totals = computed(() => {
 		{ key: 'total', value: props.order.totals.totalLabel, className: 'is-total' },
 	];
 });
+
+function openUploadModal(item: AccountOrderLineItem) {
+	active_upload_item.value = item;
+	is_upload_modal_open.value = true;
+}
+
+function closeUploadModal() {
+	is_upload_modal_open.value = false;
+}
+
+function itemPagePath(item: AccountOrderLineItem) {
+	return withCountry(`/order-items/${props.order.id}/${item.number}`);
+}
+
+function hideUploadToast() {
+	upload_toast_visible.value = false;
+	if (upload_toast_timeout) {
+		clearTimeout(upload_toast_timeout);
+		upload_toast_timeout = null;
+	}
+}
+
+function handleUploadSubmit(payload: { itemNumber: string }) {
+	upload_toast_message.value = `Artwork for Item No. ${payload.itemNumber} uploaded successfully!`;
+	upload_toast_visible.value = true;
+	if (upload_toast_timeout) {
+		clearTimeout(upload_toast_timeout);
+	}
+	upload_toast_timeout = setTimeout(() => {
+		upload_toast_visible.value = false;
+		upload_toast_timeout = null;
+	}, 3000);
+}
 </script>
 
 <template>
@@ -109,9 +151,12 @@ const summary_totals = computed(() => {
 						class="account-orders-summary-item"
 						:data-testid="`account-orders-summary-item-${item.number}`"
 					>
-						<div class="account-orders-summary-thumb">
+						<NuxtLink
+							class="account-orders-summary-thumb"
+							:to="itemPagePath(item)"
+						>
 							<img :src="item.imageSrc" :alt="t('account.orders.itemNumber', { number: item.number })" class="account-orders-summary-image">
-						</div>
+						</NuxtLink>
 
 						<div class="account-orders-summary-copy">
 							<div class="account-orders-summary-head">
@@ -148,6 +193,7 @@ const summary_totals = computed(() => {
 								height="40px"
 								:disabled="item.actionDisabled"
 								class="account-orders-summary-action"
+								@click.stop="openUploadModal(item)"
 							>
 								{{ t(`account.orders.${item.actionLabelKey}`) }}
 							</UiButton>
@@ -180,6 +226,23 @@ const summary_totals = computed(() => {
 				{{ t('account.orders.cancelOrder') }}
 			</UiButton>
 		</footer>
+
+		<OrderUploadArtworkModal
+			:open="is_upload_modal_open"
+			:item="active_upload_item"
+			@close="closeUploadModal"
+			@submit="handleUploadSubmit"
+		/>
+
+		<UiToast
+			:visible="upload_toast_visible"
+			:message="upload_toast_message"
+			tone="primary"
+			variant="outlined"
+			dismissible
+			class="account-orders-upload-toast"
+			@close="hideUploadToast"
+		/>
 	</section>
 </template>
 
@@ -334,6 +397,7 @@ const summary_totals = computed(() => {
 					padding: 2px 0;
 
 					.account-orders-summary-thumb {
+						border: 0;
 						width: 88px;
 						height: 88px;
 						border-radius: 10px;
@@ -341,6 +405,8 @@ const summary_totals = computed(() => {
 						display: grid;
 						place-items: center;
 						overflow: hidden;
+						padding: 0;
+						cursor: pointer;
 
 						.account-orders-summary-image {
 							width: 56px;
@@ -487,6 +553,43 @@ const summary_totals = computed(() => {
 				align-items: flex-start;
 			}
 		}
+	}
+}
+
+:global(.ui-toast.account-orders-upload-toast) {
+	left: 50%;
+	bottom: 40px;
+	transform: translateX(-50%);
+	border: 1px solid #f4c542;
+	border-radius: 14px;
+	background: #ffe05c;
+	box-shadow: 0 18px 36px rgba(21, 26, 38, 0.18);
+}
+
+:global(.ui-toast.account-orders-upload-toast .ui-toast-main) {
+	align-items: center;
+	gap: 10px;
+}
+
+:global(.ui-toast.account-orders-upload-toast .ui-toast-text) {
+	font-size: 14px;
+	line-height: 1.4;
+	font-weight: var(--font-weight-semibold);
+	color: #1f2533;
+	white-space: nowrap;
+}
+
+:global(.ui-toast.account-orders-upload-toast .ui-icon) {
+	color: #1f2533;
+}
+
+:global(.ui-toast.account-orders-upload-toast .ui-toast-close) {
+	color: #1f2533;
+}
+
+@media (max-width: 560px) {
+	:global(.ui-toast.account-orders-upload-toast .ui-toast-text) {
+		white-space: normal;
 	}
 }
 </style>
