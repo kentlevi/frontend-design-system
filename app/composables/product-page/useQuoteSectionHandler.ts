@@ -45,25 +45,16 @@ export const useQuoteSectionHandler = () => {
 	 * 📌Initiate the value of all fields in form and set the default value and behaviour
 	 * @param prod_slug string — Product URL slug
 	 */
-	const instatiateForm = async ({ interactive = true }: InitializeFormOptions = {}) => {
-		console.log('🔥 Preparing form...')
-
-		await assignDefault({ interactive })
-	}
-
-	/**
-	 * Assigning the default base on use activity
-	 * @param prod_slug string — Product URL Slug
-	 */
-	const assignDefault = async ({ interactive = true }: InitializeFormOptions = {}) => {
-		if( !quote_service.slug || !quote_service.slug.value )
-			return
+	const instatiateForm = async (prod_slug: string, { interactive = true }: InitializeFormOptions = {}) => {
+		console.warn('🔥 Preparing form...')
 
 		// 📌 Existing attributes
-		const existing_attr = quote_service.recentSelection()
+		const existing_attr = quote_service.recentSelection(prod_slug)
 
 		// 🔥 If the current selected product, has already a pre-selected attributes
-		if( existing_attr ) {
+		if( quote_service.url_slug &&  existing_attr ) {
+			await quote_service.updateFeaturedData(prod_slug)
+
 			preparingExistingSelection(existing_attr, { interactive })
 		}
 		/**
@@ -71,18 +62,24 @@ export const useQuoteSectionHandler = () => {
 		 * Or the user never visited this product before
 		 */
 		else {
-			prepareDefaultSize()
-			hideCustomSize()
+			await quote_service.updateFeaturedData(prod_slug)
 
-			prepareDefaultQty()
-			hideCustomQty()
-
-			if( quote_service.has_color_selection.value )
-				prepareDefaultColor()
-
-			if( quote_service.has_font_selection.value)
-				prepareDefaultFont()
+			prepareAllDefault()
 		}
+	}
+
+	const prepareAllDefault = async () => {
+		prepareDefaultSize()
+		hideCustomSize()
+
+		prepareDefaultQty()
+		hideCustomQty()
+
+		if( quote_service.has_color_selection.value )
+			prepareDefaultColor()
+
+		if( quote_service.has_font_selection.value)
+			prepareDefaultFont()
 	}
 
 	const preparingExistingSelection = (
@@ -131,7 +128,7 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	const prepareLetteringEditor = (existing_attr : AttributeSelection) => {
-		if(  existing_attr.lettering_text ) {
+		if(  existing_attr.lettering_text) {
 			quote_service.defaultLettering(existing_attr.size, existing_attr.lettering_text)
 		}
 		else {
@@ -146,7 +143,7 @@ export const useQuoteSectionHandler = () => {
 		/** COMMON SIZE AND QUANTITY FLOW */
 
 		quote_service.defaultSize(existing_attr.size)
-		console.log(existing_attr.size.custom)
+
 		if( existing_attr.size.custom )
 			setCustomSizeVisible({ interactive })
 		else
@@ -154,6 +151,9 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	const prepareDefaultSize = () => {
+		if( !quote_service.featured_sizes.value?.length )
+			return
+
 		// Get first size as default
 		const default_size = quote_service.featured_sizes.value[0]
 
@@ -162,6 +162,9 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	const prepareDefaultQty = () => {
+		if( !quote_service.featured_quantities.value )
+			return
+
 		// Get first quantity as default
 		const default_qty = quote_service.featured_quantities.value[0]
 

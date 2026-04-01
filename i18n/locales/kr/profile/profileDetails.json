@@ -1,0 +1,9 @@
+{
+	"profile": {
+		"details": {
+			"changeEmailButtonLabel": "변경",
+			"emailLinkedHintPrefix": "이 계정은 당신의",
+			"emailLinkedHintSuffix": "로그인과 연결되어 있습니다."
+		}
+	}
+}

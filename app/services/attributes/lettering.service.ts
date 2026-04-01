@@ -32,7 +32,6 @@ export const useLetteringService = () => {
 
 	const letteringUpdate = () => {
 		const size_spec = ref<SizeSpec>({
-			id: null,
 			custom: false,
 			label: 'Vinyl-Lettering',
 			width: lettering.value.width,
@@ -61,6 +60,7 @@ export const useLetteringService = () => {
 
 		letteringUpdate()
 	}
+
 
 	return {
 		lettering,

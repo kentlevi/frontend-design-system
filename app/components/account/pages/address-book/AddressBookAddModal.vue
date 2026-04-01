@@ -18,6 +18,7 @@ const emit = defineEmits<{
 	(e: 'set-form-type', value: AddressType): void;
 	(e: 'update-field', payload: { field: AddressFormField; value: string }): void;
 	(e: 'update-dynamic-field', paylod: { field_key: string; value: string | number }): void;
+	(e: 'add-address'): void;
 }>();
 
 /** Check whether the form supports address lines */
@@ -104,21 +105,15 @@ function updateDynamicField(field_key: string, value: string | number) {
 }
 
 function getDynamicFieldValue(field_key: string) {
-	const field = props.activeAddForm.dynamic_fields.find(
-		f => f.field_key === field_key // fixed duplicate condition
-	)
+	const value = props.activeAddForm.fields?.[field_key]
+	const field = props.dynamicFields?.find(f => f.field_key === field_key)
 
-	if (!field) {
-		return ''
+	// If it's a select field, return the option label
+	if (field?.options?.length) {
+		return field.options.find(opt => opt.id === value)?.value ?? ''
 	}
 
-	if (field.input_type === 'select') {
-		// selected id is stored in field.value
-		const option = field.options?.find(opt => opt.id === field.value)
-		return option?.value ?? ''   // or option?.id ?? '', depending UiSelect expects value-type
-	}
-
-	return field.value ?? ''
+	return value ?? ''
 }
 
 function onDynamicSelectChange(field_key: string, selected_value: string | number) {
@@ -159,9 +154,6 @@ function closeModal() {
 	emit('update:modelValue', false);
 }
 
-function handleSave() {
-	closeModal();
-}
 </script>
 
 <template>
@@ -403,7 +395,7 @@ function handleSave() {
 								tone="neutral"
 								size="md"
 								class="account-address-book-add-modal-save"
-								@click="handleSave"
+								@click="emit('add-address')"
 							>
 								{{ save_label }}
 							</UiButton>

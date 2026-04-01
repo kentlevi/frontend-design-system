@@ -6,9 +6,9 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 	const selections = ref<Record<string, AttributeSelection>>({})
 
-	const product = ref<string>()
+	const url_slug = ref<string>()
 
-	const slug = ref<string>()
+	const product_config_mapping_id = ref<number>()
 
 	const size = ref<SizeSpec>()
 
@@ -30,9 +30,12 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 	const unit_price = ref<number>(0)
 
-	const updateProduct = (prod_slug: string) => {
-		slug.value = prod_slug
-		product.value = prod_slug
+	const updateMappingID = (mapping_id: number) => {
+		product_config_mapping_id.value = mapping_id
+	}
+
+	const updateProductSlug = (p_slug: string) => {
+		url_slug.value = p_slug
 	}
 
 	const hasSelection = (slug: string): AttributeSelection | null => {
@@ -40,7 +43,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	}
 
 	const saveSelection = () => {
-		if( !slug.value || !product.value || !size.value || !quantity.value)
+		if( !url_slug.value || !size.value || !quantity.value)
 			return
 
 		const selected_color = color && color?.value ? color.value : null
@@ -49,7 +52,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 		const selected_font = font && font?.value ? font.value : null
 
-		selections.value[slug.value] = {
+		selections.value[url_slug.value] = {
 			size			: size.value,
 			quantity		: quantity.value,
 			color			: selected_color,
@@ -106,17 +109,17 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	}
 
 	const clearSelection = () => {
-		product.value = undefined
-		slug.value = undefined
+		url_slug.value = undefined
 		size.value = undefined
 		quantity.value = undefined
 		color.value = null
 		font.value = null
+		lettering_text.value = ''
 	}
 
 	return {
-		product,
-		slug,
+		product_config_mapping_id,
+		url_slug,
 		size,
 		quantity,
 		color,
@@ -128,7 +131,8 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		discounted_price,
 		price,
 		unit_price,
-		updateProduct,
+		updateMappingID,
+		updateProductSlug,
 		clearSelection,
 		hasSelection,
 		saveSelection,

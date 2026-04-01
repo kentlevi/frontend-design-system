@@ -1,0 +1,9 @@
+{
+	"profile": {
+		"details": {
+			"changeEmailButtonLabel": "Change",
+            "emailLinkedHintPrefix": "This account is linked to your",
+            "emailLinkedHintSuffix": "login."
+		}
+	}
+}

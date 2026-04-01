@@ -12,7 +12,8 @@ export function addressFormDefaults<T extends AddressType>(
 		company: '',
 		is_default: false,
 		notes: '',
-		dynamic_fields: [],
+		email: '',
+		fields: {},
 	}
 
 	/** Defaults for address forms with lines */

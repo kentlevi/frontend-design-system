@@ -46,5 +46,5 @@ export interface AddressDynamicFields extends CountryField {
 }
 
 export interface AddressFieldDefinition extends AddressDynamicFields {
-	value: string | number
+	value: string
 }
