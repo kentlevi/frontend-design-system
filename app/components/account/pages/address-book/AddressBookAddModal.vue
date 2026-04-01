@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
-import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
+import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType, UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
 
 type IconName = keyof typeof icons;
 
@@ -16,8 +16,8 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'set-form-type', value: AddressType): void;
-	(e: 'update-field', payload: { field: AddressFormField; value: string }): void;
-	(e: 'update-dynamic-field', paylod: { field_key: string; value: string | number }): void;
+	(e: 'update-field', payload: UpdateFieldPayload): void;
+	(e: 'update-dynamic-field', payload: UpdateDynamicFieldPayload): void;
 	(e: 'add-address'): void;
 }>();
 
@@ -50,6 +50,22 @@ function createStringFieldModel(
 	})
 }
 
+function createBooleanFieldModel(
+	field: Extract<AddressFormField, 'is_default'>,
+	get_value: () => boolean
+) {
+	return computed({
+		get: get_value,
+
+		set: (value: boolean) => {
+			emit('update-field', {
+				field,
+				value
+			})
+		},
+	});
+}
+
 /** Shared fields */
 const contact_name_model = createStringFieldModel(
 	'contact_name',
@@ -61,9 +77,9 @@ const company_model = createStringFieldModel(
 	() => props.activeAddForm.company ?? ''
 )
 
-const is_default_model = createStringFieldModel(
+const is_default_model = createBooleanFieldModel(
 	'is_default',
-	() => props.activeAddForm.notes ?? ''
+	() => props.activeAddForm.is_default ?? false
 )
 
 /** Address line fields */

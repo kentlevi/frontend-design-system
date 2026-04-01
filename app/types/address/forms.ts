@@ -63,7 +63,7 @@ export type AddressFormField =
 /** Payload sent by the child when a field changes */
 export type UpdateFieldPayload = {
 	field: AddressFormField
-	value: string
+	value: string | boolean
 }
 
 export type UpdateDynamicFieldPayload = {
