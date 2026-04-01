@@ -111,7 +111,6 @@ const { t } = useI18n();
 				&.is-active {
 					border-color: var(--gold-base);
 					background: var(--gold-10);
-					box-shadow: var(--shadow-sm);
 				}
 
 				.account-orders-list-card-head {

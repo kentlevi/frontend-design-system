@@ -19,6 +19,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'lackingArtwork',
 				size: '25x25mm',
@@ -28,6 +33,11 @@ export const accountOrders: AccountOrder[] = [
 			},
 			{
 				number: '002',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/account/points-icon.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '50x25mm',
@@ -61,6 +71,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '40x40mm',
@@ -95,6 +110,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'lackingArtwork',
 				size: '30x30mm',
@@ -128,6 +148,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'lackingArtwork',
 				size: '60x45mm',
@@ -160,6 +185,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '25x25mm',
@@ -193,6 +223,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
+				productName: 'Die Cut Sticker',
+				artworkFileName: 'yellow-bear.png',
+				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedAt: '11/20/2024 at 1:43pm',
+				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '30x20mm',
