@@ -17,6 +17,7 @@ export interface Product {
 	name: string
 	url_slug: string
 	description: string
+	default_featured_image_url: string
 }
 
 export interface Categories {
@@ -26,3 +27,11 @@ export interface Categories {
 export interface Products {
 	products: Product[]
 }
+
+export type StageProduct = {
+	id: string;
+	slug: string;
+	name: string;
+	blurb: string;
+	image: string;
+};

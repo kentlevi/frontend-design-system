@@ -20,14 +20,16 @@ const clear_cache = computed(() => {
 })
 
 const navigation = useNavigation()
-watch(
-	() => [category.value, clear_cache.value],
-	([new_category, should_clear_cache]) => {
-		if (new_category) {
-			void navigation.fetchAndStoreProducts(new_category as string, should_clear_cache as boolean)
-		}
+
+await useAsyncData(
+	() => `navigation-products:${category.value}:${clear_cache.value ? 'clear' : 'cached'}`,
+	async () => {
+		if (!category.value) return false
+		return await navigation.fetchAndStoreProducts(category.value as string, clear_cache.value)
 	},
-	{ immediate: true }
+	{
+		watch: [category, clear_cache],
+	}
 )
 
 const navigation_store = useNavigationStore()

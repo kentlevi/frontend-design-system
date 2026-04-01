@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { ProductItem, ProductCategoryKey  } from '~/types/products/catalog';
+import type { Product as NavigationProduct, StageProduct } from '~/types/navigation/navgiation';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
+import { useNavigationStore } from '~/stores/navigation/navigation.store';
+import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 
 
 const props = defineProps<{
 	category?: ProductCategoryKey;
-	categoryProducts: ProductItem[];
 	hasPickedProduct: boolean;
 	selectedId: string | null;
 	selectedProduct: ProductItem | null;
@@ -98,7 +100,6 @@ const route_product_slug = computed(() => {
 			: null
 })
 
-
 watch(
 	route_product_slug,
 	() => {
@@ -112,14 +113,29 @@ watch(
 	{ immediate: true }
 )
 
-const switchProduct = (prod : ProductItem) => {
-	emit('select-product', prod.id)
-	updateSelectedSlug(prod.id)
-}
-
-
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
+const navigation_store = useNavigationStore();
+
+const navigation_products = computed<NavigationProduct[]>(() => {
+	if (!props.category) return [];
+	return navigation_store.product_state[props.category] || [];
+});
+
+const category_products = computed<StageProduct[]>(() =>
+	navigation_products.value.map((product) => ({
+		id: props.category ? (getProductIdFromSlug(product.url_slug, props.category) || product.url_slug) : product.url_slug,
+		slug: product.url_slug,
+		name: product.name,
+		blurb: product.description,
+		image: product.default_featured_image_url ? resolveFileUrl(product.default_featured_image_url) : '',
+	}))
+);
+
+const selected_navigation_product = computed(() =>
+	category_products.value.find((product) => product.id === props.selectedId || product.slug === props.selectedId) || null
+);
+
 const demo_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const demo_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 const has_hydrated = ref(false)
@@ -150,9 +166,19 @@ const should_play_preview_video = computed(() =>
 )
 
 const displayed_product_title = computed(() =>
-	props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
+	selected_navigation_product.value?.name
+		|| (props.selectedProduct ? props.getProductName(props.selectedProduct) : '')
 )
 
+const displayed_product_blurb = computed(() =>
+	selected_navigation_product.value?.blurb
+		|| (props.selectedProduct ? props.getProductBlurb(props.selectedProduct) : '')
+)
+
+const switchProduct = (prod: StageProduct) => {
+	emit('select-product', prod.id)
+	updateSelectedSlug(prod.slug)
+}
 
 const openArworkUpload = () => {
 	if( props.navigationInFlight || has_pending_custom_selection.value ) {
@@ -167,20 +193,20 @@ const openArworkUpload = () => {
 
 <template>
 	<section class="product-stage" :class="{ 'is-selected': props.hasPickedProduct }" data-testid="product-category-stage-root">
-		<section :key="resolved_category" class="product-picker product-picker-layer" data-testid="product-category-picker">
+		<section :key="props.category ?? 'product-category'" class="product-picker product-picker-layer" data-testid="product-category-picker">
 			<button
-				v-for="(prod, index) in props.categoryProducts"
-				:key="prod.id"
+				v-for="(prod, index) in category_products"
+				:key="prod.slug"
 				type="button"
 				class="product-picker-item"
-				:class="{ 'is-active': props.selectedId === prod.id }"
+				:class="{ 'is-active': props.selectedId === prod.id || props.selectedId === prod.slug }"
 				:data-testid="`product-category-picker-item-${prod.id}`"
 				@click="switchProduct(prod)"
 			>
 				<div class="product-picker-icon" :class="`is-${prod.id}`">
 					<img
 						:src="prod.image"
-						:alt="`${props.getProductName(prod)} preview`"
+						:alt="`${prod.name} preview`"
 						:loading="index === 0 ? 'eager' : 'lazy'"
 						:fetchpriority="index === 0 ? 'high' : undefined"
 						:decoding="index === 0 ? 'sync' : 'async'"
@@ -190,7 +216,7 @@ const openArworkUpload = () => {
 					>
 				</div>
 				<p class="product-picker-name">
-					{{ props.getProductName(prod) }}
+					{{ prod.name }}
 				</p>
 			</button>
 		</section>
@@ -206,7 +232,7 @@ const openArworkUpload = () => {
 							</h1>
 
 							<p class="product-preview-blurb" data-testid="product-category-preview-blurb">
-								{{ props.getProductBlurb(props.selectedProduct) }}
+								{{ displayed_product_blurb }}
 							</p>
 						</div>
 
