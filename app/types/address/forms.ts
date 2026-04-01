@@ -9,7 +9,7 @@ export interface BaseAddressForm {
 	email: string
 	is_default: boolean
 	notes: string
-	dynamic_fields: DynamicFieldDefinition
+	fields: DynamicFieldDefinition
 }
 
 /** Shared fields for forms with address lines */

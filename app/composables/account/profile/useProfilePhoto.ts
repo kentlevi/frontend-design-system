@@ -1,7 +1,7 @@
 import { deleteAvatar, saveAvatar } from "~/services/profile/avatar.service";
 import { useUsersStore } from "~/stores/users/users.store";
 import { processAvatarFile } from "~/utils/avatar/processAvatar";
-import { isValidImage, resolveUploadPath } from "~/utils/file/file";
+import { isValidImage } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
@@ -53,20 +53,16 @@ export function useProfilePhoto() {
 			/** Process image before upload */
 			const processed_avatar = await processAvatarFile(file, 'image/webp', 0.82)
 
-			/** Resolve final storage path */
-			const { full_path, file_name } = await resolveUploadPath({
-				file_path_code: 'avatar',
-				image_type: processed_avatar.file.type
-			})
-
 			/** Upload processed file directly to storage */
-			await uploadFileToPresignedUrl({
-				full_path,
+			const { file_name } = await uploadFileToPresignedUrl({
+				file_path_code: 'avatar',
 				file: processed_avatar.file
 			})
 
+			const orig_file_name = processed_avatar.file.name
+
 			/** Save file name in database */
-			const response = await saveAvatar(file_name)
+			const response = await saveAvatar(orig_file_name, file_name)
 
 			toast_store.handleApiResponse(response)
 

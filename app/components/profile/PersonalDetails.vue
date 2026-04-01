@@ -85,7 +85,7 @@ const {
 	closeOtpModal,
 
 	openEmailChangeModal,
-	 email: account_email
+	email: account_email
 } = useChangeEmailForm();
 
 const {

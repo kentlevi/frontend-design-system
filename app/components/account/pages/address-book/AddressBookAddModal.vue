@@ -105,7 +105,7 @@ function updateDynamicField(field_key: string, value: string | number) {
 }
 
 function getDynamicFieldValue(field_key: string) {
-	const value = props.activeAddForm.dynamic_fields?.[field_key]
+	const value = props.activeAddForm.fields?.[field_key]
 	const field = props.dynamicFields?.find(f => f.field_key === field_key)
 
 	// If it's a select field, return the option label

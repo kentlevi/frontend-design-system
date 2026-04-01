@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
+
 const props = defineProps<{
 	open: boolean;
 	hasUploadedArtwork: boolean;
@@ -21,9 +23,14 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const skipUpload = () => {
+const {
+	dispatchItem
+} = useArtworkSectionHandler()
+
+const skipUpload = async () => {
 	console.warn('Skip-Uploading')
 	emit('skip-upload-later')
+	await dispatchItem()
 }
 
 </script>

@@ -21,3 +21,11 @@ export async function fetchDynamicFields(
 
 	return $api.get('/address/fields');
 }
+
+export async function addUserAddress(
+	params: Record<string, unknown>
+): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return $api.post('/address', params);
+}
