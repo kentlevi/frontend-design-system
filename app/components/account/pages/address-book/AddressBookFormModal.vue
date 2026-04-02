@@ -8,9 +8,9 @@ const { t } = useI18n();
 
 const props = defineProps<{
 	modelValue: boolean;
-	mode: 'add' | 'edit';
-	addFormType: AddressType;
-	activeAddForm: AddressFormMap[AddressType];
+	modalMode: 'create' | 'edit';
+	formType: AddressType;
+	activeForm: AddressFormMap[AddressType];
 	dynamicFields: AddressDynamicFields[];
 	fieldErrors: Record<string, string>;
 	submitLabel?: string;
@@ -21,7 +21,7 @@ const emit = defineEmits<{
 	(e: 'set-form-type', value: AddressType): void;
 	(e: 'update-field', payload: UpdateFieldPayload): void;
 	(e: 'update-dynamic-field', payload: UpdateDynamicFieldPayload): void;
-	(e: 'add-address'): void;
+	(e: 'submit'): void;
 }>();
 
 /** Check whether the form supports address lines */
@@ -72,46 +72,46 @@ function createBooleanFieldModel(
 /** Shared fields */
 const contact_name_model = createStringFieldModel(
 	'contact_name',
-	() => props.activeAddForm.contact_name
+	() => props.activeForm.contact_name
 )
 
 const company_model = createStringFieldModel(
 	'company',
-	() => props.activeAddForm.company ?? ''
+	() => props.activeForm.company ?? ''
 )
 
 const is_default_model = createBooleanFieldModel(
 	'is_default',
-	() => props.activeAddForm.is_default ?? false
+	() => props.activeForm.is_default ?? false
 )
 
 /** Address line fields */
 const address_line_1_model = createStringFieldModel(
 	'address_line_1',
-	() => hasAddressLines(props.activeAddForm)
-		? props.activeAddForm.address_line_1
+	() => hasAddressLines(props.activeForm)
+		? props.activeForm.address_line_1
 		: ''
 )
 
 const address_line_2_model = createStringFieldModel(
 	'address_line_2',
-	() => hasAddressLines(props.activeAddForm)
-		? props.activeAddForm.address_line_2 ?? ''
+	() => hasAddressLines(props.activeForm)
+		? props.activeForm.address_line_2 ?? ''
 		: ''
 )
 
 const postcode_model = createStringFieldModel(
 	'postcode',
-	() => hasAddressLines(props.activeAddForm)
-		? props.activeAddForm.postcode
+	() => hasAddressLines(props.activeForm)
+		? props.activeForm.postcode
 		: ''
 )
 
 /** Shipping-only field */
 const phone_number_model = createStringFieldModel(
 	'phone_number',
-	() => hasPhoneNumber(props.activeAddForm)
-		? props.activeAddForm.phone_number
+	() => hasPhoneNumber(props.activeForm)
+		? props.activeForm.phone_number
 		: ''
 )
 
@@ -124,9 +124,9 @@ function updateDynamicField(field_key: string, value: string | number) {
 }
 
 function getDynamicFieldValue(field_key: string) {
-	if (!hasAddressLines(props.activeAddForm)) return ''
+	if (!hasAddressLines(props.activeForm)) return ''
 
-	const value = props.activeAddForm.fields?.[field_key]
+	const value = props.activeForm.fields?.[field_key]
 	const field = props.dynamicFields?.find(f => f.field_key === field_key)
 
 	// If it's a select field, return the option label
@@ -173,12 +173,12 @@ const address_label_options: Array<{
 ];
 
 const modal_title = computed(() => {
-	return props.mode === 'edit'
+	return props.modalMode === 'edit'
 		? t('account.addressBook.editTitle')
 		: t('account.addressBook.addNew')
 });
 const save_label = computed(() => {
-	const label_key = props.submitLabel ?? (props.mode === 'edit' ? 'update' : 'save')
+	const label_key = props.submitLabel ?? (props.modalMode === 'edit' ? 'update' : 'save')
 
 	return t(`account.addressBook.${label_key}`)
 });
@@ -234,8 +234,8 @@ function closeModal() {
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="props.addFormType === option.value"
-									:disabled="props.mode === 'edit'"
+									:selected="props.formType === option.value"
+									:disabled="props.modalMode === 'edit'"
 									@click="emit('set-form-type', option.value)"
 								>
 									<UiIcon :name="option.icon" :size="24" />
@@ -243,7 +243,7 @@ function closeModal() {
 								</UiButton>
 							</div>
 
-							<p v-if="props.mode === 'edit'" class="account-address-book-add-modal-note">
+							<p v-if="props.modalMode === 'edit'" class="account-address-book-add-modal-note">
 								<UiIcon name="regular-info-circle" :size="16" />
 								<span>{{ edit_address_type_note }}</span>
 							</p>
@@ -299,7 +299,7 @@ function closeModal() {
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="props.activeAddForm.label === option.value"
+									:selected="props.activeForm.label === option.value"
 									@click="emit('update-field', { field: 'label', value: option.value })"
 								>
 									<UiIcon :name="option.icon" :size="24" />
@@ -308,7 +308,7 @@ function closeModal() {
 							</div>
 						</div>
 
-						<template v-if="hasAddressLines(props.activeAddForm)">
+						<template v-if="hasAddressLines(props.activeForm)">
 							<UiFormField
 								:label="t('account.addressBook.streetAddress')"
 								:required="true"
@@ -385,7 +385,7 @@ function closeModal() {
 								</UiFormField>
 
 								<UiFormField
-									v-if="hasPhoneNumber(props.activeAddForm)"
+									v-if="hasPhoneNumber(props.activeForm)"
 									:label="t('account.addressBook.phoneNumber')"
 									:required="true"
 									:show-required-mark="true"
@@ -449,7 +449,7 @@ function closeModal() {
 								tone="neutral"
 								size="md"
 								class="account-address-book-add-modal-save"
-								@click="emit('add-address')"
+								@click="emit('submit')"
 							>
 								{{ save_label }}
 							</UiButton>

@@ -18,9 +18,15 @@ export function useAddressBookList() {
 	const billing_address = computed(() => address_store.billing_address)
 	const drop_address = computed(() => address_store.drop_address)
 
+	const has_shipping_addresses = computed(() => shipping_address.value.length > 0)
+	const has_billing_addresses = computed(() => billing_address.value.length > 0)
+	const has_drop_addresses = computed(() => drop_address.value.length > 0)
 
-
-
+	const has_addresses = computed(() => {
+		return shipping_address.value.length > 0
+            || billing_address.value.length > 0
+            || drop_address.value.length > 0
+	})
 
 
 
@@ -51,6 +57,10 @@ export function useAddressBookList() {
 		shipping_address,
 		billing_address,
 		drop_address,
+		has_shipping_addresses,
+		has_billing_addresses,
+		has_drop_addresses,
+		has_addresses,
 
 		getAddresses,
 	}
