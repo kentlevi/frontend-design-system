@@ -80,7 +80,7 @@ export async function socialRedirect(payload: SocialLoginPayload): Promise<Socia
 /**
  * Logout user
  */
-export async function logout(): Promise<ApiResponse>{
+export async function logout(): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
 	return await $api.post('auth/logout');
@@ -93,4 +93,22 @@ export async function completeOnboarding(payload: OnboardingPayload): Promise<Ap
 	const { $api } = useNuxtApp()
 
 	return await $api.post('user/complete-onboarding', { ...payload })
+}
+
+/**
+ * Checkout send verification code
+ */
+export async function sendCheckoutNonMemberLoginVerification(payload: { email: string }): Promise<NonMemberLoginVerificationResponse> {
+	const { $api } = useNuxtApp()
+
+	return await $api.post('auth/login/guest/verification/checkout', { ...payload })
+}
+
+/**
+ * Checkout non member submit verification
+ */
+export async function checkoutNonMemberSubmitVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return await $api.post('auth/login/guest/verification/checkout', { ...payload })
 }
