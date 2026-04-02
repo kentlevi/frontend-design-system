@@ -48,7 +48,7 @@ export default defineNuxtPlugin(() => {
 				})
 			}
 		},
-		async onResponseError({ response }) {
+		async onResponseError({ request, response }) {
 			// 🚫 1. Check for Unauthorized status
 			if (response.status === 401) {
 				// Keep member session cookie refs in sync when auth is no longer valid.
@@ -56,7 +56,15 @@ export default defineNuxtPlugin(() => {
 				token.value = null
 
 				// 🔥 Action or redirection will be added here.
-				console.warn('Unauthorized action!')
+				const request_path = typeof request === 'string'
+					? request
+					: request instanceof Request
+						? request.url
+						: ''
+
+				if (!request_path.includes('user/me')) {
+					console.warn('Unauthorized action!')
+				}
 			}
 
 			// 🔥 5. Handle other common errors (Optional)

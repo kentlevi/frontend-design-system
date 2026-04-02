@@ -15,7 +15,7 @@ const { year, isProduct: is_product } = toRefs(component_props);
 <template>
 	<div class="home-footer-inner" :class="{ 'is-product': is_product }" data-testid="app-footer-main-container">
 		<div class="home-footer-left" data-testid="app-footer-main-left">
-			<h2 class="home-footer-brand">MUSTICKER</h2>
+			<h2 class="home-footer-brand">{{ t('layout.footer.brand') }}</h2>
 			<p class="home-footer-meta">
 				{{ t('layout.footer.meta1') }}
 			</p>
@@ -31,8 +31,10 @@ const { year, isProduct: is_product } = toRefs(component_props);
 
 		<div class="home-footer-right" data-testid="app-footer-main-right">
 			<p class="home-footer-phone">1588-5218</p>
-			<p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
-			<p class="home-footer-note">{{ t('layout.footer.closed') }}</p>
+			<div class="home-footer-meta-row">
+				<p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
+				<p class="home-footer-note">{{ t('layout.footer.closed') }}</p>
+			</div>
 			<div class="home-footer-links">
 				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ t('layout.footer.inquiry') }}</NuxtLink>
 				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ t('layout.footer.faq') }}</NuxtLink>
@@ -50,7 +52,7 @@ const { year, isProduct: is_product } = toRefs(component_props);
     display: flex;
     justify-content: space-between;
     gap: 40px;
-    padding: 56px 58px 42px;
+    padding: 78px 78px 48px;
 
     &.is-product {
         padding: 72px 0 48px 0;
@@ -95,28 +97,34 @@ const { year, isProduct: is_product } = toRefs(component_props);
     }
 
     .home-footer-right {
-        min-width: 250px;
         text-align: right;
 
         .home-footer-phone {
-
+            margin-bottom: 6px;
             font-size: var(--type-size-400);
             font-weight: var(--font-weight-semibold);
             line-height: var(--type-line-400);
             color: var(--footer-text-primary);
         }
 
-        .home-footer-hours {
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            color: var(--footer-text-primary);
-        }
+        .home-footer-meta-row {
+            display: inline-flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
 
-        .home-footer-note {
-            margin-bottom: 16px;
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            color: var(--footer-text-primary);
+            .home-footer-hours {
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                color: var(--footer-text-primary);
+            }
+
+            .home-footer-note {
+                font-size: var(--type-size-100);
+                line-height: var(--type-line-100);
+                color: var(--footer-text-primary);
+            }
         }
 
         .home-footer-links {

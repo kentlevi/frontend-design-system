@@ -55,11 +55,7 @@ async function onProductionInquiryClick() {
 
 <style scoped lang="scss">
 .home-cta {
-    margin-bottom: 0;
-
     .home-cta-panel {
-        max-width: 1200px;
-        margin: 0 auto;
         min-height: 520px;
         border-radius: 0;
         overflow: hidden;
@@ -72,14 +68,12 @@ async function onProductionInquiryClick() {
 
         .home-cta-inner {
             text-align: center;
-            padding: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 64px;
 
             .home-cta-title {
-
                 font-family: var(--font-base);
                 color: var(--contrast-light);
                 font-size: var(--type-size-600);
@@ -97,7 +91,7 @@ async function onProductionInquiryClick() {
                     border-radius: 10px;
                     border: 0;
                     background: var(--contrast-light);
-                    color: #4747FF;
+                    color: var(--neon-blue-base);
                     font-size: var(--type-size-300);
                     font-weight: var(--font-weight-bold);
                     line-height: var(--type-line-300);
@@ -115,7 +109,7 @@ async function onProductionInquiryClick() {
                     font-size: var(--type-size-300);
                     font-weight: var(--font-weight-bold);
                     line-height: var(--type-line-300);
-                    background: #4747FF;
+                    background: var(--neon-blue-base);
                 }
             }
         }

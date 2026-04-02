@@ -3,15 +3,15 @@
         "guarantees": {
             "quality": {
                 "title": "100% Quality Guaranteed",
-                "text": "When problems arise, we take full responsibility, including reprints or refunds. No excuses, just solutions."
+                "text": "We don't make excuses if a problem arises.\nWe take full responsibility, including reprints or refunds."
             },
             "shipping": {
-                "title": "Made today · Shipped tomorrow",
-                "text": "Production starts as soon as your design is approved. The faster you approve, the sooner it ships, often the next day."
+                "title": "Ordered Today · Shipped Tomorrow",
+                "text": "Production starts right after design approval;\nthe faster you approve, the sooner it ships—usually the next day."
             },
             "freeDelivery": {
-                "title": "Free shipping over 50,000 won",
-                "text": "Our standard shipping fee is 3,000원. To make your shopping even better, orders over 50,000원 qualify for free shipping."
+                "title": "Free Shipping over ₩50,000",
+                "text": "Standard shipping is ₩3,000;\nfree shipping applies to all orders over ₩50,000."
             }
         }
     }

@@ -1,51 +1,35 @@
 {
     "home": {
         "reviews": {
-            "titleLine1": "499 Client Reviews",
-            "titleLine2": "Satisfaction Guaranteed.",
+            "titleLine1": "499+ Photo Reviews,",
+            "titleLine2": "Satisfaction is already proven",
             "controls": {
                 "previous": "Go to previous review",
                 "next": "Go to next review"
             },
             "carouselLabel": "Client reviews carousel",
             "items": {
+                "service": {
+                    "title": "Excellent Service",
+                    "text": "From design to printing, it's fast and the quality is great.\nI think I'll order more in small sizes.",
+                    "author": "Gildong H.*"
+                },
                 "football": {
-                    "title": "Football Stickers",
-                    "text": "Overall, reviews tend to reflect high satisfaction with the look and feel, with many saying they'd buy more or recommend them to fellow football fans.",
-                    "author": "Hans",
+                    "title": "Football Sticker",
+                    "text": "From design to printing, it's fast and the quality is great.\nI think I'll order more in small sizes! This place is definitely the best for printing stickers.",
+                    "author": "Gildong H.*",
                     "badge": "1 Month Use",
                     "badgeTone": "success"
                 },
-                "service": {
-                    "title": "Great service, excellent products!",
-                    "text": "I had an amazing experience! The service was friendly and super responsive, and the products exceeded my expectations.",
-                    "author": "Elizabeth"
+                "products": {
+                    "title": "Excellent service and products, I love them.",
+                    "text": "From design to printing, it's fast and the quality is great.\nI think I'll order more in small sizes! This place is definitely the best for printing stickers.",
+                    "author": "Gildong H.*"
                 },
                 "market": {
                     "title": "Market Sticker",
-                    "text": "I love this Market Sticker! The design is vibrant, the material feels durable, and it stuck perfectly wherever I placed it.",
-                    "author": "Tricia"
-                },
-                "fastFlawlessA": {
-                    "title": "Fast and flawless.",
-                    "text": "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
-                    "author": "Katrina",
-                    "badge": "Repurchase",
-                    "badgeTone": "default"
-                },
-                "quality": {
-                    "title": "Top quality!",
-                    "text": "The durability and water resistance are excellent, and everything is great, but since there are 100 sheets, quite a few stickers are skewed to one side.",
-                    "author": "Michelle",
-                    "badge": "Repurchase",
-                    "badgeTone": "default"
-                },
-                "fastFlawlessB": {
-                    "title": "Fast and flawless.",
-                    "text": "I'm really impressed! My order arrived quickly, and the stickers were flawless - vibrant, durable, and exactly as described.",
-                    "author": "Katrina",
-                    "badge": "Repurchase",
-                    "badgeTone": "default"
+                    "text": "From design to printing, it's fast and the quality is great.\nI think I'll order more in small sizes! This place is definitely the best for printing stickers.",
+                    "author": "Gildong H.*"
                 }
             }
         }
