@@ -22,9 +22,12 @@ export async function fetchDynamicFields(
 	return $api.get('/address/fields');
 }
 
+/**
+ * Add user address
+ */
 export async function addUserAddress(
 	params: Record<string, unknown>
-): Promise<ApiResponse> {
+): Promise<ApiResponse<AddressMap[AddressType]>> {
 	const { $api } = useNuxtApp()
 
 	return $api.post('/address', params);
