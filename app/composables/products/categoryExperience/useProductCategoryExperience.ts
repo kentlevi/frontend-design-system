@@ -556,10 +556,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		};
 	}
 
-	function productIdToSlug(productId: string) {
-		return getProductSlugByCategory(productId, category.value);
-	}
-
 	function resolveCatalogProductByApiSlug(slug: string, catalogProducts: ProductItem[]) {
 		if (!slug) return null;
 

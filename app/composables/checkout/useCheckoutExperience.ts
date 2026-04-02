@@ -4,6 +4,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
 import { useCheckoutMember } from '~/composables/checkout/member/useCheckoutMember';
 import { useCheckoutCompletion } from '~/composables/checkout/completion/useCheckoutCompletion';
+import { useCheckoutTooltipState } from '~/composables/checkout/features/useCheckoutTooltipState';
 import {
 	checkoutFieldValidation,
 	checkoutMemberPaymentBrands,
@@ -13,11 +14,11 @@ export function useCheckoutExperience() {
 	const { t } = useI18n();
 	const { withCountry } = useCountry();
 	const user_store = useUsersStore();
-	
+
 	// Use Member logic as the primary base for both guest and member
 	const member_logic = useCheckoutMember();
-	
-	const { completing_checkout, completeCheckout } = useCheckoutCompletion({
+
+	const { completing_checkout, complete_loader_ref, completeCheckout } = useCheckoutCompletion({
 		...member_logic,
 		redirectPath: withCountry('/checkout/success')
 	});
@@ -34,24 +35,22 @@ export function useCheckoutExperience() {
 	});
 
 	const is_login_modal_open = ref(false);
-	const email_tooltip_open = ref(false);
-	const points_tooltip_open = ref(false);
-	const drop_shipping_tooltip_open = ref(false);
-	const billing_tooltip_open = ref(false);
+	const {
+		email_tooltip_open,
+		points_tooltip_open,
+		drop_shipping_tooltip_open,
+		billing_tooltip_open,
+		toggleEmailTooltip,
+		togglePointsTooltip,
+		toggleDropShippingTooltip,
+		toggleBillingTooltip,
+	} = useCheckoutTooltipState();
 
 	// Modal States expected by the template
 	const is_shipping_address_modal_open = ref(false);
 	const is_billing_address_modal_open = ref(false);
 	const is_drop_shipping_address_modal_open = ref(false);
 	const is_accredited_banks_modal_open = ref(false);
-
-
-	const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-	const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
-	const drop_shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-	const drop_shipping_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
-	const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
-	const payment_meta_swap_wrapper_ref = ref<HTMLElement | null>(null);
 
 	// Static lookup data for the template
 	const shipping_method_details = {
@@ -73,22 +72,6 @@ export function useCheckoutExperience() {
 		});
 	}
 
-	function togglePointsTooltip() {
-		points_tooltip_open.value = !points_tooltip_open.value;
-	}
-
-	function toggleDropShippingTooltip() {
-		drop_shipping_tooltip_open.value = !drop_shipping_tooltip_open.value;
-	}
-
-	function toggleBillingTooltip() {
-		billing_tooltip_open.value = !billing_tooltip_open.value;
-	}
-
-	function toggleEmailTooltip() {
-		email_tooltip_open.value = !email_tooltip_open.value;
-	}
-
 	function getAddressTagClass(label: string) {
 		const lower_label = label.toLowerCase();
 		if (lower_label.includes('office')) return 'checkout-member-address-tag--office';
@@ -106,6 +89,7 @@ export function useCheckoutExperience() {
 		t,
 		withCountry,
 		completing_checkout,
+		complete_loader_ref,
 		completeCheckout,
 		itemMeta,
 
@@ -119,14 +103,6 @@ export function useCheckoutExperience() {
 		is_billing_address_modal_open,
 		is_drop_shipping_address_modal_open,
 		is_accredited_banks_modal_open,
-
-		// Transitions
-		shipping_swap_wrapper_ref,
-		billing_swap_wrapper_ref,
-		drop_shipping_swap_wrapper_ref,
-		drop_shipping_mode_swap_wrapper_ref,
-		billing_mode_swap_wrapper_ref,
-		payment_meta_swap_wrapper_ref,
 
 		// UI Methods
 		openLoginModal,

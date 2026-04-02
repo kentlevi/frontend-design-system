@@ -1,7 +1,6 @@
 import { storeToRefs } from 'pinia';
 import { DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries';
 import { useUsersStore } from '~/stores/users/users.store';
-import { useAuthUser } from '~/composables/auth/useAuthUser';
 
 function hasEmailValue(email: string | null | undefined): boolean {
 	return Boolean((email ?? '').trim());

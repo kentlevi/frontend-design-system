@@ -1,8 +1,8 @@
-import { watch, nextTick, type Ref } from 'vue';
+import { watch, nextTick, type Ref, type WatchSource } from 'vue';
 
 export function useHeightTransition(
 	wrapperRef: Ref<HTMLElement | null>,
-	watchSource: any,
+	watchSource: WatchSource<unknown> | object,
 	getActivePanelSelector: () => string | null,
 	options: {
 		enabled?: () => boolean;
