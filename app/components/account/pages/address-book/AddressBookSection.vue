@@ -2,12 +2,20 @@
 import type { AddressMap, AddressType } from '~/types/address';
 import AddressBookCard from './AddressBookCard.vue';
 
+type MenuActionKey = 'edit' | 'delete' | 'default';
+
 type SectionProps = {
 	section: AddressType;
 	items: AddressMap[AddressType][];
 };
 
 const props = defineProps<SectionProps>();
+const emit = defineEmits<{
+	(e: 'menu-action', payload: {
+		action: MenuActionKey;
+		item: AddressMap[AddressType];
+	}): void;
+}>()
 
 const { t } = useI18n();
 </script>
@@ -33,6 +41,7 @@ const { t } = useI18n();
 					:key="`${props.section}-${item.id}-${index}`"
 					:item="item"
 					:index="index"
+					@menu-action="emit('menu-action', $event)"
 				/>
 			</div>
 		</div>

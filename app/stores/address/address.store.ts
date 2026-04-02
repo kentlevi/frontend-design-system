@@ -32,11 +32,24 @@ export const useAddressStore = defineStore('address', () => {
 		target.value.push(...normalized_value)
 	}
 
+	function updateAddress<T extends AddressType>(
+		type: T,
+		value: AddressMap[T]
+	) {
+		const target = address_refs[type]
+		const target_index = target.value.findIndex(address => address.id === value.id)
+
+		if (target_index === -1) return
+
+		target.value.splice(target_index, 1, value)
+	}
+
 	return {
 		shipping_address,
 		billing_address,
 		drop_address,
 
-		setAddresses
+		setAddresses,
+		updateAddress,
 	}
 })
