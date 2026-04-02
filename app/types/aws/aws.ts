@@ -1,4 +1,4 @@
-export type UploadWithPresignedUrlPayload = Record<'full_path', string>
+export type UploadWithPresignedUrlPayload = Record<string, string>
 
 export interface UploadWithPresignedUrlParams {
 	payload: Record<string, string>
@@ -8,4 +8,5 @@ export interface UploadWithPresignedUrlParams {
 
 export interface UploadWithPresignedUrlResult {
 	presigned_url: string
+	file_name: string
 }

@@ -18,12 +18,10 @@ type ReviewItem = {
 };
 
 const review_ids = [
-	'football',
 	'service',
+	'football',
+	'products',
 	'market',
-	'fastFlawlessA',
-	'quality',
-	'fastFlawlessB',
 ] as const;
 
 const reviews = computed<ReviewItem[]>(() =>
@@ -139,24 +137,26 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
 						>
 
 						<div class="home-reviews-content">
-							<div class="home-reviews-item-head">
-								<h3 class="home-reviews-item-title">
-									{{ review.title }}
-								</h3>
-								<UiBadge
-									v-if="review.badge"
-									variant="outline"
-									:tone="review.badgeTone ?? 'success'"
-									size="sm"
-									badge-class="home-reviews-badge"
-								>
-									{{ review.badge }}
-								</UiBadge>
-							</div>
+							<div class="home-reviews-item-copy">
+								<div class="home-reviews-item-head">
+									<h3 class="home-reviews-item-title">
+										{{ review.title }}
+									</h3>
+									<UiBadge
+										v-if="review.badge"
+										variant="outline"
+										:tone="review.badgeTone ?? 'success'"
+										size="sm"
+										badge-class="home-reviews-badge"
+									>
+										{{ review.badge }}
+									</UiBadge>
+								</div>
 
-							<p class="home-reviews-item-text">
-								{{ review.text }}
-							</p>
+								<p class="home-reviews-item-text">
+									{{ review.text }}
+								</p>
+							</div>
 
 							<p class="home-reviews-stars">
 								<UiIcon
@@ -178,20 +178,14 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
 
 <style scoped lang="scss">
 .home-reviews {
-    font-family: var(--font-base);
-    margin-bottom: 64px;
-
     .home-reviews-card {
-        max-width: 1200px;
-        height: 522px;
-        margin: 0 auto;
         border-radius: 16px;
         background: linear-gradient(
             180deg,
             var(--contrast-light) 6%,
             #efefef 100%
         );
-        padding: 56px 42px 48px;
+        padding: 112px 78px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -246,7 +240,7 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
                     flex: 0 0 calc((100% - 24px) / 2.18);
                     border-radius: 16px;
                     background: var(--contrast-light);
-                    padding: 18px;
+                    padding: 20px;
                     display: grid;
                     grid-template-columns: 144px 1fr;
                     gap: 18px;
@@ -254,7 +248,7 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
                     .home-reviews-media {
                         width: 100%;
                         height: 100%;
-                        min-height: 150px;
+                        max-height: 144px;
                         align-self: stretch;
                         border-radius: 18px;
                         object-fit: cover;
@@ -264,33 +258,38 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
                         min-width: 0;
                         display: flex;
                         flex-direction: column;
-                        gap: 18px;
+                        justify-content: space-between;
 
-                        .home-reviews-item-head {
+                        .home-reviews-item-copy {
                             display: flex;
-                            align-items: center;
-                            gap: 10px;
+                            flex-direction: column;
+                            gap: 8px;
 
-                            .home-reviews-item-title {
+                            .home-reviews-item-head {
+                                display: flex;
+                                align-items: center;
+                                gap: 10px;
 
-                                font-size: var(--heading-6);
-                                font-weight: var(--font-weight-bold);
-                                line-height: 1.4;
-                                color: var(--text-primary);
+                                .home-reviews-item-title {
+
+                                    font-size: var(--heading-6);
+                                    font-weight: var(--font-weight-bold);
+                                    line-height: 1.4;
+                                    color: var(--text-primary);
+                                    overflow-wrap: anywhere;
+                                }
+                            }
+
+                            .home-reviews-item-text {
+
+                                font-size: var(--body-base);
+                                line-height: 1.6;
+                                color: var(--text-secondary);
                                 overflow-wrap: anywhere;
                             }
                         }
 
-                        .home-reviews-item-text {
-
-                            font-size: var(--body-base);
-                            line-height: 1.6;
-                            color: var(--text-secondary);
-                            overflow-wrap: anywhere;
-                        }
-
                         .home-reviews-stars {
-                            margin: auto 0 0;
                             display: inline-flex;
                             align-items: center;
                             gap: 4px;

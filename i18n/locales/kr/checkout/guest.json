@@ -33,8 +33,8 @@
                     "line2Placeholder": "주소 2를 입력하세요"
                 },
                 "province": {
-                    "label": "주/도",
-                    "placeholder": "주/도를 선택하세요"
+                    "label": "도/직할시",
+                    "placeholder": "도/직할시를 선택하세요"
                 },
                 "city": {
                     "label": "시/군/구",
@@ -46,7 +46,7 @@
                 },
                 "phone": {
                     "label": "전화번호",
-                    "placeholder": "(000) 000-0000"
+                    "placeholder": "전화번호/유선번호를 입력하세요"
                 },
                 "cardNumber": {
                     "label": "카드 번호",

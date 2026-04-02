@@ -44,15 +44,10 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/home-feature-high
     margin-bottom: 72px;
 
     .home-feature-card {
-        max-width: 1200px;
-        height: 512px;
-        margin: 0 auto;
         border-radius: 16px;
         background: var(--gray-20);
-        padding: 64px 58px;
-        display: grid;
-        grid-template-columns: 492px 1fr;
-        align-items: center;
+        padding: 112px 78px;
+        display: flex;
         gap: 56px;
 
         .home-feature-media {
@@ -81,16 +76,16 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/home-feature-high
                 font-size: var(--type-size-550);
                 line-height: var(--type-line-550);
 
-                color: #252b3a;
+                color: var(--black-base);
                 font-weight: var(--font-weight-bold);
             }
 
             .home-feature-text {
-
                 font-size: var(--type-size-100);
                 line-height: var(--type-line-100);
-                color: #4c5261;
+                color: var(--gray-90);
                 max-width: 560px;
+                white-space: pre-line;
             }
         }
     }

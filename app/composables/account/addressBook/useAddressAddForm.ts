@@ -1,6 +1,7 @@
 import { addressFormDefaults } from "~/factories/address";
-import { useAddressFieldStore } from "~/stores/address";
-import type { AddFormState, AddressType, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
+import { addUserAddress, fetchUserAddresses } from "~/services/profile/address.service";
+import { useAddressFieldStore, useAddressStore } from "~/stores/address";
+import type { AddFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
 
 export function useAddressAddForm() {
 
@@ -9,6 +10,9 @@ export function useAddressAddForm() {
      */
 	// const address_store = useAddressStore()
 	const address_field_store = useAddressFieldStore()
+	const address_store = useAddressStore()
+	const toast_store = useToastStore()
+	const loading_overlay_store = useLoadingOverlayStore()
 
 	/**
      * Variables
@@ -40,14 +44,18 @@ export function useAddressAddForm() {
 
 	/** Transform store fields into form fields with empty values */
 	function populateDynamicFields(target_type: AddressType) {
-		if (add_form_state[target_type].dynamic_fields.length !== 0) return;
+		if (target_type === 'drop') return
 
-		const mappedFields = address_field_store.dynamic_address_fields.map(field => ({
-			...field,
-			value: ''            // Start with empty value
-		}))
+		// Check if object is empty (not array length)
+		if (Object.keys(add_form_state[target_type].fields).length !== 0) return;
 
-		add_form_state[target_type].dynamic_fields = mappedFields
+		// Use reduce to create object, not map for array
+		const mappedFields = address_field_store.dynamic_address_fields.reduce((acc, field) => {
+			acc[field.field_key] = ''  // Set empty string as default
+			return acc
+		}, {} as DynamicFieldDefinition)
+
+		add_form_state[target_type].fields = mappedFields
 	}
 
 	function resetAddForm(type?: AddressType) {
@@ -72,17 +80,8 @@ export function useAddressAddForm() {
 
 	/** Update one dynamic field value in the active form */
 	function updateActiveDynamicField(payload: UpdateDynamicFieldPayload) {
-
-		const target_field = active_add_form.value.dynamic_fields.find(
-			field => field.field_key === payload.field_key
-		)
-
-		/** Stop if the field does not exist */
-		if (!target_field) {
-			return
-		}
-
-		target_field.value = payload.value
+		if (active_add_form.value.type === 'drop') return
+		active_add_form.value.fields[payload.field_key] = payload.value
 	}
 
 	/** Change the active add form type */
@@ -92,23 +91,55 @@ export function useAddressAddForm() {
 	}
 
 	async function addAddress() {
+		closeAddModal()
+		startRequestOverlay()
 
+
+		const type = add_form_type.value;
+		const payload = { ...active_add_form.value };
+		try {
+			const response = await addUserAddress(payload)
+
+			if (response?.success) {
+				const list_response = await fetchUserAddresses({ type });
+
+				if (list_response.success && Array.isArray(list_response.data)) {
+					address_store.setAddresses(type, list_response.data);
+				}
+
+				resetAddForm(type);
+			} else {
+				openAddModal();
+			}
+
+			toast_store.handleApiResponse(response)
+		} catch (_error: unknown) {
+			console.log(_error);
+			openAddModal();
+		} finally {
+			loading_overlay_store.stopLoading('add_address')
+		}
 	}
 
 
 	function openAddModal() {
-		resetAddForm()
 		is_add_modal_open.value = true
 	}
 
-	/** Close add modal and optionally reset the current active form */
-	function closeAddModal(should_reset = false) {
+	function closeAddModal() {
 		is_add_modal_open.value = false
+	}
 
-		/** Reset only when requested */
-		if (should_reset) {
-			resetAddForm()
-		}
+
+
+
+	/** Overlays */
+	function startRequestOverlay() {
+		loading_overlay_store.startLoading('add_address', {
+			showCopy: true,
+			testId: 'account-profile-upload-avatar-overlay',
+			position: 'fixed'
+		})
 	}
 
 	return {

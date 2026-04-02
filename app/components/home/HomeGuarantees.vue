@@ -51,17 +51,15 @@ const guarantee_items = [
 
 <style scoped lang="scss">
 .home-guarantees {
-    margin-bottom: 64px;
 
     .home-guarantees-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 34px;
+        display: flex;
+        justify-content: center;
+        gap: 78px;
+        padding: 64px 0;
 
         .home-guarantees-item {
-            max-width: 291px;
+            min-width: 296px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -95,6 +93,7 @@ const guarantee_items = [
                 font-size: var(--type-size-200);
                 line-height: var(--type-line-200);
                 color: var(--text-secondary);
+                white-space: pre-line;
             }
 
             .home-guarantees-copy {

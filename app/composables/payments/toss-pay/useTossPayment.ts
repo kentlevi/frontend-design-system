@@ -1,68 +1,68 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
 
 export const useTossPayment = () => {
-    
-    const { 
-        completeCheckout
-    } = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
 
-    let popup: Window | null = null
+	const {
+		completeCheckout
+	} = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
 
-    // =========================
-    // POPUP HANDLING
-    // =========================
-    const openPaymentPopup = (url: string) => {
+	let popup: Window | null = null
 
-        popup = window.open(
-            '',
-            '_blank',
-            'width=800,height=1000,toolbar=no,menubar=no,location=no,status=no'
-        )
+	// =========================
+	// POPUP HANDLING
+	// =========================
+	const openPaymentPopup = (url: string) => {
 
-        if (!popup) {
-            throw new Error('Popup blocked')
-        }
+		popup = window.open(
+			'',
+			'_blank',
+			'width=800,height=1000,toolbar=no,menubar=no,location=no,status=no'
+		)
 
-        popup.location.href = url
-    }
+		if (!popup) {
+			throw new Error('Popup blocked')
+		}
 
-    const closePaymentPopup = () => {
-        popup?.close()
-        popup = null
-    }
+		popup.location.href = url
+	}
 
-
-    // =========================
-    // LISTENER HANDLING
-    // =========================
-    const listenPaymentResult = () => {
-
-        const handler = (event: MessageEvent) => {
-
-            const data = event.data
-
-            if (data?.type === 'TOSS_PAYMENT_SUCCESS') {
-                console.log('Payment Success:', data.data)
-                closePaymentPopup()
-                completeCheckout(true,data.data);
-            }
-
-            if (data?.type === 'TOSS_PAYMENT_FAIL') {
-                console.log('Payment Failed:', data.data)
-                closePaymentPopup()
-            }
-        }
-
-        window.addEventListener('message', handler)
-
-        return () => window.removeEventListener('message', handler)
-    }
+	const closePaymentPopup = () => {
+		popup?.close()
+		popup = null
+	}
 
 
-    return {
-        openPaymentPopup,
-        closePaymentPopup,
-        listenPaymentResult,
-        popup: () => popup
-    }
+	// =========================
+	// LISTENER HANDLING
+	// =========================
+	const listenPaymentResult = () => {
+
+		const handler = (event: MessageEvent) => {
+
+			const data = event.data
+
+			if (data?.type === 'TOSS_PAYMENT_SUCCESS') {
+				console.log('Payment Success:', data.data)
+				closePaymentPopup()
+				completeCheckout(true,data.data);
+			}
+
+			if (data?.type === 'TOSS_PAYMENT_FAIL') {
+				console.log('Payment Failed:', data.data)
+				closePaymentPopup()
+			}
+		}
+
+		window.addEventListener('message', handler)
+
+		return () => window.removeEventListener('message', handler)
+	}
+
+
+	return {
+		openPaymentPopup,
+		closePaymentPopup,
+		listenPaymentResult,
+		popup: () => popup
+	}
 }

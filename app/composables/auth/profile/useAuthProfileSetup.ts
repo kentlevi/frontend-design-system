@@ -259,6 +259,7 @@ export function useAuthProfileSetup() {
 		normalizeEmail(email.value) !== original_email_from_state.value
 	);
 	const requires_email_verification = computed(() => {
+		if (!email_required.value) return false;
 		if (!state.value.id) return false;
 		if (!has_required_email.value) return false;
 		return email_changed_from_state.value;
@@ -526,6 +527,20 @@ export function useAuthProfileSetup() {
 				is_email_verification_modal_open.value = true;
 				return;
 			}
+
+			clearVerificationState();
+			const response = await requestEmailVerification(false);
+
+			if (!response?.success) {
+				const meta_code = (response.meta as { code?: string } | null)?.code || '';
+				if (meta_code === 'max_resend_reached') {
+					is_email_verification_modal_open.value = true;
+				}
+				return;
+			}
+
+			is_email_verification_modal_open.value = true;
+			return;
 		}
 
 		step.value = 2;

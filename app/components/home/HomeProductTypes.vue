@@ -36,14 +36,12 @@ const { withCountry } = useCountry();
 
 <style scoped lang="scss">
 .home-types {
-    margin-bottom: 56px;
+    padding: 56px 0;
 
     .home-types-container {
-        max-width: 1200px;
-        margin: 0 auto;
         display: flex;
         justify-content: center;
-        gap: 46px;
+        gap: 24px;
 
         .home-types-item {
             width: 180px;
@@ -86,7 +84,7 @@ const { withCountry } = useCountry();
                 font-weight: var(--font-weight-medium);
                 line-height: var(--type-line-200);
                 text-align: center;
-                color: #232735;
+                color: var(--black-base);
             }
         }
     }

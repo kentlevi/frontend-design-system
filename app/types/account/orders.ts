@@ -13,6 +13,11 @@ export interface AccountOrderActionItem {
 
 export interface AccountOrderLineItem {
 	number: string;
+	productName: string;
+	artworkFileName?: string;
+	artworkSubmittedBy?: string;
+	artworkSubmittedAt?: string;
+	artworkInstruction?: string;
 	imageSrc: string;
 	artworkStatusKey: AccountOrderArtworkStatusKey;
 	size: string;

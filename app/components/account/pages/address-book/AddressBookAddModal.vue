@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
-import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
+import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType, UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
 
 type IconName = keyof typeof icons;
 
@@ -16,8 +16,9 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'set-form-type', value: AddressType): void;
-	(e: 'update-field', payload: { field: AddressFormField; value: string }): void;
-	(e: 'update-dynamic-field', paylod: { field_key: string; value: string | number }): void;
+	(e: 'update-field', payload: UpdateFieldPayload): void;
+	(e: 'update-dynamic-field', payload: UpdateDynamicFieldPayload): void;
+	(e: 'add-address'): void;
 }>();
 
 /** Check whether the form supports address lines */
@@ -49,6 +50,22 @@ function createStringFieldModel(
 	})
 }
 
+function createBooleanFieldModel(
+	field: Extract<AddressFormField, 'is_default'>,
+	get_value: () => boolean
+) {
+	return computed({
+		get: get_value,
+
+		set: (value: boolean) => {
+			emit('update-field', {
+				field,
+				value
+			})
+		},
+	});
+}
+
 /** Shared fields */
 const contact_name_model = createStringFieldModel(
 	'contact_name',
@@ -60,9 +77,9 @@ const company_model = createStringFieldModel(
 	() => props.activeAddForm.company ?? ''
 )
 
-const is_default_model = createStringFieldModel(
+const is_default_model = createBooleanFieldModel(
 	'is_default',
-	() => props.activeAddForm.notes ?? ''
+	() => props.activeAddForm.is_default ?? false
 )
 
 /** Address line fields */
@@ -104,21 +121,17 @@ function updateDynamicField(field_key: string, value: string | number) {
 }
 
 function getDynamicFieldValue(field_key: string) {
-	const field = props.activeAddForm.dynamic_fields.find(
-		f => f.field_key === field_key // fixed duplicate condition
-	)
+	if (!hasAddressLines(props.activeAddForm)) return ''
 
-	if (!field) {
-		return ''
+	const value = props.activeAddForm.fields?.[field_key]
+	const field = props.dynamicFields?.find(f => f.field_key === field_key)
+
+	// If it's a select field, return the option label
+	if (field?.options?.length) {
+		return field.options.find(opt => opt.id === value)?.value ?? ''
 	}
 
-	if (field.input_type === 'select') {
-		// selected id is stored in field.value
-		const option = field.options?.find(opt => opt.id === field.value)
-		return option?.value ?? ''   // or option?.id ?? '', depending UiSelect expects value-type
-	}
-
-	return field.value ?? ''
+	return value ?? ''
 }
 
 function onDynamicSelectChange(field_key: string, selected_value: string | number) {
@@ -159,9 +172,6 @@ function closeModal() {
 	emit('update:modelValue', false);
 }
 
-function handleSave() {
-	closeModal();
-}
 </script>
 
 <template>
@@ -366,22 +376,22 @@ function handleSave() {
 									</template>
 								</UiFormField>
 							</div>
-
-							<label class="account-address-book-add-modal-switch">
-								<input
-									v-model="is_default_model"
-									type="checkbox"
-									class="account-address-book-add-modal-switch-input"
-								>
-								<span class="account-address-book-add-modal-switch-track" />
-								<span class="account-address-book-add-modal-switch-copy-group">
-									<span class="account-address-book-add-modal-switch-copy">
-										{{ t('account.addressBook.saveAsDefault') }}
-									</span>
-									<UiIcon name="regular-question-circle" :size="20" />
-								</span>
-							</label>
 						</template>
+
+						<label class="account-address-book-add-modal-switch">
+							<input
+								v-model="is_default_model"
+								type="checkbox"
+								class="account-address-book-add-modal-switch-input"
+							>
+							<span class="account-address-book-add-modal-switch-track" />
+							<span class="account-address-book-add-modal-switch-copy-group">
+								<span class="account-address-book-add-modal-switch-copy">
+									{{ t('account.addressBook.saveAsDefault') }}
+								</span>
+								<UiIcon name="regular-question-circle" :size="20" />
+							</span>
+						</label>
 					</div>
 
 					<div class="account-address-book-add-modal-footer-row">
@@ -403,7 +413,7 @@ function handleSave() {
 								tone="neutral"
 								size="md"
 								class="account-address-book-add-modal-save"
-								@click="handleSave"
+								@click="emit('add-address')"
 							>
 								{{ save_label }}
 							</UiButton>

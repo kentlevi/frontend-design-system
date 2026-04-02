@@ -9,7 +9,7 @@
             "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
             "payment": "Payment",
             "paymentSubnote": "Pay with your credit card:",
-            "useShippingAsBilling": "Use shipping address as billing address",
+            "useShippingAsBilling": "Use Shipping Address for Billing",
             "viewBillingAddresses": "View Billing Addresses",
             "orderSummary": "Order Summary",
             "noItemsSelected": "No items selected for checkout.",
@@ -33,8 +33,8 @@
                     "line2Placeholder": "Enter Address Line 2"
                 },
                 "province": {
-                    "label": "Province/State",
-                    "placeholder": "Select Province/State"
+                    "label": "Province/Metropolitan City",
+                    "placeholder": "Select Province/Metropolitan City"
                 },
                 "city": {
                     "label": "City/Town",
@@ -46,7 +46,7 @@
                 },
                 "phone": {
                     "label": "Phone Number",
-                    "placeholder": "(000) 000-0000"
+                    "placeholder": "Enter Phone/Landline Number"
                 },
                 "cardNumber": {
                     "label": "Card Number",

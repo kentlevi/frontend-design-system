@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
+
 const props = defineProps<{
 	open: boolean;
 	hasUploadedArtwork: boolean;
@@ -20,6 +22,17 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const {
+	dispatchItem
+} = useArtworkSectionHandler()
+
+const skipUpload = async () => {
+	console.warn('Skip-Uploading')
+	emit('skip-upload-later')
+	await dispatchItem()
+}
+
 </script>
 
 <template>
@@ -154,7 +167,7 @@ const { t } = useI18n();
 					class="upload-skip-btn"
 					:disabled="props.addToCartLoading"
 					data-testid="product-category-upload-skip-button"
-					@click="emit('skip-upload-later')"
+					@click="skipUpload()"
 				>
 					{{ t('cart.uploadArtwork.skipUploadLater') }}
 				</UiButton>

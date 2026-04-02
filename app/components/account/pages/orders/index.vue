@@ -102,6 +102,21 @@ const accent_class_map = {
 										class="account-orders-search-icon"
 									/>
 								</template>
+								<template #icon-right>
+									<button
+										v-show="search_query.length > 0"
+										type="button"
+										class="account-orders-search-clear"
+										data-testid="account-orders-search-clear-button"
+										@click="search_query = ''"
+									>
+										<UiIcon
+											name="light-times-circle"
+											:size="24"
+											color="var(--text-primary)"
+										/>
+									</button>
+								</template>
 							</UiInput>
 						</div>
 					</div>
@@ -197,6 +212,27 @@ const accent_class_map = {
 				.account-orders-search {
 					width: 200px;
 					border-radius: 14px;
+
+					:deep(.ui-input-field) {
+						&::-webkit-search-cancel-button {
+							-webkit-appearance: none;
+							display: none;
+						}
+					}
+
+					.account-orders-search-clear {
+						border: 0;
+						background: transparent;
+						padding: 0;
+						display: grid;
+						place-items: center;
+						cursor: pointer;
+						transition: opacity 0.2s ease;
+
+						&:hover {
+							opacity: 0.7;
+						}
+					}
 				}
 			}
 		}

@@ -12,7 +12,7 @@ export function addressFormDefaults<T extends AddressType>(
 		company: '',
 		is_default: false,
 		notes: '',
-		dynamic_fields: [],
+		email: '',
 	}
 
 	/** Defaults for address forms with lines */
@@ -20,6 +20,7 @@ export function addressFormDefaults<T extends AddressType>(
 		...base_defaults,
 		address_line_1: '',
 		address_line_2: '',
+		fields: {},
 		postcode: '',
 	}
 

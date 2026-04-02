@@ -417,11 +417,13 @@ useHead({
 <template>
 	<main class="home-page">
 		<HomeHeroSection />
-		<HomeProductTypes />
-		<HomeFeatureHighlight />
-		<HomeReviewsSection />
-		<HomeGuarantees />
-		<HomeCtaSection />
+		<div class="home-sections-container">
+			<HomeProductTypes />
+			<HomeFeatureHighlight />
+			<HomeReviewsSection />
+			<HomeGuarantees />
+			<HomeCtaSection />
+		</div>
 		<AuthLoginForgotPasswordModal
 			v-model="isForgotPasswordModalOpen"
 			:email="forgotEmail"
@@ -470,6 +472,12 @@ useHead({
 <style scoped lang="scss">
 .home-page {
     background: var(--bg-page);
+}
+
+.home-sections-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 :global(.home-guide-tour-target-active) {

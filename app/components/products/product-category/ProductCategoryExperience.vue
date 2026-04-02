@@ -26,7 +26,6 @@ const props = defineProps<{
 const {
 	size_feature_cards,
 	quantity_options,
-	category_data,
 	selected_id,
 	selected_size,
 	selected_qty,
@@ -77,7 +76,6 @@ const {
 		<div class="product-experience-container" data-testid="product-category-experience-container">
 			<ProductCategoryStage
 				:category="props.category"
-				:category-products="category_data.products"
 				:has-picked-product="has_picked_product"
 				:selected-id="selected_id"
 				:selected-product="selected_product"

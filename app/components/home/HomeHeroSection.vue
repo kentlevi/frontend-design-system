@@ -51,42 +51,40 @@ async function onOrderNowClick() {
 <style scoped lang="scss">
 .home-hero {
     background: var(--brand-primary);
-    padding: 36px 24px 44px;
-    max-height: 380px;
-    margin-bottom: 56px;
+    padding: 92px 0;
 
     .home-hero-container {
-        max-width: 1280px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 340px 1fr;
-        align-items: center;
+        display: flex;
         justify-content: center;
-        gap: 24px;
+        align-items: center;
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
 
         .home-hero-art {
-            width: 280px;
-            height: 320px;
-            display: grid;
-            place-items: center;
-            justify-self: end;
+            position: absolute;
+            left: 144px;
+            z-index: 1;
+            pointer-events: none;
+            max-height: 274px;
+            max-width: 225px;
 
             .home-hero-art-image {
-                height: 274px;
                 object-fit: contain;
                 display: block;
                 position: relative;
-                z-index: 1;
             }
         }
 
         .home-hero-content {
-            max-width: 560px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 32px;
+            position: relative;
+            z-index: 2;
 
             .home-hero-copy {
                 display: flex;
@@ -95,16 +93,15 @@ async function onOrderNowClick() {
             }
 
             .home-hero-title {
-
                 font-family: var(--font-base);
                 font-size: var(--type-size-600);
                 font-weight: var(--font-weight-bold);
                 line-height: var(--type-line-600);
                 color: var(--abyss-base);
+                white-space: pre-line;
             }
 
             .home-hero-subtitle {
-
                 font-size: var(--type-size-300);
                 line-height: var(--type-line-300);
                 color: var(--abyss-base);
@@ -120,6 +117,19 @@ async function onOrderNowClick() {
                 font-weight: var(--font-weight-semibold);
                 line-height: var(--type-line-200);
             }
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .home-hero-art {
+            opacity: 0.3; /* Fade it out or hide on smaller screens to avoid overlap */
+            left: -50px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .home-hero-art {
+            display: none;
         }
     }
 }

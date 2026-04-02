@@ -85,9 +85,19 @@ export const checkoutPaymentBrands = [
 
 export const checkoutMemberPaymentBrands = [
 	{
+		key: 'kb-kookmin-bank',
+		label: 'KB Kookmin Bank',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/kb-kookmin-bank.svg',
+	},
+	{
 		key: 'shinhan-card',
 		label: 'Shinhan Card',
 		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/shinhan-card.svg',
+	},
+	{
+		key: 'hyundai-card',
+		label: 'Hyundai Card',
+		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/hyundai-card.svg',
 	},
 	{
 		key: 'samsung-card',
@@ -100,19 +110,9 @@ export const checkoutMemberPaymentBrands = [
 		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/nh-nonghyup-card.svg',
 	},
 	{
-		key: 'kb-kookmin-bank',
-		label: 'KB Kookmin Bank',
-		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/kb-kookmin-bank.svg',
-	},
-	{
 		key: 'kakao-bank',
 		label: 'Kakao Bank',
 		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/kakao-bank.svg',
-	},
-	{
-		key: 'hyundai-card',
-		label: 'Hyundai Card',
-		icon: '/icons/custom/payment-methods/checkout-member-payment-brands/hyundai-card.svg',
 	},
 	{
 		key: 'bc-card',

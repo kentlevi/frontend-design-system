@@ -31,7 +31,7 @@ const {
 
 	is_add_modal_open,
 
-	// addAddress,
+	addAddress,
 	openAddModal,
 	// closeAddModal,
 	setAddFormType,
@@ -138,6 +138,7 @@ onMounted(() => {
 				@set-form-type="setAddFormType"
 				@update-field="updateActiveAddFormField"
 				@update-dynamic-field="updateActiveDynamicField"
+				@add-address="addAddress"
 			/>
 		</AccountShellSection>
 	</section>
