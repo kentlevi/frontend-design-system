@@ -98,6 +98,7 @@ async function onOrderNowClick() {
                 font-weight: var(--font-weight-bold);
                 line-height: var(--type-line-600);
                 color: var(--abyss-base);
+                white-space: pre-line;
             }
 
             .home-hero-subtitle {
