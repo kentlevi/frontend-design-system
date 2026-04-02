@@ -13,12 +13,12 @@ export interface BaseAddress {
 	email?: string
 	is_default: boolean
 	notes?: string
-	dynamic_fields: AddressFieldDefinition[]
 }
 
 export interface AddressWithLines extends BaseAddress {
 	address_line_1: string
 	address_line_2?: string
+	dynamic_fields: AddressFieldDefinition[]
 	postcode: string
 }
 

@@ -9,13 +9,13 @@ export interface BaseAddressForm {
 	email: string
 	is_default: boolean
 	notes: string
-	fields: DynamicFieldDefinition
 }
 
 /** Shared fields for forms with address lines */
 export interface AddressWithLinesForm extends BaseAddressForm {
 	address_line_1: string
 	address_line_2: string
+	fields: DynamicFieldDefinition
 	postcode: string
 }
 

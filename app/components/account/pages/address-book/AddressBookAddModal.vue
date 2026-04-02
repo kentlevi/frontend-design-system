@@ -121,6 +121,8 @@ function updateDynamicField(field_key: string, value: string | number) {
 }
 
 function getDynamicFieldValue(field_key: string) {
+	if (!hasAddressLines(props.activeAddForm)) return ''
+
 	const value = props.activeAddForm.fields?.[field_key]
 	const field = props.dynamicFields?.find(f => f.field_key === field_key)
 
@@ -374,22 +376,22 @@ function closeModal() {
 									</template>
 								</UiFormField>
 							</div>
-
-							<label class="account-address-book-add-modal-switch">
-								<input
-									v-model="is_default_model"
-									type="checkbox"
-									class="account-address-book-add-modal-switch-input"
-								>
-								<span class="account-address-book-add-modal-switch-track" />
-								<span class="account-address-book-add-modal-switch-copy-group">
-									<span class="account-address-book-add-modal-switch-copy">
-										{{ t('account.addressBook.saveAsDefault') }}
-									</span>
-									<UiIcon name="regular-question-circle" :size="20" />
-								</span>
-							</label>
 						</template>
+
+						<label class="account-address-book-add-modal-switch">
+							<input
+								v-model="is_default_model"
+								type="checkbox"
+								class="account-address-book-add-modal-switch-input"
+							>
+							<span class="account-address-book-add-modal-switch-track" />
+							<span class="account-address-book-add-modal-switch-copy-group">
+								<span class="account-address-book-add-modal-switch-copy">
+									{{ t('account.addressBook.saveAsDefault') }}
+								</span>
+								<UiIcon name="regular-question-circle" :size="20" />
+							</span>
+						</label>
 					</div>
 
 					<div class="account-address-book-add-modal-footer-row">

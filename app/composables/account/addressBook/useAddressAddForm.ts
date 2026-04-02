@@ -44,6 +44,8 @@ export function useAddressAddForm() {
 
 	/** Transform store fields into form fields with empty values */
 	function populateDynamicFields(target_type: AddressType) {
+		if (target_type === 'drop') return
+
 		// Check if object is empty (not array length)
 		if (Object.keys(add_form_state[target_type].fields).length !== 0) return;
 
@@ -78,7 +80,7 @@ export function useAddressAddForm() {
 
 	/** Update one dynamic field value in the active form */
 	function updateActiveDynamicField(payload: UpdateDynamicFieldPayload) {
-
+		if (active_add_form.value.type === 'drop') return
 		active_add_form.value.fields[payload.field_key] = payload.value
 	}
 
