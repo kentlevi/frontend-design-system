@@ -56,6 +56,17 @@ export const useAddressStore = defineStore('address', () => {
 		sortAddressesByDefault(type)
 	}
 
+	function deleteAddress<T extends AddressType>(
+		type: T,
+		id: number
+	) {
+		const target = address_refs[type]
+
+		target.value = target.value.filter(address => address.id !== id)
+
+		sortAddressesByDefault(type)
+	}
+
 	function updateAddress<T extends AddressType>(
 		type: T,
 		value: AddressMap[T]
@@ -77,5 +88,6 @@ export const useAddressStore = defineStore('address', () => {
 		sortAddressesByDefault,
 		setAddresses,
 		updateAddress,
+		deleteAddress,
 	}
 })

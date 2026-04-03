@@ -39,11 +39,11 @@ export function useAddressModalState() {
 		openFormModal()
 	}
 
-	function openDeleteModal() {
+	function openDeleteDialog() {
 		is_delete_modal_open.value = true
 	}
 
-	function closeDeleteModal() {
+	function closeDeleteDialog() {
 		is_delete_modal_open.value = false
 	}
 
@@ -77,8 +77,8 @@ export function useAddressModalState() {
 		closeFormModal,
 		openCreateFormModal,
 		openEditFormModal,
-		openDeleteModal,
-		closeDeleteModal,
+		openDeleteDialog,
+		closeDeleteDialog,
 		openDefaultShippingModal,
 		closeDefaultShippingModal,
 		openConfirmDefaultChangeModal,
