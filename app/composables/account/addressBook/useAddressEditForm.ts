@@ -40,7 +40,24 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 			} as AddressFormMap['drop']
 		}
 
+		/**
+         * Resolve dynamic fields that have a value of option_id
+         * else return text_value
+         */
 		const fields = address.dynamic_fields.reduce((acc, field) => {
+			if (field.input_type !== 'text') {
+				const dynamic_field = address_field_store.dynamic_address_fields.find((dynamic_field) => {
+					return dynamic_field.field_key === field.field_key
+				})
+
+				const matched_option = dynamic_field?.options?.find((option) => {
+					return option.value === (field.value ?? '')
+				})
+
+				acc[field.field_key] = matched_option?.id ?? field.value ?? ''
+				return acc
+			}
+
 			acc[field.field_key] = field.value ?? ''
 			return acc
 		}, {} as DynamicFieldDefinition)
