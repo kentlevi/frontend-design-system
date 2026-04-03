@@ -42,7 +42,7 @@ export interface AddressFormMap {
 	drop: DropAddressForm
 }
 
-export type AddFormState = {
+export type AddressFormState = {
 	shipping: AddressFormMap['shipping']
 	billing: AddressFormMap['billing']
 	drop: AddressFormMap['drop']

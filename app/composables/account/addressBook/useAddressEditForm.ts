@@ -1,9 +1,9 @@
 import type { Ref } from 'vue';
 import { useAddressFieldStore, useAddressStore } from "~/stores/address";
-import type { AddFormState, AddressFormMap, AddressMap, AddressType, DynamicFieldDefinition } from "~/types/address";
+import type { AddressFormState, AddressFormMap, AddressMap, AddressType, DynamicFieldDefinition } from "~/types/address";
 
 type UseAddressEditFormOptions = {
-	form_state: AddFormState
+	form_state: AddressFormState
 	form_type: Ref<AddressType>
 	openEditFormModal: () => void
 	closeModal: () => void
@@ -12,6 +12,11 @@ type UseAddressEditFormOptions = {
 }
 
 export function useAddressEditForm(options: UseAddressEditFormOptions) {
+
+	/**
+     * Stores
+     */
+
 	const address_field_store = useAddressFieldStore()
 	const address_store = useAddressStore()
 	const toast_store = useToastStore()

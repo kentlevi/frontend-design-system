@@ -10,6 +10,7 @@ import { useAddressCreateForm } from '~/composables/account/addressBook/useAddre
 import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
 import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
 import { useAddressFieldStore } from '~/stores/address';
+import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -37,6 +38,20 @@ const {
 } = useAddressBookList()
 
 const {
+	form_state,
+	form_type,
+	active_form,
+	form_field_errors,
+
+	setFormType,
+	populateDynamicFields,
+	clearFormFieldErrors,
+	updateActiveFormField,
+	updateDynamicField,
+	resetForm,
+} = useAddressFormState()
+
+const {
 	is_form_modal_open,
 	form_modal_mode,
 	form_submit_label,
@@ -47,20 +62,20 @@ const {
 } = useAddressModalState()
 
 const {
+	createAddress,
+	prepareCreateModal,
+	validateForm,
+} = useAddressCreateForm({
 	form_state,
 	form_type,
 	active_form,
 	form_field_errors,
-	createAddress,
-	prepareCreateModal,
-	setFormType,
-	clearFormFieldErrors,
-	validateForm,
-	updateActiveFormField,
-	updateDynamicField,
-} = useAddressCreateForm({
-	openFormModal: openCreateFormModal,
+
+	openCreateFormModal,
 	closeFormModal,
+	resetForm,
+	clearFormFieldErrors,
+	populateDynamicFields,
 })
 
 const {
