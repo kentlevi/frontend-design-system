@@ -9,6 +9,7 @@ import {
 	checkoutDropShippingTooltipContent,
 	checkoutDropShippingTooltipProps,
 } from '~/data/checkout/tooltips';
+import ShippingMethod from '../ShippingMethod.vue';
 
 const {
 	t,
@@ -163,22 +164,8 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 				{{ t('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 
-			<div class="checkout-member-block">
-				<div class="checkout-member-block-head">
-					<div class="checkout-member-block-title">{{ t('checkout.member.shippingMethod') }}</div>
-					<div class="checkout-member-block-note">{{ t('checkout.member.shippingNote') }}</div>
-				</div>
-				<div class="checkout-member-card-grid">
-					<button v-for="method in active_shipping_methods" :key="method.key" type="button" class="checkout-member-choice-card" :class="{ 'is-active': selected_shipping_method === method.key }" @click="selected_shipping_method = method.key">
-						<img :src="method.icon" :alt="shipping_method_details[method.key]?.name" class="checkout-member-choice-icon">
-						<div class="checkout-member-choice-copy">
-							<div class="checkout-member-choice-title">{{ shipping_method_details[method.key]?.name }}</div>
-							<div class="checkout-member-choice-subtitle">{{ shipping_method_details[method.key]?.date }}</div>
-						</div>
-						<div class="checkout-member-choice-price">{{ shipping_method_details[method.key]?.price }}</div>
-					</button>
-				</div>
-			</div>
+			<!-- ipasa ang id gaw if unsay product_variant_id sa kana nga combination -->
+			<ShippingMethod :cart-item-ids="[1,2]" />
 
 			<div class="checkout-member-inline-row">
 				<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
