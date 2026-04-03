@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { AddressMap, AddressType } from '~/types/address';
 import AddressBookSection from './AddressBookSection.vue';
-import AddressBookAddModal from './AddressBookAddModal.vue';
+import AddressBookFormModal from './AddressBookFormModal.vue';
 import AddressBookConfirmDefaultChangeModal from './AddressBookConfirmDefaultChangeModal.vue';
 import AddressBookDefaultShippingModal from './AddressBookDefaultShippingModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
-import { useAddressAddForm } from '~/composables/account/addressBook/useAddressAddForm';
+import { useAddressCreateForm } from '~/composables/account/addressBook/useAddressCreateForm';
+import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
+import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
 import { useAddressFieldStore } from '~/stores/address';
+import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -26,38 +29,68 @@ const {
 	shipping_address,
 	billing_address,
 	drop_address,
+	has_shipping_addresses,
+	has_billing_addresses,
+	has_drop_addresses,
+	has_addresses,
 
 	getAddresses,
 } = useAddressBookList()
 
 const {
-	add_form_type,
-	active_add_form,
-	address_modal_mode,
-	modal_submit_label,
-	field_errors,
+	form_state,
+	form_type,
+	active_form,
+	form_field_errors,
 
-	is_add_modal_open,
+	setFormType,
+	populateDynamicFields,
+	clearFormFieldErrors,
+	updateActiveFormField,
+	updateDynamicField,
+	resetForm,
+} = useAddressFormState()
 
-	saveAddress,
-	openAddModal,
-	openEditModal,
-	// closeAddModal,
-	setAddFormType,
-	// resetAddForm,
-	updateActiveAddFormField,
-	updateActiveDynamicField,
-} = useAddressAddForm()
+const {
+	is_form_modal_open,
+	form_modal_mode,
+	form_submit_label,
+	setCreateMode,
+	openCreateFormModal,
+	openEditFormModal,
+	closeFormModal,
+} = useAddressModalState()
 
-const has_addresses = computed(() => {
-	return shipping_address.value.length > 0
-		|| billing_address.value.length > 0
-		|| drop_address.value.length > 0
+const {
+	createAddress,
+	prepareCreateModal,
+	validateForm,
+} = useAddressCreateForm({
+	form_state,
+	form_type,
+	active_form,
+	form_field_errors,
+
+	openCreateFormModal,
+	closeFormModal,
+	resetForm,
+	clearFormFieldErrors,
+	populateDynamicFields,
 })
 
-const has_shipping_addresses = computed(() => shipping_address.value.length > 0)
-const has_billing_addresses = computed(() => billing_address.value.length > 0)
-const has_drop_addresses = computed(() => drop_address.value.length > 0)
+const {
+	resetEditState,
+	openEditModal,
+	updateAddressLocally,
+} = useAddressEditForm({
+	form_state,
+	form_type,
+	openEditFormModal,
+	closeModal: closeFormModal,
+	setCreateMode,
+	clearFormFieldErrors,
+})
+
 const pending_delete_address = ref<AddressMap[AddressType] | null>(null)
 const is_default_shipping_modal_open = ref(false)
 const pending_default_address = ref<AddressMap[AddressType] | null>(null)
@@ -127,6 +160,26 @@ function handleCardMenuAction(payload: {
 
 		showDefaultAddressToast(payload.item.type)
 	}
+}
+
+function handleOpenAddModal() {
+	resetEditState()
+	setCreateMode()
+	prepareCreateModal()
+	openCreateFormModal()
+}
+
+function submitAddressForm() {
+	if (!validateForm()) {
+		return
+	}
+
+	if (form_modal_mode.value === 'edit') {
+		updateAddressLocally()
+		return
+	}
+
+	createAddress()
 }
 
 function closeDeleteAddressModal() {
@@ -200,7 +253,7 @@ function confirmDefaultAddressChange() {
 						icon="regular-plus"
 						icon-position="left"
 						data-testid="account-address-book-add-button"
-						@click="openAddModal"
+						@click="handleOpenAddModal"
 					>
 						{{ t('account.addressBook.addNew') }}
 					</UiButton>
@@ -259,25 +312,25 @@ function confirmDefaultAddressChange() {
 						icon-position="left"
 						class="account-address-book-empty-state-button"
 						data-testid="account-address-book-empty-add-button"
-						@click="openAddModal"
+						@click="handleOpenAddModal"
 					>
 						{{ t('account.addressBook.addNew') }}
 					</UiButton>
 				</section>
 			</div>
 
-			<AddressBookAddModal
-				v-model="is_add_modal_open"
-				:mode="address_modal_mode"
-				:add-form-type="add_form_type"
-				:active-add-form="active_add_form"
+			<AddressBookFormModal
+				v-model="is_form_modal_open"
+				:modal-mode="form_modal_mode"
+				:form-type="form_type"
+				:active-form="active_form"
 				:dynamic-fields="dynamic_fields"
-				:field-errors="field_errors"
-				:submit-label="modal_submit_label"
-				@set-form-type="setAddFormType"
-				@update-field="updateActiveAddFormField"
-				@update-dynamic-field="updateActiveDynamicField"
-				@add-address="saveAddress"
+				:field-errors="form_field_errors"
+				:submit-label="form_submit_label"
+				@set-form-type="setFormType"
+				@update-field="updateActiveFormField"
+				@update-dynamic-field="updateDynamicField"
+				@submit="submitAddressForm"
 			/>
 			<DeleteConfirmModal
 				:model-value="Boolean(pending_delete_address) && !is_default_shipping_modal_open"
