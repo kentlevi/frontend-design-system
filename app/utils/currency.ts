@@ -1,3 +1,4 @@
+import { useCountry } from '~/composables/app/country/useCountry';
 import { COUNTRIES, type SupportedCountry } from '~/constants/countries';
 
 export interface CurrencyFormatOptions {
@@ -46,4 +47,11 @@ export function formatUsd(value: number) {
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 	});
+}
+
+
+export const formattedPrice = (price: number) => {
+	const { country } = useCountry();
+
+	return formatCurrencyByCountry(price, country.value)
 }

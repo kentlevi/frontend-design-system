@@ -4,7 +4,8 @@ import type { CSSProperties } from 'vue'
 export interface ProductSpec {
 	url_slug: string
 	name: string
-	description: string
+	description: string,
+	image: string,
 }
 
 export interface FontSpec {

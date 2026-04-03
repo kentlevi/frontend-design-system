@@ -89,6 +89,10 @@ const {
 
 const route = useRoute()
 
+const resolved_category = computed(() => {
+	return  route.params.category as string
+})
+
 const route_product_slug = computed(() => {
 	const route_product = route.params?.product
 	return typeof route_product === 'string'
@@ -156,7 +160,7 @@ const displayed_product_title = computed(() =>
 
 const openArworkUpload = () => {
 	if( props.navigationInFlight || has_pending_custom_selection.value ) {
-		console.log(props.navigationInFlight, has_pending_custom_selection.value)
+		console.warn('Opps!!!', (props.navigationInFlight || has_pending_custom_selection.value))
 		return
 	}
 

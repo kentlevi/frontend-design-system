@@ -3,20 +3,10 @@ import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkS
 
 const props = defineProps<{
 	open: boolean;
-	hasUploadedArtwork: boolean;
-	artworkPreviewUrl: string;
-	cartArtworkName: string;
-	cartArtworkExtension: string;
-	cartArtworkSize: string;
-	specialInstructions: string;
-	addToCartLoading: boolean;
 }>();
 
 const emit = defineEmits<{
 	close: [];
-	'open-file-picker': [];
-	'remove-artwork': [];
-	'update:specialInstructions': [value: string];
 	'skip-upload-later': [];
 	'proceed-to-cart': [];
 }>();
@@ -24,14 +14,57 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const {
-	dispatchItem
+	artwork_file_name,
+	artwork_file_ext,
+	artwork_file_size,
+	artwork_preview,
+	instruction,
+	uploading,
+	is_dragging,
+	has_uploaded_file,
+	dispatchItem,
+	handleDrop,
+	fileChange,
+	unsetFile,
 } = useArtworkSectionHandler()
 
 const skipUpload = async () => {
+	if( uploading.value )
+		return
+
 	console.warn('Skip-Uploading')
 	emit('skip-upload-later')
+	await dispatchItem(true)
+}
+
+const addToCart = async () => {
+	if( uploading.value )
+		return
+
+	console.warn('Adding cart...')
+	emit('proceed-to-cart')
 	await dispatchItem()
 }
+
+const artwork_input = ref<HTMLInputElement | null>(null)
+
+const openFilePicker = () => {
+	if( uploading.value )
+		return
+
+	artwork_input.value?.click();
+}
+
+const removeFile = () => {
+	if ( uploading.value )
+		return
+
+	unsetFile()
+	if (artwork_input.value)
+		artwork_input.value.value = '';
+}
+
+
 
 </script>
 
@@ -63,10 +96,26 @@ const skipUpload = async () => {
 				/>
 			</header>
 
+			<input
+				ref="artwork_input" type="file" class="artwork-file-input"
+				accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" data-testid="product-category-artwork-input"
+				@change="fileChange"
+			>
+
 			<div class="upload-modal-body" data-testid="product-category-upload-body">
-				<div class="upload-dropzone" data-testid="product-category-upload-dropzone">
-					<template v-if="!props.hasUploadedArtwork">
-						<div class="upload-dropzone-copy upload-dropzone-copy--empty" data-testid="product-category-upload-empty-state">
+				<div
+					class="upload-dropzone"
+					data-testid="product-category-upload-dropzone"
+					@dragover.prevent="is_dragging = true"
+					@dragenter.prevent="is_dragging = true"
+					@dragleave.prevent="is_dragging = false"
+					@drop.prevent="handleDrop"
+				>
+					<template v-if="!has_uploaded_file">
+						<div
+							class="upload-dropzone-copy upload-dropzone-copy--empty"
+							data-testid="product-category-upload-empty-state"
+						>
 							<p class="upload-dropzone-title">
 								<UiIcon name="regular-upload" :size="24" color="#2a2f3d" />
 								<span>{{ t('cart.uploadArtwork.dragDropTitle') }}</span>
@@ -83,7 +132,7 @@ const skipUpload = async () => {
 							height="44px"
 							class="upload-secondary-btn"
 							data-testid="product-category-upload-select-files-button"
-							@click="emit('open-file-picker')"
+							@click="openFilePicker"
 						>
 							{{ t('cart.uploadArtwork.selectFiles') }}
 						</UiButton>
@@ -92,17 +141,17 @@ const skipUpload = async () => {
 						<div class="upload-dropzone-copy" data-testid="product-category-upload-file-state">
 							<div class="upload-artwork-thumb">
 								<img
-									v-if="props.artworkPreviewUrl"
-									:src="props.artworkPreviewUrl"
-									:alt="props.cartArtworkName"
+									v-if="has_uploaded_file"
+									:src="artwork_preview"
+									:alt="artwork_file_name"
 									class="upload-artwork-image"
 								>
 								<UiIcon v-else name="regular-file-image" :size="24" color="#2a2f3d" />
 							</div>
 							<div>
-								<p class="upload-dropzone-title">{{ props.cartArtworkName }}</p>
+								<p class="upload-dropzone-title">{{ artwork_file_name }}</p>
 								<p class="upload-dropzone-meta">
-									.{{ props.cartArtworkExtension }} | {{ props.cartArtworkSize }}
+									.{{ artwork_file_ext }} | {{ artwork_file_size }}
 								</p>
 							</div>
 						</div>
@@ -115,7 +164,7 @@ const skipUpload = async () => {
 								height="44px"
 								class="upload-secondary-btn"
 								data-testid="product-category-upload-replace-image-button"
-								@click="emit('open-file-picker')"
+								@click="openFilePicker"
 							>
 								{{ t('cart.uploadArtwork.replaceImage') }}
 							</UiButton>
@@ -132,7 +181,7 @@ const skipUpload = async () => {
 								height="40px"
 								class="upload-icon-btn"
 								data-testid="product-category-upload-remove-image-button"
-								@click="emit('remove-artwork')"
+								@click="removeFile"
 							/>
 						</div>
 					</template>
@@ -141,14 +190,13 @@ const skipUpload = async () => {
 				<div class="upload-notes" data-testid="product-category-upload-notes">
 					<span class="upload-notes-label">{{ t('cart.uploadArtwork.specialInstructions') }}</span>
 					<UiTextarea
+						v-model="instruction"
 						class="upload-notes-textarea"
-						:model-value="props.specialInstructions"
 						:rows="4"
 						resize="none"
 						field-class="upload-notes-textarea-field"
 						:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
 						data-testid="product-category-upload-special-instructions"
-						@update:model-value="emit('update:specialInstructions', $event)"
 					/>
 				</div>
 
@@ -165,7 +213,7 @@ const skipUpload = async () => {
 					size="md"
 					height="44px"
 					class="upload-skip-btn"
-					:disabled="props.addToCartLoading"
+					:disabled="uploading"
 					data-testid="product-category-upload-skip-button"
 					@click="skipUpload()"
 				>
@@ -178,18 +226,18 @@ const skipUpload = async () => {
 					size="md"
 					height="44px"
 					class="upload-primary-btn"
-					:disabled="props.addToCartLoading"
+					:disabled="uploading"
 					data-testid="product-category-upload-proceed-button"
-					@click="emit('proceed-to-cart')"
+					@click="addToCart()"
 				>
 					<UiIcon
-						v-if="!props.addToCartLoading"
+						v-if="!uploading"
 						name="regular-shop-cart"
 						:size="18"
 						color="#ffffff"
 					/>
 					{{
-						props.addToCartLoading
+						uploading
 							? `${t('cart.uploadArtwork.addToCart')}...`
 							: t('cart.uploadArtwork.addToCart')
 					}}
@@ -388,5 +436,9 @@ const skipUpload = async () => {
 	.upload-modal {
 		transform: translateY(10px);
 	}
+}
+
+.artwork-file-input {
+	display: none;
 }
 </style>

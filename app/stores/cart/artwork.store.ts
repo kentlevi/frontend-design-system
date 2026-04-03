@@ -1,6 +1,6 @@
 export const useArtworkStore = defineStore('artwork', () => {
 
-	const artwork = ref()
+	const artwork = ref<File>()
 
 	return {
 		artwork
