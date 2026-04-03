@@ -44,3 +44,14 @@ export async function updateUserAddress(
 
 	return $api.put(`/address/${id}`, params);
 }
+
+/**
+ * Delete user address
+ */
+export async function deleteUserAddress(
+	id: number,
+): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return $api.delete(`/address/${id}`);
+}

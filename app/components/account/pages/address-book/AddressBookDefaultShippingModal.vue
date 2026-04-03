@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ShippingAddress } from '~/types/address';
+import type { AddressMap, AddressType, ShippingAddress } from '~/types/address';
 
 const props = defineProps<{
 	modelValue: boolean;
-	addresses: ShippingAddress[];
+	addresses: AddressMap[AddressType][];
 }>();
 
 const emit = defineEmits<{
