@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import type { Categories, Category, Product, Products } from '~/types/navigation/navgiation'
+import type { Categories, Category, Product } from '~/types/navigation/navgiation'
 
 /**
  * Initial categories state factory

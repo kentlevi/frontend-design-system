@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { AddressMap, AddressType, ShippingAddress } from '~/types/address';
+import type { ComponentPublicInstance } from 'vue';
+
+type MenuActionKey = 'edit' | 'delete' | 'default';
 
 type CardProps = {
 	item: AddressMap[AddressType];
@@ -7,8 +10,36 @@ type CardProps = {
 };
 
 const props = defineProps<CardProps>()
+const emit = defineEmits<{
+	(e: 'menu-action', payload: {
+		action: MenuActionKey;
+		item: AddressMap[AddressType];
+	}): void;
+}>()
 
 const { t } = useI18n();
+const menu_wrap_ref = ref<HTMLElement | null>(null)
+const is_menu_open = ref(false)
+
+const menu_actions = computed(() => {
+	return [
+		{
+			key: 'edit',
+			label: t('account.addressBook.editAddress'),
+			tone: 'default',
+		},
+		{
+			key: 'delete',
+			label: t('account.addressBook.deleteAddress'),
+			tone: 'danger',
+		},
+		{
+			key: 'default',
+			label: t('account.addressBook.setAsDefault'),
+			tone: 'default',
+		},
+	] as const
+})
 
 const tag_badge_colors = {
 	home: {
@@ -78,6 +109,52 @@ const address_lines = computed(() => {
 
 	return lines
 })
+
+function setMenuWrapRef(element: Element | ComponentPublicInstance | null) {
+	menu_wrap_ref.value = element instanceof HTMLElement ? element : null
+}
+
+function closeMenu() {
+	is_menu_open.value = false
+}
+
+function toggleMenu() {
+	is_menu_open.value = !is_menu_open.value
+}
+
+function handleDocumentClick(event: MouseEvent) {
+	if (!is_menu_open.value || !menu_wrap_ref.value) return
+
+	const target = event.target
+
+	if (!(target instanceof Node) || menu_wrap_ref.value.contains(target)) return
+
+	closeMenu()
+}
+
+function handleWindowKeydown(event: KeyboardEvent) {
+	if (event.key !== 'Escape') return
+
+	closeMenu()
+}
+
+function handleMenuAction(action: MenuActionKey) {
+	closeMenu()
+	emit('menu-action', {
+		action,
+		item: props.item,
+	})
+}
+
+onMounted(() => {
+	document.addEventListener('click', handleDocumentClick, true)
+	window.addEventListener('keydown', handleWindowKeydown)
+})
+
+onBeforeUnmount(() => {
+	document.removeEventListener('click', handleDocumentClick, true)
+	window.removeEventListener('keydown', handleWindowKeydown)
+})
 </script>
 
 <template>
@@ -97,17 +174,45 @@ const address_lines = computed(() => {
 					{{ t('account.addressBook.default') }}
 				</UiBadge>
 			</div>
-			<UiButton
-				variant="ghost"
-				tone="neutral"
-				height="40px"
-				width="40px"
-				:no-hover="true"
-				class="account-address-book-menu-button"
-				:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-button`"
+			<div
+				:ref="setMenuWrapRef"
+				class="account-address-book-menu-wrap"
 			>
-				<UiIcon name="regular-ellipsis-horizontal" :size="24" />
-			</UiButton>
+				<UiButton
+					variant="ghost"
+					tone="neutral"
+					height="40px"
+					width="40px"
+					:no-hover="true"
+					class="account-address-book-menu-button"
+					:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-button`"
+					@click="toggleMenu"
+				>
+					<UiIcon name="regular-ellipsis-horizontal" :size="24" />
+				</UiButton>
+
+				<transition name="account-address-book-menu">
+					<div
+						v-if="is_menu_open"
+						class="account-address-book-menu-dropdown"
+						:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}`"
+					>
+						<button
+							v-for="action in menu_actions"
+							:key="action.key"
+							type="button"
+							class="account-address-book-menu-item"
+							:class="{
+								'account-address-book-menu-item--danger': action.tone === 'danger',
+							}"
+							:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-${action.key}`"
+							@click="handleMenuAction(action.key)"
+						>
+							{{ action.label }}
+						</button>
+					</div>
+				</transition>
+			</div>
 		</header>
 		<div class="account-address-book-card-body">
 			<div class="account-address-book-card-footer">
@@ -150,7 +255,6 @@ const address_lines = computed(() => {
 	border: 1px solid var(--border-default);
 	border-radius: 12px;
 	background: var(--contrast-light);
-	overflow: hidden;
 	transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
 	.account-address-book-card-header {
@@ -179,6 +283,52 @@ const address_lines = computed(() => {
 		color: var(--text-primary);
 		flex-shrink: 0;
 		padding: 0;
+	}
+
+	.account-address-book-menu-wrap {
+		position: relative;
+		flex-shrink: 0;
+	}
+
+	.account-address-book-menu-dropdown {
+		position: absolute;
+		top: calc(100% + 8px);
+		right: 0;
+		z-index: 4;
+		min-width: 204px;
+		display: flex;
+		flex-direction: column;
+		border: 1px solid var(--gray-60);
+		border-radius: 12px;
+		background: var(--contrast-light);
+		box-shadow: var(--shadow-md);
+		overflow: hidden;
+	}
+
+	.account-address-book-menu-item {
+		width: 100%;
+		padding: 8px 16px;
+		border: 0;
+		background: transparent;
+		color: var(--text-primary);
+		font-size: var(--type-size-200);
+		font-weight: var(--font-weight-semibold);
+		line-height: var(--type-line-200);
+		text-align: left;
+		cursor: pointer;
+		transition: background-color 0.18s ease, color 0.18s ease;
+
+		&:hover {
+			background: var(--gray-10);
+		}
+
+		&.account-address-book-menu-item--danger {
+			color: var(--error-60, #ff3838);
+
+			&:hover {
+				background: color-mix(in srgb, var(--error-10, #fff0f0) 100%, transparent);
+			}
+		}
 	}
 
 	.account-address-book-card-body {
@@ -210,11 +360,17 @@ const address_lines = computed(() => {
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
 	}
+}
 
-	&:hover {
-		border-color: color-mix(in srgb, var(--brand-primary) 26%, var(--border-default));
-		box-shadow: var(--shadow-sm);
-	}
+.account-address-book-menu-enter-active,
+.account-address-book-menu-leave-active {
+	transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.account-address-book-menu-enter-from,
+.account-address-book-menu-leave-to {
+	opacity: 0;
+	transform: translateY(-6px);
 }
 
 @media (max-width: 980px) {

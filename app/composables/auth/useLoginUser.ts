@@ -1,4 +1,4 @@
-import { memberLogin, nonMemberSubmitVerification, sendNonMemberLoginVerification, socialRedirect } from "~/services/auth/auth.service";
+import { memberLogin, nonMemberSubmitVerification, sendCheckoutNonMemberLoginVerification, sendNonMemberLoginVerification, socialRedirect } from "~/services/auth/auth.service";
 import type {
 	LoginPayload,
 	LoginResponse,
@@ -77,6 +77,33 @@ export function useLoginUser() {
 				success: false,
 				message: 'social_login_error'
 			} as SocialRedirectResponse
+		}
+	}
+
+	async function handleCheckoutNonMemberVerification(payload: { email: string }): Promise<NonMemberLoginVerificationResponse> {
+		try {
+			const response = await sendCheckoutNonMemberLoginVerification(payload)
+
+			return response
+		} catch (error) {
+			console.error(error)
+			return {
+				success: false,
+				message: 'checkout_non_member_login_error'
+			} as NonMemberLoginVerificationResponse
+		}
+	}
+
+	async function handleCheckoutSubmitNonMemberLoginVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<ApiResponse> {
+		try {
+			const response = await handleSubmitNonMemberLoginVerification(payload)
+			return response
+		} catch (error) {
+			console.error(error)
+			return {
+				success: false,
+				message: 'checkout_non_member_login_verification_error'
+			} as ApiResponse
 		}
 	}
 

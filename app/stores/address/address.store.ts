@@ -11,10 +11,19 @@ export const useAddressStore = defineStore('address', () => {
 		drop: drop_address
 	}
 
+	/** Sort one address list and keep default entries first */
+	function sortAddressesByDefault<T extends AddressType>(type: T) {
+		const target = address_refs[type]
+
+		target.value.sort((a, b) => {
+			return Number(b.is_default) - Number(a.is_default)
+		})
+	}
+
 	function setAddresses<T extends AddressType>(
 		type: T,
 		value: AddressMap[T] | AddressMap[T][],
-		mode: 'replace' | 'append' = 'replace'
+		mode: 'replace' | 'append' | 'prepend' = 'replace'
 	) {
 		/** Always work with an array */
 		const normalized_value = Array.isArray(value) ? value : [value]
@@ -22,14 +31,42 @@ export const useAddressStore = defineStore('address', () => {
 		/** Get the exact matching ref */
 		const target = address_refs[type]
 
+		/** Keep one default address per type when we append/prepend */
+		if (mode !== 'replace') {
+			const has_default = normalized_value.some((address) => address.is_default)
+
+			if (has_default) {
+				target.value.forEach((address) => {
+					address.is_default = false
+				})
+			}
+		}
+
 		/** Replace existing data */
 		if (mode === 'replace') {
 			target.value = [...normalized_value]
-			return
+		} else if (mode === 'prepend') {
+			/** Prepend new data */
+			target.value.unshift(...normalized_value)
+		} else {
+			/** Append new data */
+			target.value.push(...normalized_value)
 		}
 
-		/** Append new data */
-		target.value.push(...normalized_value)
+		sortAddressesByDefault(type)
+	}
+
+	function updateAddress<T extends AddressType>(
+		type: T,
+		value: AddressMap[T]
+	) {
+		const target = address_refs[type]
+		const target_index = target.value.findIndex(address => address.id === value.id)
+
+		if (target_index === -1) return
+
+		target.value.splice(target_index, 1, value)
+		sortAddressesByDefault(type)
 	}
 
 	return {
@@ -37,6 +74,8 @@ export const useAddressStore = defineStore('address', () => {
 		billing_address,
 		drop_address,
 
-		setAddresses
+		sortAddressesByDefault,
+		setAddresses,
+		updateAddress,
 	}
 })

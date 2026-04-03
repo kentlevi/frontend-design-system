@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 import { useTooltip } from '~/composables/ui/useTooltip';
 import type { UiTooltipProps, tooltip_alignments, tooltip_sides, tooltip_tones } from '~/data/ui/tooltip';
 import { ui_tooltip_defaults } from '~/data/ui/tooltip';
@@ -46,12 +46,36 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	contentWidth: {
+		type: String,
+		default: '',
+	},
+	contentMinWidth: {
+		type: String,
+		default: '',
+	},
+	contentMaxWidth: {
+		type: String,
+		default: '',
+	},
+	mobileContentWidth: {
+		type: String,
+		default: '',
+	},
 });
 
 const { css_vars } = useTooltip({
 	offset: toRef(props, 'offset'),
 	slideDistance: toRef(props, 'slideDistance'),
 });
+
+const tooltip_style = computed(() => ({
+	...css_vars.value,
+	'--ui-tooltip-content-width': props.contentWidth || null,
+	'--ui-tooltip-content-min-width': props.contentMinWidth || null,
+	'--ui-tooltip-content-max-width': props.contentMaxWidth || null,
+	'--ui-tooltip-mobile-content-width': props.mobileContentWidth || null,
+}));
 
 const content_ref = ref<HTMLElement | null>(null);
 const viewport_shift_style = ref<Record<string, string>>({
@@ -128,7 +152,7 @@ watch(() => props.open, () => {
 		:data-align="props.align"
 		:data-mobile-side="props.mobileSide || null"
 		:data-tone="props.tone"
-		:style="css_vars"
+		:style="tooltip_style"
 	>
 		<slot name="trigger" />
 

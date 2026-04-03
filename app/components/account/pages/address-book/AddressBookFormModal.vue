@@ -8,9 +8,12 @@ const { t } = useI18n();
 
 const props = defineProps<{
 	modelValue: boolean;
-	addFormType: AddressType;
-	activeAddForm: AddressFormMap[AddressType];
-	dynamicFields: AddressDynamicFields[]
+	modalMode: 'create' | 'edit';
+	formType: AddressType;
+	activeForm: AddressFormMap[AddressType];
+	dynamicFields: AddressDynamicFields[];
+	fieldErrors: Record<string, string>;
+	submitLabel?: string;
 }>();
 
 const emit = defineEmits<{
@@ -18,7 +21,7 @@ const emit = defineEmits<{
 	(e: 'set-form-type', value: AddressType): void;
 	(e: 'update-field', payload: UpdateFieldPayload): void;
 	(e: 'update-dynamic-field', payload: UpdateDynamicFieldPayload): void;
-	(e: 'add-address'): void;
+	(e: 'submit'): void;
 }>();
 
 /** Check whether the form supports address lines */
@@ -69,46 +72,46 @@ function createBooleanFieldModel(
 /** Shared fields */
 const contact_name_model = createStringFieldModel(
 	'contact_name',
-	() => props.activeAddForm.contact_name
+	() => props.activeForm.contact_name
 )
 
 const company_model = createStringFieldModel(
 	'company',
-	() => props.activeAddForm.company ?? ''
+	() => props.activeForm.company ?? ''
 )
 
 const is_default_model = createBooleanFieldModel(
 	'is_default',
-	() => props.activeAddForm.is_default ?? false
+	() => props.activeForm.is_default ?? false
 )
 
 /** Address line fields */
 const address_line_1_model = createStringFieldModel(
 	'address_line_1',
-	() => hasAddressLines(props.activeAddForm)
-		? props.activeAddForm.address_line_1
+	() => hasAddressLines(props.activeForm)
+		? props.activeForm.address_line_1
 		: ''
 )
 
 const address_line_2_model = createStringFieldModel(
 	'address_line_2',
-	() => hasAddressLines(props.activeAddForm)
-		? props.activeAddForm.address_line_2 ?? ''
+	() => hasAddressLines(props.activeForm)
+		? props.activeForm.address_line_2 ?? ''
 		: ''
 )
 
 const postcode_model = createStringFieldModel(
 	'postcode',
-	() => hasAddressLines(props.activeAddForm)
-		? props.activeAddForm.postcode
+	() => hasAddressLines(props.activeForm)
+		? props.activeForm.postcode
 		: ''
 )
 
 /** Shipping-only field */
 const phone_number_model = createStringFieldModel(
 	'phone_number',
-	() => hasPhoneNumber(props.activeAddForm)
-		? props.activeAddForm.phone_number
+	() => hasPhoneNumber(props.activeForm)
+		? props.activeForm.phone_number
 		: ''
 )
 
@@ -121,9 +124,9 @@ function updateDynamicField(field_key: string, value: string | number) {
 }
 
 function getDynamicFieldValue(field_key: string) {
-	if (!hasAddressLines(props.activeAddForm)) return ''
+	if (!hasAddressLines(props.activeForm)) return ''
 
-	const value = props.activeAddForm.fields?.[field_key]
+	const value = props.activeForm.fields?.[field_key]
 	const field = props.dynamicFields?.find(f => f.field_key === field_key)
 
 	// If it's a select field, return the option label
@@ -143,6 +146,10 @@ function onDynamicSelectChange(field_key: string, selected_value: string | numbe
 
 	const id = option?.id ?? selected_value
 	updateDynamicField(field_key, id)
+}
+
+function getFieldError(field_key: string) {
+	return props.fieldErrors[field_key] ?? ''
 }
 
 const address_type_options: Array<{
@@ -165,8 +172,17 @@ const address_label_options: Array<{
 	{ value: 'client', label_key: 'client', icon: 'regular-user-circle' },
 ];
 
-const modal_title = computed(() => t('account.addressBook.addNew'));
-const save_label = computed(() => t('account.addressBook.save'));
+const modal_title = computed(() => {
+	return props.modalMode === 'edit'
+		? t('account.addressBook.editTitle')
+		: t('account.addressBook.addNew')
+});
+const save_label = computed(() => {
+	const label_key = props.submitLabel ?? (props.modalMode === 'edit' ? 'update' : 'save')
+
+	return t(`account.addressBook.${label_key}`)
+});
+const edit_address_type_note = 'Address type can’t be changed to maintain data integrity and ensure smooth order processing.'
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -218,13 +234,19 @@ function closeModal() {
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="props.addFormType === option.value"
+									:selected="props.formType === option.value"
+									:disabled="props.modalMode === 'edit'"
 									@click="emit('set-form-type', option.value)"
 								>
 									<UiIcon :name="option.icon" :size="24" />
 									<span>{{ t(`account.addressBook.${option.label_key}`) }}</span>
 								</UiButton>
 							</div>
+
+							<p v-if="props.modalMode === 'edit'" class="account-address-book-add-modal-note">
+								<UiIcon name="regular-info-circle" :size="16" />
+								<span>{{ edit_address_type_note }}</span>
+							</p>
 						</div>
 					</div>
 
@@ -234,6 +256,7 @@ function closeModal() {
 								:label="t('account.addressBook.fullName')"
 								:required="true"
 								:show-required-mark="true"
+								:error="getFieldError('contact_name')"
 							>
 								<template #default="{ inputId, describedBy }">
 									<UiInput
@@ -241,6 +264,7 @@ function closeModal() {
 										v-model="contact_name_model"
 										:aria-describedby="describedBy || undefined"
 										:placeholder="t('account.addressBook.fullNamePlaceholder')"
+										:state="getFieldError('contact_name') ? 'error' : 'default'"
 									/>
 								</template>
 							</UiFormField>
@@ -275,7 +299,7 @@ function closeModal() {
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="props.activeAddForm.label === option.value"
+									:selected="props.activeForm.label === option.value"
 									@click="emit('update-field', { field: 'label', value: option.value })"
 								>
 									<UiIcon :name="option.icon" :size="24" />
@@ -284,11 +308,12 @@ function closeModal() {
 							</div>
 						</div>
 
-						<template v-if="hasAddressLines(props.activeAddForm)">
+						<template v-if="hasAddressLines(props.activeForm)">
 							<UiFormField
 								:label="t('account.addressBook.streetAddress')"
 								:required="true"
 								:show-required-mark="true"
+								:error="getFieldError('address_line_1')"
 							>
 								<template #default="{ inputId, describedBy }">
 									<div class="account-address-book-add-modal-stack">
@@ -297,6 +322,7 @@ function closeModal() {
 											v-model="address_line_1_model"
 											:aria-describedby="describedBy || undefined"
 											:placeholder="t('account.addressBook.addressLine1Placeholder')"
+											:state="getFieldError('address_line_1') ? 'error' : 'default'"
 										/>
 										<UiInput
 											v-model="address_line_2_model"
@@ -313,6 +339,7 @@ function closeModal() {
 									:label="dynamic_field.field_label"
 									:required="dynamic_field.is_required"
 									:show-required-mark="dynamic_field.is_required"
+									:error="getFieldError(`fields.${dynamic_field.field_key}`)"
 								>
 									<template #default="{ inputId, describedBy }">
 										<UiSelect
@@ -320,6 +347,7 @@ function closeModal() {
 											:options="dynamic_field.options"
 											:placeholder="dynamic_field.field_label"
 											:model-value="getDynamicFieldValue(dynamic_field.field_key)"
+											:trigger-class="getFieldError(`fields.${dynamic_field.field_key}`) ? 'account-address-book-add-modal-select-trigger--error' : ''"
 											@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
 										/>
 
@@ -329,6 +357,7 @@ function closeModal() {
 											:aria-describedby="describedBy || undefined"
 											:placeholder="dynamic_field.field_label"
 											:model-value="getDynamicFieldValue(dynamic_field.field_key)"
+											:state="getFieldError(`fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
 											@update:model-value="updateDynamicField(dynamic_field.field_key, $event)"
 										/>
 									</template>
@@ -342,6 +371,7 @@ function closeModal() {
 									:label="t('account.addressBook.postalCode')"
 									:required="true"
 									:show-required-mark="true"
+									:error="getFieldError('postcode')"
 								>
 									<template #default="{ inputId, describedBy }">
 										<UiInput
@@ -349,18 +379,23 @@ function closeModal() {
 											v-model="postcode_model"
 											:aria-describedby="describedBy || undefined"
 											:placeholder="t('account.addressBook.postalCodePlaceholder')"
+											:state="getFieldError('postcode') ? 'error' : 'default'"
 										/>
 									</template>
 								</UiFormField>
 
 								<UiFormField
-									v-if="hasPhoneNumber(props.activeAddForm)"
+									v-if="hasPhoneNumber(props.activeForm)"
 									:label="t('account.addressBook.phoneNumber')"
 									:required="true"
 									:show-required-mark="true"
+									:error="getFieldError('phone_number')"
 								>
 									<template #default="{ inputId, describedBy }">
-										<div class="account-address-book-add-modal-phone">
+										<div
+											class="account-address-book-add-modal-phone"
+											:class="{ 'account-address-book-add-modal-phone--error': getFieldError('phone_number') }"
+										>
 											<div class="account-address-book-add-modal-phone-prefix">+82</div>
 											<UiInput
 												:id="inputId"
@@ -371,6 +406,7 @@ function closeModal() {
 												:placeholder="t('account.addressBook.phonePlaceholder')"
 												class="account-address-book-add-modal-phone-input-wrap"
 												input-class="account-address-book-add-modal-phone-input"
+												:state="getFieldError('phone_number') ? 'error' : 'default'"
 											/>
 										</div>
 									</template>
@@ -413,7 +449,7 @@ function closeModal() {
 								tone="neutral"
 								size="md"
 								class="account-address-book-add-modal-save"
-								@click="emit('add-address')"
+								@click="emit('submit')"
 							>
 								{{ save_label }}
 							</UiButton>
@@ -488,6 +524,15 @@ function closeModal() {
 		gap: 12px;
 	}
 
+	.account-address-book-add-modal-note {
+		display: inline-flex;
+		align-items: flex-start;
+		gap: 8px;
+		color: var(--text-secondary);
+		font-size: var(--type-size-100);
+		line-height: 1.6;
+	}
+
 	.account-address-book-add-modal-label {
 		font-size: var(--type-size-200);
 		line-height: var(--type-line-200);
@@ -526,6 +571,11 @@ function closeModal() {
 		background: var(--gray-20);
 		border-color: var(--gray-60);
 		color: var(--text-primary);
+	}
+
+	.account-address-book-add-modal-choice:disabled {
+		cursor: default;
+		opacity: 0.56;
 	}
 
 	.account-address-book-add-modal-grid {
@@ -602,6 +652,14 @@ function closeModal() {
 
 	:deep(.account-address-book-add-modal-province-trigger) {
 		border-radius: 8px;
+	}
+
+	:deep(.account-address-book-add-modal-select-trigger--error) {
+		border-color: var(--error);
+	}
+
+	.account-address-book-add-modal-phone--error {
+		border-color: var(--error);
 	}
 
 	.account-address-book-add-modal-footer-row {

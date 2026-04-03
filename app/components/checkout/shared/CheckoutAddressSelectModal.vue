@@ -1,0 +1,449 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import type {
+	MemberAddress,
+	MemberDropShippingAddress,
+} from '~/types/checkout';
+
+type AddressVariant = 'shipping' | 'billing' | 'drop-shipping';
+
+type SelectableAddress = MemberAddress | MemberDropShippingAddress;
+
+const props = withDefaults(defineProps<{
+	modelValue: boolean;
+	addresses: SelectableAddress[];
+	selectedAddressId: string;
+	title: string;
+	copy?: string;
+	variant: AddressVariant;
+	confirmLabel?: string;
+}>(), {
+	copy: '',
+	confirmLabel: 'Select Address',
+});
+
+const emit = defineEmits<{
+	(e: 'update:modelValue', value: boolean): void;
+	(e: 'select', value: string): void;
+}>();
+
+const pending_selected_address_id = ref(props.selectedAddressId);
+
+const active_address_id = computed(() =>
+	pending_selected_address_id.value || props.addresses[0]?.id || ''
+);
+
+watch(
+	() => props.modelValue,
+	(is_open) => {
+		if (!is_open) return;
+		pending_selected_address_id.value = props.selectedAddressId || props.addresses[0]?.id || '';
+	}
+);
+
+watch(
+	() => props.selectedAddressId,
+	(next_id) => {
+		if (props.modelValue) {
+			pending_selected_address_id.value = next_id || props.addresses[0]?.id || '';
+		}
+	}
+);
+
+function closeModal() {
+	emit('update:modelValue', false);
+}
+
+function confirmSelection() {
+	if (active_address_id.value) {
+		emit('select', active_address_id.value);
+	}
+	closeModal();
+}
+
+function getAddressTagClass(label?: string) {
+	if (!label) return '';
+
+	const lower_label = label.toLowerCase();
+
+	if (lower_label.includes('office')) return 'checkout-address-select-modal-tag--office';
+	if (lower_label.includes('client')) return 'checkout-address-select-modal-tag--client';
+	return 'checkout-address-select-modal-tag--home';
+}
+
+function getDefaultBadgeLabel(address: SelectableAddress) {
+	if (props.variant === 'shipping') return 'Default Shipping';
+	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || 'Default Billing';
+	return 'Default Drop Shipping';
+}
+</script>
+
+<template>
+	<UiModal
+		:model-value="props.modelValue"
+		align="top"
+		width="720px"
+		padding="0"
+		gap="0"
+		modal-class="checkout-address-select-modal-shell"
+		@update:model-value="emit('update:modelValue', $event)"
+	>
+		<section class="checkout-address-select-modal">
+			<header class="checkout-address-select-modal-header">
+				<h3 class="checkout-address-select-modal-title">{{ props.title }}</h3>
+				<button
+					type="button"
+					class="checkout-address-select-modal-close"
+					:aria-label="`Close ${props.title.toLowerCase()}`"
+					@click="closeModal"
+				>
+					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
+				</button>
+			</header>
+
+			<div class="checkout-address-select-modal-body">
+				<p v-if="props.copy" class="checkout-address-select-modal-copy">
+					{{ props.copy }}
+				</p>
+
+				<div class="checkout-address-select-modal-list">
+					<button
+						v-for="address in props.addresses"
+						:key="address.id"
+						type="button"
+						class="checkout-address-select-modal-card"
+						:class="{ 'is-active': active_address_id === address.id }"
+						@click="pending_selected_address_id = address.id"
+					>
+						<div class="checkout-address-select-modal-card-top">
+							<div class="checkout-address-select-modal-title-group">
+								<span
+									class="checkout-address-select-modal-radio"
+									:class="{ 'is-active': active_address_id === address.id }"
+									aria-hidden="true"
+								>
+									<span class="checkout-address-select-modal-radio-dot" />
+								</span>
+								<strong class="checkout-address-select-modal-name">{{ address.recipient }}</strong>
+								<span v-if="address.isDefault" class="checkout-address-select-modal-badge">
+									{{ getDefaultBadgeLabel(address) }}
+								</span>
+							</div>
+						</div>
+
+						<div class="checkout-address-select-modal-card-body" :data-variant="props.variant">
+							<template v-if="props.variant === 'shipping'">
+								<div v-if="'phone' in address && address.phone" class="checkout-address-select-modal-row">
+									<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" decorative />
+									<p class="checkout-address-select-modal-line checkout-address-select-modal-line--strong">
+										{{ address.phone }}
+									</p>
+								</div>
+
+								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split">
+									<div class="checkout-address-select-modal-row-main">
+										<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" decorative />
+										<div class="checkout-address-select-modal-lines">
+											<p class="checkout-address-select-modal-line">{{ 'line1' in address ? address.line1 : '' }}</p>
+											<p class="checkout-address-select-modal-line">{{ 'line2' in address ? address.line2 : '' }}</p>
+										</div>
+									</div>
+									<span
+										v-if="address.label"
+										class="checkout-address-select-modal-tag"
+										:class="getAddressTagClass(address.label)"
+									>
+										{{ address.label }}
+									</span>
+								</div>
+
+								<div v-if="'company' in address && address.company" class="checkout-address-select-modal-row">
+									<UiIcon name="regular-building" size="18" color="var(--text-secondary)" decorative />
+									<p class="checkout-address-select-modal-line">{{ address.company }}</p>
+								</div>
+							</template>
+
+							<template v-else-if="props.variant === 'billing'">
+								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split">
+									<div class="checkout-address-select-modal-lines checkout-address-select-modal-lines--stacked">
+										<p class="checkout-address-select-modal-line">{{ 'line1' in address ? address.line1 : '' }}</p>
+										<p v-if="'line2' in address && address.line2" class="checkout-address-select-modal-line">{{ address.line2 }}</p>
+										<p v-if="'company' in address && address.company" class="checkout-address-select-modal-line">{{ address.company }}</p>
+									</div>
+									<span
+										v-if="address.label"
+										class="checkout-address-select-modal-tag"
+										:class="getAddressTagClass(address.label)"
+									>
+										{{ address.label }}
+									</span>
+								</div>
+							</template>
+
+							<template v-else>
+								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split checkout-address-select-modal-row--centered">
+									<p class="checkout-address-select-modal-line">
+										{{ address.company || 'No company provided' }}
+									</p>
+									<span
+										v-if="address.label"
+										class="checkout-address-select-modal-tag"
+										:class="getAddressTagClass(address.label)"
+									>
+										{{ address.label }}
+									</span>
+								</div>
+							</template>
+						</div>
+					</button>
+				</div>
+			</div>
+
+			<footer class="checkout-address-select-modal-footer">
+				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
+					Cancel
+				</UiButton>
+				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="confirmSelection">
+					{{ props.confirmLabel }}
+				</UiButton>
+			</footer>
+		</section>
+	</UiModal>
+</template>
+
+<style lang="scss">
+.ui-modal.checkout-address-select-modal-shell {
+	width: min(720px, calc(100vw - 32px));
+	padding: 0;
+	gap: 0;
+}
+
+.checkout-address-select-modal {
+	display: grid;
+	grid-template-rows: auto minmax(0, 1fr) auto;
+	max-height: min(760px, calc(100vh - 40px));
+	overflow: hidden;
+}
+
+.checkout-address-select-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 20px 24px;
+	border-bottom: 1px solid var(--gray-40);
+}
+
+.checkout-address-select-modal-title {
+	font-size: var(--type-size-200);
+	line-height: var(--type-line-200);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.checkout-address-select-modal-close {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	width: 24px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.checkout-address-select-modal-body {
+	display: grid;
+	gap: 18px;
+	padding: 24px;
+	overflow-y: auto;
+}
+
+.checkout-address-select-modal-copy {
+	font-size: var(--type-size-100);
+	line-height: 1.45;
+	color: var(--text-secondary);
+}
+
+.checkout-address-select-modal-list {
+	display: grid;
+	gap: 16px;
+}
+
+.checkout-address-select-modal-card {
+	border: 1px solid var(--gray-40);
+	border-radius: 12px;
+	background: var(--contrast-light);
+	padding: 0;
+	text-align: left;
+	overflow: hidden;
+	cursor: pointer;
+	transition:
+		border-color 0.18s ease,
+		background-color 0.18s ease,
+		box-shadow 0.18s ease;
+
+	&.is-active {
+		border-color: var(--gray-60);
+		background: var(--gray-20);
+	}
+}
+
+.checkout-address-select-modal-card-top {
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--gray-40);
+}
+
+.checkout-address-select-modal-title-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.checkout-address-select-modal-radio {
+	width: 22px;
+	height: 22px;
+	border: 1.5px solid var(--gray-50);
+	border-radius: 999px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: var(--contrast-light);
+	transition:
+		border-color 0.18s ease,
+		background-color 0.18s ease;
+
+	&.is-active {
+		border-color: var(--gray-100);
+		background: var(--gray-100);
+	}
+}
+
+.checkout-address-select-modal-radio-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--contrast-light);
+	opacity: 0;
+	transition: opacity 0.18s ease;
+
+	.checkout-address-select-modal-radio.is-active & {
+		opacity: 1;
+	}
+}
+
+.checkout-address-select-modal-name {
+	font-size: var(--type-size-150);
+	line-height: var(--type-line-150);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.checkout-address-select-modal-badge {
+	padding: 4px 12px;
+	border-radius: 999px;
+	border: 1px solid var(--gray-40);
+	background: var(--contrast-light);
+	font-size: var(--type-size-50);
+	line-height: var(--type-line-50);
+	font-weight: var(--font-weight-semibold);
+	color: var(--text-secondary);
+}
+
+.checkout-address-select-modal-card-body {
+	display: grid;
+	gap: 10px;
+	padding: 16px 18px;
+}
+
+.checkout-address-select-modal-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.checkout-address-select-modal-row--split {
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.checkout-address-select-modal-row--centered {
+	align-items: center;
+}
+
+.checkout-address-select-modal-row-main {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	min-width: 0;
+}
+
+.checkout-address-select-modal-lines {
+	min-width: 0;
+}
+
+.checkout-address-select-modal-lines--stacked {
+	display: grid;
+	gap: 6px;
+}
+
+.checkout-address-select-modal-line {
+	font-size: var(--type-size-100);
+	line-height: 1.45;
+	color: var(--text-secondary);
+}
+
+.checkout-address-select-modal-line--strong {
+	color: var(--text-primary);
+	font-weight: var(--font-weight-semibold);
+}
+
+.checkout-address-select-modal-tag {
+	flex-shrink: 0;
+	align-self: center;
+	padding: 4px 12px;
+	border-radius: 999px;
+	font-size: var(--type-size-50);
+	line-height: var(--type-line-50);
+	font-weight: var(--font-weight-semibold);
+}
+
+.checkout-address-select-modal-tag--home {
+	background: var(--aloha-10);
+	color: var(--aloha-60);
+}
+
+.checkout-address-select-modal-tag--office {
+	background: var(--neon-blue-10);
+	color: var(--neon-blue-60);
+}
+
+.checkout-address-select-modal-tag--client {
+	background: var(--azure-10);
+	color: var(--azure-60);
+}
+
+.checkout-address-select-modal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 24px 24px;
+	border-top: 1px solid var(--gray-40);
+}
+
+@media (max-width: 760px) {
+	.checkout-address-select-modal-body {
+		padding: 18px 16px;
+	}
+
+	.checkout-address-select-modal-row--split,
+	.checkout-address-select-modal-footer {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+}
+</style>
