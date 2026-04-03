@@ -85,8 +85,9 @@ const {
 } = useAddressEditForm({
 	form_state,
 	form_type,
+	active_form,
 	openEditFormModal,
-	closeModal: closeFormModal,
+	closeFormModal,
 	setCreateMode,
 	clearFormFieldErrors,
 })

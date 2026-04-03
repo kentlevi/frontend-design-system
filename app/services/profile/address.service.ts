@@ -32,3 +32,15 @@ export async function addUserAddress(
 
 	return $api.post('/address', params);
 }
+
+/**
+ * Update user address
+ */
+export async function updateUserAddress(
+	id: number,
+	params: Record<string, unknown>
+): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return $api.put(`/address/${id}`, params);
+}
