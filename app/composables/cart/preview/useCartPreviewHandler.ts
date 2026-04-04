@@ -12,43 +12,25 @@ export const useCartPreviewHandler = () => {
 
 	const grand_total = computed(() => cart_store.grand_total)
 
-	const syncItemNumber = () => {
-		console.warn('Syncronizing the number of items...')
-
-		cart_store.syncNumber()
-	}
-
 	const formatImage = (img_str: string) => {
-		return `${config.public.file_url}${img_str}`
+		if (!img_str.startsWith('data:'))
+			return `${config.public.file_url}${img_str}`
+		else
+			return img_str
 	}
 
 	const removeCartItem = (index: number, item_id: number | string) => {
 		cart_store.removeItem(index)
 
-		console.warn(`Deleting cart ${item_id}`)
+		console.warn(`Deleting item ${item_id}`)
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
 	// 🔥 Default method and initialization of component
 	const composePreview = () => {
-		syncItemNumber()
+		console.warn('Compose preview component...')
 	}
 
 	return {
@@ -56,7 +38,6 @@ export const useCartPreviewHandler = () => {
 		items,
 		grand_total,
 		composePreview,
-		syncItemNumber,
 		formatImage,
 		removeCartItem,
 	}

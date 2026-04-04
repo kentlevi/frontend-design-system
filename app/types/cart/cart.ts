@@ -15,7 +15,9 @@ export interface CartItemSource {
 	color_id?: number
 	font_id?:number
 	artwork?: string | null
+	artwork_original_file_name?: string | null
 	instruction?: string | null
+	local_identity: string
 }
 
 
@@ -25,4 +27,8 @@ export interface CartItem {
 	user_id?: number | null
 	preview: CartItemPreview
 	src: CartItemSource
+}
+
+export interface CartItemCreationSpec {
+	item: { id: number }
 }

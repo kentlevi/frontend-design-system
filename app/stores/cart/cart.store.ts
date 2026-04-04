@@ -14,6 +14,37 @@ export const useCartStore = defineStore('cart', () => {
 		}, 0)
 	})
 
+
+	const syncNumber = (nr: number) => {
+		number_of_items.value = nr
+	}
+
+	const saveItemLocally = (item: CartItem) => {
+		items.value.push(item)
+		addNumber()
+	}
+
+	const removeItem = (index: number | null, local_identity?: string | number) => {
+		if( index != null && index >= 0 ) // Removing item with the given item index
+			items.value.splice(index, 1)
+		else if( local_identity && index === null ) // Removing the one matching the ID
+			items.value = items.value.filter(item => item.id !== local_identity)
+
+		reduceNumber()
+	}
+
+	const updateUploadedItem = (item_id: string | null, new_id: number) => {
+		const index = items.value.findIndex(i => i.id === item_id)
+
+		if( index !== -1 && items.value[index] )
+			items.value[index].id = new_id
+	}
+
+	const empty = () => {
+		items.value = []
+		number_of_items.value = 0
+	}
+
 	const addNumber = () => {
 		number_of_items.value++
 	}
@@ -22,31 +53,18 @@ export const useCartStore = defineStore('cart', () => {
 		number_of_items.value--
 	}
 
-	const syncNumber = () => {
-		number_of_items.value = items.value.length
-	}
-
-	const saveItemLocally = (item: CartItem) => {
-		items.value.push(item)
-		addNumber()
-	}
-
-	const removeItem = (index: number) => {
-		// Filter keeps every item EXCEPT the one matching the ID
-		items.value.splice(index, 1)
-		reduceNumber()
-	}
-
 
 	return {
 		items,
 		number_of_items,
 		grand_total,
 		syncNumber,
-		saveItemLocally,
 		addNumber,
 		reduceNumber,
+		saveItemLocally,
 		removeItem,
+		updateUploadedItem,
+		empty,
 	}
 }, {
 	persist: true

@@ -98,6 +98,7 @@ const {
 } = useCartPreviewHandler()
 
 watch(is_active, (a) => {
+	console.log('Preview')
 	// 🔥 Execution of the following methods when the modal is open or active.
 	if( a )
 		composePreview()

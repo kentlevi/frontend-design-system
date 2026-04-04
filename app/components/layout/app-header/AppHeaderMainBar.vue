@@ -3,6 +3,7 @@ import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccoun
 import type { FlagCode } from '~/data/ui/flags';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { normalizeAppPath } from '~/utils/auth/redirect';
+import { useCartService } from '~/services/cart/cart.service';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -54,6 +55,12 @@ const emit = defineEmits<{
 function isExactNavHeading(path: string) {
 	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
+
+const { number_of_items, countNumberOfItems } = useCartService()
+
+onMounted(() => {
+	countNumberOfItems()
+})
 </script>
 
 <template>
@@ -146,11 +153,11 @@ function isExactNavHeading(path: string) {
 						@focus="emit('prefetch-cart')"
 					/>
 					<span
-						v-if="props.cartItemCount > 0"
+						v-if="number_of_items > 0"
 						class="home-header-cart-dot"
 						data-testid="app-header-cart-count"
 					>
-						{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
+						{{ number_of_items > 99 ? '99+' : number_of_items }}
 					</span>
 				</div>
 				<UiButton
