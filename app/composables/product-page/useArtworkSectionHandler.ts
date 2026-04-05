@@ -23,7 +23,7 @@ export const useArtworkSectionHandler = () => {
 
 	const instruction = ref<string>('')
 
-	const artwork = ref<File | null>(null)
+	const artwork = ref<File | null>(selection_store.lettering_file ? selection_store.lettering_file : null )
 
 	const artwork_file_name = computed(() => artwork.value ? artwork.value?.name : '')
 
@@ -39,6 +39,12 @@ export const useArtworkSectionHandler = () => {
 	)
 
 	const artwork_preview = ref<string>('')
+
+	onMounted(async () => {
+		if( artwork && artwork.value ) {
+			artwork_preview.value = selection_store.lettering_file ? await convertFileBase64(selection_store.lettering_file) : ''
+		}
+	})
 
 	const has_uploaded_file = computed(() => !!(artwork?.value && artwork_preview?.value) )
 

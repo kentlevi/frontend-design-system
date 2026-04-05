@@ -61,6 +61,13 @@ export const useLetteringService = () => {
 		letteringUpdate()
 	}
 
+	const letteringFileUpdate = (f : File) => {
+		if( !f )
+			return
+
+		selection_store.updateLetteringFile(f)
+	}
+
 
 	return {
 		lettering,
@@ -69,5 +76,6 @@ export const useLetteringService = () => {
 		letteringTextUpdate,
 		letteringWidthUpdate,
 		letteringHeightUpdate,
+		letteringFileUpdate,
 	}
 }
