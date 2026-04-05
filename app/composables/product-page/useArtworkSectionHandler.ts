@@ -117,7 +117,7 @@ export const useArtworkSectionHandler = () => {
 	const addingItem = async (src : CartItemSource) => {
 		// 🔥 Sending the new item to API
 		const result = await cart_service.sendToServer(src)
-		console.log(result)
+
 		if( result && result.item && result.item.id ) {
 			cart_store.updateUploadedItem(src.local_identity, result.item.id)
 		} else {
