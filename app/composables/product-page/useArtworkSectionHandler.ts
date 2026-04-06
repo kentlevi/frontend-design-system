@@ -2,7 +2,7 @@ import { useCartService } from "~/services/cart/cart.service"
 import { useCartStore } from "~/stores/cart"
 import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import { useUsersStore } from "~/stores/users/users.store"
-import type { CartItemSource } from "~/types/cart/cart"
+import type { CartItem } from "~/types/cart/cart"
 import { convertFileBase64, formatProductFileSize } from "~/utils/file/file"
 
 export const useArtworkSectionHandler = () => {
@@ -114,15 +114,12 @@ export const useArtworkSectionHandler = () => {
 			: '';
 	}
 
-	const addingItem = async (src : CartItemSource) => {
+	const sendItemToServer = async (item : CartItem) => {
 		// 🔥 Sending the new item to API
-		const result = await cart_service.sendToServer(src)
+		const result = await cart_service.sendToServer(item)
 
-		if( result && result.item && result.item.id ) {
-			cart_store.updateUploadedItem(src.local_identity, result.item.id)
-		} else {
-			cart_store.removeItem(null, src.local_identity)
-		}
+		if( result && result.item && result.item.id && item.local_identity )
+			cart_store.updateUploadedItem(item.local_identity, result.item.id)
 	}
 
 
@@ -132,6 +129,16 @@ export const useArtworkSectionHandler = () => {
 	 */
 	const dispatchItem = async (has_artwork : boolean = false) => {
 		// ⚠️ VALIDATION
+		if( uploading.value ) {
+			console.warn('Uploading is no the process!')
+			return false
+		}
+
+		if( has_artwork && !has_uploaded_file.value ) {
+			console.warn('No artwork selected.')
+			return false
+		}
+
 		if(!attribute_store.product || !selection_store.product_config_mapping_id ) {
 			console.warn('Product data is missing!')
 			return false
@@ -158,16 +165,23 @@ export const useArtworkSectionHandler = () => {
 
 
 		// 🔥 Creating temporary ID — this will be use when the api already responded
-		const item_id = crypto.randomUUID();
+		const item_id = cart_store.generateLocalIdentity();
 
 		const uploaded_file = ref<string>('')
 
 		// 🔥 Adding cart with Artwork file
-		if( has_artwork && artwork.value) {
+		if( has_artwork ) {
+
+			if(!artwork.value) {
+				console.warn("Artwork file is required!")
+				return
+			}
+
 			// 🔥 Handles the sending of File to S3 and component behavior using the cart service
 			uploading.value = true
 			const { ok, message, filename } = await cart_service.sendToS3(artwork.value)
 			uploading.value = false
+
 			if( !ok ) {
 				console.warn(message)
 				return false
@@ -176,49 +190,43 @@ export const useArtworkSectionHandler = () => {
 			uploaded_file.value = filename.value
 		}
 
-		// 🔥 Savable object to be sent to API
-		const src = {
-			product_config_mapping_id	: selection_store.product_config_mapping_id,
-			width						: selection_store.size.width,
-			height						: selection_store.size.height,
-			quantity					: selection_store.quantity.nr,
-			lettering_text				: selection_store.lettering_text,
-			color_id					: selection_store.color?.id,
-			font_id						: selection_store.font?.id,
-			artwork						: has_artwork ? uploaded_file.value : null,
-			artwork_original_file_name	: has_artwork ? artwork_file_name.value : null,
-			instruction					: has_artwork ? instruction.value : null,
-			local_identity 				: item_id,
-		}
-
-		// 🔥 Used for local storage
-		const visual = {
-			product		: attribute_store.product.name,
-			thumbnail	: has_artwork && artwork_preview.value ? artwork_preview.value : attribute_store.product.image,
-			size		: `${selection_store.size.width}x${selection_store.size.height}`,
-			quantity	: selection_store.quantity.nr ?? 0,
-			price		: selection_store.quantity.price ?? 0,
+		// 🔥 Used for storing data in both API and local storage
+		const item = {
+			id: null,
+			user_id: user_id.value,
+			product_config_mapping_id: selection_store.product_config_mapping_id,
+			url_slug: attribute_store.product.url_slug,
+			product: attribute_store.product.name,
+			product_thumbnail: attribute_store.product.image,
+			color: selection_store.color?.name ?? null,
+			color_id: selection_store.color?.id ?? null,
+			font: selection_store.font?.label ?? null,
+			font_id: selection_store.font?.id ?? null,
+			width: selection_store.size.width,
+			height: selection_store.size.height,
+			quantity: selection_store.quantity.nr,
+			cost: selection_store.quantity.price ?? 0,
+			lettering_text: selection_store.lettering_text,
+			artwork_file: has_artwork ? uploaded_file.value : null,
+			artwork_file_name: has_artwork ? artwork_file_name.value : null,
+			artwork_preview: has_artwork ? artwork_preview.value : null,
+			instruction: has_artwork ? instruction.value : null,
+			local_identity: item_id,
 		}
 
 
 		// 🔥 Store new item in local storage before uploading it to our database.
-		cart_store.saveItemLocally({
-			id			: item_id,
-			submitted	: false,
-			user_id		: user_id.value,
-			preview		: visual,
-			src			: src,
-		})
+		cart_store.saveItemLocally(item)
 
 		// 🔥 Sending the new item to API
 		if( is_authenticated )
-			addingItem(src)
+			sendItemToServer(item)
 
 		return true
 	}
 
 	return {
-		...cart_store,
+		...cart_service,
 		artwork,
 		artwork_file_name,
 		artwork_file_ext,

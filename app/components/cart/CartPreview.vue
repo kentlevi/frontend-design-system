@@ -164,32 +164,32 @@ watch(is_active, (a) => {
 								data-testid="product-category-cart-items"
 							>
 								<article
-									v-for="({ id: item_id, preview }, index) in items"
-									:key="item_id"
+									v-for="(item, index) in items"
+									:key="item?.local_identity ?? index"
 									class="cart-preview-item"
 									data-testid="product-category-cart-item"
 								>
 									<div class="cart-preview-item-main" data-testid="product-category-cart-item-main">
 										<div class="cart-preview-item-thumb">
 											<img
-												:src="formatImage(preview.thumbnail)"
-												:alt="formatImage(preview.product)" class="cart-preview-image" >
+												:src="formatImage(item)"
+												:alt="item.artwork_file_name ?? item.product_thumbnail" class="cart-preview-image" >
 										</div>
 										<div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
 											<h4 class="cart-preview-section-title" data-testid="product-category-cart-item-name">
-												{{ preview.product }}
+												{{ item.product }}
 												<UiIcon name="regular-info-circle" :size="20" color="#6d7180" />
 											</h4>
-											<p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ preview.size }}</p>
+											<p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ item.width }}x{{ item.height }}</p>
 											<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
 												{{ t('cart.cartPreview.quantity') }}:
-												{{ preview.quantity.toLocaleString() }}
+												{{ item.quantity.toLocaleString() }}
 											</p>
 										</div>
 									</div>
 									<div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
 										<strong class="cart-preview-item-price" data-testid="product-category-cart-item-price">
-											{{ props.formatPrice(preview.price) }}
+											{{ props.formatPrice(item.cost) }}
 										</strong>
 										<div
 											class="cart-preview-item-actions"
@@ -216,7 +216,7 @@ watch(is_active, (a) => {
 												:icon-size="24"
 												:sr-label="t('cart.cartPreview.aria.removeItem')"
 												data-testid="product-category-cart-item-delete-button"
-												@click="removeCartItem(index, item_id)"
+												@click="removeCartItem(item.id, item.local_identity)"
 											/>
 										</div>
 									</div>

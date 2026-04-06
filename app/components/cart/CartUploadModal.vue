@@ -38,17 +38,12 @@ const skipUpload = async () => {
 }
 
 const addToCart = async () => {
-	if( uploading.value )
-		return
-
-	if( !has_uploaded_file.value )
-		return
-
 	console.warn('Adding cart...')
 
-	await dispatchItem(true)
+	const dispatched = await dispatchItem(true)
 
-	emit('proceed-to-cart')
+	if( dispatched )
+		emit('proceed-to-cart')
 }
 
 const artwork_input = ref<HTMLInputElement | null>(null)
@@ -236,7 +231,6 @@ const removeFile = () => {
 					@click="addToCart()"
 				>
 					<UiIcon
-						v-if="!uploading"
 						name="regular-shop-cart"
 						:size="18"
 						color="#ffffff"

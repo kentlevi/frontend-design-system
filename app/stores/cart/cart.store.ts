@@ -5,39 +5,64 @@ export const useCartStore = defineStore('cart', () => {
 
 	const number_of_items = ref<number>(0)
 
-	const grand_total = computed(() => {
-		return items.value.reduce((total, item) => {
-			// Standardize to 0 if values are missing to avoid NaN
-			const price = item.preview?.price ?? 0
-
-			return total + price
-		}, 0)
-	})
+	const grand_total = ref<number>(0)
 
 
-	const syncNumber = (nr: number) => {
-		number_of_items.value = nr
+	const syncNumber = (total_count: number, total_cost: number) => {
+		number_of_items.value = Number(total_count)
+		grand_total.value = Number(total_cost)
 	}
 
+
 	const saveItemLocally = (item: CartItem) => {
-		items.value.push(item)
+		items.value.unshift(item)
+		grand_total.value += Number(item.cost)
 		addNumber()
 	}
 
-	const removeItem = (index: number | null, local_identity?: string | number) => {
-		if( index != null && index >= 0 ) // Removing item with the given item index
-			items.value.splice(index, 1)
-		else if( local_identity && index === null ) // Removing the one matching the ID
-			items.value = items.value.filter(item => item.id !== local_identity)
+	const populateItems = (cart_items: Partial<CartItem>[]) => {
+		// 1. Create a Map of the incoming items for O(1) lookup speed
+		// We use local_identity as the unique key
+		const incoming_map = new Map(
+			cart_items.map(item => [item.local_identity, item])
+		)
+
+		// 2. Update existing items in the store
+		const updated_item = items.value.map(existing_item => {
+			const incoming_data = incoming_map.get(existing_item.local_identity)
+
+			if (incoming_data) {
+				// Merge existing with new data (New data overwrites old)
+				return { ...existing_item, ...incoming_data }
+			}
+			return existing_item
+		})
+
+		// 3. Find items that are in the incoming list but NOT in our store yet
+		const existing_ids = new Set(items.value.map(i => i.local_identity))
+		const truly_new_items = cart_items.filter(i => i.local_identity && !existing_ids.has(i.local_identity))
+
+		// 4. Set the final state: [Updated Originals] + [Brand New Extras]
+		items.value = [...updated_item, ...truly_new_items] as CartItem[]
+	}
+
+	const removeItem = (item_id: number | null, local_identity?: string | null) => {
+		if( item_id ) // Removing item with the given item index
+			items.value = items.value.filter(item => item.id != item_id)
+		else if( local_identity ) // Removing the one matching the ID
+			items.value = items.value.filter(item => item.local_identity != local_identity)
 
 		reduceNumber()
 	}
 
-	const updateUploadedItem = (item_id: string | null, new_id: number) => {
-		const index = items.value.findIndex(i => i.id === item_id)
+	const updateUploadedItem = (local_identity: string, new_id: number) => {
+		const index = items.value.findIndex(i => i.local_identity === local_identity)
 
-		if( index !== -1 && items.value[index] )
+		if( index !== -1 && items.value[index] ) {
 			items.value[index].id = new_id
+			if( items.value[index]?.artwork_preview )
+				items.value[index].artwork_preview = null
+		}
 	}
 
 	const empty = () => {
@@ -53,6 +78,23 @@ export const useCartStore = defineStore('cart', () => {
 		number_of_items.value--
 	}
 
+	const generateLocalIdentity = (): string => {
+		let identifier: string = ''
+		let is_duplicate = true
+
+		while (is_duplicate) {
+			// Create a short unique string (e.g., "sj-1712401234-a7b2")
+			const timestamp = Date.now()
+			const randomPart = Math.random().toString(36).substring(2, 6)
+			identifier = `mu-${timestamp}-${randomPart}`
+
+			// Check if this ID already exists in your current items array
+			is_duplicate = items.value.some(item => item.local_identity === identifier)
+		}
+
+		return identifier
+	}
+
 
 	return {
 		items,
@@ -65,7 +107,13 @@ export const useCartStore = defineStore('cart', () => {
 		removeItem,
 		updateUploadedItem,
 		empty,
+		populateItems,
+		generateLocalIdentity,
 	}
 }, {
-	persist: true
+	persist: {
+		key: 'mu_cart',
+		storage: persistedState.localStorage,
+		pick: ['items', 'number_of_items', 'grand_total'],
+	}
 })
