@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType, ShippingAddress } from '~/types/address';
+import type { AddressMap, AddressType } from '~/types/address';
+import { useAddressHelper } from '~/utils/address';
+
+const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
 
 const props = defineProps<{
 	modelValue: boolean;
@@ -35,23 +38,6 @@ watch(() => props.modelValue, (is_open) => {
 		selected_address_id.value = null
 	}
 })
-
-function buildAddressLines(address: ShippingAddress) {
-	const lines: string[] = []
-
-	if (address.address_line_1) lines.push(address.address_line_1)
-	if (address.address_line_2) lines.push(address.address_line_2)
-
-	address.dynamic_fields.forEach((field) => {
-		if (field?.value) {
-			lines.push(field.value)
-		}
-	})
-
-	if (address.postcode) lines.push(address.postcode)
-
-	return lines.join(', ')
-}
 
 function closeModal() {
 	emit('update:modelValue', false)
@@ -132,8 +118,8 @@ function saveSelection() {
 						</div>
 
 						<div class="account-address-book-default-modal-card-body">
-							<p class="account-address-book-default-modal-card-phone">
-								{{ address.phone_number }}
+							<p v-if="shippingPhoneNumber(address)" class="account-address-book-default-modal-card-phone">
+								{{ shippingPhoneNumber(address) }}
 							</p>
 							<p class="account-address-book-default-modal-card-address">
 								{{ buildAddressLines(address) }}

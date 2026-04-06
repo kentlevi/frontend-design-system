@@ -1,6 +1,7 @@
 import type { CountryField } from "../country_field"
 
 export type AddressType = keyof AddressMap
+export type AddressItem = AddressMap[AddressType];
 export type AddressLabel = 'home' | 'office' | 'client'
 
 export interface BaseAddress {

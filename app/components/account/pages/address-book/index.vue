@@ -21,7 +21,6 @@ withDefaults(defineProps<{
 });
 
 const { t: translate } = useI18n();
-const toast_store = useToastStore()
 
 /**
  * Store
