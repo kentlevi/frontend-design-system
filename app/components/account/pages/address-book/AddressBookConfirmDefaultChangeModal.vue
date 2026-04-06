@@ -12,7 +12,7 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'cancel'): void;
-	(e: 'confirm'): void;
+	(e: 'confirm', type: AddressType, address_id: number): void;
 }>();
 
 const tag_badge_colors = {
@@ -81,7 +81,10 @@ function cancelModal() {
 
 function confirmModal() {
 	closeModal()
-	emit('confirm')
+
+	if (!props.nextAddress) return
+
+	emit('confirm', props.nextAddress?.type, props.nextAddress?.id)
 }
 </script>
 

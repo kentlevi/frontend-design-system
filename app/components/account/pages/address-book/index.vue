@@ -23,14 +23,12 @@ withDefaults(defineProps<{
 const { t: translate } = useI18n();
 const toast_store = useToastStore()
 
-/** Store */
+/**
+ * Store
+ */
 const loading_overlay_store = useLoadingOverlayStore()
 const address_field_store = useAddressFieldStore()
 const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
-
-const {
-	setAddressDefault
-} = useAddressDefaultFlow()
 
 const {
 	shipping_address,
@@ -76,6 +74,17 @@ const {
 	openConfirmDefaultChangeModal,
 	closeConfirmDefaultChangeModal: closeConfirmDefaultChangeStateModal,
 } = useAddressModalState()
+
+const {
+	pending_default_address,
+	current_default_address,
+
+	setAddressDefault,
+	setAddressDefaultWithToast,
+	startDefaultFlow,
+} = useAddressDefaultFlow({
+	openConfirmDefaultChangeModal,
+})
 
 const {
 	createAddress,
@@ -126,9 +135,6 @@ const {
 	clearFormFieldErrors,
 })
 
-const pending_default_address = ref<AddressMap[AddressType] | null>(null)
-const current_default_address = ref<AddressMap[AddressType] | null>(null)
-
 const replacement_addresses = computed(() => {
 	const pending_type = pending_delete_address.value?.type
 	return pending_type ? getReplacementAddresses(pending_type) : []
@@ -140,25 +146,6 @@ onMounted(() => {
 	getAddresses('drop')
 	address_field_store.getDynamicFields()
 })
-
-function getAddressListByType(type: AddressType) {
-	if (type === 'shipping') return shipping_address.value
-	if (type === 'billing') return billing_address.value
-	return drop_address.value
-}
-
-function getAddressTypeLabel(type: AddressType) {
-	return type === 'drop' ? 'drop shipping' : type
-}
-
-function showDefaultAddressToast(type: AddressType) {
-	toast_store.showToastWithTimer({
-		message: `Your default ${getAddressTypeLabel(type)} address has been updated!`,
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
-	})
-}
 
 function handleCardMenuAction(payload: {
 	action: 'edit' | 'delete' | 'default';
@@ -175,19 +162,7 @@ function handleCardMenuAction(payload: {
 	}
 
 	if (payload.action === 'default') {
-		if (!payload.item.is_default) {
-			const existing_default = getAddressListByType(payload.item.type)
-				.find(address => address.is_default && address.id !== payload.item.id) ?? null
-
-			if (existing_default) {
-				current_default_address.value = existing_default
-				pending_default_address.value = payload.item
-				openConfirmDefaultChangeModal()
-				return
-			}
-		}
-
-		showDefaultAddressToast(payload.item.type)
+		startDefaultFlow(payload.item)
 	}
 }
 
@@ -233,14 +208,8 @@ function closeConfirmDefaultChangeModal() {
 	pending_default_address.value = null
 }
 
-function confirmDefaultAddressChange() {
-	closeConfirmDefaultChangeModal()
-	toast_store.showToastWithTimer({
-		message: 'Your default drop shipping address has been updated!',
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
-	})
+function confirmDefaultAddressChange(type: AddressType, address_id: number) {
+	setAddressDefaultWithToast(type, address_id)
 }
 </script>
 
