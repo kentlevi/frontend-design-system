@@ -159,7 +159,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 						type: 'billing',
 						dynamic_fields: address_field_store.dynamic_address_fields.map(field => ({
 							...field,
-							value: String(fields[field.field_key] ?? ''),
+							value: String(getValue(field, fields[field.field_key] ?? '')),
 						})),
 					})
 				}
