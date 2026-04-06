@@ -4,6 +4,7 @@ import { formatShippingDateRange } from '~/utils/shipping/dateRange'
 import { computed, ref } from 'vue'
 
 const selected_shipping_method = ref('')
+const shipping_method_id = ref<number | null>(null)
 const production_shipping_id = ref<number | null>(null)
 const is_loading = ref(false)
 const shipping_method_data = ref<ShippingMethodData[]>([])
@@ -65,6 +66,7 @@ export function useShippingMethod() {
 				longer_date_message: `Estimated Delivery Date: ${formatted_date_range}`,
 				price: `$${item.shipping_price}`,
 				icon: `/icons/custom/checkout/${item.shipping_method_code}-shipping.svg`,
+				shipping_method_id: item.shipping_method_id,
 				production_shipping_id: item.production_shipping_id,
 				cart_item_ids: item.cart_item_ids,
 				description: item.description,
@@ -83,6 +85,7 @@ export function useShippingMethod() {
 
 		setSelectedShippingMethod({
 			key: selected_method.key,
+			shipping_method_id: selected_method.shipping_method_id,
 			production_shipping_id: selected_method.production_shipping_id,
 		})
 	}
@@ -98,6 +101,7 @@ export function useShippingMethod() {
 		if (matched_selected_method) {
 			setSelectedShippingMethod({
 				key: matched_selected_method.key,
+				shipping_method_id: matched_selected_method.shipping_method_id,
 				production_shipping_id: matched_selected_method.production_shipping_id,
 			})
 			return
@@ -112,24 +116,31 @@ export function useShippingMethod() {
 
 		setSelectedShippingMethod({
 			key: default_method.key,
+			shipping_method_id: default_method.shipping_method_id,
 			production_shipping_id: default_method.production_shipping_id,
 		})
 	}
 
-	/* @desc set the current selected shipping method and its production shipping id
+	/* @desc set the current selected shipping method and its shipping ids
     @param object|null selection - selected method payload or null to clear
     @return void
     */
 	const setSelectedShippingMethod = (
-		selection: { key: string; production_shipping_id: number } | null
+		selection: {
+			key: string;
+			shipping_method_id: number;
+			production_shipping_id: number;
+		} | null
 	): void => {
 		if (!selection) {
 			selected_shipping_method.value = ''
+			shipping_method_id.value = null
 			production_shipping_id.value = null
 			return
 		}
 
 		selected_shipping_method.value = selection.key
+		shipping_method_id.value = selection.shipping_method_id
 		production_shipping_id.value = selection.production_shipping_id
 	}
 
@@ -138,14 +149,19 @@ export function useShippingMethod() {
     */
 	const clearSelectedShippingMethod = (): void => {
 		selected_shipping_method.value = ''
+		shipping_method_id.value = null
 		production_shipping_id.value = null
 	}
 
 	return {
-		production_shipping_id,
 		is_loading,
-		active_shipping_methods,
+
+		production_shipping_id,
+        shipping_method_id,
 		selected_shipping_method,
+        
+		active_shipping_methods,
+
 		setSelectedShippingMethod,
 		clearSelectedShippingMethod,
 		fetchShippingMethods,

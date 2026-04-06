@@ -24,6 +24,7 @@ export type ShippingMethodItem = {
 	longer_date_message: string;
 	price: string;
 	icon: string;
+	shipping_method_id: number;
 	production_shipping_id: number;
 	cart_item_ids: number[];
 	description: string;
