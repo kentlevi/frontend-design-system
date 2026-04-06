@@ -70,7 +70,9 @@ export const useCartService = () => {
 		total_cost: number
 		total_count: number
 	}
-	const countNumberOfItems = async () => {
+
+
+	const calculateCartItems = async () => {
 		const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
 		if( !success || !data ) {
 			console.warn(message)
@@ -102,7 +104,7 @@ export const useCartService = () => {
 		file_path : string | null
 	}
 
-
+	// 📌 Requesting cart items from database
 	const requestCartItems = async (page?: number, per_page?: number): Promise<ExpectedCartItemData []> => {
 		const { success, message, data } = await $api.get<ExpectedCartItemData []>('cart', { params: { page, per_page }})
 
@@ -117,6 +119,7 @@ export const useCartService = () => {
 		return data
 	}
 
+	// 📌 Deleting specific cart in both local storage and database
 	const removeCartItem = async (item_id: number | null, local_identity?: string | null) => {
 		console.warn(`Deleting item ${item_id ?? local_identity}`)
 
@@ -129,13 +132,45 @@ export const useCartService = () => {
 		}
 	}
 
+	type SavedDraftResponse = {
+		success: Record<string, unknown>[]
+		failure: Record<string, unknown>[]
+	}
+	const saveDraft = async () => {
+		const drafted = cart_store.items.map( e => {
+			return {
+				product_config_mapping_id: e.product_config_mapping_id,
+				color_id: e.color_id,
+				font_id: e.font_id,
+				width: e.width,
+				height: e.height,
+				quantity: e.quantity,
+				cost: e.cost,
+				lettering_text: e.lettering_text,
+				artwork_file: e.artwork_file,
+				artwork_file_name: e.artwork_file_name,
+				instruction: e.instruction,
+				local_identity: e.local_identity,
+			}
+		})
+		const { success, message, data } = await $api.post<SavedDraftResponse>('cart/saving-draft', { cart_items: drafted })
+
+		if( !success ) {
+			console.log(message)
+			return null
+		}
+
+		return data;
+	}
+
 	return {
 		number_of_items,
 		sendToServer,
 		sendToS3,
-		countNumberOfItems,
+		calculateCartItems,
 		requestCartItems,
 		removeCartItem,
+		saveDraft,
 	}
 
 }

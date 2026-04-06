@@ -33,11 +33,17 @@ export const useCartPreviewHandler = () => {
 	}
 
 	const getCartItems = async () => {
+		// calculate the numbers of cart items everytime request new data from database
+		await cart_service.calculateCartItems()
+
 		const cart_items = await cart_service.requestCartItems(page.value, per_page.value)
-		if( !cart_items || !cart_items.length )
+		if( !cart_items )
 			return
 
-		cart_store.populateItems(cart_items)
+		if( cart_items.length )
+			cart_store.populateItems(cart_items)
+		else if( !cart_items.length && cart_store.number_of_items == 0 )
+			cart_store.empty()
 	}
 
 

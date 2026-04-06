@@ -56,10 +56,10 @@ function isExactNavHeading(path: string) {
 	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
 
-const { number_of_items, countNumberOfItems } = useCartService()
+const { number_of_items, calculateCartItems } = useCartService()
 
 onMounted(() => {
-	countNumberOfItems()
+	calculateCartItems()
 })
 </script>
 

@@ -21,29 +21,7 @@ export const useCartStore = defineStore('cart', () => {
 	}
 
 	const populateItems = (cart_items: Partial<CartItem>[]) => {
-		// 1. Create a Map of the incoming items for O(1) lookup speed
-		// We use local_identity as the unique key
-		const incoming_map = new Map(
-			cart_items.map(item => [item.local_identity, item])
-		)
-
-		// 2. Update existing items in the store
-		const updated_item = items.value.map(existing_item => {
-			const incoming_data = incoming_map.get(existing_item.local_identity)
-
-			if (incoming_data) {
-				// Merge existing with new data (New data overwrites old)
-				return { ...existing_item, ...incoming_data }
-			}
-			return existing_item
-		})
-
-		// 3. Find items that are in the incoming list but NOT in our store yet
-		const existing_ids = new Set(items.value.map(i => i.local_identity))
-		const truly_new_items = cart_items.filter(i => i.local_identity && !existing_ids.has(i.local_identity))
-
-		// 4. Set the final state: [Updated Originals] + [Brand New Extras]
-		items.value = [...updated_item, ...truly_new_items] as CartItem[]
+		items.value = cart_items as CartItem[]
 	}
 
 	const removeItem = (item_id: number | null, local_identity?: string | null) => {
@@ -68,6 +46,7 @@ export const useCartStore = defineStore('cart', () => {
 	const empty = () => {
 		items.value = []
 		number_of_items.value = 0
+		grand_total.value = 0
 	}
 
 	const addNumber = () => {
