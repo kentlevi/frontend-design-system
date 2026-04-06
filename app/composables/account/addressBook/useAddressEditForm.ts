@@ -3,11 +3,14 @@ import { updateUserAddress } from '~/services/profile/address.service';
 import { useAddressFieldStore, useAddressStore } from "~/stores/address";
 import type { AddressFormState, AddressFormMap, AddressMap, AddressType, DynamicFieldDefinition } from "~/types/address";
 import type { CountryField } from '~/types/country_field';
+import { useAddressHelper } from '~/utils/address';
 
 type UseAddressEditFormOptions = {
 	form_state: AddressFormState
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
+	form_field_errors: Ref<Record<string, string>>
+
 	openEditFormModal: () => void
 	closeFormModal: () => void
 	setCreateMode: () => void
@@ -16,10 +19,11 @@ type UseAddressEditFormOptions = {
 
 export function useAddressEditForm(options: UseAddressEditFormOptions) {
 
+	const { mapApiFieldErrors } = useAddressHelper()
+
 	/**
      * Stores
      */
-
 	const address_field_store = useAddressFieldStore()
 	const address_store = useAddressStore()
 	const toast_store = useToastStore()
@@ -123,7 +127,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 		options.openEditFormModal()
 	}
 
-	async function updateAddressLocally() {
+	async function updateAddress() {
 		if (editing_address_id.value === null || !editing_address_snapshot.value) {
 			options.closeFormModal()
 			return
@@ -182,6 +186,8 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 				resetEditState()
 				options.setCreateMode()
 			} else {
+				const next_errors = mapApiFieldErrors(response.data)
+				options.form_field_errors.value = next_errors
 				options.openEditFormModal()
 			}
 
@@ -216,6 +222,6 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 	return {
 		resetEditState,
 		openEditModal,
-		updateAddressLocally,
+		updateAddress,
 	}
 }

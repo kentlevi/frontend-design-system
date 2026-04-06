@@ -88,7 +88,6 @@ const {
 const {
 	createAddress,
 	prepareCreateModal,
-	validateForm,
 } = useAddressCreateForm({
 	form_state,
 	form_type,
@@ -123,11 +122,13 @@ const {
 const {
 	resetEditState,
 	openEditModal,
-	updateAddressLocally,
+	updateAddress,
 } = useAddressEditForm({
 	form_state,
 	form_type,
 	active_form,
+	form_field_errors,
+
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,
@@ -173,12 +174,8 @@ function handleOpenAddModal() {
 }
 
 function submitAddressForm() {
-	if (!validateForm()) {
-		return
-	}
-
 	if (form_modal_mode.value === 'edit') {
-		updateAddressLocally()
+		updateAddress()
 		return
 	}
 

@@ -43,10 +43,25 @@ export function useAddressHelper() {
 		if ('phone_number' in address && address.phone_number) return address.phone_number
 	}
 
+	/** Map api response errors */
+	function mapApiFieldErrors(data: unknown): Record<string, string> {
+		const next_errors: Record<string, string> = {}
+		if (!data || typeof data !== 'object') return next_errors
+
+		Object.entries(data as Record<string, unknown>).forEach(([field_key, messages]) => {
+			if (Array.isArray(messages) && messages.length > 0) {
+				next_errors[field_key] = String(messages[0])
+			}
+		})
+
+		return next_errors
+	}
+
 	return {
 		getAddressListByType,
 		getAddressLineParts,
 		buildAddressLines,
 		shippingPhoneNumber,
+		mapApiFieldErrors,
 	}
 }
