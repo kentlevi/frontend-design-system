@@ -2,6 +2,7 @@ import type { Ref } from 'vue';
 import { updateUserAddress } from '~/services/profile/address.service';
 import { useAddressFieldStore, useAddressStore } from "~/stores/address";
 import type { AddressFormState, AddressFormMap, AddressMap, AddressType, DynamicFieldDefinition } from "~/types/address";
+import type { CountryField } from '~/types/country_field';
 
 type UseAddressEditFormOptions = {
 	form_state: AddressFormState
@@ -174,7 +175,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 						type: 'shipping',
 						dynamic_fields: address_field_store.dynamic_address_fields.map(field => ({
 							...field,
-							value: String(fields[field.field_key] ?? ''),
+							value: String(getValue(field, fields[field.field_key] ?? '')),
 						})),
 					})
 				}
@@ -190,6 +191,17 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 		} finally {
 			loading_overlay_store.stopLoading('update_address')
 		}
+	}
+
+	function getValue(field: CountryField, field_value: string | number) {
+
+		if (field.input_type !== 'text') {
+			const value = field.options?.find((option) => option.id === field_value)
+
+			return value?.value ?? ''
+		}
+
+		return field_value
 	}
 
 	/** Overlays */
