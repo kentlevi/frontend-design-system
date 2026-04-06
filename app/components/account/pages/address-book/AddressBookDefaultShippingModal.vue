@@ -10,7 +10,7 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'cancel'): void;
 	(e: 'skip'): void;
-	(e: 'save', addressId: number): void;
+	(e: 'save', type: AddressType, address_id: number): void;
 }>();
 
 const selected_address_id = ref<number | null>(null)
@@ -71,7 +71,12 @@ function saveSelection() {
 	if (selected_address_id.value === null) return
 
 	closeModal()
-	emit('save', selected_address_id.value)
+
+	const selected_address = props.addresses.find((address) => address.id === selected_address_id.value)
+
+	if (!selected_address) return
+
+	emit('save', selected_address.type, selected_address_id.value)
 }
 </script>
 

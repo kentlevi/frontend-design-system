@@ -9,6 +9,7 @@ type UseAddressDeleteFormOptions = {
 	openDeleteDialog: () => void
 	closeDeleteDialog: () => void
 	openDefaultShippingModal: () => void
+	closeDefaultShippingModal: () => void
 }
 
 export function useAddressDeleteForm(options: UseAddressDeleteFormOptions) {
@@ -41,26 +42,37 @@ export function useAddressDeleteForm(options: UseAddressDeleteFormOptions) {
 		return list.filter(address => address.id !== pending.id)
 	}
 
-	async function confirmDeleteAddress() {
+	async function confirmDeleteAddress({skip_default_shipping_modal = false, overlay = true} = {}) {
 		const deleting_address = pending_delete_address.value
 		if (!deleting_address) return
 
-		const should_show_default_shipping_modal = deleting_address.is_default
-			&& getReplacementAddresses(deleting_address.type).length > 0
+		// First pass: when deleting a default address with replacements, pause delete and show selector modal.
+		if (!skip_default_shipping_modal) {
+			const should_show_default_shipping_modal = deleting_address.is_default
+                && getReplacementAddresses(deleting_address.type).length > 0
 
-		if (should_show_default_shipping_modal) {
-			cancelDeleteFlow({reset: false})
-			options.openDefaultShippingModal()
-			return
+			if (should_show_default_shipping_modal) {
+				// Keep pending delete state so Skip/Save can continue the same delete request.
+				cancelDeleteFlow({reset: false})
+				options.openDefaultShippingModal()
+				return
+			}
+		} else {
+			// Second pass (Skip or Save): close selector modal and continue delete immediately.
+			options.closeDefaultShippingModal()
 		}
 
-		startUpdateOverlay()
+		// Close dialog state before API call so UI is clean while request is in-flight.
+		if (overlay) {
+			startUpdateOverlay()
+		}
 		cancelDeleteFlow()
 
 		try {
 			const response = await deleteUserAddress(deleting_address.id)
 
 			if (response.success) {
+				// Keep local store in sync with backend delete result.
 				toast_store.handleApiResponse(response)
 
 				address_store.deleteAddress(deleting_address.type, deleting_address.id)
@@ -72,9 +84,6 @@ export function useAddressDeleteForm(options: UseAddressDeleteFormOptions) {
 			loading_overlay_store.stopLoading('delete_address')
 		}
 	}
-
-
-
 
 	function startDeleteFlow(address: AddressMap[AddressType]) {
 		pending_delete_address.value = address

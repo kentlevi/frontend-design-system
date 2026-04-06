@@ -12,6 +12,7 @@ import { useAddressModalState } from '~/composables/account/addressBook/useAddre
 import { useAddressFieldStore } from '~/stores/address';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
+import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -23,8 +24,13 @@ const { t: translate } = useI18n();
 const toast_store = useToastStore()
 
 /** Store */
+const loading_overlay_store = useLoadingOverlayStore()
 const address_field_store = useAddressFieldStore()
 const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
+
+const {
+	setAddressDefault
+} = useAddressDefaultFlow()
 
 const {
 	shipping_address,
@@ -103,6 +109,7 @@ const {
 	openDeleteDialog,
 	closeDeleteDialog,
 	openDefaultShippingModal,
+	closeDefaultShippingModal,
 })
 
 const {
@@ -204,15 +211,20 @@ function submitAddressForm() {
 	createAddress()
 }
 
-function finalizeDefaultShippingDeleteFlow() {
-	closeDefaultShippingModal()
-	cancelDeleteFlow()
-	toast_store.showToastWithTimer({
-		message: 'Your address has been successfully deleted.',
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
+async function deleteAndSetDefault(type: AddressType, address_id: number) {
+
+	loading_overlay_store.startLoading('set_default', {
+		showCopy: true,
+		testId: 'account-address-set-default-overlay',
+		position: 'fixed'
 	})
+
+	await Promise.all([
+		confirmDeleteAddress({ skip_default_shipping_modal: true, overlay: false }),
+		setAddressDefault(type, address_id),
+	])
+
+	loading_overlay_store.stopLoading('set_default')
 }
 
 function closeConfirmDefaultChangeModal() {
@@ -340,10 +352,9 @@ function confirmDefaultAddressChange() {
 			<AddressBookDefaultShippingModal
 				:model-value="is_default_shipping_modal_open"
 				:addresses="replacement_addresses"
-				@update:model-value="!$event ? finalizeDefaultShippingDeleteFlow() : undefined"
-				@cancel="finalizeDefaultShippingDeleteFlow"
-				@skip="finalizeDefaultShippingDeleteFlow"
-				@save="finalizeDefaultShippingDeleteFlow"
+				@cancel="() => { closeDefaultShippingModal(); cancelDeleteFlow() }"
+				@skip="confirmDeleteAddress({skip_default_shipping_modal: true})"
+				@save="deleteAndSetDefault"
 			/>
 			<AddressBookConfirmDefaultChangeModal
 				:model-value="is_confirm_default_change_modal_open"
