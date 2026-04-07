@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType, ShippingAddress } from '~/types/address';
+import type { AddressItem, AddressType, ShippingAddress } from '~/types/address';
+import { useAddressHelper } from '~/utils/address';
 
-type AddressItem = AddressMap[AddressType];
+const { getAddressLineParts } = useAddressHelper()
 
 const props = defineProps<{
 	modelValue: boolean;
@@ -12,7 +13,7 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'cancel'): void;
-	(e: 'confirm'): void;
+	(e: 'confirm', type: AddressType, address_id: number): void;
 }>();
 
 const tag_badge_colors = {
@@ -53,23 +54,6 @@ function isShippingAddress(address: AddressItem): address is ShippingAddress {
 	return address.type === 'shipping'
 }
 
-function buildAddressLines(address: AddressItem) {
-	const lines: string[] = []
-
-	if ('address_line_1' in address && address.address_line_1) lines.push(address.address_line_1)
-	if ('address_line_2' in address && address.address_line_2) lines.push(address.address_line_2)
-
-	if ('dynamic_fields' in address && Array.isArray(address.dynamic_fields)) {
-		address.dynamic_fields.forEach((field) => {
-			if (field?.value) lines.push(field.value)
-		})
-	}
-
-	if ('postcode' in address && address.postcode) lines.push(address.postcode)
-
-	return lines
-}
-
 function closeModal() {
 	emit('update:modelValue', false)
 }
@@ -81,7 +65,10 @@ function cancelModal() {
 
 function confirmModal() {
 	closeModal()
-	emit('confirm')
+
+	if (!props.nextAddress) return
+
+	emit('confirm', props.nextAddress?.type, props.nextAddress?.id)
 }
 </script>
 
@@ -133,7 +120,7 @@ function confirmModal() {
 								{{ props.currentAddress.phone_number }}
 							</p>
 							<p
-								v-for="(line, index) in buildAddressLines(props.currentAddress)"
+								v-for="(line, index) in getAddressLineParts(props.currentAddress)"
 								:key="`current-${index}`"
 								class="account-address-book-confirm-default-modal-card-address"
 							>
@@ -173,7 +160,7 @@ function confirmModal() {
 								{{ props.nextAddress.phone_number }}
 							</p>
 							<p
-								v-for="(line, index) in buildAddressLines(props.nextAddress)"
+								v-for="(line, index) in getAddressLineParts(props.nextAddress)"
 								:key="`next-${index}`"
 								class="account-address-book-confirm-default-modal-card-address"
 							>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, toRef } from 'vue';
 import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
-import { sizeDimOnly } from '~/utils/cart';
+// import { sizeDimOnly } from '~/utils/cart';
 import CartItemEditModal from '~/components/cart/CartItemEditModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import type { ProductItem } from '~/types/products/catalog';
@@ -9,6 +9,7 @@ import type {
 	CartPreviewItem,
 	CartPreviewSizeOptionModel,
 } from '~/types/cart/preview';
+import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 
 const props = withDefaults(
 	defineProps<{
@@ -39,9 +40,9 @@ const emit = defineEmits<{
 
 const deleting_item_id = ref<string | null>(null);
 
-function openDeleteModal(item_id: string) {
-	deleting_item_id.value = item_id;
-}
+// function openDeleteModal(item_id: string) {
+// 	deleting_item_id.value = item_id;
+// }
 
 function closeDeleteModal() {
 	deleting_item_id.value = null;
@@ -65,11 +66,11 @@ const {
 	redirectingToCart: redirecting_to_cart,
 	savingInlineEdit: saving_inline_edit,
 	redirectLoaderRef: redirect_loader_ref,
-	openInlineEdit,
+	// openInlineEdit,
 	cancelInlineEdit,
 	saveInlineEdit,
-	editedItemTotal,
-	editedGrandTotal,
+	// editedItemTotal,
+	// editedGrandTotal,
 	getInlineSizeOptions,
 	getInlineQtyOptions,
 	goToCart,
@@ -83,6 +84,27 @@ const {
 	closePreview: () => emit('close'),
 	emitUpdateItem: (payload) => emit('update-item', payload),
 });
+
+// 📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌
+const is_active = computed(() => props.open)
+
+const {
+	number_of_items,
+	items,
+	grand_total,
+	composePreview,
+	formatImage,
+	removeCartItem,
+} = useCartPreviewHandler()
+
+watch(is_active, (a) => {
+	console.log('Preview')
+	// 🔥 Execution of the following methods when the modal is open or active.
+	if( a )
+		composePreview()
+})
+
+
 </script>
 
 <template>
@@ -101,7 +123,7 @@ const {
 				</UiLoadingOverlay>
 				<aside class="cart-preview-panel" role="dialog" aria-modal="true" data-testid="product-category-cart-dialog">
 					<header class="cart-preview-header" data-testid="product-category-cart-header">
-						<h3 class="cart-preview-title" data-testid="product-category-cart-title">{{ t('cart.cartPreview.previewTitle', { count: props.cartItemCount }) }}</h3>
+						<h3 class="cart-preview-title" data-testid="product-category-cart-title">{{ t('cart.cartPreview.previewTitle', { count: number_of_items }) }}</h3>
 						<UiButton
 							type="button"
 							variant="ghost"
@@ -117,10 +139,10 @@ const {
 
 					<div
 						class="cart-preview-body"
-						:class="{ 'cart-preview-body--empty': props.cartItemCount === 0 }"
+						:class="{ 'cart-preview-body--empty': number_of_items === 0 }"
 						data-testid="product-category-cart-body"
 					>
-						<section v-if="props.cartItemCount === 0" class="cart-preview-empty" data-testid="product-category-cart-empty">
+						<section v-if="number_of_items === 0" class="cart-preview-empty" data-testid="product-category-cart-empty">
 							<img
 								src="/illustrations/cart/empty-cart-basket.svg"
 								:alt="t('cart.cartPreview.emptyIconAlt')"
@@ -133,7 +155,7 @@ const {
 						</section>
 
 						<section
-							v-if="props.cartItemCount > 0"
+							v-if="number_of_items > 0"
 							class="cart-preview-items-scroll"
 							data-testid="product-category-cart-items-scroll"
 						>
@@ -142,32 +164,32 @@ const {
 								data-testid="product-category-cart-items"
 							>
 								<article
-									v-for="item in props.cartItems"
-									:key="item.id"
+									v-for="(item, index) in items"
+									:key="item?.local_identity ?? index"
 									class="cart-preview-item"
 									data-testid="product-category-cart-item"
 								>
 									<div class="cart-preview-item-main" data-testid="product-category-cart-item-main">
 										<div class="cart-preview-item-thumb">
 											<img
-												:src="item.artworkPreviewUrl || item.product.image"
-												:alt="props.getProductName(item.product)" class="cart-preview-image" >
+												:src="formatImage(item)"
+												:alt="item.artwork_file_name ?? item.product_thumbnail" class="cart-preview-image" >
 										</div>
 										<div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
 											<h4 class="cart-preview-section-title" data-testid="product-category-cart-item-name">
-												{{ props.getProductName(item.product) }}
+												{{ item.product }}
 												<UiIcon name="regular-info-circle" :size="20" color="#6d7180" />
 											</h4>
-											<p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ sizeDimOnly(item.sizeLabel) }}</p>
+											<p class="cart-preview-meta" data-testid="product-category-cart-item-size">{{ t('cart.cartPreview.size') }}: {{ item.width }}x{{ item.height }}</p>
 											<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
 												{{ t('cart.cartPreview.quantity') }}:
-												{{ item.qty.toLocaleString() }}
+												{{ item.quantity.toLocaleString() }}
 											</p>
 										</div>
 									</div>
 									<div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
 										<strong class="cart-preview-item-price" data-testid="product-category-cart-item-price">
-											{{ props.formatPrice(editedItemTotal(item)) }}
+											{{ props.formatPrice(item.cost) }}
 										</strong>
 										<div
 											class="cart-preview-item-actions"
@@ -183,7 +205,6 @@ const {
 												:icon-size="24"
 												:sr-label="t('cart.cartPreview.aria.editItem')"
 												data-testid="product-category-cart-item-edit-button"
-												@click="openInlineEdit(item)"
 											/>
 											<UiButton
 												variant="ghost"
@@ -195,7 +216,7 @@ const {
 												:icon-size="24"
 												:sr-label="t('cart.cartPreview.aria.removeItem')"
 												data-testid="product-category-cart-item-delete-button"
-												@click="openDeleteModal(item.id)"
+												@click="removeCartItem(item.id, item.local_identity)"
 											/>
 										</div>
 									</div>
@@ -206,7 +227,7 @@ const {
 						<section
 							v-if="props.featuredOpen"
 							class="cart-featured"
-							:class="{ 'cart-featured--with-item': props.cartItemCount > 0 }"
+							:class="{ 'cart-featured--with-item': number_of_items > 0 }"
 							data-testid="product-category-cart-featured"
 						>
 							<div class="cart-featured-head" data-testid="product-category-cart-featured-head">
@@ -256,11 +277,11 @@ const {
 						</section>
 					</div>
 
-					<footer v-if="props.cartItemCount > 0" class="cart-preview-footer" data-testid="product-category-cart-footer">
+					<footer v-if="number_of_items > 0" class="cart-preview-footer" data-testid="product-category-cart-footer">
 						<div class="cart-preview-summary" data-testid="product-category-cart-summary">
 							<p class="cart-preview-total" data-testid="product-category-cart-total-row">
 								<span class="cart-preview-label">{{ t('cart.cartPreview.total') }}</span>
-								<strong class="cart-preview-value">{{ props.formatPrice(editedGrandTotal()) }}</strong>
+								<strong class="cart-preview-value">{{ props.formatPrice(grand_total) }}</strong>
 							</p>
 							<div class="cart-preview-note-row" data-testid="product-category-cart-note-row">
 								<p class="cart-preview-note-label">{{ t('cart.cartPreview.noteLabel') }}</p>
@@ -325,542 +346,542 @@ const {
 
 <style scoped lang="scss">
 .cart-preview-shell {
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    z-index: 230;
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-end;
-
-    .cart-preview-panel {
-        width: min(540px, 100vw);
-        max-width: 100vw;
-        background: var(--contrast-light);
-        border-left: 1px solid var(--gray-30);
-        box-shadow: -20px 0 42px rgba(7, 14, 26, 0.16);
-        height: 100dvh;
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        overflow-x: hidden;
-    }
-
-    .cart-preview-header {
-        min-height: 84px;
-        border-bottom: 1px solid var(--gray-30);
-        padding: 0 22px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .cart-preview-title {
-
-            font-size: var(--type-size-300);
-            line-height: var(--type-line-300);
-            color: var(--text-primary);
-        }
-
-        .cart-preview-continue {
-            color: var(--text-primary);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: var(--type-size-100);
-            font-weight: var(--font-weight-semibold);
-            line-height: var(--type-line-100);
-            padding: 6px 0;
-            min-height: auto;
-            border-radius: 0;
-            --btn-soft: transparent;
-            transition: opacity 0.18s ease;
-
-            &:hover {
-                opacity: 0.7;
-            }
-        }
-    }
-
-    .cart-preview-body {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        overflow-x: hidden;
-        padding: 0;
-        min-height: 0;
-
-        .cart-preview-items-scroll {
-            min-height: 0;
-            overflow: auto;
-            height: 100%;
-        }
-
-        .cart-preview-items {
-            display: grid;
-            gap: 16px;
-            padding: 24px;
-        }
-
-        .cart-preview-item {
-            padding: 0 0 16px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 12px;
-            border-bottom: 1px solid var(--gray-30);
-            min-height: 106px;
-        }
-
-        .cart-preview-item-main {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            min-width: 0;
-        }
-
-        .cart-preview-item-thumb {
-            width: 72px;
-            height: 72px;
-            border-radius: 10px;
-            background: var(--gray-10);
-            overflow: hidden;
-            flex-shrink: 0;
-
-            .cart-preview-image {
-                padding: 12px;
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-        }
-
-        .cart-preview-item-copy {
-            min-width: 0;
-            flex: 1;
-            min-height: 72px;
-
-            .cart-preview-section-title {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-                color: var(--text-primary);
-            }
-
-            .cart-preview-meta {
-
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-                color: var(--text-secondary);
-                min-height: 24px;
-                display: flex;
-                align-items: center;
-            }
-
-        }
-
-        .cart-preview-item-side {
-            display: grid;
-            justify-items: end;
-            gap: 8px;
-            min-width: 118px;
-            align-self: stretch;
-            align-content: start;
-        }
-
-        .cart-preview-item-price {
-            font-size: var(--type-size-300);
-            line-height: var(--type-line-300);
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
-
-        .cart-preview-item-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 16px;
-            width: 100%;
-            min-height: 32px;
-        }
-
-        .cart-item-icon-btn {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
-            border-radius: 6px;
-            padding: 0;
-            box-shadow: none;
-            --btn-soft: transparent;
-            --btn-border: transparent;
-
-            &:hover {
-                background: var(--gray-20);
-            }
-        }
-
-        .cart-featured {
-            margin-top: 16px;
-            padding: 16px 24px;
-            border-top: 1px solid var(--gray-30);
-            min-width: 0;
-        }
-
-        .cart-featured--with-item {
-            margin-top: auto;
-        }
-
-        .cart-preview-empty {
-            display: grid;
-            justify-items: center;
-            text-align: center;
-            row-gap: 10px;
-            padding: 18px 14px 20px;
-            border-bottom: 0;
-
-            .cart-preview-empty-image {
-                width: 112px;
-                height: 112px;
-                object-fit: contain;
-                display: block;
-            }
-
-            .cart-preview-empty-title {
-
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-                color: var(--text-primary);
-            }
-
-            .cart-preview-empty-description {
-
-                max-width: 420px;
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-                color: var(--text-secondary);
-            }
-        }
-
-        &.cart-preview-body--empty {
-            display: grid;
-            grid-template-rows: minmax(0, 1fr) auto;
-            align-items: stretch;
-            padding-top: 0;
-            overflow: hidden;
-
-            .cart-preview-empty {
-                height: 100%;
-                align-content: center;
-                max-width: 100%;
-                margin: 0 auto;
-                padding: 24px 14px;
-            }
-
-            .cart-featured {
-                margin-top: 0;
-                min-height: 0;
-            }
-        }
-
-        .cart-featured-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-
-            .cart-preview-section-title {
-
-                font-size: var(--type-size-200);
-                line-height: var(--type-line-200);
-                color: var(--text-primary);
-            }
-        }
-
-        .cart-featured-close {
-            width: 26px;
-            height: 26px;
-            min-width: 26px;
-            border-radius: 6px;
-            padding: 0;
-            --btn-soft: transparent;
-        }
-
-        .cart-featured-grid {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 10px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding-bottom: 12px;
-            scrollbar-width: thin;
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-
-            &::-webkit-scrollbar {
-                height: 6px;
-            }
-
-            &::-webkit-scrollbar-track {
-                background: transparent;
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: var(--gray-50);
-                border-radius: 999px;
-            }
-        }
-
-        .cart-featured-card {
-            min-width: 184px;
-            flex: 0 0 184px;
-            border: 1px solid var(--gray-30);
-            border-radius: 10px;
-            background: var(--contrast-light);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-
-            &:hover {
-                border-color: var(--gray-50);
-            }
-
-            .cart-preview-image {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-
-            .cart-featured-item-title {
-
-                font-size: var(--type-size-100);
-                font-weight: var(--font-weight-medium);
-                line-height: var(--type-line-100);
-                color: var(--text-primary);
-            }
-
-            .cart-featured-customize-btn {
-                width: 100%;
-                margin: 0 auto;
-                height: 32px;
-                border-radius: 8px;
-                background: var(--gray-20);
-                color: var(--text-primary);
-                font-size: var(--type-size-100);
-                font-weight: var(--font-weight-semibold);
-                line-height: var(--type-line-100);
-                box-shadow: none;
-                transition: background-color 0.18s ease;
-
-                &:hover {
-                    background: var(--gray-30);
-                }
-            }
-        }
-
-        .cart-featured-media {
-            height: 120px;
-            background: var(--gray-10);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 22px;
-        }
-
-        .cart-featured-content {
-            padding: 16px;
-            display: grid;
-            gap: 8px;
-        }
-
-        .cart-featured-price {
-
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 8px;
-
-            .cart-preview-label {
-                font-size: var(--type-size-100);
-                line-height: var(--type-line-100);
-                color: var(--text-secondary);
-            }
-
-            .cart-preview-value {
-                font-size: var(--type-size-200);
-                line-height: var(--type-line-200);
-                color: var(--text-primary);
-            }
-        }
-    }
-
-    .cart-preview-footer {
-        border-top: 1px solid var(--gray-30);
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-
-        .cart-preview-total {
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 2px;
-
-            .cart-preview-label {
-                font-size: var(--type-size-200);
-                line-height: var(--type-line-200);
-                color: var(--text-primary);
-            }
-
-            .cart-preview-value {
-                font-size: var(--type-size-400);
-                line-height: var(--type-line-400);
-                color: var(--text-primary);
-            }
-        }
-
-        .cart-preview-note-row {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            align-items: start;
-            column-gap: 10px;
-        }
-
-        .cart-preview-note-label {
-
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            color: var(--text-secondary);
-        }
-
-        .cart-preview-note {
-
-            font-size: var(--type-size-100);
-            line-height: var(--type-line-100);
-            color: var(--text-secondary);
-            text-align: right;
-        }
-
-        .cart-preview-actions {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .cart-preview-view-btn {
-            border-radius: 16px;
-            border: 1px solid var(--gray-80);
-            background: var(--contrast-light);
-            color: var(--text-primary);
-            font-size: var(--type-size-200);
-            font-weight: var(--font-weight-semibold);
-            line-height: var(--type-line-200);
-            box-shadow: none;
-            transition: background-color 0.18s ease;
-            padding: 10px 16px;
-
-            &:hover {
-                background: var(--gray-20);
-            }
-        }
-
-        .cart-preview-checkout-btn {
-            border-radius: 16px;
-            background: var(--gray-100);
-            color: #ffffff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: var(--type-size-200);
-            font-weight: var(--font-weight-semibold);
-            line-height: var(--type-line-200);
-            transition: filter 0.18s ease;
-            padding: 10px 20px;
-
-            &:hover {
-                filter: brightness(1.05);
-            }
-        }
-    }
+	position: fixed;
+	inset: 0;
+	background: transparent;
+	z-index: 230;
+	display: flex;
+	align-items: stretch;
+	justify-content: flex-end;
+
+	.cart-preview-panel {
+		width: min(540px, 100vw);
+		max-width: 100vw;
+		background: var(--contrast-light);
+		border-left: 1px solid var(--gray-30);
+		box-shadow: -20px 0 42px rgba(7, 14, 26, 0.16);
+		height: 100dvh;
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		overflow-x: hidden;
+	}
+
+	.cart-preview-header {
+		min-height: 84px;
+		border-bottom: 1px solid var(--gray-30);
+		padding: 0 22px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.cart-preview-title {
+
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			color: var(--text-primary);
+		}
+
+		.cart-preview-continue {
+			color: var(--text-primary);
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			font-size: var(--type-size-100);
+			font-weight: var(--font-weight-semibold);
+			line-height: var(--type-line-100);
+			padding: 6px 0;
+			min-height: auto;
+			border-radius: 0;
+			--btn-soft: transparent;
+			transition: opacity 0.18s ease;
+
+			&:hover {
+				opacity: 0.7;
+			}
+		}
+	}
+
+	.cart-preview-body {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		overflow-x: hidden;
+		padding: 0;
+		min-height: 0;
+
+		.cart-preview-items-scroll {
+			min-height: 0;
+			overflow: auto;
+			height: 100%;
+		}
+
+		.cart-preview-items {
+			display: grid;
+			gap: 16px;
+			padding: 24px;
+		}
+
+		.cart-preview-item {
+			padding: 0 0 16px;
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 12px;
+			border-bottom: 1px solid var(--gray-30);
+			min-height: 106px;
+		}
+
+		.cart-preview-item-main {
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+			min-width: 0;
+		}
+
+		.cart-preview-item-thumb {
+			width: 72px;
+			height: 72px;
+			border-radius: 10px;
+			background: var(--gray-10);
+			overflow: hidden;
+			flex-shrink: 0;
+
+			.cart-preview-image {
+				padding: 12px;
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
+		}
+
+		.cart-preview-item-copy {
+			min-width: 0;
+			flex: 1;
+			min-height: 72px;
+
+			.cart-preview-section-title {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-primary);
+			}
+
+			.cart-preview-meta {
+
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-secondary);
+				min-height: 24px;
+				display: flex;
+				align-items: center;
+			}
+
+		}
+
+		.cart-preview-item-side {
+			display: grid;
+			justify-items: end;
+			gap: 8px;
+			min-width: 118px;
+			align-self: stretch;
+			align-content: start;
+		}
+
+		.cart-preview-item-price {
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			color: var(--text-primary);
+			white-space: nowrap;
+		}
+
+		.cart-preview-item-actions {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 16px;
+			width: 100%;
+			min-height: 32px;
+		}
+
+		.cart-item-icon-btn {
+			width: 32px;
+			height: 32px;
+			min-width: 32px;
+			border-radius: 6px;
+			padding: 0;
+			box-shadow: none;
+			--btn-soft: transparent;
+			--btn-border: transparent;
+
+			&:hover {
+				background: var(--gray-20);
+			}
+		}
+
+		.cart-featured {
+			margin-top: 16px;
+			padding: 16px 24px;
+			border-top: 1px solid var(--gray-30);
+			min-width: 0;
+		}
+
+		.cart-featured--with-item {
+			margin-top: auto;
+		}
+
+		.cart-preview-empty {
+			display: grid;
+			justify-items: center;
+			text-align: center;
+			row-gap: 10px;
+			padding: 18px 14px 20px;
+			border-bottom: 0;
+
+			.cart-preview-empty-image {
+				width: 112px;
+				height: 112px;
+				object-fit: contain;
+				display: block;
+			}
+
+			.cart-preview-empty-title {
+
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-primary);
+			}
+
+			.cart-preview-empty-description {
+
+				max-width: 420px;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-secondary);
+			}
+		}
+
+		&.cart-preview-body--empty {
+			display: grid;
+			grid-template-rows: minmax(0, 1fr) auto;
+			align-items: stretch;
+			padding-top: 0;
+			overflow: hidden;
+
+			.cart-preview-empty {
+				height: 100%;
+				align-content: center;
+				max-width: 100%;
+				margin: 0 auto;
+				padding: 24px 14px;
+			}
+
+			.cart-featured {
+				margin-top: 0;
+				min-height: 0;
+			}
+		}
+
+		.cart-featured-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 10px;
+
+			.cart-preview-section-title {
+
+				font-size: var(--type-size-200);
+				line-height: var(--type-line-200);
+				color: var(--text-primary);
+			}
+		}
+
+		.cart-featured-close {
+			width: 26px;
+			height: 26px;
+			min-width: 26px;
+			border-radius: 6px;
+			padding: 0;
+			--btn-soft: transparent;
+		}
+
+		.cart-featured-grid {
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 10px;
+			overflow-x: auto;
+			overflow-y: hidden;
+			padding-bottom: 12px;
+			scrollbar-width: thin;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+
+			&::-webkit-scrollbar {
+				height: 6px;
+			}
+
+			&::-webkit-scrollbar-track {
+				background: transparent;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background: var(--gray-50);
+				border-radius: 999px;
+			}
+		}
+
+		.cart-featured-card {
+			min-width: 184px;
+			flex: 0 0 184px;
+			border: 1px solid var(--gray-30);
+			border-radius: 10px;
+			background: var(--contrast-light);
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			transition: transform 0.2s ease, border-color 0.2s ease;
+
+			&:hover {
+				border-color: var(--gray-50);
+			}
+
+			.cart-preview-image {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
+
+			.cart-featured-item-title {
+
+				font-size: var(--type-size-100);
+				font-weight: var(--font-weight-medium);
+				line-height: var(--type-line-100);
+				color: var(--text-primary);
+			}
+
+			.cart-featured-customize-btn {
+				width: 100%;
+				margin: 0 auto;
+				height: 32px;
+				border-radius: 8px;
+				background: var(--gray-20);
+				color: var(--text-primary);
+				font-size: var(--type-size-100);
+				font-weight: var(--font-weight-semibold);
+				line-height: var(--type-line-100);
+				box-shadow: none;
+				transition: background-color 0.18s ease;
+
+				&:hover {
+					background: var(--gray-30);
+				}
+			}
+		}
+
+		.cart-featured-media {
+			height: 120px;
+			background: var(--gray-10);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px 22px;
+		}
+
+		.cart-featured-content {
+			padding: 16px;
+			display: grid;
+			gap: 8px;
+		}
+
+		.cart-featured-price {
+
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 8px;
+
+			.cart-preview-label {
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-secondary);
+			}
+
+			.cart-preview-value {
+				font-size: var(--type-size-200);
+				line-height: var(--type-line-200);
+				color: var(--text-primary);
+			}
+		}
+	}
+
+	.cart-preview-footer {
+		border-top: 1px solid var(--gray-30);
+		padding: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		.cart-preview-total {
+
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding-top: 2px;
+
+			.cart-preview-label {
+				font-size: var(--type-size-200);
+				line-height: var(--type-line-200);
+				color: var(--text-primary);
+			}
+
+			.cart-preview-value {
+				font-size: var(--type-size-400);
+				line-height: var(--type-line-400);
+				color: var(--text-primary);
+			}
+		}
+
+		.cart-preview-note-row {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: start;
+			column-gap: 10px;
+		}
+
+		.cart-preview-note-label {
+
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			color: var(--text-secondary);
+		}
+
+		.cart-preview-note {
+
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			color: var(--text-secondary);
+			text-align: right;
+		}
+
+		.cart-preview-actions {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+		}
+
+		.cart-preview-view-btn {
+			border-radius: 16px;
+			border: 1px solid var(--gray-80);
+			background: var(--contrast-light);
+			color: var(--text-primary);
+			font-size: var(--type-size-200);
+			font-weight: var(--font-weight-semibold);
+			line-height: var(--type-line-200);
+			box-shadow: none;
+			transition: background-color 0.18s ease;
+			padding: 10px 16px;
+
+			&:hover {
+				background: var(--gray-20);
+			}
+		}
+
+		.cart-preview-checkout-btn {
+			border-radius: 16px;
+			background: var(--gray-100);
+			color: #ffffff;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			font-size: var(--type-size-200);
+			font-weight: var(--font-weight-semibold);
+			line-height: var(--type-line-200);
+			transition: filter 0.18s ease;
+			padding: 10px 20px;
+
+			&:hover {
+				filter: brightness(1.05);
+			}
+		}
+	}
 }
 
 @media (max-width: 820px) {
-    .cart-preview-shell {
-        .cart-preview-header {
-            .cart-preview-title {
-                font-size: var(--type-size-500);
-                line-height: var(--type-line-500);
-            }
-        }
+	.cart-preview-shell {
+		.cart-preview-header {
+			.cart-preview-title {
+				font-size: var(--type-size-500);
+				line-height: var(--type-line-500);
+			}
+		}
 
-        .cart-preview-body {
-            .cart-preview-item-price {
-                font-size: var(--type-size-500);
-                line-height: var(--type-line-500);
-            }
-        }
+		.cart-preview-body {
+			.cart-preview-item-price {
+				font-size: var(--type-size-500);
+				line-height: var(--type-line-500);
+			}
+		}
 
-        .cart-preview-footer {
-            .cart-preview-total {
-                .cart-preview-label {
-                    font-size: var(--type-size-500);
-                    line-height: var(--type-line-500);
-                }
+		.cart-preview-footer {
+			.cart-preview-total {
+				.cart-preview-label {
+					font-size: var(--type-size-500);
+					line-height: var(--type-line-500);
+				}
 
-                .cart-preview-value {
-                    font-size: var(--type-size-550);
-                    line-height: var(--type-line-550);
-                }
-            }
+				.cart-preview-value {
+					font-size: var(--type-size-550);
+					line-height: var(--type-line-550);
+				}
+			}
 
-            .cart-preview-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
+			.cart-preview-actions {
+				display: grid;
+				grid-template-columns: 1fr;
+			}
 
-            .cart-preview-view-btn,
-            .cart-preview-checkout-btn {
-                width: 100%;
-            }
-        }
-    }
+			.cart-preview-view-btn,
+			.cart-preview-checkout-btn {
+				width: 100%;
+			}
+		}
+	}
 }
 </style>
 
 <style lang="scss">
 .cart-preview-slide-enter-active,
 .cart-preview-slide-leave-active {
-    transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+	transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .cart-preview-slide-enter-from,
 .cart-preview-slide-leave-to {
-    opacity: 0;
+	opacity: 0;
 }
 
 .cart-preview-slide-enter-from .cart-preview-panel,
 .cart-preview-slide-leave-to .cart-preview-panel {
-    transform: translateX(100%);
+	transform: translateX(100%);
 }
 
 .cart-preview-slide-enter-active .cart-preview-panel,
 .cart-preview-slide-leave-active .cart-preview-panel {
-    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+	transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .cart-redirect-fade-enter-active,
 .cart-redirect-fade-leave-active {
-    transition: opacity 0.16s ease;
+	transition: opacity 0.16s ease;
 }
 
 .cart-redirect-fade-enter-from,
 .cart-redirect-fade-leave-to {
-    opacity: 0;
+	opacity: 0;
 }
 
 </style>

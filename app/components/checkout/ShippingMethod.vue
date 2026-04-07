@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 import { useShippingMethod } from '~/composables/checkout/shipping/useShippingMethod';
-import ShippingMethodSkeletonLoader from '~/components/checkout/skeleton-loader/ShippingMethod.vue';
+import ShippingMethodSkeletonLoader from '~/components/checkout/skeleton-loader/SkeletonShippingMethod.vue';
 
 const { t: translate } = useI18n();
 

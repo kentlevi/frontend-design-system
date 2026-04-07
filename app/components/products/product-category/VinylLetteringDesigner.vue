@@ -441,6 +441,23 @@ onMounted(async () => {
 	await textHandler()
 	isReady.value = true
 })
+
+
+// The internal function that does the work
+const generateImage = async (): Promise<Blob | null> => {
+	return new Promise((resolve) => {
+		if (!canvasRef.value) return resolve(null)
+
+		canvasRef.value.toBlob((blob) => {
+			resolve(blob)
+		}, 'image/png', 1.0)
+	})
+}
+
+// 🔑 EXPOSE the function to the parent
+defineExpose({
+	generateImage
+})
 </script>
 
 <template>
@@ -521,7 +538,7 @@ onMounted(async () => {
 	overflow: hidden;
 	text-align: center;
 	background-color: #64656A;
-    background-image: linear-gradient(45deg, #797A7F 25%, transparent 25%, transparent 75%, #797A7F 75%, #797A7F), linear-gradient(45deg, #797A7F 25%, transparent 25%, transparent 75%, #797A7F 75%, #797A7F);
+	background-image: linear-gradient(45deg, #797A7F 25%, transparent 25%, transparent 75%, #797A7F 75%, #797A7F), linear-gradient(45deg, #797A7F 25%, transparent 25%, transparent 75%, #797A7F 75%, #797A7F);
 	background-size: 22px 22px;
 	background-position: 0 0, 11px 11px;
 }

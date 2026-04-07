@@ -11,6 +11,8 @@ import { useAddressEditForm } from '~/composables/account/addressBook/useAddress
 import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
 import { useAddressFieldStore } from '~/stores/address';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
+import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
+import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -18,10 +20,12 @@ withDefaults(defineProps<{
 	embedded: false,
 });
 
-const { t } = useI18n();
-const toast_store = useToastStore()
+const { t: translate } = useI18n();
 
-/** Store */
+/**
+ * Store
+ */
+const loading_overlay_store = useLoadingOverlayStore()
 const address_field_store = useAddressFieldStore()
 const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 
@@ -53,18 +57,37 @@ const {
 
 const {
 	is_form_modal_open,
+	is_delete_modal_open,
+	is_default_shipping_modal_open,
+	is_confirm_default_change_modal_open,
 	form_modal_mode,
 	form_submit_label,
 	setCreateMode,
 	openCreateFormModal,
 	openEditFormModal,
 	closeFormModal,
+	openDeleteDialog,
+	closeDeleteDialog,
+	openDefaultShippingModal,
+	closeDefaultShippingModal,
+	openConfirmDefaultChangeModal,
+	closeConfirmDefaultChangeModal: closeConfirmDefaultChangeStateModal,
 } = useAddressModalState()
+
+const {
+	pending_default_address,
+	current_default_address,
+
+	setAddressDefault,
+	setAddressDefaultWithToast,
+	startDefaultFlow,
+} = useAddressDefaultFlow({
+	openConfirmDefaultChangeModal,
+})
 
 const {
 	createAddress,
 	prepareCreateModal,
-	validateForm,
 } = useAddressCreateForm({
 	form_state,
 	form_type,
@@ -79,31 +102,42 @@ const {
 })
 
 const {
+	pending_delete_address,
+
+	startDeleteFlow,
+	cancelDeleteFlow,
+	getReplacementAddresses,
+	confirmDeleteAddress,
+} = useAddressDeleteForm({
+	shipping_address,
+	billing_address,
+	drop_address,
+
+	openDeleteDialog,
+	closeDeleteDialog,
+	openDefaultShippingModal,
+	closeDefaultShippingModal,
+})
+
+const {
 	resetEditState,
 	openEditModal,
-	updateAddressLocally,
+	updateAddress,
 } = useAddressEditForm({
 	form_state,
 	form_type,
 	active_form,
+	form_field_errors,
+
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,
 	clearFormFieldErrors,
 })
 
-const pending_delete_address = ref<AddressMap[AddressType] | null>(null)
-const is_default_shipping_modal_open = ref(false)
-const pending_default_address = ref<AddressMap[AddressType] | null>(null)
-const current_default_address = ref<AddressMap[AddressType] | null>(null)
-const is_confirm_default_change_modal_open = ref(false)
-
-const replacement_shipping_addresses = computed(() => {
-	if (!pending_delete_address.value || pending_delete_address.value.type !== 'shipping') {
-		return shipping_address.value
-	}
-
-	return shipping_address.value.filter(address => address.id !== pending_delete_address.value?.id)
+const replacement_addresses = computed(() => {
+	const pending_type = pending_delete_address.value?.type
+	return pending_type ? getReplacementAddresses(pending_type) : []
 })
 
 onMounted(() => {
@@ -112,25 +146,6 @@ onMounted(() => {
 	getAddresses('drop')
 	address_field_store.getDynamicFields()
 })
-
-function getAddressListByType(type: AddressType) {
-	if (type === 'shipping') return shipping_address.value
-	if (type === 'billing') return billing_address.value
-	return drop_address.value
-}
-
-function getAddressTypeLabel(type: AddressType) {
-	return type === 'drop' ? 'drop shipping' : type
-}
-
-function showDefaultAddressToast(type: AddressType) {
-	toast_store.showToastWithTimer({
-		message: `Your default ${getAddressTypeLabel(type)} address has been updated!`,
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
-	})
-}
 
 function handleCardMenuAction(payload: {
 	action: 'edit' | 'delete' | 'default';
@@ -142,24 +157,12 @@ function handleCardMenuAction(payload: {
 	}
 
 	if (payload.action === 'delete') {
-		pending_delete_address.value = payload.item
+		startDeleteFlow(payload.item)
 		return
 	}
 
 	if (payload.action === 'default') {
-		if (!payload.item.is_default) {
-			const existing_default = getAddressListByType(payload.item.type)
-				.find(address => address.is_default && address.id !== payload.item.id) ?? null
-
-			if (existing_default) {
-				current_default_address.value = existing_default
-				pending_default_address.value = payload.item
-				is_confirm_default_change_modal_open.value = true
-				return
-			}
-		}
-
-		showDefaultAddressToast(payload.item.type)
+		startDefaultFlow(payload.item)
 	}
 }
 
@@ -171,70 +174,38 @@ function handleOpenAddModal() {
 }
 
 function submitAddressForm() {
-	if (!validateForm()) {
-		return
-	}
-
 	if (form_modal_mode.value === 'edit') {
-		updateAddressLocally()
+		updateAddress()
 		return
 	}
 
 	createAddress()
 }
 
-function closeDeleteAddressModal() {
-	pending_delete_address.value = null
-}
+async function deleteAndSetDefault(type: AddressType, address_id: number) {
 
-function confirmDeleteAddress() {
-	const deleting_address = pending_delete_address.value
-
-	if (!deleting_address) return
-
-	const should_show_default_shipping_modal = deleting_address.type === 'shipping'
-		&& deleting_address.is_default
-		&& replacement_shipping_addresses.value.length > 0
-
-	if (should_show_default_shipping_modal) {
-		is_default_shipping_modal_open.value = true
-		return
-	}
-
-	closeDeleteAddressModal()
-	toast_store.showToastWithTimer({
-		message: 'Your address has been successfully deleted.',
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
+	loading_overlay_store.startLoading('set_default', {
+		showCopy: true,
+		testId: 'account-address-set-default-overlay',
+		position: 'fixed'
 	})
-}
 
-function finalizeDefaultShippingDeleteFlow() {
-	is_default_shipping_modal_open.value = false
-	closeDeleteAddressModal()
-	toast_store.showToastWithTimer({
-		message: 'Your address has been successfully deleted.',
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
-	})
+	await Promise.all([
+		confirmDeleteAddress({ skip_default_shipping_modal: true, overlay: false }),
+		setAddressDefault(type, address_id),
+	])
+
+	loading_overlay_store.stopLoading('set_default')
 }
 
 function closeConfirmDefaultChangeModal() {
-	is_confirm_default_change_modal_open.value = false
+	closeConfirmDefaultChangeStateModal()
 	current_default_address.value = null
 	pending_default_address.value = null
 }
 
-function confirmDefaultAddressChange() {
-	closeConfirmDefaultChangeModal()
-	toast_store.showToastWithTimer({
-		message: 'Your default drop shipping address has been updated!',
-		tone: 'primary',
-		dismissible: true,
-		variant: 'default',
-	})
+function confirmDefaultAddressChange(type: AddressType, address_id: number) {
+	setAddressDefaultWithToast(type, address_id)
 }
 </script>
 
@@ -244,7 +215,7 @@ function confirmDefaultAddressChange() {
 			<div class="account-content" data-testid="account-address-book-content">
 				<header class="account-address-book-header" data-testid="account-address-book-header">
 					<h1 class="account-address-book-title" data-testid="account-address-book-title">
-						{{ t('account.addressBook.title') }}
+						{{ translate('account.addressBook.title') }}
 					</h1>
 					<UiButton
 						v-if="has_addresses"
@@ -256,7 +227,7 @@ function confirmDefaultAddressChange() {
 						data-testid="account-address-book-add-button"
 						@click="handleOpenAddModal"
 					>
-						{{ t('account.addressBook.addNew') }}
+						{{ translate('account.addressBook.addNew') }}
 					</UiButton>
 				</header>
 
@@ -300,10 +271,10 @@ function confirmDefaultAddressChange() {
 						>
 					</div>
 					<h2 class="account-address-book-empty-state-title">
-						{{ t('account.addressBook.emptyTitle') }}
+						{{ translate('account.addressBook.emptyTitle') }}
 					</h2>
 					<p class="account-address-book-empty-state-description">
-						{{ t('account.addressBook.emptyDescription') }}
+						{{ translate('account.addressBook.emptyDescription') }}
 					</p>
 					<UiButton
 						variant="filled"
@@ -315,7 +286,7 @@ function confirmDefaultAddressChange() {
 						data-testid="account-address-book-empty-add-button"
 						@click="handleOpenAddModal"
 					>
-						{{ t('account.addressBook.addNew') }}
+						{{ translate('account.addressBook.addNew') }}
 					</UiButton>
 				</section>
 			</div>
@@ -334,22 +305,21 @@ function confirmDefaultAddressChange() {
 				@submit="submitAddressForm"
 			/>
 			<DeleteConfirmModal
-				:model-value="Boolean(pending_delete_address) && !is_default_shipping_modal_open"
+				:model-value="is_delete_modal_open"
 				title="Are you sure you want to delete this address?"
 				description="This address will be permanently removed from your address book."
 				modal-class="account-address-book-delete-modal-shell"
 				test-id="account-address-book-delete-modal"
-				@update:model-value="!$event ? closeDeleteAddressModal() : undefined"
-				@cancel="closeDeleteAddressModal"
+				@update:model-value="!$event ? cancelDeleteFlow() : undefined"
+				@cancel="cancelDeleteFlow"
 				@confirm="confirmDeleteAddress"
 			/>
 			<AddressBookDefaultShippingModal
 				:model-value="is_default_shipping_modal_open"
-				:addresses="replacement_shipping_addresses"
-				@update:model-value="!$event ? finalizeDefaultShippingDeleteFlow() : undefined"
-				@cancel="finalizeDefaultShippingDeleteFlow"
-				@skip="finalizeDefaultShippingDeleteFlow"
-				@save="finalizeDefaultShippingDeleteFlow"
+				:addresses="replacement_addresses"
+				@cancel="() => { closeDefaultShippingModal(); cancelDeleteFlow() }"
+				@skip="confirmDeleteAddress({skip_default_shipping_modal: true})"
+				@save="deleteAndSetDefault"
 			/>
 			<AddressBookConfirmDefaultChangeModal
 				:model-value="is_confirm_default_change_modal_open"

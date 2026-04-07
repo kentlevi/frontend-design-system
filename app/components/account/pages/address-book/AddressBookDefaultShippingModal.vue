@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import type { ShippingAddress } from '~/types/address';
+import type { AddressMap, AddressType } from '~/types/address';
+import { useAddressHelper } from '~/utils/address';
+
+const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
 
 const props = defineProps<{
 	modelValue: boolean;
-	addresses: ShippingAddress[];
+	addresses: AddressMap[AddressType][];
 }>();
 
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'cancel'): void;
 	(e: 'skip'): void;
-	(e: 'save', addressId: number): void;
+	(e: 'save', type: AddressType, address_id: number): void;
 }>();
 
 const selected_address_id = ref<number | null>(null)
@@ -36,23 +39,6 @@ watch(() => props.modelValue, (is_open) => {
 	}
 })
 
-function buildAddressLines(address: ShippingAddress) {
-	const lines: string[] = []
-
-	if (address.address_line_1) lines.push(address.address_line_1)
-	if (address.address_line_2) lines.push(address.address_line_2)
-
-	address.dynamic_fields.forEach((field) => {
-		if (field?.value) {
-			lines.push(field.value)
-		}
-	})
-
-	if (address.postcode) lines.push(address.postcode)
-
-	return lines.join(', ')
-}
-
 function closeModal() {
 	emit('update:modelValue', false)
 }
@@ -71,7 +57,12 @@ function saveSelection() {
 	if (selected_address_id.value === null) return
 
 	closeModal()
-	emit('save', selected_address_id.value)
+
+	const selected_address = props.addresses.find((address) => address.id === selected_address_id.value)
+
+	if (!selected_address) return
+
+	emit('save', selected_address.type, selected_address_id.value)
 }
 </script>
 
@@ -127,8 +118,8 @@ function saveSelection() {
 						</div>
 
 						<div class="account-address-book-default-modal-card-body">
-							<p class="account-address-book-default-modal-card-phone">
-								{{ address.phone_number }}
+							<p v-if="shippingPhoneNumber(address)" class="account-address-book-default-modal-card-phone">
+								{{ shippingPhoneNumber(address) }}
 							</p>
 							<p class="account-address-book-default-modal-card-address">
 								{{ buildAddressLines(address) }}

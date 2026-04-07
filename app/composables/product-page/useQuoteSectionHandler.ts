@@ -48,7 +48,7 @@ export const useQuoteSectionHandler = () => {
 	const instatiateForm = async (prod_slug: string, { interactive = true }: InitializeFormOptions = {}) => {
 		console.warn('🔥 Preparing form...')
 
-		// 📌 Existing attributes
+		// 📌 Existing attributes that was selected in previous products
 		const existing_attr = quote_service.recentSelection(prod_slug)
 
 		// 🔥 If the current selected product, has already a pre-selected attributes

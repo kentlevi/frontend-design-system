@@ -164,8 +164,8 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 				{{ t('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 
-			<!-- ipasa ang id gaw if unsay product_variant_id sa kana nga combination -->
-			<ShippingMethod :cart-item-ids="[1,2]" />
+			<!-- ipasa ang id gaw tanan cart_item_ids in array -->
+			<ShippingMethod :cart-item-ids="[1]" />
 
 			<div class="checkout-member-inline-row">
 				<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">

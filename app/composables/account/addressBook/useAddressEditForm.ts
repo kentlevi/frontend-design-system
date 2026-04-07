@@ -2,11 +2,15 @@ import type { Ref } from 'vue';
 import { updateUserAddress } from '~/services/profile/address.service';
 import { useAddressFieldStore, useAddressStore } from "~/stores/address";
 import type { AddressFormState, AddressFormMap, AddressMap, AddressType, DynamicFieldDefinition } from "~/types/address";
+import type { CountryField } from '~/types/country_field';
+import { useAddressHelper } from '~/utils/address';
 
 type UseAddressEditFormOptions = {
 	form_state: AddressFormState
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
+	form_field_errors: Ref<Record<string, string>>
+
 	openEditFormModal: () => void
 	closeFormModal: () => void
 	setCreateMode: () => void
@@ -15,10 +19,11 @@ type UseAddressEditFormOptions = {
 
 export function useAddressEditForm(options: UseAddressEditFormOptions) {
 
+	const { mapApiFieldErrors } = useAddressHelper()
+
 	/**
      * Stores
      */
-
 	const address_field_store = useAddressFieldStore()
 	const address_store = useAddressStore()
 	const toast_store = useToastStore()
@@ -122,7 +127,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 		options.openEditFormModal()
 	}
 
-	async function updateAddressLocally() {
+	async function updateAddress() {
 		if (editing_address_id.value === null || !editing_address_snapshot.value) {
 			options.closeFormModal()
 			return
@@ -158,7 +163,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 						type: 'billing',
 						dynamic_fields: address_field_store.dynamic_address_fields.map(field => ({
 							...field,
-							value: String(fields[field.field_key] ?? ''),
+							value: String(getValue(field, fields[field.field_key] ?? '')),
 						})),
 					})
 				}
@@ -174,13 +179,15 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 						type: 'shipping',
 						dynamic_fields: address_field_store.dynamic_address_fields.map(field => ({
 							...field,
-							value: String(fields[field.field_key] ?? ''),
+							value: String(getValue(field, fields[field.field_key] ?? '')),
 						})),
 					})
 				}
 				resetEditState()
 				options.setCreateMode()
 			} else {
+				const next_errors = mapApiFieldErrors(response.data)
+				options.form_field_errors.value = next_errors
 				options.openEditFormModal()
 			}
 
@@ -190,6 +197,17 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 		} finally {
 			loading_overlay_store.stopLoading('update_address')
 		}
+	}
+
+	function getValue(field: CountryField, field_value: string | number) {
+
+		if (field.input_type !== 'text') {
+			const value = field.options?.find((option) => option.id === field_value)
+
+			return value?.value ?? ''
+		}
+
+		return field_value
 	}
 
 	/** Overlays */
@@ -204,6 +222,6 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 	return {
 		resetEditState,
 		openEditModal,
-		updateAddressLocally,
+		updateAddress,
 	}
 }

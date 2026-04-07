@@ -44,3 +44,25 @@ export async function updateUserAddress(
 
 	return $api.put(`/address/${id}`, params);
 }
+
+/**
+ * Delete user address
+ */
+export async function deleteUserAddress(
+	id: number,
+): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return $api.delete(`/address/${id}`);
+}
+
+/**
+ * Set user address to default
+ */
+export async function setDefault(
+	id: number,
+): Promise<ApiResponse> {
+	const { $api } = useNuxtApp()
+
+	return $api.put(`/address/${id}/default`);
+}

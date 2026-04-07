@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType, ShippingAddress } from '~/types/address';
+import type { AddressMap, AddressType } from '~/types/address';
 import type { ComponentPublicInstance } from 'vue';
+import { useAddressHelper } from '~/utils/address';
+
+const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
 
 type MenuActionKey = 'edit' | 'delete' | 'default';
 
@@ -56,59 +59,10 @@ const tag_badge_colors = {
 	},
 } as const;
 
-/** Check if current item is a shipping address */
-const is_shipping = computed(() => {
-	return props.item.type === 'shipping'
-})
-
-/** Check if current item is a drop address */
-const is_drop = computed(() => {
-	return props.item.type === 'drop'
-})
-
-/** Safely expose shipping phone number only for shipping items */
-const shipping_phone_number = computed(() => {
-	if (!is_shipping.value) return ''
-
-	return (props.item as ShippingAddress).phone_number ?? ''
-})
-
-/** Normalize company name */
-const company_name = computed(() => {
-	return props.item.company ?? ''
-})
+const shipping_phone_number = computed(() => shippingPhoneNumber(props.item))
 
 /** Build all visible address lines for the template */
-const address_lines = computed(() => {
-	const lines: string[] = []
-
-	/** Add standard address fields for non-drop items */
-	if (!is_drop.value) {
-		if ('address_line_1' in props.item && props.item.address_line_1) {
-			lines.push(props.item.address_line_1)
-		}
-
-		if ('address_line_2' in props.item && props.item.address_line_2) {
-			lines.push(props.item.address_line_2)
-		}
-	}
-
-	/** Add dynamic fields if they exist */
-	if ('dynamic_fields' in props.item && Array.isArray(props.item.dynamic_fields)) {
-		props.item.dynamic_fields.forEach((dynamic_field) => {
-			if (dynamic_field?.value) {
-				lines.push(dynamic_field.value)
-			}
-		})
-	}
-
-	/** Add postcode for non-drop items */
-	if (!is_drop.value && 'postcode' in props.item && props.item.postcode) {
-		lines.push(props.item.postcode)
-	}
-
-	return lines
-})
+const address_line_text = computed(() => buildAddressLines(props.item))
 
 function setMenuWrapRef(element: Element | ComponentPublicInstance | null) {
 	menu_wrap_ref.value = element instanceof HTMLElement ? element : null
@@ -217,22 +171,20 @@ onBeforeUnmount(() => {
 		<div class="account-address-book-card-body">
 			<div class="account-address-book-card-footer">
 				<div class="account-address-book-card-copy">
-					<p v-if="is_shipping && shipping_phone_number" class="account-address-book-card-phone">
+					<p v-if="shipping_phone_number" class="account-address-book-card-phone">
 						{{ shipping_phone_number }}
 					</p>
 
 					<div style="display: flex; gap: 4px;">
 						<p
-							v-for="(line, y_index) in address_lines"
-							:key="y_index"
 							class="account-address-book-card-address"
 						>
-							{{ line }}<span v-if="y_index !== address_lines.length - 1">, </span>
+							{{ address_line_text }}
 						</p>
 					</div>
 
-					<span v-if="company_name" class="account-address-book-card-company">
-						{{ company_name }}
+					<span v-if="props.item.company" class="account-address-book-card-company">
+						{{ props.item.company }}
 					</span>
 				</div>
 				<UiBadge
