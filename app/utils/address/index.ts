@@ -24,6 +24,8 @@ export function useAddressHelper() {
 
 		if ('postcode' in address && address.postcode) lines.push(address.postcode)
 
+		lines.push(address.country.name)
+
 		return lines
 	}
 

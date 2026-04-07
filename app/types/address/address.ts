@@ -14,6 +14,7 @@ export interface BaseAddress {
 	email?: string
 	is_default: boolean
 	notes?: string
+	country: Country
 }
 
 export interface AddressWithLines extends BaseAddress {
@@ -48,4 +49,9 @@ export interface AddressDynamicFields extends CountryField {
 
 export interface AddressFieldDefinition extends AddressDynamicFields {
 	value: string
+}
+
+export interface Country {
+	id: number
+	name: string
 }
