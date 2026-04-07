@@ -116,6 +116,23 @@ const phone_number_model = createStringFieldModel(
 		: ''
 )
 
+function onPhoneBeforeInput(event: InputEvent) {
+	// allow delete/backspace/etc (event.data can be null)
+	if (!event.data) return
+
+	if (/\D/.test(event.data)) {
+		event.preventDefault()
+	}
+}
+
+function onPhonePaste(event: ClipboardEvent) {
+	const pasted = event.clipboardData?.getData('text') ?? ''
+
+	if (/\D/.test(pasted)) {
+		event.preventDefault()
+	}
+}
+
 const default_address_tooltip_open = ref(false)
 const default_address_tooltip_ref = ref<HTMLElement | null>(null)
 
@@ -509,6 +526,8 @@ function toggleDefaultAddressTooltip() {
 											:aria-describedby="describedBy || undefined"
 											:placeholder="t('account.addressBook.phonePlaceholder')"
 											:state="getFieldError('phone_number') ? 'error' : 'default'"
+											@beforeinput="onPhoneBeforeInput"
+											@paste="onPhonePaste"
 										/>
 									</template>
 								</UiFormField>
