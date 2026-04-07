@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
 
 export function useAppHeaderCartPreview(params: {
 	closeAccountMenu: () => void;
@@ -12,8 +13,11 @@ export function useAppHeaderCartPreview(params: {
 
 	const cart_preview_open = ref(false);
 
-	// 🔥 Constant for now as requested, will be Pinia-driven in future
-	const cart_item_count = computed(() => 2);
+	const { itemCount: cart_item_count } = useCartPreview({
+		closePreview: () => {
+			cart_preview_open.value = false;
+		}
+	});
 
 	const is_cart_page = computed(
 		() => normalizeAppPath(route.path) === normalizeAppPath(withCountry('/cart'))
