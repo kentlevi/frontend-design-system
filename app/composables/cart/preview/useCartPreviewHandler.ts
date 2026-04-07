@@ -16,9 +16,6 @@ export const useCartPreviewHandler = () => {
 
 	const grand_total = computed(() => cart_store.grand_total)
 
-	const page = ref<number>(1)
-
-	const per_page = ref<number>(10)
 
 	const formatImage = (item: CartItem) => {
 		let f = `${config.public.file_url}${item.product_thumbnail}`
@@ -32,27 +29,13 @@ export const useCartPreviewHandler = () => {
 		return f
 	}
 
-	const getCartItems = async () => {
-		// calculate the numbers of cart items everytime request new data from database
-		await cart_service.calculateCartItems()
-
-		const cart_items = await cart_service.requestCartItems(page.value, per_page.value)
-		if( !cart_items )
-			return
-
-		if( cart_items.length )
-			cart_store.populateItems(cart_items)
-		else if( !cart_items.length && cart_store.number_of_items == 0 )
-			cart_store.empty()
-	}
-
 
 
 
 	// 🔥 Default method and initialization of component
 	const composePreview = () => {
 		console.warn('Compose preview component...')
-		getCartItems()
+		cart_service.getCartItems()
 	}
 
 	return {
@@ -60,11 +43,8 @@ export const useCartPreviewHandler = () => {
 		number_of_items,
 		items,
 		grand_total,
-		page,
-		per_page,
 		composePreview,
 		formatImage,
-		getCartItems,
 	}
 
 }

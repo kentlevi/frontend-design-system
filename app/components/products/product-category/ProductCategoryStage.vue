@@ -197,7 +197,6 @@ const openArworkUpload = async () => {
 		const blob = await editor_ref.value.generateImage()
 
 		if (blob) {
-			console.log('Generated blob:', blob)
 			// Now you can send this to your cart_service
 			const file = new File([blob], 'lettering.png', { type: 'image/png' })
 			letteringFileUpdate(file)
