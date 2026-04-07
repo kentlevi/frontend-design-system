@@ -61,8 +61,8 @@ const { year } = toRefs(component_props);
         .home-footer-compact-action-link {
             border: 1px solid var(--footer-border);
             color: var(--footer-text-secondary);
-            font-size: 12px;
-            line-height: 20px;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             text-decoration: none;
             padding: 2px 8px;
         }

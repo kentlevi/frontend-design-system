@@ -673,8 +673,8 @@ defineExpose({
 	border-radius: 18px;
 	background: rgba(95, 95, 99, 0.78);
 	color: var(--white-base);
-	font-size: var(--type-size-150);
-	line-height: 1.6;
+	font-size: var(--type-size-100);
+    line-height: var(--type-line-100);
 	text-align: left;
 
 	p {

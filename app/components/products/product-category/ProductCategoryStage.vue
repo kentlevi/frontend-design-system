@@ -933,8 +933,8 @@ const openArworkUpload = async () => {
             border-radius: 18px;
             background: #342b37;
             color: var(--white-base);
-            font-size: var(--type-size-150);
-            line-height: 1;
+            font-size: var(--type-size-100);
+            line-height: var(--type-line-100);
             font-weight: var(--font-weight-semibold);
             white-space: nowrap;
             opacity: 0;
@@ -1249,8 +1249,8 @@ const openArworkUpload = async () => {
         color: var(--text-secondary);
         display: grid;
         gap: 4px;
-        font-size: 12px;
-        line-height: 20px;
+        font-size: var(--type-size-100);
+    	line-height: var(--type-line-100);
         list-style: disc;
         max-width: 174.5px;
     }

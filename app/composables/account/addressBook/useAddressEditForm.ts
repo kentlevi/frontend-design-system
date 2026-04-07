@@ -183,6 +183,8 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 						})),
 					})
 				}
+
+				toast_store.handleApiResponse(response)
 				resetEditState()
 				options.setCreateMode()
 			} else {
@@ -190,8 +192,6 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 				options.form_field_errors.value = next_errors
 				options.openEditFormModal()
 			}
-
-			toast_store.handleApiResponse(response)
 		} catch (_error: unknown) {
 			console.log(_error);
 		} finally {

@@ -83,8 +83,8 @@ const { t } = useI18n();
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				font-size: var(--type-size-0);
-				line-height: 1;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
 				font-weight: var(--font-weight-bold);
 			}
 		}

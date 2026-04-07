@@ -38,7 +38,7 @@ useDismissibleTooltip(email_tooltip_ref, email_tooltip_open);
 						>
 							<template #trigger>
 								<button type="button" class="ui-tooltip-icon-trigger" @click="toggleEmailTooltip">
-									<UiIcon :name="email_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
+									<UiIcon :name="email_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
 								</button>
 							</template>
 							<div class="ui-tooltip-copy">

@@ -572,8 +572,8 @@ function handleUploadSubmit(payload: { itemNumber: string }) {
 }
 
 :global(.ui-toast.account-orders-upload-toast .ui-toast-text) {
-	font-size: 14px;
-	line-height: 1.4;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: var(--font-weight-semibold);
 	color: #1f2533;
 	white-space: nowrap;

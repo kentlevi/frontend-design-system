@@ -37,7 +37,7 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 						<UiTooltip :open="points_tooltip_open" v-bind="checkoutMemberPointsTooltipProps">
 							<template #trigger>
 								<button type="button" class="ui-tooltip-icon-trigger" @click="togglePointsTooltip">
-									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
+									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
 								</button>
 							</template>
 							<div class="ui-tooltip-copy">

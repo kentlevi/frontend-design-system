@@ -198,23 +198,23 @@ function saveSelection() {
 		justify-content: space-between;
 		padding: 18px 24px;
 		border-bottom: 1px solid var(--gray-20);
-	}
 
-	.account-address-book-default-modal-title {
-		font-size: var(--type-size-300);
-		line-height: var(--type-line-300);
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
+		.account-address-book-default-modal-title {
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			font-weight: var(--font-weight-bold);
+			color: var(--text-primary);
+		}
 
-	.account-address-book-default-modal-close {
-		display: grid;
-		place-items: center;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		cursor: pointer;
-		color: var(--text-primary);
+		.account-address-book-default-modal-close {
+			display: grid;
+			place-items: center;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			cursor: pointer;
+			color: var(--text-primary);
+		}
 	}
 
 	.account-address-book-default-modal-body {
@@ -222,96 +222,96 @@ function saveSelection() {
 		flex-direction: column;
 		gap: 24px;
 		padding: 28px 24px 24px;
-	}
 
-	.account-address-book-default-modal-description {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: 1.8;
-	}
-
-	.account-address-book-default-modal-list {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-address-book-default-modal-card {
-		display: flex;
-		flex-direction: column;
-		border: 1px solid var(--border-default);
-		border-radius: 12px;
-		background: var(--contrast-light);
-		cursor: pointer;
-		overflow: hidden;
-		transition: border-color 0.18s ease, box-shadow 0.18s ease;
-
-		&[data-selected='true'] {
-			border-color: var(--border-strong);
-			box-shadow: var(--shadow-sm);
+		.account-address-book-default-modal-description {
+			color: var(--text-secondary);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
 		}
-	}
 
-	.account-address-book-default-modal-card-head {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 18px 20px;
-		border-bottom: 1px solid var(--gray-20);
-	}
+		.account-address-book-default-modal-list {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
 
-	.account-address-book-default-modal-card-name {
-		font-size: var(--type-size-200);
-		line-height: var(--type-line-200);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
-	}
+			.account-address-book-default-modal-card {
+				display: flex;
+				flex-direction: column;
+				border: 1px solid var(--border-default);
+				border-radius: 12px;
+				background: var(--contrast-light);
+				cursor: pointer;
+				overflow: hidden;
+				transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
-	.account-address-book-default-modal-card-body {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		padding: 18px 20px;
-	}
+				&[data-selected='true'] {
+					border-color: var(--border-strong);
+					box-shadow: var(--shadow-sm);
+				}
 
-	.account-address-book-default-modal-card-phone {
-		color: var(--text-primary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-100);
-	}
+				.account-address-book-default-modal-card-head {
+					display: flex;
+					align-items: center;
+					gap: 12px;
+					padding: 18px 20px;
+					border-bottom: 1px solid var(--gray-20);
 
-	.account-address-book-default-modal-card-address,
-	.account-address-book-default-modal-card-company {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: 1.8;
-	}
+					.account-address-book-default-modal-card-name {
+						font-size: var(--type-size-200);
+						line-height: var(--type-line-200);
+						font-weight: var(--font-weight-semibold);
+						color: var(--text-primary);
+					}
+				}
 
-	.account-address-book-default-modal-card-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-	}
+				.account-address-book-default-modal-card-body {
+					display: flex;
+					flex-direction: column;
+					gap: 8px;
+					padding: 18px 20px;
 
-	.account-address-book-default-modal-actions {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		padding-top: 12px;
-	}
+					.account-address-book-default-modal-card-phone {
+						color: var(--text-primary);
+						font-size: var(--type-size-100);
+						font-weight: var(--font-weight-semibold);
+						line-height: var(--type-line-100);
+					}
 
-	.account-address-book-default-modal-actions-right {
-		display: inline-flex;
-		align-items: center;
-		gap: 12px;
-	}
+					.account-address-book-default-modal-card-address,
+					.account-address-book-default-modal-card-company {
+						color: var(--text-secondary);
+						font-size: var(--type-size-100);
+						line-height: var(--type-line-100);
+					}
 
-	.account-address-book-default-modal-save {
-		min-width: 74px;
-		border-radius: 18px;
+					.account-address-book-default-modal-card-footer {
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						gap: 16px;
+					}
+				}
+			}
+		}
+
+		.account-address-book-default-modal-actions {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			padding-top: 12px;
+
+			.account-address-book-default-modal-actions-right {
+				display: inline-flex;
+				align-items: center;
+				gap: 12px;
+
+				.account-address-book-default-modal-save {
+					min-width: 74px;
+					border-radius: 18px;
+				}
+			}
+		}
 	}
 }
 
@@ -325,13 +325,23 @@ function saveSelection() {
 	.account-address-book-default-modal {
 		.account-address-book-default-modal-body {
 			padding: 20px;
-		}
 
-		.account-address-book-default-modal-card-footer,
-		.account-address-book-default-modal-actions,
-		.account-address-book-default-modal-actions-right {
-			flex-direction: column;
-			align-items: stretch;
+			.account-address-book-default-modal-list {
+				.account-address-book-default-modal-card {
+					.account-address-book-default-modal-card-body {
+						.account-address-book-default-modal-card-footer {
+							flex-direction: column;
+							align-items: stretch;
+						}
+					}
+				}
+			}
+
+			.account-address-book-default-modal-actions,
+			.account-address-book-default-modal-actions-right {
+				flex-direction: column;
+				align-items: stretch;
+			}
 		}
 	}
 }

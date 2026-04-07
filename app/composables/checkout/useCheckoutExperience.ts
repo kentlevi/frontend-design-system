@@ -47,7 +47,7 @@ export function useCheckoutExperience() {
 	} = useCheckoutTooltipState();
 
 	// Modal States expected by the template
-	const is_shipping_address_modal_open = ref(false);
+	const is_shipping_address_modal_open = useState('is_shipping_address_modal_open', () =>false) 
 	const is_billing_address_modal_open = ref(false);
 	const is_drop_shipping_address_modal_open = ref(false);
 	const is_accredited_banks_modal_open = ref(false);

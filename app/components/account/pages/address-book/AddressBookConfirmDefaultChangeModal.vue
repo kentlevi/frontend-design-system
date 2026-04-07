@@ -2,7 +2,7 @@
 import type { AddressItem, AddressType, ShippingAddress } from '~/types/address';
 import { useAddressHelper } from '~/utils/address';
 
-const { getAddressLineParts } = useAddressHelper()
+const { buildAddressLines } = useAddressHelper()
 
 const props = defineProps<{
 	modelValue: boolean;
@@ -49,6 +49,10 @@ const modal_title = computed(() => {
 const modal_description = computed(() => {
 	return `You're about to set this as your default ${address_type_copy.value}. Confirm to proceed.`
 })
+
+function getLabelCopy(label: AddressItem['label']) {
+	return label.charAt(0).toUpperCase() + label.slice(1)
+}
 
 function isShippingAddress(address: AddressItem): address is ShippingAddress {
 	return address.type === 'shipping'
@@ -110,7 +114,12 @@ function confirmModal() {
 							<h4 class="account-address-book-confirm-default-modal-card-name">
 								{{ props.currentAddress.contact_name }}
 							</h4>
-							<UiBadge variant="outline" tone="default" size="md">
+							<UiBadge
+								variant="outline"
+								tone="default"
+								size="md"
+								class="account-address-book-confirm-default-modal-default-badge"
+							>
 								Default
 							</UiBadge>
 						</header>
@@ -119,17 +128,12 @@ function confirmModal() {
 							<p v-if="isShippingAddress(props.currentAddress)" class="account-address-book-confirm-default-modal-card-phone">
 								{{ props.currentAddress.phone_number }}
 							</p>
-							<p
-								v-for="(line, index) in getAddressLineParts(props.currentAddress)"
-								:key="`current-${index}`"
-								class="account-address-book-confirm-default-modal-card-address"
-							>
-								{{ line }}
-							</p>
-							<div class="account-address-book-confirm-default-modal-card-footer">
-								<span v-if="props.currentAddress.company" class="account-address-book-confirm-default-modal-card-company">
-									{{ props.currentAddress.company }}
-								</span>
+
+							<div class="account-address-book-confirm-default-modal-card-address-row">
+								<p class="account-address-book-confirm-default-modal-card-address">
+									{{ buildAddressLines(props.currentAddress) }}
+								</p>
+
 								<UiBadge
 									v-if="props.currentAddress.label"
 									variant="tonal"
@@ -137,10 +141,15 @@ function confirmModal() {
 									size="md"
 									:bg-color="tag_badge_colors[props.currentAddress.label]?.bgColor || 'var(--gray-10)'"
 									:text-color="tag_badge_colors[props.currentAddress.label]?.textColor || 'var(--gray-60)'"
+									class="account-address-book-confirm-default-modal-label-badge"
 								>
-									{{ props.currentAddress.label.charAt(0).toUpperCase() + props.currentAddress.label.slice(1) }}
+									{{ getLabelCopy(props.currentAddress.label) }}
 								</UiBadge>
 							</div>
+
+							<p v-if="props.currentAddress.company" class="account-address-book-confirm-default-modal-card-company">
+								{{ props.currentAddress.company }}
+							</p>
 						</div>
 					</article>
 
@@ -159,17 +168,12 @@ function confirmModal() {
 							<p v-if="isShippingAddress(props.nextAddress)" class="account-address-book-confirm-default-modal-card-phone">
 								{{ props.nextAddress.phone_number }}
 							</p>
-							<p
-								v-for="(line, index) in getAddressLineParts(props.nextAddress)"
-								:key="`next-${index}`"
-								class="account-address-book-confirm-default-modal-card-address"
-							>
-								{{ line }}
-							</p>
-							<div class="account-address-book-confirm-default-modal-card-footer">
-								<span v-if="props.nextAddress.company" class="account-address-book-confirm-default-modal-card-company">
-									{{ props.nextAddress.company }}
-								</span>
+
+							<div class="account-address-book-confirm-default-modal-card-address-row">
+								<p class="account-address-book-confirm-default-modal-card-address">
+									{{ buildAddressLines(props.nextAddress) }}
+								</p>
+
 								<UiBadge
 									v-if="props.nextAddress.label"
 									variant="tonal"
@@ -177,38 +181,43 @@ function confirmModal() {
 									size="md"
 									:bg-color="tag_badge_colors[props.nextAddress.label]?.bgColor || 'var(--gray-10)'"
 									:text-color="tag_badge_colors[props.nextAddress.label]?.textColor || 'var(--gray-60)'"
+									class="account-address-book-confirm-default-modal-label-badge"
 								>
-									{{ props.nextAddress.label.charAt(0).toUpperCase() + props.nextAddress.label.slice(1) }}
+									{{ getLabelCopy(props.nextAddress.label) }}
 								</UiBadge>
 							</div>
+
+							<p v-if="props.nextAddress.company" class="account-address-book-confirm-default-modal-card-company">
+								{{ props.nextAddress.company }}
+							</p>
 						</div>
 					</article>
 				</div>
-
-				<footer class="account-address-book-confirm-default-modal-actions">
-					<UiButton
-						type="button"
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="account-address-book-confirm-default-modal-cancel"
-						@click="cancelModal"
-					>
-						Cancel
-					</UiButton>
-
-					<UiButton
-						type="button"
-						variant="filled"
-						tone="neutral"
-						size="md"
-						class="account-address-book-confirm-default-modal-confirm"
-						@click="confirmModal"
-					>
-						Confirm
-					</UiButton>
-				</footer>
 			</div>
+
+			<footer class="account-address-book-confirm-default-modal-actions">
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="account-address-book-confirm-default-modal-cancel"
+					@click="cancelModal"
+				>
+					Cancel
+				</UiButton>
+
+				<UiButton
+					type="button"
+					variant="filled"
+					tone="neutral"
+					size="md"
+					class="account-address-book-confirm-default-modal-confirm"
+					@click="confirmModal"
+				>
+					Confirm
+				</UiButton>
+			</footer>
 		</section>
 	</UiModal>
 </template>
@@ -224,116 +233,135 @@ function confirmModal() {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 18px 24px;
+		padding: 20px 24px;
 		border-bottom: 1px solid var(--gray-20);
-	}
 
-	.account-address-book-confirm-default-modal-title {
-		font-size: var(--type-size-300);
-		line-height: var(--type-line-300);
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
+		.account-address-book-confirm-default-modal-title {
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			font-weight: var(--font-weight-bold);
+			color: var(--text-primary);
+		}
 
-	.account-address-book-confirm-default-modal-close {
-		display: grid;
-		place-items: center;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		cursor: pointer;
-		color: var(--text-primary);
+		.account-address-book-confirm-default-modal-close {
+			display: grid;
+			place-items: center;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			cursor: pointer;
+			color: var(--text-primary);
+		}
 	}
 
 	.account-address-book-confirm-default-modal-body {
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
-		padding: 28px 24px 24px;
-	}
+		gap: 28px;
+		padding: 28px 24px 0;
 
-	.account-address-book-confirm-default-modal-description {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: 1.8;
-	}
+		.account-address-book-confirm-default-modal-description {
+			color: var(--text-secondary);
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+		}
 
-	.account-address-book-confirm-default-modal-compare {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-		align-items: center;
-		gap: 20px;
-	}
+		.account-address-book-confirm-default-modal-compare {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr);
+			align-items: stretch;
+			gap: 20px;
 
-	.account-address-book-confirm-default-modal-arrow {
-		color: var(--text-primary);
-	}
+			.account-address-book-confirm-default-modal-arrow {
+				display: grid;
+				place-items: center;
+				color: var(--text-primary);
+			}
 
-	.account-address-book-confirm-default-modal-card {
-		border: 1px solid var(--border-default);
-		border-radius: 12px;
-		background: var(--contrast-light);
-		overflow: hidden;
+			.account-address-book-confirm-default-modal-card {
+				display: flex;
+				flex-direction: column;
+				border: 1px solid var(--border-default);
+				border-radius: 12px;
+				background: var(--contrast-light);
+				overflow: hidden;
 
-		&.account-address-book-confirm-default-modal-card--next {
-			border-color: var(--green-50, #59d94f);
+				&.account-address-book-confirm-default-modal-card--next {
+					border-color: var(--green-50, #59d94f);
+				}
+
+				.account-address-book-confirm-default-modal-card-head {
+					display: flex;
+					align-items: center;
+					gap: 12px;
+					padding: 18px 20px;
+					border-bottom: 1px solid var(--gray-20);
+
+					.account-address-book-confirm-default-modal-card-name {
+						flex: 1 1 auto;
+						font-size: var(--type-size-200);
+						line-height: var(--type-line-200);
+						font-weight: var(--font-weight-semibold);
+						color: var(--text-primary);
+					}
+
+					.account-address-book-confirm-default-modal-default-badge {
+						flex-shrink: 0;
+						font-weight: var(--font-weight-medium);
+					}
+				}
+
+				.account-address-book-confirm-default-modal-card-body {
+					display: flex;
+					flex-direction: column;
+					gap: 10px;
+					padding: 18px 20px;
+
+					.account-address-book-confirm-default-modal-card-phone {
+						color: var(--text-primary);
+						font-size: var(--type-size-100);
+						font-weight: var(--font-weight-semibold);
+						line-height: var(--type-line-100);
+					}
+
+					.account-address-book-confirm-default-modal-card-address,
+					.account-address-book-confirm-default-modal-card-company {
+						color: var(--text-secondary);
+						font-size: var(--type-size-100);
+						line-height: var(--type-line-100);
+					}
+
+					.account-address-book-confirm-default-modal-card-address-row {
+						display: flex;
+						align-items: flex-start;
+						justify-content: space-between;
+						gap: 16px;
+
+						.account-address-book-confirm-default-modal-card-address {
+							flex: 1 1 auto;
+							word-break: break-word;
+						}
+
+						.account-address-book-confirm-default-modal-label-badge {
+							flex-shrink: 0;
+						}
+					}
+				}
+			}
 		}
 	}
 
-	.account-address-book-confirm-default-modal-card-head {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 16px 20px;
-		border-bottom: 1px solid var(--gray-20);
-	}
-
-	.account-address-book-confirm-default-modal-card-name {
-		font-size: var(--type-size-200);
-		line-height: var(--type-line-200);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
-	}
-
-	.account-address-book-confirm-default-modal-card-body {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		padding: 16px 20px;
-	}
-
-	.account-address-book-confirm-default-modal-card-phone {
-		color: var(--text-primary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-100);
-	}
-
-	.account-address-book-confirm-default-modal-card-address,
-	.account-address-book-confirm-default-modal-card-company {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: 1.8;
-	}
-
-	.account-address-book-confirm-default-modal-card-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		padding-top: 4px;
-	}
-
 	.account-address-book-confirm-default-modal-actions {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
 		justify-content: flex-end;
 		gap: 12px;
-	}
+		padding: 26px 24px 24px;
 
-	.account-address-book-confirm-default-modal-confirm {
-		min-width: 88px;
-		border-radius: 18px;
+		.account-address-book-confirm-default-modal-confirm {
+			min-width: 88px;
+			border-radius: 18px;
+		}
 	}
 }
 
@@ -343,24 +371,33 @@ function confirmModal() {
 	overflow: hidden;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 640px) {
 	.account-address-book-confirm-default-modal {
 		.account-address-book-confirm-default-modal-body {
 			padding: 20px;
+
+			.account-address-book-confirm-default-modal-compare {
+				grid-template-columns: minmax(0, 1fr);
+
+				.account-address-book-confirm-default-modal-arrow {
+					display: none;
+				}
+
+				.account-address-book-confirm-default-modal-card {
+					.account-address-book-confirm-default-modal-card-body {
+						.account-address-book-confirm-default-modal-card-address-row {
+							flex-direction: column;
+							align-items: stretch;
+						}
+					}
+				}
+			}
 		}
 
-		.account-address-book-confirm-default-modal-compare {
-			grid-template-columns: minmax(0, 1fr);
-		}
-
-		.account-address-book-confirm-default-modal-arrow {
-			display: none;
-		}
-
-		.account-address-book-confirm-default-modal-card-footer,
 		.account-address-book-confirm-default-modal-actions {
 			flex-direction: column;
 			align-items: stretch;
+			padding: 20px;
 		}
 	}
 }

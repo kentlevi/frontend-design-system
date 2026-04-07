@@ -44,14 +44,14 @@ export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
 					address_store.setAddresses(type, response.data, 'prepend');
 				}
 
+
+				toast_store.handleApiResponse(response)
 				options.resetForm(type);
 			} else {
 				const next_errors = mapApiFieldErrors(response.data)
 				options.form_field_errors.value = next_errors
 				options.openCreateFormModal();
 			}
-
-			toast_store.handleApiResponse(response)
 		} catch (_error: unknown) {
 			console.log(_error);
 			options.openCreateFormModal();

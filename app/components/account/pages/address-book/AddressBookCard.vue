@@ -120,7 +120,40 @@ onBeforeUnmount(() => {
 			<div class="account-address-book-card-title-row">
 				<h3 class="account-address-book-card-name">{{ props.item.contact_name }}</h3>
 				<UiBadge
-					v-if="props.item.is_default"
+					v-if="props.item.is_default && props.item.type === 'shipping'"
+					variant="outline"
+					tone="default"
+					size="md"
+					class="account-address-book-card-default-badge"
+					text-color="var(--gray-80)"
+				>
+					<UiIcon name="strong-ship" :size="18" />
+					<span class="account-address-book-card-default-badge-copy">Default Shipping</span>
+				</UiBadge>
+				<UiBadge
+					v-else-if="props.item.is_default && props.item.type === 'billing'"
+					variant="outline"
+					tone="default"
+					size="md"
+					class="account-address-book-card-default-badge"
+					text-color="var(--gray-80)"
+				>
+					<UiIcon name="strong-file-dollar" :size="18" />
+					<span class="account-address-book-card-default-badge-copy">Default Billing</span>
+				</UiBadge>
+				<UiBadge
+					v-else-if="props.item.is_default && props.item.type === 'drop'"
+					variant="outline"
+					tone="default"
+					size="md"
+					class="account-address-book-card-default-badge"
+					text-color="var(--gray-80)"
+				>
+					<UiIcon name="strong-box-full" :size="18" />
+					<span class="account-address-book-card-default-badge-copy">Default Drop Shipping</span>
+				</UiBadge>
+				<UiBadge
+					v-else-if="props.item.is_default"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -216,101 +249,114 @@ onBeforeUnmount(() => {
 		gap: 12px;
 		padding: 12px 24px;
 		border-bottom: 1px solid var(--border-subtle, var(--border-default));
-	}
 
-	.account-address-book-card-title-row {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		min-width: 0;
-	}
+		.account-address-book-card-title-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			min-width: 0;
 
-	.account-address-book-card-name {
-		font-size: var(--type-size-200);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-200);
-	}
+			.account-address-book-card-name {
+				font-size: var(--type-size-200);
+				font-weight: var(--font-weight-semibold);
+				line-height: var(--type-line-200);
+			}
 
-	.account-address-book-menu-button {
-		color: var(--text-primary);
-		flex-shrink: 0;
-		padding: 0;
-	}
+			.account-address-book-card-default-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				flex-shrink: 0;
 
-	.account-address-book-menu-wrap {
-		position: relative;
-		flex-shrink: 0;
-	}
-
-	.account-address-book-menu-dropdown {
-		position: absolute;
-		top: calc(100% + 8px);
-		right: 0;
-		z-index: 4;
-		min-width: 204px;
-		display: flex;
-		flex-direction: column;
-		border: 1px solid var(--gray-60);
-		border-radius: 12px;
-		background: var(--contrast-light);
-		box-shadow: var(--shadow-md);
-		overflow: hidden;
-	}
-
-	.account-address-book-menu-item {
-		width: 100%;
-		padding: 8px 16px;
-		border: 0;
-		background: transparent;
-		color: var(--text-primary);
-		font-size: var(--type-size-200);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-200);
-		text-align: left;
-		cursor: pointer;
-		transition: background-color 0.18s ease, color 0.18s ease;
-
-		&:hover {
-			background: var(--gray-10);
+				.account-address-book-card-default-badge-copy {
+					font-size: var(--type-size-100);
+					line-height: var(--type-line-100);
+					font-weight: var(--font-weight-semibold);
+				}
+			}
 		}
 
-		&.account-address-book-menu-item--danger {
-			color: var(--error-60, #ff3838);
+		.account-address-book-menu-wrap {
+			position: relative;
+			flex-shrink: 0;
 
-			&:hover {
-				background: color-mix(in srgb, var(--error-10, #fff0f0) 100%, transparent);
+			.account-address-book-menu-button {
+				color: var(--text-primary);
+				flex-shrink: 0;
+				padding: 0;
+			}
+
+			.account-address-book-menu-dropdown {
+				position: absolute;
+				top: calc(100% + 8px);
+				right: 0;
+				z-index: 4;
+				min-width: 204px;
+				display: flex;
+				flex-direction: column;
+				border: 1px solid var(--gray-60);
+				border-radius: 12px;
+				background: var(--contrast-light);
+				box-shadow: var(--shadow-md);
+				overflow: hidden;
+
+				.account-address-book-menu-item {
+					width: 100%;
+					padding: 8px 16px;
+					border: 0;
+					background: transparent;
+					color: var(--text-primary);
+					font-size: var(--type-size-200);
+					font-weight: var(--font-weight-semibold);
+					line-height: var(--type-line-200);
+					text-align: left;
+					cursor: pointer;
+					transition: background-color 0.18s ease, color 0.18s ease;
+
+					&:hover {
+						background: var(--gray-10);
+					}
+
+					&.account-address-book-menu-item--danger {
+						color: var(--error-60, #ff3838);
+
+						&:hover {
+							background: color-mix(in srgb, var(--error-10, #fff0f0) 100%, transparent);
+						}
+					}
+				}
 			}
 		}
 	}
 
 	.account-address-book-card-body {
 		padding: 20px 24px;
-	}
 
-	.account-address-book-card-phone {
-		color: var(--text-primary);
-		font-size: var(--type-size-100);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-100);
-	}
+		.account-address-book-card-phone {
+			color: var(--text-primary);
+			font-size: var(--type-size-100);
+			font-weight: var(--font-weight-semibold);
+			line-height: var(--type-line-100);
+		}
 
-	.account-address-book-card-address {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
-	}
+		.account-address-book-card-address {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			color: var(--text-secondary);
+		}
 
-	.account-address-book-card-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-	}
+		.account-address-book-card-footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
 
-	.account-address-book-card-company {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
+			.account-address-book-card-company {
+				color: var(--text-secondary);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+			}
+		}
 	}
 }
 
@@ -337,10 +383,18 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
 	.account-address-book-card {
-		.account-address-book-card-title-row,
-		.account-address-book-card-footer {
-			align-items: flex-start;
-			flex-direction: column;
+		.account-address-book-card-header {
+			.account-address-book-card-title-row {
+				align-items: flex-start;
+				flex-direction: column;
+			}
+		}
+
+		.account-address-book-card-body {
+			.account-address-book-card-footer {
+				align-items: flex-start;
+				flex-direction: column;
+			}
 		}
 	}
 }

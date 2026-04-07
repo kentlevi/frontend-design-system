@@ -285,7 +285,7 @@ function submitUpload() {
 
 .account-orders-upload-details-label {
 	font-size: var(--type-size-100);
-	line-height: 1.45;
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 }
 
@@ -293,7 +293,7 @@ function submitUpload() {
 	justify-self: end;
 	text-align: right;
 	font-size: var(--type-size-200);
-	line-height: 1.45;
+	line-height: var(--type-line-200);
 	font-weight: var(--font-weight-semibold);
 	color: var(--text-primary);
 }
@@ -332,7 +332,7 @@ function submitUpload() {
 .account-orders-upload-dropzone-meta,
 .account-orders-upload-dropzone-files {
 	font-size: var(--type-size-100);
-	line-height: 1.45;
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 }
 
