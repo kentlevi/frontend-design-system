@@ -12,7 +12,7 @@ export const useColorService = () => {
 		const active_slug = selection_store.url_slug ?? ''
 
 		if (active_slug === 'vinyl-lettering') {
-			return (attribute_store.colors ?? []).filter((entry) => entry.key !== 'full-color')
+			return (attribute_store.colors ?? []).filter((entry) => entry.keyword !== 'full-color')
 		}
 
 		return attribute_store.colors ?? []

@@ -81,6 +81,7 @@ const {
 	letteringHeightUpdate,
 	letteringWidthInput,
 	letteringHeightInput,
+	letteringFileUpdate,
 	clearForm,
 	onVinylSizeFocus,
 	onVinylSizeBlur,
@@ -90,6 +91,10 @@ const {
 } = useQuoteSectionHandler();
 
 const route = useRoute()
+
+const resolved_category = computed(() => {
+	return  route.params.category as string
+})
 
 const route_product_slug = computed(() => {
 	const route_product = route.params?.product
@@ -166,8 +171,7 @@ const should_play_preview_video = computed(() =>
 )
 
 const displayed_product_title = computed(() =>
-	selected_navigation_product.value?.name
-		|| (props.selectedProduct ? props.getProductName(props.selectedProduct) : '')
+	props.selectedProduct ? props.getProductName(props.selectedProduct) : ''
 )
 
 const displayed_product_blurb = computed(() =>
@@ -179,11 +183,26 @@ const switchProduct = (prod: StageProduct) => {
 	emit('select-product', prod.id)
 	updateSelectedSlug(prod.slug)
 }
+const editor_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null)
 
-const openArworkUpload = () => {
+const openArworkUpload = async () => {
 	if( props.navigationInFlight || has_pending_custom_selection.value ) {
-		console.log(props.navigationInFlight, has_pending_custom_selection.value)
+		console.warn('Opps!!!', (props.navigationInFlight || has_pending_custom_selection.value))
 		return
+	}
+
+	if( has_lettering_editor.value ) {
+		if (!editor_ref.value) return
+
+		// 2. Call the exposed function directly
+		const blob = await editor_ref.value.generateImage()
+
+		if (blob) {
+			console.log('Generated blob:', blob)
+			// Now you can send this to your cart_service
+			const file = new File([blob], 'lettering.png', { type: 'image/png' })
+			letteringFileUpdate(file)
+		}
 	}
 
 	emit('open-upload')
@@ -268,11 +287,12 @@ const openArworkUpload = () => {
 							data-testid="product-category-vinyl-preview"
 						>
 							<VinylLetteringDesigner
+								ref="editor_ref"
 								:text="lettering.text"
 								:width="lettering.width"
 								:height="lettering.height"
 								:font="selected_font"
-								:color-key="color?.key ?? 'black'"
+								:color-key="color?.keyword ?? 'black'"
 								:redirecting="props.navigationInFlight || lettering_navigation_flight"
 								:active-size="lettering.active"
 								@update:text="letteringTextInput($event)"
@@ -320,7 +340,7 @@ const openArworkUpload = () => {
 									class="color-swatch"
 									:class="{ 'is-active': color?.id === fcolor.id }"
 									:aria-label="fcolor.name"
-									:data-testid="`product-category-color-option-${fcolor.key}`"
+									:data-testid="`product-category-color-option-${fcolor.keyword}`"
 									@click="inputUpdateColor(fcolor)"
 								>
 									<span class="color-swatch-tooltip">{{ fcolor.name }}</span>

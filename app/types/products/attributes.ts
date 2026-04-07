@@ -4,7 +4,8 @@ import type { CSSProperties } from 'vue'
 export interface ProductSpec {
 	url_slug: string
 	name: string
-	description: string
+	description: string,
+	image: string,
 }
 
 export interface FontSpec {
@@ -19,7 +20,7 @@ export type SwatchStyleSpec = CSSProperties
 export interface ColorSpec {
 	id: number
 	name: string
-	key: string
+	keyword: string
 	hex_code: string
 	style: SwatchStyleSpec
 }
@@ -51,7 +52,8 @@ export interface AttributeSelection {
 	quantity: QuantitySpec
 	color: ColorSpec | null
 	font: FontSpec | null
-	lettering_text: string | null,
+	lettering_text: string | null
+	lettering_file: File | null
 }
 
 export interface LetteringSpec {

@@ -17,6 +17,7 @@ export const useProductService = () => {
 			url_slug: string
 			name: string
 			description: string
+			image: string
 		}
 		featured_sizes: SizeSpec[]
 		variants: {
@@ -70,7 +71,8 @@ export const useProductService = () => {
 		attribute_store.updateProduct({
 			url_slug: featured_data.product.url_slug,
 			name: featured_data.product.name,
-			description: featured_data.product.description
+			description: featured_data.product.description,
+			image: featured_data.product.image
 		})
 
 		attribute_store.updateSizes(featured_data.featured_sizes)

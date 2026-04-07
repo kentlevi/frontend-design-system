@@ -20,6 +20,8 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 	const lettering_text = ref('')
 
+	const lettering_file = ref<File>()
+
 	const shipping_fee = ref<number>(0)
 
 	const discount_perce = ref<number>(0)
@@ -50,6 +52,8 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 		const selected_lettering_text = lettering_text && lettering_text?.value ? lettering_text.value : null
 
+		const selected_lettering_file = lettering_file && lettering_file?.value ? lettering_file.value : null
+
 		const selected_font = font && font?.value ? font.value : null
 
 		selections.value[url_slug.value] = {
@@ -58,6 +62,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 			color			: selected_color,
 			font			: selected_font,
 			lettering_text	: selected_lettering_text,
+			lettering_file 	: selected_lettering_file,
 		}
 	}
 
@@ -108,6 +113,12 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 			saveSelection()
 	}
 
+	const updateLetteringFile = (f : File) => {
+		lettering_file.value = f
+
+		saveSelection()
+	}
+
 	const clearSelection = () => {
 		url_slug.value = undefined
 		size.value = undefined
@@ -115,6 +126,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		color.value = null
 		font.value = null
 		lettering_text.value = ''
+		lettering_file.value = undefined
 	}
 
 	return {
@@ -125,6 +137,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		color,
 		font,
 		lettering_text,
+		lettering_file,
 		selections,
 		shipping_fee,
 		discount_perce,
@@ -142,5 +155,6 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		updateColor,
 		updateFont,
 		updateLetteringText,
+		updateLetteringFile,
 	}
 })

@@ -9,7 +9,13 @@ loadAppEnv();
 export default defineNuxtConfig({
 	css: [],
 	compatibilityDate: '2025-07-15',
-	devtools: { enabled: true },
+	devtools: {
+		enabled: true,
+
+		timeline: {
+			enabled: true,
+		},
+	},
 	// debug: process.env.ENV == 'homestead',
 	imports: {
 		dirs: ['composables', 'composables/core', 'composables/ui'],
@@ -39,9 +45,9 @@ export default defineNuxtConfig({
 			rollupOptions: {
 				onwarn(warning, warn) {
 					if (
-						warning.code === 'EVAL' &&
-						typeof warning.id === 'string' &&
-						warning.id.includes('lottie-web/build/player/lottie.js')
+						warning.code === 'EVAL'
+						&& typeof warning.id === 'string'
+						&& warning.id.includes('lottie-web/build/player/lottie.js')
 					) {
 						return;
 					}
@@ -54,7 +60,7 @@ export default defineNuxtConfig({
 		},
 	},
 
-	modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n'],
+	modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n', '@pinia-plugin-persistedstate/nuxt'],
 
 	i18n: {
 		defaultLocale: 'us',
