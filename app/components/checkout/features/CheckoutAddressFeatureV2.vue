@@ -66,7 +66,9 @@ useHeightTransition(
 	}
 );
 
-await getShippingAddress()
+onMounted(async()=>{
+	await getShippingAddress()
+})
 </script>
 
 <style scoped lang="scss">
