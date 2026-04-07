@@ -1,10 +1,66 @@
+<template>
+	<CheckoutPageBase
+		page-class="checkout-member-page"
+		shell-class="checkout-member-shell"
+		main-class="checkout-member-main"
+		summary-class="checkout-member-summary"
+		test-id="checkout-member-page"
+		loading-test-id="checkout-member-complete-loading-overlay"
+		:loading="completing_checkout"
+		:loading-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
+	>
+		<template #loader>
+			<div :ref="setCompleteLoaderRef" />
+		</template>
+
+		<template #main>
+			<CheckoutGuestContactFeature />
+			<CheckoutAddressFeatureV2 />
+			<CheckoutPaymentFeature />
+		</template>
+
+		<template #summary>
+			<CheckoutSummaryCard
+				:tone="is_member ? 'member' : 'guest'"
+				:items="selected_checkout_items"
+				shipping-fee-tooltip-title="Shipping Fee"
+				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location."
+				:complete-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
+				:agreement-prefix="t(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
+				:agreement-terms="t(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"
+				:agreement-and="t(is_member ? 'checkout.member.agreement.and' : 'checkout.guest.agreement.and')"
+				:agreement-privacy="t(is_member ? 'checkout.member.agreement.privacy' : 'checkout.guest.agreement.privacy')"
+				:agreement-suffix="t(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
+				:terms-path="withCountry('/terms-of-use')"
+				:privacy-path="withCountry('/privacy-policy')"
+				:disabled="selected_checkout_items.length === 0"
+				:loading="completing_checkout"
+				:size-dim-only="sizeDimOnly"
+				:format-price="formatPrice"
+				:item-meta="itemMeta"
+			>
+				<template #after-items>
+					<CheckoutMemberPerksFeature />
+				</template>
+			</CheckoutSummaryCard>
+		</template>
+	</CheckoutPageBase>
+
+	<!-- Modals -->
+	<CheckoutLoginModal v-model="is_login_modal_open" />
+	<CheckoutMemberShippingAddressModal v-model="is_shipping_address_modal_open" :addresses="saved_shipping_addresses" :selected-address-id="selected_shipping_address_id" @select="selected_shipping_address_id = $event" />
+	<CheckoutMemberDropShippingAddressModal v-model="is_drop_shipping_address_modal_open" :addresses="drop_shipping_addresses" :selected-address-id="selected_drop_shipping_address_id" @select="selected_drop_shipping_address_id = $event" />
+	<CheckoutMemberBillingAddressModal v-model="is_billing_address_modal_open" :addresses="billing_addresses" :selected-address-id="selected_billing_address_id" @select="selected_billing_address_id = $event" />
+	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
+</template>
+
 <script setup lang="ts">
 import type { ComponentPublicInstance } from 'vue';
 import { useCheckoutExperience } from '~/composables/checkout/useCheckoutExperience';
 import CheckoutGuestContactFeature from '~/components/checkout/features/CheckoutGuestContactFeature.vue';
 import CheckoutMemberPerksFeature from '~/components/checkout/features/CheckoutMemberPerksFeature.vue';
 import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPaymentFeature.vue';
-import CheckoutShippingFeature from '~/components/checkout/features/CheckoutShippingFeature.vue';
+import CheckoutAddressFeatureV2 from '~/components/checkout/features/CheckoutAddressFeatureV2.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 
 const checkout_experience = useCheckoutExperience();
@@ -16,12 +72,7 @@ const {
 	formatPrice,
 	sizeDimOnly,
 	completing_checkout,
-	completeCheckout,
 	complete_loader_ref,
-	order_total,
-	order_discount,
-	order_shipping_fee,
-	order_subtotal,
 	selected_checkout_items,
 	itemMeta,
 
@@ -32,9 +83,6 @@ const {
 	is_billing_address_modal_open,
 	is_shipping_address_modal_open,
 
-	// Data
-	selected_shipping_method,
-	shipping_method_details,
 
 	// Member Specifics (Available via spread)
 	saved_shipping_addresses,
@@ -53,72 +101,6 @@ function setCompleteLoaderRef(
 	complete_loader_ref.value = element instanceof HTMLElement ? element : null;
 }
 </script>
-
-<template>
-	<CheckoutPageBase
-		page-class="checkout-member-page"
-		shell-class="checkout-member-shell"
-		main-class="checkout-member-main"
-		summary-class="checkout-member-summary"
-		test-id="checkout-member-page"
-		loading-test-id="checkout-member-complete-loading-overlay"
-		:loading="completing_checkout"
-		:loading-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
-	>
-		<template #loader>
-			<div :ref="setCompleteLoaderRef" />
-		</template>
-
-		<template #main>
-			<CheckoutGuestContactFeature />
-			<CheckoutShippingFeature />
-			<CheckoutPaymentFeature />
-		</template>
-
-		<template #summary>
-			<CheckoutSummaryCard
-				:tone="is_member ? 'member' : 'guest'"
-				:title="t(is_member ? 'checkout.member.orderSummary' : 'checkout.guest.orderSummary')"
-				:items="selected_checkout_items"
-				:subtotal-label="t(is_member ? 'checkout.member.summary.subtotal' : 'checkout.guest.summary.subtotal')"
-				:shipping-fee-label="is_member ? t('checkout.member.summary.shippingFee', { method: shipping_method_details[selected_shipping_method]?.name }) : t('checkout.guest.summary.shippingFee')"
-				shipping-fee-tooltip-title="Shipping Fee"
-				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location."
-				:discounts-label="t(is_member ? 'checkout.member.summary.discounts' : 'checkout.guest.summary.discounts')"
-				:total-label="t(is_member ? 'checkout.member.summary.total' : 'checkout.guest.summary.total')"
-				:subtotal-value="formatPrice(order_subtotal)"
-				:shipping-fee-value="formatPrice(order_shipping_fee)"
-				:discount-value="`-${formatPrice(order_discount)}`"
-				:total-value="formatPrice(order_total)"
-				:complete-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
-				:agreement-prefix="t(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
-				:agreement-terms="t(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"
-				:agreement-and="t(is_member ? 'checkout.member.agreement.and' : 'checkout.guest.agreement.and')"
-				:agreement-privacy="t(is_member ? 'checkout.member.agreement.privacy' : 'checkout.guest.agreement.privacy')"
-				:agreement-suffix="t(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
-				:terms-path="withCountry('/terms-of-use')"
-				:privacy-path="withCountry('/privacy-policy')"
-				:disabled="selected_checkout_items.length === 0"
-				:loading="completing_checkout"
-				:size-dim-only="sizeDimOnly"
-				:format-price="formatPrice"
-				:item-meta="itemMeta"
-				@submit="completeCheckout(selected_checkout_items.length > 0)"
-			>
-				<template #after-items>
-					<CheckoutMemberPerksFeature />
-				</template>
-			</CheckoutSummaryCard>
-		</template>
-	</CheckoutPageBase>
-
-	<!-- Modals -->
-	<CheckoutLoginModal v-model="is_login_modal_open" />
-	<CheckoutMemberShippingAddressModal v-model="is_shipping_address_modal_open" :addresses="saved_shipping_addresses" :selected-address-id="selected_shipping_address_id" @select="selected_shipping_address_id = $event" />
-	<CheckoutMemberDropShippingAddressModal v-model="is_drop_shipping_address_modal_open" :addresses="drop_shipping_addresses" :selected-address-id="selected_drop_shipping_address_id" @select="selected_drop_shipping_address_id = $event" />
-	<CheckoutMemberBillingAddressModal v-model="is_billing_address_modal_open" :addresses="billing_addresses" :selected-address-id="selected_billing_address_id" @select="selected_billing_address_id = $event" />
-	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
-</template>
 
 <style lang="scss">
 .checkout-member-page {

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+ <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from 'vue';
 import CheckoutInvoiceBillingModal from '~/components/checkout/CheckoutInvoiceBillingModal.vue';
 import { useCountry } from '~/composables/app/country/useCountry';

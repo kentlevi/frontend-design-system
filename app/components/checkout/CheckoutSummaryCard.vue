@@ -1,7 +1,157 @@
+<template>
+	<section :class="[`checkout-summary-card`, `is-${props.tone}`]">
+		<div class="checkout-summary-title">
+			<span>Order Summary</span>
+			<div class="checkout-summary-title-actions">
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="sm"
+					:no-hover="true"
+					class="checkout-summary-title-action"
+					aria-label="Edit order summary"
+					@click="goToCart"
+				>
+					<UiIcon name="regular-edit" size="24px" color="var(--text-primary)" decorative />
+				</UiButton>
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="sm"
+					:no-hover="true"
+					class="checkout-summary-title-action"
+					aria-label="Print order summary"
+					@click="goToInvoice"
+				>
+					<UiIcon name="regular-print" size="24px" color="var(--text-primary)" decorative />
+				</UiButton>
+			</div>
+		</div>
+
+		<div class="checkout-summary-list">
+			<template v-if="props.items.length > 0">
+				<div
+					v-for="item in props.items"
+					:key="item.id"
+					class="checkout-summary-item"
+				>
+					<div class="checkout-summary-thumb">
+						<img
+							:src="item.artworkPreviewUrl || item.product.image"
+							:alt="item.product.name"
+							class="checkout-summary-thumb-image"
+						>
+					</div>
+					<div class="checkout-summary-info">
+						<div class="checkout-summary-name">{{ item.product.name }}</div>
+						<div class="checkout-summary-meta">
+							{{ props.itemMeta(item.sizeLabel, item.qty) }}
+						</div>
+					</div>
+					<div class="checkout-summary-price">{{ props.formatPrice(item.total) }}</div>
+				</div>
+			</template>
+			<div v-else class="checkout-summary-skeleton" aria-hidden="true">
+				<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
+					<div class="checkout-summary-thumb skeleton-block" />
+					<div class="checkout-summary-info">
+						<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--name" />
+						<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--meta" />
+					</div>
+					<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--price" />
+				</div>
+			</div>
+		</div>
+
+		<slot name="after-items" />
+
+		<div class="checkout-summary-footer">
+			<div class="checkout-summary-lines">
+				<div class="checkout-summary-line">
+					<div class="checkout-summary-line-label">Subtotal: </div>
+					<div class="checkout-summary-line-value">$22.54</div>
+				</div>
+				<div class="checkout-summary-line">
+					<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
+						<span>Shipping Fee:</span>
+						<UiTooltip
+							v-if="has_shipping_fee_tooltip"
+							:open="shipping_fee_tooltip_open"
+							side="right"
+							align="center"
+							mobile-side="bottom"
+							tone="neutral"
+							:offset="10"
+							:slide-distance="24"
+							role="dialog"
+							content-class="checkout-summary-tooltip-content"
+							class="checkout-summary-tooltip"
+						>
+							<template #trigger>
+								<button
+									type="button"
+									class="checkout-summary-tooltip-trigger"
+									:class="{ 'is-active': shipping_fee_tooltip_open }"
+									:aria-expanded="shipping_fee_tooltip_open"
+									aria-haspopup="dialog"
+									aria-label="Show shipping fee information"
+									@click="toggleShippingFeeTooltip"
+								>
+									<UiIcon
+										:name="shipping_fee_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
+										size="24"
+										color="var(--gray-90)"
+										decorative
+									/>
+								</button>
+							</template>
+
+							<div class="checkout-summary-tooltip-copy">
+								<strong class="checkout-summary-tooltip-title">{{ props.shippingFeeTooltipTitle }}</strong>
+								<p class="checkout-summary-tooltip-text">{{ props.shippingFeeTooltipText }}</p>
+							</div>
+						</UiTooltip>
+					</div>
+					<div class="checkout-summary-line-value">$22.54</div>
+				</div>
+				<div class="checkout-summary-line">
+					<div class="checkout-summary-line-label">Discounts:</div>
+					<div class="checkout-summary-line-value is-discount">- $0.00</div>
+				</div>
+				<div class="checkout-summary-line is-total">
+					<div class="checkout-summary-line-label">Total:</div>
+					<div class="checkout-summary-line-value">$22.54</div>
+				</div>
+			</div>
+
+			<UiButton
+				variant="filled"
+				tone="neutral"
+				size="lg"
+				class="checkout-summary-submit"
+				:disabled="props.disabled || props.loading"
+				@click="submitCheckout"
+			>
+				{{ props.completeLabel }}
+			</UiButton>
+
+			<div class="checkout-summary-agreement">
+				<span class="checkout-summary-agreement-text">{{ props.agreementPrefix }}</span>
+				<NuxtLink :to="props.termsPath" class="checkout-summary-agreement-link">{{ props.agreementTerms }}</NuxtLink>
+				<span class="checkout-summary-agreement-text">{{ props.agreementAnd }}</span>
+				<NuxtLink :to="props.privacyPath" class="checkout-summary-agreement-link">{{ props.agreementPrivacy }}</NuxtLink>
+				<span class="checkout-summary-agreement-text">{{ props.agreementSuffix }}</span>
+			</div>
+		</div>
+	</section>
+</template>
+
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useCheckoutFlow } from '~/composables/checkout/useCheckoutFlow';
+import { useCheckoutFlow } from '~/composables/checkout/main/useCheckoutFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 type SummaryItem = {
 	id: string;
@@ -17,18 +167,9 @@ type SummaryItem = {
 
 const props = defineProps<{
 	tone: 'guest' | 'member';
-	title: string;
 	items: SummaryItem[];
-	subtotalLabel: string;
-	shippingFeeLabel: string;
 	shippingFeeTooltipTitle?: string;
 	shippingFeeTooltipText?: string;
-	discountsLabel: string;
-	totalLabel: string;
-	subtotalValue: string;
-	shippingFeeValue: string;
-	discountValue: string;
-	totalValue: string;
 	completeLabel: string;
 	agreementPrefix: string;
 	agreementTerms: string;
@@ -105,156 +246,6 @@ onBeforeUnmount(() => {
 	window.removeEventListener('keydown', handleShippingFeeTooltipEscape);
 });
 </script>
-
-<template>
-	<section :class="[`checkout-summary-card`, `is-${props.tone}`]">
-		<div class="checkout-summary-title">
-			<span>{{ props.title }}</span>
-			<div class="checkout-summary-title-actions">
-				<UiButton
-					type="button"
-					variant="ghost"
-					tone="neutral"
-					size="sm"
-					:no-hover="true"
-					class="checkout-summary-title-action"
-					aria-label="Edit order summary"
-					@click="goToCart"
-				>
-					<UiIcon name="regular-edit" size="24px" color="var(--text-primary)" decorative />
-				</UiButton>
-				<UiButton
-					type="button"
-					variant="ghost"
-					tone="neutral"
-					size="sm"
-					:no-hover="true"
-					class="checkout-summary-title-action"
-					aria-label="Print order summary"
-					@click="goToInvoice"
-				>
-					<UiIcon name="regular-print" size="24px" color="var(--text-primary)" decorative />
-				</UiButton>
-			</div>
-		</div>
-
-		<div class="checkout-summary-list">
-			<template v-if="props.items.length > 0">
-				<div
-					v-for="item in props.items"
-					:key="item.id"
-					class="checkout-summary-item"
-				>
-					<div class="checkout-summary-thumb">
-						<img
-							:src="item.artworkPreviewUrl || item.product.image"
-							:alt="item.product.name"
-							class="checkout-summary-thumb-image"
-						>
-					</div>
-					<div class="checkout-summary-info">
-						<div class="checkout-summary-name">{{ item.product.name }}</div>
-						<div class="checkout-summary-meta">
-							{{ props.itemMeta(item.sizeLabel, item.qty) }}
-						</div>
-					</div>
-					<div class="checkout-summary-price">{{ props.formatPrice(item.total) }}</div>
-				</div>
-			</template>
-			<div v-else class="checkout-summary-skeleton" aria-hidden="true">
-				<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
-					<div class="checkout-summary-thumb skeleton-block" />
-					<div class="checkout-summary-info">
-						<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--name" />
-						<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--meta" />
-					</div>
-					<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--price" />
-				</div>
-			</div>
-		</div>
-
-		<slot name="after-items" />
-
-		<div class="checkout-summary-footer">
-			<div class="checkout-summary-lines">
-				<div class="checkout-summary-line">
-					<div class="checkout-summary-line-label">{{ props.subtotalLabel }}</div>
-					<div class="checkout-summary-line-value">{{ props.subtotalValue }}</div>
-				</div>
-				<div class="checkout-summary-line">
-					<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
-						<span>{{ props.shippingFeeLabel }}</span>
-						<UiTooltip
-							v-if="has_shipping_fee_tooltip"
-							:open="shipping_fee_tooltip_open"
-							side="right"
-							align="center"
-							mobile-side="bottom"
-							tone="neutral"
-							:offset="10"
-							:slide-distance="24"
-							role="dialog"
-							content-class="checkout-summary-tooltip-content"
-							class="checkout-summary-tooltip"
-						>
-							<template #trigger>
-								<button
-									type="button"
-									class="checkout-summary-tooltip-trigger"
-									:class="{ 'is-active': shipping_fee_tooltip_open }"
-									:aria-expanded="shipping_fee_tooltip_open"
-									aria-haspopup="dialog"
-									aria-label="Show shipping fee information"
-									@click="toggleShippingFeeTooltip"
-								>
-									<UiIcon
-										:name="shipping_fee_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
-										size="24"
-										color="var(--gray-90)"
-										decorative
-									/>
-								</button>
-							</template>
-
-							<div class="checkout-summary-tooltip-copy">
-								<strong class="checkout-summary-tooltip-title">{{ props.shippingFeeTooltipTitle }}</strong>
-								<p class="checkout-summary-tooltip-text">{{ props.shippingFeeTooltipText }}</p>
-							</div>
-						</UiTooltip>
-					</div>
-					<div class="checkout-summary-line-value">{{ props.shippingFeeValue }}</div>
-				</div>
-				<div class="checkout-summary-line">
-					<div class="checkout-summary-line-label">{{ props.discountsLabel }}</div>
-					<div class="checkout-summary-line-value is-discount">{{ props.discountValue }}</div>
-				</div>
-				<div class="checkout-summary-line is-total">
-					<div class="checkout-summary-line-label">{{ props.totalLabel }}</div>
-					<div class="checkout-summary-line-value">{{ props.totalValue }}</div>
-				</div>
-			</div>
-
-			<UiButton
-				variant="filled"
-				tone="neutral"
-				size="lg"
-				class="checkout-summary-submit"
-				:disabled="props.disabled || props.loading"
-				@click="submitCheckout"
-			>
-				{{ props.completeLabel }}
-			</UiButton>
-
-			<div class="checkout-summary-agreement">
-				<span class="checkout-summary-agreement-text">{{ props.agreementPrefix }}</span>
-				<NuxtLink :to="props.termsPath" class="checkout-summary-agreement-link">{{ props.agreementTerms }}</NuxtLink>
-				<span class="checkout-summary-agreement-text">{{ props.agreementAnd }}</span>
-				<NuxtLink :to="props.privacyPath" class="checkout-summary-agreement-link">{{ props.agreementPrivacy }}</NuxtLink>
-				<span class="checkout-summary-agreement-text">{{ props.agreementSuffix }}</span>
-			</div>
-		</div>
-	</section>
-</template>
 
 <style scoped lang="scss">
 .checkout-summary-card {
