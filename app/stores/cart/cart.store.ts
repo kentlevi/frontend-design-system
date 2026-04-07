@@ -1,12 +1,22 @@
 import type { CartItem } from '~/types/cart/cart'
 export const useCartStore = defineStore('cart', () => {
 
+
 	const items = ref<CartItem[]>([])
 
 	const number_of_items = ref<number>(0)
 
 	const grand_total = ref<number>(0)
 
+	const cart_user_id = ref<number | null>(null)
+
+	const updateUserId = (new_id: number | null) => {
+
+		if( cart_user_id.value != new_id ) {
+			cart_user_id.value = new_id
+			empty()
+		}
+	}
 
 	const syncNumber = (total_count: number, total_cost: number) => {
 		number_of_items.value = Number(total_count)
@@ -20,8 +30,21 @@ export const useCartStore = defineStore('cart', () => {
 		addNumber()
 	}
 
+	const unsaveDraft = ref<CartItem []>([])
+
 	const populateItems = (cart_items: Partial<CartItem>[]) => {
-		items.value = cart_items as CartItem[]
+		const local_drafts = items.value.filter(item => item.id === null)
+
+		// 3. Prevent duplication:
+		// If a draft was just saved, its local_identity will now be in the server data.
+		const incoming_identities = new Set(cart_items.map(i => i.local_identity))
+
+		const unique_drafts = local_drafts.filter(
+			draft => !incoming_identities.has(draft.local_identity)
+		)
+		unsaveDraft.value = unique_drafts;
+
+		items.value = [...unique_drafts, ...cart_items] as CartItem[]
 	}
 
 	const removeItem = (item_id: number | null, local_identity?: string | null) => {
@@ -79,6 +102,8 @@ export const useCartStore = defineStore('cart', () => {
 		items,
 		number_of_items,
 		grand_total,
+		cart_user_id,
+		unsaveDraft,
 		syncNumber,
 		addNumber,
 		reduceNumber,
@@ -88,11 +113,12 @@ export const useCartStore = defineStore('cart', () => {
 		empty,
 		populateItems,
 		generateLocalIdentity,
+		updateUserId,
 	}
 }, {
 	persist: {
 		key: 'mu_cart',
 		storage: persistedState.localStorage,
-		pick: ['items', 'number_of_items', 'grand_total'],
+		pick: ['items', 'number_of_items', 'grand_total', 'cart_user_id'],
 	}
 })

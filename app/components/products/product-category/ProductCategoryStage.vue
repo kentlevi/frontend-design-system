@@ -7,6 +7,7 @@ import { useNavigationStore } from '~/stores/navigation/navigation.store';
 import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
+import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
 
 
 const props = defineProps<{
@@ -29,6 +30,7 @@ const emit = defineEmits<{
 	'select-product': [productId: string];
 	'update:selectedQty': [qty: number];
 	'open-upload': [];
+	'proceed-to-cart': [],
 }>();
 
 // 🔥 Functionality Implementation
@@ -88,6 +90,7 @@ const {
 	onVinylFontFocus,
 	onVinylFontBlur,
 	updateSelectedSlug,
+	dispatchItem,
 } = useQuoteSectionHandler();
 
 const route = useRoute()
@@ -194,14 +197,24 @@ const openArworkUpload = async () => {
 		const blob = await editor_ref.value.generateImage()
 
 		if (blob) {
-			console.log('Generated blob:', blob)
 			// Now you can send this to your cart_service
 			const file = new File([blob], 'lettering.png', { type: 'image/png' })
 			letteringFileUpdate(file)
+			addToCart()
 		}
+	} else {
+		emit('open-upload')
 	}
 
-	emit('open-upload')
+}
+
+const addToCart = async () => {
+	console.warn('Adding cart...')
+
+	const dispatched = await dispatchItem()
+	console.log(dispatched)
+	if( dispatched )
+		emit('proceed-to-cart')
 }
 
 </script>

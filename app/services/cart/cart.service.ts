@@ -1,4 +1,5 @@
 import { useCartStore } from "~/stores/cart";
+import { useUsersStore } from "~/stores/users/users.store";
 import type { CartItem, CartItemCreationSpec } from "~/types/cart/cart";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
@@ -6,6 +7,28 @@ export const useCartService = () => {
 	const { $api } = useNuxtApp();
 
 	const cart_store = useCartStore()
+
+	const user_store = useUsersStore()
+
+	// const auth_user_id = computed(() => user_store.state?.id ?? null)
+
+	const page = ref<number>(1)
+
+	const per_page = ref<number>(10)
+
+	// watch(auth_user_id, (new_id) => {
+	// 	console.log(new_id)
+	// 	cart_store.updateUserId(new_id)
+	// 	if( new_id )
+	// 		getCartItems()
+	// })
+
+	const detected_draft = computed(() => cart_store.unsaveDraft.length)
+
+	watch(detected_draft, (n) => {
+		if( n )
+			console.warn('Detected Draft:', n) // saveDraft
+	})
 
 	const number_of_items = computed(() => cart_store.number_of_items )
 
@@ -82,6 +105,21 @@ export const useCartService = () => {
 		cart_store.syncNumber(data.total_count, data.total_cost)
 	}
 
+	const getCartItems = async () => {
+		// calculate the numbers of cart items everytime request new data from database
+		await calculateCartItems()
+
+		const cart_items = await requestCartItems(page.value, per_page.value)
+		if( !cart_items )
+			return
+
+		if( cart_items.length )
+			cart_store.populateItems(cart_items)
+		else if( !cart_items.length && cart_store.number_of_items == 0 )
+			cart_store.empty()
+	}
+
+
 	type ExpectedCartItemData = {
 		id : number
 		product_config_mapping_id : number
@@ -137,7 +175,7 @@ export const useCartService = () => {
 		failure: Record<string, unknown>[]
 	}
 	const saveDraft = async () => {
-		const drafted = cart_store.items.map( e => {
+		const drafted = cart_store.unsaveDraft.map( e => {
 			return {
 				product_config_mapping_id: e.product_config_mapping_id,
 				color_id: e.color_id,
@@ -165,12 +203,15 @@ export const useCartService = () => {
 
 	return {
 		number_of_items,
+		page,
+		per_page,
 		sendToServer,
 		sendToS3,
 		calculateCartItems,
 		requestCartItems,
 		removeCartItem,
 		saveDraft,
+		getCartItems,
 	}
 
 }
