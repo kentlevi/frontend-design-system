@@ -4,7 +4,7 @@ import type { Product as NavigationProduct, StageProduct } from '~/types/navigat
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
 import { useNavigationStore } from '~/stores/navigation/navigation.store';
-import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper';
+import { getProductIdFromSlug, findProductById } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
@@ -127,13 +127,20 @@ const navigation_products = computed<NavigationProduct[]>(() => {
 });
 
 const category_products = computed<StageProduct[]>(() =>
-	navigation_products.value.map((product) => ({
-		id: props.category ? (getProductIdFromSlug(product.url_slug, props.category) || product.url_slug) : product.url_slug,
-		slug: product.url_slug,
-		name: product.name,
-		blurb: product.description,
-		image: product.default_featured_image_url ? resolveFileUrl(product.default_featured_image_url) : '',
-	}))
+	navigation_products.value.map((product) => {
+		const productId = props.category ? (getProductIdFromSlug(product.url_slug, props.category) || product.url_slug) : product.url_slug;
+		const localProduct = findProductById(productId);
+
+		return {
+			id: productId,
+			slug: product.url_slug,
+			name: product.name,
+			blurb: product.description,
+			image: product.default_featured_image_url
+				? resolveFileUrl(product.default_featured_image_url)
+				: (localProduct?.image ? resolveFileUrl(localProduct.image) : ''),
+		};
+	})
 );
 
 const selected_navigation_product = computed(() =>

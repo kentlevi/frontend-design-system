@@ -12,6 +12,7 @@ export type CartPreviewItem = {
 	artworkSizeLabel?: string;
 	specialInstructions?: string;
 	artworkPreviewUrl?: string;
+	image?: string;
 }
 
 export type CartPreviewSizeOptionModel = {

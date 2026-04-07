@@ -131,20 +131,7 @@ const {
 
 		<cart_preview
 			:open="cart_preview_open"
-			:cart-item-count="cart_item_count"
-			:cart-items="cart_items"
-			:grand-total="cart_grand_total"
-			:featured-open="featured_open"
-			:featured-items="featured_items"
-			:size-option-models="size_option_models"
-			:quantity-options="quantity_options"
-			:get-product-name="getProductName"
-			:format-price="formatPrice"
-			:featured-start-price="featuredStartPrice"
 			@close="closeCartPreview"
-			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty, $event.customSizeLabel || '')"
-			@remove-item="removeCartItem($event)"
-			@close-featured="closeFeaturedItems"
 		/>
 
 		<product_reviews_section

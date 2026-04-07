@@ -16,36 +16,17 @@ import CartPreviewFooter from './CartPreviewFooter.vue';
 import CartPreviewHeader from './CartPreviewHeader.vue';
 import CartPreviewItems from './CartPreviewItems.vue';
 
-const props = withDefaults(
-	defineProps<{
-		open: boolean;
-		cartItemCount: number;
-		cartItems: CartPreviewItem[];
-		sizeOptionModels?: CartPreviewSizeOptionModel[];
-		quantityOptions?: readonly number[];
-		grandTotal: number;
-		featuredOpen: boolean;
-		featuredItems: ProductItem[];
-		getProductName: (product: ProductItem) => string;
-		formatPrice: (value: number) => string;
-		featuredStartPrice: (product: ProductItem) => string;
-	}>(),
-	{
-		sizeOptionModels: () => [],
-		quantityOptions: () => [],
-	}
-);
+const props = defineProps<{
+	open: boolean;
+}>();
 
 const emit = defineEmits<{
 	close: [];
-	'close-featured': [];
-	'update-item': [payload: { itemId: string; sizeKey: string; qty: number; customSizeLabel?: string }];
-	'remove-item': [itemId: string];
 }>();
 
-const deleting_item_id = ref<number | null>(null);
+const deleting_item_id = ref<string | null>(null);
 
-function openDeleteModal(payload: { itemId: number | null; localIdentity?: string | null }) {
+function openDeleteModal(payload: { itemId: string | null }) {
 	if (payload.itemId === null) return;
 	deleting_item_id.value = payload.itemId;
 }
@@ -54,14 +35,15 @@ function closeDeleteModal() {
 	deleting_item_id.value = null;
 }
 
-function confirmDeleteItem() {
-	if (deleting_item_id.value === null) return;
-	emit('remove-item', String(deleting_item_id.value));
-	deleting_item_id.value = null;
-}
-
 const { t } = useI18n();
+
 const {
+	cartItems: items,
+	sizeOptionModels,
+	quantityOptions,
+	grandTotal: grand_total,
+	itemCount: number_of_items,
+	featuredItems,
 	editingItemId: editing_item_id,
 	editingItem: editing_item,
 	draftSizeKey: draft_size_key,
@@ -75,40 +57,48 @@ const {
 	openInlineEdit,
 	cancelInlineEdit,
 	saveInlineEdit,
+	removeCartItem,
 	getInlineSizeOptions,
 	getInlineQtyOptions,
 	goToCart,
 	goToCheckout,
 	customizeFeaturedProduct,
 } = useCartPreview({
-	cartItems: toRef(props, 'cartItems'),
-	sizeOptionModels: toRef(props, 'sizeOptionModels'),
-	quantityOptions: toRef(props, 'quantityOptions'),
-	grandTotal: toRef(props, 'grandTotal'),
 	closePreview: () => emit('close'),
-	emitUpdateItem: (payload) => emit('update-item', payload),
 });
 
-const is_active = computed(() => props.open);
+function confirmDeleteItem() {
+	if (deleting_item_id.value === null) return;
+	removeCartItem(deleting_item_id.value);
+	deleting_item_id.value = null;
+}
 
-const {
-	number_of_items,
-	items,
-	grand_total,
-	composePreview,
-	formatImage,
-} = useCartPreviewHandler();
+/**
+ * Helper to get product name (fallback for sample data)
+ */
+function getProductName(product: ProductItem) {
+	return product.name;
+}
 
-watch(is_active, (is_open) => {
-	if (is_open) {
-		void composePreview();
-	}
-});
+/**
+ * Local total formatting
+ */
+function formatPrice(value: number) {
+	return new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+	}).format(value);
+}
 
-function handleEditItem(item: CartItem) {
-	const matched_item = props.cartItems.find((preview_item) => String(preview_item.id) === String(item.id));
-	if (!matched_item) return;
-	openInlineEdit(matched_item);
+/**
+ * Local image formatting (fallback for sample data)
+ */
+function formatImage(item: CartPreviewItem) {
+	return item.image || item.product.image;
+}
+
+function handleEditItem(item: CartPreviewItem) {
+	openInlineEdit(item);
 }
 </script>
 
@@ -150,22 +140,22 @@ function handleEditItem(item: CartItem) {
 							v-if="number_of_items > 0"
 							:items="items"
 							:format-image="formatImage"
-							:format-price="props.formatPrice"
+							:format-price="formatPrice"
 							@edit-item="handleEditItem"
 							@remove-item="openDeleteModal"
 						/>
 
 						<CartPreviewFeatured
-							v-if="props.featuredOpen"
+							v-if="featuredItems.length > 0"
 							:has-items="number_of_items > 0"
-							:featured-items="props.featuredItems"
-							:get-product-name="props.getProductName"
-							:featured-start-price="props.featuredStartPrice"
+							:featured-items="featuredItems"
+							:get-product-name="getProductName"
+							:featured-start-price="(p) => formatPrice(5.00)"
 							:title="t('cart.cartPreview.featuredItems')"
 							:close-label="t('cart.cartPreview.closeFeaturedItems')"
 							:starts-at-label="t('cart.cartPreview.startsAt')"
 							:customize-label="t('cart.cartPreview.customize')"
-							@close-featured="emit('close-featured')"
+							@close-featured="featuredItems = []"
 							@customize="customizeFeaturedProduct"
 						/>
 					</div>
@@ -173,7 +163,7 @@ function handleEditItem(item: CartItem) {
 					<CartPreviewFooter
 						v-if="number_of_items > 0"
 						:total-label="t('cart.cartPreview.total')"
-						:total-value="props.formatPrice(grand_total)"
+						:total-value="formatPrice(grand_total)"
 						:note-label="t('cart.cartPreview.noteLabel')"
 						:note="t('cart.cartPreview.note')"
 						:view-cart-label="t('cart.cartPreview.viewCart')"

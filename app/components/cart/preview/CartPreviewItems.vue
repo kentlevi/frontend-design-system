@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { CartItem } from '~/types/cart/cart';
+import type { CartPreviewItem } from '~/types/cart/preview';
 
 defineProps<{
-	items: readonly CartItem[];
-	formatImage: (item: CartItem) => string;
+	items: readonly CartPreviewItem[];
+	formatImage: (item: CartPreviewItem) => string;
 	formatPrice: (value: number) => string;
 }>();
 
 defineEmits<{
-	(e: 'edit-item', item: CartItem): void;
-	(e: 'remove-item', payload: { itemId: number | null; localIdentity?: string | null }): void;
+	(e: 'edit-item', item: CartPreviewItem): void;
+	(e: 'remove-item', payload: { itemId: string | null }): void;
 }>();
 </script>
 
@@ -24,7 +24,7 @@ defineEmits<{
 		>
 			<article
 				v-for="(item, index) in items"
-				:key="item?.local_identity ?? index"
+				:key="item?.id ?? index"
 				class="cart-preview-item"
 				data-testid="product-category-cart-item"
 			>
@@ -32,25 +32,25 @@ defineEmits<{
 					<div class="cart-preview-item-thumb">
 						<img
 							:src="formatImage(item)"
-							:alt="item.artwork_file_name || item.product"
+							:alt="item.artworkName || item.product.name"
 							class="cart-preview-image"
 						>
 					</div>
 					<div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
 						<h4 class="cart-preview-section-title" data-testid="product-category-cart-item-name">
-							{{ item.product }}
+							{{ item.product.name }}
 							<UiIcon name="regular-info-circle" :size="20" color="#6d7180" />
 						</h4>
-						<p class="cart-preview-meta" data-testid="product-category-cart-item-size">Size: {{ item.width }}x{{ item.height }}</p>
+						<p class="cart-preview-meta" data-testid="product-category-cart-item-size">Size: {{ item.customSizeLabel || item.sizeLabel }}</p>
 						<p class="cart-preview-meta" data-testid="product-category-cart-item-quantity">
 							Quantity:
-							{{ item.quantity.toLocaleString() }}
+							{{ item.qty.toLocaleString() }}
 						</p>
 					</div>
 				</div>
 				<div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
 					<strong class="cart-preview-item-price" data-testid="product-category-cart-item-price">
-						{{ formatPrice(item.cost) }}
+						{{ formatPrice(item.total) }}
 					</strong>
 					<div
 						class="cart-preview-item-actions"
@@ -78,7 +78,7 @@ defineEmits<{
 							:icon-size="24"
 							sr-label="Remove item"
 							data-testid="product-category-cart-item-delete-button"
-							@click="$emit('remove-item', { itemId: item.id, localIdentity: item.local_identity })"
+							@click="$emit('remove-item', { itemId: item.id })"
 						/>
 					</div>
 				</div>

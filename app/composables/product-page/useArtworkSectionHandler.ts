@@ -211,7 +211,7 @@ export const useArtworkSectionHandler = () => {
 			artwork_file: has_artwork ? uploaded_file.value : null,
 			artwork_file_name: has_artwork ? artwork_file_name.value : null,
 			artwork_preview: has_artwork ? artwork_preview.value : null,
-			instruction: has_artwork ? instruction.value : null,
+			instruction: instruction.value,
 			local_identity: item_id,
 		}
 
