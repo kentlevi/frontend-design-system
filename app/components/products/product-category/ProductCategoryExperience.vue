@@ -96,6 +96,7 @@ const {
 				@update:selected-size="selected_size = $event"
 				@update:selected-qty="selected_qty = $event"
 				@open-upload="openUploadModal"
+				@proceed-to-cart="proceedToCart"
 			/>
 		</div>
 

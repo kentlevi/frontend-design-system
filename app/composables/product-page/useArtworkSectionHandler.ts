@@ -5,6 +5,7 @@ import { useUsersStore } from "~/stores/users/users.store"
 import type { CartItem } from "~/types/cart/cart"
 import { convertFileBase64, formatProductFileSize } from "~/utils/file/file"
 
+
 export const useArtworkSectionHandler = () => {
 
 	const attribute_store = useAttributesStore()
