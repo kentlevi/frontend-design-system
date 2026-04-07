@@ -12,10 +12,10 @@ const product_category_details = defineAsyncComponent(
 	() => import('~/components/products/product-category/ProductCategoryDetails.vue')
 );
 const cart_upload_modal = defineAsyncComponent(
-	() => import('~/components/cart/CartUploadModal.vue')
+	() => import('~/components/cart/modals/CartUploadModal.vue')
 );
 const cart_preview = defineAsyncComponent(
-	() => import('~/components/cart/CartPreview.vue')
+	() => import('~/components/cart/preview/CartPreview.vue')
 );
 
 const props = defineProps<{

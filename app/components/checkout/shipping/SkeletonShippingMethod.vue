@@ -1,7 +1,7 @@
 <template>
-	<div class="checkout-member-card-grid" :class="{ 'only-one': card_count === 1 }" aria-hidden="true">
+	<div class="checkout-member-card-grid" :class="{ 'only-one': cardCount === 1 }" aria-hidden="true">
 		<div
-			v-for="card in card_count"
+			v-for="card in cardCount"
 			:key="card"
 			class="checkout-member-choice-card"
 			aria-hidden="true"
@@ -21,10 +21,10 @@
 <script setup lang="ts">
 withDefaults(
 	defineProps<{
-		card_count?: number;
+		cardCount?: number;
 	}>(),
 	{
-		card_count: 1,
+		cardCount: 1,
 	}
 );
 </script>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CheckoutInvoicePage from '~/components/checkout/invoice/CheckoutInvoicePage.vue';
+
 definePageMeta({
 	layout: 'checkout',
 	hideHeader: true,

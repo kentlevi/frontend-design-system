@@ -47,16 +47,10 @@ export function useCheckoutExperience() {
 	} = useCheckoutTooltipState();
 
 	// Modal States expected by the template
-	const is_shipping_address_modal_open = useState('is_shipping_address_modal_open', () =>false) 
+	const is_shipping_address_modal_open = useState('is_shipping_address_modal_open', () => false)
 	const is_billing_address_modal_open = ref(false);
 	const is_drop_shipping_address_modal_open = ref(false);
 	const is_accredited_banks_modal_open = ref(false);
-
-	// Static lookup data for the template
-	const shipping_method_details = {
-		standard: { name: 'Standard', date: 'December 15, 2025', price: 'Free' },
-		express: { name: 'Express', date: 'December 12, 2025', price: '$15.00' },
-	} as Record<string, { name: string; date: string; price: string }>;
 
 	const field_validation_by_key = checkoutFieldValidation;
 
@@ -113,7 +107,6 @@ export function useCheckoutExperience() {
 		getAddressTagClass,
 
 		// Unified Data
-		shipping_method_details,
 		field_validation_by_key,
 
 		// Unified Payment Brands (Filtered: Member brands only)

@@ -21,7 +21,12 @@ export const useCartPreviewHandler = () => {
 	const per_page = ref<number>(10)
 
 	const formatImage = (item: CartItem) => {
-		let f = `${config.public.file_url}${item.product_thumbnail}`
+		const is_absolute_url = (value: string | null | undefined) =>
+			Boolean(value && /^(https?:)?\/\//i.test(value))
+
+		let f = is_absolute_url(item.product_thumbnail)
+			? String(item.product_thumbnail)
+			: `${config.public.file_url}${item.product_thumbnail}`
 
 		if( item.id && item.artwork_file) {
 			f = `${config.public.s3_file_url}${item.file_path}${item.artwork_file}`
@@ -49,7 +54,7 @@ export const useCartPreviewHandler = () => {
 
 
 
-	// 🔥 Default method and initialization of component
+	// ðŸ”¥ Default method and initialization of component
 	const composePreview = () => {
 		console.warn('Compose preview component...')
 		getCartItems()

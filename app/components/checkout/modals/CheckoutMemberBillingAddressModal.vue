@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CheckoutAddressSelectModal from '~/components/checkout/shared/CheckoutAddressSelectModal.vue';
+import CheckoutAddressSelectModal from '~/components/checkout/modals/CheckoutAddressSelectModal.vue';
 import type { MemberAddress } from '~/types/checkout';
 
 const props = defineProps<{
@@ -19,9 +19,9 @@ const emit = defineEmits<{
 		:model-value="props.modelValue"
 		:addresses="props.addresses"
 		:selected-address-id="props.selectedAddressId"
-		title="Select Shipping Address"
-		copy="Please select the address where you'd like us to deliver your order."
-		variant="shipping"
+		title="Select Billing Address"
+		copy="Please select the billing address you'd like us to use for this order."
+		variant="billing"
 		confirm-label="Select Address"
 		@update:model-value="emit('update:modelValue', $event)"
 		@select="emit('select', $event)"

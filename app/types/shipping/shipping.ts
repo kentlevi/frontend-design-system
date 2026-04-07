@@ -13,7 +13,7 @@ export interface ShippingMethodData {
 	max_delivery_date: number;
 	min_shipping_days: number;
 	max_shipping_days: number;
-    production_days: number;
+	production_days: number;
 	cart_item_ids: number[];
 }
 

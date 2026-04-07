@@ -10,7 +10,7 @@ const AppHeaderLocaleModal = defineAsyncComponent(
 	() => import('~/components/layout/app-header/AppHeaderLocaleModal.vue')
 );
 const CartPreview = defineAsyncComponent(
-	() => import('~/components/cart/CartPreview.vue')
+	() => import('~/components/cart/preview/CartPreview.vue')
 );
 const route = useRoute();
 const {
@@ -75,7 +75,7 @@ async function prefetchHeaderOverlayModules() {
 	prefetched_header_overlays.value = true;
 	await Promise.allSettled([
 		import('~/components/layout/app-header/AppHeaderLocaleModal.vue'),
-		import('~/components/cart/CartPreview.vue'),
+		import('~/components/cart/preview/CartPreview.vue'),
 	]);
 }
 

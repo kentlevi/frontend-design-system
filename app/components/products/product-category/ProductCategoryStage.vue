@@ -92,10 +92,6 @@ const {
 
 const route = useRoute()
 
-const resolved_category = computed(() => {
-	return  route.params.category as string
-})
-
 const route_product_slug = computed(() => {
 	const route_product = route.params?.product
 	return typeof route_product === 'string'
