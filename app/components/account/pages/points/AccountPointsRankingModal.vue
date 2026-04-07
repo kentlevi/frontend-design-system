@@ -170,7 +170,7 @@ function handleModelValueChange(value: boolean) {
 		background: color-mix(in srgb, var(--rank-accent) 88%, white);
 		color: var(--contrast-light);
 		font-size: var(--type-size-100);
-		line-height: 1;
+		line-height: var(--type-line-100);
 		font-weight: var(--font-weight-bold);
 	}
 
@@ -209,7 +209,7 @@ function handleModelValueChange(value: boolean) {
 		margin: 0;
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
-		line-height: 1.5;
+		line-height: var(--type-line-100);
 	}
 
 	.account-points-ranking-card-section {
@@ -232,7 +232,7 @@ function handleModelValueChange(value: boolean) {
 		padding-left: 24px;
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
-		line-height: 1.7;
+		line-height: var(--type-line-100);
 	}
 
 	@media (max-width: 1280px) {

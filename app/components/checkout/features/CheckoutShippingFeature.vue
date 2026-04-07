@@ -94,7 +94,17 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 								<div class="checkout-member-address-top">
 									<div class="checkout-member-address-title-group">
 										<strong class="checkout-member-address-name">{{ selected_shipping_address.recipient }}</strong>
-										<span v-if="selected_shipping_address.isDefault" class="checkout-member-address-badge">Default Shipping</span>
+										<UiBadge
+											v-if="selected_shipping_address.isDefault"
+											variant="outline"
+											tone="default"
+											size="md"
+											class="checkout-member-address-badge"
+											text-color="var(--gray-80)"
+										>
+											<UiIcon name="strong-ship" :size="18" />
+											<span class="checkout-member-address-badge-copy">Default Shipping</span>
+										</UiBadge>
 									</div>
 								</div>
 								<div class="checkout-member-address-content">
@@ -173,7 +183,7 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 					<UiTooltip :open="drop_shipping_tooltip_open" v-bind="checkoutDropShippingTooltipProps">
 						<template #trigger>
 							<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleDropShippingTooltip">
-								<UiIcon :name="drop_shipping_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
+								<UiIcon :name="drop_shipping_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
 							</button>
 						</template>
 						<div class="ui-tooltip-copy">
@@ -209,7 +219,17 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 												<div class="checkout-member-address-top">
 													<div class="checkout-member-address-title-group">
 														<strong class="checkout-member-address-name">{{ selected_drop_shipping_address?.recipient }}</strong>
-														<span v-if="selected_drop_shipping_address?.isDefault" class="checkout-member-address-badge">Default Drop Shipping</span>
+														<UiBadge
+															v-if="selected_drop_shipping_address?.isDefault"
+															variant="outline"
+															tone="default"
+															size="md"
+															class="checkout-member-address-badge"
+															text-color="var(--gray-80)"
+														>
+															<UiIcon name="strong-boxes-full" :size="18" />
+															<span class="checkout-member-address-badge-copy">Default Drop Shipping</span>
+														</UiBadge>
 													</div>
 												</div>
 												<div class="checkout-member-address-content">
@@ -403,14 +423,16 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 					}
 
 					.checkout-member-address-badge {
-						padding: 3px 10px;
-						border-radius: 999px;
-						border: 1px solid var(--gray-40);
-						background: var(--contrast-light);
-						font-size: var(--type-size-50);
-						line-height: var(--type-line-50);
+						display: inline-flex;
+						align-items: center;
+						gap: 6px;
+						flex-shrink: 0;
+					}
+
+					.checkout-member-address-badge-copy {
+						font-size: var(--type-size-100);
+						line-height: var(--type-line-100);
 						font-weight: var(--font-weight-semibold);
-						color: var(--text-secondary);
 					}
 				}
 			}
@@ -540,7 +562,8 @@ useHeightTransition(drop_shipping_mode_swap_wrapper_ref, drop_shipping_ship_to_a
 			align-items: center;
 			gap: 6px;
 			min-width: 0;
-			line-height: 1;
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
 		}
 
 		.checkout-member-address-form,

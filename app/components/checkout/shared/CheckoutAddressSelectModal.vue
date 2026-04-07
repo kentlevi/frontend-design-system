@@ -76,6 +76,12 @@ function getDefaultBadgeLabel(address: SelectableAddress) {
 	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || 'Default Billing';
 	return 'Default Drop Shipping';
 }
+
+function getDefaultBadgeIcon() {
+	if (props.variant === 'shipping') return 'strong-ship'
+	if (props.variant === 'billing') return 'strong-file-dollar'
+	return 'strong-box-full'
+}
 </script>
 
 <template>
@@ -125,9 +131,19 @@ function getDefaultBadgeLabel(address: SelectableAddress) {
 									<span class="checkout-address-select-modal-radio-dot" />
 								</span>
 								<strong class="checkout-address-select-modal-name">{{ address.recipient }}</strong>
-								<span v-if="address.isDefault" class="checkout-address-select-modal-badge">
-									{{ getDefaultBadgeLabel(address) }}
-								</span>
+								<UiBadge
+									v-if="address.isDefault"
+									variant="outline"
+									tone="default"
+									size="md"
+									class="checkout-address-select-modal-badge"
+									text-color="var(--gray-80)"
+								>
+									<UiIcon :name="getDefaultBadgeIcon()" :size="18" />
+									<span class="checkout-address-select-modal-badge-copy">
+										{{ getDefaultBadgeLabel(address) }}
+									</span>
+								</UiBadge>
 							</div>
 						</div>
 
@@ -262,7 +278,7 @@ function getDefaultBadgeLabel(address: SelectableAddress) {
 
 .checkout-address-select-modal-copy {
 	font-size: var(--type-size-100);
-	line-height: 1.45;
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 }
 
@@ -343,14 +359,16 @@ function getDefaultBadgeLabel(address: SelectableAddress) {
 }
 
 .checkout-address-select-modal-badge {
-	padding: 4px 12px;
-	border-radius: 999px;
-	border: 1px solid var(--gray-40);
-	background: var(--contrast-light);
-	font-size: var(--type-size-50);
-	line-height: var(--type-line-50);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.checkout-address-select-modal-badge-copy {
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: var(--font-weight-semibold);
-	color: var(--text-secondary);
 }
 
 .checkout-address-select-modal-card-body {
@@ -392,7 +410,7 @@ function getDefaultBadgeLabel(address: SelectableAddress) {
 
 .checkout-address-select-modal-line {
 	font-size: var(--type-size-100);
-	line-height: 1.45;
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 }
 

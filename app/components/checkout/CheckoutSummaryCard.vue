@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
 								>
 									<UiIcon
 										:name="shipping_fee_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
-										size="20"
+										size="24"
 										color="var(--gray-90)"
 										decorative
 									/>
@@ -495,7 +495,8 @@ onBeforeUnmount(() => {
 	display: inline-flex;
 	align-items: center;
 	align-self: center;
-	line-height: 1;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 }
 
 .checkout-summary-tooltip-trigger {
@@ -533,15 +534,15 @@ onBeforeUnmount(() => {
 }
 
 .checkout-summary-tooltip-title {
-	font-size: 14px;
-	line-height: 24px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: var(--font-weight-semibold);
 	color: inherit;
 }
 
 .checkout-summary-tooltip-text {
-	font-size: 14px;
-	line-height: 24px;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: var(--font-weight-regular);
 	color: inherit;
 }

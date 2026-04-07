@@ -130,8 +130,8 @@ const skip_modal_body_parts = computed(() => {
             }
 
             .home-guide-tour-skip-modal-text {
-                font-size: 12px;
-                line-height: 20px;
+                font-size: var(--type-size-100);
+	            line-height: var(--type-line-100);
                 color: var(--text-secondary);
             }
         }

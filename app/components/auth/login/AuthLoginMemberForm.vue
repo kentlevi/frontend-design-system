@@ -192,7 +192,8 @@ const emit = defineEmits<{
         }
 
         .auth-login-checkbox-text {
-            line-height: 1.2;
+            font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
         }
 
         .auth-login-link-button {

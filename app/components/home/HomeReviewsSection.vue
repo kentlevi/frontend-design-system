@@ -271,19 +271,17 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
                                 gap: 10px;
 
                                 .home-reviews-item-title {
-
-                                    font-size: var(--heading-6);
                                     font-weight: var(--font-weight-bold);
-                                    line-height: 1.4;
+                                    font-size: var(--type-size-100);
+	                                line-height: var(--type-line-100);
                                     color: var(--text-primary);
                                     overflow-wrap: anywhere;
                                 }
                             }
 
                             .home-reviews-item-text {
-
-                                font-size: var(--body-base);
-                                line-height: 1.6;
+                                font-size: var(--type-size-100);
+                            	line-height: var(--type-line-100);
                                 color: var(--text-secondary);
                                 overflow-wrap: anywhere;
                             }
@@ -296,8 +294,8 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
 
                             .home-reviews-author {
                                 margin-left: 8px;
-                                font-size: var(--body-base);
-                                line-height: 1.5;
+                                font-size: var(--type-size-100);
+                            	line-height: var(--type-line-100);
                                 color: var(--text-secondary);
                             }
                         }
@@ -361,8 +359,8 @@ const carousel_label = computed(() => t('home.reviews.carouselLabel'));
                         .home-reviews-content {
                             .home-reviews-item-head {
                                 .home-reviews-item-title {
-                                    font-size: var(--heading-6);
-                                    line-height: var(--type-line-100);
+                                    font-size: var(--type-size-100);
+                                	line-height: var(--type-line-100);
                                 }
                             }
 

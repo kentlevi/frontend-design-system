@@ -141,7 +141,7 @@ function closeModal() {
 
 .checkout-member-accredited-banks-modal-label {
 	font-size: var(--type-size-100);
-	line-height: 1.45;
+	line-height: var(--type-line-100);
 	color: var(--text-primary);
 }
 

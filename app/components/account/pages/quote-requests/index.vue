@@ -190,7 +190,8 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 						background: color-mix(in srgb, var(--brand-primary) 14%, var(--contrast-light));
 						padding: 12px;
 						color: var(--text-primary);
-						line-height: 1.5;
+						font-size: var(--type-size-100);
+						line-height: var(--type-line-100);
 
 						.account-quote-chat-request {
 							margin-top: 8px;

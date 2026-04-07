@@ -174,7 +174,7 @@ useHeightTransition(payment_meta_swap_wrapper_ref, selected_payment_method,
 				<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
 					<template #trigger>
 						<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">
-							<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--text-secondary)" decorative />
+							<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
 						</button>
 					</template>
 
@@ -207,7 +207,17 @@ useHeightTransition(payment_meta_swap_wrapper_ref, selected_payment_method,
 											<div class="checkout-member-address-top">
 												<div class="checkout-member-address-title-group">
 													<strong class="checkout-member-address-name">{{ selected_billing_address.recipient }}</strong>
-													<span v-if="selected_billing_address.isDefault" class="checkout-member-address-badge">Default Billing</span>
+													<UiBadge
+														v-if="selected_billing_address.isDefault"
+														variant="outline"
+														tone="default"
+														size="md"
+														class="checkout-member-address-badge"
+														text-color="var(--gray-80)"
+													>
+														<UiIcon name="strong-file-dollar" :size="18" />
+														<span class="checkout-member-address-badge-copy">Default Billing</span>
+													</UiBadge>
 												</div>
 											</div>
 											<div class="checkout-member-address-content">
@@ -404,14 +414,16 @@ useHeightTransition(payment_meta_swap_wrapper_ref, selected_payment_method,
 						}
 
 						.checkout-member-address-badge {
-							padding: 3px 10px;
-							border-radius: 999px;
-							border: 1px solid var(--gray-40);
-							background: var(--contrast-light);
-							font-size: var(--type-size-50);
-							line-height: var(--type-line-50);
+							display: inline-flex;
+							align-items: center;
+							gap: 6px;
+							flex-shrink: 0;
+						}
+
+						.checkout-member-address-badge-copy {
+							font-size: var(--type-size-100);
+							line-height: var(--type-line-100);
 							font-weight: var(--font-weight-semibold);
-							color: var(--text-secondary);
 						}
 					}
 				}

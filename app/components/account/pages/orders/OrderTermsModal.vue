@@ -134,7 +134,7 @@ function closeModal() {
 	flex-direction: column;
 	gap: 20px;
 	font-size: var(--type-size-100);
-	line-height: 1.5;
+	line-height: var(--type-line-100);
 	color: var(--text-primary);
 
 	p {
@@ -155,7 +155,7 @@ function closeModal() {
 
 .account-order-terms-modal-section-title {
 	font-size: var(--type-size-100);
-	line-height: 1.45;
+	line-height: var(--type-line-100);
 	font-weight: var(--font-weight-bold);
 	color: var(--text-primary);
 }
@@ -172,7 +172,7 @@ function closeModal() {
 		position: relative;
 		padding-left: 24px;
 		font-size: var(--type-size-100);
-		line-height: 1.45;
+		line-height: var(--type-line-100);
 
 		&::before {
 			content: '';

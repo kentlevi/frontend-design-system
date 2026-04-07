@@ -306,8 +306,8 @@ onBeforeUnmount(() => {
 		border-radius: 999px;
 		background: var(--contrast-light);
 		color: var(--text-primary);
-		font-size: 13px;
-		line-height: 1;
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
 		font-weight: var(--font-weight-semibold);
 		cursor: pointer;
 		transition:
@@ -363,8 +363,8 @@ onBeforeUnmount(() => {
 	display: grid;
 	gap: 8px;
 	color: rgba(255, 255, 255, 0.8);
-	font-size: 13px;
-	line-height: 1.35;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 }
 
 .checkout-invoice-meta {
@@ -383,8 +383,8 @@ onBeforeUnmount(() => {
 }
 
 .checkout-invoice-date {
-	font-size: 13px;
-	line-height: 1.35;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: rgba(255, 255, 255, 0.78);
 }
 
@@ -404,15 +404,15 @@ onBeforeUnmount(() => {
 }
 
 .checkout-invoice-billing-title {
-	font-size: 14px;
-	line-height: 1.35;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: 700;
 	color: #ffffff;
 }
 
 .checkout-invoice-billing-line {
-	font-size: 13px;
-	line-height: 1.45;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: rgba(255, 255, 255, 0.84);
 
 	strong {
@@ -429,8 +429,8 @@ onBeforeUnmount(() => {
 	border-radius: 999px;
 	background: #ffffff;
 	color: #2f3341;
-	font-size: 12px;
-	line-height: 1;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: 600;
 	cursor: pointer;
 	transition:
@@ -469,8 +469,8 @@ onBeforeUnmount(() => {
 .checkout-invoice-items-head {
 	background: #2b2d39;
 	color: #ffffff;
-	font-size: 12px;
-	line-height: 1.2;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: 700;
 	text-transform: uppercase;
 
@@ -483,8 +483,8 @@ onBeforeUnmount(() => {
 .checkout-invoice-items-row {
 	background: #ffffff;
 	border-top: 1px solid #eceef3;
-	font-size: 14px;
-	line-height: 1.35;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 
 	span:last-child,
@@ -516,8 +516,8 @@ onBeforeUnmount(() => {
 	align-items: baseline;
 	justify-content: space-between;
 	gap: 16px;
-	font-size: 14px;
-	line-height: 1.35;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	color: var(--text-secondary);
 
 	strong {
@@ -550,8 +550,8 @@ onBeforeUnmount(() => {
 	padding: 30px 40px 34px;
 	background: #ffffff;
 	color: var(--text-secondary);
-	font-size: 13px;
-	line-height: 1.4;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 
 	.checkout-invoice-footer-copy {
 		display: grid;
@@ -672,8 +672,8 @@ onBeforeUnmount(() => {
 }
 
 :global(.ui-toast.checkout-invoice-success-toast .ui-toast-text) {
-	font-size: 15px;
-	line-height: 1.3;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 	font-weight: var(--font-weight-semibold);
 	white-space: nowrap;
 }

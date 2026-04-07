@@ -279,8 +279,8 @@ function openRankingModal() {
 			border-radius: 999px;
 			border: 1px solid color-mix(in srgb, var(--brand-primary) 68%, white);
 			color: var(--brand-primary);
-			font-size: 13px;
-			line-height: 1;
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
 			font-weight: var(--font-weight-semibold);
 			background: color-mix(in srgb, var(--brand-primary) 8%, white);
 		}
@@ -431,8 +431,8 @@ function openRankingModal() {
 			border: 1px solid var(--border-default);
 			background: var(--contrast-light);
 			color: var(--text-secondary);
-			font-size: 14px;
-			line-height: 1;
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
 			font-weight: var(--font-weight-medium);
 		}
 
@@ -508,8 +508,8 @@ function openRankingModal() {
 			border-left: 1px solid var(--text-primary);
 			background: transparent;
 			color: var(--text-primary);
-			font-size: 14px;
-			line-height: 1;
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
 			font-weight: var(--font-weight-semibold);
 			cursor: pointer;
 
