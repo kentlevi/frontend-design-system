@@ -1,7 +1,6 @@
 import { checkoutRequest } from "~/services/checkout/checkout.service"
 import { usePaymentStrategy } from "~/composables/payments/usePaymentStrategy"
-import type { CheckoutResponse, InitialCheckoutPayload } from "~/types/checkout"
-import { useShippingMethod } from "../shipping/useShippingMethod"
+import type { InitialCheckoutPayload } from "~/types/checkout"
 import { useUsersStore } from '~/stores/users/users.store';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 
@@ -15,7 +14,7 @@ export const useCheckoutFlow = () => {
 	} = storeToRefs(useMainCheckOutStore())
 
 	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
-		
+
 		return {
 			shipping_method_id: selected_shipping_method_id.value,
 			email: state.value.email,
@@ -28,13 +27,17 @@ export const useCheckoutFlow = () => {
 		try {
 			const params = initializeSubmitCheckoutParams()
 
-			const request = await checkoutRequest(params)
+			const response = await checkoutRequest(params)
 
-			payment.execute("TOSS", "process", request.data as CheckoutResponse)
+			payment.execute("TOSS", "process", response.data)
 
 		} catch (error) {
 			console.error(error)
-			payment.execute("TOSS", "error", error)
+			if (error instanceof Error) {
+				payment.execute("TOSS", "error", error)
+			} else {
+				payment.execute("TOSS", "error", new Error(String(error)))
+			}
 		}
 	}
 

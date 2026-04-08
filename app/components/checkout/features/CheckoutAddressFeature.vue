@@ -74,8 +74,8 @@ const {
 	is_shipping_address_modal_open,
 } = useCheckoutExperienceFeatureContext();
 
-const { 
-	getShippingAddress 
+const {
+	getShippingAddress
 } = useCheckoutAddressFlow();
 
 const {

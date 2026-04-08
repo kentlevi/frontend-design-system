@@ -1,5 +1,6 @@
 import type { ProductItem } from '~/types/products/catalog';
 import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
+import type { ApiResponse } from '~/types/config/api'
 
 export type CheckoutItem = {
 	id: string;
@@ -30,7 +31,7 @@ export type MemberDropShippingAddress = {
 	isDefault?: boolean;
 };
 
-export type CheckoutResponse = {
+export type CheckoutResponseData = {
 	payment_information?: {
 		redirect_url?: string
 	}
@@ -42,3 +43,5 @@ export type InitialCheckoutPayload = {
 	contact_name?:string
 	phone_number?:string
 }
+
+export type CheckoutApiResponse = ApiResponse<CheckoutResponseData>

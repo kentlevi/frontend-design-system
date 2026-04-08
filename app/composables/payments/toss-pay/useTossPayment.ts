@@ -11,7 +11,11 @@ export const useTossPayment = () => {
 	// =========================
 	// POPUP HANDLING
 	// =========================
-	const openPaymentPopup = (url: string) => {
+	const openPaymentPopup = (url: string | null) => {
+
+		if (url === null) {
+			throw new Error('No URL provided')
+		}
 
 		popup = window.open(
 			'',
