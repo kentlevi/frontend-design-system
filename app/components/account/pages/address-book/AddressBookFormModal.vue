@@ -1,29 +1,27 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
-import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType, UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
+import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
+import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
 
 type IconName = keyof typeof icons;
 
 const { t } = useI18n();
+const address_book_feature_context = useAddressBookFeatureContext();
 
-const props = defineProps<{
-	modelValue: boolean;
-	modalMode: 'create' | 'edit';
-	formType: AddressType;
-	activeForm: AddressFormMap[AddressType];
-	dynamicFields: AddressDynamicFields[];
-	fieldErrors: Record<string, string>;
-	submitLabel?: string;
-}>();
+const is_form_modal_open = address_book_feature_context.is_form_modal_open;
+const form_modal_mode = address_book_feature_context.form_modal_mode;
+const form_submit_label = address_book_feature_context.form_submit_label;
+const form_type = address_book_feature_context.form_type;
+const active_form = address_book_feature_context.active_form;
+const dynamic_fields = address_book_feature_context.dynamic_fields;
+const form_field_errors = address_book_feature_context.form_field_errors;
 
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void;
-	(e: 'set-form-type', value: AddressType): void;
-	(e: 'update-field', payload: UpdateFieldPayload): void;
-	(e: 'update-dynamic-field', payload: UpdateDynamicFieldPayload): void;
-	(e: 'submit'): void;
-}>();
+const setFormType = address_book_feature_context.setFormType;
+const updateActiveFormField = address_book_feature_context.updateActiveFormField;
+const updateFormDynamicField = address_book_feature_context.updateDynamicField;
+const submitAddressForm = address_book_feature_context.submitAddressForm;
+const closeFormModal = address_book_feature_context.closeFormModal;
 
 /** Check whether the form supports address lines */
 function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
@@ -41,12 +39,12 @@ function createStringFieldModel(
 	get_value: () => string
 ) {
 	return computed({
-		/** Read current value from prop */
+		/** Read current value from active form */
 		get: get_value,
 
-		/** Send changed value to parent */
+		/** Push changed value to shared form state */
 		set: (value: string) => {
-			emit('update-field', {
+			updateActiveFormField({
 				field,
 				value,
 			})
@@ -62,57 +60,57 @@ function createBooleanFieldModel(
 		get: get_value,
 
 		set: (value: boolean) => {
-			emit('update-field', {
+			updateActiveFormField({
 				field,
-				value
+				value,
 			})
 		},
-	});
+	})
 }
 
 /** Shared fields */
 const contact_name_model = createStringFieldModel(
 	'contact_name',
-	() => props.activeForm.contact_name
+	() => active_form.value.contact_name
 )
 
 const company_model = createStringFieldModel(
 	'company',
-	() => props.activeForm.company ?? ''
+	() => active_form.value.company ?? ''
 )
 
 const is_default_model = createBooleanFieldModel(
 	'is_default',
-	() => props.activeForm.is_default ?? false
+	() => active_form.value.is_default ?? false
 )
 
 /** Address line fields */
 const address_line_1_model = createStringFieldModel(
 	'address_line_1',
-	() => hasAddressLines(props.activeForm)
-		? props.activeForm.address_line_1
+	() => hasAddressLines(active_form.value)
+		? active_form.value.address_line_1
 		: ''
 )
 
 const address_line_2_model = createStringFieldModel(
 	'address_line_2',
-	() => hasAddressLines(props.activeForm)
-		? props.activeForm.address_line_2 ?? ''
+	() => hasAddressLines(active_form.value)
+		? active_form.value.address_line_2 ?? ''
 		: ''
 )
 
 const postcode_model = createStringFieldModel(
 	'postcode',
-	() => hasAddressLines(props.activeForm)
-		? props.activeForm.postcode
+	() => hasAddressLines(active_form.value)
+		? active_form.value.postcode
 		: ''
 )
 
 /** Shipping-only field */
 const phone_number_model = createStringFieldModel(
 	'phone_number',
-	() => hasPhoneNumber(props.activeForm)
-		? props.activeForm.phone_number
+	() => hasPhoneNumber(active_form.value)
+		? active_form.value.phone_number
 		: ''
 )
 
@@ -138,19 +136,19 @@ const default_address_tooltip_ref = ref<HTMLElement | null>(null)
 
 useDismissibleTooltip(default_address_tooltip_ref, default_address_tooltip_open)
 
-/** Send one dynamic field change to the parent */
+/** Send one dynamic field change to shared form state */
 function updateDynamicField(field_key: string, value: string | number) {
-	emit('update-dynamic-field', {
+	updateFormDynamicField({
 		field_key,
 		value,
 	})
 }
 
 function getDynamicFieldValue(field_key: string) {
-	if (!hasAddressLines(props.activeForm)) return ''
+	if (!hasAddressLines(active_form.value)) return ''
 
-	const value = props.activeForm.fields?.[field_key]
-	const field = props.dynamicFields?.find(f => f.field_key === field_key)
+	const value = active_form.value.fields?.[field_key]
+	const field = dynamic_fields.value?.find(f => f.field_key === field_key)
 
 	// If it's a select field, return the option label
 	if (field?.options?.length) {
@@ -161,9 +159,8 @@ function getDynamicFieldValue(field_key: string) {
 }
 
 function onDynamicSelectChange(field_key: string, selected_value: string | number) {
-
-	// if options carry `id` and `value`, transform:
-	const option = props.dynamicFields
+	// If options carry `id` and `value`, map selected label/value back to option id
+	const option = dynamic_fields.value
 		.find(f => f.field_key === field_key)
 		?.options?.find(opt => opt.value === selected_value)
 
@@ -172,7 +169,7 @@ function onDynamicSelectChange(field_key: string, selected_value: string | numbe
 }
 
 function getFieldError(field_key: string) {
-	return props.fieldErrors[field_key] ?? ''
+	return form_field_errors.value[field_key] ?? ''
 }
 
 function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
@@ -197,7 +194,7 @@ const address_type_options: Array<{
 	{ value: 'shipping', label_key: 'shippingTitle', icon: 'regular-truck' },
 	{ value: 'billing', label_key: 'billingTitle', icon: 'regular-file-dollar' },
 	{ value: 'drop', label_key: 'dropTitle', icon: 'regular-boxes' },
-];
+]
 
 const address_label_options: Array<{
 	value: AddressLabel;
@@ -207,25 +204,26 @@ const address_label_options: Array<{
 	{ value: 'home', label_key: 'home', icon: 'regular-home' },
 	{ value: 'office', label_key: 'office', icon: 'regular-building' },
 	{ value: 'client', label_key: 'client', icon: 'regular-user-circle' },
-];
+]
 
 const modal_title = computed(() => {
-	return props.modalMode === 'edit'
+	return form_modal_mode.value === 'edit'
 		? t('account.addressBook.editTitle')
 		: t('account.addressBook.addNew')
-});
-const save_label = computed(() => {
-	const label_key = props.submitLabel ?? (props.modalMode === 'edit' ? 'update' : 'save')
+})
 
+const save_label = computed(() => {
+	const label_key = form_submit_label.value || (form_modal_mode.value === 'edit' ? 'update' : 'save')
 	return t(`account.addressBook.${label_key}`)
-});
-const edit_address_type_note = 'Address type can’t be changed to maintain data integrity and ensure smooth order processing.'
+})
+
+const edit_address_type_note = "Address type can't be changed to maintain data integrity and ensure smooth order processing."
 
 const default_toggle_copy = computed(() => {
-	if (props.formType === 'shipping') return 'Save as my default shipping address'
-	if (props.formType === 'drop') return 'Save as my default drop shipping address'
+	if (form_type.value === 'shipping') return 'Save as my default shipping address'
+	if (form_type.value === 'drop') return 'Save as my default drop shipping address'
 	return 'Save as my default billing address'
-});
+})
 
 const default_address_tooltip_props = {
 	side: 'right',
@@ -241,14 +239,14 @@ const default_address_tooltip_props = {
 } as const
 
 const default_address_tooltip_content = computed(() => {
-	if (props.formType === 'shipping') {
+	if (form_type.value === 'shipping') {
 		return {
 			title: 'Default Shipping Address',
 			text: 'Choose this option to automatically use this address as your default shipping address for future purchases.',
 		}
 	}
 
-	if (props.formType === 'billing') {
+	if (form_type.value === 'billing') {
 		return {
 			title: 'Default Billing Address',
 			text: 'Choose this option to automatically use this address as your default billing address for future purchases.',
@@ -268,7 +266,8 @@ const prioritized_dynamic_field_keys: Record<AddressType, string[]> = {
 }
 
 const ordered_dynamic_fields = computed(() => {
-	const prioritized_keys = prioritized_dynamic_field_keys[props.formType] ?? []
+	const prioritized_keys = prioritized_dynamic_field_keys[form_type.value] ?? []
+
 	const get_priority_index = (field: AddressDynamicFields) => {
 		const normalized_label = field.field_label.toLowerCase()
 		const fallback_key = normalized_label.includes('city')
@@ -284,7 +283,7 @@ const ordered_dynamic_fields = computed(() => {
 		return fallback_index === -1 ? Number.MAX_SAFE_INTEGER : fallback_index
 	}
 
-	return [...props.dynamicFields].sort((left, right) => {
+	return [...dynamic_fields.value].sort((left, right) => {
 		const normalized_left_index = get_priority_index(left)
 		const normalized_right_index = get_priority_index(right)
 
@@ -297,24 +296,23 @@ const ordered_dynamic_fields = computed(() => {
 })
 
 function closeModal() {
-	emit('update:modelValue', false);
+	closeFormModal()
 }
 
 function toggleDefaultAddressTooltip() {
 	default_address_tooltip_open.value = !default_address_tooltip_open.value
 }
-
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.modelValue"
+		:model-value="is_form_modal_open"
 		align="top"
 		padding="0"
 		gap="0"
 		width="710px"
 		modal-class="account-address-book-add-modal-shell"
-		@update:model-value="emit('update:modelValue', $event)"
+		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-add-modal" data-testid="account-address-book-add-modal">
 			<header class="account-address-book-add-modal-header">
@@ -350,16 +348,16 @@ function toggleDefaultAddressTooltip() {
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="props.formType === option.value"
-									:disabled="props.modalMode === 'edit'"
-									@click="emit('set-form-type', option.value)"
+									:selected="form_type === option.value"
+									:disabled="form_modal_mode === 'edit'"
+									@click="setFormType(option.value)"
 								>
 									<UiIcon :name="option.icon" :size="24" />
 									<span>{{ t(`account.addressBook.${option.label_key}`) }}</span>
 								</UiButton>
 							</div>
 
-							<p v-if="props.modalMode === 'edit'" class="account-address-book-add-modal-note">
+							<p v-if="form_modal_mode === 'edit'" class="account-address-book-add-modal-note">
 								<UiIcon name="regular-info-circle" :size="16" />
 								<span>{{ edit_address_type_note }}</span>
 							</p>
@@ -426,8 +424,8 @@ function toggleDefaultAddressTooltip() {
 									tone="neutral"
 									size="40"
 									class="account-address-book-add-modal-choice"
-									:selected="props.activeForm.label === option.value"
-									@click="emit('update-field', { field: 'label', value: option.value })"
+									:selected="active_form.label === option.value"
+									@click="updateActiveFormField({ field: 'label', value: option.value })"
 								>
 									<UiIcon :name="option.icon" :size="24" />
 									<span>{{ t(`account.addressBook.tags.${option.label_key}`) }}</span>
@@ -435,7 +433,7 @@ function toggleDefaultAddressTooltip() {
 							</div>
 						</div>
 
-						<template v-if="hasAddressLines(props.activeForm)">
+						<template v-if="hasAddressLines(active_form)">
 							<UiFormField
 								:label="t('account.addressBook.streetAddress')"
 								:required="true"
@@ -512,7 +510,7 @@ function toggleDefaultAddressTooltip() {
 								</UiFormField>
 
 								<UiFormField
-									v-if="hasPhoneNumber(props.activeForm)"
+									v-if="hasPhoneNumber(active_form)"
 									:label="t('account.addressBook.phoneNumber')"
 									:required="true"
 									:show-required-mark="true"
@@ -603,7 +601,7 @@ function toggleDefaultAddressTooltip() {
 						tone="neutral"
 						size="md"
 						class="account-address-book-add-modal-save"
-						@click="emit('submit')"
+						@click="submitAddressForm"
 					>
 						{{ save_label }}
 					</UiButton>

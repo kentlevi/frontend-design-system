@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType } from '~/types/address';
 import { useAddressHelper } from '~/utils/address';
+import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
 
 const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
+const address_book_feature_context = useAddressBookFeatureContext()
 
-const props = defineProps<{
-	modelValue: boolean;
-	addresses: AddressMap[AddressType][];
-}>();
+const is_default_shipping_modal_open = address_book_feature_context.is_default_shipping_modal_open
+const replacement_addresses = address_book_feature_context.replacement_addresses
 
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void;
-	(e: 'cancel'): void;
-	(e: 'skip'): void;
-	(e: 'save', type: AddressType, address_id: number): void;
-}>();
+const cancelDefaultShippingFlow = address_book_feature_context.cancelDefaultShippingFlow
+const skipDefaultShippingSelection = address_book_feature_context.skipDefaultShippingSelection
+const saveDefaultShippingSelection = address_book_feature_context.saveDefaultShippingSelection
 
 const selected_address_id = ref<number | null>(null)
 
@@ -33,48 +29,44 @@ const tag_badge_colors = {
 	},
 } as const
 
-watch(() => props.modelValue, (is_open) => {
+watch(() => is_default_shipping_modal_open.value, (is_open) => {
 	if (is_open) {
 		selected_address_id.value = null
 	}
 })
 
 function closeModal() {
-	emit('update:modelValue', false)
+	cancelModal()
 }
 
 function cancelModal() {
-	closeModal()
-	emit('cancel')
+	cancelDefaultShippingFlow()
 }
 
 function skipSelection() {
-	closeModal()
-	emit('skip')
+	skipDefaultShippingSelection()
 }
 
-function saveSelection() {
+async function saveSelection() {
 	if (selected_address_id.value === null) return
 
-	closeModal()
-
-	const selected_address = props.addresses.find((address) => address.id === selected_address_id.value)
+	const selected_address = replacement_addresses.value.find((address) => address.id === selected_address_id.value)
 
 	if (!selected_address) return
 
-	emit('save', selected_address.type, selected_address_id.value)
+	await saveDefaultShippingSelection(selected_address.type, selected_address_id.value)
 }
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.modelValue"
+		:model-value="is_default_shipping_modal_open"
 		align="center"
 		padding="0"
 		gap="0"
 		width="710px"
 		modal-class="account-address-book-default-modal-shell"
-		@update:model-value="emit('update:modelValue', $event)"
+		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-default-modal" data-testid="account-address-book-default-modal">
 			<header class="account-address-book-default-modal-header">
@@ -100,7 +92,7 @@ function saveSelection() {
 
 				<div class="account-address-book-default-modal-list">
 					<label
-						v-for="address in props.addresses"
+						v-for="address in replacement_addresses"
 						:key="address.id"
 						class="account-address-book-default-modal-card"
 						:data-selected="selected_address_id === address.id"
