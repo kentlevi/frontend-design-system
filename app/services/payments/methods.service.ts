@@ -1,5 +1,5 @@
-import type { 
-    AvailablePaymentMethodsResponse, 
+import type {
+	AvailablePaymentMethodsResponse,
 } from "~/types/payments/payment";
 
 export const fetchAvailablePaymentMethods = async () : Promise<AvailablePaymentMethodsResponse> => {

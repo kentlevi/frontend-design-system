@@ -1,6 +1,6 @@
-import type { InitialCheckoutPayload } from "~/types/checkout"
+import type { InitialCheckoutPayload, CheckoutApiResponse } from "~/types/checkout"
 
-export const checkoutRequest = async (params : InitialCheckoutPayload) => {
+export const checkoutRequest = async (params : InitialCheckoutPayload) :Promise<CheckoutApiResponse>=> {
 	const { $api } = useNuxtApp()
 	return await $api.post(`orders/checkout`, params)
 }

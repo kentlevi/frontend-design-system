@@ -5,55 +5,55 @@ import type { AddressMap, AddressType } from "~/types/address";
  */
 export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
-    const saved_shipping_addresses = ref<AddressMap[AddressType][]>([])
-    const selected_shipping_address = ref<AddressMap[AddressType] | null>(null)
-    
-    const selected_billing_address = ref<AddressMap[AddressType] | null>(null)
-    const selected_drop_address = ref<AddressMap[AddressType] | null>(null)
-    const ship_to_another_address = ref<boolean>(false)
+	const saved_shipping_addresses = ref<AddressMap[AddressType][]>([])
+	const selected_shipping_address = ref<AddressMap[AddressType] | null>(null)
 
-    const selected_shipping_method_id = ref<number | null>(null)
-    const selected_payment_method_id = ref<number | null>(null)
+	const selected_billing_address = ref<AddressMap[AddressType] | null>(null)
+	const selected_drop_address = ref<AddressMap[AddressType] | null>(null)
+	const ship_to_another_address = ref<boolean>(false)
 
-    const setSavedShippingAddresses = (addresses: AddressMap[AddressType][]) => {
-        saved_shipping_addresses.value = addresses
-    }
+	const selected_shipping_method_id = ref<number | null>(null)
+	const selected_payment_method_id = ref<number | null>(null)
 
-    const setShippingAddress = (address: AddressMap[AddressType] | null) => {
-        selected_shipping_address.value = address
-    }
+	const setSavedShippingAddresses = (addresses: AddressMap[AddressType][]) => {
+		saved_shipping_addresses.value = addresses
+	}
 
-    const setBillingAddress = (address: AddressMap[AddressType] | null) => {
-        selected_billing_address.value = address
-    }
+	const setShippingAddress = (address: AddressMap[AddressType] | null) => {
+		selected_shipping_address.value = address
+	}
 
-    const setDropAddress = (address: AddressMap[AddressType] | null) => {
-        selected_drop_address.value = address
-    }
+	const setBillingAddress = (address: AddressMap[AddressType] | null) => {
+		selected_billing_address.value = address
+	}
 
-    const setShippingMethodId = (id: number | null) => {
-        selected_shipping_method_id.value = id
-    }
+	const setDropAddress = (address: AddressMap[AddressType] | null) => {
+		selected_drop_address.value = address
+	}
 
-    const setPaymentMethodId = (id: number | null) => {
-        selected_payment_method_id.value = id
-    }
+	const setShippingMethodId = (id: number | null) => {
+		selected_shipping_method_id.value = id
+	}
 
-    return {
-        saved_shipping_addresses,
-        selected_shipping_address,
-        selected_billing_address,
-        selected_drop_address,
-        selected_shipping_method_id,
-        selected_payment_method_id,
-        ship_to_another_address,
+	const setPaymentMethodId = (id: number | null) => {
+		selected_payment_method_id.value = id
+	}
 
-        // expose setters
-        setSavedShippingAddresses,
-        setShippingAddress,
-        setBillingAddress,
-        setDropAddress,
-        setShippingMethodId,
-        setPaymentMethodId
-    }
+	return {
+		saved_shipping_addresses,
+		selected_shipping_address,
+		selected_billing_address,
+		selected_drop_address,
+		selected_shipping_method_id,
+		selected_payment_method_id,
+		ship_to_another_address,
+
+		// expose setters
+		setSavedShippingAddresses,
+		setShippingAddress,
+		setBillingAddress,
+		setDropAddress,
+		setShippingMethodId,
+		setPaymentMethodId
+	}
 })
