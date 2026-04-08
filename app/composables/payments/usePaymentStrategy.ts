@@ -17,8 +17,8 @@ export const usePaymentStrategy = () => {
 	const handlers: Record<PaymentCode, PaymentHandlerMap> = {
 		TOSS: {
 			process: (payload?: CheckoutResponseData) => {
-				const url = payload?.payment_information?.redirect_url
-				toss.openPaymentPopup(url as string)
+				const url = payload?.payment_information?.redirect_url || null
+				toss.openPaymentPopup(url)
 			},
 			error: () => {
 				toss.closePaymentPopup()

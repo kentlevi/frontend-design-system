@@ -1,18 +1,18 @@
 <template>
 	<div key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
 		<div v-if="is_member" class="checkout-member-address-form-head">
-			 <UiRadio 
-                v-if = "selected_shipping_address"
-                v-model="ship_to_another_address"
-                :value="true"
-                name="shipping-mode"
-                class="checkout-member-radio-line checkout-member-radio-line--inline"
-            >
-                {{ t('checkout.member.shipToAnotherAddress') }}
-            </UiRadio>
-            <h2 v-else style="font-size: 20px; font-weight: 600;">
-                Shipping Information
-            </h2>
+			<UiRadio
+				v-if = "selected_shipping_address"
+				v-model="ship_to_another_address"
+				:value="true"
+				name="shipping-mode"
+				class="checkout-member-radio-line checkout-member-radio-line--inline"
+			>
+				{{ t('checkout.member.shipToAnotherAddress') }}
+			</UiRadio>
+			<h2 v-else style="font-size: 20px; font-weight: 600;">
+				Shipping Information
+			</h2>
 
 			<div class="checkout-member-address-form-note">
 				This address will be saved for future use.
