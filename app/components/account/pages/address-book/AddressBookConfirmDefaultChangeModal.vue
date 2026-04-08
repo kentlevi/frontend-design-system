@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import type { AddressItem, AddressType, ShippingAddress } from '~/types/address';
+import type { AddressItem, ShippingAddress } from '~/types/address';
 import { useAddressHelper } from '~/utils/address';
+import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
 
 const { buildAddressLines } = useAddressHelper()
+const address_book_feature_context = useAddressBookFeatureContext()
 
-const props = defineProps<{
-	modelValue: boolean;
-	currentAddress: AddressItem | null;
-	nextAddress: AddressItem | null;
-}>();
+const is_confirm_default_change_modal_open = address_book_feature_context.is_confirm_default_change_modal_open
+const current_default_address = address_book_feature_context.current_default_address
+const pending_default_address = address_book_feature_context.pending_default_address
 
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void;
-	(e: 'cancel'): void;
-	(e: 'confirm', type: AddressType, address_id: number): void;
-}>();
+const closeConfirmDefaultChangeModal = address_book_feature_context.closeConfirmDefaultChangeModal
+const confirmDefaultAddressChange = address_book_feature_context.confirmDefaultAddressChange
 
 const tag_badge_colors = {
 	home: {
@@ -32,16 +29,18 @@ const tag_badge_colors = {
 } as const
 
 const address_type_copy = computed(() => {
-	if (!props.nextAddress) return 'address'
-	return props.nextAddress.type === 'drop' ? 'drop shipping address' : `${props.nextAddress.type} address`
+	if (!pending_default_address.value) return 'address'
+	return pending_default_address.value.type === 'drop'
+		? 'drop shipping address'
+		: `${pending_default_address.value.type} address`
 })
 
 const modal_title = computed(() => {
-	if (!props.nextAddress) return 'Confirm Default Address Change'
+	if (!pending_default_address.value) return 'Confirm Default Address Change'
 
-	const type_label = props.nextAddress.type === 'drop'
+	const type_label = pending_default_address.value.type === 'drop'
 		? 'Drop Shipping'
-		: `${props.nextAddress.type.charAt(0).toUpperCase()}${props.nextAddress.type.slice(1)}`
+		: `${pending_default_address.value.type.charAt(0).toUpperCase()}${pending_default_address.value.type.slice(1)}`
 
 	return `Confirm Default ${type_label} Address Change`
 })
@@ -59,32 +58,32 @@ function isShippingAddress(address: AddressItem): address is ShippingAddress {
 }
 
 function closeModal() {
-	emit('update:modelValue', false)
+	closeConfirmDefaultChangeModal()
 }
 
 function cancelModal() {
-	closeModal()
-	emit('cancel')
+	closeConfirmDefaultChangeModal()
 }
 
 function confirmModal() {
-	closeModal()
+	const next_address = pending_default_address.value
 
-	if (!props.nextAddress) return
+	if (!next_address) return
 
-	emit('confirm', props.nextAddress?.type, props.nextAddress?.id)
+	closeConfirmDefaultChangeModal()
+	confirmDefaultAddressChange(next_address.type, next_address.id)
 }
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.modelValue"
+		:model-value="is_confirm_default_change_modal_open"
 		align="center"
 		padding="0"
 		gap="0"
 		width="710px"
 		modal-class="account-address-book-confirm-default-modal-shell"
-		@update:model-value="emit('update:modelValue', $event)"
+		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-confirm-default-modal" data-testid="account-address-book-confirm-default-modal">
 			<header class="account-address-book-confirm-default-modal-header">
@@ -108,11 +107,14 @@ function confirmModal() {
 					{{ modal_description }}
 				</p>
 
-				<div v-if="props.currentAddress && props.nextAddress" class="account-address-book-confirm-default-modal-compare">
+				<div
+					v-if="current_default_address && pending_default_address"
+					class="account-address-book-confirm-default-modal-compare"
+				>
 					<article class="account-address-book-confirm-default-modal-card">
 						<header class="account-address-book-confirm-default-modal-card-head">
 							<h4 class="account-address-book-confirm-default-modal-card-name">
-								{{ props.currentAddress.contact_name }}
+								{{ current_default_address.contact_name }}
 							</h4>
 							<UiBadge
 								variant="outline"
@@ -125,30 +127,33 @@ function confirmModal() {
 						</header>
 
 						<div class="account-address-book-confirm-default-modal-card-body">
-							<p v-if="isShippingAddress(props.currentAddress)" class="account-address-book-confirm-default-modal-card-phone">
-								{{ props.currentAddress.phone_number }}
+							<p
+								v-if="isShippingAddress(current_default_address)"
+								class="account-address-book-confirm-default-modal-card-phone"
+							>
+								{{ current_default_address.phone_number }}
 							</p>
 
 							<div class="account-address-book-confirm-default-modal-card-address-row">
 								<p class="account-address-book-confirm-default-modal-card-address">
-									{{ buildAddressLines(props.currentAddress) }}
+									{{ buildAddressLines(current_default_address) }}
 								</p>
 
 								<UiBadge
-									v-if="props.currentAddress.label"
+									v-if="current_default_address.label"
 									variant="tonal"
 									tone="default"
 									size="md"
-									:bg-color="tag_badge_colors[props.currentAddress.label]?.bgColor || 'var(--gray-10)'"
-									:text-color="tag_badge_colors[props.currentAddress.label]?.textColor || 'var(--gray-60)'"
+									:bg-color="tag_badge_colors[current_default_address.label]?.bgColor || 'var(--gray-10)'"
+									:text-color="tag_badge_colors[current_default_address.label]?.textColor || 'var(--gray-60)'"
 									class="account-address-book-confirm-default-modal-label-badge"
 								>
-									{{ getLabelCopy(props.currentAddress.label) }}
+									{{ getLabelCopy(current_default_address.label) }}
 								</UiBadge>
 							</div>
 
-							<p v-if="props.currentAddress.company" class="account-address-book-confirm-default-modal-card-company">
-								{{ props.currentAddress.company }}
+							<p v-if="current_default_address.company" class="account-address-book-confirm-default-modal-card-company">
+								{{ current_default_address.company }}
 							</p>
 						</div>
 					</article>
@@ -160,35 +165,38 @@ function confirmModal() {
 					<article class="account-address-book-confirm-default-modal-card account-address-book-confirm-default-modal-card--next">
 						<header class="account-address-book-confirm-default-modal-card-head">
 							<h4 class="account-address-book-confirm-default-modal-card-name">
-								{{ props.nextAddress.contact_name }}
+								{{ pending_default_address.contact_name }}
 							</h4>
 						</header>
 
 						<div class="account-address-book-confirm-default-modal-card-body">
-							<p v-if="isShippingAddress(props.nextAddress)" class="account-address-book-confirm-default-modal-card-phone">
-								{{ props.nextAddress.phone_number }}
+							<p
+								v-if="isShippingAddress(pending_default_address)"
+								class="account-address-book-confirm-default-modal-card-phone"
+							>
+								{{ pending_default_address.phone_number }}
 							</p>
 
 							<div class="account-address-book-confirm-default-modal-card-address-row">
 								<p class="account-address-book-confirm-default-modal-card-address">
-									{{ buildAddressLines(props.nextAddress) }}
+									{{ buildAddressLines(pending_default_address) }}
 								</p>
 
 								<UiBadge
-									v-if="props.nextAddress.label"
+									v-if="pending_default_address.label"
 									variant="tonal"
 									tone="default"
 									size="md"
-									:bg-color="tag_badge_colors[props.nextAddress.label]?.bgColor || 'var(--gray-10)'"
-									:text-color="tag_badge_colors[props.nextAddress.label]?.textColor || 'var(--gray-60)'"
+									:bg-color="tag_badge_colors[pending_default_address.label]?.bgColor || 'var(--gray-10)'"
+									:text-color="tag_badge_colors[pending_default_address.label]?.textColor || 'var(--gray-60)'"
 									class="account-address-book-confirm-default-modal-label-badge"
 								>
-									{{ getLabelCopy(props.nextAddress.label) }}
+									{{ getLabelCopy(pending_default_address.label) }}
 								</UiBadge>
 							</div>
 
-							<p v-if="props.nextAddress.company" class="account-address-book-confirm-default-modal-card-company">
-								{{ props.nextAddress.company }}
+							<p v-if="pending_default_address.company" class="account-address-book-confirm-default-modal-card-company">
+								{{ pending_default_address.company }}
 							</p>
 						</div>
 					</article>

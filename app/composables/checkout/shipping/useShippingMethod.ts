@@ -1,7 +1,7 @@
 import { getShippingMethodByCartItems } from '~/services/shipping/shipping.service'
 import type { ShippingMethodData, ShippingMethodItem } from '~/types/shipping/shipping'
 import { formatShippingDateRange } from '~/utils/shipping/dateRange'
-import { computed, ref } from 'vue'
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 
 const selected_shipping_method = ref('')
 const shipping_method_id = ref<number | null>(null)
@@ -11,6 +11,8 @@ const shipping_method_data = ref<ShippingMethodData[]>([])
 let latest_request_id = 0
 
 export function useShippingMethod() {
+	const checkout_store = useMainCheckOutStore()
+
 	const active_shipping_methods = computed<ShippingMethodItem[]>(() =>
 		mapShippingMethodDataToUi(shipping_method_data.value)
 	)
@@ -136,12 +138,14 @@ export function useShippingMethod() {
 			selected_shipping_method.value = ''
 			shipping_method_id.value = null
 			production_shipping_id.value = null
+			checkout_store.setShippingMethodId(null)
 			return
 		}
 
 		selected_shipping_method.value = selection.key
 		shipping_method_id.value = selection.shipping_method_id
 		production_shipping_id.value = selection.production_shipping_id
+		checkout_store.setShippingMethodId(selection.shipping_method_id)
 	}
 
 	/* @desc clear the selected shipping method state
@@ -151,6 +155,7 @@ export function useShippingMethod() {
 		selected_shipping_method.value = ''
 		shipping_method_id.value = null
 		production_shipping_id.value = null
+		checkout_store.setShippingMethodId(null)
 	}
 
 	return {

@@ -2,7 +2,7 @@
 	<section class="checkout-member-section">
 		<div class="checkout-member-shipping-group">
 			<div class="checkout-member-address-group">
-				<div v-if="is_member" class="checkout-member-radio-row">
+				<div v-if="is_member && selected_shipping_address" class="checkout-member-radio-row">
 					<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 						{{ t('checkout.member.myShippingAddress') }}
 					</UiRadio>
@@ -39,7 +39,7 @@
 			</UiRadio>
 
 			<!-- ipasa ang id gaw tanan cart_item_ids in array -->
-			<ShippingMethod :cart-item-ids="cart_item_ids" />
+			<ShippingMethod :cart-item-ids="[1]" />
 
 			<DropShippingAddress/>
 		</div>
@@ -47,10 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
+import { useCheckoutAddressFlow } from '~/composables/checkout/main/useCheckoutAddressFlow';
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import ShippingMethod from '../shipping/ShippingMethod.vue';
 import ManualAddress from '../address/ManualShippingAddress.vue';
 import SavedAddress from '../address/SavedShippingAddress.vue';
@@ -71,16 +72,18 @@ const {
 	t,
 	is_member,
 	is_shipping_address_modal_open,
-	ship_to_another_address,
-	selected_checkout_items,
 } = useCheckoutExperienceFeatureContext();
 
+const { 
+	getShippingAddress 
+} = useCheckoutAddressFlow();
+
+const {
+	ship_to_another_address,
+	selected_shipping_address
+} = storeToRefs(useMainCheckOutStore())
+
 const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const cart_item_ids = computed(() =>
-	selected_checkout_items.value
-		.map((item) => Number(item.id))
-		.filter((id) => Number.isFinite(id))
-);
 
 const getSelector = () =>
 	ship_to_another_address.value
@@ -96,6 +99,10 @@ useHeightTransition(
 		leaveDurationMs: leave_duration_ms
 	}
 );
+
+onMounted(async()=>{
+	await getShippingAddress()
+})
 </script>
 
 <style scoped lang="scss">

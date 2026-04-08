@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType } from '~/types/address';
+import type { AddressItem, AddressMap, AddressType } from '~/types/address';
 import AddressBookSection from './AddressBookSection.vue';
 import AddressBookFormModal from './AddressBookFormModal.vue';
+import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';
 import AddressBookConfirmDefaultChangeModal from './AddressBookConfirmDefaultChangeModal.vue';
 import AddressBookDefaultShippingModal from './AddressBookDefaultShippingModal.vue';
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
 import { useAddressCreateForm } from '~/composables/account/addressBook/useAddressCreateForm';
 import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
@@ -13,6 +13,7 @@ import { useAddressFieldStore } from '~/stores/address';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
 import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
+import { provideAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -135,9 +136,38 @@ const {
 	clearFormFieldErrors,
 })
 
-const replacement_addresses = computed(() => {
+const replacement_addresses = computed<AddressItem[]>(() => {
 	const pending_type = pending_delete_address.value?.type
 	return pending_type ? getReplacementAddresses(pending_type) : []
+})
+
+provideAddressBookFeatureContext({
+	is_form_modal_open,
+	form_modal_mode,
+	form_submit_label,
+	is_delete_modal_open,
+	is_default_shipping_modal_open,
+	replacement_addresses,
+	is_confirm_default_change_modal_open,
+	current_default_address,
+	pending_default_address,
+	form_type,
+	active_form,
+	dynamic_fields,
+	form_field_errors,
+	setFormType,
+	updateActiveFormField,
+	updateDynamicField,
+	submitAddressForm,
+	closeFormModal,
+	cancelDeleteFlow,
+	confirmDeleteAddress,
+	cancelDefaultShippingFlow,
+	skipDefaultShippingSelection,
+	saveDefaultShippingSelection: deleteAndSetDefault,
+	closeConfirmDefaultChangeModal,
+	confirmDefaultAddressChange,
+	handleCardMenuAction,
 })
 
 onMounted(() => {
@@ -207,6 +237,15 @@ function closeConfirmDefaultChangeModal() {
 function confirmDefaultAddressChange(type: AddressType, address_id: number) {
 	setAddressDefaultWithToast(type, address_id)
 }
+
+function cancelDefaultShippingFlow() {
+	closeDefaultShippingModal()
+	cancelDeleteFlow()
+}
+
+function skipDefaultShippingSelection() {
+	confirmDeleteAddress({ skip_default_shipping_modal: true })
+}
 </script>
 
 <template>
@@ -241,19 +280,16 @@ function confirmDefaultAddressChange(type: AddressType, address_id: number) {
 							v-if="has_shipping_addresses"
 							section="shipping"
 							:items="shipping_address"
-							@menu-action="handleCardMenuAction"
 						/>
 						<AddressBookSection
 							v-if="has_billing_addresses"
 							section="billing"
 							:items="billing_address"
-							@menu-action="handleCardMenuAction"
 						/>
 						<AddressBookSection
 							v-if="has_drop_addresses"
 							section="drop"
 							:items="drop_address"
-							@menu-action="handleCardMenuAction"
 						/>
 					</div>
 				</div>
@@ -295,44 +331,10 @@ function confirmDefaultAddressChange(type: AddressType, address_id: number) {
 				</section>
 			</div>
 
-			<AddressBookFormModal
-				v-model="is_form_modal_open"
-				:modal-mode="form_modal_mode"
-				:form-type="form_type"
-				:active-form="active_form"
-				:dynamic-fields="dynamic_fields"
-				:field-errors="form_field_errors"
-				:submit-label="form_submit_label"
-				@set-form-type="setFormType"
-				@update-field="updateActiveFormField"
-				@update-dynamic-field="updateDynamicField"
-				@submit="submitAddressForm"
-			/>
-			<DeleteConfirmModal
-				:model-value="is_delete_modal_open"
-				title="Are you sure you want to delete this address?"
-				description="This address will be permanently removed from your address book."
-				modal-class="account-address-book-delete-modal-shell"
-				test-id="account-address-book-delete-modal"
-				@update:model-value="!$event ? cancelDeleteFlow() : undefined"
-				@cancel="cancelDeleteFlow"
-				@confirm="confirmDeleteAddress"
-			/>
-			<AddressBookDefaultShippingModal
-				:model-value="is_default_shipping_modal_open"
-				:addresses="replacement_addresses"
-				@cancel="() => { closeDefaultShippingModal(); cancelDeleteFlow() }"
-				@skip="confirmDeleteAddress({skip_default_shipping_modal: true})"
-				@save="deleteAndSetDefault"
-			/>
-			<AddressBookConfirmDefaultChangeModal
-				:model-value="is_confirm_default_change_modal_open"
-				:current-address="current_default_address"
-				:next-address="pending_default_address"
-				@update:model-value="!$event ? closeConfirmDefaultChangeModal() : undefined"
-				@cancel="closeConfirmDefaultChangeModal"
-				@confirm="confirmDefaultAddressChange"
-			/>
+			<AddressBookFormModal />
+			<AddressBookDeleteConfirmModal />
+			<AddressBookDefaultShippingModal />
+			<AddressBookConfirmDefaultChangeModal />
 		</AccountShellSection>
 	</section>
 </template>

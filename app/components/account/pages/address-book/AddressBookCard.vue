@@ -2,8 +2,10 @@
 import type { AddressMap, AddressType } from '~/types/address';
 import type { ComponentPublicInstance } from 'vue';
 import { useAddressHelper } from '~/utils/address';
+import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
 
 const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
+const address_book_feature_context = useAddressBookFeatureContext()
 
 type MenuActionKey = 'edit' | 'delete' | 'default';
 
@@ -13,12 +15,6 @@ type CardProps = {
 };
 
 const props = defineProps<CardProps>()
-const emit = defineEmits<{
-	(e: 'menu-action', payload: {
-		action: MenuActionKey;
-		item: AddressMap[AddressType];
-	}): void;
-}>()
 
 const { t } = useI18n();
 const menu_wrap_ref = ref<HTMLElement | null>(null)
@@ -94,7 +90,7 @@ function handleWindowKeydown(event: KeyboardEvent) {
 
 function handleMenuAction(action: MenuActionKey) {
 	closeMenu()
-	emit('menu-action', {
+	address_book_feature_context.handleCardMenuAction({
 		action,
 		item: props.item,
 	})
