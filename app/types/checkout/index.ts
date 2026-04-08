@@ -35,3 +35,10 @@ export type CheckoutResponse = {
 		redirect_url?: string
 	}
 }
+
+export type InitialCheckoutPayload = {
+	shipping_method_id: number | null
+	email?: string
+	contact_name?:string
+	phone_number?:string
+}

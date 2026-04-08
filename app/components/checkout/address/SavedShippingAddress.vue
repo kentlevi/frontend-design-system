@@ -9,11 +9,11 @@
 			<div class="checkout-member-address-top">
 				<div class="checkout-member-address-title-group">
 					<strong class="checkout-member-address-name">
-						{{ selected_shipping_address.recipient }}
+						{{ selected_shipping_address.contact_name }}
 					</strong>
 
 					<UiBadge
-						v-if="selected_shipping_address.isDefault"
+						v-if="selected_shipping_address.is_default"
 						variant="outline"
 						tone="default"
 						size="md"
@@ -28,12 +28,12 @@
 
 			<div class="checkout-member-address-content">
 				<div
-					v-if="selected_shipping_address.phone"
+					v-if="shippingPhoneNumber(selected_shipping_address)"
 					class="checkout-member-address-row"
 				>
 					<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line checkout-member-address-line--strong">
-						{{ selected_shipping_address.phone }}
+						{{ shippingPhoneNumber(selected_shipping_address) }}
 					</p>
 				</div>
 
@@ -42,15 +42,10 @@
 						<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 						<div class="checkout-member-address-lines">
 							<p class="checkout-member-address-line">
-								{{ selected_shipping_address.line1 }}
-							</p>
-
-							<!-- hydration-safe: only render if exists -->
-							<p
-								v-if="selected_shipping_address.line2"
-								class="checkout-member-address-line"
-							>
-								{{ selected_shipping_address.line2 }}
+								{{ getAddressLine1(selected_shipping_address) }}
+								<span v-if="getAddressLine2(selected_shipping_address)">
+									, {{ getAddressLine2(selected_shipping_address) }}
+								</span>
 							</p>
 						</div>
 					</div>
@@ -80,12 +75,23 @@
 
 <script setup lang="ts">
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
+import { useAddressHelper } from '~/utils/address';
+
+const {
+	shippingPhoneNumber,
+	getAddressLine1,
+	getAddressLine2
+} = useAddressHelper()
 
 const {
 	getAddressTagClass,
-	selected_shipping_address,
 	is_shipping_address_modal_open,
 } = useCheckoutExperienceFeatureContext();
+
+const {
+	selected_shipping_address
+} = storeToRefs(useMainCheckOutStore())
 </script>
 
 <style scoped lang="scss">

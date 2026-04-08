@@ -1,14 +1,18 @@
 <template>
 	<div key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
 		<div v-if="is_member" class="checkout-member-address-form-head">
-			<UiRadio
-				v-model="ship_to_another_address"
-				:value="true"
-				name="shipping-mode"
-				class="checkout-member-radio-line checkout-member-radio-line--inline"
-			>
-				{{ t('checkout.member.shipToAnotherAddress') }}
-			</UiRadio>
+			 <UiRadio 
+                v-if = "selected_shipping_address"
+                v-model="ship_to_another_address"
+                :value="true"
+                name="shipping-mode"
+                class="checkout-member-radio-line checkout-member-radio-line--inline"
+            >
+                {{ t('checkout.member.shipToAnotherAddress') }}
+            </UiRadio>
+            <h2 v-else style="font-size: 20px; font-weight: 600;">
+                Shipping Information
+            </h2>
 
 			<div class="checkout-member-address-form-note">
 				This address will be saved for future use.
@@ -16,21 +20,6 @@
 		</div>
 
 		<CheckoutAddressForm
-			v-if="is_member"
-			v-model:full-name="full_name"
-			v-model:company="company"
-			v-model:address1="address_1"
-			v-model:address2="address_2"
-			v-model:province="province"
-			v-model:city="city"
-			v-model:postal-code="postal_code"
-			v-model:phone="phone"
-			:province-options="province_options"
-			size="md"
-		/>
-
-		<CheckoutAddressForm
-			v-else
 			v-model:full-name="full_name"
 			v-model:company="company"
 			v-model:address1="address_1"
@@ -48,6 +37,7 @@
 <script setup lang="ts">
 import CheckoutAddressForm from '~/components/checkout/shared/CheckoutAddressForm.vue';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 
 const {
 	t,
@@ -61,8 +51,12 @@ const {
 	postal_code,
 	phone,
 	province_options,
-	ship_to_another_address,
 } = useCheckoutExperienceFeatureContext();
+
+const {
+	selected_shipping_address,
+	ship_to_another_address
+} = storeToRefs(useMainCheckOutStore())
 </script>
 
 <style scoped lang="scss">

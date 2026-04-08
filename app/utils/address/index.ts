@@ -45,6 +45,20 @@ export function useAddressHelper() {
 		if ('phone_number' in address && address.phone_number) return address.phone_number
 	}
 
+	/** Safely expose shipping phone number only for shipping items */
+	function getAddressLine1(address: AddressItem) {
+		if (!isShipping(address.type)) return
+
+		if ('address_line_1' in address && address.address_line_1) return address.address_line_1
+	}
+
+	/** Safely expose shipping phone number only for shipping items */
+	function getAddressLine2(address: AddressItem) {
+		if (!isShipping(address.type)) return
+
+		if ('address_line_2' in address && address.address_line_2) return address.address_line_2
+	}
+
 	/** Map api response errors */
 	function mapApiFieldErrors(data: unknown): Record<string, string> {
 		const next_errors: Record<string, string> = {}
@@ -65,5 +79,7 @@ export function useAddressHelper() {
 		buildAddressLines,
 		shippingPhoneNumber,
 		mapApiFieldErrors,
+		getAddressLine1,
+		getAddressLine2,
 	}
 }
