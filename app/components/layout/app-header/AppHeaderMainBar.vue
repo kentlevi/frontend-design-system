@@ -153,11 +153,11 @@ onMounted(() => {
 						@focus="emit('prefetch-cart')"
 					/>
 					<span
-						v-if="props.cartItemCount > 0"
+						v-if="number_of_items > 0"
 						class="home-header-cart-dot"
 						data-testid="app-header-cart-count"
 					>
-						{{ props.cartItemCount > 99 ? '99+' : props.cartItemCount }}
+						{{ number_of_items > 99 ? '99+' : number_of_items }}
 					</span>
 				</div>
 				<UiButton

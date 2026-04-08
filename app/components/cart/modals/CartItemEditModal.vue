@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 import type { CartPreviewItem } from '~/types/cart/preview';
 
 type SelectOption = {
@@ -46,6 +47,7 @@ const digits_only = (value: string | number | null | undefined) => String(value 
 const size_dropdown_ref = ref<HTMLElement | null>(null);
 const qty_dropdown_ref = ref<HTMLElement | null>(null);
 const custom_width_input_ref = ref<HTMLInputElement | null>(null);
+
 const size_menu_open = ref(false);
 const qty_menu_open = ref(false);
 
@@ -130,25 +132,25 @@ function preventNonDigitInput(event: InputEvent) {
 	event.preventDefault();
 }
 
-function onSizeOptionSelect(value: string | number) {
-	const normalized_value = String(value);
-	emit('update:sizeKey', normalized_value);
-	if (normalized_value === 'custom') {
-		emit('update:customSizeWidth', '');
-		emit('update:customSizeHeight', '');
-		closeMenus();
-		nextTick(() => {
-			custom_width_input_ref.value?.focus();
-		});
-		return;
-	}
+// function onSizeOptionSelect(value: string | number) {
+// 	const normalized_value = String(value);
+// 	emit('update:sizeKey', normalized_value);
+// 	if (normalized_value === 'custom') {
+// 		emit('update:customSizeWidth', '');
+// 		emit('update:customSizeHeight', '');
+// 		closeMenus();
+// 		nextTick(() => {
+// 			custom_width_input_ref.value?.focus();
+// 		});
+// 		return;
+// 	}
 
-	const selected_option = props.sizeOptions.find((item) => String(item.value) === normalized_value);
-	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
-	emit('update:customSizeWidth', matched?.[1] ?? '');
-	emit('update:customSizeHeight', matched?.[2] ?? '');
-	closeMenus();
-}
+// 	const selected_option = props.sizeOptions.find((item) => String(item.value) === normalized_value);
+// 	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
+// 	emit('update:customSizeWidth', matched?.[1] ?? '');
+// 	emit('update:customSizeHeight', matched?.[2] ?? '');
+// 	closeMenus();
+// }
 
 function onQtyOptionSelect(value: string | number) {
 	const normalized_value = Number(value);
@@ -174,11 +176,6 @@ function onCustomQtyInput(value: string) {
 	emit('update:customQty', value.replace(/[^0-9]/g, ''));
 }
 
-function closeModal() {
-	closeMenus();
-	emit('update:modelValue', false);
-	emit('cancel');
-}
 
 function saveChanges() {
 	emit('save');
@@ -204,6 +201,53 @@ watch(
 	},
 	{ immediate: true }
 );
+
+
+const show_quantity = ref<boolean>(true)
+
+
+const {
+	selected_item,
+	featured_sizes,
+	sizes,
+	clearSelection,
+} = useEditItemHandler()
+
+const closeModal = () => {
+	closeMenus()
+	clearSelection()
+}
+
+const size_key = ref<string | number>('default')
+
+const custom_width = ref<number | null>(null)
+
+const custom_height = ref<number | null>(null)
+
+// type SizeSpec = {
+// 	widh
+// }
+// const selected_size = ref
+
+function onSizeOptionSelect(option: string | number) {
+	console.log(option)
+	size_key.value = option
+	if (option === 'custom') {
+		closeMenus();
+		nextTick(() => {
+			custom_width_input_ref.value?.focus();
+		});
+		return;
+	}
+
+	const selected_option = featured_sizes.value.find((size) => size.code === option);
+	console.log(selected_option)
+	// const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
+	// emit('update:customSizeWidth', matched?.[1] ?? '');
+	// emit('update:customSizeHeight', matched?.[2] ?? '');
+	closeMenus();
+}
+
 </script>
 
 <template>
@@ -214,16 +258,16 @@ watch(
 		padding="0"
 		gap="0"
 		modal-class="cart-item-edit-modal-shell"
-		:title="showQuantity ? t('cart.cartPreview.editModal.title') : t('cart.cartPreview.editModal.sizeOnlyTitle')"
+		:title="show_quantity ? t('cart.cartPreview.editModal.title') : t('cart.cartPreview.editModal.sizeOnlyTitle')"
 		@update:model-value="emit('update:modelValue', $event)"
-		@close="emit('cancel')"
+		@close="closeModal"
 	>
-		<section v-if="item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
+		<section v-if="selected_item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
 			<div class="cart-item-edit-modal-body">
 				<div class="cart-item-edit-modal-thumb">
 					<img
-						:src="item.artworkPreviewUrl || item.product.image"
-						:alt="item.artworkName || item.product.name"
+						:src="selected_item.artwork_file ?? selected_item.product_thumbnail"
+						:alt="selected_item.artwork_file_name ?? selected_item.product"
 						class="cart-item-edit-modal-image"
 					>
 				</div>
@@ -235,12 +279,12 @@ watch(
 							<span class="cart-item-edit-unit">(Unit: mm)</span>
 						</div>
 						<UiSelect
-							v-if="sizeKey !== 'custom'"
-							:model-value="sizeKey"
+							v-if="size_key !== 'custom'"
+							:model-value="size_key"
 							size="40"
 							class="cart-item-edit-select"
 							trigger-class="cart-item-edit-select-trigger"
-							:options="sizeOptions"
+							:options="sizes"
 							data-testid="cart-item-edit-size-select"
 							@update:model-value="onSizeOptionSelect($event)"
 						/>
@@ -311,7 +355,7 @@ watch(
 						</div>
 					</div>
 
-					<div v-if="showQuantity" class="cart-item-edit-field">
+					<div v-if="show_quantity" class="cart-item-edit-field">
 						<label class="cart-item-edit-label">{{ t('cart.cartPreview.quantity') }}</label>
 						<UiSelect
 							v-if="qty !== -1"
