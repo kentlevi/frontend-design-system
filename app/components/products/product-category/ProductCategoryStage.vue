@@ -147,8 +147,34 @@ const selected_navigation_product = computed(() =>
 	category_products.value.find((product) => product.id === props.selectedId || product.slug === props.selectedId) || null
 );
 
-const demo_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
-const demo_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
+const product_hero_media_ids = new Set([
+	'clear-sticker',
+	'die-cut-sticker',
+	'hologram-sticker',
+	'kiss-cut-sticker',
+	'sticker-sheet',
+	'vinyl-lettering',
+]);
+
+const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
+const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+
+const hero_media_product_id = computed(() => {
+	const selected_id = props.selectedProduct?.id;
+	return selected_id && product_hero_media_ids.has(selected_id) ? selected_id : null;
+});
+
+const demo_hero_video_url = computed(() =>
+	hero_media_product_id.value
+		? `${PRODUCT_HERO_BASE_URL}/${hero_media_product_id.value}/hero/01-hero-video.mp4`
+		: fallback_hero_video_url
+);
+const demo_hero_poster_url = computed(() =>
+	hero_media_product_id.value
+		? `${PRODUCT_HERO_BASE_URL}/${hero_media_product_id.value}/hero/01-hero-poster.png`
+		: fallback_hero_poster_url
+);
 const has_hydrated = ref(false)
 
 onMounted(() => {
