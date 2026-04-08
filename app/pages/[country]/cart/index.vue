@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CartPage from '~/components/cart/CartPage.vue';
+import CartPage from '~/components/cart/page/CartPage.vue';
 
 definePageMeta({
 	layout: 'home',

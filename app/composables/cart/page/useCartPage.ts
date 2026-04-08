@@ -5,10 +5,6 @@ import { quantity_options, size_options } from '~/data/products/categoryExperien
 import { cartPaymentOptions } from '~/data/cart/page';
 import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
 import {
-	readStoredCartStateFromStorage,
-	resolveStoredCartProduct,
-	writeCheckoutSelectionIdsToStorage,
-	writeStoredCartStateToStorage,
 	type StoredCartState,
 	type LocalizedCatalogProduct,
 } from '~/helpers/cart/cartState.helper';
@@ -44,41 +40,39 @@ export function useCartPage() {
 	const { withCountry, country } = useCountry();
 	const router = useRouter();
 
-	function resolveCartSizeLabel(entry: Pick<StoredCartState, 'sizeKey' | 'customSizeLabel'>) {
-		if (entry.customSizeLabel) return entry.customSizeLabel;
-		if (entry.sizeKey === 'custom') return '';
-		return t(`product.sizes.${entry.sizeKey}.label`);
-	}
+	const cart_state = ref<CartRow[]>([
+		{
+			id: '1',
+			category: 'stickers',
+			product: { id: 'die-cut-sticker', name: 'Die Cut Sticker', icon: 'strong-star', image: '/illustrations/products/stickers/die-cut.svg', blurb: 'Precision-cut shape.' },
+			sizeKey: '3x3',
+			sizeLabel: '3x3"',
+			customSizeLabel: '',
+			qty: 50,
+			total: 62.50,
+			artworkName: 'my-cool-design.png',
+			artworkSizeLabel: '1.2 MB',
+			specialInstructions: 'Please make the border 2mm thick.',
+			artworkPreviewUrl: '/illustrations/products/stickers/die-cut.svg',
+		},
+		{
+			id: '2',
+			category: 'stickers',
+			product: { id: 'circle-sticker', name: 'Circle Sticker', icon: 'strong-stars', image: '/illustrations/products/stickers/circle.svg', blurb: 'Perfectly round.' },
+			sizeKey: '2x2',
+			sizeLabel: '2x2"',
+			customSizeLabel: '',
+			qty: 100,
+			total: 85.00,
+			artworkName: 'logo.svg',
+			artworkSizeLabel: '800 KB',
+			specialInstructions: '',
+			artworkPreviewUrl: '/illustrations/products/stickers/circle.svg',
+		}
+	]);
+	const selected_ids = ref<string[]>(['1', '2']);
 
-	const cart_state = ref<StoredCartState[]>([]);
-	const selected_ids = ref<string[]>([]);
-
-	const rows = computed<CartRow[]>(() =>
-		cart_state.value
-			.map((entry) => {
-				const product = resolveStoredCartProduct(
-					entry,
-					(productId) => t(`product.items.${productId}.name`)
-				);
-				if (!product) return null;
-
-				return {
-					id: entry.id,
-					category: entry.category,
-					product,
-					sizeKey: entry.sizeKey,
-					sizeLabel: resolveCartSizeLabel(entry),
-					customSizeLabel: entry.customSizeLabel || '',
-					qty: entry.qty,
-					total: entry.total,
-					artworkName: entry.artworkName,
-					artworkSizeLabel: entry.artworkSizeLabel || '',
-					specialInstructions: entry.specialInstructions || '',
-					artworkPreviewUrl: entry.artworkPreviewUrl || '',
-				};
-			})
-			.filter((item): item is CartRow => Boolean(item))
-	);
+	const rows = computed<CartRow[]>(() => cart_state.value);
 
 	const all_selected = computed({
 		get: () => rows.value.length > 0 && selected_ids.value.length === rows.value.length,
@@ -171,15 +165,12 @@ export function useCartPage() {
 				total: unit_price * qty,
 			};
 		});
-
-		writeStoredCartStateToStorage(cart_state.value);
 	}
 
 	function removeByIds(ids: string[]) {
 		if (!ids.length) return;
 		cart_state.value = cart_state.value.filter((item) => !ids.includes(item.id));
 		selected_ids.value = selected_ids.value.filter((id) => !ids.includes(id));
-		writeStoredCartStateToStorage(cart_state.value);
 	}
 
 	function updateItemArtworkDetails(
@@ -202,8 +193,6 @@ export function useCartPage() {
 					specialInstructions: payload.specialInstructions,
 				}
 		));
-
-		writeStoredCartStateToStorage(cart_state.value);
 	}
 
 	function updateSize(item_id: string, next_size_key: string, custom_size_label = '') {
@@ -222,21 +211,20 @@ export function useCartPage() {
 				customSizeLabel: normalized_size_key === 'custom' ? custom_size_label : '',
 			};
 		});
-
-		writeStoredCartStateToStorage(cart_state.value);
 	}
 
 	function goToCheckout() {
 		if (!selected_rows.value.length) return;
-		writeCheckoutSelectionIdsToStorage(selected_rows.value.map((row) => row.id));
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem('musticker-checkout-selection-v1', JSON.stringify(selected_rows.value.map((row) => row.id)));
+		}
 		void router.push(withCountry('/checkout'));
 	}
 
 	const continue_shopping_path = computed(() => withCountry('/'));
 
 	onMounted(() => {
-		cart_state.value = readStoredCartStateFromStorage();
-		selected_ids.value = cart_state.value.map((item) => item.id);
+		// Mocked state already initialized, ignoring storage for now as requested
 	});
 
 	return {

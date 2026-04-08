@@ -10,7 +10,7 @@ const AppHeaderLocaleModal = defineAsyncComponent(
 	() => import('~/components/layout/app-header/AppHeaderLocaleModal.vue')
 );
 const CartPreview = defineAsyncComponent(
-	() => import('~/components/cart/CartPreview.vue')
+	() => import('~/components/cart/preview/CartPreview.vue')
 );
 const route = useRoute();
 const {
@@ -40,21 +40,9 @@ const search_modal_open = ref(false);
 
 const {
 	cart_preview_open,
-	cart_featured_open,
-	cart_featured_items,
-	cart_items,
-	cart_grand_total,
 	cart_item_count,
-	cart_size_option_models,
-	cart_quantity_options,
-	getCartProductName,
-	formatCartPrice,
-	cartFeaturedStartPrice,
 	openCartPreview: openCartPreviewBase,
 	closeCartPreview,
-	closeCartFeatured,
-	removeCartItem,
-	updateCartItem,
 } = useAppHeaderCartPreview({
 	closeAccountMenu,
 	closeLocaleModal,
@@ -75,7 +63,7 @@ async function prefetchHeaderOverlayModules() {
 	prefetched_header_overlays.value = true;
 	await Promise.allSettled([
 		import('~/components/layout/app-header/AppHeaderLocaleModal.vue'),
-		import('~/components/cart/CartPreview.vue'),
+		import('~/components/cart/preview/CartPreview.vue'),
 	]);
 }
 
@@ -223,20 +211,7 @@ onBeforeUnmount(() => {
 
 		<CartPreview
 			:open="cart_preview_open"
-			:cart-item-count="cart_item_count"
-			:cart-items="cart_items"
-			:size-option-models="cart_size_option_models"
-			:quantity-options="cart_quantity_options"
-			:grand-total="cart_grand_total"
-			:featured-open="cart_featured_open"
-			:featured-items="cart_featured_items"
-			:get-product-name="getCartProductName"
-			:format-price="formatCartPrice"
-			:featured-start-price="cartFeaturedStartPrice"
 			@close="closeCartPreview"
-			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty, $event.customSizeLabel || '')"
-			@remove-item="removeCartItem($event)"
-			@close-featured="closeCartFeatured"
 		/>
 	</header>
 </template>

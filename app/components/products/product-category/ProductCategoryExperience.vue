@@ -12,10 +12,10 @@ const product_category_details = defineAsyncComponent(
 	() => import('~/components/products/product-category/ProductCategoryDetails.vue')
 );
 const cart_upload_modal = defineAsyncComponent(
-	() => import('~/components/cart/CartUploadModal.vue')
+	() => import('~/components/cart/modals/CartUploadModal.vue')
 );
 const cart_preview = defineAsyncComponent(
-	() => import('~/components/cart/CartPreview.vue')
+	() => import('~/components/cart/preview/CartPreview.vue')
 );
 
 const props = defineProps<{
@@ -96,6 +96,7 @@ const {
 				@update:selected-size="selected_size = $event"
 				@update:selected-qty="selected_qty = $event"
 				@open-upload="openUploadModal"
+				@proceed-to-cart="proceedToCart"
 			/>
 		</div>
 
@@ -130,20 +131,7 @@ const {
 
 		<cart_preview
 			:open="cart_preview_open"
-			:cart-item-count="cart_item_count"
-			:cart-items="cart_items"
-			:grand-total="cart_grand_total"
-			:featured-open="featured_open"
-			:featured-items="featured_items"
-			:size-option-models="size_option_models"
-			:quantity-options="quantity_options"
-			:get-product-name="getProductName"
-			:format-price="formatPrice"
-			:featured-start-price="featuredStartPrice"
 			@close="closeCartPreview"
-			@update-item="updateCartItem($event.itemId, $event.sizeKey, $event.qty, $event.customSizeLabel || '')"
-			@remove-item="removeCartItem($event)"
-			@close-featured="closeFeaturedItems"
 		/>
 
 		<product_reviews_section

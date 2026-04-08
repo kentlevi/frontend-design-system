@@ -15,7 +15,7 @@
 
 		<template #main>
 			<CheckoutGuestContactFeature />
-			<CheckoutAddressFeatureV2 />
+			<CheckoutAddressFeature />
 			<CheckoutPaymentFeature />
 		</template>
 
@@ -35,7 +35,10 @@
 				:privacy-path="withCountry('/privacy-policy')"
 				:disabled="selected_checkout_items.length === 0"
 				:loading="completing_checkout"
-				:size-dim-only="sizeDimOnly"
+				:subtotal="order_subtotal"
+				:shipping-fee="order_shipping_fee"
+				:discount="order_discount"
+				:total="order_total"
 				:format-price="formatPrice"
 				:item-meta="itemMeta"
 			>
@@ -60,7 +63,14 @@ import { useCheckoutExperience } from '~/composables/checkout/useCheckoutExperie
 import CheckoutGuestContactFeature from '~/components/checkout/features/CheckoutGuestContactFeature.vue';
 import CheckoutMemberPerksFeature from '~/components/checkout/features/CheckoutMemberPerksFeature.vue';
 import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPaymentFeature.vue';
-import CheckoutAddressFeatureV2 from '~/components/checkout/features/CheckoutAddressFeatureV2.vue';
+import CheckoutAddressFeature from '~/components/checkout/features/CheckoutAddressFeature.vue';
+import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.vue';
+import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
+import CheckoutMemberBillingAddressModal from '~/components/checkout/modals/CheckoutMemberBillingAddressModal.vue';
+import CheckoutMemberDropShippingAddressModal from '~/components/checkout/modals/CheckoutMemberDropShippingAddressModal.vue';
+import CheckoutMemberShippingAddressModal from '~/components/checkout/modals/CheckoutMemberShippingAddressModal.vue';
+import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
+import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 
 const checkout_experience = useCheckoutExperience();
@@ -70,11 +80,14 @@ const {
 	t,
 	withCountry,
 	formatPrice,
-	sizeDimOnly,
 	completing_checkout,
 	complete_loader_ref,
 	selected_checkout_items,
 	itemMeta,
+	order_subtotal,
+	order_shipping_fee,
+	order_discount,
+	order_total,
 
 	// Identifiers & UI State
 	is_login_modal_open,

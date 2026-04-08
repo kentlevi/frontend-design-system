@@ -4,9 +4,10 @@ import type { Product as NavigationProduct, StageProduct } from '~/types/navigat
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
 import { useNavigationStore } from '~/stores/navigation/navigation.store';
-import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper';
+import { getProductIdFromSlug, findProductById } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
+import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
 
 
 const props = defineProps<{
@@ -29,6 +30,7 @@ const emit = defineEmits<{
 	'select-product': [productId: string];
 	'update:selectedQty': [qty: number];
 	'open-upload': [];
+	'proceed-to-cart': [],
 }>();
 
 // 🔥 Functionality Implementation
@@ -88,13 +90,10 @@ const {
 	onVinylFontFocus,
 	onVinylFontBlur,
 	updateSelectedSlug,
+	dispatchItem,
 } = useQuoteSectionHandler();
 
 const route = useRoute()
-
-const resolved_category = computed(() => {
-	return  route.params.category as string
-})
 
 const route_product_slug = computed(() => {
 	const route_product = route.params?.product
@@ -128,13 +127,20 @@ const navigation_products = computed<NavigationProduct[]>(() => {
 });
 
 const category_products = computed<StageProduct[]>(() =>
-	navigation_products.value.map((product) => ({
-		id: props.category ? (getProductIdFromSlug(product.url_slug, props.category) || product.url_slug) : product.url_slug,
-		slug: product.url_slug,
-		name: product.name,
-		blurb: product.description,
-		image: product.default_featured_image_url ? resolveFileUrl(product.default_featured_image_url) : '',
-	}))
+	navigation_products.value.map((product) => {
+		const productId = props.category ? (getProductIdFromSlug(product.url_slug, props.category) || product.url_slug) : product.url_slug;
+		const localProduct = findProductById(productId);
+
+		return {
+			id: productId,
+			slug: product.url_slug,
+			name: product.name,
+			blurb: product.description,
+			image: product.default_featured_image_url
+				? resolveFileUrl(product.default_featured_image_url)
+				: (localProduct?.image ? resolveFileUrl(localProduct.image) : ''),
+		};
+	})
 );
 
 const selected_navigation_product = computed(() =>
@@ -198,14 +204,24 @@ const openArworkUpload = async () => {
 		const blob = await editor_ref.value.generateImage()
 
 		if (blob) {
-			console.log('Generated blob:', blob)
 			// Now you can send this to your cart_service
 			const file = new File([blob], 'lettering.png', { type: 'image/png' })
 			letteringFileUpdate(file)
+			addToCart()
 		}
+	} else {
+		emit('open-upload')
 	}
 
-	emit('open-upload')
+}
+
+const addToCart = async () => {
+	console.warn('Adding cart...')
+
+	const dispatched = await dispatchItem()
+	console.log(dispatched)
+	if( dispatched )
+		emit('proceed-to-cart')
 }
 
 </script>

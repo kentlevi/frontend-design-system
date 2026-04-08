@@ -5,6 +5,7 @@ import { useUsersStore } from "~/stores/users/users.store"
 import type { CartItem } from "~/types/cart/cart"
 import { convertFileBase64, formatProductFileSize } from "~/utils/file/file"
 
+
 export const useArtworkSectionHandler = () => {
 
 	const attribute_store = useAttributesStore()
@@ -210,7 +211,7 @@ export const useArtworkSectionHandler = () => {
 			artwork_file: has_artwork ? uploaded_file.value : null,
 			artwork_file_name: has_artwork ? artwork_file_name.value : null,
 			artwork_preview: has_artwork ? artwork_preview.value : null,
-			instruction: has_artwork ? instruction.value : null,
+			instruction: instruction.value,
 			local_identity: item_id,
 		}
 

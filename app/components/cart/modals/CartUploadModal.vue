@@ -40,7 +40,7 @@ const skipUpload = async () => {
 const addToCart = async () => {
 	console.warn('Adding cart...')
 
-	const dispatched = await dispatchItem(true)
+	const dispatched = await dispatchItem(has_uploaded_file.value)
 
 	if( dispatched )
 		emit('proceed-to-cart')
@@ -105,6 +105,7 @@ const removeFile = () => {
 			<div class="upload-modal-body" data-testid="product-category-upload-body">
 				<div
 					class="upload-dropzone"
+					:class="{ 'is-dragging': is_dragging }"
 					data-testid="product-category-upload-dropzone"
 					@dragover.prevent="is_dragging = true"
 					@dragenter.prevent="is_dragging = true"
@@ -290,6 +291,24 @@ const removeFile = () => {
 			align-items: center;
 			justify-content: space-between;
 			gap: 20px;
+			transition: all 0.2s ease;
+
+			&.is-dragging {
+				border-color: var(--black-base);
+				background: var(--gray-20);
+				transform: scale(1.01);
+				border-style: solid;
+				box-shadow: var(--shadow-md);
+
+				.upload-dropzone-title {
+					color: var(--black-base);
+				}
+
+				:deep(.ui-icon) {
+					transform: scale(1.1);
+					color: var(--black-base) !important;
+				}
+			}
 		}
 
 		.upload-dropzone-copy {

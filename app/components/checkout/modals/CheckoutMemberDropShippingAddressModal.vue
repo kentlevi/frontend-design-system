@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CheckoutAddressSelectModal from '~/components/checkout/shared/CheckoutAddressSelectModal.vue';
+import CheckoutAddressSelectModal from '~/components/checkout/modals/CheckoutAddressSelectModal.vue';
 import type { MemberDropShippingAddress } from '~/types/checkout';
 
 const props = defineProps<{

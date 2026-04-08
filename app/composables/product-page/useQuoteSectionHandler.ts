@@ -6,11 +6,24 @@ import type { SizeSpec, QuantitySpec, ColorSpec, AttributeSelection } from '~/ty
 
 import { useQuoteSectionService } from '~/services/attributes/quote.section'
 import { useCountry } from '../app/country/useCountry'
+import { useUsersStore } from '~/stores/users/users.store'
+import { useAttributesStore, useSelectionStore } from '~/stores/product'
+import { useCartStore } from '~/stores/cart'
+import { useCartService } from '~/services/cart/cart.service'
+import { convertFileBase64 } from '~/utils/file/file'
 
 export const useQuoteSectionHandler = () => {
 
 	// 🔥 Quote section service
 	const quote_service = useQuoteSectionService()
+
+	const attribute_store = useAttributesStore()
+
+	const selection_store = useSelectionStore()
+
+	const cart_store = useCartStore()
+
+	const cart_service = useCartService()
 
 	const { country } = useCountry();
 
@@ -364,6 +377,102 @@ export const useQuoteSectionHandler = () => {
 	const onVinylFontBlur = () => { is_font_focused.value = false }
 
 
+	/**
+	 * Vinyl lettering will store in cart instead of goind to Artwork uploading
+	 * @param has_artwork boolean
+	 */
+	const dispatchItem = async () => {
+		// ⚠️ VALIDATION
+
+		if(!attribute_store.product || !selection_store.product_config_mapping_id ) {
+			console.warn('Product data is missing!')
+			return false
+		}
+
+		else if( !selection_store.size || !selection_store.size.width || !selection_store.size.height ) {
+			console.warn('Dimensions is missing!')
+			return false;
+		}
+
+		else if( !selection_store.quantity || !selection_store.quantity.nr ) {
+			console.warn('Quantity is missing!')
+			return false;
+		}
+
+		// ⚠️ END OF VALIDATION
+
+		const user = useUsersStore()
+
+		const user_id = ref<number | null>(null)
+
+		if( user && user.state && user.state.id )
+			user_id.value = user.state.id
+
+
+		// 🔥 Creating temporary ID — this will be use when the api already responded
+		const item_id = cart_store.generateLocalIdentity();
+
+		const uploaded_file = ref<string>('')
+		if( !selection_store.lettering_file ) {
+			console.warn('No editor result found!')
+			return
+		}
+
+		const lettering_file = selection_store.lettering_file;
+
+		const lettering_preview = await convertFileBase64(lettering_file);
+
+		const { ok, message, filename } = await cart_service.sendToS3(lettering_file)
+
+		if( !ok ) {
+			console.warn(message)
+			return false
+		}
+
+		uploaded_file.value = filename.value
+
+
+		// 🔥 Used for storing data in both API and local storage
+		const item = {
+			id: null,
+			user_id: user_id.value,
+			product_config_mapping_id: selection_store.product_config_mapping_id,
+			url_slug: attribute_store.product.url_slug,
+			product: attribute_store.product.name,
+			product_thumbnail: attribute_store.product.image,
+			color: selection_store.color?.name ?? null,
+			color_id: selection_store.color?.id ?? null,
+			font: selection_store.font?.label ?? null,
+			font_id: selection_store.font?.id ?? null,
+			width: selection_store.size.width,
+			height: selection_store.size.height,
+			quantity: selection_store.quantity.nr,
+			cost: selection_store.quantity.price ?? 0,
+			lettering_text: selection_store.lettering_text,
+			artwork_file: uploaded_file.value,
+			artwork_file_name: lettering_file.name ,
+			artwork_preview: lettering_preview,
+			instruction: null,
+			local_identity: item_id,
+		}
+
+
+		// 🔥 Store new item in local storage before uploading it to our database.
+		cart_store.saveItemLocally(item)
+
+		// 🔥 Sending the new item to API
+		if( user_id.value ) {
+			// 🔥 Sending the new item to API
+			const result = await cart_service.sendToServer(item)
+
+			if( result && result.item && result.item.id && item.local_identity )
+				cart_store.updateUploadedItem(item.local_identity, result.item.id)
+		}
+
+		return true
+	}
+
+
 	return {
 		...quote_service,
 		is_custom_size,
@@ -403,5 +512,6 @@ export const useQuoteSectionHandler = () => {
 		onVinylSizeBlur,
 		onVinylFontFocus,
 		onVinylFontBlur,
+		dispatchItem,
 	}
 }

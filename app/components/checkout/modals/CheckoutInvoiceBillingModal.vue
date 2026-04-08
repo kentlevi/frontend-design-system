@@ -173,8 +173,8 @@ function saveBillingDetails() {
 	</UiModal>
 </template>
 
-<style lang="scss">
-.ui-modal.checkout-invoice-billing-modal-shell {
+<style scoped lang="scss">
+:global(.ui-modal.checkout-invoice-billing-modal-shell) {
 	width: min(720px, calc(100vw - 32px));
 	padding: 0;
 	gap: 0;
@@ -185,81 +185,73 @@ function saveBillingDetails() {
 	grid-template-rows: auto minmax(0, 1fr) auto;
 	max-height: min(760px, calc(100vh - 40px));
 	overflow: hidden;
-}
 
-.checkout-invoice-billing-modal-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 20px 24px;
-	border-bottom: 1px solid var(--gray-40);
-}
-
-.checkout-invoice-billing-modal-title {
-	font-size: var(--type-size-200);
-	line-height: var(--type-line-200);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.checkout-invoice-billing-modal-close {
-	border: 0;
-	background: transparent;
-	padding: 0;
-	width: 24px;
-	height: 24px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-}
-
-.checkout-invoice-billing-modal-body {
-	display: grid;
-	gap: 18px;
-	padding: 24px;
-	overflow-y: visible;
-}
-
-.checkout-invoice-billing-modal-grid,
-.checkout-invoice-billing-modal-stack {
-	display: grid;
-	gap: 14px 16px;
-}
-
-.checkout-invoice-billing-modal-grid {
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.checkout-invoice-billing-modal-grid--postal {
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-
-	> *:first-child {
-		grid-column: span 1;
+	.checkout-invoice-billing-modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 20px 24px;
+		border-bottom: 1px solid var(--gray-40);
 	}
-}
 
-.checkout-invoice-billing-modal-select {
-	width: 100%;
-}
+	.checkout-invoice-billing-modal-title {
+		font-size: var(--type-size-200);
+		line-height: var(--type-line-200);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
 
-.ui-select-trigger.checkout-invoice-billing-modal-select-trigger {
-	height: 44px;
-	border-radius: 8px;
-	box-shadow: none;
-}
+	.checkout-invoice-billing-modal-close {
+		border: 0;
+		background: transparent;
+		padding: 0;
+		width: 24px;
+		height: 24px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+	}
 
-.checkout-invoice-billing-modal-footer {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: 12px;
-	padding: 16px 24px 24px;
-	border-top: 1px solid var(--gray-40);
-}
+	.checkout-invoice-billing-modal-body {
+		display: grid;
+		gap: 18px;
+		padding: 24px;
+		overflow-y: visible;
+	}
 
-.checkout-invoice-billing-modal {
+	.checkout-invoice-billing-modal-grid,
+	.checkout-invoice-billing-modal-stack {
+		display: grid;
+		gap: 14px 16px;
+	}
+
+	.checkout-invoice-billing-modal-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+
+		&.checkout-invoice-billing-modal-grid--postal {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+			> *:first-child {
+				grid-column: span 1;
+			}
+		}
+	}
+
+	.checkout-invoice-billing-modal-select {
+		width: 100%;
+	}
+
+	.checkout-invoice-billing-modal-footer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 12px;
+		padding: 16px 24px 24px;
+		border-top: 1px solid var(--gray-40);
+	}
+
 	.checkout-form-field-head {
 		.checkout-form-field-label {
 			.checkout-form-field-label-text {
@@ -272,17 +264,25 @@ function saveBillingDetails() {
 	}
 }
 
+:global(.ui-select-trigger.checkout-invoice-billing-modal-select-trigger) {
+	height: 44px;
+	border-radius: 8px;
+	box-shadow: none;
+}
+
 @media (max-width: 720px) {
-	.checkout-invoice-billing-modal-body {
-		padding: 20px 16px;
-	}
+	.checkout-invoice-billing-modal {
+		.checkout-invoice-billing-modal-body {
+			padding: 20px 16px;
+		}
 
-	.checkout-invoice-billing-modal-grid {
-		grid-template-columns: 1fr;
-	}
+		.checkout-invoice-billing-modal-grid {
+			grid-template-columns: 1fr;
+		}
 
-	.checkout-invoice-billing-modal-footer {
-		padding: 16px;
+		.checkout-invoice-billing-modal-footer {
+			padding: 16px;
+		}
 	}
 }
 </style>

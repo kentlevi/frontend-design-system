@@ -31,11 +31,24 @@
 						:src="method.icon"
 						:alt="method.name"
 						class="checkout-member-choice-icon"
-					/>
+					>
 
 					<div class="checkout-member-choice-copy">
-						<div class="checkout-member-choice-title">
-							{{ method.name }}
+						<div class="checkout-member-choice-title-row">
+							<div class="checkout-member-choice-title">
+								{{ method.name }}
+							</div>
+							<UiBadge
+								v-if="selected_shipping_method === method.key"
+								variant="outline"
+								tone="default"
+								size="md"
+								class="checkout-member-choice-badge"
+								text-color="var(--gray-80)"
+							>
+								<UiIcon name="strong-ship" :size="18" />
+								<span class="checkout-member-choice-badge-copy">Updated</span>
+							</UiBadge>
 						</div>
 						<div class="checkout-member-choice-subtitle">
 							{{
@@ -58,7 +71,7 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 import { useShippingMethod } from '~/composables/checkout/shipping/useShippingMethod';
-import ShippingMethodSkeletonLoader from '~/components/checkout/skeleton-loader/SkeletonShippingMethod.vue';
+import ShippingMethodSkeletonLoader from '~/components/checkout/shipping/SkeletonShippingMethod.vue';
 
 const { t: translate } = useI18n();
 
@@ -110,66 +123,86 @@ watch(
 		line-height: var(--type-line-100);
 		text-align: right;
 	}
-}
 
-.checkout-member-card-grid {
-	display: grid;
-	gap: 12px;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-
-	&.only-one {
-		grid-template-columns: 1fr;
-	}
-}
-
-.checkout-member-choice-card {
-	min-height: 62px;
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 14px 16px;
-	border: 1px solid var(--gray-40);
-	border-radius: 12px;
-	background: var(--contrast-light);
-	text-align: left;
-	cursor: pointer;
-
-	&.is-active {
-		border-color: var(--gray-60);
-		background: var(--gray-20);
-	}
-
-	.checkout-member-choice-icon {
-		width: 36px;
-		height: 36px;
-		object-fit: contain;
-		flex-shrink: 0;
-	}
-
-	.checkout-member-choice-copy {
-		flex: 1;
+	.checkout-member-card-grid {
 		display: grid;
-		gap: 4px;
-	}
+		gap: 12px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 
-	.checkout-member-choice-title {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
-	}
+		&.only-one {
+			grid-template-columns: 1fr;
+		}
 
-	.checkout-member-choice-subtitle {
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-	}
+		.checkout-member-choice-card {
+			min-height: 62px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 14px 16px;
+			border: 1px solid var(--gray-40);
+			border-radius: 12px;
+			background: var(--contrast-light);
+			text-align: left;
+			cursor: pointer;
 
-	.checkout-member-choice-price {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
+			&.is-active {
+				border-color: var(--gray-60);
+				background: var(--gray-20);
+			}
+
+			.checkout-member-choice-icon {
+				width: 36px;
+				height: 36px;
+				object-fit: contain;
+				flex-shrink: 0;
+			}
+
+			.checkout-member-choice-copy {
+				flex: 1;
+				display: grid;
+				gap: 4px;
+			}
+
+			.checkout-member-choice-title-row {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+
+			.checkout-member-choice-title {
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-semibold);
+				color: var(--text-primary);
+			}
+
+			.checkout-member-choice-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				flex-shrink: 0;
+			}
+
+			.checkout-member-choice-badge-copy {
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-semibold);
+			}
+
+			.checkout-member-choice-subtitle {
+				color: var(--text-secondary);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+			}
+
+			.checkout-member-choice-price {
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-semibold);
+				color: var(--text-primary);
+			}
+		}
 	}
 }
 
@@ -183,10 +216,10 @@ watch(
 		.checkout-member-block-note {
 			text-align: left;
 		}
-	}
 
-	.checkout-member-card-grid {
-		grid-template-columns: 1fr;
+		.checkout-member-card-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 }
 </style>
