@@ -2,6 +2,17 @@ import type { ApiResponse } from '~/types/config/api'
 
 export type ShippingMethodResponse = ApiResponse<ShippingMethodData[]>
 
+export interface LocalShippingMethodItemPayload {
+	product_config_mapping_id: number;
+	quantity: number;
+	color_id: number | null;
+	font_id: number | null;
+}
+
+export interface LocalShippingMethodRequest {
+	items: LocalShippingMethodItemPayload[];
+}
+
 export interface ShippingMethodData {
 	production_shipping_id: number;
 	shipping_method_id: number;
