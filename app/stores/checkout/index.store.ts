@@ -1,4 +1,5 @@
 import type { AddressMap, AddressType } from "~/types/address";
+import type { AvailablePaymentMethods } from "~/types/payments/payment"
 
 /**
  * This store is only for dedicated data needed for checkout process
@@ -13,7 +14,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const ship_to_another_address = ref<boolean>(false)
 
 	const selected_shipping_method_id = ref<number | null>(null)
-	const selected_payment_method_id = ref<number | null>(null)
+	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
 	const setSavedShippingAddresses = (addresses: AddressMap[AddressType][]) => {
 		saved_shipping_addresses.value = addresses
@@ -35,8 +36,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_shipping_method_id.value = id
 	}
 
-	const setPaymentMethodId = (id: number | null) => {
-		selected_payment_method_id.value = id
+	const setPaymentMethod = (data: AvailablePaymentMethods | null) => {
+		selected_payment_method.value = data
 	}
 
 	return {
@@ -45,7 +46,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_billing_address,
 		selected_drop_address,
 		selected_shipping_method_id,
-		selected_payment_method_id,
+		selected_payment_method,
 		ship_to_another_address,
 
 		// expose setters
@@ -54,6 +55,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setBillingAddress,
 		setDropAddress,
 		setShippingMethodId,
-		setPaymentMethodId
+		setPaymentMethod
 	}
 })

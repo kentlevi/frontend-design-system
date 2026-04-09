@@ -1,6 +1,7 @@
 import type { ProductItem } from '~/types/products/catalog';
 import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
 import type { ApiResponse } from '~/types/config/api'
+import type { PaymentCode } from '../payments/payment';
 
 export type CheckoutItem = {
 	id: string;
@@ -39,6 +40,7 @@ export type CheckoutResponseData = {
 
 export type InitialCheckoutPayload = {
 	shipping_method_id: number | null
+	payment_method_code: PaymentCode
 	email?: string
 	contact_name?:string
 	phone_number?:string
