@@ -14,6 +14,8 @@ export const useCartStore = defineStore('cart', () => {
 
 	const cart_user_id = computed(() => user_store.state?.id ?? null)
 
+	const is_authenticated = computed(() => user_store.state?.id ?? null)
+
 	const selected_item = ref<CartItem | null>(null)
 
 	const selected_item_id = computed(() => selected_item.value && selected_item.value.id ? selected_item.value.id : null )
@@ -57,6 +59,7 @@ export const useCartStore = defineStore('cart', () => {
 		number_of_items,
 		grand_total,
 		cart_user_id,
+		is_authenticated,
 		unsave_draft,
 		deletion_id,
 		deletion_ids,

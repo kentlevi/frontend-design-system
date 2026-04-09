@@ -3,9 +3,10 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 const { t } = useI18n();
 const {
-	selected_item: store_selected_item,
+	selected_item,
 	sizes,
 	clearSelection,
+	formatImage,
 } = useEditItemHandler();
 
 const test_item = ref({
@@ -19,7 +20,7 @@ const test_item = ref({
 });
 
 // Derived from Pinia state
-const model_value = computed(() => Boolean(store_selected_item.value));
+const model_value = computed(() => Boolean(selected_item.value));
 
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
 const size_dropdown_ref = ref<HTMLElement | null>(null);
@@ -210,12 +211,12 @@ watch(
 		@update:model-value="!$event && closeModal()"
 		@close="closeModal"
 	>
-		<section v-if="test_item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
+		<section v-if="selected_item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
 			<div class="cart-item-edit-modal-body">
 				<div class="cart-item-edit-modal-thumb">
 					<img
-						:src="test_item.artwork_file ?? test_item.product_thumbnail"
-						:alt="test_item.artwork_file_name ?? test_item.name"
+						:src="formatImage(selected_item)"
+						:alt="selected_item.artwork_file_name ?? selected_item.product"
 						class="cart-item-edit-modal-image"
 					>
 				</div>
