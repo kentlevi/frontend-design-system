@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
+// import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
+import EditModal from '~/components/cart/modals/EditModal.vue'
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
@@ -163,9 +164,10 @@ watch(() => props.open, (v) => {
 		</Transition>
 	</Teleport>
 
-	<CartItemEditModal v-if="editing_item" :model-value="editing_item"/>
-
+	<!-- <CartItemEditModal v-if="editing_item" :model-value="editing_item"/> -->
+	<EditModal v-if="editing_item" :model-value="editing_item"/>
 	<DeleteConfirmModal
+		v-if="open_deletion_modal"
 		:model-value="open_deletion_modal"
 		:title="t('cart.cartPage.deleteItemTitle')"
 		:description="t('cart.cartPage.deleteItemDescription')"
