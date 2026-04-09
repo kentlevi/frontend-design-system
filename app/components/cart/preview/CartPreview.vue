@@ -1,13 +1,9 @@
 <script setup lang="ts">
-// import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
-import EditModal from '~/components/cart/modals/EditModal.vue'
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
+import CartDeleteItemModal from '~/components/cart/modals/CartDeleteItemModal.vue';
+import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
 import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import type { ProductItem } from '~/types/products/catalog';
-import type {
-	CartPreviewItem,
-} from '~/types/cart/preview';
 import CartPreviewEmptyState from './CartPreviewEmptyState.vue';
 import CartPreviewFeatured from './CartPreviewFeatured.vue';
 import CartPreviewFooter from './CartPreviewFooter.vue';
@@ -25,30 +21,16 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const {
-	cartItems: items,
-	grandTotal: grand_total,
 	featuredItems,
-	editingItemId: editing_item_id,
-	draftSizeKey: draft_size_key,
-	draftCustomSizeWidth: draft_custom_size_width,
-	draftCustomSizeHeight: draft_custom_size_height,
-	draftQty: draft_qty,
-	draftCustomQty: draft_custom_qty,
 	redirectingToCart: redirecting_to_cart,
 	savingInlineEdit: saving_inline_edit,
 	redirectLoaderRef: redirect_loader_ref,
-	openInlineEdit,
-	cancelInlineEdit,
-	saveInlineEdit,
-	getInlineSizeOptions,
-	getInlineQtyOptions,
 	goToCart,
 	goToCheckout,
 	customizeFeaturedProduct,
 } = useCartPreview({
 	closePreview: () => emit('close'),
 });
-
 
 /**
  * Helper to get product name (fallback for sample data)
@@ -67,19 +49,12 @@ function formatPrice(value: number) {
 	}).format(value);
 }
 
-
-function handleEditItem(item: CartPreviewItem) {
-	openInlineEdit(item);
-}
-
 const {
+	items,
+	grand_total,
 	number_of_items,
-	open_deletion_modal,
-	editing_item,
 	composePreview,
 	formatImage,
-	confirmDeleteItem,
-	closeDeleteModal,
 } = useCartPreviewHandler('cart-preview')
 
 watch(() => props.open, (v) => {
@@ -87,13 +62,13 @@ watch(() => props.open, (v) => {
 		console.warn('Composing cart preview...')
 		composePreview()
 	}
-})
+}, { immediate: true })
 
 </script>
 
 <template>
 	<Teleport to="body">
-		<Transition name="cart-preview-slide">
+		<Transition name="cart-preview-slide" appear>
 			<div v-if="props.open" class="cart-preview-shell" data-testid="product-category-cart-overlay" @click.self="emit('close')">
 				<UiLoadingOverlay
 					:visible="redirecting_to_cart || saving_inline_edit"
@@ -164,18 +139,9 @@ watch(() => props.open, (v) => {
 		</Transition>
 	</Teleport>
 
-	<!-- <CartItemEditModal v-if="editing_item" :model-value="editing_item"/> -->
-	<EditModal v-if="editing_item" :model-value="editing_item"/>
-	<DeleteConfirmModal
-		v-if="open_deletion_modal"
-		:model-value="open_deletion_modal"
-		:title="t('cart.cartPage.deleteItemTitle')"
-		:description="t('cart.cartPage.deleteItemDescription')"
-		:confirm-label="t('cart.cartPage.removeConfirm')"
-		test-id="cart-item-delete-modal"
-		@cancel="closeDeleteModal"
-		@confirm="confirmDeleteItem"
-	/>
+	<CartItemEditModal />
+
+	<CartDeleteItemModal />
 </template>
 
 <style scoped lang="scss">

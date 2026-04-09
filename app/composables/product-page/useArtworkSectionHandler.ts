@@ -1,5 +1,4 @@
 import { useCartService } from "~/services/cart/cart.service"
-import { useCartStore } from "~/stores/cart"
 import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import { useUsersStore } from "~/stores/users/users.store"
 import type { CartItem } from "~/types/cart/cart"
@@ -11,8 +10,6 @@ export const useArtworkSectionHandler = () => {
 	const attribute_store = useAttributesStore()
 
 	const selection_store = useSelectionStore()
-
-	const cart_store = useCartStore()
 
 	const cart_service = useCartService()
 
@@ -120,7 +117,7 @@ export const useArtworkSectionHandler = () => {
 		const result = await cart_service.sendToServer(item)
 
 		if( result && result.item && result.item.id && item.local_identity )
-			cart_store.updateUploadedItem(item.local_identity, result.item.id)
+			cart_service.updateUploadedItem(item.local_identity, result.item.id)
 	}
 
 
@@ -166,7 +163,7 @@ export const useArtworkSectionHandler = () => {
 
 
 		// 🔥 Creating temporary ID — this will be use when the api already responded
-		const item_id = cart_store.generateLocalIdentity();
+		const item_id = cart_service.generateLocalIdentity();
 
 		const uploaded_file = ref<string>('')
 
@@ -217,10 +214,10 @@ export const useArtworkSectionHandler = () => {
 
 
 		// 🔥 Store new item in local storage before uploading it to our database.
-		cart_store.saveItemLocally(item)
+		cart_service.saveItemLocally(item)
 
 		// 🔥 Sending the new item to API
-		if( is_authenticated )
+		if( is_authenticated.value )
 			sendItemToServer(item)
 
 		return true

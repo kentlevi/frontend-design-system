@@ -52,6 +52,7 @@ let body_overflow_before_cart_lock = '';
 let cart_body_scroll_locked = false;
 let idle_prefetch_timer: ReturnType<typeof setTimeout> | null = null;
 let idle_prefetch_handle: number | null = null;
+const cart_preview_rendered = ref(false);
 const prefetched_header_overlays = ref(false);
 const should_lock_body_scroll = computed(
 	() => cart_preview_open.value || search_modal_open.value
@@ -92,6 +93,7 @@ function openSearchModal() {
 
 function openCartPreview() {
 	void prefetchHeaderOverlayModules();
+	cart_preview_rendered.value = true;
 	openCartPreviewBase();
 }
 
@@ -210,6 +212,7 @@ onBeforeUnmount(() => {
 		/>
 
 		<CartPreview
+			v-if="cart_preview_rendered"
 			:open="cart_preview_open"
 			@close="closeCartPreview"
 		/>

@@ -17,7 +17,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-	<Transition name="locale-modal">
+	<Transition name="locale-modal" appear>
 		<div
 			v-if="props.open"
 			class="home-locale-overlay"
