@@ -1,7 +1,7 @@
 import type { ApiResponse } from "../config/api"
 import type { CheckoutResponseData } from "~/types/checkout"
 
-export type PaymentCode = "TOSS" | "BANK_TRANSFER" | "CREDIT_CARD"
+export type PaymentCode = "TP" | "BT" | "CC"
 
 export type PaymentAction = "process" | "error"
 

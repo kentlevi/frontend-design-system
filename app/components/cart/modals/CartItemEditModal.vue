@@ -1,48 +1,26 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
-import type { CartPreviewItem } from '~/types/cart/preview';
+const { t } = useI18n();
+const {
+	selected_item: store_selected_item,
+	sizes,
+	clearSelection,
+} = useEditItemHandler();
 
-type SelectOption = {
-	label: string;
-	value: string | number;
-}
-
-const props = withDefaults(defineProps<{
-	modelValue: boolean;
-	item?: CartPreviewItem | null;
-	sizeOptions?: SelectOption[];
-	quantityOptions?: SelectOption[];
-	showQuantity?: boolean;
-	sizeKey?: string;
-	customSizeWidth?: string;
-	customSizeHeight?: string;
-	qty?: number;
-	customQty?: string;
-}>(), {
-	item: null,
-	sizeOptions: () => [],
-	quantityOptions: () => [],
-	showQuantity: true,
-	sizeKey: '',
-	customSizeWidth: '',
-	customSizeHeight: '',
-	qty: 0,
-	customQty: '',
+const test_item = ref({
+	id: 1,
+	name: 'Sample Die Cut Sticker',
+	width: 50,
+	height: 50,
+	quantity: 100,
+	cost: 1250.00,
+	product_thumbnail: '/illustrations/products/stickers/die-cut.svg',
 });
 
-const emit = defineEmits<{
-	'update:modelValue': [value: boolean];
-	'update:sizeKey': [value: string];
-	'update:customSizeWidth': [value: string];
-	'update:customSizeHeight': [value: string];
-	'update:qty': [value: number];
-	'update:customQty': [value: string];
-	save: [];
-	cancel: [];
-}>();
+// Derived from Pinia state
+const model_value = computed(() => Boolean(store_selected_item.value));
 
-const { t } = useI18n();
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
 const size_dropdown_ref = ref<HTMLElement | null>(null);
 const qty_dropdown_ref = ref<HTMLElement | null>(null);
@@ -51,8 +29,30 @@ const custom_width_input_ref = ref<HTMLInputElement | null>(null);
 const size_menu_open = ref(false);
 const qty_menu_open = ref(false);
 
+const size_key = ref<string | number>('');
+const custom_size_width = ref<string>('');
+const custom_size_height = ref<string>('');
+const qty = ref<number>(0);
+const custom_qty = ref<string>('');
+const show_quantity = ref(true);
+
+// Initialize draft state from test_item
+watch(test_item, (item) => {
+	if (!item) return;
+
+	// Sizing logic
+	size_key.value = item.width && item.height ? `${item.width}x${item.height}` : 'custom';
+	custom_size_width.value = String(item.width || '');
+	custom_size_height.value = String(item.height || '');
+
+	// Quantity logic
+	qty.value = item.quantity || 0;
+	custom_qty.value = '';
+}, { immediate: true });
+
+// Sizing logic from original version
 const current_size_option = computed(() =>
-	props.sizeOptions.find((option) => String(option.value) === props.sizeKey) ?? null
+	sizes.value.find((option) => String(option.value) === String(size_key.value)) ?? null
 );
 
 const parsed_size_from_option = computed(() => {
@@ -65,41 +65,40 @@ const parsed_size_from_option = computed(() => {
 });
 
 const display_width = computed(() =>
-	props.sizeKey === 'custom' ? digits_only(props.customSizeWidth) : parsed_size_from_option.value.width
+	size_key.value === 'custom' ? digits_only(custom_size_width.value) : parsed_size_from_option.value.width
 );
 
 const display_height = computed(() =>
-	props.sizeKey === 'custom' ? digits_only(props.customSizeHeight) : parsed_size_from_option.value.height
+	size_key.value === 'custom' ? digits_only(custom_size_height.value) : parsed_size_from_option.value.height
 );
 
 const display_qty = computed(() =>
-	props.qty === -1 ? digits_only(props.customQty) : (props.qty > 0 ? String(props.qty) : '')
+	qty.value === -1 ? digits_only(custom_qty.value) : (qty.value > 0 ? String(qty.value) : '')
 );
 
 const is_update_disabled = computed(() => {
-	if (!props.sizeKey) return true;
+	if (!size_key.value) return true;
 
-	const is_custom_size = props.sizeKey === 'custom';
-	const custom_width = Number(props.customSizeWidth);
-	const custom_height = Number(props.customSizeHeight);
-	const custom_qty = Number(props.customQty);
+	const is_custom_size = size_key.value === 'custom';
+	const cw = Number(custom_size_width.value);
+	const ch = Number(custom_size_height.value);
+	const cq = Number(custom_qty.value);
 
 	if (is_custom_size) {
-		if (!Number.isFinite(custom_width) || custom_width <= 0) return true;
-		if (!Number.isFinite(custom_height) || custom_height <= 0) return true;
+		if (!Number.isFinite(cw) || cw <= 0) return true;
+		if (!Number.isFinite(ch) || ch <= 0) return true;
 	}
 
-	if (!props.showQuantity) {
-		return false;
+	if (!show_quantity.value) return false;
+
+	if (qty.value === -1) {
+		if (!Number.isFinite(cq) || cq <= 0) return true;
 	}
 
-	if (props.qty === -1) {
-		if (!Number.isFinite(custom_qty) || custom_qty <= 0) return true;
-	}
-
-	return !Number.isFinite(props.qty) || props.qty === 0;
+	return !Number.isFinite(qty.value) || qty.value === 0;
 });
 
+// Menu handlers
 function closeMenus() {
 	size_menu_open.value = false;
 	qty_menu_open.value = false;
@@ -132,53 +131,48 @@ function preventNonDigitInput(event: InputEvent) {
 	event.preventDefault();
 }
 
-// function onSizeOptionSelect(value: string | number) {
-// 	const normalized_value = String(value);
-// 	emit('update:sizeKey', normalized_value);
-// 	if (normalized_value === 'custom') {
-// 		emit('update:customSizeWidth', '');
-// 		emit('update:customSizeHeight', '');
-// 		closeMenus();
-// 		nextTick(() => {
-// 			custom_width_input_ref.value?.focus();
-// 		});
-// 		return;
-// 	}
-
-// 	const selected_option = props.sizeOptions.find((item) => String(item.value) === normalized_value);
-// 	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
-// 	emit('update:customSizeWidth', matched?.[1] ?? '');
-// 	emit('update:customSizeHeight', matched?.[2] ?? '');
-// 	closeMenus();
-// }
-
-function onQtyOptionSelect(value: string | number) {
-	const normalized_value = Number(value);
-	emit('update:qty', normalized_value);
-	if (normalized_value !== -1) {
-		emit('update:customQty', '');
+function onSizeOptionSelect(value: string | number) {
+	const normalized_value = String(value);
+	size_key.value = normalized_value;
+	if (normalized_value === 'custom') {
+		closeMenus();
+		nextTick(() => {
+			custom_width_input_ref.value?.focus();
+		});
+		return;
 	}
+
+	const selected_option = sizes.value.find((item) => String(item.value) === normalized_value);
+	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
+	custom_size_width.value = matched?.[1] ?? '';
+	custom_size_height.value = matched?.[2] ?? '';
 	closeMenus();
 }
 
+
 function onCustomWidthInput(value: string) {
-	emit('update:sizeKey', 'custom');
-	emit('update:customSizeWidth', value.replace(/[^0-9]/g, ''));
+	size_key.value = 'custom';
+	custom_size_width.value = value.replace(/[^0-9]/g, '');
 }
 
 function onCustomHeightInput(value: string) {
-	emit('update:sizeKey', 'custom');
-	emit('update:customSizeHeight', value.replace(/[^0-9]/g, ''));
+	size_key.value = 'custom';
+	custom_size_height.value = value.replace(/[^0-9]/g, '');
 }
 
 function onCustomQtyInput(value: string) {
-	emit('update:qty', -1);
-	emit('update:customQty', value.replace(/[^0-9]/g, ''));
+	qty.value = -1;
+	custom_qty.value = value.replace(/[^0-9]/g, '');
 }
 
-
 function saveChanges() {
-	emit('save');
+	// TODO: Call service to update cart item in Pinia/API
+	closeModal();
+}
+
+const closeModal = () => {
+	closeMenus()
+	clearSelection()
 }
 
 onMounted(() => {
@@ -192,9 +186,9 @@ onBeforeUnmount(() => {
 });
 
 watch(
-	() => [props.modelValue, props.sizeKey] as const,
-	([is_open, size_key]) => {
-		if (!is_open || size_key !== 'custom') return;
+	() => [model_value.value, size_key.value] as const,
+	([is_open, sk]) => {
+		if (!is_open || sk !== 'custom') return;
 		nextTick(() => {
 			custom_width_input_ref.value?.focus();
 		});
@@ -202,72 +196,26 @@ watch(
 	{ immediate: true }
 );
 
-
-const show_quantity = ref<boolean>(true)
-
-
-const {
-	selected_item,
-	featured_sizes,
-	sizes,
-	clearSelection,
-} = useEditItemHandler()
-
-const closeModal = () => {
-	closeMenus()
-	clearSelection()
-}
-
-const size_key = ref<string | number>('default')
-
-const custom_width = ref<number | null>(null)
-
-const custom_height = ref<number | null>(null)
-
-// type SizeSpec = {
-// 	widh
-// }
-// const selected_size = ref
-
-function onSizeOptionSelect(option: string | number) {
-	console.log(option)
-	size_key.value = option
-	if (option === 'custom') {
-		closeMenus();
-		nextTick(() => {
-			custom_width_input_ref.value?.focus();
-		});
-		return;
-	}
-
-	const selected_option = featured_sizes.value.find((size) => size.code === option);
-	console.log(selected_option)
-	// const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
-	// emit('update:customSizeWidth', matched?.[1] ?? '');
-	// emit('update:customSizeHeight', matched?.[2] ?? '');
-	closeMenus();
-}
-
 </script>
 
 <template>
 	<UiModal
-		:model-value="modelValue"
+		:model-value="model_value"
 		align="center"
 		width="640px"
 		padding="0"
 		gap="0"
 		modal-class="cart-item-edit-modal-shell"
 		:title="show_quantity ? t('cart.cartPreview.editModal.title') : t('cart.cartPreview.editModal.sizeOnlyTitle')"
-		@update:model-value="emit('update:modelValue', $event)"
+		@update:model-value="!$event && closeModal()"
 		@close="closeModal"
 	>
-		<section v-if="selected_item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
+		<section v-if="test_item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
 			<div class="cart-item-edit-modal-body">
 				<div class="cart-item-edit-modal-thumb">
 					<img
-						:src="selected_item.artwork_file ?? selected_item.product_thumbnail"
-						:alt="selected_item.artwork_file_name ?? selected_item.product"
+						:src="test_item.artwork_file ?? test_item.product_thumbnail"
+						:alt="test_item.artwork_file_name ?? test_item.name"
 						class="cart-item-edit-modal-image"
 					>
 				</div>
@@ -338,11 +286,11 @@ function onSizeOptionSelect(option: string | number) {
 								<div v-if="size_menu_open" class="ui-select-menu" role="listbox">
 									<div class="ui-select-options">
 										<button
-											v-for="option in sizeOptions"
+											v-for="option in sizes"
 											:key="option.value"
 											type="button"
 											class="ui-select-option"
-											:class="{ 'is-selected': String(option.value) === sizeKey }"
+											:class="{ 'is-selected': String(option.value) === String(size_key) }"
 											@mousedown.prevent="onSizeOptionSelect(option.value)"
 										>
 											<div class="ui-select-option-copy">
@@ -357,20 +305,9 @@ function onSizeOptionSelect(option: string | number) {
 
 					<div v-if="show_quantity" class="cart-item-edit-field">
 						<label class="cart-item-edit-label">{{ t('cart.cartPreview.quantity') }}</label>
-						<UiSelect
-							v-if="qty !== -1"
-							:model-value="qty"
-							size="40"
-							class="cart-item-edit-select"
-							trigger-class="cart-item-edit-select-trigger"
-							menu-class="cart-item-edit-qty-menu"
-							:pin-last-option="true"
-							:options="quantityOptions"
-							data-testid="cart-item-edit-qty-select"
-							@update:model-value="onQtyOptionSelect($event)"
-						/>
+						<!-- For now, simplifying quantity selection back to a basic store-driven one if needed, -->
+						<!-- but keeping the UI structure for custom quantity if the store supports it. -->
 						<div
-							v-else
 							ref="qty_dropdown_ref"
 							class="cart-item-edit-select-shell ui-select"
 							:data-open="qty_menu_open || null"
@@ -400,24 +337,6 @@ function onSizeOptionSelect(option: string | number) {
 									:class="{ 'is-open': qty_menu_open }"
 								/>
 							</button>
-							<Transition name="ui-select-menu">
-								<div v-if="qty_menu_open" class="ui-select-menu cart-item-edit-qty-menu" role="listbox">
-									<div class="ui-select-options">
-										<button
-											v-for="option in quantityOptions"
-											:key="option.value"
-											type="button"
-											class="ui-select-option"
-											:class="{ 'is-selected': Number(option.value) === qty }"
-											@mousedown.prevent="onQtyOptionSelect(option.value)"
-										>
-											<div class="ui-select-option-copy">
-												<p class="ui-select-option-label">{{ option.label }}</p>
-											</div>
-										</button>
-									</div>
-								</div>
-							</Transition>
 						</div>
 					</div>
 				</div>
@@ -449,7 +368,6 @@ function onSizeOptionSelect(option: string | number) {
 		</section>
 	</UiModal>
 </template>
-
 <style lang="scss">
 .cart-item-edit-modal-shell {
 	border-radius: 18px;

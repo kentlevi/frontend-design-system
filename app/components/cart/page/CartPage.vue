@@ -6,7 +6,6 @@ import { useCartPage } from '~/composables/cart/page/useCartPage';
 import { formatProductFileSize, readProductArtworkAsDataUrl } from '~/helpers/products/productCategory.helper';
 import CartItemDetailsModal from '~/components/cart/modals/CartItemDetailsModal.vue';
 import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import CartEmptyState from './CartEmptyState.vue';
 import CartPageHeader from './CartPageHeader.vue';
 import CartPageList from './CartPageList.vue';
@@ -30,15 +29,11 @@ const {
 	updateQty,
 	updateSize,
 	updateItemArtworkDetails,
-	removeByIds,
 	goToCheckout,
 	format_price,
 	size_dim_only,
 } = useCartPage();
 
-const delete_target_ids = ref<string[]>([]);
-const delete_modal_open = computed(() => delete_target_ids.value.length > 0);
-const is_bulk_delete = computed(() => delete_target_ids.value.length > 1);
 const detail_item_id = ref<string | null>(null);
 const edit_size_item_id = ref<string | null>(null);
 const edit_size_draft_key = ref('');
@@ -323,18 +318,10 @@ function preventNonDigitInput(event: InputEvent) {
 	event.preventDefault();
 }
 
+const cart_store = useCartStore();
+
 function openDeleteModal(ids: string[]) {
-	delete_target_ids.value = [...ids];
-}
-
-function closeDeleteModal() {
-	delete_target_ids.value = [];
-}
-
-function confirmDeleteItems() {
-	if (!delete_target_ids.value.length) return;
-	removeByIds(delete_target_ids.value);
-	delete_target_ids.value = [];
+	cart_store.setForDeleteItems(ids);
 }
 
 function openItemDetails(item_id: string) {
@@ -529,18 +516,7 @@ onBeforeUnmount(() => {
 			/>
 		</section>
 
-		<DeleteConfirmModal
-			:model-value="delete_modal_open"
-			:title="is_bulk_delete ? t('cart.cartPage.removeAllTitle') : t('cart.cartPage.deleteItemTitle')"
-			:description="is_bulk_delete
-				? t('cart.cartPage.removeAllDescription')
-				: t('cart.cartPage.deleteItemDescription')"
-			:confirm-label="is_bulk_delete ? t('cart.cartPage.removeAllConfirm') : t('cart.cartPage.removeConfirm')"
-			test-id="cart-page-delete-modal"
-			@update:model-value="!$event ? closeDeleteModal() : undefined"
-			@cancel="closeDeleteModal"
-			@confirm="confirmDeleteItems"
-		/>
+		<CartDeleteItemModal />
 
 		<CartItemDetailsModal
 			:model-value="Boolean(detail_item_id)"

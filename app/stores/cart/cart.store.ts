@@ -27,6 +27,24 @@ export const useCartStore = defineStore('cart', () => {
 	const unsave_draft = ref<CartItem []>([])
 
 	const deletion_id = ref<number>(0)
+	const deletion_ids = ref<string[]>([])
+
+	const setForDeleteItem = (id: number) => {
+		deletion_id.value = id
+		deletion_ids.value = []
+	}
+
+	const setForDeleteItems = (ids: string[]) => {
+		deletion_ids.value = ids
+		deletion_id.value = 0
+	}
+
+	const removeByIds = (ids: string[]) => {
+		items.value = items.value.filter(item => !ids.includes(String(item.id)))
+		// Update totals accordingly (simple decrement for now, or trigger re-calculation)
+		number_of_items.value = items.value.length
+		grand_total.value = items.value.reduce((sum, item) => sum + Number(item.cost), 0)
+	}
 
 	const empty = () => {
 		items.value = []
@@ -41,9 +59,14 @@ export const useCartStore = defineStore('cart', () => {
 		cart_user_id,
 		unsave_draft,
 		deletion_id,
+		deletion_ids,
 		selected_item,
 		selected_item_id,
 		featured_data,
+		setForDeleteItem,
+		setForDeleteItems,
+		removeByIds,
+		empty,
 	}
 }, {
 	persist: {
