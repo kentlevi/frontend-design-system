@@ -1,35 +1,22 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, type CSSProperties } from 'vue'
-import { resolveLetteringPaintSpec } from '~/utils/products/letteringPaint'
-
+import type { CSSProperties } from 'vue'
 const props = withDefaults(defineProps<{
 	text: string;
-	width: number | null;
-	height: number | null;
+	width: number;
+	height: number;
 	font: string;
 	colorKey: string;
-	hexCode?: string;
 	redirecting?: boolean;
 	activeSize?: 'width' | 'height';
-	isLoadingFeatures?: boolean;
-	selectionNavigationInFlight?: boolean;
-	letteringNavigationFlight?: boolean;
-	hasLetteringEditor?: boolean;
 }>(), {
-	hexCode: undefined,
 	redirecting: false,
 	activeSize: 'height',
-	isLoadingFeatures: false,
-	selectionNavigationInFlight: false,
-	letteringNavigationFlight: false,
-	hasLetteringEditor: false,
 })
 
 const emit = defineEmits<{
 	'update:text': [value: string];
-	'update:width': [value: number | null];
-	'preview-ready-change': [value: boolean];
-	'update:height': [value: number | null];
+	'update:width': [value: number];
+	'update:height': [value: number];
 }>()
 
 const editorCont = ref<HTMLElement | null>(null)
@@ -53,27 +40,8 @@ const lineCount = ref(1)
 const lines = ref<string[]>([])
 const editorReady = ref(Boolean(props.text))
 const initialized = ref(false)
-const isMounted = ref(false)
-const isReady = ref(Boolean(props.text && props.font))
-const fontLoading = ref(false)
-const hasSettledOnce = ref(false)
-const showPreviewOverlay = computed(() =>
-	!isMounted.value
-	|| !isReady.value
-	|| !props.font
-	|| props.redirecting
-	|| (fontLoading.value && !hasSettledOnce.value)
-)
-const isPreviewSettled = computed(() =>
-	isMounted.value
-	&& isReady.value
-	&& Boolean(props.font)
-	&& !props.redirecting
-	&& (!fontLoading.value || hasSettledOnce.value)
-)
-onMounted(() => {
-	isMounted.value = true
-})
+const isReady = ref(false)
+const showPreviewOverlay = computed(() => !isReady.value || props.redirecting)
 const previewTopInset = 0
 const previewBottomReservedSpace = 84
 const widthRulerGap = 22
@@ -84,32 +52,77 @@ const previewContentCenterY = usablePreviewHeight / 2
 const placeholderText = 'Your text'
 
 
-const formattedWidth = computed(() => props.width ? Math.round(props.width * 10) / 10 : 0)
-const formattedHeight = computed(() => props.height ? Math.round(props.height * 10) / 10 : 0)
+const formattedWidth = computed(() => Math.round(props.width * 10) / 10)
+const formattedHeight = computed(() => Math.round(props.height * 10) / 10)
 const fontFamily = computed(() => props.font)
-const letteringPaintSpec = computed(() => resolveLetteringPaintSpec(props.colorKey, props.hexCode))
 
 const textColorStyle = computed<CSSProperties>(() => {
-	if (letteringPaintSpec.value.kind === 'solid') {
-		return { color: letteringPaintSpec.value.color }
-	}
-
-	const gradientDirection = letteringPaintSpec.value.type === 'diagonal' ? '135deg' : '0deg'
-	const gradientStops = letteringPaintSpec.value.stops
-		.map((stop) => `${stop.color} ${Math.round(stop.offset * 100)}%`)
-		.join(', ')
-
-	return {
-		backgroundImage: `linear-gradient(${gradientDirection}, ${gradientStops})`,
-		backgroundClip: 'text',
-		WebkitBackgroundClip: 'text',
-		WebkitTextFillColor: 'transparent',
-		color: 'transparent',
+	switch (props.colorKey) {
+		case 'white':
+			return { color: '#FFFFFF' }
+		case 'red':
+			return { color: '#FF0000' }
+		case 'orange':
+			return { color: '#FFB700' }
+		case 'yellow':
+			return { color: '#FFE600' }
+		case 'green':
+			return { color: '#008F00' }
+		case 'blue':
+			return { color: '#1B1BFF' }
+		case 'purple':
+			return { color: '#80008F' }
+		case 'pink':
+			return { color: '#F5A9B8' }
+		case 'yellow-orange':
+			return { color: '#FFB700' }
+		case 'gold':
+			return {
+				backgroundImage: 'linear-gradient(0deg, rgb(183, 128, 25), rgb(251, 226, 84), rgb(240, 204, 68), rgb(255, 255, 255), rgb(240, 204, 68), rgb(251, 226, 84), rgb(183, 128, 25))',
+				backgroundClip: 'text',
+				WebkitBackgroundClip: 'text',
+				WebkitTextFillColor: 'transparent',
+				color: 'transparent',
+			}
+		case 'silver':
+			return {
+				backgroundImage: 'linear-gradient(0deg, rgb(137, 137, 137), rgb(207, 207, 207), rgb(172, 172, 172), rgb(255, 255, 255), rgb(172, 172, 172), rgb(207, 207, 207), rgb(137, 137, 137))',
+				backgroundClip: 'text',
+				WebkitBackgroundClip: 'text',
+				WebkitTextFillColor: 'transparent',
+				color: 'transparent',
+			}
+		case 'bronze':
+			return {
+				backgroundImage: 'linear-gradient(0deg, rgb(110, 58, 6), rgb(205, 127, 49), rgb(158, 93, 28), rgb(252, 208, 96), rgb(158, 93, 28), rgb(205, 127, 49), rgb(110, 58, 6))',
+				backgroundClip: 'text',
+				WebkitBackgroundClip: 'text',
+				WebkitTextFillColor: 'transparent',
+				color: 'transparent',
+			}
+		case 'hologram':
+			return {
+				backgroundImage: 'linear-gradient(135deg, #B6EEE8 0%, #F5F3EA 32%, #F1B2B9 50%, #D893C1 60%, #B6EEE8 80%)',
+				backgroundClip: 'text',
+				WebkitBackgroundClip: 'text',
+				WebkitTextFillColor: 'transparent',
+				color: 'transparent',
+			}
+		case 'full-color':
+			return {
+				backgroundImage: 'linear-gradient(90deg, #ff3b30 0%, #ff9500 18%, #ffdb4d 34%, #34c759 50%, #32ade6 68%, #007aff 82%, #af52de 100%)',
+				backgroundClip: 'text',
+				WebkitBackgroundClip: 'text',
+				WebkitTextFillColor: 'transparent',
+				color: 'transparent',
+			}
+		default:
+			return { color: '#000000' }
 	}
 })
 
 const editorTextStyle = computed<CSSProperties>(() => ({
-	fontFamily: fontFamily.value || 'sans-serif',
+	fontFamily: fontFamily.value,
 	textAlign: textAlign.value,
 	whiteSpace: 'nowrap',
 	width: 'auto',
@@ -153,29 +166,6 @@ const focusAtEnd = () => {
 const getWidth = (given: number, x: number, y: number) => Math.round((y * given) / x)
 const getHeight = (given: number, x: number, y: number) => Math.round((x * given) / y)
 
-const resolveCanvasTextFillStyle = (
-	context: CanvasRenderingContext2D,
-	width: number,
-	height: number
-): string | CanvasGradient => {
-	const paint = letteringPaintSpec.value
-	if (paint.kind === 'solid') {
-		return paint.color
-	}
-
-	const gradient_width = Math.max(width, 144)
-	const gradient_height = Math.max(height, 144)
-	const gradient = paint.type === 'diagonal'
-		? context.createLinearGradient(0, 0, gradient_width, gradient_height)
-		: context.createLinearGradient(0, gradient_height, 0, 0)
-
-	paint.stops.forEach((stop) => {
-		gradient.addColorStop(stop.offset, stop.color)
-	})
-
-	return gradient
-}
-
 const resetContext = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, w: number, h: number) => {
 	scale.value = 1
 	if (w && h) {
@@ -184,14 +174,10 @@ const resetContext = (canvas: HTMLCanvasElement, context: CanvasRenderingContext
 		context.clearRect(0, 0, canvas.width, canvas.height)
 	}
 
-	context.font = `100px ${fontFamily.value ? `"${fontFamily.value}"` : 'sans-serif'}`
+	context.fillStyle = '#000000'
+	context.font = `100px ${fontFamily.value}`
 	context.direction = 'ltr'
 	context.textAlign = textAlign.value
-	context.fillStyle = resolveCanvasTextFillStyle(
-		context,
-		w || canvas.width || 144,
-		h || canvas.height || 144
-	)
 	return context
 }
 
@@ -343,27 +329,6 @@ const calculateDimension = () => {
 	}
 }
 
-const waitForFont = async (font: string) => {
-	if (typeof window === 'undefined' || !('fonts' in document)) return
-
-	// Check if font is already loaded to avoid a flicker/overlay flash
-	if (document.fonts.check(`100px "${font}"`)) {
-		return;
-	}
-
-	try {
-		fontLoading.value = true
-		// Wait for the font to be loaded. '100px' is used to match the editor/canvas size
-		await document.fonts.load(`100px "${font}"`)
-	}
-	catch (error) {
-		if (import.meta.dev) {
-			console.warn(`Failed to load font: ${font}`, error)
-		}
-		fontLoading.value = false
-	}
-}
-
 const textHandler = async (flag?: 'first_load') => {
 	await nextTick()
 	renderToCanvas()
@@ -461,49 +426,20 @@ watch(
 
 watch(
 	() => [props.width, props.height, props.font, props.colorKey, props.activeSize] as const,
-	async (next, prev) => {
-		if (next[2] && next[2] !== prev?.[2]) {
-			await waitForFont(next[2])
-			if (!isReady.value) isReady.value = true
-		}
+	async () => {
 		await textHandler()
-		fontLoading.value = false
 	},
-)
-
-watch(
-	isPreviewSettled,
-	(settled) => {
-		if (settled) {
-			hasSettledOnce.value = true
-		}
-		emit('preview-ready-change', settled)
-	},
-	{ immediate: true },
 )
 
 onMounted(async () => {
 	if (initialized.value) return
 	initialized.value = true
-
-	// If we already have the necessary props, we can start as ready
-	// while still waiting for the font in the background/overlay if needed.
-	const should_be_ready = Boolean(props.text && props.font)
-
+	isReady.value = false
 	setEditorValue(props.text || placeholderText)
 	editorReady.value = props.text.length > 0
-
 	await nextTick()
-	if (props.font) {
-		await waitForFont(props.font)
-		await textHandler()
-		isReady.value = true
-		fontLoading.value = false
-	}
-	else {
-		await textHandler()
-		isReady.value = should_be_ready
-	}
+	await textHandler()
+	isReady.value = true
 })
 
 
@@ -518,7 +454,7 @@ const generateImage = async (): Promise<Blob | null> => {
 	})
 }
 
-// Expose the image generator to the parent component.
+// 🔑 EXPOSE the function to the parent
 defineExpose({
 	generateImage
 })
@@ -528,11 +464,10 @@ defineExpose({
 	<div class="vinyl-lettering-designer">
 		<div class="lettering_editor">
 			<UiLoadingOverlay
-				:visible="showPreviewOverlay || isLoadingFeatures || selectionNavigationInFlight || letteringNavigationFlight"
+				:visible="showPreviewOverlay"
 				position="absolute"
 				background="rgba(58, 58, 58, 0.72)"
 				label="Loading preview"
-				transition-name="ui-loading-overlay-fade"
 				test-id="vinyl-lettering-preview-loading-overlay"
 			/>
 
@@ -557,11 +492,7 @@ defineExpose({
 					contenteditable="false"
 				/>
 
-				<div
-					class="text_cont"
-					:style="[textContainerStyle, { opacity: fontLoading && !hasSettledOnce ? 0 : 1 }]"
-					data-testid="product-category-vinyl-designer-textarea"
-				>
+				<div class="text_cont" :style="textContainerStyle">
 					<p
 						ref="textField"
 						tabindex="1"
@@ -642,7 +573,6 @@ defineExpose({
 	inset: 0;
 	overflow: hidden;
 	pointer-events: none;
-	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
 	.text_cont {
 		position: absolute;
@@ -666,10 +596,6 @@ defineExpose({
 		word-spacing: 0;
 		direction: ltr;
 		unicode-bidi: plaintext;
-		white-space: pre-wrap;
-		word-break: break-all;
-		font-family: inherit;
-		min-width: 1px;
 		cursor: text;
 		caret-color: #ffffff;
 		pointer-events: all;
@@ -755,5 +681,4 @@ defineExpose({
 		margin: 0;
 	}
 }
-
 </style>

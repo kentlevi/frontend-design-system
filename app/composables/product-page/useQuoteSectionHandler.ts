@@ -1,5 +1,5 @@
 /**
- * This composable will handle the logic and behavior of Quote Section component
+ * ⚠️ This composable will handle the logic and behavior of Quote Section component
  */
 
 import type { SizeSpec, QuantitySpec, ColorSpec, AttributeSelection } from '~/types/products/attributes'
@@ -13,7 +13,7 @@ import { convertFileBase64 } from '~/utils/file/file'
 
 export const useQuoteSectionHandler = () => {
 
-	// Quote section service
+	// 🔥 Quote section service
 	const quote_service = useQuoteSectionService()
 
 	const attribute_store = useAttributesStore()
@@ -52,34 +52,29 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	/**
-	 * Initiate the value of all fields in form and set the default value and behaviour
+	 * 📌Initiate the value of all fields in form and set the default value and behaviour
 	 * @param prod_slug string — Product URL slug
 	 */
 	const instatiateForm = async (prod_slug: string, { interactive = true }: InitializeFormOptions = {}) => {
-		lettering_navigation_flight.value = true;
-		console.warn('Preparing form...')
+		console.warn('🔥 Preparing form...')
 
-		try {
-			// Existing attributes that was selected in previous products
-			const existing_attr = quote_service.recentSelection(prod_slug)
+		// 📌 Existing attributes that was selected in previous products
+		const existing_attr = quote_service.recentSelection(prod_slug)
 
-			// If the current selected product, has already a pre-selected attributes
-			if( quote_service.url_slug &&  existing_attr ) {
-				await quote_service.updateFeaturedData(prod_slug)
+		// 🔥 If the current selected product, has already a pre-selected attributes
+		if( quote_service.url_slug &&  existing_attr ) {
+			await quote_service.updateFeaturedData(prod_slug)
 
-				preparingExistingSelection(existing_attr, { interactive })
-			}
-			/**
-			 *The user don't have a pre-selected or changes in default attributes
-			 * Or the user never visited this product before
-			 */
-			else {
-				await quote_service.updateFeaturedData(prod_slug)
+			preparingExistingSelection(existing_attr, { interactive })
+		}
+		/**
+		 * 🔥 The user don't have a pre-selected or changes in default attributes
+		 * Or the user never visited this product before
+		 */
+		else {
+			await quote_service.updateFeaturedData(prod_slug)
 
-				prepareAllDefault()
-			}
-		} finally {
-			lettering_navigation_flight.value = false;
+			prepareAllDefault()
 		}
 	}
 
@@ -95,9 +90,6 @@ export const useQuoteSectionHandler = () => {
 
 		if( quote_service.has_font_selection.value)
 			prepareDefaultFont()
-
-		quote_service.resetCustomSize()
-		quote_service.resetCustomQuantity()
 	}
 
 	const preparingExistingSelection = (
@@ -225,11 +217,9 @@ export const useQuoteSectionHandler = () => {
 		await nextTick()
 
 		custom_width_input.value?.focus()
-		custom_width_input.value?.select()
 	}
 
 	const showCustomSize = async () => {
-		quote_service.resetCustomSize()
 		await setCustomSizeVisible()
 	}
 
@@ -239,7 +229,6 @@ export const useQuoteSectionHandler = () => {
 
 	const focusWidthInput = () => {
 		custom_width_input.value?.focus()
-		custom_width_input.value?.select()
 	}
 
 	const setCustomQtyVisible = async ({ interactive = true }: InitializeFormOptions = {}) => {
@@ -251,7 +240,6 @@ export const useQuoteSectionHandler = () => {
 		await nextTick()
 
 		custom_qty_input.value?.focus()
-		custom_qty_input.value?.select()
 
 		/**
 		 * This will trigger the @change event,
@@ -262,7 +250,6 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	const showCustomQty = async () => {
-		quote_service.resetCustomQuantity()
 		await setCustomQtyVisible()
 	}
 
@@ -301,13 +288,7 @@ export const useQuoteSectionHandler = () => {
 		await quote_service.changeSize(ssize)
 	}
 
-	const inputUpdateCustomSize = async (event: Event, property: 'width' | 'height') => {
-		const input = event.target as HTMLInputElement
-		const value = input.value === '' ? null : Number(input.value)
-
-		if (property === 'width') quote_service.custom_size.value.width = value
-		else if (property === 'height') quote_service.custom_size.value.height = value
-
+	const inputUpdateCustomSize = async () => {
 		await quote_service.changeCustomSize()
 	}
 
@@ -349,11 +330,13 @@ export const useQuoteSectionHandler = () => {
 	}
 
 	const letteringWidthInput = (event: Event) => {
-		const input = event.target as HTMLInputElement
-		const value = input.value === '' ? null : Number(input.value)
+		const target = event.target as HTMLInputElement
+		const next_w = Number(target.value)
 
-		quote_service.lettering.value.width = value
-		quote_service.letteringWidthUpdate(value)
+		if (!Number.isFinite(next_w) || next_w <= 0) return
+
+		quote_service.lettering.value.active = 'width'
+		quote_service.lettering.value.width = next_w
 	}
 
 	const letteringHeightInput = (event: Event) => {

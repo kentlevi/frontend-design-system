@@ -46,11 +46,6 @@ export const useQuantityService = () => {
 		selection_store.updateQuantity(custom_quantity.value)
 	}
 
-	const resetCustomQuantity = () => {
-		custom_quantity.value.nr = null
-		custom_quantity.value.price = null
-	}
-
 	return {
 		featured_quantities,
 		quantity,
@@ -58,6 +53,5 @@ export const useQuantityService = () => {
 		defaultQuantity,
 		changeQuantity,
 		changeCustomQuantity,
-		resetCustomQuantity,
 	}
 }

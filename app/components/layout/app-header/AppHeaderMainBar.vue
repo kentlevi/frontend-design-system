@@ -27,8 +27,6 @@ const props = defineProps<{
 	navLinks: NavLink[];
 	isNavLinkActive: (path: string) => boolean;
 	selectedLocale: FlagCode;
-	headerStateReady: boolean;
-	headerAccountSkeletonCount: number;
 	isMockLoggedIn: boolean;
 	isGuestLoggedIn: boolean;
 	accountOpen: boolean;
@@ -111,91 +109,68 @@ onMounted(() => {
 
 		<div class="home-header-tools" data-testid="app-header-tools">
 			<template v-if="!props.simple">
-				<template v-if="props.headerStateReady">
-					<UiButton
-						type="button"
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="home-header-icon home-header-locale"
-						:aria-label="t('layout.header.locale.aria')"
-						data-testid="app-header-locale-button"
-						@click="emit('open-locale')"
-						@mouseenter="emit('prefetch-locale')"
-						@focus="emit('prefetch-locale')"
-					>
-						<UiFlag :code="props.selectedLocale" :size="24" />
-					</UiButton>
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="home-header-icon home-header-locale"
+					:aria-label="t('layout.header.locale.aria')"
+					data-testid="app-header-locale-button"
+					@click="emit('open-locale')"
+					@mouseenter="emit('prefetch-locale')"
+					@focus="emit('prefetch-locale')"
+				>
+					<UiFlag :code="props.selectedLocale" :size="24" />
+				</UiButton>
+				<UiButton
+					variant="ghost"
+					tone="default"
+					size="md"
+					:icon-only="true"
+					icon="strong-search"
+					icon-size="md"
+					class="home-header-icon"
+					:aria-label="t('layout.header.search')"
+					data-testid="app-header-search-button"
+					@click="emit('open-search')"
+					@mouseenter="emit('prefetch-search')"
+					@focus="emit('prefetch-search')"
+				/>
+				<div class="home-header-cart-wrap">
 					<UiButton
 						variant="ghost"
 						tone="default"
 						size="md"
 						:icon-only="true"
-						icon="strong-search"
+						icon="strong-shop-cart"
 						icon-size="md"
-						class="home-header-icon"
-						:aria-label="t('layout.header.search')"
-						data-testid="app-header-search-button"
-						@click="emit('open-search')"
-						@mouseenter="emit('prefetch-search')"
-						@focus="emit('prefetch-search')"
+						class="home-header-icon home-header-cart"
+						:aria-label="t('layout.header.cart')"
+						data-testid="app-header-cart-button"
+						@click="emit('open-cart')"
+						@mouseenter="emit('prefetch-cart')"
+						@focus="emit('prefetch-cart')"
 					/>
-					<div class="home-header-cart-wrap">
-						<UiButton
-							variant="ghost"
-							tone="default"
-							size="md"
-							:icon-only="true"
-							icon="strong-shop-cart"
-							icon-size="md"
-							class="home-header-icon home-header-cart"
-							:aria-label="t('layout.header.cart')"
-							data-testid="app-header-cart-button"
-							@click="emit('open-cart')"
-							@mouseenter="emit('prefetch-cart')"
-							@focus="emit('prefetch-cart')"
-						/>
-						<span
-							v-if="number_of_items > 0"
-							class="home-header-cart-dot"
-							data-testid="app-header-cart-count"
-						>
-							{{ number_of_items > 99 ? '99+' : number_of_items }}
-						</span>
-					</div>
-					<UiButton
-						v-if="props.isMockLoggedIn"
-						type="button"
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="home-header-icon home-header-bell"
-						data-testid="app-header-notification-button"
+					<span
+						v-if="number_of_items > 0"
+						class="home-header-cart-dot"
+						data-testid="app-header-cart-count"
 					>
-						<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
-					</UiButton>
-				</template>
-				<div
-					v-else
-					class="home-header-loading-tools"
-					data-testid="app-header-loading-tools"
-				>
-					<UiSkeleton width="40px" height="40px" border-radius="16px" />
-					<UiSkeleton width="40px" height="40px" border-radius="16px" />
-					<UiSkeleton width="40px" height="40px" border-radius="16px" />
-					<div
-						class="home-header-auth-skeletons"
-						data-testid="app-header-auth-skeletons"
-					>
-						<UiSkeleton
-							v-for="index in props.headerAccountSkeletonCount"
-							:key="'header-auth-skeleton-'+index"
-							:width="index === props.headerAccountSkeletonCount ? '52px' : '40px'"
-							height="40px"
-							border-radius="16px"
-						/>
-					</div>
+						{{ number_of_items > 99 ? '99+' : number_of_items }}
+					</span>
 				</div>
+				<UiButton
+					v-if="props.isMockLoggedIn"
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="home-header-icon home-header-bell"
+					data-testid="app-header-notification-button"
+				>
+					<UiIcon name="strong-bell" :size="20" color="var(--text-primary)" />
+				</UiButton>
 			</template>
 
 			<UiButton
@@ -213,7 +188,7 @@ onMounted(() => {
 			</UiButton>
 
 			<AppHeaderAccountMenu
-				v-if="props.simple || props.headerStateReady"
+				v-else
 				:simple="props.simple"
 				:account-open="props.accountOpen"
 				:is-mock-logged-in="props.isMockLoggedIn"
@@ -336,25 +311,6 @@ onMounted(() => {
 
         .home-header-bell {
             position: relative;
-        }
-
-        .home-header-auth-skeletons {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-width: 98px;
-            justify-content: flex-end;
-        }
-
-        .home-header-loading-tools {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        :deep(.home-header-loading-tools .ui-skeleton),
-        :deep(.home-header-auth-skeletons .ui-skeleton) {
-            background: rgba(255, 255, 255, 0.52);
         }
 
         .home-header-badge-dot {

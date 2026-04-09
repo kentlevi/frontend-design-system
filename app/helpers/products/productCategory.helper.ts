@@ -79,12 +79,9 @@ export function getProductSlugByCategory(
 
 export function getProductIdFromSlug(
 	slug: string,
-	categoryKey: ProductCategoryKey | null | undefined
+	categoryKey: ProductCategoryKey
 ) {
-	if (!slug || !categoryKey) return null;
-
 	const category = productCatalog[categoryKey];
-	if (!category?.products?.length) return null;
 	const directMatch = category.products.find((item) => item.id === slug);
 	if (directMatch) return directMatch.id;
 

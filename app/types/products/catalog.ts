@@ -1,4 +1,4 @@
-export type ProductCategoryKey = 'stickers' | 'roll-stickers' | 'sheet-stickers' | 'vinyl-lettering';
+export type ProductCategoryKey = 'stickers' | 'roll-stickers' | 'sheet-stickers';
 
 export type ProductItem = {
 	id: string;

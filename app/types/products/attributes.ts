@@ -12,7 +12,6 @@ export interface FontSpec {
 	id: number
 	label: string
 	value: string
-	code: string
 	style: { fontFamily: string }
 }
 
@@ -26,7 +25,6 @@ export interface ColorSpec {
 	style: SwatchStyleSpec
 }
 export interface SizeSpec {
-	id?: number | null
 	width: number | null
 	height: number | null
 	label: string | null
@@ -60,8 +58,8 @@ export interface AttributeSelection {
 
 export interface LetteringSpec {
 	active: 'width' | 'height',
-	width: number | null,
-	height: number | null,
+	width: number,
+	height: number,
 	text: string,
 }
 

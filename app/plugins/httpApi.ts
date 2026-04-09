@@ -6,16 +6,18 @@ export default defineNuxtPlugin(() => {
 	const config = useRuntimeConfig()
 	const authToken = useCookie<string | null>('auth_token')
 	const token = useCookie<string | null>('token')
-	const device_uuid = useCookie<string | null>('device_uuid', { maxAge: 10 * 365 * 24 * 60 * 60 })
 
 	const { country } = useCountry()
+
 
 	const apiFetch = $fetch.create({
 		baseURL: config.public.api_url + '/' + country.value,
 		credentials: 'include',
 		onRequest({ options }) {
+			// 1. Force the type to be a plain object so we can use the spread operator/assignment
 			const headers = options.headers
 
+			const device_uuid = useCookie('device_uuid', { maxAge: 10 * 365 * 24 * 60 * 60 })
 			if (!device_uuid.value) {
 				device_uuid.value = crypto.randomUUID()
 			}
@@ -32,12 +34,15 @@ export default defineNuxtPlugin(() => {
 		},
 		async onResponse({ response }) {
 			const data = response._data
+			// ⚠️ STRICT CHECK: Ensure the response has the required keys
 			const is_valid = typeof data === 'object'
 				&& data !== null
 				&& 'success' in data
 				&& 'data' in data
 
 			if (!is_valid) {
+				// 📌 If the server returns a plain array or malformed object,
+				// - throw an error immediately to force backend compliance
 				throw createError({
 					statusCode: 500,
 					statusMessage: 'API Response Contract Violation: Expected ApiResponse structure.',
@@ -45,10 +50,13 @@ export default defineNuxtPlugin(() => {
 			}
 		},
 		async onResponseError({ request, response }) {
+			// 🚫 1. Check for Unauthorized status
 			if (response.status === 401) {
+				// Keep member session cookie refs in sync when auth is no longer valid.
 				authToken.value = null
 				token.value = null
 
+				// 🔥 Action or redirection will be added here.
 				const request_path = typeof request === 'string'
 					? request
 					: request instanceof Request
@@ -60,7 +68,9 @@ export default defineNuxtPlugin(() => {
 				}
 			}
 
+			// 🔥 5. Handle other common errors (Optional)
 			if (response.status === 500) {
+				// 🔥 You could trigger a global 'Toast' or 'Alert' here
 				console.error('Critical Server Error. Please contact support.')
 			}
 		},

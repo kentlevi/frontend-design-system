@@ -32,22 +32,6 @@ export const useEditItemHandler = () => {
 		return [ ...new_options, ...last_option ] as SelectOption []
 	})
 
-	const quantity_options = computed(() => {
-		if (!cart_service.featured_data.value?.quantities?.data)
-			return [] as SelectOption[]
-
-		return [
-			...cart_service.featured_data.value.quantities.data.map((quantity) => ({
-				label: Number(quantity.nr ?? 0).toLocaleString(),
-				value: Number(quantity.nr ?? 0),
-			})),
-			{
-				label: 'Custom Quantity',
-				value: -1,
-			},
-		] as SelectOption[]
-	})
-
 	const closeModal = () => {
 		cart_service.clearSelection()
 	}
@@ -56,7 +40,6 @@ export const useEditItemHandler = () => {
 		...cart_service,
 		featured_sizes,
 		sizes,
-		quantity_options,
 		closeModal,
 	}
 }

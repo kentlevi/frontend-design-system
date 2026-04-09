@@ -26,7 +26,7 @@ export function useAppHeaderAccount() {
 	const { t, setLocale } = useI18n();
 	const route = useRoute();
 	const { withCountry, country } = useCountry();
-	const { state, auth_state_ready, auth_state_loading } = storeToRefs(useUsersStore());
+	const { state } = storeToRefs(useUsersStore());
 
 
 	const preferred_locale = useCookie<SupportedCountry | null>('preferred_locale', {
@@ -82,13 +82,6 @@ export function useAppHeaderAccount() {
 	const has_member_identity = computed(() =>
 		Boolean(auth_token.value || state.value.email || mock_user.value?.email?.trim())
 	);
-	const has_auth_hint = computed(() =>
-		Boolean(
-			auth_token.value
-			|| mock_user.value?.email?.trim()
-			|| String(guest_login_mode.value || '') === '1'
-		)
-	);
 	const is_mock_logged_in = computed(
 		() => has_member_identity.value && String(guest_login_mode.value || '') !== '1'
 	);
@@ -110,19 +103,6 @@ export function useAppHeaderAccount() {
 			? 'account-dropdown'
 			: 'account-dropdown-guest'
 	);
-	const header_account_ready = computed(() => {
-		if (!import.meta.client) return false;
-		if (auth_state_loading.value) return false;
-		if (has_auth_hint.value) return auth_state_ready.value;
-		return true;
-	});
-	const header_account_skeleton_count = computed(() => {
-		if (!header_account_ready.value) return 2;
-		if (is_mock_logged_in.value) return 2;
-		if (String(guest_login_mode.value || '') === '1') return 1;
-		if (auth_token.value || mock_user.value?.email?.trim()) return 2;
-		return 1;
-	});
 
 	function clearAccountCloseTimeout() {
 		if (!account_close_timeout) return;
@@ -266,8 +246,6 @@ export function useAppHeaderAccount() {
 		user_avatar_url,
 		display_email,
 		account_transition_name,
-		header_account_ready,
-		header_account_skeleton_count,
 		isNavLinkActive: isNavLinkActive,
 		toggleAccountMenu: toggleAccountMenu,
 		closeAccountMenu: closeAccountMenu,

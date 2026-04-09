@@ -4,9 +4,9 @@ import { productCatalog } from '~/data/products/catalog';
 import { quantity_options, size_options } from '~/data/products/categoryExperience';
 import { cartPaymentOptions } from '~/data/cart/page';
 import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
-import type {
-	StoredCartState,
-	LocalizedCatalogProduct,
+import {
+	type StoredCartState,
+	type LocalizedCatalogProduct,
 } from '~/helpers/cart/cartState.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { formatCurrencyByCountry } from '~/utils/currency';

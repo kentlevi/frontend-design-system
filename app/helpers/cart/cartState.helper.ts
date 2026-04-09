@@ -5,7 +5,6 @@ import {
 	CHECKOUT_SELECTION_STORAGE_KEY,
 } from '~/data/cart/page';
 import type { ProductCategoryKey, ProductItem } from '~/types/products/catalog';
-import type { FontSpec } from '~/types/products/attributes';
 
 export type StoredCartState = {
 	id: string;
@@ -19,8 +18,6 @@ export type StoredCartState = {
 	artworkSizeLabel?: string;
 	specialInstructions?: string;
 	artworkPreviewUrl?: string;
-	font?: FontSpec;
-	letteringText?: string;
 };
 
 export type LocalizedCatalogProduct = ProductItem & {
@@ -55,10 +52,6 @@ export function normalizeStoredCartState(payload: unknown): StoredCartState[] {
 				typeof item.specialInstructions === 'string' ? item.specialInstructions : '',
 			artworkPreviewUrl:
 				typeof item.artworkPreviewUrl === 'string' ? item.artworkPreviewUrl : '',
-			font:
-				item.font && typeof item.font === 'object' ? item.font : undefined,
-			letteringText:
-				typeof item.letteringText === 'string' ? item.letteringText : undefined,
 		}));
 }
 

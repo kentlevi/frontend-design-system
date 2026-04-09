@@ -5,7 +5,7 @@ export type SizeOptionKey =
 	| 'extraLarge125';
 
 export type SizeFeatureCard = {
-	code: SizeOptionKey;
+	key: SizeOptionKey;
 	image: string;
-	desc_key: 'small' | 'medium' | 'large' | 'extraLarge';
+	descriptionKey: 'small' | 'medium' | 'large' | 'extraLarge';
 };

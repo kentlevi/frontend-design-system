@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toRef, defineAsyncComponent } from 'vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
-import { provideProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
+import { useProductCategoryExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import type { Products } from '~/types/navigation/navgiation';
 import type { ProductCategoryKey } from '~/types/products/catalog';
 
@@ -23,45 +23,81 @@ const props = defineProps<{
 	products?: Products;
 }>();
 
-const { t } = useI18n();
-
-// Slicedown: Provide context to all children
 const {
+	size_feature_cards,
+	quantity_options,
 	selected_id,
+	selected_size,
+	selected_qty,
+	selection_navigation_in_flight,
+	has_picked_product,
 	upload_modal_open,
 	add_to_cart_loading,
-	has_lettering_editor,
 	cart_preview_open,
+	featured_open,
 	special_instructions,
 	artwork_preview_url,
 	artwork_input_ref,
+	size_option_models,
+	selected_product,
+	cart_items,
+	cart_grand_total,
+	subtotal,
+	discount_rate,
+	total,
 	has_uploaded_artwork,
 	cart_artwork_name,
+	featured_items,
+	cart_item_count,
 	cart_artwork_size,
 	cart_artwork_extension,
+	selectProduct,
+	openUploadModal,
 	closeUploadModal,
 	closeCartPreview,
 	openFilePicker,
 	removeArtwork,
 	onArtworkSelected,
 	proceedToCart,
+	removeCartItem,
+	updateCartItem,
 	skipAndUploadLater,
-} = provideProductExperience(toRef(props, 'category'), toRef(props, 'products'));
+	closeFeaturedItems,
+	featuredStartPrice,
+	formatPrice,
+	quantityPrice,
+	getProductName,
+	getProductBlurb,
+} = useProductCategoryExperience(toRef(props, 'category'), toRef(props, 'products'));
 </script>
 
 <template>
 	<section class="product-experience" data-testid="product-category-experience">
-		<UiLoadingOverlay
-			:visible="add_to_cart_loading && has_lettering_editor"
-			:label="t('cart.cartPreview.redirectingToCart')"
-			test-id="product-category-page-loading-overlay"
-			transition-name="cart-redirect-fade"
-			position="fixed"
-			:z-index="120"
-		/>
-
 		<div class="product-experience-container" data-testid="product-category-experience-container">
-			<ProductCategoryStage />
+			<ProductCategoryStage
+				:category="props.category"
+				:has-picked-product="has_picked_product"
+				:selected-id="selected_id"
+				:selected-product="selected_product"
+				:size-feature-cards="size_feature_cards"
+				:selected-size="selected_size"
+				:quantity-options="quantity_options"
+				:selected-qty="selected_qty"
+				:navigation-in-flight="selection_navigation_in_flight"
+				:subtotal="subtotal"
+				:discount-rate="discount_rate"
+				:total="total"
+				:get-product-name="getProductName"
+				:get-product-blurb="getProductBlurb"
+				:format-price="formatPrice"
+				:quantity-price="quantityPrice"
+				data-testid="product-category-stage"
+				@select-product="selectProduct"
+				@update:selected-size="selected_size = $event"
+				@update:selected-qty="selected_qty = $event"
+				@open-upload="openUploadModal"
+				@proceed-to-cart="proceedToCart"
+			/>
 		</div>
 
 		<product_category_details

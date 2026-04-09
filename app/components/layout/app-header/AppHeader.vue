@@ -26,8 +26,6 @@ const {
 	user_avatar_url,
 	display_email,
 	account_transition_name,
-	header_account_ready,
-	header_account_skeleton_count,
 	isNavLinkActive,
 	toggleAccountMenu,
 	closeAccountMenu,
@@ -171,8 +169,6 @@ onBeforeUnmount(() => {
 			:nav-links="nav_links"
 			:is-nav-link-active="isNavLinkActive"
 			:selected-locale="selected_locale"
-			:header-state-ready="header_account_ready"
-			:header-account-skeleton-count="header_account_skeleton_count"
 			:is-mock-logged-in="is_mock_logged_in"
 			:is-guest-logged-in="is_guest_logged_in"
 			:account-open="account_open"

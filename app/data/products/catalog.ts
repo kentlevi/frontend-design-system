@@ -54,12 +54,4 @@ export const productCatalog: Record<ProductCategoryKey, ProductCategory> = {
 			{ id: 'rounded-sheet', name: 'Rounded Sheet', icon: 'strong-star', image: '/illustrations/products/sheet-stickers/rounded-sheet.svg', blurb: commonBlurb },
 		],
 	},
-	'vinyl-lettering': {
-		key: 'vinyl-lettering',
-		title: 'Vinyl Lettering',
-		defaultProductId: 'custom-lettering',
-		products: [
-			{ id: 'custom-lettering', name: 'Custom Lettering', icon: 'strong-ship', image: '/illustrations/products/stickers/vinyl-lettering.svg', blurb: commonBlurb },
-		],
-	},
 };
