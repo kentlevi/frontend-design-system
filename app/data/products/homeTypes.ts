@@ -1,42 +1,51 @@
 import type { HomeProductType } from '~/types/products/homeTypes';
 
-export const homeProductTypes: HomeProductType[] = [
+interface RawHomeProductType extends Omit<HomeProductType, 'to'> {
+	category: string;
+}
+
+const rawHomeProductTypes: RawHomeProductType[] = [
 	{
 		key: 'dieCut',
 		productId: 'die-cut-sticker',
 		image: '/illustrations/products/stickers/die-cut.svg',
-		to: '/stickers/die-cut',
+		category: 'stickers',
 	},
 	{
 		key: 'dieCutRoll',
 		productId: 'die-cut-roll',
 		image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
-		to: '/roll-stickers/die-cut-roll',
+		category: 'roll-stickers',
 	},
 	{
 		key: 'sheet',
 		productId: 'sticker-sheet',
 		image: '/illustrations/products/stickers/sheet.svg',
-		to: '/stickers/sticker-sheet',
+		category: 'stickers',
 	},
 	{
 		key: 'hologram',
 		productId: 'hologram-sticker',
 		image: '/illustrations/products/stickers/hologram.svg',
-		to: '/stickers/hologram',
+		category: 'stickers',
 	},
 	{
 		key: 'vinyl',
 		productId: 'vinyl-lettering',
 		image: '/illustrations/products/stickers/vinyl-lettering.svg',
-		to: '/stickers/vinyl-lettering',
+		category: 'stickers',
 	},
 ];
+
+export const homeProductTypes: HomeProductType[] = rawHomeProductTypes.map((item) => ({
+	...item,
+	to: `/${item.category}/${item.productId}`,
+}));
 
 export const homeProductTypePathById = homeProductTypes.reduce<Record<string, string>>(
 	(map, item) => {
 		map[item.productId] = item.to;
 		return map;
 	},
-	{}
+	{},
 );

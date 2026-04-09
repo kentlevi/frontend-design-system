@@ -119,6 +119,11 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		saveSelection()
 	}
 
+	const clearLetteringState = () => {
+		lettering_text.value = ''
+		lettering_file.value = undefined
+	}
+
 	const clearSelection = () => {
 		url_slug.value = undefined
 		size.value = undefined
@@ -156,5 +161,6 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		updateFont,
 		updateLetteringText,
 		updateLetteringFile,
+		clearLetteringState,
 	}
 })

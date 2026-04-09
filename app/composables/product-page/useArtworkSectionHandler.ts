@@ -20,11 +20,20 @@ export const useArtworkSectionHandler = () => {
 
 	const auth_user = user_store.state
 
+	const current_product_slug = computed(() => attribute_store.product?.url_slug || '')
+	const has_lettering_editor = computed(() =>
+		attribute_store.active_lettering_editor.includes(current_product_slug.value)
+	)
+
 	const is_authenticated = computed(() => auth_user.id && auth_user.email )
 
 	const instruction = ref<string>('')
 
-	const artwork = ref<File | null>(selection_store.lettering_file ? selection_store.lettering_file : null )
+	const artwork = ref<File | null>(
+		has_lettering_editor.value && selection_store.lettering_file
+			? selection_store.lettering_file
+			: null
+	)
 
 	const artwork_file_name = computed(() => artwork.value ? artwork.value?.name : '')
 
@@ -42,7 +51,7 @@ export const useArtworkSectionHandler = () => {
 	const artwork_preview = ref<string>('')
 
 	onMounted(async () => {
-		if( artwork && artwork.value ) {
+		if( has_lettering_editor.value && artwork && artwork.value ) {
 			artwork_preview.value = selection_store.lettering_file ? await convertFileBase64(selection_store.lettering_file) : ''
 		}
 	})
@@ -116,7 +125,7 @@ export const useArtworkSectionHandler = () => {
 	}
 
 	const sendItemToServer = async (item : CartItem) => {
-		// 🔥 Sending the new item to API
+		// Send the new item to the API.
 		const result = await cart_service.sendToServer(item)
 
 		if( result && result.item && result.item.id && item.local_identity )
@@ -129,7 +138,7 @@ export const useArtworkSectionHandler = () => {
 	 * @param has_artwork boolean
 	 */
 	const dispatchItem = async (has_artwork : boolean = false) => {
-		// ⚠️ VALIDATION
+		// Validation
 		if( uploading.value ) {
 			console.warn('Uploading is no the process!')
 			return false
@@ -155,7 +164,7 @@ export const useArtworkSectionHandler = () => {
 			return false;
 		}
 
-		// ⚠️ END OF VALIDATION
+		// End of validation
 
 		const user = useUsersStore()
 
@@ -165,12 +174,12 @@ export const useArtworkSectionHandler = () => {
 			user_id.value = user.state.id
 
 
-		// 🔥 Creating temporary ID — this will be use when the api already responded
+		// Create a temporary local identity before the API responds.
 		const item_id = cart_store.generateLocalIdentity();
 
 		const uploaded_file = ref<string>('')
 
-		// 🔥 Adding cart with Artwork file
+		// Handle uploading the artwork file to S3 when needed.
 		if( has_artwork ) {
 
 			if(!artwork.value) {
@@ -178,7 +187,7 @@ export const useArtworkSectionHandler = () => {
 				return
 			}
 
-			// 🔥 Handles the sending of File to S3 and component behavior using the cart service
+			// Upload the artwork file to S3 when artwork is provided.
 			uploading.value = true
 			const { ok, message, filename } = await cart_service.sendToS3(artwork.value)
 			uploading.value = false
@@ -191,7 +200,7 @@ export const useArtworkSectionHandler = () => {
 			uploaded_file.value = filename.value
 		}
 
-		// 🔥 Used for storing data in both API and local storage
+		// Build the cart item payload for local state and API sync.
 		const item = {
 			id: null,
 			user_id: user_id.value,
@@ -216,10 +225,10 @@ export const useArtworkSectionHandler = () => {
 		}
 
 
-		// 🔥 Store new item in local storage before uploading it to our database.
+		// Save the new item locally before syncing it to the server.
 		cart_store.saveItemLocally(item)
 
-		// 🔥 Sending the new item to API
+		// Send the new item to the API when the user is authenticated.
 		if( is_authenticated )
 			sendItemToServer(item)
 

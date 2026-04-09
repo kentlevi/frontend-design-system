@@ -33,8 +33,10 @@ const skipUpload = async () => {
 		return
 
 	console.warn('Skip-Uploading')
-	emit('skip-upload-later')
-	await dispatchItem()
+	const dispatched = await dispatchItem()
+
+	if( dispatched )
+		emit('skip-upload-later')
 }
 
 const addToCart = async () => {

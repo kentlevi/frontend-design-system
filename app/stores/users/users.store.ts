@@ -47,6 +47,10 @@ export const useUsersStore = defineStore('users', () => {
 
 	const state = ref<UserState>(createInitialUserState())
 
+	const auth_state_ready = ref<boolean>(false)
+
+	const auth_state_loading = ref<boolean>(false)
+
 	/* --------------------------------------------------------------------------
      * Actions
      * -------------------------------------------------------------------------- */
@@ -82,6 +86,14 @@ export const useUsersStore = defineStore('users', () => {
      */
 	function clearUser(): void {
 		state.value = createInitialUserState()
+	}
+
+	function setAuthStateLoading(value: boolean): void {
+		auth_state_loading.value = value
+	}
+
+	function setAuthStateReady(value: boolean): void {
+		auth_state_ready.value = value
 	}
 
 	/**
@@ -143,10 +155,14 @@ export const useUsersStore = defineStore('users', () => {
 
 	return {
 		state,
+		auth_state_ready,
+		auth_state_loading,
 
 		setUser,
 		patchUser,
 		clearUser,
+		setAuthStateLoading,
+		setAuthStateReady,
 
 		setOnboardingProfile,
 		clearOnboardingProfile,

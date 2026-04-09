@@ -6,28 +6,28 @@ export const useColorService = () => {
 
 	const selection_store = useSelectionStore()
 
-	const color = ref<ColorSpec | null>(selection_store.color ?? null)
+	const color = computed(() => selection_store.color)
 
 	const featured_colors = computed<ColorSpec[]>(() => {
 		const active_slug = selection_store.url_slug ?? ''
 
 		if (active_slug === 'vinyl-lettering') {
-			return (attribute_store.colors ?? []).filter((entry) => entry.keyword !== 'full-color')
+			return (attribute_store.colors ?? []).filter((entry) => {
+				const kw = (entry.keyword || '').toLowerCase();
+				const name = (entry.name || '').toLowerCase();
+				return kw !== 'full-color' && !name.includes('full color');
+			})
 		}
 
 		return attribute_store.colors ?? []
 	})
 
 	const defaultColor = (selected_color: ColorSpec) => {
-		color.value = selected_color
-
 		selection_store.updateColor(selected_color, true)
 	}
 
 
 	const changeColor = (selected_color: ColorSpec) => {
-		color.value = selected_color
-
 		selection_store.updateColor(selected_color)
 	}
 

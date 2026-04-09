@@ -8,6 +8,7 @@ export function useAuthUser() {
      * Fetch authenticated user and store it
      */
 	async function fetchAndStoreUser(): Promise<boolean> {
+		user_store.setAuthStateLoading(true)
 		try {
 			const response = await getCurrentAuthenticatedUser()
 
@@ -16,6 +17,7 @@ export function useAuthUser() {
 
 			if (!user) {
 				user_store.clearUser()
+				user_store.setAuthStateReady(true)
 				return false
 			}
 
@@ -23,11 +25,15 @@ export function useAuthUser() {
 				...user,
 				profile
 			})
+			user_store.setAuthStateReady(true)
 
 			return true
 		} catch {
 			user_store.clearUser()
+			user_store.setAuthStateReady(true)
 			return false
+		} finally {
+			user_store.setAuthStateLoading(false)
 		}
 	}
 
@@ -43,6 +49,7 @@ export function useAuthUser() {
 			}
 
 			user_store.clearUser()
+			user_store.setAuthStateReady(true)
 
 			await navigateTo('/')
 

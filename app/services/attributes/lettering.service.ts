@@ -49,13 +49,13 @@ export const useLetteringService = () => {
 		letteringUpdate()
 	}
 
-	const letteringWidthUpdate = (value: number) => {
+	const letteringWidthUpdate = (value: number | null) => {
 		lettering.value.width = value
 
 		letteringUpdate()
 	}
 
-	const letteringHeightUpdate = (value: number) => {
+	const letteringHeightUpdate = (value: number | null) => {
 		lettering.value.height = value
 
 		letteringUpdate()

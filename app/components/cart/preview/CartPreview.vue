@@ -4,9 +4,6 @@ import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import type { ProductItem } from '~/types/products/catalog';
-import type {
-	CartPreviewItem,
-} from '~/types/cart/preview';
 import CartPreviewEmptyState from './CartPreviewEmptyState.vue';
 import CartPreviewFeatured from './CartPreviewFeatured.vue';
 import CartPreviewFooter from './CartPreviewFooter.vue';
@@ -24,23 +21,10 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const {
-	cartItems: items,
-	grandTotal: grand_total,
 	featuredItems,
-	editingItemId: editing_item_id,
-	draftSizeKey: draft_size_key,
-	draftCustomSizeWidth: draft_custom_size_width,
-	draftCustomSizeHeight: draft_custom_size_height,
-	draftQty: draft_qty,
-	draftCustomQty: draft_custom_qty,
 	redirectingToCart: redirecting_to_cart,
 	savingInlineEdit: saving_inline_edit,
 	redirectLoaderRef: redirect_loader_ref,
-	openInlineEdit,
-	cancelInlineEdit,
-	saveInlineEdit,
-	getInlineSizeOptions,
-	getInlineQtyOptions,
 	goToCart,
 	goToCheckout,
 	customizeFeaturedProduct,
@@ -66,13 +50,10 @@ function formatPrice(value: number) {
 	}).format(value);
 }
 
-
-function handleEditItem(item: CartPreviewItem) {
-	openInlineEdit(item);
-}
-
 const {
 	number_of_items,
+	grand_total: live_grand_total,
+	preview_loading,
 	open_deletion_modal,
 	editing_item,
 	composePreview,
@@ -118,15 +99,14 @@ watch(() => props.open, (v) => {
 						data-testid="product-category-cart-body"
 					>
 						<CartPreviewEmptyState
-							v-if="number_of_items === 0"
+							v-if="!preview_loading && number_of_items === 0"
 							:icon-alt="t('cart.cartPreview.emptyIconAlt')"
 							:title="t('cart.cartPreview.emptyTitle')"
 							:description="t('cart.cartPreview.emptyDescription')"
 						/>
 
 						<CartPreviewItems
-							v-if="number_of_items > 0"
-							:items="items"
+							v-if="preview_loading || number_of_items > 0"
 							:format-image="formatImage"
 							:format-price="formatPrice"
 						/>
@@ -149,7 +129,7 @@ watch(() => props.open, (v) => {
 					<CartPreviewFooter
 						v-if="number_of_items > 0"
 						:total-label="t('cart.cartPreview.total')"
-						:total-value="formatPrice(grand_total)"
+						:total-value="formatPrice(live_grand_total)"
 						:note-label="t('cart.cartPreview.noteLabel')"
 						:note="t('cart.cartPreview.note')"
 						:view-cart-label="t('cart.cartPreview.viewCart')"

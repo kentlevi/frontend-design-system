@@ -10,6 +10,7 @@ defineEmits<{
 
 const {
 	items: cart_items,
+	preview_loading,
 	formatImage,
 	deleteCartItem,
 	editCartItem,
@@ -27,8 +28,36 @@ const {
 			data-testid="product-category-cart-items"
 		>
 			<article
-				v-for="(item, index) in cart_items"
-				:key="item?.id ?? index"
+				v-for="index in preview_loading ? 4 : 0"
+				:key="'cart-preview-skeleton-'+index"
+				class="cart-preview-item cart-preview-item--skeleton"
+				data-testid="product-category-cart-item-skeleton"
+			>
+				<div class="cart-preview-item-main" data-testid="product-category-cart-item-main">
+					<div class="cart-preview-item-thumb">
+						<UiSkeleton width="72px" height="72px" border-radius="10px" />
+					</div>
+					<div class="cart-preview-item-copy" data-testid="product-category-cart-item-copy">
+						<UiSkeleton width="160px" height="20px" border-radius="6px" />
+						<UiSkeleton width="120px" height="18px" border-radius="6px" />
+						<UiSkeleton width="100px" height="18px" border-radius="6px" />
+					</div>
+				</div>
+				<div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
+					<UiSkeleton width="98px" height="28px" border-radius="6px" />
+					<div
+						class="cart-preview-item-actions"
+						data-testid="product-category-cart-item-actions"
+					>
+						<UiSkeleton width="32px" height="32px" border-radius="6px" />
+						<UiSkeleton width="32px" height="32px" border-radius="6px" />
+					</div>
+				</div>
+			</article>
+
+			<article
+				v-for="(item, index) in preview_loading ? [] : cart_items"
+				:key="item.local_identity || item.id || `cart-preview-item-${index}`"
 				class="cart-preview-item"
 				data-testid="product-category-cart-item"
 			>
@@ -198,6 +227,19 @@ const {
 		&:hover {
 			background: var(--gray-20);
 		}
+	}
+}
+
+.cart-preview-item--skeleton {
+	.cart-preview-item-copy {
+		display: grid;
+		align-content: start;
+		gap: 10px;
+		padding-top: 2px;
+	}
+
+	.cart-preview-item-thumb {
+		background: transparent;
 	}
 }
 
