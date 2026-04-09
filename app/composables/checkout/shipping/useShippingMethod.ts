@@ -1,5 +1,15 @@
-import { getShippingMethodByCartItems } from '~/services/shipping/shipping.service'
-import type { ShippingMethodData, ShippingMethodItem } from '~/types/shipping/shipping'
+import {
+	getShippingMethodByCartItems,
+	getShippingMethodByLocalItems
+} from '~/services/shipping/shipping.service'
+import { useCartStore } from '~/stores/cart'
+import { useUsersStore } from '~/stores/users/users.store'
+import type { CartItem } from '~/types/cart/cart'
+import type {
+	LocalShippingMethodItemPayload,
+	ShippingMethodData,
+	ShippingMethodItem
+} from '~/types/shipping/shipping'
 import { formatShippingDateRange } from '~/utils/shipping/dateRange'
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 
@@ -12,21 +22,42 @@ let latest_request_id = 0
 
 export function useShippingMethod() {
 	const checkout_store = useMainCheckOutStore()
+	const cart_store = useCartStore()
+	const user_store = useUsersStore()
+
+	const is_authenticated = computed(() => Boolean(user_store.state.id))
 
 	const active_shipping_methods = computed<ShippingMethodItem[]>(() =>
 		mapShippingMethodDataToUi(shipping_method_data.value)
 	)
 
 	/* @desc fetch shipping methods, prevent stale response overwrite, and sync selection
-    @param object params - request payload containing cart_ids and quantity
-    @return Promise<void> - no return value
-    */
+	@param object params - request payload containing cart_ids and quantity
+	@return Promise<void> - no return value
+	*/
 	const fetchShippingMethods = async (params: { cart_item_ids: number[] }): Promise<void> => {
 		const request_id = ++latest_request_id
 		is_loading.value = true
 
 		try {
-			const shipping_method_response = await getShippingMethodByCartItems(params)
+			const local_shipping_items = is_authenticated.value
+				? []
+				: buildLocalShippingItems(params.cart_item_ids)
+
+			if (
+				(is_authenticated.value && params.cart_item_ids.length === 0)
+				|| (!is_authenticated.value && local_shipping_items.length === 0)
+			) {
+				shipping_method_data.value = []
+				clearSelectedShippingMethod()
+				return
+			}
+
+			const shipping_method_response = is_authenticated.value
+				? await getShippingMethodByCartItems(params)
+				: await getShippingMethodByLocalItems({
+					items: local_shipping_items,
+				})
 
 			if (request_id !== latest_request_id) return
 
@@ -48,10 +79,37 @@ export function useShippingMethod() {
 		}
 	}
 
+	const buildLocalShippingItems = (cart_item_ids: number[]): LocalShippingMethodItemPayload[] => {
+		const local_cart_items = resolveLocalCartItems(cart_item_ids)
+
+		return local_cart_items.map((item) => ({
+			product_config_mapping_id: item.product_config_mapping_id,
+			quantity: item.quantity,
+			color_id: item.color_id,
+			font_id: item.font_id,
+		}))
+	}
+
+	const resolveLocalCartItems = (cart_item_ids: number[]): CartItem[] => {
+		if (cart_store.items.length === 0) {
+			return []
+		}
+
+		const matched_local_items = cart_store.items.filter((item) =>
+			item.id !== null && cart_item_ids.includes(item.id)
+		)
+
+		if (matched_local_items.length > 0) {
+			return matched_local_items
+		}
+
+		return cart_store.items
+	}
+
 	/* @desc map API response into a UI-friendly shipping method structure
-    @param ShippingMethodData[] shipping_method_data - raw shipping method response list
-    @return ShippingMethodItem[] - mapped shipping methods
-    */
+	@param ShippingMethodData[] shipping_method_data - raw shipping method response list
+	@return ShippingMethodItem[] - mapped shipping methods
+	*/
 	const mapShippingMethodDataToUi = (
 		shipping_method_data: ShippingMethodData[]
 	): ShippingMethodItem[] => {
@@ -66,7 +124,9 @@ export function useShippingMethod() {
 				name: item.shipping_method_name,
 				date: formatted_date_range,
 				longer_date_message: `Estimated Delivery Date: ${formatted_date_range}`,
-				price: `$${item.shipping_price}`,
+				price: item.shipping_price === 0
+					? 'Free'
+					: `$${item.shipping_price}`,
 				icon: `/icons/custom/checkout/${item.shipping_method_code}-shipping.svg`,
 				shipping_method_id: item.shipping_method_id,
 				production_shipping_id: item.production_shipping_id,
@@ -77,9 +137,9 @@ export function useShippingMethod() {
 	}
 
 	/* @desc select a shipping method by its key and sync its production_shipping_id
-    @param string key - shipping method code
-    @return void
-    */
+	@param string key - shipping method code
+	@return void
+	*/
 	const selectShippingMethod = (key: string): void => {
 		const selected_method = active_shipping_methods.value.find((method) => method.key === key)
 
@@ -93,8 +153,8 @@ export function useShippingMethod() {
 	}
 
 	/* @desc keep selected method valid after refresh or default to first available method
-    @return void
-    */
+	@return void
+	*/
 	const syncSelectionWithActiveMethods = (): void => {
 		const matched_selected_method = active_shipping_methods.value.find(
 			(method) => method.key === selected_shipping_method.value
@@ -124,9 +184,9 @@ export function useShippingMethod() {
 	}
 
 	/* @desc set the current selected shipping method and its shipping ids
-    @param object|null selection - selected method payload or null to clear
-    @return void
-    */
+	@param object|null selection - selected method payload or null to clear
+	@return void
+	*/
 	const setSelectedShippingMethod = (
 		selection: {
 			key: string;
@@ -149,8 +209,8 @@ export function useShippingMethod() {
 	}
 
 	/* @desc clear the selected shipping method state
-    @return void
-    */
+	@return void
+	*/
 	const clearSelectedShippingMethod = (): void => {
 		selected_shipping_method.value = ''
 		shipping_method_id.value = null

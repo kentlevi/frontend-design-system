@@ -2,15 +2,15 @@
 	<div class="checkout-member-payment-group">
 		<div class="checkout-member-card-grid checkout-member-card-grid--payments">
 			<button
-				v-for="method in active_payment_methods"
-				:key="method.key"
+				v-for="method in available_payment_methods"
+				:key="method.id"
 				type="button"
 				class="checkout-member-choice-card checkout-member-choice-card--payment"
-				:class="{ 'is-active': selected_payment_method === method.key }"
-				@click="selected_payment_method = method.key"
+				:class="{ 'is-active': selected_payment_method === method }"
+				@click="selected_payment_method = method"
 			>
-				<img :src="method.icon" :alt="t(`checkout.guest.paymentMethods.${method.i18nKey}.alt`)" class="checkout-member-choice-icon">
-				<div class="checkout-member-choice-title">{{ t(`checkout.guest.paymentMethods.${method.i18nKey}.label`) }}</div>
+				<img :src="`/icons/custom/checkout/${method.logo}`" :alt="method.name" class="checkout-member-choice-icon">
+				<div class="checkout-member-choice-title">{{ method.name }}</div>
 			</button>
 		</div>
 
@@ -23,7 +23,7 @@
 				@leave="leave"
 				@after-leave="afterLeave"
 			>
-				<div v-if="selected_payment_method === 'credit-card'" data-payment-panel="credit-card" class="checkout-member-payment-meta-panel">
+				<div v-if="selected_payment_method?.code === 'CC'" data-payment-panel="credit-card" class="checkout-member-payment-meta-panel">
 					<div class="checkout-member-payment-meta-block">
 						<div class="checkout-member-payment-meta">
 							<button
@@ -75,7 +75,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-else-if="selected_payment_method === 'bank-transfer'" data-payment-panel="bank-transfer" class="checkout-member-payment-meta-panel">
+				<div v-else-if="selected_payment_method?.code === 'BT'" data-payment-panel="bank-transfer" class="checkout-member-payment-meta-panel">
 					<div class="checkout-member-payment-meta-block">
 						<div class="checkout-member-payment-transfer-meta">
 							<div class="checkout-member-payment-transfer-note">
@@ -94,42 +94,20 @@
 			</Transition>
 		</div>
 	</div>
-
-	<div class="checkout-member-inline-row">
-		<div ref="billing_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="use_shipping_as_billing">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
-			<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
-				<template #trigger>
-					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">
-						<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
-					</button>
-				</template>
-
-				<div class="ui-tooltip-copy">
-					<strong class="ui-tooltip-title">{{ t('checkout.member.billingTooltip.title') }}</strong>
-					<p class="ui-tooltip-text">{{ t('checkout.member.billingTooltip.text') }}</p>
-				</div>
-			</UiTooltip>
-		</div>
-	</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
+import { usePaymentMethod } from '~/composables/payments/usePaymentMethod';
+import { useMainCheckOutStore } from '~/stores/checkout/index.store';
 
 const {
 	t,
-	active_payment_methods,
-	selected_payment_method,
 	payment_brands,
-	use_shipping_as_billing,
 	billing_tooltip_open,
-	toggleBillingTooltip,
 	card_number,
 	expiry,
 	cvv,
@@ -150,19 +128,32 @@ const {
 	afterLeave,
 } = useCheckoutFeatureTransition();
 
+const {
+	available_payment_methods,
+	getAvailablePaymentMethod
+} = usePaymentMethod()
+
+const {
+	selected_payment_method
+} = storeToRefs(useMainCheckOutStore())
+
 useDismissibleTooltip(billing_tooltip_ref, billing_tooltip_open);
 
 useHeightTransition(
 	payment_meta_swap_wrapper_ref,
 	selected_payment_method,
 	() =>
-		selected_payment_method.value === 'credit-card'
+		selected_payment_method.value?.code === 'CC'
 			? '[data-payment-panel="credit-card"]'
-			: selected_payment_method.value === 'bank-transfer'
+			: selected_payment_method.value?.code === 'BT'
 				? '[data-payment-panel="bank-transfer"]'
 				: null,
 	{ enterDurationMs: enter_duration_ms, leaveDurationMs: leave_duration_ms }
 );
+
+onMounted(async()=>{
+	await getAvailablePaymentMethod()
+})
 </script>
 
 <style scoped lang="scss">
