@@ -46,7 +46,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 </script>
 
 <template>
-	<Transition name="search-modal">
+	<Transition name="search-modal" appear>
 		<div
 			v-if="props.open"
 			class="home-search-overlay"

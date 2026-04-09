@@ -1,17 +1,20 @@
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { homeProductTypes } from '~/data/products/homeTypes';
 import { productCatalog } from '~/data/products/catalog';
 import { quantity_options, size_options } from '~/data/products/categoryExperience';
 import { cartPaymentOptions } from '~/data/cart/page';
 import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
-import {
-	type StoredCartState,
-	type LocalizedCatalogProduct,
+import type {
+	StoredCartState,
+	LocalizedCatalogProduct,
 } from '~/helpers/cart/cartState.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { sizeDimOnly } from '~/utils/cart';
+import type { CartItem } from '~/types/cart/cart';
 import type { ProductCategoryKey } from '~/types/products/catalog';
+
+import { useCartStore } from '~/stores/cart/cart.store';
 
 export type CartRow = {
 	id: string;
@@ -34,8 +37,6 @@ export type CartEmptyProduct = {
 	image: string;
 	to: string;
 };
-
-import { useCartStore } from '~/stores/cart/cart.store';
 
 export function useCartPage() {
 	const { t } = useI18n();
@@ -138,12 +139,12 @@ export function useCartPage() {
 			const cost = Number(item?.cost || 0);
 			const quantity = Number(item?.quantity || 1);
 			const unit_price = quantity > 0 ? cost / quantity : 0;
-			
+
 			cart_store.items[index] = {
 				...cart_store.items[index],
 				quantity: qty,
 				cost: unit_price * qty
-			} as any;
+			} as CartItem;
 		}
 	}
 
@@ -168,7 +169,7 @@ export function useCartPage() {
 				artwork_file_name: payload.artworkName,
 				instruction: payload.specialInstructions,
 				artwork_preview: payload.artworkPreviewUrl
-			} as any;
+			} as CartItem;
 		}
 	}
 
@@ -177,8 +178,8 @@ export function useCartPage() {
 		if (index !== -1) {
 			cart_store.items[index] = {
 				...cart_store.items[index],
-				width: next_size_key // Simplified for now
-			} as any;
+				width: next_size_key as unknown as number // Simplified for now
+			} as CartItem;
 		}
 	}
 
@@ -214,4 +215,4 @@ export function useCartPage() {
 			formatCurrencyByCountry(value, country.value),
 		size_dim_only: sizeDimOnly,
 	};
-}
+}

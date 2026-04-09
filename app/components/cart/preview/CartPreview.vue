@@ -21,8 +21,6 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const {
-	cartItems: items,
-	grandTotal: grand_total,
 	featuredItems,
 	redirectingToCart: redirecting_to_cart,
 	savingInlineEdit: saving_inline_edit,
@@ -33,7 +31,6 @@ const {
 } = useCartPreview({
 	closePreview: () => emit('close'),
 });
-
 
 /**
  * Helper to get product name (fallback for sample data)
@@ -52,9 +49,9 @@ function formatPrice(value: number) {
 	}).format(value);
 }
 
-
-
 const {
+	items,
+	grand_total,
 	number_of_items,
 	composePreview,
 	formatImage,
@@ -65,13 +62,13 @@ watch(() => props.open, (v) => {
 		console.warn('Composing cart preview...')
 		composePreview()
 	}
-})
+}, { immediate: true })
 
 </script>
 
 <template>
 	<Teleport to="body">
-		<Transition name="cart-preview-slide">
+		<Transition name="cart-preview-slide" appear>
 			<div v-if="props.open" class="cart-preview-shell" data-testid="product-category-cart-overlay" @click.self="emit('close')">
 				<UiLoadingOverlay
 					:visible="redirecting_to_cart || saving_inline_edit"
