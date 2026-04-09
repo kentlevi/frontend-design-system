@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, toRef, watch } from 'vue';
 import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
@@ -7,9 +6,7 @@ import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreview
 import type { ProductItem } from '~/types/products/catalog';
 import type {
 	CartPreviewItem,
-	CartPreviewSizeOptionModel,
 } from '~/types/cart/preview';
-import type { CartItem } from '~/types/cart/cart';
 import CartPreviewEmptyState from './CartPreviewEmptyState.vue';
 import CartPreviewFeatured from './CartPreviewFeatured.vue';
 import CartPreviewFooter from './CartPreviewFooter.vue';
@@ -24,28 +21,13 @@ const emit = defineEmits<{
 	close: [];
 }>();
 
-const deleting_item_id = ref<string | null>(null);
-
-function openDeleteModal(payload: { itemId: string | null }) {
-	if (payload.itemId === null) return;
-	deleting_item_id.value = payload.itemId;
-}
-
-function closeDeleteModal() {
-	deleting_item_id.value = null;
-}
-
 const { t } = useI18n();
 
 const {
 	cartItems: items,
-	sizeOptionModels,
-	quantityOptions,
 	grandTotal: grand_total,
-	itemCount: number_of_items,
 	featuredItems,
 	editingItemId: editing_item_id,
-	editingItem: editing_item,
 	draftSizeKey: draft_size_key,
 	draftCustomSizeWidth: draft_custom_size_width,
 	draftCustomSizeHeight: draft_custom_size_height,
@@ -57,7 +39,6 @@ const {
 	openInlineEdit,
 	cancelInlineEdit,
 	saveInlineEdit,
-	removeCartItem,
 	getInlineSizeOptions,
 	getInlineQtyOptions,
 	goToCart,
@@ -67,11 +48,6 @@ const {
 	closePreview: () => emit('close'),
 });
 
-function confirmDeleteItem() {
-	if (deleting_item_id.value === null) return;
-	removeCartItem(deleting_item_id.value);
-	deleting_item_id.value = null;
-}
 
 /**
  * Helper to get product name (fallback for sample data)
@@ -90,16 +66,28 @@ function formatPrice(value: number) {
 	}).format(value);
 }
 
-/**
- * Local image formatting (fallback for sample data)
- */
-function formatImage(item: CartPreviewItem) {
-	return item.image || item.product.image;
-}
 
 function handleEditItem(item: CartPreviewItem) {
 	openInlineEdit(item);
 }
+
+const {
+	number_of_items,
+	open_deletion_modal,
+	editing_item,
+	composePreview,
+	formatImage,
+	confirmDeleteItem,
+	closeDeleteModal,
+} = useCartPreviewHandler('cart-preview')
+
+watch(() => props.open, (v) => {
+	if( v ) {
+		console.warn('Composing cart preview...')
+		composePreview()
+	}
+})
+
 </script>
 
 <template>
@@ -141,8 +129,6 @@ function handleEditItem(item: CartPreviewItem) {
 							:items="items"
 							:format-image="formatImage"
 							:format-price="formatPrice"
-							@edit-item="handleEditItem"
-							@remove-item="openDeleteModal"
 						/>
 
 						<CartPreviewFeatured
@@ -177,34 +163,14 @@ function handleEditItem(item: CartPreviewItem) {
 		</Transition>
 	</Teleport>
 
-	<CartItemEditModal
-		v-if="editing_item"
-		:model-value="Boolean(editing_item_id)"
-		:item="editing_item"
-		:size-options="getInlineSizeOptions(editing_item)"
-		:quantity-options="getInlineQtyOptions(editing_item)"
-		:size-key="draft_size_key"
-		:custom-size-width="draft_custom_size_width"
-		:custom-size-height="draft_custom_size_height"
-		:qty="draft_qty"
-		:custom-qty="draft_custom_qty"
-		@update:model-value="!$event ? cancelInlineEdit() : undefined"
-		@update:size-key="draft_size_key = $event"
-		@update:custom-size-width="draft_custom_size_width = $event"
-		@update:custom-size-height="draft_custom_size_height = $event"
-		@update:qty="draft_qty = $event"
-		@update:custom-qty="draft_custom_qty = $event"
-		@cancel="cancelInlineEdit"
-		@save="saveInlineEdit(editing_item.id)"
-	/>
+	<CartItemEditModal v-if="editing_item" :model-value="editing_item"/>
 
 	<DeleteConfirmModal
-		:model-value="Boolean(deleting_item_id)"
+		:model-value="open_deletion_modal"
 		:title="t('cart.cartPage.deleteItemTitle')"
 		:description="t('cart.cartPage.deleteItemDescription')"
 		:confirm-label="t('cart.cartPage.removeConfirm')"
 		test-id="cart-item-delete-modal"
-		@update:model-value="!$event ? closeDeleteModal() : undefined"
 		@cancel="closeDeleteModal"
 		@confirm="confirmDeleteItem"
 	/>

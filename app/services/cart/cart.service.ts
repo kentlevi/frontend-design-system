@@ -1,57 +1,43 @@
 import { useCartStore } from "~/stores/cart";
-import { useUsersStore } from "~/stores/users/users.store";
-import type { CartItem, CartItemCreationSpec } from "~/types/cart/cart";
+import type { CartItem, CartItemAPI, CartItemCreationSpec, ExpectedCartItemData, ResponseNumberSpec, SavedDraftResponse } from "~/types/cart/cart";
+import type { FeaturedDataResponse } from "~/types/products/attributes";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
-export const useCartService = () => {
+export const useCartService = (caller: string = 'unknown') => {
 	const { $api } = useNuxtApp();
 
+	const config = useRuntimeConfig()
+
 	const cart_store = useCartStore()
-
-	const user_store = useUsersStore()
-
-	// const auth_user_id = computed(() => user_store.state?.id ?? null)
 
 	const page = ref<number>(1)
 
 	const per_page = ref<number>(10)
 
-	// watch(auth_user_id, (new_id) => {
-	// 	console.log(new_id)
-	// 	cart_store.updateUserId(new_id)
-	// 	if( new_id )
-	// 		getCartItems()
-	// })
+	const formatImage = (item: CartItem) => {
+		const is_absolute_url = (value: string | null | undefined) =>
+			Boolean(value && /^(https?:)?\/\//i.test(value))
 
-	const detected_draft = computed(() => cart_store.unsaveDraft.length)
+		let f = is_absolute_url(item.product_thumbnail)
+			? String(item.product_thumbnail)
+			: `${config.public.file_url}${item.product_thumbnail}`
 
-	watch(detected_draft, (n) => {
-		if( n )
-			console.warn('Detected Draft:', n) // saveDraft
-	})
+		if( item.id && item.artwork_file) {
+			f = `${config.public.s3_file_url}${item.file_path}${item.artwork_file}`
+		} else if( item.artwork_preview ) {
+			f = item.artwork_preview
+		}
 
-	const number_of_items = computed(() => cart_store.number_of_items )
+		return f
+	}
 
-	const sendToServer = async (params: CartItem) => {
+	const sendToServer = async (params: CartItemAPI) => {
 		const { success, message, data } = await $api.post<CartItemCreationSpec>('cart/create',
-			{
-				product_config_mapping_id: params.product_config_mapping_id,
-				color_id: params.color_id,
-				font_id: params.font_id,
-				width: params.width,
-				height: params.height,
-				quantity: params.quantity,
-				cost: params.cost,
-				lettering_text: params.lettering_text,
-				artwork_file: params.artwork_file,
-				artwork_file_name: params.artwork_file_name,
-				instruction: params.instruction,
-				local_identity: params.local_identity,
-			}
+			{ ...params }
 		)
 
 		if( !success ) {
-			console.log(message)
+			console.warn(message)
 			return null
 		}
 
@@ -89,12 +75,6 @@ export const useCartService = () => {
 		}
 	}
 
-	type ResponseNumberSpec = {
-		total_cost: number
-		total_count: number
-	}
-
-
 	const calculateCartItems = async () => {
 		const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
 		if( !success || !data ) {
@@ -102,44 +82,21 @@ export const useCartService = () => {
 			return
 		}
 
-		cart_store.syncNumber(data.total_count, data.total_cost)
+		syncNumber(data.total_count, data.total_cost)
 	}
 
-	const getCartItems = async () => {
+	const getCartItems = async (first_load : boolean = false) => {
 		// calculate the numbers of cart items everytime request new data from database
-		await calculateCartItems()
+		calculateCartItems()
 
 		const cart_items = await requestCartItems(page.value, per_page.value)
 		if( !cart_items )
 			return
 
 		if( cart_items.length )
-			cart_store.populateItems(cart_items)
-		else if( !cart_items.length && cart_store.number_of_items == 0 )
-			cart_store.empty()
-	}
-
-
-	type ExpectedCartItemData = {
-		id : number
-		product_config_mapping_id : number
-		url_slug : string
-		product : string
-		product_thumbnail : string
-		color : string | null
-		color_id : number | null
-		font : string | null
-		font_id : number | null
-		width : number
-		height : number
-		quantity : number
-		cost : number
-		lettering_text : string | null
-		artwork_file : string | null
-		artwork_file_name : string | null
-		instruction : string | null
-		local_identity : string
-		file_path : string | null
+			populateItems(cart_items)
+		else if( first_load && !cart_items.length && cart_store.number_of_items == 0 )
+			empty()
 	}
 
 	// 📌 Requesting cart items from database
@@ -157,25 +114,34 @@ export const useCartService = () => {
 		return data
 	}
 
+
 	// 📌 Deleting specific cart in both local storage and database
-	const removeCartItem = async (item_id: number | null, local_identity?: string | null) => {
+	const requestDeletion = async (item_id: number | null, local_identity?: string | null) => {
 		console.warn(`Deleting item ${item_id ?? local_identity}`)
 
-		cart_store.removeItem(item_id, local_identity ?? null)
+		removeStateItem(item_id, local_identity ?? null)
 
 		const {success, message} = await $api.post(`cart/${item_id}/delete`)
-		if( !success ) {
+
+		if( !success )
 			console.warn(message)
-			return
-		}
+
+		return
 	}
 
-	type SavedDraftResponse = {
-		success: Record<string, unknown>[]
-		failure: Record<string, unknown>[]
+	const removeStateItem = (item_id: number | null, local_identity?: string | null) => {
+		// ✅ Removing item with the given item index
+		if( item_id )
+			cart_store.items = cart_store.items.filter(item => item.id != item_id)
+		// ✅ Removing the one matching the ID
+		else if( local_identity )
+			cart_store.items = cart_store.items.filter(item => item.local_identity != local_identity)
+
+		reduceNumber()
 	}
+
 	const saveDraft = async () => {
-		const drafted = cart_store.unsaveDraft.map( e => {
+		const drafted = cart_store.unsave_draft.map( e => {
 			return {
 				product_config_mapping_id: e.product_config_mapping_id,
 				color_id: e.color_id,
@@ -201,17 +167,124 @@ export const useCartService = () => {
 		return data;
 	}
 
+	const setForDeleteItem = (cart_item_id: number | null) => {
+		cart_store.deletion_id = cart_item_id ?? 0
+	}
+
+	const syncNumber = (total_count: number, total_cost: number) => {
+		cart_store.number_of_items = Number(total_count)
+		cart_store.grand_total = Number(total_cost)
+	}
+
+
+	const saveItemLocally = (item: CartItem) => {
+		cart_store.items.unshift(item)
+		cart_store.grand_total += Number(item.cost)
+		addNumber()
+	}
+
+	/**
+	 * This will populate and arrange the items inside the  items state
+	 */
+	const populateItems = (cart_items: Partial<CartItem>[]) => {
+		const local_drafts = cart_store.items.filter(item => item.id === null)
+
+		/**
+		 * Prevent duplication:
+		 * - If a draft was just saved, its local_identity will now be in the server data.
+		 */
+		const incoming_identities = new Set(cart_items.map(i => i.local_identity))
+
+		const unique_drafts = local_drafts.filter(
+			draft => !incoming_identities.has(draft.local_identity)
+		)
+		cart_store.unsave_draft = unique_drafts;
+
+		cart_store.items = [...unique_drafts, ...cart_items] as CartItem[]
+	}
+
+
+	const updateUploadedItem = (local_identity: string, new_id: number) => {
+		const index = cart_store.items.findIndex(i => i.local_identity === local_identity)
+
+		if( index !== -1 && cart_store.items[index] ) {
+			cart_store.items[index].id = new_id
+			if( cart_store.items[index]?.artwork_preview )
+				cart_store.items[index].artwork_preview = null
+		}
+	}
+
+	const empty = () => {
+		cart_store.items = []
+		cart_store.number_of_items = 0
+		cart_store.grand_total = 0
+	}
+
+	const addNumber = () => {
+		cart_store.number_of_items++
+	}
+
+	const reduceNumber = () => {
+		cart_store.number_of_items--
+	}
+
+	const generateLocalIdentity = (): string => {
+		let identifier: string = ''
+		let is_duplicate = true
+
+		while (is_duplicate) {
+			// Create a short unique string (e.g., "sj-1712401234-a7b2")
+			const timestamp = Date.now()
+			const randomPart = Math.random().toString(36).substring(2, 6)
+			identifier = `mu-${timestamp}-${randomPart}`
+
+			// Check if this ID already exists in your current items array
+			is_duplicate = cart_store.items.some(item => item.local_identity === identifier)
+		}
+
+		return identifier
+	}
+
+	const selectItem = (item: CartItem) => {
+		cart_store.selected_item = item
+	}
+
+	const setFeaturedData = (featured_data : FeaturedDataResponse) => {
+		cart_store.featured_data = featured_data
+	}
+
+	const clearSelection = () => {
+		cart_store.selected_item = null
+		cart_store.featured_data = null
+	}
+
 	return {
-		number_of_items,
+		...storeToRefs(cart_store),
+		caller,
 		page,
 		per_page,
+		formatImage,
 		sendToServer,
 		sendToS3,
+		extractThrownError,
 		calculateCartItems,
-		requestCartItems,
-		removeCartItem,
-		saveDraft,
 		getCartItems,
+		requestCartItems,
+		requestDeletion,
+		removeStateItem,
+		saveDraft,
+		setForDeleteItem,
+		syncNumber,
+		saveItemLocally,
+		populateItems,
+		updateUploadedItem,
+		empty,
+		addNumber,
+		reduceNumber,
+		generateLocalIdentity,
+		selectItem,
+		setFeaturedData,
+		clearSelection,
 	}
 
 }

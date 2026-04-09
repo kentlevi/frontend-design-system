@@ -91,9 +91,11 @@ export const useProductService = () => {
 		attribute_store.updateFonts(f)
 	}
 
+
 	return {
 		url_slug,
 		product,
 		updateFeaturedData,
+		getFeaturedData,
 	}
 }

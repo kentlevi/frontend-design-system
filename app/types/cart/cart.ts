@@ -25,3 +25,50 @@ export interface CartItem {
 export interface CartItemCreationSpec {
 	item: { id: number }
 }
+
+export interface CartItemAPI {
+	product_config_mapping_id: number
+	color_id: number | null
+	font_id: number | null
+	width: number
+	height: number
+	quantity: number
+	lettering_text: string | null
+	artwork_file: string | null
+	artwork_file_name: string | null
+	instruction: string | null
+	local_identity: string | null
+}
+
+export interface ExpectedCartItemData {
+	id : number
+	product_config_mapping_id : number
+	url_slug : string
+	product : string
+	product_thumbnail : string
+	color : string | null
+	color_id : number | null
+	font : string | null
+	font_id : number | null
+	width : number
+	height : number
+	quantity : number
+	cost : number
+	lettering_text : string | null
+	artwork_file : string | null
+	artwork_file_name : string | null
+	instruction : string | null
+	local_identity : string
+	file_path : string | null
+}
+
+
+export interface SavedDraftResponse {
+	success: Record<string, unknown>[]
+	failure: Record<string, unknown>[]
+}
+
+export interface ResponseNumberSpec {
+	total_cost: number
+	total_count: number
+}
