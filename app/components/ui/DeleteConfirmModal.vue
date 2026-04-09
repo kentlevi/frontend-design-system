@@ -25,13 +25,11 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-	'update:modelValue': [value: boolean];
 	cancel: [];
 	confirm: [];
 }>();
 
 function closeModal() {
-	emit('update:modelValue', false);
 	emit('cancel');
 }
 
@@ -48,7 +46,6 @@ function confirmAction() {
 		padding="0"
 		gap="0"
 		:modal-class="props.modalClass"
-		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<section class="delete-confirm-modal" :data-testid="props.testId">
 			<div class="delete-confirm-modal-copy">
@@ -78,7 +75,7 @@ function confirmAction() {
 					:no-hover="true"
 					class="delete-confirm-modal-cancel"
 					:data-testid="`${props.testId}-cancel`"
-					@click="closeModal"
+					@click="closeModal()"
 				>
 					{{ props.cancelLabel }}
 				</UiButton>

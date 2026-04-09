@@ -1,55 +1,39 @@
 import { useCartService } from "~/services/cart/cart.service"
-import { useCartStore } from "~/stores/cart"
-import type { CartItem } from "~/types/cart/cart"
 
-export const useCartPreviewHandler = () => {
-
-	const cart_store = useCartStore()
+export const useCartPreviewHandler = (caller : string = 'unknown') => {
+	console.log('Caller:', caller)
 
 	const cart_service = useCartService()
 
-	const config = useRuntimeConfig()
+	const open_deletion_modal = computed(() => Boolean(cart_service.deletion_id.value))
 
-	const number_of_items = computed(() => cart_store.number_of_items)
+	const editing_item = computed(() => Boolean(cart_service.selected_item.value) )
 
-	const items =  computed(() => cart_store.items)
-
-	const grand_total = computed(() => cart_store.grand_total)
-
-
-	const formatImage = (item: CartItem) => {
-		const is_absolute_url = (value: string | null | undefined) =>
-			Boolean(value && /^(https?:)?\/\//i.test(value))
-
-		let f = is_absolute_url(item.product_thumbnail)
-			? String(item.product_thumbnail)
-			: `${config.public.file_url}${item.product_thumbnail}`
-
-		if( item.id && item.artwork_file) {
-			f = `${config.public.s3_file_url}${item.file_path}${item.artwork_file}`
-		} else if( item.artwork_preview ) {
-			f = item.artwork_preview
-		}
-
-		return f
-	}
-
-
-
-
-	// ðŸ”¥ Default method and initialization of component
+	// 🔥 Default method and initialization of component
 	const composePreview = () => {
 		console.warn('Compose preview component...')
-		cart_service.getCartItems()
+		cart_service.getCartItems(true)
+	}
+
+	const confirmDeleteItem = async () => {
+		if ( !cart_service.deletion_id.value ) return;
+
+		cart_service.requestDeletion(cart_service.deletion_id.value)
+
+		cart_service.setForDeleteItem(0)
+	}
+
+	const closeDeleteModal = () => {
+		cart_service.setForDeleteItem(0)
 	}
 
 	return {
 		...cart_service,
-		number_of_items,
-		items,
-		grand_total,
+		open_deletion_modal,
+		editing_item,
 		composePreview,
-		formatImage,
+		confirmDeleteItem,
+		closeDeleteModal,
 	}
 
 }

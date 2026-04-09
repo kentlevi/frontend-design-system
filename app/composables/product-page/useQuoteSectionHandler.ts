@@ -8,7 +8,6 @@ import { useQuoteSectionService } from '~/services/attributes/quote.section'
 import { useCountry } from '../app/country/useCountry'
 import { useUsersStore } from '~/stores/users/users.store'
 import { useAttributesStore, useSelectionStore } from '~/stores/product'
-import { useCartStore } from '~/stores/cart'
 import { useCartService } from '~/services/cart/cart.service'
 import { convertFileBase64 } from '~/utils/file/file'
 
@@ -20,8 +19,6 @@ export const useQuoteSectionHandler = () => {
 	const attribute_store = useAttributesStore()
 
 	const selection_store = useSelectionStore()
-
-	const cart_store = useCartStore()
 
 	const cart_service = useCartService()
 
@@ -410,7 +407,7 @@ export const useQuoteSectionHandler = () => {
 
 
 		// 🔥 Creating temporary ID — this will be use when the api already responded
-		const item_id = cart_store.generateLocalIdentity();
+		const item_id = cart_service.generateLocalIdentity();
 
 		const uploaded_file = ref<string>('')
 		if( !selection_store.lettering_file ) {
@@ -458,7 +455,7 @@ export const useQuoteSectionHandler = () => {
 
 
 		// 🔥 Store new item in local storage before uploading it to our database.
-		cart_store.saveItemLocally(item)
+		cart_service.saveItemLocally(item)
 
 		// 🔥 Sending the new item to API
 		if( user_id.value ) {
@@ -466,7 +463,7 @@ export const useQuoteSectionHandler = () => {
 			const result = await cart_service.sendToServer(item)
 
 			if( result && result.item && result.item.id && item.local_identity )
-				cart_store.updateUploadedItem(item.local_identity, result.item.id)
+				cart_service.updateUploadedItem(item.local_identity, result.item.id)
 		}
 
 		return true

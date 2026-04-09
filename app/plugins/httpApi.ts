@@ -1,16 +1,17 @@
 import { defineNuxtPlugin, useRuntimeConfig, useCookie } from '#app'
+import { useCountry } from '~/composables/app/country/useCountry'
 import type { ApiResponse, ApiOptions } from '../types/config/api'
 
 export default defineNuxtPlugin(() => {
 	const config = useRuntimeConfig()
 	const authToken = useCookie<string | null>('auth_token')
 	const token = useCookie<string | null>('token')
-	const route = useRoute()
 
-	const country = route.params.country
+	const { country } = useCountry()
+
 
 	const apiFetch = $fetch.create({
-		baseURL: config.public.api_url + '/' + country,
+		baseURL: config.public.api_url + '/' + country.value,
 		credentials: 'include',
 		onRequest({ options }) {
 			// 1. Force the type to be a plain object so we can use the spread operator/assignment

@@ -62,3 +62,27 @@ export interface LetteringSpec {
 	height: number,
 	text: string,
 }
+
+export interface FeaturedDataResponse {
+	product: {
+		pcm_id: number
+		url_slug: string
+		name: string
+		description: string
+		image: string
+	}
+	featured_sizes: SizeSpec[]
+	variants: {
+		colors: ColorSpec[],
+		fonts: {
+			id: number,
+			name: string,
+			code: string,
+			style: Record<string, unknown>
+		}[],
+	},
+	quantities: {
+		product_variant_id: number,
+		data: QuantitySpec[],
+	}
+}

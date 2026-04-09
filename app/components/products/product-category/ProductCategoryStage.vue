@@ -7,7 +7,6 @@ import { useNavigationStore } from '~/stores/navigation/navigation.store';
 import { getProductIdFromSlug, findProductById } from '~/helpers/products/productCategory.helper';
 
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
-import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
 
 
 const props = defineProps<{
