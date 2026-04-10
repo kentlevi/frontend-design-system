@@ -72,6 +72,12 @@ import CheckoutMemberShippingAddressModal from '~/components/checkout/modals/Che
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { provideAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
+import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
+
+/** Standalone address context (isolated from checkout_experience) */
+const address_checkout_form_state = useAddressFormState();
+provideAddressCheckoutContext(address_checkout_form_state);
 
 const checkout_experience = useCheckoutExperience();
 
@@ -105,6 +111,7 @@ const {
 	billing_addresses,
 	selected_billing_address_id,
 } = checkout_experience;
+
 provideCheckoutExperienceFeatureContext(checkout_experience);
 
 function setCompleteLoaderRef(

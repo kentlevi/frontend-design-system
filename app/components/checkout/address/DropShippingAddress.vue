@@ -93,28 +93,26 @@
 									</UiRadio>
 									<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
 								</div>
-								<div class="checkout-member-field-grid">
-									<UiFormField label="Name" :required="true" :show-required-mark="true">
-										<UiInput v-model="drop_shipping_name" placeholder="Enter Full Name" />
-									</UiFormField>
-									<UiFormField label="Company (Optional)">
-										<UiInput v-model="drop_shipping_company" placeholder="Enter Company Name" />
-									</UiFormField>
-								</div>
+								<AddressFormFields
+									type="drop"
+									:form="drop_form"
+									:errors="form_field_errors"
+									@update:field="updateDropField"
+									@update:dynamic-field="updateDropDynamicField"
+								/>
 							</div>
 						</Transition>
 					</div>
 				</template>
 
 				<template v-else>
-					<div class="checkout-member-field-grid">
-						<UiFormField label="Name" :required="true" :show-required-mark="true">
-							<UiInput v-model="drop_shipping_name" placeholder="Enter Full Name" />
-						</UiFormField>
-						<UiFormField label="Company (Optional)">
-							<UiInput v-model="drop_shipping_company" placeholder="Enter Company Name" />
-						</UiFormField>
-					</div>
+					<AddressFormFields
+						type="drop"
+						:form="drop_form"
+						:errors="form_field_errors"
+						@update:field="updateDropField"
+						@update:dynamic-field="updateDropDynamicField"
+					/>
 				</template>
 			</div>
 		</Transition>
@@ -123,6 +121,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
+import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
@@ -131,6 +131,7 @@ import {
 	checkoutDropShippingTooltipContent,
 	checkoutDropShippingTooltipProps,
 } from '~/data/checkout/tooltips';
+import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
 
 const {
 	enter_duration_ms,
@@ -149,13 +150,19 @@ const {
 	getAddressTagClass,
 	drop_shipping_enabled,
 	drop_shipping_ship_to_another_address,
-	drop_shipping_name,
-	drop_shipping_company,
 	selected_drop_shipping_address,
 	is_drop_shipping_address_modal_open,
 	drop_shipping_tooltip_open,
 	toggleDropShippingTooltip,
 } = useCheckoutExperienceFeatureContext();
+
+const {
+	form_state,
+	form_field_errors,
+	clearFormFieldError,
+} = useAddressCheckoutContext();
+
+const drop_form = computed(() => form_state.drop);
 
 // refs (used)
 const drop_shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
@@ -192,6 +199,18 @@ useHeightTransition(
 		leaveDurationMs: leave_duration_ms
 	}
 );
+
+function updateDropField(payload: UpdateFieldPayload) {
+	Object.assign(drop_form.value, {
+		[payload.field]: payload.value,
+	})
+
+	clearFormFieldError(payload.field)
+}
+
+function updateDropDynamicField(_payload: UpdateDynamicFieldPayload) {
+	// Drop form has no dynamic fields. This keeps the shared component API consistent.
+}
 </script>
 
 <style scoped lang="scss">

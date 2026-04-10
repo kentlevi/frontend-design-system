@@ -1,6 +1,5 @@
 import { computed, ref } from 'vue';
 import { useCheckoutBase } from '../shared/useCheckoutBase';
-import { useCheckoutAddressForm } from '../shared/useCheckoutAddressForm';
 import { checkoutMemberPaymentBrands, checkoutPaymentMethods, checkoutShippingMethods } from '~/data/checkout/options';
 import { getProfileFieldValue, normalizeAccountName } from '~/utils/account/accountProfile';
 import type {
@@ -12,7 +11,6 @@ import type { MemberAddress, MemberDropShippingAddress } from '~/types/checkout'
 
 export function useCheckoutMember() {
 	const base = useCheckoutBase();
-	const address_form = useCheckoutAddressForm();
 	const user_store = useUsersStore();
 	const mock_user = useCookie<{ firstName?: string; lastName?: string; email?: string } | null>('mock_user');
 
@@ -70,8 +68,6 @@ export function useCheckoutMember() {
 
 	const drop_shipping_enabled = ref(false);
 	const drop_shipping_ship_to_another_address = ref(false);
-	const drop_shipping_name = ref(`${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || '');
-	const drop_shipping_company = ref('');
 	const drop_shipping_addresses = computed<MemberDropShippingAddress[]>(() => [
 		{
 			id: 'drop-default',
@@ -154,13 +150,6 @@ export function useCheckoutMember() {
 	]);
 	const selected_billing_address_id = ref(billing_addresses.value[0]?.id || '');
 	const billing_use_different_address = ref(false);
-	const billing_full_name = ref(`${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love');
-	const billing_company = ref('Summit Inc.');
-	const billing_address_1 = ref('176-6, Yusan-ri, Gusan-myeon');
-	const billing_address_2 = ref('');
-	const billing_province = ref('incheon');
-	const billing_city = ref('Gaseong-si');
-	const billing_postal_code = ref('01000');
 
 	// Member specific payment pre-fills
 	base.card_number.value = '4242 4242 4242 4242';
@@ -194,7 +183,6 @@ export function useCheckoutMember() {
 
 	return {
 		...base,
-		...address_form, // For "Ship to another address" fields
 		member_email,
 		saved_shipping_addresses,
 		selected_shipping_address,
@@ -207,8 +195,6 @@ export function useCheckoutMember() {
 		payment_brands: checkoutMemberPaymentBrands,
 		drop_shipping_enabled,
 		drop_shipping_ship_to_another_address,
-		drop_shipping_name,
-		drop_shipping_company,
 		drop_shipping_addresses,
 		selected_drop_shipping_address,
 		selected_drop_shipping_address_id,
@@ -219,13 +205,6 @@ export function useCheckoutMember() {
 		selected_billing_address,
 		selected_billing_address_id,
 		billing_use_different_address,
-		billing_full_name,
-		billing_company,
-		billing_address_1,
-		billing_address_2,
-		billing_province,
-		billing_city,
-		billing_postal_code,
 		useAllPoints,
 		clearPoints,
 	};
