@@ -1,10 +1,17 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
+import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
+import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 
 export const useTossPayment = () => {
 
 	const {
 		completeCheckout
 	} = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
+	const checkout_store = useMainCheckOutStore()
+	const{
+		selected_shipping_address,
+		selected_billing_address
+	} = storeToRefs(checkout_store)
 
 	let popup: Window | null = null
 
@@ -17,10 +24,22 @@ export const useTossPayment = () => {
 			throw new Error('No URL provided')
 		}
 
-		popup = window.open(
+		const width = 800
+		const height = 1000
+
+		const dual_screen_left = window.screenLeft ?? window.screenX
+		const dual_screen_top = window.screenTop ?? window.screenY
+
+		const screen_width = window.innerWidth ?? document.documentElement.clientWidth
+		const screen_height = window.innerHeight ?? document.documentElement.clientHeight
+
+		const left = dual_screen_left + (screen_width - width) / 2
+		const top = dual_screen_top + (screen_height - height) / 2
+
+		const popup = window.open(
 			'',
 			'_blank',
-			'width=800,height=1000,toolbar=no,menubar=no,location=no,status=no'
+			`width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
 		)
 
 		if (!popup) {
@@ -41,14 +60,26 @@ export const useTossPayment = () => {
 	// =========================
 	const listenPaymentResult = () => {
 
-		const handler = (event: MessageEvent) => {
+		const handler = async (event: MessageEvent) => {
 
 			const data = event.data
 
 			if (data?.type === 'TOSS_PAYMENT_SUCCESS') {
-				console.log('Payment Success:', data.data)
-				closePaymentPopup()
-				completeCheckout(true,data.data);
+
+				const order_id = data?.data?.id
+				try {
+					closePaymentPopup()
+
+					await completeCheckoutRequest({
+						order_id: order_id,
+						shipping_address: selected_shipping_address.value,
+						billing_address: selected_billing_address.value
+					})
+					checkout_store.cleanCheckoutStatesOnSuccess()
+					completeCheckout(true, order_id)
+				} catch (error) {
+					console.error('Checkout completion failed:', error)
+				}
 			}
 
 			if (data?.type === 'TOSS_PAYMENT_FAIL') {

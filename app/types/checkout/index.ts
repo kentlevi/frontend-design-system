@@ -2,6 +2,7 @@ import type { ProductItem } from '~/types/products/catalog';
 import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
 import type { ApiResponse } from '~/types/config/api'
 import type { PaymentCode } from '../payments/payment';
+import type { AddressMap, AddressType } from "~/types/address";
 
 export type CheckoutItem = {
 	id: string;
@@ -44,6 +45,12 @@ export type InitialCheckoutPayload = {
 	email?: string
 	contact_name?:string
 	phone_number?:string
+}
+
+export type completeCheckoutPayload = {
+	order_id : number
+	shipping_address:AddressMap[AddressType] | null
+	billing_address: AddressMap[AddressType] | null
 }
 
 export type CheckoutApiResponse = ApiResponse<CheckoutResponseData>

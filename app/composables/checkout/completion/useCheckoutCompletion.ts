@@ -36,10 +36,9 @@ export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 		});
 	}
 
-	async function completeCheckout(canComplete: boolean, data?: { id: string }) {
+	async function completeCheckout(canComplete: boolean, order_id:number) {
 		if (completing_checkout.value || !canComplete) return;
 		completing_checkout.value = true;
-		const order_id = data?.id || `ORD-${Math.floor(Math.random() * 1000000)}`;
 		const redirect_path = `${options.redirectPath}?order_id=${order_id}`
 
 		await nextTick();

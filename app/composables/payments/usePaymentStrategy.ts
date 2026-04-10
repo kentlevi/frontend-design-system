@@ -27,6 +27,7 @@ export const usePaymentStrategy = () => {
 				console.log("BANK_TRANSFER success not implemented", payload)
 			},
 			error: (error?: Error) => {
+				alert("BANK TRANSFER PAYMENT NOT IMPLEMENTED YET")
 				console.warn("BANK_TRANSFER error not implemented", error)
 			}
 		},
@@ -36,6 +37,7 @@ export const usePaymentStrategy = () => {
 				console.log("CREDIT_CARD success not implemented", payload)
 			},
 			error: (error?: Error) => {
+				alert("CREDIT CARD PAYMENT NOT IMPLEMENTED YET")
 				console.warn("CREDIT_CARD error not implemented", error)
 			}
 		}
