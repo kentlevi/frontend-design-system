@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<{
 	loaderWidth?: string;
 	loaderHeight?: string;
 	animationPath?: string;
+	variant?: 'default' | 'modal';
 }>(), {
 	label: '',
 	description: '',
@@ -33,10 +34,11 @@ const props = withDefaults(defineProps<{
 	overlayClass: '',
 	loaderClass: '',
 	background: 'rgba(255, 255, 255, 0.64)',
-	zIndex: 320,
+	zIndex: 120,
 	loaderWidth: '104px',
 	loaderHeight: '102px',
 	animationPath: '/animations/musticker-loader.json',
+	variant: 'default',
 });
 
 const slots = useSlots();
@@ -45,16 +47,24 @@ let loaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 const has_custom_loader = computed(() => Boolean(slots.default));
 
-const overlay_style = computed<CSSProperties>(() => ({
-	position: props.position,
-	background: props.background,
-	zIndex: props.zIndex,
-}));
+const overlay_style = computed<CSSProperties>(() => {
+	const is_modal = props.variant === 'modal';
 
-const loader_style = computed<CSSProperties>(() => ({
-	width: props.loaderWidth,
-	height: props.loaderHeight,
-}));
+	return {
+		position: is_modal ? 'absolute' : props.position,
+		background: is_modal ? 'rgba(246, 246, 248, 0.72)' : props.background,
+		zIndex: is_modal ? 5 : props.zIndex,
+	};
+});
+
+const loader_style = computed<CSSProperties>(() => {
+	const is_modal = props.variant === 'modal';
+
+	return {
+		width: is_modal ? '74px' : props.loaderWidth,
+		height: is_modal ? '74px' : props.loaderHeight,
+	};
+});
 
 function destroyLoaderAnimation() {
 	if (!loaderAnimation) return;

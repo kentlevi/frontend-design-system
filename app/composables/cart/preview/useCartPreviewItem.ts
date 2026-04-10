@@ -8,7 +8,7 @@ export const useCartPreviewItem = () => {
 
 	const product_service = useProductService()
 
-	const deleteCartItem = (cart_item_id: number | null) => {
+	const deleteCartItem = (cart_item_id: string | number | null) => {
 		if ( !cart_item_id )
 			return;
 
@@ -23,10 +23,13 @@ export const useCartPreviewItem = () => {
 		if( !product_data ) return
 
 		cart_service.setFeaturedData(product_data)
+
+		const item_id = item.id ? String(item.id) : item.local_identity
+		if (!item_id) return
+
+		cart_service.openEditFullModal(item_id)
 	}
 
-
-	// ✅ ------------------------------
 	return {
 		...cart_service,
 		deleteCartItem,

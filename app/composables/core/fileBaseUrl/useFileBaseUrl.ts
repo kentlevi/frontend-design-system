@@ -16,11 +16,23 @@ export function useFileBaseUrl() {
 		return `${normalized_base}/${normalized_path}`;
 	}
 
+	function resolveS3Asset(path: string) {
+		const input = String(path || '').trim();
+		if (!input) return input;
+		if (/^https?:\/\//i.test(input) || input.startsWith('//')) return input;
+		if (!s3_file_url) return input;
+
+		const normalized_base = s3_file_url.replace(/\/+$/, '');
+		const normalized_path = input.replace(/^\/+/, '');
+		return `${normalized_base}/${normalized_path}`;
+	}
+
 	return {
 		file_url,
 		s3_file_url,
 		file_base_url,
 		effective_file_base_url: base_url,
 		resolveFileUrl,
+		resolveS3Asset,
 	};
-}
+}

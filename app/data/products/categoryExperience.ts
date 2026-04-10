@@ -17,23 +17,23 @@ export const quantity_options = [
 
 export const size_feature_cards: readonly SizeFeatureCard[] = [
 	{
-		key: 'small30',
+		code: 'small30',
 		image: '/icons/custom/size-use-cases/small-helmet.svg',
-		descriptionKey: 'small',
+		desc_key: 'small',
 	},
 	{
-		key: 'medium75',
+		code: 'medium75',
 		image: '/icons/custom/size-use-cases/medium-tumbler.svg',
-		descriptionKey: 'medium',
+		desc_key: 'medium',
 	},
 	{
-		key: 'large100',
+		code: 'large100',
 		image: '/icons/custom/size-use-cases/large-case.svg',
-		descriptionKey: 'large',
+		desc_key: 'large',
 	},
 	{
-		key: 'extraLarge125',
+		code: 'extraLarge125',
 		image: '/icons/custom/size-use-cases/extra-large-cooler.svg',
-		descriptionKey: 'extraLarge',
+		desc_key: 'extraLarge',
 	},
 ];

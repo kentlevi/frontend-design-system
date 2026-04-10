@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { formatProductFileSize, readProductArtworkAsDataUrl } from '~/helpers/products/productCategory.helper';
-import type { CartRow } from '~/composables/cart/page/useCartPage';
+import type { CartRow } from '~/types/cart/cart';
 
 const props = withDefaults(defineProps<{
 	modelValue: boolean;

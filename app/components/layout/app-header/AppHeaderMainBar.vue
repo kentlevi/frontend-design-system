@@ -1,70 +1,46 @@
 <script setup lang="ts">
 import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
-import type { FlagCode } from '~/data/ui/flags';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { useAppHeaderContext } from '~/composables/layout/appHeader/useAppHeader';
 import { normalizeAppPath } from '~/utils/auth/redirect';
-import { useCartService } from '~/services/cart/cart.service';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute();
-type IconName = keyof typeof import('~/data/ui/icons').icons;
 
-type NavLink = {
-	key: string;
-	label: string;
-	to: string;
-};
-
-type AccountLink = {
-	to: string;
-	icon: IconName;
-	label: string;
-};
-
-const props = defineProps<{
-	simple?: boolean;
-	navLinks: NavLink[];
-	isNavLinkActive: (path: string) => boolean;
-	selectedLocale: FlagCode;
-	isMockLoggedIn: boolean;
-	isGuestLoggedIn: boolean;
-	accountOpen: boolean;
-	userAvatarUrl?: string | null;
-	displayEmail: string;
-	accountTransitionName: string;
-	accountLinks: AccountLink[];
-	cartItemCount: number;
-	setAccountMenuRef: (el: HTMLElement | null) => void;
-}>();
-
-const emit = defineEmits<{
-	(e: 'open-locale'): void;
-	(e: 'open-search'): void;
-	(e: 'open-cart'): void;
-	(e: 'prefetch-locale'): void;
-	(e: 'prefetch-search'): void;
-	(e: 'prefetch-cart'): void;
-	(e: 'toggle-account'): void;
-	(e: 'close-account'): void;
-	(e: 'account-mouse-enter'): void;
-	(e: 'account-mouse-leave'): void;
-	(e: 'logout'): void;
-}>();
+const {
+	simple,
+	nav_links,
+	isNavLinkActive,
+	selected_locale,
+	header_loading,
+	header_account_skeleton_count,
+	is_mock_logged_in,
+	is_guest_logged_in,
+	account_open,
+	display_email,
+	account_transition_name,
+	account_links,
+	cart_badge_count,
+	setAccountMenuRef,
+	openLocaleModal,
+	openSearchModal,
+	openCartPreview,
+	prefetchHeaderOverlayModules,
+	toggleAccountMenu,
+	closeAccountMenu,
+	onAccountMouseEnter,
+	onAccountMouseLeave,
+	logoutMock,
+} = useAppHeaderContext();
 
 function isExactNavHeading(path: string) {
 	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
-
-const { number_of_items, calculateCartItems } = useCartService()
-
-onMounted(() => {
-	calculateCartItems()
-})
 </script>
 
 <template>
-	<div class="home-header-container" data-testid="app-header-main-bar-container">
+	<div class="home-header-container" data-testid="app-header-main-bar">
 		<NuxtLink :to="withCountry('/')" class="home-header-logo" aria-label="Musticker" data-testid="app-header-logo-link">
 			<UiLogo
 				name="musticker"
@@ -78,13 +54,13 @@ onMounted(() => {
 		</NuxtLink>
 
 		<nav
-			v-if="!props.simple"
+			v-if="!simple"
 			class="home-header-nav"
 			:aria-label="t('layout.header.primaryNav')"
 			data-testid="app-header-nav"
 		>
 			<template
-				v-for="link in props.navLinks"
+				v-for="link in nav_links"
 				:key="link.key"
 			>
 				<h1
@@ -98,7 +74,7 @@ onMounted(() => {
 					v-else
 					:to="link.to"
 					class="home-header-link"
-					:class="{ 'is-active': props.isNavLinkActive(link.to) }"
+					:class="{ 'is-active': isNavLinkActive(link.to) }"
 					:data-testid="`app-header-nav-link-${link.key}`"
 				>
 					{{ link.label }}
@@ -108,7 +84,35 @@ onMounted(() => {
 		<div v-else />
 
 		<div class="home-header-tools" data-testid="app-header-tools">
-			<template v-if="!props.simple">
+			<template v-if="!simple && header_loading">
+				<div class="home-header-loading-row" data-testid="app-header-loading-tools">
+					<UiSkeleton
+						v-for="index in 3"
+						:key="`header-tool-skeleton-${index}`"
+						width="40px"
+						height="40px"
+						border-radius="16px"
+						class="home-header-tool-skeleton"
+					/>
+					<UiSkeleton
+						v-if="header_account_skeleton_count === 2"
+						key="header-bell-skeleton"
+						width="40px"
+						height="40px"
+						border-radius="16px"
+						class="home-header-tool-skeleton"
+					/>
+					<UiSkeleton
+						key="header-account-skeleton"
+						:width="header_account_skeleton_count === 2 ? '64px' : '40px'"
+						height="40px"
+						border-radius="16px"
+						class="home-header-tool-skeleton"
+					/>
+				</div>
+			</template>
+
+			<template v-else-if="!simple">
 				<UiButton
 					type="button"
 					variant="ghost"
@@ -117,11 +121,11 @@ onMounted(() => {
 					class="home-header-icon home-header-locale"
 					:aria-label="t('layout.header.locale.aria')"
 					data-testid="app-header-locale-button"
-					@click="emit('open-locale')"
-					@mouseenter="emit('prefetch-locale')"
-					@focus="emit('prefetch-locale')"
+					@click="openLocaleModal"
+					@mouseenter="prefetchHeaderOverlayModules"
+					@focus="prefetchHeaderOverlayModules"
 				>
-					<UiFlag :code="props.selectedLocale" :size="24" />
+					<UiFlag :code="selected_locale" :size="24" />
 				</UiButton>
 				<UiButton
 					variant="ghost"
@@ -133,9 +137,9 @@ onMounted(() => {
 					class="home-header-icon"
 					:aria-label="t('layout.header.search')"
 					data-testid="app-header-search-button"
-					@click="emit('open-search')"
-					@mouseenter="emit('prefetch-search')"
-					@focus="emit('prefetch-search')"
+					@click="openSearchModal"
+					@mouseenter="prefetchHeaderOverlayModules"
+					@focus="prefetchHeaderOverlayModules"
 				/>
 				<div class="home-header-cart-wrap">
 					<UiButton
@@ -148,20 +152,20 @@ onMounted(() => {
 						class="home-header-icon home-header-cart"
 						:aria-label="t('layout.header.cart')"
 						data-testid="app-header-cart-button"
-						@click="emit('open-cart')"
-						@mouseenter="emit('prefetch-cart')"
-						@focus="emit('prefetch-cart')"
+						@click="openCartPreview"
+						@mouseenter="prefetchHeaderOverlayModules"
+						@focus="prefetchHeaderOverlayModules"
 					/>
 					<span
-						v-if="number_of_items > 0"
+						v-if="cart_badge_count > 0"
 						class="home-header-cart-dot"
 						data-testid="app-header-cart-count"
 					>
-						{{ number_of_items > 99 ? '99+' : number_of_items }}
+						{{ cart_badge_count > 99 ? '99+' : cart_badge_count }}
 					</span>
 				</div>
 				<UiButton
-					v-if="props.isMockLoggedIn"
+					v-if="is_mock_logged_in"
 					type="button"
 					variant="ghost"
 					tone="neutral"
@@ -174,7 +178,7 @@ onMounted(() => {
 			</template>
 
 			<UiButton
-				v-if="props.simple"
+				v-if="simple"
 				type="button"
 				variant="ghost"
 				tone="neutral"
@@ -182,28 +186,27 @@ onMounted(() => {
 				class="home-header-icon"
 				:aria-label="t('layout.header.accountLinks.signOut')"
 				data-testid="app-header-direct-logout-button"
-				@click="emit('logout')"
+				@click="logoutMock"
 			>
 				<UiIcon name="strong-sign-out" :size="22" color="var(--text-primary)" />
 			</UiButton>
 
 			<AppHeaderAccountMenu
-				v-else
-				:simple="props.simple"
-				:account-open="props.accountOpen"
-				:is-mock-logged-in="props.isMockLoggedIn"
-				:is-guest-logged-in="props.isGuestLoggedIn"
-				:user-avatar-url="props.userAvatarUrl"
-				:display-email="props.displayEmail"
-				:account-transition-name="props.accountTransitionName"
-				:account-links="props.accountLinks"
-				:set-wrap-ref="props.setAccountMenuRef"
+				v-else-if="!header_loading"
+				:simple="simple"
+				:account-open="account_open"
+				:is-mock-logged-in="is_mock_logged_in"
+				:is-guest-logged-in="is_guest_logged_in"
+				:display-email="display_email"
+				:account-transition-name="account_transition_name"
+				:account-links="account_links"
+				:set-wrap-ref="setAccountMenuRef"
 				data-testid="app-header-account-menu"
-				@toggle="emit('toggle-account')"
-				@close="emit('close-account')"
-				@mouse-enter="emit('account-mouse-enter')"
-				@mouse-leave="emit('account-mouse-leave')"
-				@logout="emit('logout')"
+				@toggle="toggleAccountMenu"
+				@close="closeAccountMenu"
+				@mouse-enter="onAccountMouseEnter"
+				@mouse-leave="onAccountMouseLeave"
+				@logout="logoutMock"
 			/>
 		</div>
 	</div>
@@ -275,6 +278,22 @@ onMounted(() => {
         display: flex;
         align-items: center;
         gap: 6px;
+
+		.home-header-loading-row {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.home-header-tool-skeleton {
+			background: linear-gradient(
+				90deg,
+				rgba(255, 255, 255, 0.34) 25%,
+				rgba(255, 255, 255, 0.58) 37%,
+				rgba(255, 255, 255, 0.34) 63%
+			);
+			background-size: 400% 100%;
+		}
 
         .home-header-icon {
             --btn-bg: var(--text-primary);

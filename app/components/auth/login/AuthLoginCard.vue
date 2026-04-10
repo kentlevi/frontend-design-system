@@ -91,7 +91,6 @@ function handleForgotPasswordOpen() {
 			:visible="is_page_login_busy"
 			:label="is_non_member ? t('auth.login.checkOrder') : t('auth.login.signIn')"
 			test-id="auth-login-check-order-loading-overlay"
-			position="fixed"
 		/>
 
 		<div class="auth-login-card">

@@ -1,21 +1,18 @@
 <script setup lang="ts">
 import { toRef, defineAsyncComponent } from 'vue';
 import ProductCategoryStage from '~/components/products/product-category/ProductCategoryStage.vue';
-import { useProductCategoryExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
+import { provideProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import type { Products } from '~/types/navigation/navgiation';
 import type { ProductCategoryKey } from '~/types/products/catalog';
 
-const product_reviews_section = defineAsyncComponent(
+const productReviewsSection = defineAsyncComponent(
 	() => import('~/components/products/product-reviews/ProductReviewsSection.vue')
 );
-const product_category_details = defineAsyncComponent(
+const productCategoryDetails = defineAsyncComponent(
 	() => import('~/components/products/product-category/ProductCategoryDetails.vue')
 );
-const cart_upload_modal = defineAsyncComponent(
+const cartUploadModal = defineAsyncComponent(
 	() => import('~/components/cart/modals/CartUploadModal.vue')
-);
-const cart_preview = defineAsyncComponent(
-	() => import('~/components/cart/preview/CartPreview.vue')
 );
 
 const props = defineProps<{
@@ -23,111 +20,33 @@ const props = defineProps<{
 	products?: Products;
 }>();
 
+const { t } = useI18n();
+
+// Slicedown: Provide context to all children
 const {
-	size_feature_cards,
-	quantity_options,
-	selected_id,
-	selected_size,
-	selected_qty,
-	selection_navigation_in_flight,
-	has_picked_product,
 	upload_modal_open,
 	add_to_cart_loading,
-	cart_preview_open,
-	special_instructions,
-	artwork_preview_url,
-	artwork_input_ref,
-	selected_product,
-	subtotal,
-	discount_rate,
-	total,
-	has_uploaded_artwork,
-	cart_artwork_name,
-	cart_artwork_size,
-	cart_artwork_extension,
-	selectProduct,
-	openUploadModal,
-	closeUploadModal,
-	closeCartPreview,
-	openFilePicker,
-	removeArtwork,
-	onArtworkSelected,
-	proceedToCart,
-	skipAndUploadLater,
-	formatPrice,
-	quantityPrice,
-	getProductName,
-	getProductBlurb,
-} = useProductCategoryExperience(toRef(props, 'category'), toRef(props, 'products'));
+	has_lettering_editor,
+} = provideProductExperience(toRef(props, 'category'), toRef(props, 'products'));
 </script>
 
 <template>
 	<section class="product-experience" data-testid="product-category-experience">
+		<UiLoadingOverlay
+			:visible="add_to_cart_loading && has_lettering_editor"
+			:label="t('cart.cartPreview.redirectingToCart')"
+			test-id="product-category-page-loading-overlay"
+		/>
+
 		<div class="product-experience-container" data-testid="product-category-experience-container">
-			<ProductCategoryStage
-				:category="props.category"
-				:has-picked-product="has_picked_product"
-				:selected-id="selected_id"
-				:selected-product="selected_product"
-				:size-feature-cards="size_feature_cards"
-				:selected-size="selected_size"
-				:quantity-options="quantity_options"
-				:selected-qty="selected_qty"
-				:navigation-in-flight="selection_navigation_in_flight"
-				:subtotal="subtotal"
-				:discount-rate="discount_rate"
-				:total="total"
-				:get-product-name="getProductName"
-				:get-product-blurb="getProductBlurb"
-				:format-price="formatPrice"
-				:quantity-price="quantityPrice"
-				data-testid="product-category-stage"
-				@select-product="selectProduct"
-				@update:selected-size="selected_size = $event"
-				@update:selected-qty="selected_qty = $event"
-				@open-upload="openUploadModal"
-				@proceed-to-cart="proceedToCart"
-			/>
+			<ProductCategoryStage />
 		</div>
 
-		<product_category_details
-			:category="props.category"
-			:selected-product-id="selected_id"
-		/>
+		<productCategoryDetails />
 
-		<input
-			ref="artwork_input_ref" type="file" class="artwork-file-input"
-			accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" data-testid="product-category-artwork-input"
-			@change="onArtworkSelected" >
+		<cartUploadModal />
 
-		<cart_upload_modal
-			v-if="upload_modal_open"
-			:open="upload_modal_open"
-			:has-uploaded-artwork="has_uploaded_artwork"
-			:artwork-preview-url="artwork_preview_url"
-			:cart-artwork-name="cart_artwork_name"
-			:cart-artwork-extension="cart_artwork_extension"
-			:cart-artwork-size="cart_artwork_size"
-			:special-instructions="special_instructions"
-			:add-to-cart-loading="add_to_cart_loading"
-			data-testid="product-category-upload-modal"
-			@close="closeUploadModal"
-			@open-file-picker="openFilePicker"
-			@remove-artwork="removeArtwork"
-			@update:special-instructions="special_instructions = $event"
-			@skip-upload-later="skipAndUploadLater"
-			@proceed-to-cart="proceedToCart"
-		/>
-
-		<cart_preview
-			:open="cart_preview_open"
-			@close="closeCartPreview"
-		/>
-
-		<product_reviews_section
-			class="product-experience-reviews"
-			data-testid="product-category-reviews-section"
-		/>
+		<productReviewsSection />
 	</section>
 </template>
 

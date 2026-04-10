@@ -4,7 +4,10 @@ import ProductCategoryExperience from '~/components/products/product-category/Pr
 import type { ProductCategoryKey } from '~/types/products/catalog';
 
 const route = useRoute()
-const category = computed(() => route.params.category as ProductCategoryKey)
+const category = computed<ProductCategoryKey | null>(() => {
+	const route_category = route.params.category
+	return typeof route_category === 'string' ? route_category as ProductCategoryKey : null
+})
 
 definePageMeta({
 	layout: 'home',
@@ -12,5 +15,5 @@ definePageMeta({
 </script>
 
 <template>
-	<ProductCategoryExperience :category="category" />
+	<ProductCategoryExperience v-if="category" :category="category" />
 </template>
