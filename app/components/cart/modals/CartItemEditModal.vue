@@ -7,7 +7,9 @@ const {
 	sizes,
 	clearSelection,
 	formatImage,
+	updateSelectedSize,
 } = useEditItemHandler();
+
 
 const test_item = ref({
 	id: 1,
@@ -142,6 +144,8 @@ function onSizeOptionSelect(value: string | number) {
 		});
 		return;
 	}
+
+	updateSelectedSize(normalized_value)
 
 	const selected_option = sizes.value.find((item) => String(item.value) === normalized_value);
 	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);

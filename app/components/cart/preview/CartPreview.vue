@@ -139,9 +139,9 @@ watch(() => props.open, (v) => {
 		</Transition>
 	</Teleport>
 
-	<CartItemEditModal />
+	<CartItemEditModal  v-if="props.open"/>
 
-	<CartDeleteItemModal />
+	<CartDeleteItemModal  v-if="props.open"/>
 </template>
 
 <style scoped lang="scss">
