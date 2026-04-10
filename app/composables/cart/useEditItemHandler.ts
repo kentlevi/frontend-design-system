@@ -10,6 +10,9 @@ export const useEditItemHandler = () => {
 	}
 
 	const featured_sizes = computed(() => cart_service.featured_data.value && cart_service.featured_data.value.featured_sizes ? cart_service.featured_data.value.featured_sizes : [])
+	const is_open = computed(() => cart_service.edit_modal_open.value)
+	const active_item = computed(() => cart_service.editing_item.value)
+	const show_quantity = computed(() => cart_service.edit_mode.value === 'full')
 
 	const sizes = computed(() => {
 
@@ -21,7 +24,7 @@ export const useEditItemHandler = () => {
 		]
 
 		if( !cart_service.featured_data.value || !cart_service.featured_data.value.featured_sizes )
-			return []
+			return last_option
 
 		const new_options = cart_service.featured_data.value.featured_sizes.map(e => {
 			return {
@@ -35,6 +38,7 @@ export const useEditItemHandler = () => {
 
 	const closeModal = () => {
 		cart_service.clearSelection()
+		cart_service.closeEditModals()
 	}
 
 	const selected_size = ref<SizeSpec | null>(null)
@@ -64,6 +68,9 @@ export const useEditItemHandler = () => {
 
 	return {
 		...cart_service,
+		is_open,
+		active_item,
+		show_quantity,
 		featured_sizes,
 		sizes,
 		selected_size,

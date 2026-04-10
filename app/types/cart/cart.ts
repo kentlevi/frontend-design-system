@@ -72,3 +72,31 @@ export interface ResponseNumberSpec {
 	total_cost: number
 	total_count: number
 }
+
+export interface CartRow {
+	id: string;
+	image: string;
+	title: string;
+	metadata: string;
+	url_slug: string;
+	width: number;
+	height: number;
+	qty: number;
+	total: number;
+	sizeKey: string;
+	sizeLabel: string;
+	customSizeLabel?: string;
+	rawItem: CartItem;
+	artwork_file_name?: string | null;
+	artwork_file?: string | null;
+	product_thumbnail?: string;
+	file_path?: string | null;
+	artworkName?: string;
+	artworkSizeLabel?: string;
+	artworkPreviewUrl?: string;
+	specialInstructions?: string;
+	product: {
+		name: string;
+		image: string;
+	};
+}

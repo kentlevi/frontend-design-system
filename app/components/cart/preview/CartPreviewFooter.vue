@@ -1,30 +1,27 @@
 <script setup lang="ts">
-defineProps<{
-	totalLabel: string;
-	totalValue: string;
-	noteLabel: string;
-	note: string;
-	viewCartLabel: string;
-	checkoutLabel: string;
-	loading: boolean;
-}>();
+import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 
-defineEmits<{
-	(e: 'view-cart'): void;
-	(e: 'checkout'): void;
-}>();
+const {
+	grand_total,
+	formatPrice,
+	redirecting_to_cart,
+	goToCart,
+	goToCheckout,
+	close,
+	t
+} = useCartPreviewHandler('cart-preview-footer');
 </script>
 
 <template>
 	<footer class="cart-preview-footer" data-testid="product-category-cart-footer">
 		<div class="cart-preview-summary" data-testid="product-category-cart-summary">
 			<p class="cart-preview-total" data-testid="product-category-cart-total-row">
-				<span class="cart-preview-label">{{ totalLabel }}</span>
-				<strong class="cart-preview-value">{{ totalValue }}</strong>
+				<span class="cart-preview-label">{{ t('cart.cartPreview.total') }}</span>
+				<strong class="cart-preview-value">{{ formatPrice(grand_total) }}</strong>
 			</p>
 			<div class="cart-preview-note-row" data-testid="product-category-cart-note-row">
-				<p class="cart-preview-note-label">{{ noteLabel }}</p>
-				<p class="cart-preview-note">{{ note }}</p>
+				<p class="cart-preview-note-label">{{ t('cart.cartPreview.noteLabel') }}</p>
+				<p class="cart-preview-note">{{ t('cart.cartPreview.note') }}</p>
 			</div>
 		</div>
 		<div class="cart-preview-actions" data-testid="product-category-cart-actions">
@@ -35,11 +32,11 @@ defineEmits<{
 				size="md"
 				height="48px"
 				class="cart-preview-view-btn"
-				:disabled="loading"
+				:disabled="redirecting_to_cart"
 				data-testid="product-category-cart-view-button"
-				@click="$emit('view-cart')"
+				@click="goToCart(close)"
 			>
-				{{ viewCartLabel }}
+				{{ t('cart.cartPreview.viewCart') }}
 			</UiButton>
 			<UiButton
 				type="button"
@@ -49,10 +46,10 @@ defineEmits<{
 				height="48px"
 				class="cart-preview-checkout-btn"
 				data-testid="product-category-cart-checkout-button"
-				@click="$emit('checkout')"
+				@click="goToCheckout(close)"
 			>
 				<UiIcon name="regular-paper-plane" :size="16" color="#ffffff" />
-				{{ checkoutLabel }}
+				{{ t('cart.cartPreview.proceedToCheckout') }}
 			</UiButton>
 		</div>
 	</footer>

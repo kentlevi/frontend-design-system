@@ -1,19 +1,11 @@
 <script setup lang="ts">
+import { nextTick } from 'vue';
 import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
-
-const props = defineProps<{
-	open: boolean;
-}>();
-
-const emit = defineEmits<{
-	close: [];
-	'skip-upload-later': [];
-	'proceed-to-cart': [];
-}>();
 
 const { t } = useI18n();
 
 const {
+	is_modal_open,
 	artwork_file_name,
 	artwork_file_ext,
 	artwork_file_size,
@@ -26,6 +18,8 @@ const {
 	handleDrop,
 	fileChange,
 	unsetFile,
+	closeModal,
+	openPreview,
 } = useArtworkSectionHandler()
 
 const skipUpload = async () => {
@@ -33,8 +27,10 @@ const skipUpload = async () => {
 		return
 
 	console.warn('Skip-Uploading')
-	emit('skip-upload-later')
 	await dispatchItem()
+	closeModal()
+	await nextTick()
+	openPreview()
 }
 
 const addToCart = async () => {
@@ -42,8 +38,11 @@ const addToCart = async () => {
 
 	const dispatched = await dispatchItem(has_uploaded_file.value)
 
-	if( dispatched )
-		emit('proceed-to-cart')
+	if( dispatched ) {
+		closeModal()
+		await nextTick()
+		openPreview()
+	}
 }
 
 const artwork_input = ref<HTMLInputElement | null>(null)
@@ -64,21 +63,19 @@ const removeFile = () => {
 		artwork_input.value.value = '';
 }
 
-
-
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.open"
+		:model-value="is_modal_open"
 		align="center"
 		width="708px"
 		padding="0"
 		gap="0"
 		modal-class="upload-modal-shell"
-		@update:model-value="!$event ? emit('close') : undefined"
+		@update:model-value="!$event ? closeModal() : undefined"
 	>
-		<section class="upload-modal" role="dialog" aria-modal="true" data-testid="product-category-upload-dialog">
+		<section class="upload-modal" role="dialog" aria-modal="true" data-testid="product-category-upload-modal">
 			<header class="upload-modal-header" data-testid="product-category-upload-header">
 				<h3 class="upload-modal-title" data-testid="product-category-upload-title">{{ t('cart.uploadArtwork.title') }}</h3>
 				<UiButton
@@ -92,15 +89,10 @@ const removeFile = () => {
 					sr-label="Close upload modal"
 					class="upload-modal-close-btn"
 					data-testid="product-category-upload-close-button"
-					@click="emit('close')"
+					@click="closeModal()"
 				/>
 			</header>
 
-			<input
-				ref="artwork_input" type="file" class="artwork-file-input"
-				accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" data-testid="product-category-artwork-input"
-				@change="fileChange"
-			>
 
 			<div class="upload-modal-body" data-testid="product-category-upload-body">
 				<div
@@ -204,6 +196,12 @@ const removeFile = () => {
 				<p class="upload-note" data-testid="product-category-upload-note">
 					{{ t('cart.uploadArtwork.note') }}
 				</p>
+
+				<input
+					ref="artwork_input" type="file" class="artwork-file-input"
+					accept=".eps,.ai,.psd,.pdf,.tif,.tiff,.png,.jpg,.jpeg" data-testid="product-category-artwork-input"
+					@change="fileChange"
+				>
 			</div>
 
 			<footer class="upload-modal-footer" data-testid="product-category-upload-footer">

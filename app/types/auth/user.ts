@@ -20,6 +20,11 @@ export interface UserState extends UserIdentity {
 	preference: PreferenceState
 }
 
+export interface RoleState {
+	code: string
+	name: string
+}
+
 /**
  * Basic user identity
  */
@@ -30,6 +35,7 @@ export interface UserIdentity {
 	country_id: number
 	social: 'google' | 'facebook' | null,
 	has_password: boolean,
+	role: RoleState | null
 }
 
 /**

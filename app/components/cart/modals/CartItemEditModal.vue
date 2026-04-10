@@ -1,33 +1,29 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
+
 const { t } = useI18n();
 const {
-	selected_item,
+	is_open,
+	active_item,
+	show_quantity,
 	sizes,
-	clearSelection,
 	formatImage,
-	updateSelectedSize,
+	updateItemSize,
+	updateItemQty,
+	closeModal: close_edit_modal,
 } = useEditItemHandler();
-
-
-const test_item = ref({
-	id: 1,
-	name: 'Sample Die Cut Sticker',
-	width: 50,
-	height: 50,
-	quantity: 100,
-	cost: 1250.00,
-	product_thumbnail: '/illustrations/products/stickers/die-cut.svg',
-});
-
-// Derived from Pinia state
-const model_value = computed(() => Boolean(selected_item.value));
+const modal_title = computed(() =>
+	!show_quantity.value
+		? t('cart.cartPreview.editModal.sizeOnlyTitle')
+		: t('cart.cartPreview.editModal.title')
+);
 
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
 const size_dropdown_ref = ref<HTMLElement | null>(null);
 const qty_dropdown_ref = ref<HTMLElement | null>(null);
 const custom_width_input_ref = ref<HTMLInputElement | null>(null);
+const custom_qty_input_ref = ref<HTMLInputElement | null>(null);
 
 const size_menu_open = ref(false);
 const qty_menu_open = ref(false);
@@ -35,25 +31,40 @@ const qty_menu_open = ref(false);
 const size_key = ref<string | number>('');
 const custom_size_width = ref<string>('');
 const custom_size_height = ref<string>('');
-const qty = ref<number>(0);
+const qty = ref<number>(10);
 const custom_qty = ref<string>('');
-const show_quantity = ref(true);
 
-// Initialize draft state from test_item
-watch(test_item, (item) => {
+const qty_options = [
+	{ label: '10', value: 10 },
+	{ label: '25', value: 25 },
+	{ label: '50', value: 50 },
+	{ label: '100', value: 100 },
+	{ label: t('cart.cartPreview.editModal.customQuantity'), value: -1 },
+];
+
+// Initialize draft state from active_item
+watch(active_item, (item) => {
 	if (!item) return;
 
-	// Sizing logic
-	size_key.value = item.width && item.height ? `${item.width}x${item.height}` : 'custom';
+	const found_preset = sizes.value.find(s => {
+		const label = String(s.label);
+		return label.includes(`${item.width}x${item.height}mm`) || label.includes(`${item.width}x${item.height}"`);
+	});
+
+	size_key.value = found_preset ? found_preset.value : 'custom';
 	custom_size_width.value = String(item.width || '');
 	custom_size_height.value = String(item.height || '');
 
-	// Quantity logic
-	qty.value = item.quantity || 0;
-	custom_qty.value = '';
+	const common_qtys = [10, 25, 50, 100];
+	if (common_qtys.includes(item.quantity)) {
+		qty.value = item.quantity;
+	} else {
+		qty.value = -1;
+		custom_qty.value = String(item.quantity);
+	}
 }, { immediate: true });
 
-// Sizing logic from original version
+// Sizing logic
 const current_size_option = computed(() =>
 	sizes.value.find((option) => String(option.value) === String(size_key.value)) ?? null
 );
@@ -75,17 +86,12 @@ const display_height = computed(() =>
 	size_key.value === 'custom' ? digits_only(custom_size_height.value) : parsed_size_from_option.value.height
 );
 
-const display_qty = computed(() =>
-	qty.value === -1 ? digits_only(custom_qty.value) : (qty.value > 0 ? String(qty.value) : '')
-);
-
 const is_update_disabled = computed(() => {
 	if (!size_key.value) return true;
 
 	const is_custom_size = size_key.value === 'custom';
 	const cw = Number(custom_size_width.value);
 	const ch = Number(custom_size_height.value);
-	const cq = Number(custom_qty.value);
 
 	if (is_custom_size) {
 		if (!Number.isFinite(cw) || cw <= 0) return true;
@@ -95,10 +101,11 @@ const is_update_disabled = computed(() => {
 	if (!show_quantity.value) return false;
 
 	if (qty.value === -1) {
+		const cq = Number(custom_qty.value);
 		if (!Number.isFinite(cq) || cq <= 0) return true;
 	}
 
-	return !Number.isFinite(qty.value) || qty.value === 0;
+	return false;
 });
 
 // Menu handlers
@@ -108,13 +115,13 @@ function closeMenus() {
 }
 
 function toggleSizeMenu() {
+	qty_menu_open.value = false;
 	size_menu_open.value = !size_menu_open.value;
-	if (size_menu_open.value) qty_menu_open.value = false;
 }
 
 function toggleQtyMenu() {
+	size_menu_open.value = false;
 	qty_menu_open.value = !qty_menu_open.value;
-	if (qty_menu_open.value) size_menu_open.value = false;
 }
 
 function handlePointerDown(event: PointerEvent) {
@@ -154,6 +161,17 @@ function onSizeOptionSelect(value: string | number) {
 	closeMenus();
 }
 
+function onQtyOptionSelect(value: number) {
+	qty.value = value;
+	if (value === -1) {
+		closeMenus();
+		nextTick(() => {
+			custom_qty_input_ref.value?.focus();
+		});
+		return;
+	}
+	closeMenus();
+}
 
 function onCustomWidthInput(value: string) {
 	size_key.value = 'custom';
@@ -171,13 +189,20 @@ function onCustomQtyInput(value: string) {
 }
 
 function saveChanges() {
-	// TODO: Call service to update cart item in Pinia/API
+	if (!active_item.value) return;
+	const final_width = size_key.value === 'custom' ? Number(custom_size_width.value) : Number(parsed_size_from_option.value.width);
+	const final_height = size_key.value === 'custom' ? Number(custom_size_height.value) : Number(parsed_size_from_option.value.height);
+	const final_qty = qty.value === -1 ? Number(custom_qty.value) : qty.value;
+
+	updateItemSize(active_item.value.id, final_width, final_height);
+	updateItemQty(active_item.value.id, final_qty);
+
 	closeModal();
 }
 
 const closeModal = () => {
-	closeMenus()
-	clearSelection()
+	closeMenus();
+	close_edit_modal();
 }
 
 onMounted(() => {
@@ -191,11 +216,22 @@ onBeforeUnmount(() => {
 });
 
 watch(
-	() => [model_value.value, size_key.value] as const,
-	([is_open, sk]) => {
-		if (!is_open || sk !== 'custom') return;
+	() => [is_open.value, size_key.value] as const,
+	([open, sk]) => {
+		if (!open || sk !== 'custom') return;
 		nextTick(() => {
 			custom_width_input_ref.value?.focus();
+		});
+	},
+	{ immediate: true }
+);
+
+watch(
+	() => [is_open.value, qty.value] as const,
+	([open, q]) => {
+		if (!open || q !== -1) return;
+		nextTick(() => {
+			custom_qty_input_ref.value?.focus();
 		});
 	},
 	{ immediate: true }
@@ -205,22 +241,22 @@ watch(
 
 <template>
 	<UiModal
-		:model-value="model_value"
+		:model-value="is_open"
 		align="center"
 		width="640px"
 		padding="0"
 		gap="0"
 		modal-class="cart-item-edit-modal-shell"
-		:title="show_quantity ? t('cart.cartPreview.editModal.title') : t('cart.cartPreview.editModal.sizeOnlyTitle')"
+		:title="modal_title"
 		@update:model-value="!$event && closeModal()"
 		@close="closeModal"
 	>
-		<section v-if="selected_item" class="cart-item-edit-modal" data-testid="cart-item-edit-modal">
+		<section v-if="active_item" class="cart-item-edit-modal">
 			<div class="cart-item-edit-modal-body">
 				<div class="cart-item-edit-modal-thumb">
 					<img
-						:src="formatImage(selected_item)"
-						:alt="selected_item.artwork_file_name ?? selected_item.product"
+						:src="formatImage(active_item)"
+						:alt="active_item.artwork_file_name ?? active_item.product.name"
 						class="cart-item-edit-modal-image"
 					>
 				</div>
@@ -238,7 +274,6 @@ watch(
 							class="cart-item-edit-select"
 							trigger-class="cart-item-edit-select-trigger"
 							:options="sizes"
-							data-testid="cart-item-edit-size-select"
 							@update:model-value="onSizeOptionSelect($event)"
 						/>
 						<div
@@ -246,7 +281,6 @@ watch(
 							ref="size_dropdown_ref"
 							class="cart-item-edit-select-shell ui-select"
 							:data-open="size_menu_open || null"
-							data-testid="cart-item-edit-size-select"
 						>
 							<div class="cart-item-edit-size-combo">
 								<input
@@ -255,9 +289,8 @@ watch(
 									type="text"
 									inputmode="numeric"
 									pattern="[0-9]*"
-									:placeholder="t('cart.cartPreview.editModal.widthPlaceholder')"
+									placeholder="W"
 									class="cart-item-edit-inline-input"
-									data-testid="cart-item-edit-custom-width"
 									@beforeinput="preventNonDigitInput"
 									@input="onCustomWidthInput(($event.target as HTMLInputElement).value)"
 								>
@@ -267,9 +300,8 @@ watch(
 									type="text"
 									inputmode="numeric"
 									pattern="[0-9]*"
-									:placeholder="t('cart.cartPreview.editModal.heightPlaceholder')"
+									placeholder="H"
 									class="cart-item-edit-inline-input"
-									data-testid="cart-item-edit-custom-height"
 									@beforeinput="preventNonDigitInput"
 									@input="onCustomHeightInput(($event.target as HTMLInputElement).value)"
 								>
@@ -310,22 +342,30 @@ watch(
 
 					<div v-if="show_quantity" class="cart-item-edit-field">
 						<label class="cart-item-edit-label">{{ t('cart.cartPreview.quantity') }}</label>
-						<!-- For now, simplifying quantity selection back to a basic store-driven one if needed, -->
-						<!-- but keeping the UI structure for custom quantity if the store supports it. -->
+						<UiSelect
+							v-if="qty !== -1"
+							:model-value="qty"
+							size="40"
+							class="cart-item-edit-select"
+							trigger-class="cart-item-edit-select-trigger"
+							:options="qty_options"
+							:pin-last-option="true"
+							@update:model-value="onQtyOptionSelect(Number($event))"
+						/>
 						<div
+							v-else
 							ref="qty_dropdown_ref"
 							class="cart-item-edit-select-shell ui-select"
 							:data-open="qty_menu_open || null"
-							data-testid="cart-item-edit-qty-select"
 						>
 							<input
-								:value="display_qty"
+								ref="custom_qty_input_ref"
+								:value="custom_qty"
 								type="text"
 								inputmode="numeric"
 								pattern="[0-9]*"
 								placeholder="Enter quantity"
 								class="cart-item-edit-inline-input cart-item-edit-inline-input--qty"
-								data-testid="cart-item-edit-custom-qty"
 								@beforeinput="preventNonDigitInput"
 								@input="onCustomQtyInput(($event.target as HTMLInputElement).value)"
 							>
@@ -342,6 +382,24 @@ watch(
 									:class="{ 'is-open': qty_menu_open }"
 								/>
 							</button>
+							<Transition name="ui-select-menu">
+								<div v-if="qty_menu_open" class="ui-select-menu" role="listbox">
+									<div class="ui-select-options">
+										<button
+											v-for="option in qty_options"
+											:key="option.value"
+											type="button"
+											class="ui-select-option"
+											:class="{ 'is-selected': Number(option.value) === qty }"
+											@mousedown.prevent="onQtyOptionSelect(Number(option.value))"
+										>
+											<div class="ui-select-option-copy">
+												<p class="ui-select-option-label">{{ option.label }}</p>
+											</div>
+										</button>
+									</div>
+								</div>
+							</Transition>
 						</div>
 					</div>
 				</div>
@@ -353,7 +411,6 @@ watch(
 					variant="ghost"
 					tone="neutral"
 					class="cart-item-edit-cancel"
-					data-testid="cart-item-edit-cancel"
 					@click="closeModal"
 				>
 					{{ t('cart.cartPreview.editModal.cancel') }}
@@ -363,7 +420,6 @@ watch(
 					variant="filled"
 					tone="neutral"
 					class="cart-item-edit-update"
-					data-testid="cart-item-edit-update"
 					:disabled="is_update_disabled"
 					@click="saveChanges"
 				>
@@ -373,6 +429,7 @@ watch(
 		</section>
 	</UiModal>
 </template>
+
 <style lang="scss">
 .cart-item-edit-modal-shell {
 	border-radius: 18px;
@@ -472,12 +529,6 @@ watch(
 		color: var(--text-secondary);
 	}
 
-	.cart-item-edit-size-unit {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
-	}
-
 	.cart-item-edit-select-shell {
 		position: relative;
 		display: grid;
@@ -526,32 +577,6 @@ watch(
 
 		&.cart-item-edit-inline-input--qty {
 			width: 100%;
-		}
-	}
-
-	.cart-item-edit-inline-input--qty {
-		padding-right: 10px;
-	}
-
-	.cart-item-edit-qty-menu {
-		.ui-select-option.is-selected {
-			background: transparent;
-		}
-
-		.ui-select-option.is-selected:hover,
-		.ui-select-option.is-selected:focus-visible {
-			background: var(--surface-subtle);
-		}
-
-		.ui-select-option--pinned {
-			background: transparent;
-		}
-
-		.ui-select-option--pinned:hover,
-		.ui-select-option--pinned:focus-visible,
-		.ui-select-option--pinned.is-selected:hover,
-		.ui-select-option--pinned.is-selected:focus-visible {
-			background: var(--surface-subtle);
 		}
 	}
 

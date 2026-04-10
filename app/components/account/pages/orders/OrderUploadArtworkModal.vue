@@ -1,103 +1,56 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import type { AccountOrderLineItem } from '~/types/account/orders';
-
-const props = defineProps<{
-	open: boolean;
-	item: AccountOrderLineItem | null;
-}>();
+import { useOrderUploadArtworkModal } from '~/composables/account/orders/useOrderUploadArtworkModal';
 
 const emit = defineEmits<{
-	close: [];
 	submit: [{ itemNumber: string; instructions: string; files: File[] }];
 }>();
 
-const file_input_ref = ref<HTMLInputElement | null>(null);
-const selected_files = ref<File[]>([]);
-const special_instructions = ref('');
-
-const primary_file = computed(() => selected_files.value[0] || null);
-
-const primary_file_preview_url = computed(() => {
-	if (!primary_file.value) return '';
-	if (!primary_file.value.type.startsWith('image/')) return '';
-	return URL.createObjectURL(primary_file.value);
-});
-
-const primary_file_extension = computed(() => {
-	if (!primary_file.value) return '';
-	const parts = primary_file.value.name.split('.');
-	return parts.length > 1 ? `.${parts.pop()?.toLowerCase() || ''}` : '';
-});
-
-const primary_file_size_label = computed(() => {
-	if (!primary_file.value) return '';
-	const size_in_mb = primary_file.value.size / (1024 * 1024);
-	return `${size_in_mb.toFixed(1)}MB`;
-});
-
-watch(
-	() => props.open,
-	(is_open) => {
-		if (!is_open) return;
-		selected_files.value = [];
-		special_instructions.value = '';
-		if (file_input_ref.value) {
-			file_input_ref.value.value = '';
-		}
-	}
-);
-
-function closeModal() {
-	emit('close');
-}
-
-function openFilePicker() {
-	file_input_ref.value?.click();
-}
-
-function handleFileChange(event: Event) {
-	const target = event.target as HTMLInputElement | null;
-	selected_files.value = Array.from(target?.files || []);
-}
-
-function removeSelectedArtwork() {
-	selected_files.value = [];
-	if (file_input_ref.value) {
-		file_input_ref.value.value = '';
-	}
-}
+const {
+	is_open,
+	item,
+	file_input_ref,
+	selected_files,
+	special_instructions,
+	primary_file,
+	primary_file_preview_url,
+	primary_file_extension,
+	primary_file_size_label,
+	close_modal,
+	open_file_picker,
+	handle_file_change,
+	remove_selected_artwork,
+} = useOrderUploadArtworkModal();
 
 function submitUpload() {
-	if (!props.item) return;
+	if (!item.value) return;
 
 	emit('submit', {
-		itemNumber: props.item.number,
+		itemNumber: item.value.number,
 		instructions: special_instructions.value.trim(),
 		files: selected_files.value,
 	});
-	closeModal();
+	close_modal();
 }
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.open"
+		:model-value="is_open"
 		align="top"
 		width="720px"
 		padding="0"
 		gap="0"
 		modal-class="account-orders-upload-modal-shell"
-		@update:model-value="!$event ? closeModal() : undefined"
+		@update:model-value="!$event && close_modal()"
 	>
-		<section v-if="props.item" class="account-orders-upload-modal">
+		<section v-if="item" class="account-orders-upload-modal">
 			<header class="account-orders-upload-modal-header">
-				<h3 class="account-orders-upload-modal-title">Upload Artwork - Item No. {{ props.item.number }}</h3>
+				<h3 class="account-orders-upload-modal-title">Upload Artwork - Item No. {{ item.number }}</h3>
 				<button
 					type="button"
 					class="account-orders-upload-modal-close"
 					aria-label="Close upload artwork modal"
-					@click="closeModal"
+					@click="close_modal"
 				>
 					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
 				</button>
@@ -109,15 +62,15 @@ function submitUpload() {
 					<div class="account-orders-upload-details-grid">
 						<div class="account-orders-upload-details-row">
 							<span class="account-orders-upload-details-label">Product:</span>
-							<strong class="account-orders-upload-details-value">{{ props.item.productName }}</strong>
+							<strong class="account-orders-upload-details-value">{{ item.productName }}</strong>
 						</div>
 						<div class="account-orders-upload-details-row">
 							<span class="account-orders-upload-details-label">Size:</span>
-							<strong class="account-orders-upload-details-value">{{ props.item.size }}</strong>
+							<strong class="account-orders-upload-details-value">{{ item.size }}</strong>
 						</div>
 						<div class="account-orders-upload-details-row">
 							<span class="account-orders-upload-details-label">Quantity:</span>
-							<strong class="account-orders-upload-details-value">{{ props.item.quantity }} pcs</strong>
+							<strong class="account-orders-upload-details-value">{{ item.quantity }} pcs</strong>
 						</div>
 					</div>
 				</section>
@@ -134,7 +87,7 @@ function submitUpload() {
 							</p>
 						</div>
 
-						<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="openFilePicker">
+						<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="open_file_picker">
 							Select Files
 						</UiButton>
 					</template>
@@ -158,7 +111,7 @@ function submitUpload() {
 						</div>
 
 						<div class="account-orders-upload-file-actions">
-							<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="openFilePicker">
+							<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="open_file_picker">
 								Replace Image
 							</UiButton>
 							<UiButton
@@ -172,7 +125,7 @@ function submitUpload() {
 								sr-label="Remove uploaded artwork"
 								width="48px"
 								height="48px"
-								@click="removeSelectedArtwork"
+								@click="remove_selected_artwork"
 							/>
 						</div>
 					</template>
@@ -183,7 +136,7 @@ function submitUpload() {
 						multiple
 						accept=".eps,.ai,.psd,.pdf,.tif,.png,.jpg,.jpeg"
 						class="account-orders-upload-hidden-input"
-						@change="handleFileChange"
+						@change="handle_file_change"
 					>
 				</section>
 
@@ -201,7 +154,7 @@ function submitUpload() {
 			</div>
 
 			<footer class="account-orders-upload-modal-footer">
-				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
+				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="close_modal">
 					Cancel
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="submitUpload">

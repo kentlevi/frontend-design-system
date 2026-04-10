@@ -1,4 +1,7 @@
-import type { ShippingMethodResponse } from "~/types/shipping/shipping"
+import type {
+	LocalShippingMethodRequest,
+	ShippingMethodResponse
+} from "~/types/shipping/shipping"
 
 export const getShippingMethodByCartItems = async (params: { cart_item_ids: number[] }): Promise<ShippingMethodResponse> => {
 	const { $api } = useNuxtApp()
@@ -9,4 +12,12 @@ export const getShippingMethodByCartItems = async (params: { cart_item_ids: numb
 	})
 
 	return $api.get(`/shipping/shipping-methods?${query.toString()}`)
+}
+
+export const getShippingMethodByLocalItems = async (
+	params: LocalShippingMethodRequest
+): Promise<ShippingMethodResponse> => {
+	const { $api } = useNuxtApp()
+
+	return $api.post('/shipping/shipping-methods-local', { ...params })
 }

@@ -26,7 +26,7 @@ export function useAppHeaderAccount() {
 	const { t, setLocale } = useI18n();
 	const route = useRoute();
 	const { withCountry, country } = useCountry();
-	const { state } = storeToRefs(useUsersStore());
+	const { state, auth_state_loading, auth_state_ready } = storeToRefs(useUsersStore());
 
 
 	const preferred_locale = useCookie<SupportedCountry | null>('preferred_locale', {
@@ -81,6 +81,12 @@ export function useAppHeaderAccount() {
 
 	const has_member_identity = computed(() =>
 		Boolean(auth_token.value || state.value.email || mock_user.value?.email?.trim())
+	);
+	const header_account_ready = computed(() =>
+		auth_state_ready.value && !auth_state_loading.value
+	);
+	const header_account_skeleton_count = computed(() =>
+		auth_state_loading.value || !auth_state_ready.value || has_member_identity.value ? 2 : 1
 	);
 	const is_mock_logged_in = computed(
 		() => has_member_identity.value && String(guest_login_mode.value || '') !== '1'
@@ -241,6 +247,8 @@ export function useAppHeaderAccount() {
 		selected_locale,
 		locale_options,
 		account_links,
+		header_account_ready,
+		header_account_skeleton_count,
 		is_mock_logged_in,
 		is_guest_logged_in,
 		user_avatar_url,

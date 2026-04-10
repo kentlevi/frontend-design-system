@@ -1,22 +1,18 @@
 <script setup lang="ts">
-defineProps<{
-	iconAlt: string;
-	title: string;
-	description: string;
-}>();
+const { t } = useI18n();
 </script>
 
 <template>
 	<section class="cart-preview-empty" data-testid="product-category-cart-empty">
 		<img
 			src="/illustrations/cart/empty-cart-basket.svg"
-			:alt="iconAlt"
+			:alt="t('cart.cartPreview.emptyIconAlt')"
 			width="112"
 			height="112"
 			class="cart-preview-empty-image"
 		>
-		<h4 class="cart-preview-empty-title">{{ title }}</h4>
-		<p class="cart-preview-empty-description">{{ description }}</p>
+		<h4 class="cart-preview-empty-title">{{ t('cart.cartPreview.emptyTitle') }}</h4>
+		<p class="cart-preview-empty-description">{{ t('cart.cartPreview.emptyDescription') }}</p>
 	</section>
 </template>
 

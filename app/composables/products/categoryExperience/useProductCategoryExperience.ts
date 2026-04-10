@@ -1,11 +1,11 @@
-import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, provide, ref, watch, type InjectionKey, type Ref } from 'vue';
+import type VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import {
 	productCatalog,
 } from '~/data/products/catalog';
 import { homeProductTypes } from '~/data/products/homeTypes';
 import {
-	PRODUCT_SELECTION_NAV_DELAY_MS,
 	quantity_options,
 	size_feature_cards,
 	size_options,
@@ -21,26 +21,33 @@ import {
 	writeStoredCartStateToStorage,
 	type StoredCartState,
 } from '~/helpers/cart/cartState.helper';
-import { useSelectionStore } from '~/stores/product';
+import { useAttributesStore, useSelectionStore, useUploadStore } from '~/stores/product';
 import {
 	formatProductFileSize,
-	generateProductCartItemId,
 	getFeaturedProducts,
 	getProductIdFromSlug,
 	getProductSlugByCategory,
 	mergePlainProductCartItems,
 	normalizeProductCartState,
-	readProductArtworkAsDataUrl,
 } from '~/helpers/products/productCategory.helper';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import type { Products } from '~/types/navigation/navgiation';
+import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
 
-export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, apiProducts?: Ref<Products | undefined>) {
+let pending_picker_route_animation = false;
+
+export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, api_products?: Ref<Products | undefined>) {
 	const { t } = useI18n();
 	const route = useRoute();
 	const router = useRouter();
 	const { withCountry, country } = useCountry();
 	const selectionStore = useSelectionStore();
+	const attributeStore = useAttributesStore();
+	const uploadStore = useUploadStore();
+
+	// Slicing Core: Quote Handler handles the complex product configuration
+	const quoteHandler = useQuoteSectionHandler();
+
 	const size_key_by_attribute_id = {
 		1: 'small30',
 		2: 'medium75',
@@ -50,7 +57,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 	const category_data = computed<ProductCategory>(() => {
 		const catalog_category = productCatalog[category.value];
-		const response_products = apiProducts?.value?.products ?? [];
+		const response_products = api_products?.value?.products ?? [];
 
 		if (!response_products.length) {
 			return catalog_category;
@@ -69,18 +76,71 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			products: dedupeProductsById(mapped_products),
 		};
 	});
+
 	const selected_id = ref<string | null>(null);
 	const selected_size = ref<(typeof size_options)[number]>(size_options[0]);
 	const selected_qty = ref<number>(quantity_options[0]);
 	const has_picked_product = ref(false);
-	const upload_modal_open = ref(false);
-	const add_to_cart_loading = ref(false);
-	const cart_preview_open = ref(false);
+	const picker_slid_up = ref(false);
+	const picker_slide_transition_enabled = ref(false);
+
+	const upload_modal_open = computed({
+		get: () => uploadStore.is_modal_open,
+		set: (val) => uploadStore.is_modal_open = val
+	});
+	const add_to_cart_loading = computed({
+		get: () => uploadStore.is_uploading,
+		set: (val) => uploadStore.is_uploading = val
+	});
+	const cart_preview_open = computed({
+		get: () => uploadStore.is_preview_open,
+		set: (val) => uploadStore.is_preview_open = val
+	});
+
 	const featured_open = ref(true);
-	const special_instructions = ref('');
-	const artwork_file = ref<File | null>(null);
-	const artwork_preview_url = ref('');
-	const artwork_input_ref = ref<HTMLInputElement | null>(null);
+
+	const special_instructions = computed({
+		get: () => uploadStore.instruction,
+		set: (val) => uploadStore.instruction = val
+	});
+
+	const artwork_file = computed({
+		get: () => uploadStore.artwork_file,
+		set: (val) => uploadStore.artwork_file = val
+	});
+
+	const artwork_preview_url = computed({
+		get: () => uploadStore.artwork_preview,
+		set: (val) => uploadStore.artwork_preview = val
+	});
+
+	const vinyl_designer_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null);
+	const is_mounted = ref(false);
+	const vinyl_preview_ready = ref(false);
+	let picker_slide_frame_id: number | null = null;
+
+	function cancelPendingPickerSlide() {
+		if (typeof window === 'undefined') return;
+		if (picker_slide_frame_id === null) return;
+		window.cancelAnimationFrame(picker_slide_frame_id);
+		picker_slide_frame_id = null;
+	}
+
+	function scheduleAnimatedPickerSlideUp() {
+		if (typeof window === 'undefined') {
+			picker_slid_up.value = true;
+			return;
+		}
+
+		cancelPendingPickerSlide();
+		picker_slid_up.value = false;
+		picker_slide_frame_id = window.requestAnimationFrame(() => {
+			picker_slide_frame_id = window.requestAnimationFrame(() => {
+				picker_slid_up.value = true;
+				picker_slide_frame_id = null;
+			});
+		});
+	}
 
 	function resolveCartSizeLabel(entry: Pick<StoredCartState, 'sizeKey' | 'customSizeLabel'>) {
 		if (entry.customSizeLabel) return entry.customSizeLabel;
@@ -103,27 +163,69 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		);
 	});
 
-	const unit_price = computed(() => {
-		const base =
-			category.value === 'stickers'
-				? 2.4
-				: category.value === 'roll-stickers'
-					? 1.7
-					: 1.9;
-		return Math.max(0.18, base - selected_qty.value / 5000);
+	// Use pricing from the selection store which is updated by quote handler
+	// QuantitySpec doesn't have unitPrice/discount directly, we derive them or fallback
+	const subtotal = computed(() => {
+		const total_price = selectionStore.quantity?.price ?? 0;
+		// If we don't have unit price from API, we can't easily show subtotal vs total discount
+		// But we can show it if we have the breakdown logic here
+		return total_price; // Fallback for now if breakdown is missing
 	});
 
-	const subtotal = computed(() => unit_price.value * selected_qty.value);
-	const discount_rate = computed(() =>
-		selected_qty.value >= 1000 ? 0.2 : selected_qty.value >= 300 ? 0.12 : 0.06
-	);
-	const total = computed(() => subtotal.value * (1 - discount_rate.value));
+	const total = computed(() => selectionStore.quantity?.price ?? 0);
+	const discount_rate = ref(0); // This could be passed from quote handler if available
+
+	const pricing_ready = computed(() => Boolean(selectionStore.quantity?.price));
+
 	const has_uploaded_artwork = computed(
 		() => Boolean(artwork_file.value || artwork_preview_url.value)
 	);
-	const selected_size_label = computed(() =>
-		t(`product.sizes.${selected_size.value}.label`)
-	);
+
+	const is_loading_features = computed(() => {
+		const has_data = (quoteHandler.featured_sizes.value?.length || 0) > 0;
+		const normalize = (slug: string | undefined) => slug?.replace(/-sticker$/, '') || '';
+
+		const target_slug = normalize(quoteHandler.url_slug.value);
+		const loaded_slug = normalize(quoteHandler.product.value?.url_slug);
+
+		// 1. Initial load (no data at all)
+		if (!has_data) {
+			// Even if we don't have active data, check if it's in the cache.
+			// If it's in the cache, the service will restore it instantly,
+			// so we shouldn't show a skeleton.
+			if (target_slug && attributeStore.attribute_cache[target_slug]) return false;
+			return true;
+		}
+
+		// 2. Navigation between different products (stale data prevention)
+		if (target_slug !== loaded_slug) {
+			// Even if in cache, we stay in 'loading' if a navigation flight is active
+			// This prevents the 'pop' before the new component is fully ready
+			if (selection_navigation_in_flight.value) return true;
+
+			if (target_slug && attributeStore.attribute_cache[target_slug]) return false;
+			return true;
+		}
+
+		// 3. Otherwise, use existing data
+		return false;
+	});
+	const active_size_code = computed(() => {
+		const store_size = selectionStore.size;
+		if (!store_size) return null;
+
+		if (store_size.custom) return 'custom';
+
+		// If it has a code, use it
+		if (store_size.code) return store_size.code;
+
+		// Map from ID if needed
+		if (typeof store_size.id === 'number') {
+			return size_key_by_attribute_id[store_size.id as keyof typeof size_key_by_attribute_id] || null;
+		}
+
+		return null;
+	});
 	const cart_state = ref<StoredCartState[]>([]);
 	const cart_items = computed(() =>
 		cart_state.value
@@ -170,62 +272,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		return parts.length > 1 && extension ? extension.toLowerCase() : 'file';
 	});
 
-	function resolveUnitPriceForQty(qty: number) {
-		const base =
-			category.value === 'stickers'
-				? 2.4
-				: category.value === 'roll-stickers'
-					? 1.7
-					: 1.9;
-		return Math.max(0.18, base - qty / 5000);
-	}
-
-	function resolveDiscountRateForQty(qty: number) {
-		return qty >= 1000 ? 0.2 : qty >= 300 ? 0.12 : 0.06;
-	}
-
-	function resolveCartSizeSelection() {
-		const live_size = selectionStore.size;
-		const width = live_size?.width ?? null;
-		const height = live_size?.height ?? null;
-		const has_dimensions =
-			typeof width === 'number'
-			&& width > 0
-			&& typeof height === 'number'
-			&& height > 0;
-
-		if (live_size?.custom) {
-			return {
-				sizeKey: 'custom',
-				customSizeLabel: has_dimensions ? `${width}x${height}mm` : '',
-			};
-		}
-
-		const mapped_size_key =
-			typeof live_size?.id === 'number'
-				? size_key_by_attribute_id[live_size.id as keyof typeof size_key_by_attribute_id]
-				: undefined;
-
-		if (mapped_size_key) {
-			return {
-				sizeKey: mapped_size_key,
-				customSizeLabel: '',
-			};
-		}
-
-		if (has_dimensions) {
-			return {
-				sizeKey: 'custom',
-				customSizeLabel: `${width}x${height}mm`,
-			};
-		}
-
-		return {
-			sizeKey: selected_size.value,
-			customSizeLabel: '',
-		};
-	}
-
 	let selection_navigation_timer: ReturnType<typeof setTimeout> | null = null;
 	let selection_scroll_locked = false;
 	let body_overflow_before_selection_lock = '';
@@ -236,11 +282,21 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 	watch(
 		() => category.value,
-		() => {
+		(new_cat, old_cat) => {
+			if (new_cat === old_cat) return;
+
+			// If the current route already has a product slug for the new category,
+			// skip the reset. The route params watch will handle setting the state.
+			// This prevents the "Reset -> Set" flicker during category navigation.
+			const route_product = route.params.product;
+			const slug = Array.isArray(route_product) ? route_product[0] : route_product;
+			if (slug && productSlugToId(slug)) return;
+
 			selected_id.value = null;
-			selected_size.value = size_options[0];
 			selected_qty.value = quantity_options[0];
+			selected_size.value = size_options[0];
 			has_picked_product.value = false;
+			quoteHandler.clearForm();
 		}
 	);
 
@@ -266,93 +322,45 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		}
 	);
 
-	function appendCurrentSelectionToCart(
-		artworkName = '',
-		artworkPreviewUrlValue = '',
-		replaceItemId: string | null = null
-	) {
-		if (!selected_product.value) {
-			applySelectionFromRoute();
-		}
-
-		if (!selected_product.value) return false;
-
-		const resolved_qty = selectionStore.quantity?.nr && selectionStore.quantity.nr > 0
-			? selectionStore.quantity.nr
-			: selected_qty.value;
-		const resolved_size = resolveCartSizeSelection();
-		const resolved_subtotal = resolveUnitPriceForQty(resolved_qty) * resolved_qty;
-		const resolved_total = resolved_subtotal * (1 - resolveDiscountRateForQty(resolved_qty));
-
-		const next_item: StoredCartState = {
-			id: generateProductCartItemId(selected_product.value.id),
-			category: category.value,
-			productId: selected_product.value.id,
-			sizeKey: resolved_size.sizeKey,
-			customSizeLabel: resolved_size.customSizeLabel,
-			qty: resolved_qty,
-			total: resolved_total,
-			artworkName,
-			artworkSizeLabel: cart_artwork_size.value,
-			specialInstructions: special_instructions.value,
-			artworkPreviewUrl: artworkPreviewUrlValue,
-		};
-
-		const base_state = replaceItemId
-			? cart_state.value.filter((item) => item.id !== replaceItemId)
-			: cart_state.value;
-		const next_state = mergePlainProductCartItems([next_item, ...base_state]);
-		cart_state.value = next_state;
-		writeStoredCartStateToStorage(next_state);
-		return true;
-	}
-
 	onMounted(() => {
 		if (typeof window === 'undefined') return;
+		is_mounted.value = true;
+
 		cart_state.value = mergePlainProductCartItems(
 			normalizeProductCartState(readStoredCartStateFromStorage())
 		);
+
+		if (pending_picker_route_animation) {
+			picker_slide_transition_enabled.value = true;
+			scheduleAnimatedPickerSlideUp();
+			pending_picker_route_animation = false;
+		}
 	});
 
-	function selectProduct(productId: string) {
-		selected_id.value = productId;
-		has_picked_product.value = true;
+	function selectProduct(product_id: string) {
+		const slug = product_id;
+		const normalize = (s: string) => s.replace(/-sticker$/, '');
+		const current_base = normalize(route.params.product as string || '');
+		const new_base = normalize(slug);
 
-		const product_slug = productId;
-		const target_path = withCountry(`/${category.value}/${product_slug}`);
-		if (route.path === target_path) {
+		if (current_base === new_base) {
 			selection_navigation_in_flight.value = false;
 			return;
 		}
 
-		const route_product = route.params.product;
-		const has_route_product = Array.isArray(route_product)
-			? route_product.length > 0
-			: Boolean(route_product);
-
-		if (selection_navigation_timer) {
-			clearTimeout(selection_navigation_timer);
-			selection_navigation_timer = null;
-		}
-
-		if (has_route_product) {
-			selection_navigation_in_flight.value = true;
-			void router.push(target_path).finally(() => {
-				selection_navigation_in_flight.value = false;
-			});
-			return;
-		}
-
-		setSelectionScrollLock(true);
+		pending_picker_route_animation = true;
+		picker_slide_transition_enabled.value = true;
 		selection_navigation_in_flight.value = true;
+
+		const target_path = withCountry(`/${category.value}/${slug}`);
+
+		router.push(target_path);
+
+		// Fallback safety to clear flight if navigation hangs
 		selection_navigation_timer = setTimeout(() => {
-			void router.push(target_path).finally(() => {
-				selection_navigation_in_flight.value = false;
-				setSelectionScrollLock(false);
-			});
-			selection_navigation_timer = null;
-		}, PRODUCT_SELECTION_NAV_DELAY_MS);
-	}
+			selection_navigation_in_flight.value = false;
+		}, 1000);
+	};
 
 	function setSelectionScrollLock(locked: boolean) {
 		if (typeof document === 'undefined') return;
@@ -389,10 +397,41 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 	function openUploadModal() {
 		if (!selected_product.value) return;
+		if (!quoteHandler.has_lettering_editor.value) {
+			selectionStore.clearLetteringState();
+		}
 		if (selection_navigation_in_flight.value) {
 			preserve_upload_modal_on_next_route_sync = true;
 		}
 		upload_modal_open.value = true;
+	}
+
+	async function proceedToNextStep() {
+		if (selection_navigation_in_flight.value || add_to_cart_loading.value) return;
+
+		if (quoteHandler.has_lettering_editor.value) {
+			add_to_cart_loading.value = true;
+			try {
+				const editor = vinyl_designer_ref.value;
+				if (!editor) return;
+
+				const blob = await editor.generateImage();
+				if (!blob) return;
+
+				const file = new File([blob], 'lettering.png', { type: 'image/png' });
+				quoteHandler.letteringFileUpdate(file);
+
+				const dispatched = await quoteHandler.dispatchItem();
+				if (!dispatched) return;
+
+				openCartPreview();
+				return;
+			} finally {
+				add_to_cart_loading.value = false;
+			}
+		}
+
+		openUploadModal();
 	}
 
 	function closeUploadModal() {
@@ -401,30 +440,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function closeCartPreview() {
-		cart_preview_open.value = false;
-	}
-
-	function openFilePicker() {
-		artwork_input_ref.value?.click();
-	}
-
-	function removeArtwork() {
-		artwork_preview_url.value = '';
-		artwork_file.value = null;
-		if (artwork_input_ref.value) {
-			artwork_input_ref.value.value = '';
-		}
-	}
-
-	async function onArtworkSelected(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const file = target.files?.[0];
-		if (!file) return;
-
-		artwork_file.value = file;
-		artwork_preview_url.value = file.type.startsWith('image/')
-			? await readProductArtworkAsDataUrl(file)
-			: '';
+		uploadStore.closePreview();
 	}
 
 	async function proceedToCart() {
@@ -432,45 +448,38 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		add_to_cart_loading.value = true;
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 450));
-			const appended = appendCurrentSelectionToCart(
-				artwork_file.value?.name || '',
-				artwork_preview_url.value,
-				editing_cart_item_id.value
-			);
-			if (appended) {
-				editing_cart_item_id.value = null;
-				removeArtwork();
-				openCartPreview();
-			}
+			editing_cart_item_id.value = null;
+			uploadStore.clearArtwork();
+			openCartPreview();
 		} finally {
 			add_to_cart_loading.value = false;
 		}
 	}
 
-	function removeCartItem(itemId: string) {
-		const next_state = cart_state.value.filter((item) => item.id !== itemId);
+	function removeCartItem(item_id: string) {
+		const next_state = cart_state.value.filter((item) => item.id !== item_id);
 		cart_state.value = next_state;
 		writeStoredCartStateToStorage(next_state);
 	}
 
-	function updateCartItem(itemId: string, nextSizeKey: string, nextQty: number, customSizeLabel = '') {
-		const qty = Number(nextQty);
+	function updateCartItem(item_id: string, next_size_key: string, next_qty: number, custom_size_label = '') {
+		const qty = Number(next_qty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
 		const normalized_size_key = size_options.includes(
-			nextSizeKey as (typeof size_options)[number]
+			next_size_key as (typeof size_options)[number]
 		)
-			? nextSizeKey
+			? next_size_key
 			: 'custom';
 
 		const next_state = mergePlainProductCartItems(
 			cart_state.value.map((item) => {
-				if (item.id !== itemId) return item;
+				if (item.id !== item_id) return item;
 				const unit_price = item.qty > 0 ? item.total / item.qty : 0;
 				return {
 					...item,
 					sizeKey: normalized_size_key,
-					customSizeLabel: normalized_size_key === 'custom' ? customSizeLabel : '',
+					customSizeLabel: normalized_size_key === 'custom' ? custom_size_label : '',
 					qty,
 					total: unit_price * qty,
 				};
@@ -481,10 +490,10 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		writeStoredCartStateToStorage(next_state);
 	}
 
-	async function editCartItem(itemId: string) {
-		const entry = cart_state.value.find((item) => item.id === itemId);
+	async function editCartItem(item_id: string) {
+		const entry = cart_state.value.find((item) => item.id === item_id);
 		if (!entry) return;
-		editing_cart_item_id.value = itemId;
+		editing_cart_item_id.value = item_id;
 
 		if (size_options.includes(entry.sizeKey as (typeof size_options)[number])) {
 			selected_size.value = entry.sizeKey as (typeof size_options)[number];
@@ -505,7 +514,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			artwork_preview_url.value = entry.artworkPreviewUrl;
 			artwork_file.value = null;
 		} else {
-			removeArtwork();
+			uploadStore.clearArtwork();
 		}
 
 		upload_modal_open.value = true;
@@ -513,18 +522,15 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function openCartPreview() {
-		upload_modal_open.value = false;
+		uploadStore.closeModal();
 		featured_open.value = true;
-		cart_preview_open.value = true;
+		uploadStore.openPreview();
 	}
 
 	function skipAndUploadLater() {
-		const appended = appendCurrentSelectionToCart('', '', editing_cart_item_id.value);
-		if (appended) {
-			editing_cart_item_id.value = null;
-			removeArtwork();
-			openCartPreview();
-		}
+		editing_cart_item_id.value = null;
+		uploadStore.clearArtwork();
+		openCartPreview();
 	}
 
 	function closeFeaturedItems() {
@@ -536,7 +542,10 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function quantityPrice(qty: number) {
-		return unit_price.value * qty;
+		const total_price = selectionStore.quantity?.price ?? 0;
+		const current_qty = selectionStore.quantity?.nr ?? 1;
+		const unit = current_qty > 0 ? total_price / current_qty : 0;
+		return unit * qty;
 	}
 
 	function getProductName(product: ProductItem) {
@@ -547,8 +556,29 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		return t(`product.items.${product.id}.blurb`);
 	}
 
-	function sizeLabelParts(sizeKey: string) {
-		const label = t(`product.sizes.${sizeKey}.label`);
+	function selectSizeByCode(code: string) {
+		const store_sizes = attributeStore.sizes;
+		if (!store_sizes?.length) return;
+
+		// Find the matching SizeSpec
+		const matching = store_sizes.find((ssize) => {
+			// Try code match first
+			if (ssize.code === code) return true;
+
+			// Try ID mapping match
+			const mapped_code = typeof ssize.id === 'number'
+				? size_key_by_attribute_id[ssize.id as keyof typeof size_key_by_attribute_id]
+				: null;
+			return mapped_code === code;
+		});
+
+		if (matching) {
+			quoteHandler.inputUpdateSize(matching);
+		}
+	}
+
+	function sizeLabelParts(size_key: string) {
+		const label = t(`product.sizes.${size_key}.label`);
 		const [name = '', ...rest] = label.split(' ');
 		return {
 			name,
@@ -556,11 +586,11 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		};
 	}
 
-	function resolveCatalogProductByApiSlug(slug: string, catalogProducts: ProductItem[]) {
+	function resolveCatalogProductByApiSlug(slug: string, catalog_products: ProductItem[]) {
 		if (!slug) return null;
 
 		return (
-			catalogProducts.find((item) => item.id === slug)
+			catalog_products.find((item) => item.id === slug)
 		);
 	}
 
@@ -574,6 +604,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function productSlugToId(slug: string) {
+		if (!category.value) return null;
 		return getProductIdFromSlug(slug, category.value);
 	}
 
@@ -596,6 +627,38 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 		selected_id.value = resolved_id;
 		has_picked_product.value = true;
+		vinyl_preview_ready.value = false;
+
+		if (pending_picker_route_animation) {
+			picker_slide_transition_enabled.value = true;
+
+			if (!is_mounted.value) {
+				picker_slid_up.value = false;
+			}
+			else {
+				scheduleAnimatedPickerSlideUp();
+				pending_picker_route_animation = false;
+			}
+		}
+		else {
+			cancelPendingPickerSlide();
+			picker_slide_transition_enabled.value = false;
+			picker_slid_up.value = true;
+		}
+
+		// Ensure quote handler is in sync with route on load
+		quoteHandler.instatiateForm(slug);
+		if (!quoteHandler.has_lettering_editor.value) {
+			selectionStore.clearLetteringState();
+		}
+	}
+
+	function setVinylPreviewReady(ready: boolean) {
+		vinyl_preview_ready.value = ready;
+	}
+
+	function setVinylDesignerRef(instance: InstanceType<typeof VinylLetteringDesigner> | null) {
+		vinyl_designer_ref.value = instance;
 	}
 
 	onBeforeUnmount(() => {
@@ -603,13 +666,19 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			clearTimeout(selection_navigation_timer);
 			selection_navigation_timer = null;
 		}
+		cancelPendingPickerSlide();
+		picker_slide_transition_enabled.value = false;
 		selection_navigation_in_flight.value = false;
 		preserve_upload_modal_on_next_route_sync = false;
 		setSelectionScrollLock(false);
 		setOverlayBodyScrollLock(false);
 	});
 
-	return {
+	const context = {
+		// States from Quote Handler
+		...quoteHandler,
+
+		// Experience-specific states
 		size_feature_cards,
 		quantity_options,
 		category_data,
@@ -618,6 +687,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		selected_qty,
 		selection_navigation_in_flight,
 		has_picked_product,
+		picker_slid_up,
+		picker_slide_transition_enabled,
 		upload_modal_open,
 		add_to_cart_loading,
 		cart_preview_open,
@@ -625,7 +696,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		special_instructions,
 		artwork_file,
 		artwork_preview_url,
-		artwork_input_ref,
 		size_option_models,
 		selected_product,
 		cart_items,
@@ -633,20 +703,23 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		subtotal,
 		discount_rate,
 		total,
+		pricing_ready,
 		has_uploaded_artwork,
-		selected_size_label,
+		is_loading_features,
+		active_size_code,
 		featured_items,
 		cart_item_count,
 		cart_artwork_name,
 		cart_artwork_size,
 		cart_artwork_extension,
+		vinyl_preview_ready,
+
+		// Actions
 		selectProduct,
 		openUploadModal,
+		proceedToNextStep,
 		closeUploadModal,
 		closeCartPreview,
-		openFilePicker,
-		removeArtwork,
-		onArtworkSelected,
 		proceedToCart,
 		editCartItem,
 		removeCartItem,
@@ -659,5 +732,30 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		quantityPrice,
 		getProductName,
 		getProductBlurb,
+		selectSizeByCode,
+		setVinylPreviewReady,
+		setVinylDesignerRef,
+		letteringWidthUpdate: quoteHandler.letteringWidthInput,
+		letteringHeightUpdate: quoteHandler.letteringHeightInput,
+		custom_size: quoteHandler.custom_size,
+		custom_quantity: quoteHandler.custom_quantity,
 	};
+
+	return context;
+}
+
+export const ProductExperienceKey: InjectionKey<ReturnType<typeof useProductCategoryExperience>> = Symbol('ProductExperience');
+
+export function provideProductExperience(category: Ref<ProductCategoryKey>, apiProducts?: Ref<Products | undefined>) {
+	const experience = useProductCategoryExperience(category, apiProducts);
+	provide(ProductExperienceKey, experience);
+	return experience;
+}
+
+export function useProductExperience() {
+	const context = inject(ProductExperienceKey);
+	if (!context) {
+		throw new Error('useProductExperience must be used within provideProductExperience');
+	}
+	return context;
 }

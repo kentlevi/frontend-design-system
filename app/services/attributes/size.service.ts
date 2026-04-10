@@ -28,7 +28,7 @@ export const useSizeService = () => {
 	}
 
 
-	// ðŸ“Œ [Size] on-change
+	// [Size] on-change
 	function changeSize(selected_size: SizeSpec) {
 		size.value = selected_size
 
@@ -47,6 +47,12 @@ export const useSizeService = () => {
 		selection_store.updateSize(custom_size.value)
 	}
 
+	const resetCustomSize = () => {
+		custom_size.value.width = null
+		custom_size.value.height = null
+		custom_size.value.label = null
+	}
+
 	return {
 		featured_sizes,
 		size,
@@ -54,5 +60,6 @@ export const useSizeService = () => {
 		defaultSize,
 		changeSize,
 		changeCustomSize,
+		resetCustomSize,
 	}
 }

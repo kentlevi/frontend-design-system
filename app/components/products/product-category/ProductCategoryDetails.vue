@@ -2,6 +2,8 @@
 import type { ProductCategoryKey } from '~/types/products/catalog';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
+import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
+
 type StoryMedia = {
 	type: 'image' | 'video';
 	src: string;
@@ -32,13 +34,15 @@ const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
 	},
 ];
 
-const props = defineProps<{
-	category: ProductCategoryKey;
-	selectedProductId?: string | null;
-}>();
-
+const route = useRoute();
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
+
+const {
+	selected_id,
+} = useProductExperience();
+
+const category = computed(() => route.params.category as ProductCategoryKey);
 
 function resolveStoryMedia(media: StoryMedia): StoryMedia {
 	return {
@@ -130,31 +134,58 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 			},
 		},
 	],
+	'vinyl-lettering': [
+		{
+			title: t('product.story.navigation.vinylLettering.row1.title'),
+			text: t('product.story.navigation.vinylLettering.row1.text'),
+			media: {
+				type: 'image',
+				src: 'products/stickers/features/01-premium-quality.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.vinylLettering.row2.title'),
+			text: t('product.story.navigation.vinylLettering.row2.text'),
+			reverse: true,
+			media: {
+				type: 'image',
+				src: 'products/stickers/features/02-long-lasting-color.png',
+			},
+		},
+		{
+			title: t('product.story.navigation.vinylLettering.row3.title'),
+			text: t('product.story.navigation.vinylLettering.row3.text'),
+			media: {
+				type: 'image',
+				src: 'products/stickers/features/03-built-to-last.png',
+			},
+		},
+	],
 };
 
 function getDefaultProductStoryMedia(index: 0 | 1 | 2): StoryMedia {
 	return resolveStoryMedia(DEFAULT_PRODUCT_STORY_MEDIA[index]);
 }
 
-function selectedProductName() {
-	if (!props.selectedProductId) return '';
-	return t(`product.items.${props.selectedProductId}.name`);
+function getSelectedProductName() {
+	if (!selected_id.value) return '';
+	return t(`product.items.${selected_id.value}.name`);
 }
 
-function selectedProductBlurb() {
-	if (!props.selectedProductId) return '';
-	return t(`product.items.${props.selectedProductId}.blurb`);
+function getSelectedProductBlurb() {
+	if (!selected_id.value) return '';
+	return t(`product.items.${selected_id.value}.blurb`);
 }
 
 const story_rows = computed<StoryRow[]>(() => {
-	const navigation_rows = (navigation_story_rows_by_category[props.category] || []).map((row) => ({
+	const navigation_rows = (navigation_story_rows_by_category[category.value] || []).map((row) => ({
 		...row,
 		media: resolveStoryMedia(row.media),
 	}));
-	if (!props.selectedProductId) return navigation_rows;
+	if (!selected_id.value) return navigation_rows;
 
-	const name = selectedProductName();
-	const blurb = selectedProductBlurb();
+	const name = getSelectedProductName();
+	const blurb = getSelectedProductBlurb();
 	return [
 		{
 			title: t('product.story.productMode.row1.title', { name }),

@@ -1,7 +1,7 @@
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useCartPreview } from '~/composables/cart/preview/useCartPreview';
+import { useUploadService } from '~/services/product/upload.service';
 
 export function useAppHeaderCartPreview(params: {
 	closeAccountMenu: () => void;
@@ -10,13 +10,11 @@ export function useAppHeaderCartPreview(params: {
 }) {
 	const route = useRoute();
 	const { withCountry } = useCountry();
+	const upload_service = useUploadService();
 
-	const cart_preview_open = ref(false);
-
-	const { itemCount: cart_item_count } = useCartPreview({
-		closePreview: () => {
-			cart_preview_open.value = false;
-		}
+	const cart_preview_open = computed({
+		get: () => upload_service.is_preview_open.value,
+		set: (val) => upload_service.is_preview_open.value = val
 	});
 
 	const is_cart_page = computed(
@@ -34,17 +32,16 @@ export function useAppHeaderCartPreview(params: {
 		params.closeAccountMenu();
 		params.closeLocaleModal();
 		params.closeSearchModal();
-		cart_preview_open.value = true;
+		upload_service.openPreview();
 	}
 
 	function closeCartPreview() {
-		cart_preview_open.value = false;
+		upload_service.closePreview();
 	}
 
 	return {
 		cart_preview_open,
-		cart_item_count,
-		openCartPreview: openCartPreview,
-		closeCartPreview: closeCartPreview,
+		openCartPreview,
+		closeCartPreview,
 	};
 }

@@ -41,6 +41,8 @@ function confirmAction() {
 <template>
 	<UiModal
 		:model-value="props.modelValue"
+		@update:model-value="emit('cancel')"
+		@close="emit('cancel')"
 		align="center"
 		:width="props.width"
 		padding="0"

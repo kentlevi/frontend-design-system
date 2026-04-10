@@ -1,31 +1,29 @@
 <script setup lang="ts">
+import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import type { ProductItem } from '~/types/products/catalog';
 
-defineProps<{
-	hasItems: boolean;
-	featuredItems: readonly ProductItem[];
-	getProductName: (product: ProductItem) => string;
-	featuredStartPrice: (product: ProductItem) => string;
-	title: string;
-	closeLabel: string;
-	startsAtLabel: string;
-	customizeLabel: string;
-}>();
+const {
+	featured_items,
+	number_of_items,
+	formatPrice,
+	customizeFeaturedProduct,
+	close,
+	t
+} = useCartPreviewHandler('cart-preview-featured');
 
-defineEmits<{
-	(e: 'close-featured'): void;
-	(e: 'customize', productId: string): void;
-}>();
+const getProductName = (product: ProductItem) => product.name;
 </script>
 
 <template>
 	<section
 		class="cart-featured"
-		:class="{ 'cart-featured--with-item': hasItems }"
+		:class="{ 'cart-featured--with-item': number_of_items > 0 }"
 		data-testid="product-category-cart-featured"
 	>
 		<div class="cart-featured-head" data-testid="product-category-cart-featured-head">
-			<h4 class="cart-preview-section-title" data-testid="product-category-cart-featured-title">{{ title }}</h4>
+			<h4 class="cart-preview-section-title" data-testid="product-category-cart-featured-title">
+				{{ t('cart.cartPreview.featuredItems') }}
+			</h4>
 			<UiButton
 				type="button"
 				variant="ghost"
@@ -34,15 +32,15 @@ defineEmits<{
 				icon-only
 				icon="strong-times"
 				icon-size="md"
-				:sr-label="closeLabel"
+				:sr-label="t('cart.cartPreview.closeFeaturedItems')"
 				class="cart-featured-close"
 				data-testid="product-category-cart-featured-close-button"
-				@click="$emit('close-featured')"
+				@click="featured_items = []"
 			/>
 		</div>
 		<div class="cart-featured-grid" data-testid="product-category-cart-featured-list">
 			<article
-				v-for="item in featuredItems"
+				v-for="item in featured_items"
 				:key="item.id"
 				class="cart-featured-card"
 				:data-testid="`product-category-cart-featured-item-${item.id}`"
@@ -53,17 +51,17 @@ defineEmits<{
 				<div class="cart-featured-content">
 					<h5 class="cart-featured-item-title">{{ getProductName(item) }}</h5>
 					<p class="cart-featured-price">
-						<span class="cart-preview-label">{{ startsAtLabel }}</span>
-						<strong class="cart-preview-value">{{ featuredStartPrice(item) }}</strong>
+						<span class="cart-preview-label">{{ t('cart.cartPreview.startsAt') }}</span>
+						<strong class="cart-preview-value">{{ formatPrice(5.00) }}</strong>
 					</p>
 					<UiButton
 						type="button"
 						variant="subtle"
 						tone="neutral"
 						class="cart-featured-customize-btn"
-						@click="$emit('customize', item.id)"
+						@click="customizeFeaturedProduct(item.id, close)"
 					>
-						{{ customizeLabel }}
+						{{ t('cart.cartPreview.customize') }}
 					</UiButton>
 				</div>
 			</article>

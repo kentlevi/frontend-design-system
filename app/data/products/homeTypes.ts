@@ -1,42 +1,20 @@
+import { featuredProducts } from './featured';
 import type { HomeProductType } from '~/types/products/homeTypes';
 
-export const homeProductTypes: HomeProductType[] = [
-	{
-		key: 'dieCut',
-		productId: 'die-cut-sticker',
-		image: '/illustrations/products/stickers/die-cut.svg',
-		to: '/stickers/die-cut',
-	},
-	{
-		key: 'dieCutRoll',
-		productId: 'die-cut-roll',
-		image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
-		to: '/roll-stickers/die-cut-roll',
-	},
-	{
-		key: 'sheet',
-		productId: 'sticker-sheet',
-		image: '/illustrations/products/stickers/sheet.svg',
-		to: '/stickers/sticker-sheet',
-	},
-	{
-		key: 'hologram',
-		productId: 'hologram-sticker',
-		image: '/illustrations/products/stickers/hologram.svg',
-		to: '/stickers/hologram',
-	},
-	{
-		key: 'vinyl',
-		productId: 'vinyl-lettering',
-		image: '/illustrations/products/stickers/vinyl-lettering.svg',
-		to: '/stickers/vinyl-lettering',
-	},
-];
+// We map featured products to the HomeProductType required by the landing page.
+// Note: We exclude 'Clear Sticker' from the home page icons if necessary,
+// but for now we follow the user's request to keep them synced.
+export const homeProductTypes: HomeProductType[] = featuredProducts.map((item) => ({
+	key: item.key,
+	productId: item.id,
+	image: item.image,
+	to: `/${item.category}/${item.id}`,
+}));
 
 export const homeProductTypePathById = homeProductTypes.reduce<Record<string, string>>(
 	(map, item) => {
 		map[item.productId] = item.to;
 		return map;
 	},
-	{}
+	{},
 );

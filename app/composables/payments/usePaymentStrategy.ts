@@ -2,20 +2,17 @@ import { useTossPayment } from "~/composables/payments/toss-pay/useTossPayment"
 import type {
 	PaymentCode,
 	PaymentAction,
-	AvailablePaymentMethods,
-	AvailablePaymentMethodsResponse,
 	PaymentHandlerMap,
 	PaymentPayloadByAction
 } from "~/types/payments/payment"
-import { fetchAvailablePaymentMethods } from "~/services/payments/methods.service"
 import type { CheckoutResponseData } from "~/types/checkout"
 
 export const usePaymentStrategy = () => {
 	const toss = useTossPayment()
-	const available_payment_methods = useState<AvailablePaymentMethods[]>('available_payment_methods',()=>[])
 
 	const handlers: Record<PaymentCode, PaymentHandlerMap> = {
-		TOSS: {
+		/**Toss Pay */
+		TP: {
 			process: (payload?: CheckoutResponseData) => {
 				const url = payload?.payment_information?.redirect_url || null
 				toss.openPaymentPopup(url)
@@ -24,21 +21,23 @@ export const usePaymentStrategy = () => {
 				toss.closePaymentPopup()
 			}
 		},
-
-		BANK_TRANSFER: {
+		/**Bank Transfer */
+		BT: {
 			process: (payload?: CheckoutResponseData) => {
 				console.log("BANK_TRANSFER success not implemented", payload)
 			},
 			error: (error?: Error) => {
+				alert("BANK TRANSFER PAYMENT NOT IMPLEMENTED YET")
 				console.warn("BANK_TRANSFER error not implemented", error)
 			}
 		},
-
-		CREDIT_CARD: {
+		/**Credit Card */
+		CC: {
 			process: (payload?: CheckoutResponseData) => {
 				console.log("CREDIT_CARD success not implemented", payload)
 			},
 			error: (error?: Error) => {
+				alert("CREDIT CARD PAYMENT NOT IMPLEMENTED YET")
 				console.warn("CREDIT_CARD error not implemented", error)
 			}
 		}
@@ -58,18 +57,8 @@ export const usePaymentStrategy = () => {
 		return handler(payload)
 	}
 
-	const getAvailablePaymentMethods = async () => {
-		try {
-			const response: AvailablePaymentMethodsResponse = await fetchAvailablePaymentMethods();
-			available_payment_methods.value = response?.data ?? [];
-		} catch (error) {
-			console.error(error)
-		}
-	}
 
 	return {
-		available_payment_methods,
 		execute,
-		getAvailablePaymentMethods
 	}
 }

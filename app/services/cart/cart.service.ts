@@ -1,5 +1,8 @@
 import { useCartStore } from "~/stores/cart";
+import { storeToRefs } from "pinia";
+import { productCatalog } from "~/data/products/catalog";
 import type { CartItem, CartItemAPI, CartItemCreationSpec, ExpectedCartItemData, ResponseNumberSpec, SavedDraftResponse } from "~/types/cart/cart";
+import type { ProductCategory, ProductItem } from "~/types/products/catalog";
 import type { FeaturedDataResponse } from "~/types/products/attributes";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
@@ -75,6 +78,52 @@ export const useCartService = (caller: string = 'unknown') => {
 		}
 	}
 
+	const createDemoCartItems = (): CartItem[] => {
+		type DemoCartSpec = {
+			product_id: string
+			width: number
+			height: number
+			quantity: number
+			cost: number
+		}
+
+		const demo_specs = [
+			{ product_id: 'die-cut-sticker', width: 76, height: 76, quantity: 100, cost: 24.99 },
+			{ product_id: 'circle-sticker', width: 51, height: 51, quantity: 50, cost: 12.49 },
+		] satisfies DemoCartSpec[];
+
+		return demo_specs.map((spec: DemoCartSpec, index: number) => {
+			const category = Object.values(productCatalog).find((entry: ProductCategory) =>
+				entry.products.some((product: ProductItem) => product.id === spec.product_id)
+			);
+			const product = category?.products.find((entry: ProductItem) => entry.id === spec.product_id);
+
+			return {
+				id: null,
+				user_id: null,
+				product_config_mapping_id: index + 1,
+				url_slug: spec.product_id,
+				product: product?.name || spec.product_id,
+				product_thumbnail: product?.image || '',
+				color: null,
+				color_id: null,
+				font: null,
+				font_id: null,
+				width: spec.width,
+				height: spec.height,
+				quantity: spec.quantity,
+				cost: spec.cost,
+				lettering_text: null,
+				artwork_file: null,
+				artwork_file_name: null,
+				instruction: '',
+				local_identity: `demo-cart-${index + 1}`,
+				artwork_preview: null,
+				file_path: null,
+			};
+		});
+	}
+
 	const calculateCartItems = async () => {
 		if( cart_store.is_authenticated ) {
 			const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
@@ -85,7 +134,7 @@ export const useCartService = (caller: string = 'unknown') => {
 
 			syncNumber(data.total_count, data.total_cost)
 		} else {
-			const tot_cost = cart_store.items.reduce((acc, item) => {
+			const tot_cost = cart_store.items.reduce((acc: number, item: CartItem) => {
 				return acc + item.cost
 			}, 0)
 			syncNumber(cart_store.items.length, tot_cost)
@@ -93,23 +142,34 @@ export const useCartService = (caller: string = 'unknown') => {
 	}
 
 	const getCartItems = async (first_load : boolean = false) => {
-		// calculate the numbers of cart items everytime request new data from database
-		calculateCartItems()
+		cart_store.loading = true;
+		try {
+			// calculate the numbers of cart items everytime request new data from database
+			calculateCartItems()
 
-		if( !cart_store.is_authenticated )
-			return
+			if( !cart_store.is_authenticated ) {
+				if (first_load && cart_store.items.length === 0 && !cart_store.has_initialized_demo) {
+					populateItems(createDemoCartItems())
+					updateTotalsFromState()
+				}
+				cart_store.has_initialized_demo = true
+				return
+			}
 
-		const cart_items = await requestCartItems(page.value, per_page.value)
-		if( !cart_items )
-			return
+			const cart_items = await requestCartItems(page.value, per_page.value)
+			if( !cart_items )
+				return
 
-		if( cart_items.length )
-			populateItems(cart_items)
-		else if( first_load && !cart_items.length && cart_store.number_of_items == 0 )
-			empty()
+			if( cart_items.length )
+				populateItems(cart_items)
+			else if( first_load && !cart_items.length && cart_store.number_of_items == 0 )
+				empty()
+		} finally {
+			cart_store.loading = false;
+		}
 	}
 
-	// 📌 Requesting cart items from database
+	// Requesting cart items from database
 	const requestCartItems = async (page?: number, per_page?: number): Promise<ExpectedCartItemData []> => {
 		const { success, message, data } = await $api.get<ExpectedCartItemData []>('cart', { params: { page, per_page }})
 
@@ -125,33 +185,61 @@ export const useCartService = (caller: string = 'unknown') => {
 	}
 
 
-	// 📌 Deleting specific cart in both local storage and database
-	const requestDeletion = async (item_id: number | null, local_identity?: string | null) => {
-		console.warn(`Deleting item ${item_id ?? local_identity}`)
+	// Deleting specific cart in both local storage and database
+	const requestDeletion = async (id: string | number | null) => {
+		if (!id) return;
 
-		removeStateItem(item_id, local_identity ?? null)
+		const is_numeric = typeof id === 'number' || (!isNaN(Number(id)) && !String(id).startsWith('mu-'));
 
-		const {success, message} = await $api.post(`cart/${item_id}/delete`)
+		if (is_numeric) {
+			const num_id = Number(id);
+			removeStateItem(num_id, null);
+			const { success, message } = await $api.post(`cart/${num_id}/delete`);
+			if (!success) console.warn(message);
+		} else {
+			removeStateItem(null, String(id));
+		}
+	}
 
-		if( !success )
-			console.warn(message)
+	const requestBulkDeletion = async (ids: string[]) => {
+		if (!ids.length) return;
 
-		return
+		// Partition IDs into server IDs and local identities
+		const server_ids: number[] = [];
+		const local_ids: string[] = [];
+
+		ids.forEach(id => {
+			if (!id.startsWith('mu-') && !isNaN(Number(id))) {
+				server_ids.push(Number(id));
+			} else {
+				local_ids.push(id);
+			}
+		});
+
+		// 1. Remove from Local State immediately
+		cart_store.removeByIds(ids);
+
+		// 2. Request deletion for server items
+		// If the API supports bulk delete, use it. For now, we'll loop or just call for each.
+		for (const s_id of server_ids) {
+			const { success, message } = await $api.post(`cart/${s_id}/delete`);
+			if (!success) console.warn(message);
+		}
 	}
 
 	const removeStateItem = (item_id: number | null, local_identity?: string | null) => {
-		// ✅ Removing item with the given item index
+		// Removing item with the given item index
 		if( item_id )
-			cart_store.items = cart_store.items.filter(item => item.id != item_id)
-		// ✅ Removing the one matching the ID
+			cart_store.items = cart_store.items.filter((item: CartItem) => item.id != item_id)
+		// Removing the one matching the ID
 		else if( local_identity )
-			cart_store.items = cart_store.items.filter(item => item.local_identity != local_identity)
+			cart_store.items = cart_store.items.filter((item: CartItem) => item.local_identity != local_identity)
 
 		reduceNumber()
 	}
 
 	const saveDraft = async () => {
-		const drafted = cart_store.unsave_draft.map( e => {
+		const drafted = cart_store.unsave_draft.map((e: CartItem) => {
 			return {
 				product_config_mapping_id: e.product_config_mapping_id,
 				color_id: e.color_id,
@@ -177,8 +265,12 @@ export const useCartService = (caller: string = 'unknown') => {
 		return data;
 	}
 
-	const setForDeleteItem = (cart_item_id: number | null) => {
-		cart_store.deletion_id = cart_item_id ?? 0
+	const setForDeleteItem = (id: string | number | null) => {
+		cart_store.setForDeleteItem(id)
+	}
+
+	const setForDeleteItems = (ids: string[]) => {
+		cart_store.setForDeleteItems(ids)
 	}
 
 	const syncNumber = (total_count: number, total_cost: number) => {
@@ -191,31 +283,40 @@ export const useCartService = (caller: string = 'unknown') => {
 		cart_store.items.unshift(item)
 		cart_store.grand_total += Number(item.cost)
 		addNumber()
+
+		// Default check the new item
+		const itemId = item.id ? String(item.id) : (item.local_identity || 'unknown');
+		if (!cart_store.selected_ids.includes(itemId)) {
+			cart_store.selected_ids.push(itemId);
+		}
 	}
 
 	/**
 	 * This will populate and arrange the items inside the  items state
 	 */
 	const populateItems = (cart_items: Partial<CartItem>[]) => {
-		const local_drafts = cart_store.items.filter(item => item.id === null)
+		const local_drafts = cart_store.items.filter((item: CartItem) => item.id === null)
 
 		/**
 		 * Prevent duplication:
 		 * - If a draft was just saved, its local_identity will now be in the server data.
 		 */
-		const incoming_identities = new Set(cart_items.map(i => i.local_identity))
+		const incoming_identities = new Set(cart_items.map((i: Partial<CartItem>) => i.local_identity))
 
 		const unique_drafts = local_drafts.filter(
-			draft => !incoming_identities.has(draft.local_identity)
+			(draft: CartItem) => !incoming_identities.has(draft.local_identity)
 		)
 		cart_store.unsave_draft = unique_drafts;
 
 		cart_store.items = [...unique_drafts, ...cart_items] as CartItem[]
+
+		// Default check select all after population
+		cart_store.selected_ids = cart_store.rows.map((row) => row.id);
 	}
 
 
 	const updateUploadedItem = (local_identity: string, new_id: number) => {
-		const index = cart_store.items.findIndex(i => i.local_identity === local_identity)
+		const index = cart_store.items.findIndex((i: CartItem) => i.local_identity === local_identity)
 
 		if( index !== -1 && cart_store.items[index] ) {
 			cart_store.items[index].id = new_id
@@ -238,6 +339,11 @@ export const useCartService = (caller: string = 'unknown') => {
 		cart_store.number_of_items--
 	}
 
+	const updateTotalsFromState = () => {
+		cart_store.number_of_items = cart_store.items.length
+		cart_store.grand_total = cart_store.items.reduce((sum: number, item: CartItem) => sum + Number(item.cost), 0)
+	}
+
 	const generateLocalIdentity = (): string => {
 		let identifier: string = ''
 		let is_duplicate = true
@@ -249,7 +355,7 @@ export const useCartService = (caller: string = 'unknown') => {
 			identifier = `mu-${timestamp}-${randomPart}`
 
 			// Check if this ID already exists in your current items array
-			is_duplicate = cart_store.items.some(item => item.local_identity === identifier)
+			is_duplicate = cart_store.items.some((item: CartItem) => item.local_identity === identifier)
 		}
 
 		return identifier
@@ -263,13 +369,49 @@ export const useCartService = (caller: string = 'unknown') => {
 		cart_store.featured_data = featured_data
 	}
 
+	const openEditSizeModal = (itemId: string) => {
+		cart_store.openEditModal(itemId, 'size')
+	}
+
+	const openEditFullModal = (itemId: string) => {
+		cart_store.openEditModal(itemId, 'full')
+	}
+
+	const closeEditModals = () => {
+		cart_store.closeEditModal()
+	}
+
 	const clearSelection = () => {
 		cart_store.selected_item = null
 		cart_store.featured_data = null
 	}
 
+	const cart_refs = storeToRefs(cart_store)
+
 	return {
-		...storeToRefs(cart_store),
+		...cart_refs,
+		// Explicitly return state properties to bridge TS inference gaps
+		items: cart_refs.items,
+		loading: cart_refs.loading,
+		number_of_items: cart_refs.number_of_items,
+		grand_total: cart_refs.grand_total,
+		rows: cart_refs.rows,
+		all_selected: cart_refs.all_selected,
+		selected_total: cart_refs.selected_total,
+		selected_item: cart_refs.selected_item,
+		deletion_id: cart_refs.deletion_id,
+		deletion_ids: cart_refs.deletion_ids,
+		selected_ids: cart_refs.selected_ids,
+		featured_data: cart_refs.featured_data,
+		unsave_draft: cart_refs.unsave_draft,
+		payment_options: cart_refs.payment_options,
+		empty_featured_products: cart_refs.empty_featured_products,
+		empty_discover_products: cart_refs.empty_discover_products,
+		edit_modal_open: cart_refs.edit_modal_open,
+		edit_mode: cart_refs.edit_mode,
+		editing_item_id: cart_refs.editing_item_id,
+		editing_item: cart_refs.editing_item,
+
 		caller,
 		page,
 		per_page,
@@ -281,9 +423,11 @@ export const useCartService = (caller: string = 'unknown') => {
 		getCartItems,
 		requestCartItems,
 		requestDeletion,
+		requestBulkDeletion,
 		removeStateItem,
 		saveDraft,
 		setForDeleteItem,
+		setForDeleteItems,
 		syncNumber,
 		saveItemLocally,
 		populateItems,
@@ -291,10 +435,19 @@ export const useCartService = (caller: string = 'unknown') => {
 		empty,
 		addNumber,
 		reduceNumber,
+		updateTotalsFromState,
 		generateLocalIdentity,
 		selectItem,
 		setFeaturedData,
+		openEditSizeModal,
+		openEditFullModal,
+		closeEditModals,
 		clearSelection,
+		removeByIds: cart_store.removeByIds,
+		updateItemQty: cart_store.updateItemQty,
+		updateItemSize: cart_store.updateItemSize,
+		updateItemArtworkDetails: cart_store.updateItemArtworkDetails,
+		toggleSelection: cart_store.toggleSelection,
 	}
 
 }

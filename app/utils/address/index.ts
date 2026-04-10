@@ -1,5 +1,34 @@
 import { useAddressStore } from "~/stores/address"
-import type { AddressItem, AddressType } from "~/types/address"
+import type { AddressFormMap, AddressItem, AddressLineForm, AddressType } from "~/types/address"
+
+/** Check whether the form supports address lines */
+export function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
+	return form.type !== 'drop'
+}
+
+/** Check whether the form supports phone number */
+export function hasPhoneNumber(form: AddressFormMap[AddressType]): form is AddressFormMap['shipping'] {
+	return form.type === 'shipping'
+}
+
+/** Blocks non-digit keyboard input for phone fields */
+export function onPhoneBeforeInput(event: InputEvent) {
+	// allow delete/backspace/etc (event.data can be null)
+	if (!event.data) return
+
+	if (/\D/.test(event.data)) {
+		event.preventDefault()
+	}
+}
+
+/** Blocks non-digit paste input for phone fields */
+export function onPhonePaste(event: ClipboardEvent) {
+	const pasted = event.clipboardData?.getData('text') ?? ''
+
+	if (/\D/.test(pasted)) {
+		event.preventDefault()
+	}
+}
 
 export function useAddressHelper() {
 	const address_store = useAddressStore()
