@@ -76,18 +76,28 @@ export const useCartService = (caller: string = 'unknown') => {
 	}
 
 	const calculateCartItems = async () => {
-		const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
-		if( !success || !data ) {
-			console.warn(message)
-			return
-		}
+		if( cart_store.is_authenticated ) {
+			const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
+			if( !success || !data ) {
+				console.warn(message)
+				return
+			}
 
-		syncNumber(data.total_count, data.total_cost)
+			syncNumber(data.total_count, data.total_cost)
+		} else {
+			const tot_cost = cart_store.items.reduce((acc, item) => {
+				return acc + item.cost
+			}, 0)
+			syncNumber(cart_store.items.length, tot_cost)
+		}
 	}
 
 	const getCartItems = async (first_load : boolean = false) => {
 		// calculate the numbers of cart items everytime request new data from database
 		calculateCartItems()
+
+		if( !cart_store.is_authenticated )
+			return
 
 		const cart_items = await requestCartItems(page.value, per_page.value)
 		if( !cart_items )

@@ -2,11 +2,12 @@
 import type { icons } from '~/data/ui/icons';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
-import type { AddressDynamicFields, AddressFormField, AddressFormMap, AddressLabel, AddressLineForm, AddressType } from '~/types/address';
+import { useAddressFormModalHelpers } from '~/composables/account/addressBook/useAddressFormModalHelpers';
+import type { AddressLabel, AddressType } from '~/types/address';
 
 type IconName = keyof typeof icons;
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const address_book_feature_context = useAddressBookFeatureContext();
 
 const is_form_modal_open = address_book_feature_context.is_form_modal_open;
@@ -23,168 +24,36 @@ const updateFormDynamicField = address_book_feature_context.updateDynamicField;
 const submitAddressForm = address_book_feature_context.submitAddressForm;
 const closeFormModal = address_book_feature_context.closeFormModal;
 
-/** Check whether the form supports address lines */
-function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
-	return form.type !== 'drop'
-}
-
-/** Check whether the form supports phone number */
-function hasPhoneNumber(form: AddressFormMap[AddressType]): form is AddressFormMap['shipping'] {
-	return form.type === 'shipping'
-}
-
-/** Generic helper to build a string model */
-function createStringFieldModel(
-	field: AddressFormField,
-	get_value: () => string
-) {
-	return computed({
-		/** Read current value from active form */
-		get: get_value,
-
-		/** Push changed value to shared form state */
-		set: (value: string) => {
-			updateActiveFormField({
-				field,
-				value,
-			})
-		},
-	})
-}
-
-function createBooleanFieldModel(
-	field: Extract<AddressFormField, 'is_default'>,
-	get_value: () => boolean
-) {
-	return computed({
-		get: get_value,
-
-		set: (value: boolean) => {
-			updateActiveFormField({
-				field,
-				value,
-			})
-		},
-	})
-}
-
-/** Shared fields */
-const contact_name_model = createStringFieldModel(
-	'contact_name',
-	() => active_form.value.contact_name
-)
-
-const company_model = createStringFieldModel(
-	'company',
-	() => active_form.value.company ?? ''
-)
-
-const is_default_model = createBooleanFieldModel(
-	'is_default',
-	() => active_form.value.is_default ?? false
-)
-
-/** Address line fields */
-const address_line_1_model = createStringFieldModel(
-	'address_line_1',
-	() => hasAddressLines(active_form.value)
-		? active_form.value.address_line_1
-		: ''
-)
-
-const address_line_2_model = createStringFieldModel(
-	'address_line_2',
-	() => hasAddressLines(active_form.value)
-		? active_form.value.address_line_2 ?? ''
-		: ''
-)
-
-const postcode_model = createStringFieldModel(
-	'postcode',
-	() => hasAddressLines(active_form.value)
-		? active_form.value.postcode
-		: ''
-)
-
-/** Shipping-only field */
-const phone_number_model = createStringFieldModel(
-	'phone_number',
-	() => hasPhoneNumber(active_form.value)
-		? active_form.value.phone_number
-		: ''
-)
-
-function onPhoneBeforeInput(event: InputEvent) {
-	// allow delete/backspace/etc (event.data can be null)
-	if (!event.data) return
-
-	if (/\D/.test(event.data)) {
-		event.preventDefault()
-	}
-}
-
-function onPhonePaste(event: ClipboardEvent) {
-	const pasted = event.clipboardData?.getData('text') ?? ''
-
-	if (/\D/.test(pasted)) {
-		event.preventDefault()
-	}
-}
+const {
+	hasAddressLines,
+	hasPhoneNumber,
+	contact_name_model,
+	company_model,
+	is_default_model,
+	address_line_1_model,
+	address_line_2_model,
+	postcode_model,
+	phone_number_model,
+	onPhoneBeforeInput,
+	onPhonePaste,
+	updateDynamicField,
+	getDynamicFieldValue,
+	onDynamicSelectChange,
+	getFieldError,
+	getDynamicFieldPlaceholder,
+} = useAddressFormModalHelpers({
+	active_form,
+	dynamic_fields,
+	form_field_errors,
+	updateActiveFormField,
+	updateFormDynamicField,
+	translate,
+})
 
 const default_address_tooltip_open = ref(false)
 const default_address_tooltip_ref = ref<HTMLElement | null>(null)
 
 useDismissibleTooltip(default_address_tooltip_ref, default_address_tooltip_open)
-
-/** Send one dynamic field change to shared form state */
-function updateDynamicField(field_key: string, value: string | number) {
-	updateFormDynamicField({
-		field_key,
-		value,
-	})
-}
-
-function getDynamicFieldValue(field_key: string) {
-	if (!hasAddressLines(active_form.value)) return ''
-
-	const value = active_form.value.fields?.[field_key]
-	const field = dynamic_fields.value?.find(f => f.field_key === field_key)
-
-	// If it's a select field, return the option label
-	if (field?.options?.length) {
-		return field.options.find(opt => opt.id === value)?.value ?? ''
-	}
-
-	return value ?? ''
-}
-
-function onDynamicSelectChange(field_key: string, selected_value: string | number) {
-	// If options carry `id` and `value`, map selected label/value back to option id
-	const option = dynamic_fields.value
-		.find(f => f.field_key === field_key)
-		?.options?.find(opt => opt.value === selected_value)
-
-	const id = option?.id ?? selected_value
-	updateDynamicField(field_key, id)
-}
-
-function getFieldError(field_key: string) {
-	return form_field_errors.value[field_key] ?? ''
-}
-
-function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
-	const normalized_label = field.field_label.toLowerCase()
-
-	if (normalized_label.includes('province') || normalized_label.includes('metropolitan')) {
-		return t('account.addressBook.provincePlaceholder')
-	}
-
-	if (normalized_label.includes('city') || normalized_label.includes('town')) {
-		return t('account.addressBook.cityPlaceholder')
-	}
-
-	return field.field_label
-}
 
 const address_type_options: Array<{
 	value: AddressType;
@@ -208,13 +77,13 @@ const address_label_options: Array<{
 
 const modal_title = computed(() => {
 	return form_modal_mode.value === 'edit'
-		? t('account.addressBook.editTitle')
-		: t('account.addressBook.addNew')
+		? translate('account.addressBook.editTitle')
+		: translate('account.addressBook.addNew')
 })
 
 const save_label = computed(() => {
 	const label_key = form_submit_label.value || (form_modal_mode.value === 'edit' ? 'update' : 'save')
-	return t(`account.addressBook.${label_key}`)
+	return translate(`account.addressBook.${label_key}`)
 })
 
 const edit_address_type_note = "Address type can't be changed to maintain data integrity and ensure smooth order processing."
@@ -259,42 +128,6 @@ const default_address_tooltip_content = computed(() => {
 	}
 })
 
-const prioritized_dynamic_field_keys: Record<AddressType, string[]> = {
-	shipping: ['city', 'town', 'city_town', 'province', 'state', 'metropolitan_city'],
-	billing: ['city', 'town', 'city_town', 'province', 'state', 'metropolitan_city'],
-	drop: ['city', 'town', 'city_town', 'province', 'state', 'metropolitan_city'],
-}
-
-const ordered_dynamic_fields = computed(() => {
-	const prioritized_keys = prioritized_dynamic_field_keys[form_type.value] ?? []
-
-	const get_priority_index = (field: AddressDynamicFields) => {
-		const normalized_label = field.field_label.toLowerCase()
-		const fallback_key = normalized_label.includes('city')
-			? 'city'
-			: normalized_label.includes('province') || normalized_label.includes('metropolitan')
-				? 'province'
-				: field.field_key
-
-		const direct_index = prioritized_keys.indexOf(field.field_key)
-		if (direct_index !== -1) return direct_index
-
-		const fallback_index = prioritized_keys.indexOf(fallback_key)
-		return fallback_index === -1 ? Number.MAX_SAFE_INTEGER : fallback_index
-	}
-
-	return [...dynamic_fields.value].sort((left, right) => {
-		const normalized_left_index = get_priority_index(left)
-		const normalized_right_index = get_priority_index(right)
-
-		if (normalized_left_index !== normalized_right_index) {
-			return normalized_left_index - normalized_right_index
-		}
-
-		return 0
-	})
-})
-
 function closeModal() {
 	closeFormModal()
 }
@@ -336,7 +169,7 @@ function toggleDefaultAddressTooltip() {
 					<div class="account-address-book-add-modal-section">
 						<div class="account-address-book-add-modal-group">
 							<h4 class="account-address-book-add-modal-label">
-								{{ t('account.addressBook.addressType') }}
+								{{ translate('account.addressBook.addressType') }}
 							</h4>
 
 							<div class="account-address-book-add-modal-segment">
@@ -353,7 +186,7 @@ function toggleDefaultAddressTooltip() {
 									@click="setFormType(option.value)"
 								>
 									<UiIcon :name="option.icon" :size="24" />
-									<span>{{ t(`account.addressBook.${option.label_key}`) }}</span>
+									<span>{{ translate(`account.addressBook.${option.label_key}`) }}</span>
 								</UiButton>
 							</div>
 
@@ -367,7 +200,7 @@ function toggleDefaultAddressTooltip() {
 					<div class="account-address-book-add-modal-section">
 						<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
 							<UiFormField
-								:label="t('account.addressBook.fullName')"
+								:label="translate('account.addressBook.fullName')"
 								:required="true"
 								:show-required-mark="true"
 								:error="getFieldError('contact_name')"
@@ -377,13 +210,13 @@ function toggleDefaultAddressTooltip() {
 										:id="inputId"
 										v-model="contact_name_model"
 										:aria-describedby="describedBy || undefined"
-										:placeholder="t('account.addressBook.fullNamePlaceholder')"
+										:placeholder="translate('account.addressBook.fullNamePlaceholder')"
 										:state="getFieldError('contact_name') ? 'error' : 'default'"
 									/>
 								</template>
 							</UiFormField>
 
-							<UiFormField :label="t('account.addressBook.companyOptional')">
+							<UiFormField :label="translate('account.addressBook.companyOptional')">
 								<template #label>
 									<span class="account-address-book-add-modal-company-label">
 										<span class="account-address-book-add-modal-company-label-text">
@@ -400,7 +233,7 @@ function toggleDefaultAddressTooltip() {
 										:id="inputId"
 										v-model="company_model"
 										:aria-describedby="describedBy || undefined"
-										:placeholder="t('account.addressBook.companyPlaceholder')"
+										:placeholder="translate('account.addressBook.companyPlaceholder')"
 									/>
 								</template>
 							</UiFormField>
@@ -412,7 +245,7 @@ function toggleDefaultAddressTooltip() {
 					<div class="account-address-book-add-modal-section">
 						<div class="account-address-book-add-modal-group">
 							<h4 class="account-address-book-add-modal-label">
-								{{ t('account.addressBook.addressLabel') }}
+								{{ translate('account.addressBook.addressLabel') }}
 							</h4>
 
 							<div class="account-address-book-add-modal-segment">
@@ -428,14 +261,14 @@ function toggleDefaultAddressTooltip() {
 									@click="updateActiveFormField({ field: 'label', value: option.value })"
 								>
 									<UiIcon :name="option.icon" :size="24" />
-									<span>{{ t(`account.addressBook.tags.${option.label_key}`) }}</span>
+									<span>{{ translate(`account.addressBook.tags.${option.label_key}`) }}</span>
 								</UiButton>
 							</div>
 						</div>
 
 						<template v-if="hasAddressLines(active_form)">
 							<UiFormField
-								:label="t('account.addressBook.streetAddress')"
+								:label="translate('account.addressBook.streetAddress')"
 								:required="true"
 								:show-required-mark="true"
 								:error="getFieldError('address_line_1')"
@@ -446,12 +279,12 @@ function toggleDefaultAddressTooltip() {
 											:id="inputId"
 											v-model="address_line_1_model"
 											:aria-describedby="describedBy || undefined"
-											:placeholder="t('account.addressBook.addressLine1Placeholder')"
+											:placeholder="translate('account.addressBook.addressLine1Placeholder')"
 											:state="getFieldError('address_line_1') ? 'error' : 'default'"
 										/>
 										<UiInput
 											v-model="address_line_2_model"
-											:placeholder="t('account.addressBook.addressLine2Placeholder')"
+											:placeholder="translate('account.addressBook.addressLine2Placeholder')"
 										/>
 									</div>
 								</template>
@@ -459,7 +292,7 @@ function toggleDefaultAddressTooltip() {
 
 							<div class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two">
 								<UiFormField
-									v-for="(dynamic_field, index) in ordered_dynamic_fields"
+									v-for="(dynamic_field, index) in dynamic_fields"
 									:key="index"
 									:label="dynamic_field.field_label"
 									:required="dynamic_field.is_required"
@@ -493,7 +326,7 @@ function toggleDefaultAddressTooltip() {
 								class="account-address-book-add-modal-grid account-address-book-add-modal-grid--two"
 							>
 								<UiFormField
-									:label="t('account.addressBook.postalCode')"
+									:label="translate('account.addressBook.postalCode')"
 									:required="true"
 									:show-required-mark="true"
 									:error="getFieldError('postcode')"
@@ -503,7 +336,7 @@ function toggleDefaultAddressTooltip() {
 											:id="inputId"
 											v-model="postcode_model"
 											:aria-describedby="describedBy || undefined"
-											:placeholder="t('account.addressBook.postalCodePlaceholder')"
+											:placeholder="translate('account.addressBook.postalCodePlaceholder')"
 											:state="getFieldError('postcode') ? 'error' : 'default'"
 										/>
 									</template>
@@ -511,7 +344,7 @@ function toggleDefaultAddressTooltip() {
 
 								<UiFormField
 									v-if="hasPhoneNumber(active_form)"
-									:label="t('account.addressBook.phoneNumber')"
+									:label="translate('account.addressBook.phoneNumber')"
 									:required="true"
 									:show-required-mark="true"
 									:error="getFieldError('phone_number')"
@@ -522,7 +355,7 @@ function toggleDefaultAddressTooltip() {
 											v-model="phone_number_model"
 											type="text"
 											:aria-describedby="describedBy || undefined"
-											:placeholder="t('account.addressBook.phonePlaceholder')"
+											:placeholder="translate('account.addressBook.phonePlaceholder')"
 											:state="getFieldError('phone_number') ? 'error' : 'default'"
 											@beforeinput="onPhoneBeforeInput"
 											@paste="onPhonePaste"
@@ -592,7 +425,7 @@ function toggleDefaultAddressTooltip() {
 						class="account-address-book-add-modal-cancel"
 						@click="closeModal"
 					>
-						{{ t('account.addressBook.cancel') }}
+						{{ translate('account.addressBook.cancel') }}
 					</UiButton>
 
 					<UiButton

@@ -1,17 +1,20 @@
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { homeProductTypes } from '~/data/products/homeTypes';
 import { productCatalog } from '~/data/products/catalog';
 import { quantity_options, size_options } from '~/data/products/categoryExperience';
 import { cartPaymentOptions } from '~/data/cart/page';
 import { getProductSlugByCategory } from '~/helpers/products/productCategory.helper';
-import {
-	type StoredCartState,
-	type LocalizedCatalogProduct,
+import type {
+	StoredCartState,
+	LocalizedCatalogProduct,
 } from '~/helpers/cart/cartState.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { sizeDimOnly } from '~/utils/cart';
+import type { CartItem } from '~/types/cart/cart';
 import type { ProductCategoryKey } from '~/types/products/catalog';
+
+import { useCartStore } from '~/stores/cart/cart.store';
 
 export type CartRow = {
 	id: string;
@@ -39,40 +42,11 @@ export function useCartPage() {
 	const { t } = useI18n();
 	const { withCountry, country } = useCountry();
 	const router = useRouter();
+	const cart_store = useCartStore();
 
-	const cart_state = ref<CartRow[]>([
-		{
-			id: '1',
-			category: 'stickers',
-			product: { id: 'die-cut-sticker', name: 'Die Cut Sticker', icon: 'strong-star', image: '/illustrations/products/stickers/die-cut.svg', blurb: 'Precision-cut shape.' },
-			sizeKey: '3x3',
-			sizeLabel: '3x3"',
-			customSizeLabel: '',
-			qty: 50,
-			total: 62.50,
-			artworkName: 'my-cool-design.png',
-			artworkSizeLabel: '1.2 MB',
-			specialInstructions: 'Please make the border 2mm thick.',
-			artworkPreviewUrl: '/illustrations/products/stickers/die-cut.svg',
-		},
-		{
-			id: '2',
-			category: 'stickers',
-			product: { id: 'circle-sticker', name: 'Circle Sticker', icon: 'strong-stars', image: '/illustrations/products/stickers/circle.svg', blurb: 'Perfectly round.' },
-			sizeKey: '2x2',
-			sizeLabel: '2x2"',
-			customSizeLabel: '',
-			qty: 100,
-			total: 85.00,
-			artworkName: 'logo.svg',
-			artworkSizeLabel: '800 KB',
-			specialInstructions: '',
-			artworkPreviewUrl: '/illustrations/products/stickers/circle.svg',
-		}
-	]);
-	const selected_ids = ref<string[]>(['1', '2']);
+	const rows = computed<CartRow[]>(() => cart_store.items as unknown as CartRow[]);
 
-	const rows = computed<CartRow[]>(() => cart_state.value);
+	const selected_ids = ref<string[]>([]);
 
 	const all_selected = computed({
 		get: () => rows.value.length > 0 && selected_ids.value.length === rows.value.length,
@@ -84,8 +58,10 @@ export function useCartPage() {
 	const selected_rows = computed(() =>
 		rows.value.filter((row) => selected_ids.value.includes(row.id))
 	);
+
 	const featured_product_ids = homeProductTypes.map((item) => item.productId);
 	const featured_product_id_set = new Set(featured_product_ids);
+
 	const featured_empty_items = computed<CartEmptyProduct[]>(() =>
 		homeProductTypes
 			.map((item) => {
@@ -105,6 +81,7 @@ export function useCartPage() {
 			})
 			.filter((item): item is CartEmptyProduct => Boolean(item))
 	);
+
 	const discover_empty_items = computed<CartEmptyProduct[]>(() =>
 		(Object.entries(productCatalog) as Array<[ProductCategoryKey, (typeof productCatalog)[ProductCategoryKey]]>)
 			.flatMap(([categoryKey, category]) =>
@@ -128,6 +105,7 @@ export function useCartPage() {
 			value: qty,
 		}))
 	);
+
 	const size_option_models = computed(() =>
 		size_options.map((size) => {
 			const label = t(`product.sizes.${size}.label`);
@@ -155,21 +133,23 @@ export function useCartPage() {
 		const qty = Number(next_qty);
 		if (!Number.isFinite(qty) || qty <= 0) return;
 
-		cart_state.value = cart_state.value.map((item) => {
-			if (item.id !== item_id) return item;
-			const unit_price = item.qty > 0 ? item.total / item.qty : 0;
+		const index = cart_store.items.findIndex(item => String(item.id) === item_id);
+		if (index !== -1) {
+			const item = cart_store.items[index];
+			const cost = Number(item?.cost || 0);
+			const quantity = Number(item?.quantity || 1);
+			const unit_price = quantity > 0 ? cost / quantity : 0;
 
-			return {
-				...item,
-				qty,
-				total: unit_price * qty,
-			};
-		});
+			cart_store.items[index] = {
+				...cart_store.items[index],
+				quantity: qty,
+				cost: unit_price * qty
+			} as CartItem;
+		}
 	}
 
 	function removeByIds(ids: string[]) {
-		if (!ids.length) return;
-		cart_state.value = cart_state.value.filter((item) => !ids.includes(item.id));
+		cart_store.removeByIds(ids);
 		selected_ids.value = selected_ids.value.filter((id) => !ids.includes(id));
 	}
 
@@ -182,35 +162,25 @@ export function useCartPage() {
 			specialInstructions: string;
 		}
 	) {
-		cart_state.value = cart_state.value.map((item) => (
-			item.id !== item_id
-				? item
-				: {
-					...item,
-					artworkName: payload.artworkName,
-					artworkSizeLabel: payload.artworkSizeLabel,
-					artworkPreviewUrl: payload.artworkPreviewUrl,
-					specialInstructions: payload.specialInstructions,
-				}
-		));
+		const index = cart_store.items.findIndex(item => String(item.id) === item_id);
+		if (index !== -1) {
+			cart_store.items[index] = {
+				...cart_store.items[index],
+				artwork_file_name: payload.artworkName,
+				instruction: payload.specialInstructions,
+				artwork_preview: payload.artworkPreviewUrl
+			} as CartItem;
+		}
 	}
 
-	function updateSize(item_id: string, next_size_key: string, custom_size_label = '') {
-		const normalized_size_key = size_options.includes(
-			next_size_key as (typeof size_options)[number]
-		)
-			? next_size_key
-			: 'custom';
-
-		cart_state.value = cart_state.value.map((item) => {
-			if (item.id !== item_id) return item;
-
-			return {
-				...item,
-				sizeKey: normalized_size_key,
-				customSizeLabel: normalized_size_key === 'custom' ? custom_size_label : '',
-			};
-		});
+	function updateSize(item_id: string, next_size_key: string, _custom_size_label = '') {
+		const index = cart_store.items.findIndex(item => String(item.id) === item_id);
+		if (index !== -1) {
+			cart_store.items[index] = {
+				...cart_store.items[index],
+				width: next_size_key as unknown as number // Simplified for now
+			} as CartItem;
+		}
 	}
 
 	function goToCheckout() {
@@ -222,10 +192,6 @@ export function useCartPage() {
 	}
 
 	const continue_shopping_path = computed(() => withCountry('/'));
-
-	onMounted(() => {
-		// Mocked state already initialized, ignoring storage for now as requested
-	});
 
 	return {
 		rows,

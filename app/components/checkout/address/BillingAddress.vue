@@ -1,4 +1,21 @@
 <template>
+	<div class="checkout-member-inline-row">
+		<div ref="billing_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
+			<UiCheckbox v-model="use_shipping_as_billing">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
+			<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
+				<template #trigger>
+					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">
+						<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
+					</button>
+				</template>
+
+				<div class="ui-tooltip-copy">
+					<strong class="ui-tooltip-title">{{ t('checkout.member.billingTooltip.title') }}</strong>
+					<p class="ui-tooltip-text">{{ t('checkout.member.billingTooltip.text') }}</p>
+				</div>
+			</UiTooltip>
+		</div>
+	</div>
 	<div ref="billing_swap_wrapper_ref" class="checkout-member-billing-swap-wrap">
 		<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 			<div v-if="!use_shipping_as_billing" data-billing-panel="content" class="checkout-member-billing-panel">
@@ -96,8 +113,10 @@ import CheckoutAddressForm from '~/components/checkout/shared/CheckoutAddressFor
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
+import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
 
 const {
+	t,
 	is_member,
 	use_shipping_as_billing,
 	selected_billing_address,
@@ -110,8 +129,10 @@ const {
 	billing_city,
 	billing_postal_code,
 	province_options,
+	billing_tooltip_open,
 	getAddressTagClass,
 	is_billing_address_modal_open,
+	toggleBillingTooltip,
 } = useCheckoutExperienceFeatureContext();
 
 const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);

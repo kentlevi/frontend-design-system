@@ -1,4 +1,4 @@
-import { useCartService } from "~/services/cart/cart.service"
+import { useCartService } from "~/services/cart/cart.service";
 
 export const useEditItemHandler = () => {
 	const cart_service = useCartService()

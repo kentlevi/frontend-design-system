@@ -1,4 +1,4 @@
-import { computed, nextTick, onBeforeUnmount, ref, type Ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
 import lottie from 'lottie-web';
 import { CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
 import { homeProductTypePathById } from '~/data/products/homeTypes';
@@ -14,11 +14,9 @@ export function useCartPreview(params: {
 	closePreview: () => void;
 }) {
 	const router = useRouter();
-	const { t, locale } = useI18n();
+	const { t } = useI18n();
 	const { withCountry } = useCountry();
 	const toast_store = useToastStore();
-	const config = useRuntimeConfig();
-
 	// Internal State with Sample Data
 	const cart_items = ref<CartPreviewItem[]>([
 		{
