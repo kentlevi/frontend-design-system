@@ -107,7 +107,6 @@
 
 				<template v-else>
 					<AddressFormFields
-						type="drop"
 						:form="drop_form"
 						:errors="form_field_errors"
 						@update:field="updateDropField"
