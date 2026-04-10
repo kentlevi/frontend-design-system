@@ -6,7 +6,8 @@ export const useCheckoutAddressFlow = () =>{
 
 	const checkout_store = useMainCheckOutStore()
 	const {
-		ship_to_another_address
+		ship_to_another_address,
+		is_shipping_billing
 	} = storeToRefs(checkout_store)
 
 	const getShippingAddress = async () => {
@@ -19,6 +20,10 @@ export const useCheckoutAddressFlow = () =>{
 			const selected = default_address || addresses[0] || null
 
 			checkout_store.setShippingAddress(selected)
+
+			if(is_shipping_billing)
+				checkout_store.setBillingAddress(selected)
+
 			ship_to_another_address.value = !selected
 
 			return response;

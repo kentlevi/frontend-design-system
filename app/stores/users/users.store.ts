@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import type { PreferenceState } from '~/types/account/preferences'
 import type {
@@ -7,7 +7,8 @@ import type {
 	UserProfile,
 	UserFieldValue,
 	OnboardingProfile,
-	UserState
+	UserState,
+	RoleState
 } from '~/types/auth/user'
 
 /**
@@ -21,6 +22,10 @@ function createInitialUserState(): UserState {
 		country_id: 0,
 		social: null,
 		has_password: false,
+		role: {
+			code: '',
+			name: ''
+		} as RoleState,
 
 		onboardingProfile: null,
 		profile: null,
@@ -50,6 +55,13 @@ export const useUsersStore = defineStore('users', () => {
 	const auth_state_ready = ref<boolean>(false)
 
 	/* --------------------------------------------------------------------------
+     * Getters
+     * -------------------------------------------------------------------------- */
+
+	const is_authenticated = computed(() => !!state.value.id)
+	const role_code = computed(() => state.value.role?.code)
+
+	/* --------------------------------------------------------------------------
      * Actions
      * -------------------------------------------------------------------------- */
 
@@ -64,6 +76,7 @@ export const useUsersStore = defineStore('users', () => {
 		state.value.profile = user.profile
 		state.value.social = user.social
 		state.value.has_password = user.has_password
+		state.value.role = user.role
 	}
 
 	/**
@@ -77,6 +90,7 @@ export const useUsersStore = defineStore('users', () => {
 		if (user.profile !== undefined) state.value.profile = user.profile
 		if (user.social !== undefined) state.value.social = user.social
 		if (user.has_password !== undefined) state.value.has_password = user.has_password
+		if (user.role !== undefined) state.value.role = user.role
 	}
 
 	/**
@@ -147,6 +161,8 @@ export const useUsersStore = defineStore('users', () => {
 		state,
 		auth_state_loading,
 		auth_state_ready,
+		is_authenticated,
+		role_code,
 
 		setUser,
 		patchUser,
