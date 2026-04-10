@@ -1,5 +1,6 @@
 import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import type { ColorSpec, FontSpec, QuantitySpec, SizeSpec } from "~/types/products/attributes"
+
 export const useProductService = () => {
 	const { $api } = useNuxtApp()
 
@@ -38,6 +39,12 @@ export const useProductService = () => {
 
 	const updateFeaturedData = async (prod_slug: string) => {
 		selection_store.updateProductSlug(prod_slug)
+
+		// Check if we have this product's attributes in cache for instant navigation
+		const was_cached = attribute_store.restoreFromCache(prod_slug);
+		if (was_cached) {
+			console.log(`Restored ${prod_slug} from cache`);
+		}
 
 		const featured_data = await getFeaturedData(prod_slug)
 
@@ -84,7 +91,8 @@ export const useProductService = () => {
 		const f = featured_data.variants.fonts.map(font => ({
 			id: font.id,
 			label: font.name,
-			value: font.code,
+			value: font.name,
+			code: font.code,
 			style: font.style
 		})) as FontSpec[]
 

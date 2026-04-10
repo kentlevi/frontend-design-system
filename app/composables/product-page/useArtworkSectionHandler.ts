@@ -1,4 +1,5 @@
 import { useCartService } from "~/services/cart/cart.service"
+import { useUploadService } from "~/services/product/upload.service"
 import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import { useUsersStore } from "~/stores/users/users.store"
 import type { CartItem } from "~/types/cart/cart"
@@ -15,13 +16,26 @@ export const useArtworkSectionHandler = () => {
 
 	const user_store = useUsersStore()
 
+	const upload_service = useUploadService()
+
 	const auth_user = user_store.state
+
+	const current_product_slug = computed(() => attribute_store.product?.url_slug || '')
+	const has_lettering_editor = computed(() =>
+		attribute_store.active_lettering_editor.includes(current_product_slug.value)
+	)
 
 	const is_authenticated = computed(() => auth_user.id && auth_user.email )
 
-	const instruction = ref<string>('')
+	const instruction = computed({
+		get: () => upload_service.instruction.value,
+		set: (val) => upload_service.instruction.value = val
+	})
 
-	const artwork = ref<File | null>(selection_store.lettering_file ? selection_store.lettering_file : null )
+	const artwork = computed({
+		get: () => upload_service.artwork_file.value,
+		set: (val) => upload_service.artwork_file.value = val
+	})
 
 	const artwork_file_name = computed(() => artwork.value ? artwork.value?.name : '')
 
@@ -36,19 +50,29 @@ export const useArtworkSectionHandler = () => {
 		artwork.value ? formatProductFileSize(artwork?.value.size) : ''
 	)
 
-	const artwork_preview = ref<string>('')
+	const artwork_preview = computed({
+		get: () => upload_service.artwork_preview.value,
+		set: (val) => upload_service.artwork_preview.value = val
+	})
 
 	onMounted(async () => {
-		if( artwork && artwork.value ) {
-			artwork_preview.value = selection_store.lettering_file ? await convertFileBase64(selection_store.lettering_file) : ''
+		if( has_lettering_editor.value && !artwork.value && selection_store.lettering_file ) {
+			artwork.value = selection_store.lettering_file
+			artwork_preview.value = await convertFileBase64(selection_store.lettering_file)
 		}
 	})
 
 	const has_uploaded_file = computed(() => !!(artwork?.value && artwork_preview?.value) )
 
-	const uploading = ref<boolean>(false)
+	const uploading = computed({
+		get: () => upload_service.is_uploading.value,
+		set: (val) => upload_service.is_uploading.value = val
+	})
 
-	const is_dragging = ref<boolean>(false)
+	const is_dragging = computed({
+		get: () => upload_service.is_dragging.value,
+		set: (val) => upload_service.is_dragging.value = val
+	})
 
 	const setFile = (file: File) => {
 		artwork.value = file
@@ -113,7 +137,7 @@ export const useArtworkSectionHandler = () => {
 	}
 
 	const sendItemToServer = async (item : CartItem) => {
-		// 🔥 Sending the new item to API
+		// Send the new item to the API.
 		const result = await cart_service.sendToServer(item)
 
 		if( result && result.item && result.item.id && item.local_identity )
@@ -126,7 +150,7 @@ export const useArtworkSectionHandler = () => {
 	 * @param has_artwork boolean
 	 */
 	const dispatchItem = async (has_artwork : boolean = false) => {
-		// ⚠️ VALIDATION
+		// Validation
 		if( uploading.value ) {
 			console.warn('Uploading is no the process!')
 			return false
@@ -152,7 +176,7 @@ export const useArtworkSectionHandler = () => {
 			return false;
 		}
 
-		// ⚠️ END OF VALIDATION
+		// End of validation
 
 		const user = useUsersStore()
 
@@ -167,7 +191,7 @@ export const useArtworkSectionHandler = () => {
 
 		const uploaded_file = ref<string>('')
 
-		// 🔥 Adding cart with Artwork file
+		// Handle uploading the artwork file to S3 when needed.
 		if( has_artwork ) {
 
 			if(!artwork.value) {
@@ -175,7 +199,7 @@ export const useArtworkSectionHandler = () => {
 				return
 			}
 
-			// 🔥 Handles the sending of File to S3 and component behavior using the cart service
+			// Upload the artwork file to S3 when artwork is provided.
 			uploading.value = true
 			const { ok, message, filename } = await cart_service.sendToS3(artwork.value)
 			uploading.value = false
@@ -188,7 +212,7 @@ export const useArtworkSectionHandler = () => {
 			uploaded_file.value = filename.value
 		}
 
-		// 🔥 Used for storing data in both API and local storage
+		// Build the cart item payload for local state and API sync.
 		const item = {
 			id: null,
 			user_id: user_id.value,
@@ -234,6 +258,12 @@ export const useArtworkSectionHandler = () => {
 		uploading,
 		is_dragging,
 		has_uploaded_file,
+		is_modal_open: upload_service.is_modal_open,
+		openModal: upload_service.openModal,
+		closeModal: upload_service.closeModal,
+		is_preview_open: upload_service.is_preview_open,
+		openPreview: upload_service.openPreview,
+		closePreview: upload_service.closePreview,
 		dispatchItem,
 		handleDrop,
 		fileChange,

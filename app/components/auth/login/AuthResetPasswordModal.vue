@@ -139,11 +139,7 @@ async function submitChangePassword() {
 				:visible="is_loading"
 				:label="t('auth.reset.changing')"
 				test-id="auth-reset-password-loading-overlay"
-				position="absolute"
-				background="rgba(246, 246, 248, 0.72)"
-				:z-index="5"
-				loader-width="74px"
-				loader-height="74px"
+				variant="modal"
 			/>
 			<div class="auth-reset-content">
 				<div class="auth-reset-header">

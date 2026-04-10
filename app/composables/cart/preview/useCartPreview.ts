@@ -2,7 +2,10 @@ import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
 import lottie from 'lottie-web';
 import { CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
 import { homeProductTypePathById } from '~/data/products/homeTypes';
+import { featuredProducts } from '~/data/products/featured';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { useCartService } from '~/services/cart/cart.service';
+import { useToastService } from '~/services/ui/toast.service';
 import type { ProductItem } from '~/types/products/catalog';
 import { sizeDimOnly } from '~/utils/cart';
 import type {
@@ -16,28 +19,9 @@ export function useCartPreview(params: {
 	const router = useRouter();
 	const { t } = useI18n();
 	const { withCountry } = useCountry();
-	const toast_store = useToastStore();
-	// Internal State with Sample Data
-	const cart_items = ref<CartPreviewItem[]>([
-		{
-			id: '1',
-			product: { id: 'die-cut-sticker', name: 'Die Cut Sticker', icon: 'strong-star', image: '/illustrations/products/stickers/die-cut.svg', blurb: 'Precision-cut shape.' },
-			sizeKey: '3x3',
-			sizeLabel: '3x3"',
-			qty: 50,
-			total: 62.50,
-			artworkName: 'my-cool-design.png',
-		},
-		{
-			id: '2',
-			product: { id: 'circle-sticker', name: 'Circle Sticker', icon: 'strong-stars', image: '/illustrations/products/stickers/circle.svg', blurb: 'Perfectly round.' },
-			sizeKey: '2x2',
-			sizeLabel: '2x2"',
-			qty: 100,
-			total: 85.00,
-			artworkName: 'logo.svg',
-		}
-	]);
+	const toast_service = useToastService();
+	const cart_service = useCartService();
+	const cart_items = computed(() => cart_service.rows.value);
 
 	const size_option_models = ref<CartPreviewSizeOptionModel[]>([
 		{ key: '2x2', name: 'Small', dim: '2x2' },
@@ -47,13 +31,16 @@ export function useCartPreview(params: {
 
 	const quantity_options = ref<readonly number[]>([50, 100, 250, 500, 1000]);
 
-	const grand_total = computed(() => cart_items.value.reduce((acc, item) => acc + item.total, 0));
-	const item_count = computed(() => cart_items.value.length);
+	const grand_total = computed(() => cart_service.selected_total.value);
+	const item_count = computed(() => cart_service.rows.value.length);
 
-	const featured_items = ref<ProductItem[]>([
-		{ id: 'hologram-sticker', name: 'Hologram Sticker', icon: 'strong-star', image: '/illustrations/products/stickers/hologram.svg', blurb: 'Premium holographic finish.' },
-		{ id: 'clear-sticker', name: 'Clear Sticker', icon: 'strong-stars', image: '/illustrations/products/stickers/clear.svg', blurb: 'Transparent vinyl stickers.' }
-	]);
+	const featured_items = ref<ProductItem[]>(featuredProducts.map(p => ({
+		id: p.id,
+		name: p.name,
+		icon: p.icon,
+		image: p.image,
+		blurb: p.blurb,
+	})));
 
 	const editing_item_id = ref<string | null>(null);
 	const draft_size_key = ref('');
@@ -73,7 +60,7 @@ export function useCartPreview(params: {
 	);
 
 	function showCartItemUpdatedToast() {
-		toast_store.showToastWithTimer({
+		toast_service.showToast({
 			message: t('cart.cartPage.itemUpdated'),
 			tone: 'primary',
 			dismissible: true,
@@ -147,7 +134,7 @@ export function useCartPreview(params: {
 	}
 
 	function removeCartItem(item_id: string) {
-		cart_items.value = cart_items.value.filter(i => i.id !== item_id);
+		cart_service.removeByIds([item_id]);
 	}
 
 	function editedItemTotal(item: CartPreviewItem) {
@@ -155,7 +142,7 @@ export function useCartPreview(params: {
 	}
 
 	function editedGrandTotal() {
-		return grand_total.value;
+		return cart_service.selected_total.value;
 	}
 
 	function getInlineSizeOptions(item: CartPreviewItem) {
@@ -255,7 +242,7 @@ export function useCartPreview(params: {
 		if (typeof window !== 'undefined') {
 			window.localStorage.setItem(
 				CHECKOUT_SELECTION_STORAGE_KEY,
-				JSON.stringify(cart_items.value.map((item) => item.id))
+				JSON.stringify(cart_service.rows.value.map((item) => item.id))
 			);
 		}
 

@@ -12,6 +12,8 @@
             },
             "sizeLabel": "Size: {size}mm",
             "replaceArtwork": "Replace Artwork",
+            "changeArtwork": "Change Artwork",
+            "addArtwork": "Add Artwork",
             "editSize": "Edit Size",
             "removeItemSr": "Remove item",
             "itemUpdated": "Item updated successfully.",
@@ -20,6 +22,9 @@
             "savingChanges": "Saving changes...",
             "deleteItemTitle": "Delete this item from your cart?",
             "deleteItemDescription": "This action will remove the selected item from your cart. You can add it again anytime if needed.",
+            "deleteSelectedTitle": "Remove {count} items from your cart?",
+            "deleteSelectedDescription": "This action will remove {count} items from your cart. You can add them again anytime.",
+            "deleteSelectedConfirm": "Remove {count} items",
             "removeAllTitle": "Remove all items from your cart?",
             "removeAllDescription": "This action will clear your cart completely. You can add items again anytime.",
             "removeConfirm": "Remove",
@@ -34,8 +39,10 @@
             "orderSummary": "Order Summary",
             "total": "Total:",
             "proceedCheckout": "Proceed Checkout ({count})",
+            "proceedToCheckout": "Proceed to Checkout",
             "note": "Shipping fees and discounts are calculated at checkout.",
-            "availablePaymentOptions": "Available Payment Options:"
+            "availablePaymentOptions": "Available Payment Options:",
+            "securedPayments": "Secured Payments"
         }
     }
 }

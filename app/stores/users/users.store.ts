@@ -51,6 +51,8 @@ export const useUsersStore = defineStore('users', () => {
      * -------------------------------------------------------------------------- */
 
 	const state = ref<UserState>(createInitialUserState())
+	const auth_state_loading = ref<boolean>(false)
+	const auth_state_ready = ref<boolean>(false)
 
 	/* --------------------------------------------------------------------------
      * Getters
@@ -157,6 +159,8 @@ export const useUsersStore = defineStore('users', () => {
 
 	return {
 		state,
+		auth_state_loading,
+		auth_state_ready,
 		is_authenticated,
 		role_code,
 

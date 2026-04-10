@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { AccountOrder, AccountOrderLineItem } from '~/types/account/orders';
-import { useCountry } from '~/composables/app/country/useCountry';
+import { toRef } from 'vue';
+import type { AccountOrder } from '~/types/account/orders';
+import { useOrderDetailSection } from '~/composables/account/orders/useOrderDetailSection';
 import OrderUploadArtworkModal from './OrderUploadArtworkModal.vue';
 
 const props = defineProps<{
@@ -10,67 +10,18 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['toggle-detail']);
-const { t } = useI18n();
-const { withCountry } = useCountry();
-const active_upload_item = ref<AccountOrderLineItem | null>(null);
-const is_upload_modal_open = ref(false);
-const upload_toast_visible = ref(false);
-const upload_toast_message = ref('');
-let upload_toast_timeout: ReturnType<typeof setTimeout> | null = null;
 
-const action_icon_map = {
-	invoice: 'regular-file-dollar',
-	paymentProof: 'regular-dollar-sign',
-	message: 'regular-message',
-} as const;
-
-const summary_totals = computed(() => {
-	if (!props.order) return null;
-
-	return [
-		{ key: 'subtotal', value: props.order.totals.subtotalLabel },
-		{
-			key: 'shippingFee',
-			value: props.order.totals.shippingFeeLabel,
-			params: { method: t('account.orders.shippingMethod') },
-		},
-		{ key: 'discounts', value: props.order.totals.discountsLabel, className: 'is-discount' },
-		{ key: 'total', value: props.order.totals.totalLabel, className: 'is-total' },
-	];
-});
-
-function openUploadModal(item: AccountOrderLineItem) {
-	active_upload_item.value = item;
-	is_upload_modal_open.value = true;
-}
-
-function closeUploadModal() {
-	is_upload_modal_open.value = false;
-}
-
-function itemPagePath(item: AccountOrderLineItem) {
-	return withCountry(`/order-items/${props.order.id}/${item.number}`);
-}
-
-function hideUploadToast() {
-	upload_toast_visible.value = false;
-	if (upload_toast_timeout) {
-		clearTimeout(upload_toast_timeout);
-		upload_toast_timeout = null;
-	}
-}
-
-function handleUploadSubmit(payload: { itemNumber: string }) {
-	upload_toast_message.value = `Artwork for Item No. ${payload.itemNumber} uploaded successfully!`;
-	upload_toast_visible.value = true;
-	if (upload_toast_timeout) {
-		clearTimeout(upload_toast_timeout);
-	}
-	upload_toast_timeout = setTimeout(() => {
-		upload_toast_visible.value = false;
-		upload_toast_timeout = null;
-	}, 3000);
-}
+const {
+	t,
+	action_icon_map,
+	summary_totals,
+	item_page_path,
+	open_upload_modal,
+	upload_toast_visible,
+	upload_toast_message,
+	hide_upload_toast,
+	handle_upload_submit,
+} = useOrderDetailSection(toRef(props, 'order'));
 </script>
 
 <template>
@@ -153,7 +104,7 @@ function handleUploadSubmit(payload: { itemNumber: string }) {
 					>
 						<NuxtLink
 							class="account-orders-summary-thumb"
-							:to="itemPagePath(item)"
+							:to="item_page_path(item)"
 						>
 							<img :src="item.imageSrc" :alt="t('account.orders.itemNumber', { number: item.number })" class="account-orders-summary-image">
 						</NuxtLink>
@@ -193,7 +144,7 @@ function handleUploadSubmit(payload: { itemNumber: string }) {
 								height="40px"
 								:disabled="item.actionDisabled"
 								class="account-orders-summary-action"
-								@click.stop="openUploadModal(item)"
+								@click.stop="open_upload_modal(item)"
 							>
 								{{ t(`account.orders.${item.actionLabelKey}`) }}
 							</UiButton>
@@ -202,7 +153,7 @@ function handleUploadSubmit(payload: { itemNumber: string }) {
 					</article>
 				</div>
 
-				<div v-if="summary_totals" class="account-orders-totals">
+				<div class="account-orders-totals">
 					<div
 						v-for="line in summary_totals"
 						:key="line.key"
@@ -228,10 +179,7 @@ function handleUploadSubmit(payload: { itemNumber: string }) {
 		</footer>
 
 		<OrderUploadArtworkModal
-			:open="is_upload_modal_open"
-			:item="active_upload_item"
-			@close="closeUploadModal"
-			@submit="handleUploadSubmit"
+			@submit="handle_upload_submit"
 		/>
 
 		<UiToast
@@ -241,7 +189,7 @@ function handleUploadSubmit(payload: { itemNumber: string }) {
 			variant="outlined"
 			dismissible
 			class="account-orders-upload-toast"
-			@close="hideUploadToast"
+			@close="hide_upload_toast"
 		/>
 	</section>
 </template>

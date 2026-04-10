@@ -1,26 +1,23 @@
 <script setup lang="ts">
-defineProps<{
-	title: string;
-	continueShoppingLabel: string;
-}>();
+import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 
-defineEmits<{
-	(e: 'close'): void;
-}>();
+const { number_of_items, t, close } = useCartPreviewHandler('cart-preview-header');
 </script>
 
 <template>
 	<header class="cart-preview-header" data-testid="product-category-cart-header">
-		<h3 class="cart-preview-title" data-testid="product-category-cart-title">{{ title }}</h3>
+		<h3 class="cart-preview-title" data-testid="product-category-cart-title">
+			{{ t('cart.cartPreview.previewTitle', { count: number_of_items }) }}
+		</h3>
 		<UiButton
 			type="button"
 			variant="ghost"
 			tone="neutral"
 			class="cart-preview-continue"
 			data-testid="product-category-cart-continue-shopping-button"
-			@click="$emit('close')"
+			@click="close()"
 		>
-			{{ continueShoppingLabel }}
+			{{ t('cart.cartPreview.continueShopping') }}
 			<UiIcon name="strong-long-arrow-right" :size="18" color="#2a2f3d" />
 		</UiButton>
 	</header>

@@ -43,6 +43,20 @@
                         "title": "Organized and Ready to Peel",
                         "text": "Sticker sheets keep all your designs neatly arranged and easy to use. With premium printing and durable material, every sticker stays vibrant and ready for any surface."
                     }
+                },
+                "vinylLettering": {
+                    "row1": {
+                        "title": "Professional Character Branding",
+                        "text": "Get a high-end, painted-on look with precisely cut vinyl letters. Perfect for storefronts, vehicles, and office walls, these characters are individually cut with no background for a seamless professional finish."
+                    },
+                    "row2": {
+                        "title": "Rugged Outdoor Durability",
+                        "text": "Our premium vinyl is designed to withstand the elements. UV-resistant and waterproof, your lettering will stay sharp and vibrant through rain, sun, and snow for years to come."
+                    },
+                    "row3": {
+                        "title": "Perfectly Spaced Application",
+                        "text": "Applying complex lettering is easy with our professional transfer tape. It keeps every character perfectly aligned and spaced, ensuring a flawless installation every time."
+                    }
                 }
             },
             "productMode": {

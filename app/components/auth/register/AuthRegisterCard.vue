@@ -185,11 +185,7 @@ watch(is_email_taken_error, (is_taken) => {
 			:visible="is_submitting"
 			:label="t('auth.register.createAccount')"
 			test-id="auth-register-loading-overlay"
-			position="fixed"
-			background="rgba(246, 246, 248, 0.72)"
-			:z-index="400"
-			loader-width="74px"
-			loader-height="74px"
+			variant="modal"
 		/>
 
 		<div class="auth-register-card" data-testid="auth-register-card">

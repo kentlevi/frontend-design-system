@@ -1,36 +1,26 @@
 <script setup lang="ts">
-type PaymentOption = {
-	key: string;
-	label: string;
-	icon: string;
-};
+import { useCartPageSummary } from '~/composables/cart/page/useCartPageSummary';
 
-defineProps<{
-	orderSummaryLabel: string;
-	totalLabel: string;
-	totalValue: string;
-	checkoutLabel: string;
-	note: string;
-	paymentLabel: string;
-	paymentOptions: readonly PaymentOption[];
-	checkoutDisabled: boolean;
-}>();
-
-defineEmits<{
-	(e: 'checkout'): void;
-}>();
+const { t } = useI18n();
+const {
+	selected_total,
+	selected_ids,
+	payment_options,
+	formatPrice,
+	goToCheckout,
+} = useCartPageSummary();
 </script>
 
 <template>
 	<aside class="cart-summary-column" data-testid="cart-page-summary">
 		<section class="cart-summary-card">
 			<header class="cart-summary-header">
-				<h2 class="cart-summary-title">{{ orderSummaryLabel }}</h2>
+				<h2 class="cart-summary-title">{{ t('cart.cartPage.orderSummary') }}</h2>
 			</header>
 			<div class="cart-summary-body">
 				<div class="cart-summary-line">
-					<span class="cart-summary-total-label">{{ totalLabel }}</span>
-					<strong class="cart-summary-total-value">{{ totalValue }}</strong>
+					<span class="cart-summary-total-label">{{ t('cart.cartPage.total') }}</span>
+					<strong class="cart-summary-total-value">{{ formatPrice(selected_total) }}</strong>
 				</div>
 				<div class="cart-summary-actions">
 					<UiButton
@@ -39,21 +29,21 @@ defineEmits<{
 						tone="neutral"
 						size="md"
 						class="cart-checkout-btn"
-						:disabled="checkoutDisabled"
-						@click="$emit('checkout')"
+						:disabled="selected_ids.length === 0"
+						@click="goToCheckout"
 					>
-						{{ checkoutLabel }}
+						{{ t('cart.cartPage.proceedToCheckout') }}
 					</UiButton>
-					<p class="cart-summary-note">{{ note }}</p>
+					<p class="cart-summary-note">{{ t('cart.cartPage.note') }}</p>
 				</div>
 			</div>
 		</section>
 
 		<section class="cart-payment-section">
-			<p class="cart-payment-label">{{ paymentLabel }}</p>
+			<p class="cart-payment-label">{{ t('cart.cartPage.securedPayments') }}</p>
 			<div class="cart-payment-grid">
 				<span
-					v-for="option in paymentOptions"
+					v-for="option in payment_options"
 					:key="option.key"
 					class="cart-payment-chip"
 				>
@@ -71,6 +61,8 @@ defineEmits<{
 
 <style scoped lang="scss">
 .cart-summary-column {
+	position: sticky;
+	top: 24px;
 	align-self: start;
 	max-width: 282px;
 	display: flex;
@@ -175,6 +167,14 @@ defineEmits<{
 				}
 			}
 		}
+	}
+}
+
+@media (max-width: 980px) {
+	.cart-summary-column {
+		position: static;
+		top: auto;
+		max-width: none;
 	}
 }
 </style>

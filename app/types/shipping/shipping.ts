@@ -22,6 +22,7 @@ export interface ShippingMethodData {
 	description: string;
 	min_delivery_date: number;
 	max_delivery_date: number;
+	timezone: string;
 	min_shipping_days: number;
 	max_shipping_days: number;
 	production_days: number;

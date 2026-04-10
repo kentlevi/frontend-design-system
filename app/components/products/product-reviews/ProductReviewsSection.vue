@@ -18,7 +18,7 @@ const {
 </script>
 
 <template>
-	<section class="product-reviews" data-testid="product-reviews-section">
+	<section class="product-reviews product-experience-reviews" data-testid="product-category-reviews-section">
 		<div class="product-reviews-wrap" data-testid="product-reviews-wrap">
 			<ProductReviewsHeader
 				:can-go-prev="can_go_prev"

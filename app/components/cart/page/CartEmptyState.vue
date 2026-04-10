@@ -1,44 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import type { CartEmptyProduct } from '~/composables/cart/page/useCartPage';
+import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
+import { useCartEmptyState } from '~/composables/cart/page/useCartEmptyState';
 
-const props = defineProps<{
-	featuredItems: CartEmptyProduct[];
-	discoverItems: CartEmptyProduct[];
-}>();
-
-const items_per_page = 6;
-const page_index = ref(0);
-
-const page_count = computed(() => Math.max(1, Math.ceil(props.discoverItems.length / items_per_page)));
-const discover_pages = computed(() => {
-	const pages: CartEmptyProduct[][] = [];
-	for (let index = 0; index < props.discoverItems.length; index += items_per_page) {
-		pages.push(props.discoverItems.slice(index, index + items_per_page));
-	}
-	return pages.length ? pages : [[]];
-});
-const can_go_prev = computed(() => page_index.value > 0);
-const can_go_next = computed(() => page_index.value < page_count.value - 1);
-
-function prevPage() {
-	if (!can_go_prev.value) return;
-	page_index.value -= 1;
-}
-
-function nextPage() {
-	if (!can_go_next.value) return;
-	page_index.value += 1;
-}
-
-watch(
-	() => props.discoverItems.length,
-	() => {
-		if (page_index.value > page_count.value - 1) {
-			page_index.value = Math.max(0, page_count.value - 1);
-		}
-	}
-);
+const { resolveFileUrl } = useFileBaseUrl();
+const {
+	featured_products,
+	page_index,
+	discover_pages,
+	can_go_prev,
+	can_go_next,
+	prevPage,
+	nextPage,
+} = useCartEmptyState();
 </script>
 
 <template>
@@ -54,14 +27,14 @@ watch(
 
 				<section class="cart-empty-state-featured" aria-label="Featured products">
 					<NuxtLink
-						v-for="item in props.featuredItems"
+						v-for="item in featured_products"
 						:key="item.id"
 						:to="item.to"
 						class="cart-empty-state-product cart-empty-state-product--featured"
 						:data-testid="`cart-empty-featured-${item.id}`"
 					>
 						<div class="cart-empty-state-featured-image-wrap">
-							<img :src="item.image" :alt="item.label" class="cart-empty-state-featured-image">
+							<img :src="resolveFileUrl(item.image)" :alt="item.label" class="cart-empty-state-featured-image">
 						</div>
 						<p class="cart-empty-state-product-label">{{ item.label }}</p>
 					</NuxtLink>
@@ -124,7 +97,7 @@ watch(
 										:data-testid="`cart-empty-discover-${item.id}`"
 									>
 										<div class="cart-empty-state-discover-image-wrap">
-											<img :src="item.image" :alt="item.label" class="cart-empty-state-discover-image">
+											<img :src="resolveFileUrl(item.image)" :alt="item.label" class="cart-empty-state-discover-image">
 										</div>
 										<p class="cart-empty-state-product-label">{{ item.label }}</p>
 									</NuxtLink>
@@ -322,8 +295,14 @@ watch(
 
 		.cart-empty-state-featured,
 		.cart-empty-state-discover-grid {
+			display: grid;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 18px;
+			justify-content: stretch;
+		}
+
+		.cart-empty-state-product {
+			width: 100%;
 		}
 
 		.cart-empty-state-featured-image-wrap,

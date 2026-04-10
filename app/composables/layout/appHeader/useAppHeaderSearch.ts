@@ -28,7 +28,7 @@ import type {
 
 const search_page_size = 10;
 const search_result_scroll_threshold = 56;
-const search_default_image = '/illustrations/products/stickers/die-cut.svg';
+const search_default_image_path = '/illustrations/products/stickers/die-cut.svg';
 
 function normalizeText(value: unknown): string {
 	return typeof value === 'string' ? value.trim() : '';
@@ -88,6 +88,7 @@ export function useAppHeaderSearch(params: {
 	const router = useRouter();
 	const { withCountry } = useCountry();
 	const { resolveFileUrl } = useFileBaseUrl();
+	const search_default_image = resolveFileUrl(search_default_image_path);
 	const users_store = useUsersStore();
 	const recent_search_store = useRecentSearchStore();
 

@@ -86,17 +86,13 @@
 										Ship to Another Billing Address
 									</UiRadio>
 								</div>
-								<CheckoutAddressForm
-									v-model:full-name="billing_full_name"
-									v-model:company="billing_company"
-									v-model:address1="billing_address_1"
-									v-model:address2="billing_address_2"
-									v-model:province="billing_province"
-									v-model:city="billing_city"
-									v-model:postal-code="billing_postal_code"
-									:province-options="province_options"
-									size="md"
-									:hide-phone="true"
+								<AddressFormFields
+									type="billing"
+									:form="billing_form"
+									:errors="form_field_errors"
+									:dynamic-fields="dynamic_fields"
+									@update:field="updateBillingField"
+									@update:dynamic-field="updateBillingDynamicField"
 								/>
 							</div>
 						</Transition>
@@ -109,11 +105,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import CheckoutAddressForm from '~/components/checkout/shared/CheckoutAddressForm.vue';
+import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
+import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
 import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
+import { useAddressFieldStore } from '~/stores/address';
+import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
 
 const {
 	t,
@@ -121,19 +120,22 @@ const {
 	use_shipping_as_billing,
 	selected_billing_address,
 	billing_use_different_address,
-	billing_full_name,
-	billing_company,
-	billing_address_1,
-	billing_address_2,
-	billing_province,
-	billing_city,
-	billing_postal_code,
-	province_options,
 	billing_tooltip_open,
 	getAddressTagClass,
 	is_billing_address_modal_open,
 	toggleBillingTooltip,
 } = useCheckoutExperienceFeatureContext();
+
+const address_field_store = useAddressFieldStore();
+const {
+	form_state,
+	form_field_errors,
+	clearFormFieldError,
+	populateDynamicFields,
+} = useAddressCheckoutContext();
+
+const billing_form = computed(() => form_state.billing);
+const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? []);
 
 const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
 const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
@@ -169,6 +171,27 @@ useHeightTransition(
 		leaveDurationMs: leave_duration_ms,
 	}
 );
+
+function updateBillingField(payload: UpdateFieldPayload) {
+	Object.assign(billing_form.value, {
+		[payload.field]: payload.value,
+	})
+
+	clearFormFieldError(payload.field)
+}
+
+function updateBillingDynamicField(payload: UpdateDynamicFieldPayload) {
+	billing_form.value.fields[payload.field_key] = payload.value
+	clearFormFieldError(`fields.${payload.field_key}`)
+}
+
+onMounted(async () => {
+	if (address_field_store.dynamic_address_fields.length === 0) {
+		await address_field_store.getDynamicFields()
+	}
+
+	populateDynamicFields('billing')
+})
 </script>
 
 <style scoped lang="scss">

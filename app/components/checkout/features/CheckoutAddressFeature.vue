@@ -38,8 +38,7 @@
 				{{ t('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 
-			<!-- ipasa ang id gaw tanan cart_item_ids in array -->
-			<ShippingMethod :cart-item-ids="[1]" />
+			<ShippingMethod />
 
 			<DropShippingAddress/>
 		</div>

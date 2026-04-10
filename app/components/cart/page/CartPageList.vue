@@ -1,42 +1,33 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
-import type { CartRow } from '~/composables/cart/page/useCartPage';
+import { useCartPageList } from '~/composables/cart/page/useCartPageList';
 
-type QtyOption = {
-	label: string;
-	value: string | number;
-};
-
-defineProps<{
-	rows: CartRow[];
-	allSelected: boolean;
-	selectedIds: string[];
-	customQtyItemId: string | null;
-	customQtyDraft: string;
-	customQtyMenuOpen: boolean;
-	qtySelectOptionsWithCustom: QtyOption[];
-	bindCustomQtyDropdownRef: (element: Element | ComponentPublicInstance | null, refs?: Record<string, unknown>) => void;
-	bindCustomQtyInputRef: (element: Element | ComponentPublicInstance | null, refs?: Record<string, unknown>) => void;
-	getRowDisplayQty: (itemId: string, qty: number) => number;
-	getQtyOptionsForRow: (qty: number) => QtyOption[];
-	getArtworkActionLabel: (hasArtwork: boolean) => string;
-	sizeDimOnly: (label: string) => string;
-	formatPrice: (value: number) => string;
-	getRowDisplayTotal: (itemId: string, total: number) => number;
-}>();
+const {
+	rows,
+	selected_ids,
+	all_selected,
+	custom_qty_item_id,
+	custom_qty_draft,
+	custom_qty_menu_open,
+	qty_select_options,
+	sizeDimOnly,
+	getArtworkActionLabel,
+	formatPrice,
+	bindCustomQtyDropdownRef,
+	bindCustomQtyInputRef,
+	openDeleteModal,
+	openEditSize,
+	handleQtyOptionSelect,
+	commitCustomQty,
+	toggleCustomQtyMenu,
+	setCustomQtyDraft,
+	preventNonDigitInput,
+	toggleSelection,
+	setAllSelected,
+} = useCartPageList();
 
 const emit = defineEmits<{
-	(e: 'update:allSelected', value: boolean): void;
-	(e: 'openDeleteModal', ids: string[]): void;
-	(e: 'toggleRowSelection', payload: { itemId: string; checked: boolean }): void;
 	(e: 'openItemDetails', itemId: string): void;
 	(e: 'openArtworkPicker', itemId: string): void;
-	(e: 'openEditSize', itemId: string): void;
-	(e: 'selectQtyOption', payload: { itemId: string; value: string | number }): void;
-	(e: 'customQtyInput', value: string): void;
-	(e: 'commitCustomQty', itemId: string): void;
-	(e: 'toggleCustomQtyMenu'): void;
-	(e: 'preventNonDigitInput', event: InputEvent): void;
 }>();
 </script>
 
@@ -45,10 +36,10 @@ const emit = defineEmits<{
 		<div class="cart-list-controls">
 			<UiCheckbox
 				class="cart-check-row"
-				:model-value="allSelected"
+				:model-value="all_selected"
 				box-class="cart-check-row-box"
 				icon-class="cart-check-row-icon"
-				@update:model-value="emit('update:allSelected', $event)"
+				@update:model-value="setAllSelected"
 			>
 				{{ $t('cart.cartPage.selectAll', { count: rows.length }) }}
 			</UiCheckbox>
@@ -58,8 +49,8 @@ const emit = defineEmits<{
 				tone="default"
 				size="md"
 				label-class="cart-remove-btn-label"
-				:disabled="selectedIds.length === 0"
-				@click="emit('openDeleteModal', selectedIds)"
+				:disabled="selected_ids.length === 0"
+				@click="openDeleteModal(selected_ids)"
 			>
 				<UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
 				{{ $t('cart.cartPage.remove') }}
@@ -81,10 +72,10 @@ const emit = defineEmits<{
 		>
 			<UiCheckbox
 				class="cart-check-row cart-check-row--item"
-				:model-value="selectedIds.includes(row.id)"
+				:model-value="selected_ids.includes(row.id)"
 				box-class="cart-check-row-box"
 				icon-class="cart-check-row-icon"
-				@update:model-value="emit('toggleRowSelection', { itemId: row.id, checked: $event })"
+				@update:model-value="toggleSelection(row.id, $event)"
 			/>
 
 			<div class="cart-row-main">
@@ -119,7 +110,7 @@ const emit = defineEmits<{
 						</div>
 					</div>
 					<div class="cart-item-links">
-						<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openEditSize', row.id)">
+						<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openEditSize(row.id)">
 							{{ $t('cart.cartPage.editSize') }}
 						</UiButton>
 					</div>
@@ -127,57 +118,57 @@ const emit = defineEmits<{
 
 				<div class="cart-qty-wrap">
 					<UiSelect
-						v-if="customQtyItemId !== row.id"
+						v-if="custom_qty_item_id !== row.id"
 						class="cart-qty-select-control"
 						size="40"
-						:model-value="getRowDisplayQty(row.id, row.qty)"
-						:options="getQtyOptionsForRow(getRowDisplayQty(row.id, row.qty))"
+						:model-value="row.qty"
+						:options="[...qty_select_options, { label: 'Custom', value: -1 }]"
 						trigger-class="cart-qty-select-trigger"
 						menu-class="cart-qty-menu"
 						:pin-last-option="true"
-						@update:model-value="emit('selectQtyOption', { itemId: row.id, value: $event })"
+						@update:model-value="handleQtyOptionSelect(row.id, $event)"
 					/>
 					<div
 						v-else
 						:ref="bindCustomQtyDropdownRef"
 						class="cart-qty-select-shell ui-select"
-						:data-open="customQtyMenuOpen || null"
+						:data-open="custom_qty_menu_open || null"
 					>
 						<input
 							:ref="bindCustomQtyInputRef"
-							:value="customQtyDraft"
+							:value="custom_qty_draft"
 							type="text"
 							inputmode="numeric"
 							placeholder="Enter quantity"
 							class="cart-qty-inline-input"
-							@beforeinput="emit('preventNonDigitInput', $event)"
-							@input="emit('customQtyInput', ($event.target as HTMLInputElement).value)"
-							@blur="emit('commitCustomQty', row.id)"
-							@keydown.enter.prevent="emit('commitCustomQty', row.id)"
+							@beforeinput="preventNonDigitInput"
+							@input="setCustomQtyDraft(($event.target as HTMLInputElement).value)"
+							@blur="commitCustomQty(row.id)"
+							@keydown.enter.prevent="commitCustomQty(row.id)"
 						>
 						<button
 							type="button"
 							class="cart-qty-select-arrow"
 							aria-label="Open quantity options"
-							@click="emit('toggleCustomQtyMenu')"
+							@click="toggleCustomQtyMenu"
 						>
 							<UiIcon
 								name="regular-angle-down"
 								:size="24"
 								color="var(--gray-90)"
-								:class="{ 'is-open': customQtyMenuOpen }"
+								:class="{ 'is-open': custom_qty_menu_open }"
 							/>
 						</button>
 						<Transition name="ui-select-menu">
-							<div v-if="customQtyMenuOpen" class="ui-select-menu cart-qty-menu" role="listbox">
+							<div v-if="custom_qty_menu_open" class="ui-select-menu cart-qty-menu" role="listbox">
 								<div class="ui-select-options">
 									<button
-										v-for="option in qtySelectOptionsWithCustom"
+										v-for="option in [...qty_select_options, { label: 'Custom', value: -1 }]"
 										:key="option.value"
 										type="button"
 										class="ui-select-option"
 										:class="{ 'is-selected': Number(option.value) === -1 }"
-										@mousedown.prevent="emit('selectQtyOption', { itemId: row.id, value: option.value })"
+										@mousedown.prevent="handleQtyOptionSelect(row.id, option.value)"
 									>
 										<div class="ui-select-option-copy">
 											<p class="ui-select-option-label">{{ option.label }}</p>
@@ -189,7 +180,7 @@ const emit = defineEmits<{
 					</div>
 				</div>
 
-				<strong class="cart-row-price">{{ formatPrice(getRowDisplayTotal(row.id, row.total)) }}</strong>
+				<strong class="cart-row-price">{{ formatPrice(row.total) }}</strong>
 			</div>
 
 			<UiButton
@@ -201,7 +192,7 @@ const emit = defineEmits<{
 				icon="regular-trash"
 				icon-size="24"
 				:sr-label="$t('cart.cartPage.removeItemSr')"
-				@click="emit('openDeleteModal', [row.id])"
+				@click="openDeleteModal([row.id])"
 			/>
 		</article>
 	</section>
