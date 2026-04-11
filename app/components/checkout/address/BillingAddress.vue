@@ -87,10 +87,8 @@
 									</UiRadio>
 								</div>
 								<AddressFormFields
-									type="billing"
 									:form="billing_form"
 									:errors="form_field_errors"
-									:dynamic-fields="dynamic_fields"
 									@update:field="updateBillingField"
 									@update:dynamic-field="updateBillingDynamicField"
 								/>
@@ -135,7 +133,6 @@ const {
 } = useAddressCheckoutContext();
 
 const billing_form = computed(() => form_state.billing);
-const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? []);
 
 const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
 const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
