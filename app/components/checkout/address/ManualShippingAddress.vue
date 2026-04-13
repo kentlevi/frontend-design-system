@@ -1,51 +1,18 @@
 <script setup lang="ts">
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import { useAddressFieldStore } from '~/stores/address';
-import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
+import { useManualShippingAddress } from '~/composables/checkout/address/useManualShippingAddress';
 
 const {
-	t,
+	t: translate,
 	is_member,
-} = useCheckoutExperienceFeatureContext();
-
-const address_field_store = useAddressFieldStore();
-const {
-	form_state,
+	shipping_form,
 	form_field_errors,
-	clearFormFieldError,
-	populateDynamicFields,
-} = useAddressFormCheckoutContext();
-
-const shipping_form = computed(() => form_state.shipping);
-
-const {
 	selected_shipping_address,
-	ship_to_another_address
-} = storeToRefs(useMainCheckOutStore())
+	ship_to_another_address,
+	updateShippingField,
+	updateShippingDynamicField,
+} = useManualShippingAddress()
 
-function updateShippingField(payload: UpdateFieldPayload) {
-	Object.assign(shipping_form.value, {
-		[payload.field]: payload.value,
-	})
-
-	clearFormFieldError(payload.field)
-}
-
-function updateShippingDynamicField(payload: UpdateDynamicFieldPayload) {
-	shipping_form.value.fields[payload.field_key] = payload.value
-	clearFormFieldError(`fields.${payload.field_key}`)
-}
-
-onMounted(async () => {
-	if (address_field_store.dynamic_address_fields.length === 0) {
-		await address_field_store.getDynamicFields()
-	}
-
-	populateDynamicFields('shipping')
-})
 </script>
 
 <template>
@@ -58,7 +25,7 @@ onMounted(async () => {
 				name="shipping-mode"
 				class="checkout-member-radio-line checkout-member-radio-line--inline"
 			>
-				{{ t('checkout.member.shipToAnotherAddress') }}
+				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 			<h2 v-else style="font-size: 20px; font-weight: 600;">
 				Shipping Information

@@ -1,7 +1,8 @@
 import type { Ref } from 'vue';
+import { mapAddressToForm } from '~/factories/address';
 import { updateUserAddress } from '~/services/profile/address.service';
 import { useAddressFieldStore, useAddressStore } from "~/stores/address";
-import type { AddressFormState, AddressFormMap, AddressMap, AddressType, DynamicFieldDefinition } from "~/types/address";
+import type { AddressFormState, AddressFormMap, AddressMap, AddressType } from "~/types/address";
 import type { CountryField } from '~/types/country_field';
 import { useAddressHelper } from '~/utils/address';
 
@@ -21,9 +22,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 
 	const { mapApiFieldErrors } = useAddressHelper()
 
-	/**
-     * Stores
-     */
+	/** Stores */
 	const address_field_store = useAddressFieldStore()
 	const address_store = useAddressStore()
 	const toast_store = useToastStore()
@@ -31,78 +30,6 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 
 	const editing_address_id = ref<number | null>(null)
 	const editing_address_snapshot = ref<AddressMap[AddressType] | null>(null)
-
-	function mapAddressToForm(
-		address: AddressMap[AddressType]
-	): AddressFormMap[AddressType] {
-		if (address.type === 'drop') {
-			return {
-				type: 'drop',
-				country_id: address.country_id,
-				label: address.label,
-				contact_name: address.contact_name,
-				company: address.company ?? '',
-				email: address.email ?? '',
-				is_default: address.is_default,
-				notes: address.notes ?? '',
-			} as AddressFormMap['drop']
-		}
-
-		/**
-         * Resolve dynamic fields that have a value of option_id
-         * else return text_value
-         */
-		const fields = address.dynamic_fields.reduce((acc, field) => {
-			if (field.input_type !== 'text') {
-				const dynamic_field = address_field_store.dynamic_address_fields.find((dynamic_field) => {
-					return dynamic_field.field_key === field.field_key
-				})
-
-				const matched_option = dynamic_field?.options?.find((option) => {
-					return option.value === (field.value ?? '')
-				})
-
-				acc[field.field_key] = matched_option?.id ?? field.value ?? ''
-				return acc
-			}
-
-			acc[field.field_key] = field.value ?? ''
-			return acc
-		}, {} as DynamicFieldDefinition)
-
-		if (address.type === 'shipping') {
-			return {
-				type: 'shipping',
-				country_id: address.country_id,
-				label: address.label,
-				contact_name: address.contact_name,
-				company: address.company ?? '',
-				email: address.email ?? '',
-				is_default: address.is_default,
-				notes: address.notes ?? '',
-				address_line_1: address.address_line_1,
-				address_line_2: address.address_line_2 ?? '',
-				fields,
-				postcode: address.postcode,
-				phone_number: address.phone_number ?? '',
-			} as AddressFormMap['shipping']
-		}
-
-		return {
-			type: 'billing',
-			country_id: address.country_id,
-			label: address.label,
-			contact_name: address.contact_name,
-			company: address.company ?? '',
-			email: address.email ?? '',
-			is_default: address.is_default,
-			notes: address.notes ?? '',
-			address_line_1: address.address_line_1,
-			address_line_2: address.address_line_2 ?? '',
-			fields,
-			postcode: address.postcode,
-		} as AddressFormMap['billing']
-	}
 
 	function resetEditState() {
 		editing_address_id.value = null
@@ -118,7 +45,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 		options.form_type.value = address.type
 
 		// 2) map API address -> form shape
-		const mapped_form = mapAddressToForm(address)
+		const mapped_form = mapAddressToForm(address, address_field_store.dynamic_address_fields)
 
 		// 3) write into the currently active form object
 		Object.assign(options.active_form.value, mapped_form)
