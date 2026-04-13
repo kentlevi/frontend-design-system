@@ -87,12 +87,12 @@ export function useAuthProfilePage() {
 	const onboarding_store = useAuthOnboardingStore();
 	const users_store = useUsersStore();
 	const profile_fields_store = useProfileFieldsStore();
+	const toast_store = useToastStore();
 
 	const {
 		step,
 		profile_details_fields,
 		email,
-		show_welcome_toast,
 		is_email_verification_modal_open,
 		email_verification_session,
 		verification_email,
@@ -155,22 +155,8 @@ export function useAuthProfilePage() {
 			accountProfileDefaults.lastName
 	);
 
-	let toast_timeout: ReturnType<typeof setTimeout> | null = null;
 	let resend_timer: ReturnType<typeof setInterval> | null = null;
 	let request_timer: ReturnType<typeof setInterval> | null = null;
-
-	function clearToastTimeout() {
-		if (!toast_timeout) return;
-		clearTimeout(toast_timeout);
-		toast_timeout = null;
-	}
-
-	function startToastTimeout() {
-		clearToastTimeout();
-		toast_timeout = setTimeout(() => {
-			onboarding_store.setShowWelcomeToast(false);
-		}, 3500);
-	}
 
 	function clearCountdownTimer(type: 'resend' | 'request') {
 		if (type === 'resend') {
@@ -451,7 +437,16 @@ export function useAuthProfilePage() {
 	}
 
 	async function initialize() {
-		onboarding_store.setShowWelcomeToast(should_show_welcome_toast.value);
+		if (should_show_welcome_toast.value) {
+			toast_store.showToastWithTimer(
+				{
+					message: translate('auth.profile.toast'),
+					tone: 'primary',
+					variant: 'outlined',
+				},
+				3500
+			);
+		}
 
 		if (!email.value) {
 			onboarding_store.setEmail(
@@ -466,22 +461,9 @@ export function useAuthProfilePage() {
 	}
 
 	function dispose() {
-		clearToastTimeout();
 		clearCountdownTimer('resend');
 		clearCountdownTimer('request');
 	}
-
-	watch(
-		show_welcome_toast,
-		(is_visible) => {
-			if (is_visible) {
-				startToastTimeout();
-			} else {
-				clearToastTimeout();
-			}
-		},
-		{ immediate: true }
-	);
 
 	watch(
 		[profile_details_fields, email],

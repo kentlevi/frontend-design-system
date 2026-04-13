@@ -2,7 +2,6 @@
 import AuthProfileDetailsStep from '@/components/auth/profile/AuthProfileDetailsStep.vue';
 import AuthProfileSettingsStep from '@/components/auth/profile/AuthProfileSettingsStep.vue';
 import AuthProfileSidebar from '@/components/auth/profile/AuthProfileSidebar.vue';
-import AuthProfileWelcomeToast from '@/components/auth/profile/AuthProfileWelcomeToast.vue';
 import AuthVerificationModal from '@/components/auth/shared/AuthVerificationModal.vue';
 import { useAuthProfilePage } from '~/composables/auth/profile/useAuthProfilePage';
 
@@ -41,7 +40,6 @@ const {
 			</main>
 		</div>
 
-		<AuthProfileWelcomeToast />
 		<AuthVerificationModal
 			:model-value="is_email_verification_modal_open"
 			:email="verification_email"

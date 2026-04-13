@@ -34,7 +34,6 @@ export const useAuthOnboardingStore = defineStore('auth_onboarding', () => {
 		}
 	);
 
-	const show_welcome_toast = ref(false);
 	const email_verification_session = ref<EmailVerificationSession | null>(
 		null
 	);
@@ -72,10 +71,6 @@ export const useAuthOnboardingStore = defineStore('auth_onboarding', () => {
 
 	function clearOnboardingDraft() {
 		onboarding_draft.value = createDefaultOnboardingDraft();
-	}
-
-	function setShowWelcomeToast(value: boolean) {
-		show_welcome_toast.value = value;
 	}
 
 	function setEmailVerificationSession(
@@ -147,7 +142,6 @@ export const useAuthOnboardingStore = defineStore('auth_onboarding', () => {
 		mock_user,
 		step,
 		onboarding_draft,
-		show_welcome_toast,
 		email_verification_session,
 		is_email_verification_modal_open,
 		verification_email,
@@ -167,7 +161,6 @@ export const useAuthOnboardingStore = defineStore('auth_onboarding', () => {
 		setStep,
 		setOnboardingDraft,
 		clearOnboardingDraft,
-		setShowWelcomeToast,
 		setEmailVerificationSession,
 		setEmailVerificationModalOpen,
 		setVerificationEmail,
