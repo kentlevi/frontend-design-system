@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { AddressItem, ShippingAddress } from '~/types/address';
 import { useAddressHelper } from '~/utils/address';
-import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
+import { useAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 
 const { buildAddressLines } = useAddressHelper()
-const address_book_feature_context = useAddressBookFeatureContext()
+const address_book_default_context = useAddressBookDefaultContext()
 
-const is_confirm_default_change_modal_open = address_book_feature_context.is_confirm_default_change_modal_open
-const current_default_address = address_book_feature_context.current_default_address
-const pending_default_address = address_book_feature_context.pending_default_address
+const is_confirm_default_change_modal_open = address_book_default_context.is_confirm_default_change_modal_open
+const current_default_address = address_book_default_context.current_default_address
+const pending_default_address = address_book_default_context.pending_default_address
 
-const closeConfirmDefaultChangeModal = address_book_feature_context.closeConfirmDefaultChangeModal
-const confirmDefaultAddressChange = address_book_feature_context.confirmDefaultAddressChange
+const closeConfirmDefaultChangeModal = address_book_default_context.closeConfirmDefaultChangeModal
+const confirmDefaultAddressChange = address_book_default_context.confirmDefaultAddressChange
 
 const tag_badge_colors = {
 	home: {

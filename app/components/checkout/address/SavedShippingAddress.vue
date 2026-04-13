@@ -1,3 +1,28 @@
+<script setup lang="ts">
+import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
+import { useAddressHelper } from '~/utils/address';
+import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
+
+useSavedShippingAddress()
+
+const {
+	shippingPhoneNumber,
+	getAddressLine1,
+	getAddressLine2
+} = useAddressHelper()
+
+const {
+	getAddressTagClass,
+	is_shipping_address_modal_open,
+} = useCheckoutExperienceFeatureContext();
+
+const {
+	selected_shipping_address
+} = storeToRefs(useMainCheckOutStore())
+
+</script>
+
 <template>
 	<div key="saved-address" data-shipping-panel="saved-address" class="checkout-member-address-grid">
 		<button
@@ -72,27 +97,6 @@
 		</button>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressHelper } from '~/utils/address';
-
-const {
-	shippingPhoneNumber,
-	getAddressLine1,
-	getAddressLine2
-} = useAddressHelper()
-
-const {
-	getAddressTagClass,
-	is_shipping_address_modal_open,
-} = useCheckoutExperienceFeatureContext();
-
-const {
-	selected_shipping_address
-} = storeToRefs(useMainCheckOutStore())
-</script>
 
 <style scoped lang="scss">
 .checkout-member-address-grid {
