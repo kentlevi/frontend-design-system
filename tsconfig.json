@@ -16,7 +16,19 @@
     }
   ],
   "compilerOptions": {
-    "types": ["nuxt", "node"]
+    "ignoreDeprecations": "6.0",
+    "types": ["nuxt", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "~": ["./app"],
+      "~/*": ["./app/*"],
+      "@": ["./app"],
+      "@/*": ["./app/*"],
+      "~~": ["./"],
+      "~~/*": ["./*"],
+      "@@": ["./"],
+      "@@/*": ["./*"]
+    }
   }
 
 }

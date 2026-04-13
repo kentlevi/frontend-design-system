@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import type { icons } from '~/data/ui/icons';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
-import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
+import { useAddressBookFormContext } from '~/composables/account/addressBook/context/useAddressBookFormContext';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
 import type { AddressType } from '~/types/address';
 
 type IconName = keyof typeof icons;
 
 const { t: translate } = useI18n();
-const address_book_feature_context = useAddressBookFeatureContext();
+const address_book_form_context = useAddressBookFormContext();
 
-const is_form_modal_open = address_book_feature_context.is_form_modal_open;
-const form_modal_mode = address_book_feature_context.form_modal_mode;
-const form_submit_label = address_book_feature_context.form_submit_label;
-const form_type = address_book_feature_context.form_type;
-const active_form = address_book_feature_context.active_form;
-const dynamic_fields = address_book_feature_context.dynamic_fields;
-const form_field_errors = address_book_feature_context.form_field_errors;
+const is_form_modal_open = address_book_form_context.is_form_modal_open;
+const form_modal_mode = address_book_form_context.form_modal_mode;
+const form_submit_label = address_book_form_context.form_submit_label;
+const form_type = address_book_form_context.form_type;
+const active_form = address_book_form_context.active_form;
+const dynamic_fields = address_book_form_context.dynamic_fields;
+const form_field_errors = address_book_form_context.form_field_errors;
 
-const setFormType = address_book_feature_context.setFormType;
-const updateActiveFormField = address_book_feature_context.updateActiveFormField;
-const updateFormDynamicField = address_book_feature_context.updateDynamicField;
-const submitAddressForm = address_book_feature_context.submitAddressForm;
-const closeFormModal = address_book_feature_context.closeFormModal;
+const setFormType = address_book_form_context.setFormType;
+const updateActiveFormField = address_book_form_context.updateActiveFormField;
+const updateFormDynamicField = address_book_form_context.updateDynamicField;
+const submitAddressForm = address_book_form_context.submitAddressForm;
+const closeFormModal = address_book_form_context.closeFormModal;
 
 const default_address_tooltip_open = ref(false)
 const default_address_tooltip_ref = ref<HTMLElement | null>(null)
@@ -174,7 +174,6 @@ function toggleDefaultAddressTooltip() {
 
 				<div class="account-address-book-add-modal-bottom-group">
 					<AddressFormFields
-						:type="form_type"
 						:form="active_form"
 						:errors="form_field_errors"
 						:dynamic-fields="dynamic_fields"

@@ -7,22 +7,22 @@ import AppHeaderRoot from '~/components/layout/app-header/AppHeader.vue';
 
 const route = useRoute();
 const year = new Date().getFullYear();
-const headerVariant = computed(() =>
+const header_variant = computed(() =>
 	route.meta.headerVariant === 'default' ? 'default' : 'checkout'
 );
-const footerVariant = computed(() =>
+const footer_variant = computed(() =>
 	route.meta.footerVariant === 'full' ? 'full' : 'compact'
 );
 </script>
 
 <template>
 	<div class="checkout-layout">
-		<AppHeaderRoot v-if="!route.meta.hideHeader && headerVariant === 'default'" />
-		<AppHeaderCheckoutBar v-else-if="!route.meta.hideHeader && headerVariant === 'checkout'" />
+		<AppHeaderRoot v-if="!route.meta.hideHeader && header_variant === 'default'" />
+		<AppHeaderCheckoutBar v-else-if="!route.meta.hideHeader && header_variant === 'checkout'" />
 		<main class="checkout-layout-main">
 			<slot />
 		</main>
-		<AppFooterRoot v-if="!route.meta.hideFooter && footerVariant === 'full'" />
+		<AppFooterRoot v-if="!route.meta.hideFooter && footer_variant === 'full'" />
 		<footer v-else-if="!route.meta.hideFooter" class="checkout-layout-footer">
 			<AppFooterCompact :year="year" />
 		</footer>

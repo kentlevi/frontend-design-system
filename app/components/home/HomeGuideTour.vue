@@ -5,7 +5,7 @@ import { HOME_GUIDE_TOUR_TOTAL_STEPS } from '~/data/home/onboarding';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import {
 	HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP,
-	resolve_home_guide_tour_panel_style,
+	resolveHomeGuideTourPanelStyle,
 } from '~/helpers/home/homeGuideTour.helper';
 import type { GuideTargetRect } from '~/types/home/guideTour';
 
@@ -50,7 +50,7 @@ const header_image_style = computed(() =>
 );
 
 const panel_inline_style = computed(() => {
-	return resolve_home_guide_tour_panel_style(
+	return resolveHomeGuideTourPanelStyle(
 		safe_step.value,
 		target_rect.value,
 		typeof window === 'undefined' ? undefined : window.innerWidth

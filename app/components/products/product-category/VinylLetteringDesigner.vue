@@ -57,14 +57,14 @@ const isMounted = ref(false)
 const isReady = ref(Boolean(props.text && props.font))
 const fontLoading = ref(false)
 const hasSettledOnce = ref(false)
-const showPreviewOverlay = computed(() =>
+const show_preview_overlay = computed(() =>
 	!isMounted.value
 	|| !isReady.value
 	|| !props.font
 	|| props.redirecting
 	|| (fontLoading.value && !hasSettledOnce.value)
 )
-const isPreviewSettled = computed(() =>
+const is_preview_settled = computed(() =>
 	isMounted.value
 	&& isReady.value
 	&& Boolean(props.font)
@@ -84,18 +84,18 @@ const previewContentCenterY = usablePreviewHeight / 2
 const placeholderText = 'Your text'
 
 
-const formattedWidth = computed(() => props.width ? Math.round(props.width * 10) / 10 : 0)
-const formattedHeight = computed(() => props.height ? Math.round(props.height * 10) / 10 : 0)
-const fontFamily = computed(() => props.font)
-const letteringPaintSpec = computed(() => resolveLetteringPaintSpec(props.colorKey, props.hexCode))
+const formatted_width = computed(() => props.width ? Math.round(props.width * 10) / 10 : 0)
+const formatted_height = computed(() => props.height ? Math.round(props.height * 10) / 10 : 0)
+const font_family = computed(() => props.font)
+const lettering_paint_spec = computed(() => resolveLetteringPaintSpec(props.colorKey, props.hexCode))
 
-const textColorStyle = computed<CSSProperties>(() => {
-	if (letteringPaintSpec.value.kind === 'solid') {
-		return { color: letteringPaintSpec.value.color }
+const text_color_style = computed<CSSProperties>(() => {
+	if (lettering_paint_spec.value.kind === 'solid') {
+		return { color: lettering_paint_spec.value.color }
 	}
 
-	const gradientDirection = letteringPaintSpec.value.type === 'diagonal' ? '135deg' : '0deg'
-	const gradientStops = letteringPaintSpec.value.stops
+	const gradientDirection = lettering_paint_spec.value.type === 'diagonal' ? '135deg' : '0deg'
+	const gradientStops = lettering_paint_spec.value.stops
 		.map((stop) => `${stop.color} ${Math.round(stop.offset * 100)}%`)
 		.join(', ')
 
@@ -108,8 +108,8 @@ const textColorStyle = computed<CSSProperties>(() => {
 	}
 })
 
-const editorTextStyle = computed<CSSProperties>(() => ({
-	fontFamily: fontFamily.value || 'sans-serif',
+const editor_text_style = computed<CSSProperties>(() => ({
+	fontFamily: font_family.value || 'sans-serif',
 	textAlign: textAlign.value,
 	whiteSpace: 'nowrap',
 	width: 'auto',
@@ -119,10 +119,10 @@ const editorTextStyle = computed<CSSProperties>(() => ({
 	paddingTop: `${textSpaceY.value}px`,
 	paddingBottom: `${textSpaceY.value}px`,
 	...containerStyle.value,
-	...textColorStyle.value,
+	...text_color_style.value,
 }))
 
-const textContainerStyle = computed<CSSProperties>(() => ({
+const text_container_style = computed<CSSProperties>(() => ({
 	left: '50%',
 	top: `${previewContentCenterY}px`,
 	transform: 'translate(-50%, -50%)',
@@ -158,7 +158,7 @@ const resolveCanvasTextFillStyle = (
 	width: number,
 	height: number
 ): string | CanvasGradient => {
-	const paint = letteringPaintSpec.value
+	const paint = lettering_paint_spec.value
 	if (paint.kind === 'solid') {
 		return paint.color
 	}
@@ -184,7 +184,7 @@ const resetContext = (canvas: HTMLCanvasElement, context: CanvasRenderingContext
 		context.clearRect(0, 0, canvas.width, canvas.height)
 	}
 
-	context.font = `100px ${fontFamily.value ? `"${fontFamily.value}"` : 'sans-serif'}`
+	context.font = `100px ${font_family.value ? `"${font_family.value}"` : 'sans-serif'}`
 	context.direction = 'ltr'
 	context.textAlign = textAlign.value
 	context.fillStyle = resolveCanvasTextFillStyle(
@@ -472,7 +472,7 @@ watch(
 )
 
 watch(
-	isPreviewSettled,
+	is_preview_settled,
 	(settled) => {
 		if (settled) {
 			hasSettledOnce.value = true
@@ -528,7 +528,7 @@ defineExpose({
 	<div class="vinyl-lettering-designer">
 		<div class="lettering_editor">
 			<UiLoadingOverlay
-				:visible="showPreviewOverlay || isLoadingFeatures || selectionNavigationInFlight || letteringNavigationFlight"
+				:visible="show_preview_overlay || isLoadingFeatures || selectionNavigationInFlight || letteringNavigationFlight"
 				position="absolute"
 				background="rgba(58, 58, 58, 0.72)"
 				label="Loading preview"
@@ -551,14 +551,14 @@ defineExpose({
 				<span
 					ref="canvasWidth"
 					class="lettering_width"
-					:data-width="`${formattedWidth}mm`"
+					:data-width="`${formatted_width}mm`"
 					:style="measurementStyle.width"
 					contenteditable="false"
 				/>
 
 				<div
 					class="text_cont"
-					:style="[textContainerStyle, { opacity: fontLoading && !hasSettledOnce ? 0 : 1 }]"
+					:style="[text_container_style, { opacity: fontLoading && !hasSettledOnce ? 0 : 1 }]"
 					data-testid="product-category-vinyl-designer-textarea"
 				>
 					<p
@@ -566,7 +566,7 @@ defineExpose({
 						tabindex="1"
 						contenteditable="true"
 						dir="ltr"
-						:style="editorTextStyle"
+						:style="editor_text_style"
 						@input="onEditorInput"
 						@keydown="keydownHandler"
 						@paste.prevent="pasteHandler"
@@ -575,7 +575,7 @@ defineExpose({
 
 				<span
 					class="lettering_height"
-					:data-height="`${formattedHeight}mm`"
+					:data-height="`${formatted_height}mm`"
 					:style="measurementStyle.height"
 					contenteditable="false"
 				/>

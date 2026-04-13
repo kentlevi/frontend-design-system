@@ -24,7 +24,6 @@ const { t } = useI18n();
 
 // Slicedown: Provide context to all children
 const {
-	upload_modal_open,
 	add_to_cart_loading,
 	has_lettering_editor,
 } = provideProductExperience(toRef(props, 'category'), toRef(props, 'products'));

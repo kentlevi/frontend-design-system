@@ -18,6 +18,7 @@
     "ipx": "^2.0.0",
     "lottie-web": "^5.13.0",
     "nuxt": "^4.3.0",
+    "pinia": "^3.0.3",
     "sass": "^1.97.3",
     "sass-embedded": "^1.97.3",
     "vue": "^3.5.27",
@@ -28,10 +29,15 @@
     "@nuxt/eslint": "^1.13.0",
     "@nuxt/eslint-config": "^1.15.2",
     "@stylistic/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@types/node": "^25.3.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "vue-tsc": "^3.1.1"
   }
 }

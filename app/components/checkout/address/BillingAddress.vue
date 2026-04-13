@@ -87,10 +87,8 @@
 									</UiRadio>
 								</div>
 								<AddressFormFields
-									type="billing"
 									:form="billing_form"
 									:errors="form_field_errors"
-									:dynamic-fields="dynamic_fields"
 									@update:field="updateBillingField"
 									@update:dynamic-field="updateBillingDynamicField"
 								/>
@@ -109,7 +107,7 @@ import AddressFormFields from '~/components/shared/address/AddressFormFields.vue
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
+import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
 import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
 import { useAddressFieldStore } from '~/stores/address';
 import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
@@ -132,10 +130,9 @@ const {
 	form_field_errors,
 	clearFormFieldError,
 	populateDynamicFields,
-} = useAddressCheckoutContext();
+} = useAddressFormCheckoutContext();
 
 const billing_form = computed(() => form_state.billing);
-const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? []);
 
 const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
 const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);

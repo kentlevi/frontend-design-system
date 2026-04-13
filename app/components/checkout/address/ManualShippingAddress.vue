@@ -1,3 +1,20 @@
+<script setup lang="ts">
+import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
+import { useManualShippingAddress } from '~/composables/checkout/address/useManualShippingAddress';
+
+const {
+	t: translate,
+	is_member,
+	shipping_form,
+	form_field_errors,
+	selected_shipping_address,
+	ship_to_another_address,
+	updateShippingField,
+	updateShippingDynamicField,
+} = useManualShippingAddress()
+
+</script>
+
 <template>
 	<div key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
 		<div v-if="is_member" class="checkout-member-address-form-head">
@@ -8,7 +25,7 @@
 				name="shipping-mode"
 				class="checkout-member-radio-line checkout-member-radio-line--inline"
 			>
-				{{ t('checkout.member.shipToAnotherAddress') }}
+				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 			<h2 v-else style="font-size: 20px; font-weight: 600;">
 				Shipping Information
@@ -20,66 +37,13 @@
 		</div>
 
 		<AddressFormFields
-			type="shipping"
 			:form="shipping_form"
 			:errors="form_field_errors"
-			:dynamic-fields="dynamic_fields"
 			@update:field="updateShippingField"
 			@update:dynamic-field="updateShippingDynamicField"
 		/>
 	</div>
 </template>
-
-<script setup lang="ts">
-import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import { useAddressFieldStore } from '~/stores/address';
-import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
-
-const {
-	t,
-	is_member,
-} = useCheckoutExperienceFeatureContext();
-
-const address_field_store = useAddressFieldStore();
-const {
-	form_state,
-	form_field_errors,
-	clearFormFieldError,
-	populateDynamicFields,
-} = useAddressCheckoutContext();
-
-const shipping_form = computed(() => form_state.shipping);
-const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? []);
-
-const {
-	selected_shipping_address,
-	ship_to_another_address
-} = storeToRefs(useMainCheckOutStore())
-
-function updateShippingField(payload: UpdateFieldPayload) {
-	Object.assign(shipping_form.value, {
-		[payload.field]: payload.value,
-	})
-
-	clearFormFieldError(payload.field)
-}
-
-function updateShippingDynamicField(payload: UpdateDynamicFieldPayload) {
-	shipping_form.value.fields[payload.field_key] = payload.value
-	clearFormFieldError(`fields.${payload.field_key}`)
-}
-
-onMounted(async () => {
-	if (address_field_store.dynamic_address_fields.length === 0) {
-		await address_field_store.getDynamicFields()
-	}
-
-	populateDynamicFields('shipping')
-})
-</script>
 
 <style scoped lang="scss">
 .checkout-member-address-form {

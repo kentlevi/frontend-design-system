@@ -68,21 +68,21 @@ export function useAddressHelper() {
 	}
 
 	/** Safely expose shipping phone number only for shipping items */
-	function shippingPhoneNumber(address: AddressItem) {
+	function shippingPhoneNumber(address: AddressItem | AddressFormMap[AddressType]) {
 		if (!isShipping(address.type)) return
 
 		if ('phone_number' in address && address.phone_number) return address.phone_number
 	}
 
 	/** Safely expose shipping phone number only for shipping items */
-	function getAddressLine1(address: AddressItem) {
+	function getAddressLine1(address: AddressItem | AddressFormMap[AddressType]) {
 		if (!isShipping(address.type)) return
 
 		if ('address_line_1' in address && address.address_line_1) return address.address_line_1
 	}
 
 	/** Safely expose shipping phone number only for shipping items */
-	function getAddressLine2(address: AddressItem) {
+	function getAddressLine2(address: AddressItem | AddressFormMap[AddressType]) {
 		if (!isShipping(address.type)) return
 
 		if ('address_line_2' in address && address.address_line_2) return address.address_line_2
