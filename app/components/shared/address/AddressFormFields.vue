@@ -1,154 +1,46 @@
 <script setup lang="ts">
-import type { icons } from '~/data/ui/icons'
-import type {
-	AddressDynamicFields,
-	AddressFormField,
-	AddressFormMap,
-	AddressLabel,
-	AddressType,
-	UpdateDynamicFieldPayload,
-	UpdateFieldPayload,
-} from '~/types/address'
-import { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } from '~/utils/address'
+import type { AddressFormFieldsEmit, AddressFormFieldsProps } from '~/composables/shared/address/useAddressFormField'
+import { useAddressFormField } from '~/composables/shared/address/useAddressFormField'
 
-type IconName = keyof typeof icons
-
-type Props = {
-	type: AddressType
-	form: AddressFormMap[AddressType]
-	errors?: Record<string, string>
-	dynamicFields?: AddressDynamicFields[]
-	showLabelSelector?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<AddressFormFieldsProps>(), {
 	errors: () => ({}),
-	dynamicFields: () => [],
 	showLabelSelector: false,
 })
 
-const emit = defineEmits<{
-	(e: 'update:field', payload: UpdateFieldPayload): void
-	(e: 'update:dynamic-field', payload: UpdateDynamicFieldPayload): void
-}>()
+const emit = defineEmits<AddressFormFieldsEmit>()
 
-const { t } = useI18n()
+const { t: translate } = useI18n()
 
-const address_label_options: Array<{
-	value: AddressLabel
-	label_key: string
-	icon: IconName
-}> = [
-	{ value: 'home', label_key: 'home', icon: 'regular-home' },
-	{ value: 'office', label_key: 'office', icon: 'regular-building' },
-	{ value: 'client', label_key: 'client', icon: 'regular-user-circle' },
-]
-
-function createStringFieldModel(
-	field: AddressFormField,
-	get_value: () => string
-) {
-	return computed({
-		get: get_value,
-		set: (value: string) => {
-			emit('update:field', {
-				field,
-				value,
-			})
-		},
-	})
-}
-
-const contact_name_model = createStringFieldModel(
-	'contact_name',
-	() => props.form.contact_name
-)
-
-const company_model = createStringFieldModel(
-	'company',
-	() => props.form.company ?? ''
-)
-
-const address_line_1_model = createStringFieldModel(
-	'address_line_1',
-	() => hasAddressLines(props.form)
-		? props.form.address_line_1
-		: ''
-)
-
-const address_line_2_model = createStringFieldModel(
-	'address_line_2',
-	() => hasAddressLines(props.form)
-		? props.form.address_line_2 ?? ''
-		: ''
-)
-
-const postcode_model = createStringFieldModel(
-	'postcode',
-	() => hasAddressLines(props.form)
-		? props.form.postcode
-		: ''
-)
-
-const phone_number_model = createStringFieldModel(
-	'phone_number',
-	() => hasPhoneNumber(props.form)
-		? props.form.phone_number
-		: ''
-)
-
-function updateDynamicField(field_key: string, value: string | number) {
-	emit('update:dynamic-field', {
-		field_key,
-		value,
-	})
-}
-
-function getDynamicFieldValue(field_key: string) {
-	if (!hasAddressLines(props.form)) return ''
-
-	const value = props.form.fields?.[field_key]
-	const field = props.dynamicFields?.find(f => f.field_key === field_key)
-
-	if (field?.options?.length) {
-		return field.options.find(opt => opt.id === value)?.value ?? ''
-	}
-
-	return value ?? ''
-}
-
-function onDynamicSelectChange(field_key: string, selected_value: string | number) {
-	const option = props.dynamicFields
-		.find(f => f.field_key === field_key)
-		?.options?.find(opt => opt.value === selected_value)
-
-	updateDynamicField(field_key, option?.id ?? selected_value)
-}
-
-function getFieldError(field_key: string) {
-	return props.errors[field_key] ?? ''
-}
-
-function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
-	const normalized_label = field.field_label.toLowerCase()
-
-	if (normalized_label.includes('province') || normalized_label.includes('metropolitan')) {
-		return t('account.addressBook.provincePlaceholder')
-	}
-
-	if (normalized_label.includes('city') || normalized_label.includes('town')) {
-		return t('account.addressBook.cityPlaceholder')
-	}
-
-	return field.field_label
-}
+const {
+	hasAddressLines,
+	hasPhoneNumber,
+	onPhoneBeforeInput,
+	onPhonePaste,
+	address_label_options,
+	contact_name_model,
+	company_model,
+	address_line_1_model,
+	address_line_2_model,
+	postcode_model,
+	phone_number_model,
+	dynamic_fields,
+	updateDynamicField,
+	getDynamicFieldValue,
+	onDynamicSelectChange,
+	getFieldError,
+	getDynamicFieldPlaceholder,
+} = useAddressFormField({
+	props,
+	emit,
+	translate
+})
 </script>
 
 <template>
 	<div class="address-form-fields">
 		<div class="address-form-fields-grid address-form-fields-grid--two">
 			<UiFormField
-				:label="t('account.addressBook.fullName')"
+				:label="translate('account.addressBook.fullName')"
 				:required="true"
 				:show-required-mark="true"
 				:error="getFieldError('contact_name')"
@@ -158,13 +50,13 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 						:id="inputId"
 						v-model="contact_name_model"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="t('account.addressBook.fullNamePlaceholder')"
+						:placeholder="translate('account.addressBook.fullNamePlaceholder')"
 						:state="getFieldError('contact_name') ? 'error' : 'default'"
 					/>
 				</template>
 			</UiFormField>
 
-			<UiFormField :label="t('account.addressBook.companyOptional')">
+			<UiFormField :label="translate('account.addressBook.companyOptional')">
 				<template #label>
 					<span class="address-form-fields-company-label">
 						<span class="address-form-fields-company-label-text">Company</span>
@@ -177,7 +69,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 						:id="inputId"
 						v-model="company_model"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="t('account.addressBook.companyPlaceholder')"
+						:placeholder="translate('account.addressBook.companyPlaceholder')"
 					/>
 				</template>
 			</UiFormField>
@@ -185,7 +77,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 
 		<div v-if="props.showLabelSelector" class="address-form-fields-group">
 			<h4 class="address-form-fields-label">
-				{{ t('account.addressBook.addressLabel') }}
+				{{ translate('account.addressBook.addressLabel') }}
 			</h4>
 
 			<div class="address-form-fields-segment">
@@ -201,14 +93,14 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 					@click="emit('update:field', { field: 'label', value: option.value })"
 				>
 					<UiIcon :name="option.icon" :size="24" />
-					<span>{{ t(`account.addressBook.tags.${option.label_key}`) }}</span>
+					<span>{{ translate(`account.addressBook.tags.${option.label_key}`) }}</span>
 				</UiButton>
 			</div>
 		</div>
 
 		<template v-if="hasAddressLines(props.form)">
 			<UiFormField
-				:label="t('account.addressBook.streetAddress')"
+				:label="translate('account.addressBook.streetAddress')"
 				:required="true"
 				:show-required-mark="true"
 				:error="getFieldError('address_line_1')"
@@ -219,12 +111,12 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 							:id="inputId"
 							v-model="address_line_1_model"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="t('account.addressBook.addressLine1Placeholder')"
+							:placeholder="translate('account.addressBook.addressLine1Placeholder')"
 							:state="getFieldError('address_line_1') ? 'error' : 'default'"
 						/>
 						<UiInput
 							v-model="address_line_2_model"
-							:placeholder="t('account.addressBook.addressLine2Placeholder')"
+							:placeholder="translate('account.addressBook.addressLine2Placeholder')"
 						/>
 					</div>
 				</template>
@@ -232,7 +124,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 
 			<div class="address-form-fields-grid address-form-fields-grid--two">
 				<UiFormField
-					v-for="(dynamic_field, index) in props.dynamicFields"
+					v-for="(dynamic_field, index) in dynamic_fields"
 					:key="index"
 					:label="dynamic_field.field_label"
 					:required="dynamic_field.is_required"
@@ -264,7 +156,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 
 			<div class="address-form-fields-grid address-form-fields-grid--two">
 				<UiFormField
-					:label="t('account.addressBook.postalCode')"
+					:label="translate('account.addressBook.postalCode')"
 					:required="true"
 					:show-required-mark="true"
 					:error="getFieldError('postcode')"
@@ -274,7 +166,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 							:id="inputId"
 							v-model="postcode_model"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="t('account.addressBook.postalCodePlaceholder')"
+							:placeholder="translate('account.addressBook.postalCodePlaceholder')"
 							:state="getFieldError('postcode') ? 'error' : 'default'"
 						/>
 					</template>
@@ -282,7 +174,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 
 				<UiFormField
 					v-if="hasPhoneNumber(props.form)"
-					:label="t('account.addressBook.phoneNumber')"
+					:label="translate('account.addressBook.phoneNumber')"
 					:required="true"
 					:show-required-mark="true"
 					:error="getFieldError('phone_number')"
@@ -293,7 +185,7 @@ function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 							v-model="phone_number_model"
 							type="text"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="t('account.addressBook.phonePlaceholder')"
+							:placeholder="translate('account.addressBook.phonePlaceholder')"
 							:state="getFieldError('phone_number') ? 'error' : 'default'"
 							@beforeinput="onPhoneBeforeInput"
 							@paste="onPhonePaste"

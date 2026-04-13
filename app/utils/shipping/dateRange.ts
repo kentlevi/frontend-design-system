@@ -25,7 +25,7 @@ function getDateParts(timestamp: number): DateParts {
 
 	return {
 		day: Number(parts_map.day),
-		month_label: parts_map.month,
+		month_label: parts_map.month ?? '',
 		year: Number(parts_map.year),
 	}
 }

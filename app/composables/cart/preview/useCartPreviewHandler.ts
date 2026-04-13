@@ -32,28 +32,37 @@ export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 		blurb: p.blurb,
 	})))
 
-	const isAllItems = computed(() => {
+	const is_all_items = computed(() => {
 		const targetCount = cart_service.deletion_ids.value.length
 		return targetCount > 1 && targetCount === cart_service.items.value.length
 	})
 
-	const isMultipleItems = computed(() => cart_service.deletion_ids.value.length > 1)
+	const is_multiple_items = computed(() => cart_service.deletion_ids.value.length > 1)
+	const is_single_item = computed(() => Boolean(cart_service.deletion_id.value))
 
-	const deletionTitle = computed(() => {
-		if (isAllItems.value) return t('cart.cartPage.removeAllTitle')
-		if (isMultipleItems.value) return t('cart.cartPage.deleteSelectedTitle', { count: cart_service.deletion_ids.value.length })
+	const deletion_item = computed(() => {
+		const targetId = cart_service.deletion_id.value;
+		if (!targetId) return null;
+		return cart_service.rows.value.find(row => row.id === String(targetId)) || null;
+	});
+
+	const deletion_title = computed(() => {
+		if (is_all_items.value) return t('cart.cartPage.removeAllTitle')
+		if (is_multiple_items.value) return t('cart.cartPage.deleteSelectedTitle', { count: cart_service.deletion_ids.value.length })
+		if (deletion_item.value) return t('cart.cartPage.deleteItemTitleWithName', { name: deletion_item.value.title })
 		return t('cart.cartPage.deleteItemTitle')
 	})
 
-	const deletionDescription = computed(() => {
-		if (isAllItems.value) return t('cart.cartPage.removeAllDescription')
-		if (isMultipleItems.value) return t('cart.cartPage.deleteSelectedDescription', { count: cart_service.deletion_ids.value.length })
+	const deletion_description = computed(() => {
+		if (is_all_items.value) return t('cart.cartPage.removeAllDescription')
+		if (is_multiple_items.value) return t('cart.cartPage.deleteSelectedDescription', { count: cart_service.deletion_ids.value.length })
+		if (deletion_item.value) return t('cart.cartPage.deleteItemDescriptionWithName', { name: deletion_item.value.title })
 		return t('cart.cartPage.deleteItemDescription')
 	})
 
-	const deletionConfirmLabel = computed(() => {
-		if (isAllItems.value) return t('cart.cartPage.removeAllConfirm')
-		if (isMultipleItems.value) return t('cart.cartPage.deleteSelectedConfirm', { count: cart_service.deletion_ids.value.length })
+	const deletion_confirm_label = computed(() => {
+		if (is_all_items.value) return t('cart.cartPage.removeAllConfirm')
+		if (is_multiple_items.value) return t('cart.cartPage.deleteSelectedConfirm', { count: cart_service.deletion_ids.value.length })
 		return t('cart.cartPage.removeConfirm')
 	})
 
@@ -162,9 +171,9 @@ export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 
 		open_deletion_modal,
 		editing_item,
-		deletionTitle,
-		deletionDescription,
-		deletionConfirmLabel,
+		deletionTitle: deletion_title,
+		deletionDescription: deletion_description,
+		deletionConfirmLabel: deletion_confirm_label,
 
 		featured_items,
 		redirecting_to_cart,

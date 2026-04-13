@@ -33,7 +33,7 @@ const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
 const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
 const localAvatarDataUrl = ref<string | null>(null);
 
-const accountStats = computed<AccountStat[]>(() => [
+const account_stats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
 		label: t('account.shell.stats.order'),
@@ -132,7 +132,7 @@ const tabs = [
 
 			<div class="account-shell-stats" data-testid="account-shell-stats">
 				<div
-					v-for="stat in accountStats"
+					v-for="stat in account_stats"
 					:key="stat.key"
 					class="account-shell-stat"
 					:data-testid="`account-shell-stat-${stat.key}`"

@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia';
 import { ref, computed, watch } from 'vue';
-import { useUsersStore } from '../users/users.store';
+import { useUsersStore } from '~/stores/users/users.store';
 import type { FeaturedDataResponse } from '~/types/products/attributes';
 import type { CartItem, CartRow } from '~/types/cart/cart';
-import { productCatalog } from '~/data/products/catalog';
-import type { ProductCategory } from '~/types/products/catalog';
-import { homeProductTypePathById } from '~/data/products/homeTypes';
-import { featuredProducts } from '~/data/products/featured';
-import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
-import { cartPaymentOptions } from '~/data/cart/page';
+import { productCatalog } from '~/utils/products/catalog';
+import { homeProductTypePathById } from '~/utils/products/homeTypes';
+import { featuredProducts } from '~/utils/products/featured';
+import type { LocalizedCatalogProduct } from '~/utils/cart/cartState.helper';
+import { cartPaymentOptions } from '~/utils/cart/page';
 
 export type CartEmptyProduct = {
 	id: string;
@@ -35,7 +34,7 @@ export const useCartStore = defineStore('cart', () => {
 	const payment_options = computed(() => cartPaymentOptions);
 
 	// Empty state recommendations
-	const empty_featured_products = computed<CartEmptyProduct[]>(() => featuredProducts.map(p => ({
+	const empty_featured_products = computed<CartEmptyProduct[]>(() => featuredProducts.map((p: { id: string; name: string; image: string }) => ({
 		id: p.id,
 		label: p.name,
 		image: p.image,
@@ -48,7 +47,7 @@ export const useCartStore = defineStore('cart', () => {
 		const featured_ids = new Set(empty_featured_products.value.map(p => p.id));
 		const products: CartEmptyProduct[] = [];
 
-		for (const category of Object.values(productCatalog)) {
+		for (const category of Object.values(productCatalog) as { key: string; products: Array<{ id: string; name: string; image: string }> }[]) {
 			for (const product of category.products) {
 				if (!featured_ids.has(product.id)) {
 					// Resolve path: use home map or fallback to category-based convention
@@ -70,16 +69,16 @@ export const useCartStore = defineStore('cart', () => {
 	// Derived Rows for UI
 	const rows = computed<CartRow[]>(() => {
 		return items.value.map((item) => {
-			const itemId = item.id ? String(item.id) : (item.local_identity || 'unknown');
+			const item_id = item.id ? String(item.id) : (item.local_identity || 'unknown');
 
 			// Resolve product info from catalog
 			// Note: This logic previously existed in helper/composable,
 			// now consolidated for global access.
-			let resolvedProduct: LocalizedCatalogProduct | null = null;
-			for (const category of Object.values(productCatalog) as ProductCategory[]) {
+			let resolved_product: LocalizedCatalogProduct | null = null;
+			for (const category of Object.values(productCatalog) as { key: string; products: Array<{ id: string; name: string; image: string; icon?: string; blurb?: string }> }[]) {
 				const product = category.products.find(p => p.id === item.product || p.name === item.product);
 				if (product) {
-					resolvedProduct = {
+					resolved_product = {
 						...product,
 						name: product.name, // In a real app, this would use i18n
 					};
@@ -88,8 +87,8 @@ export const useCartStore = defineStore('cart', () => {
 			}
 
 			// Fallback if not found in catalog
-			if (!resolvedProduct) {
-				resolvedProduct = {
+			if (!resolved_product) {
+				resolved_product = {
 					id: item.product || 'unknown',
 					name: item.product || 'Unknown Product',
 					icon: 'regular-info-circle',
@@ -99,11 +98,11 @@ export const useCartStore = defineStore('cart', () => {
 			}
 
 			return {
-				id: itemId,
-				image: item.product_thumbnail || resolvedProduct.image,
-				title: resolvedProduct.name,
+				id: item_id,
+				image: item.product_thumbnail || resolved_product.image,
+				title: resolved_product.name,
 				metadata: `${item.width}x${item.height}"`,
-				url_slug: item.url_slug || resolvedProduct.id,
+				url_slug: item.url_slug || resolved_product.id,
 				width: item.width,
 				height: item.height,
 				qty: item.quantity,
@@ -112,7 +111,7 @@ export const useCartStore = defineStore('cart', () => {
 				sizeLabel: `${item.width}x${item.height}"`,
 				customSizeLabel: '',
 				rawItem: item,
-				product: resolvedProduct,
+				product: resolved_product,
 				category: (item as CartItem & { category?: string }).category || 'stickers',
 				artworkName: item.artwork_file_name || '',
 				artworkSizeLabel: '',
@@ -156,14 +155,11 @@ export const useCartStore = defineStore('cart', () => {
 
 	const editing_item = computed(() => {
 		if (!editing_item_id.value) return null;
-		return items.value.find(item => {
-			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
-			return currentId === editing_item_id.value;
-		}) ?? null;
+		return items.value.find(item => String(item.id) === editing_item_id.value) ?? null;
 	});
 
-	const openEditModal = (itemId: string, mode: 'full' | 'size' = 'full') => {
-		editing_item_id.value = itemId;
+	const openEditModal = (item_id: string, mode: 'full' | 'size' = 'full') => {
+		editing_item_id.value = item_id;
 		edit_mode.value = mode;
 		edit_modal_open.value = true;
 	};
@@ -189,25 +185,22 @@ export const useCartStore = defineStore('cart', () => {
 
 	const removeByIds = (ids: string[]) => {
 		items.value = items.value.filter(item => {
-			const itemId = item.id ? String(item.id) : (item.local_identity || 'unknown');
-			return !ids.includes(itemId);
+			const item_id = item.id ? String(item.id) : (item.local_identity || 'unknown');
+			return !ids.includes(item_id);
 		});
 		selected_ids.value = selected_ids.value.filter(id => !ids.includes(id));
 		updateTotals();
 	};
 
-	const updateItemQty = (itemId: string, qty: number) => {
-		const index = items.value.findIndex(item => {
-			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
-			return currentId === itemId;
-		});
+	const updateItemQty = (item_id: string, qty: number) => {
+		const index = items.value.findIndex(item => String(item.id) === item_id);
 		if (index !== -1 && items.value[index]) {
 			const item = items.value[index];
-			const unitPrice = item.quantity > 0 ? item.cost / item.quantity : 0;
+			const unit_price = item.quantity > 0 ? item.cost / item.quantity : 0;
 			items.value[index] = {
 				...item,
 				quantity: qty,
-				cost: unitPrice * qty
+				cost: unit_price * qty
 			};
 			updateTotals();
 		}
@@ -235,11 +228,8 @@ export const useCartStore = defineStore('cart', () => {
 		}
 	};
 
-	const updateItemSize = (itemId: string, width: number, height: number) => {
-		const index = items.value.findIndex(item => {
-			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
-			return currentId === itemId;
-		});
+	const updateItemSize = (item_id: string, width: number, height: number) => {
+		const index = items.value.findIndex(item => String(item.id) === item_id);
 		if (index !== -1 && items.value[index]) {
 			items.value[index] = {
 				...items.value[index],
@@ -249,16 +239,13 @@ export const useCartStore = defineStore('cart', () => {
 		}
 	};
 
-	const updateItemArtworkDetails = (itemId: string, details: {
+	const updateItemArtworkDetails = (item_id: string, details: {
 		artworkName: string;
 		artworkSizeLabel: string;
 		artworkPreviewUrl: string;
 		specialInstructions: string;
 	}) => {
-		const index = items.value.findIndex(item => {
-			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
-			return currentId === itemId;
-		});
+		const index = items.value.findIndex(item => String(item.id) === item_id);
 		if (index !== -1 && items.value[index]) {
 			items.value[index] = {
 				...items.value[index],

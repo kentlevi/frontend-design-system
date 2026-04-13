@@ -1,13 +1,12 @@
 import {
-	getShippingMethodByCartItems,
 	getShippingMethodByLocalItems
 } from '~/services/shipping/shipping.service'
 import { useCartStore } from '~/stores/cart'
-import { useUsersStore } from '~/stores/users/users.store'
+import { useProductionShippingStore } from '~/stores/production-shipping/production-shipping.store'
 import type { CartItem } from '~/types/cart/cart'
+import type { AvailableShippingMethod } from '~/types/production-shipping/production-shipping'
 import type {
 	LocalShippingMethodItemPayload,
-	ShippingMethodData,
 	ShippingMethodItem
 } from '~/types/shipping/shipping'
 import { formatShippingDateRange } from '~/utils/shipping/dateRange'
@@ -16,104 +15,81 @@ import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 const selected_shipping_method = ref('')
 const shipping_method_id = ref<number | null>(null)
 const production_shipping_id = ref<number | null>(null)
-const is_loading = ref(false)
-const shipping_method_data = ref<ShippingMethodData[]>([])
-let latest_request_id = 0
 
 export function useShippingMethod() {
+
 	const checkout_store = useMainCheckOutStore()
 	const cart_store = useCartStore()
-	const user_store = useUsersStore()
+	const production_shipping_store = useProductionShippingStore()
 
-	const is_authenticated = computed(() => Boolean(user_store.state.id))
+	const { selected_ids } = storeToRefs(cart_store)
+	const { available_shipping_methods, is_loading } = storeToRefs(production_shipping_store)
 
-	const active_shipping_methods = computed<ShippingMethodItem[]>(() =>
-		mapShippingMethodDataToUi(shipping_method_data.value)
+	const selected_cart_items = computed(() =>
+		cart_store.items.filter((item) => {
+			const item_id = item.id !== null
+				? String(item.id)
+				: (item.local_identity || '')
+
+			return selected_ids.value.includes(item_id)
+		})
 	)
 
-	/* @desc fetch shipping methods, prevent stale response overwrite, and sync selection
-	@param object params - request payload containing cart_ids and quantity
-	@return Promise<void> - no return value
-	*/
-	const fetchShippingMethods = async (params: { cart_item_ids: number[] }): Promise<void> => {
-		const request_id = ++latest_request_id
-		is_loading.value = true
+	const active_shipping_methods = computed<ShippingMethodItem[]>(() =>
+		mapShippingMethodDataToUi(available_shipping_methods.value)
+	)
+
+	const fetchShippingMethods = async (): Promise<void> => {
+		production_shipping_store.setIsLoading(true)
+		production_shipping_store.setErrorMessage('')
 
 		try {
-			const local_shipping_items = is_authenticated.value
-				? []
-				: buildLocalShippingItems(params.cart_item_ids)
-
-			if (
-				(is_authenticated.value && params.cart_item_ids.length === 0)
-				|| (!is_authenticated.value && local_shipping_items.length === 0)
-			) {
-				shipping_method_data.value = []
+			if (selected_cart_items.value.length === 0) {
+				production_shipping_store.clearAvailableShippingMethods()
+				production_shipping_store.setIsLoaded(false)
 				clearSelectedShippingMethod()
 				return
 			}
 
-			const shipping_method_response = is_authenticated.value
-				? await getShippingMethodByCartItems(params)
-				: await getShippingMethodByLocalItems({
-					items: local_shipping_items,
-				})
+			const shipping_method_response = await getShippingMethodByLocalItems({
+				items: buildLocalShippingItems(selected_cart_items.value),
+			})
 
-			if (request_id !== latest_request_id) return
-
-			shipping_method_data.value = Array.isArray(shipping_method_response.data)
+			const methods = Array.isArray(shipping_method_response.data)
 				? shipping_method_response.data
 				: []
+			production_shipping_store.setAvailableShippingMethods(methods)
+			production_shipping_store.setIsLoaded(true)
 
 			syncSelectionWithActiveMethods()
 		} catch (error) {
-			if (request_id !== latest_request_id) return
-
-			shipping_method_data.value = []
+			production_shipping_store.clearAvailableShippingMethods()
+			production_shipping_store.setIsLoaded(false)
+			production_shipping_store.setErrorMessage('Failed to load shipping methods.')
 			clearSelectedShippingMethod()
 			console.error('Error loading shipping methods:', error)
 		} finally {
-			if (request_id === latest_request_id) {
-				is_loading.value = false
-			}
+			production_shipping_store.setIsLoading(false)
 		}
 	}
 
-	const buildLocalShippingItems = (cart_item_ids: number[]): LocalShippingMethodItemPayload[] => {
-		const local_cart_items = resolveLocalCartItems(cart_item_ids)
-
-		return local_cart_items.map((item) => ({
-			product_config_mapping_id: item.product_config_mapping_id,
-			quantity: item.quantity,
-			color_id: item.color_id,
-			font_id: item.font_id,
-		}))
+	const buildLocalShippingItems = (items: CartItem[]): LocalShippingMethodItemPayload[] => {
+		return items.map((item) => ({
+				product_config_mapping_id: item.product_config_mapping_id,
+				quantity: item.quantity,
+				color_id: item.color_id,
+				font_id: item.font_id,
+			}))
 	}
 
-	const resolveLocalCartItems = (cart_item_ids: number[]): CartItem[] => {
-		if (cart_store.items.length === 0) {
-			return []
-		}
-
-		const matched_local_items = cart_store.items.filter((item) =>
-			item.id !== null && cart_item_ids.includes(item.id)
-		)
-
-		if (matched_local_items.length > 0) {
-			return matched_local_items
-		}
-
-		return cart_store.items
-	}
-
-	/* @desc map API response into a UI-friendly shipping method structure
-	@param ShippingMethodData[] shipping_method_data - raw shipping method response list
+	/* @desc map stored shipping methods into a UI-friendly shipping method structure
+	@param AvailableShippingMethod[] shipping_methods - raw shipping method response list
 	@return ShippingMethodItem[] - mapped shipping methods
 	*/
 	const mapShippingMethodDataToUi = (
-		shipping_method_data: ShippingMethodData[]
+		shipping_methods: AvailableShippingMethod[]
 	): ShippingMethodItem[] => {
-		return shipping_method_data.map((item) => {
+		return shipping_methods.map((item) => {
 			const formatted_date_range = formatShippingDateRange(
 				item.min_delivery_date,
 				item.max_delivery_date,
@@ -217,6 +193,14 @@ export function useShippingMethod() {
 		production_shipping_id.value = null
 		checkout_store.setShippingMethodId(null)
 	}
+
+	watch(
+		() => [...selected_ids.value],
+		() => {
+			void fetchShippingMethods()
+		},
+		{ immediate: true }
+	)
 
 	return {
 		is_loading,

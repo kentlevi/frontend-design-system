@@ -5,7 +5,7 @@ import type {
 } from '~/types/account/profile'
 import type { UserFieldValue, UserProfile } from '~/types/auth/user'
 
-export function build_empty_fields(
+export function buildEmptyFields(
 	field_definitions: ProfileFieldDefinition[]
 ): PersonalFormFields {
 	const fields: PersonalFormFields = {}
@@ -17,7 +17,7 @@ export function build_empty_fields(
 	return fields
 }
 
-export function get_profile_field_value(
+export function getProfileFieldValue(
 	user_field_values: ProfileUserFieldValue[],
 	country_field_id: number
 ): string {
