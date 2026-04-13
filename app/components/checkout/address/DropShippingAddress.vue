@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
+import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
@@ -159,7 +159,7 @@ const {
 	form_state,
 	form_field_errors,
 	clearFormFieldError,
-} = useAddressCheckoutContext();
+} = useAddressFormCheckoutContext();
 
 const drop_form = computed(() => form_state.drop);
 

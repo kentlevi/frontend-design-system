@@ -7,25 +7,25 @@ import AppFooterCompact from '~/components/layout/app-footer/AppFooterCompact.vu
 
 const route = useRoute();
 const year = new Date().getFullYear();
-const headerVariant = computed(() =>
+const header_variant = computed(() =>
 	route.meta.headerVariant === 'checkout' ? 'checkout' : 'default'
 );
-const footerVariant = computed(() =>
+const footer_variant = computed(() =>
 	route.meta.footerVariant === 'compact' ? 'compact' : 'full'
 );
-const backgroundVariant = computed(() =>
+const background_variant = computed(() =>
 	route.meta.layoutBackground === 'neutral' ? 'neutral' : 'brand'
 );
 </script>
 
 <template>
-	<div class="home-layout" :class="`home-layout--${backgroundVariant}`">
-		<AppHeaderRoot v-if="!route.meta.hideHeader && headerVariant === 'default'" />
-		<AppHeaderCheckoutBar v-else-if="!route.meta.hideHeader && headerVariant === 'checkout'" />
+	<div class="home-layout" :class="`home-layout--${background_variant}`">
+		<AppHeaderRoot v-if="!route.meta.hideHeader && header_variant === 'default'" />
+		<AppHeaderCheckoutBar v-else-if="!route.meta.hideHeader && header_variant === 'checkout'" />
 		<main class="home-layout-main">
 			<slot />
 		</main>
-		<AppFooterRoot v-if="!route.meta.hideFooter && footerVariant === 'full'" />
+		<AppFooterRoot v-if="!route.meta.hideFooter && footer_variant === 'full'" />
 		<footer v-else-if="!route.meta.hideFooter" class="home-layout-compact-footer">
 			<AppFooterCompact :year="year" />
 		</footer>

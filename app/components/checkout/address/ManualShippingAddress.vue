@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
 import { useAddressFieldStore } from '~/stores/address';
-import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
+import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
@@ -17,7 +17,7 @@ const {
 	form_field_errors,
 	clearFormFieldError,
 	populateDynamicFields,
-} = useAddressCheckoutContext();
+} = useAddressFormCheckoutContext();
 
 const shipping_form = computed(() => form_state.shipping);
 

@@ -49,7 +49,6 @@
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { useCheckoutAddressFlow } from '~/composables/checkout/main/useCheckoutAddressFlow';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import ShippingMethod from '../shipping/ShippingMethod.vue';
 import ManualAddress from '../address/ManualShippingAddress.vue';
@@ -74,10 +73,6 @@ const {
 } = useCheckoutExperienceFeatureContext();
 
 const {
-	getShippingAddress
-} = useCheckoutAddressFlow();
-
-const {
 	ship_to_another_address,
 	selected_shipping_address
 } = storeToRefs(useMainCheckOutStore())
@@ -98,10 +93,6 @@ useHeightTransition(
 		leaveDurationMs: leave_duration_ms
 	}
 );
-
-onMounted(async()=>{
-	await getShippingAddress()
-})
 </script>
 
 <style scoped lang="scss">
