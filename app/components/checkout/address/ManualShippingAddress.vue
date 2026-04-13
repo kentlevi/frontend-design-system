@@ -1,35 +1,3 @@
-<template>
-	<div key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
-		<div v-if="is_member" class="checkout-member-address-form-head">
-			<UiRadio
-				v-if = "selected_shipping_address"
-				v-model="ship_to_another_address"
-				:value="true"
-				name="shipping-mode"
-				class="checkout-member-radio-line checkout-member-radio-line--inline"
-			>
-				{{ t('checkout.member.shipToAnotherAddress') }}
-			</UiRadio>
-			<h2 v-else style="font-size: 20px; font-weight: 600;">
-				Shipping Information
-			</h2>
-
-			<div class="checkout-member-address-form-note">
-				This address will be saved for future use.
-			</div>
-		</div>
-
-		<AddressFormFields
-			type="shipping"
-			:form="shipping_form"
-			:errors="form_field_errors"
-			:dynamic-fields="dynamic_fields"
-			@update:field="updateShippingField"
-			@update:dynamic-field="updateShippingDynamicField"
-		/>
-	</div>
-</template>
-
 <script setup lang="ts">
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
 import { useAddressFieldStore } from '~/stores/address';
@@ -52,7 +20,6 @@ const {
 } = useAddressCheckoutContext();
 
 const shipping_form = computed(() => form_state.shipping);
-const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? []);
 
 const {
 	selected_shipping_address,
@@ -80,6 +47,36 @@ onMounted(async () => {
 	populateDynamicFields('shipping')
 })
 </script>
+
+<template>
+	<div key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
+		<div v-if="is_member" class="checkout-member-address-form-head">
+			<UiRadio
+				v-if = "selected_shipping_address"
+				v-model="ship_to_another_address"
+				:value="true"
+				name="shipping-mode"
+				class="checkout-member-radio-line checkout-member-radio-line--inline"
+			>
+				{{ t('checkout.member.shipToAnotherAddress') }}
+			</UiRadio>
+			<h2 v-else style="font-size: 20px; font-weight: 600;">
+				Shipping Information
+			</h2>
+
+			<div class="checkout-member-address-form-note">
+				This address will be saved for future use.
+			</div>
+		</div>
+
+		<AddressFormFields
+			:form="shipping_form"
+			:errors="form_field_errors"
+			@update:field="updateShippingField"
+			@update:dynamic-field="updateShippingDynamicField"
+		/>
+	</div>
+</template>
 
 <style scoped lang="scss">
 .checkout-member-address-form {

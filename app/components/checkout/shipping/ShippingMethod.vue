@@ -69,33 +69,17 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
 import { useShippingMethod } from '~/composables/checkout/shipping/useShippingMethod';
 import ShippingMethodSkeletonLoader from '~/components/checkout/shipping/SkeletonShippingMethod.vue';
 
 const { t: translate } = useI18n();
 
-const props = defineProps<{
-	cartItemIds: number[];
-}>();
-
 const {
 	is_loading,
 	active_shipping_methods,
 	selected_shipping_method,
-	fetchShippingMethods,
 	selectShippingMethod,
 } = useShippingMethod();
-
-watch(
-	() => [props.cartItemIds],
-	() => {
-		void fetchShippingMethods({
-			cart_item_ids: props.cartItemIds,
-		});
-	},
-	{ immediate: true }
-);
 </script>
 
 <style scoped lang="scss">

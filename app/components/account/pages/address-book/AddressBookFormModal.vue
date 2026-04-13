@@ -174,7 +174,6 @@ function toggleDefaultAddressTooltip() {
 
 				<div class="account-address-book-add-modal-bottom-group">
 					<AddressFormFields
-						:type="form_type"
 						:form="active_form"
 						:errors="form_field_errors"
 						:dynamic-fields="dynamic_fields"
