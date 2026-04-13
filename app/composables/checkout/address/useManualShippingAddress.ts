@@ -39,11 +39,15 @@ export function useManualShippingAddress() {
 		})
 
 		clearFormFieldError(payload.field)
+
+		Object.assign(selected_shipping_address.value, shipping_form.value)
 	}
 
 	function updateShippingDynamicField(payload: UpdateDynamicFieldPayload) {
 		shipping_form.value.fields[payload.field_key] = payload.value
 		clearFormFieldError(`fields.${payload.field_key}`)
+
+		Object.assign(selected_shipping_address.value, shipping_form.value)
 	}
 
 
