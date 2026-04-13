@@ -14,7 +14,7 @@ const HOME_GUIDE_TOUR_PANEL_POSITION_BY_STEP: Record<number, { x: number; y: num
 	4: { x: 1140, y: 680 },
 };
 
-export function resolve_home_guide_tour_panel_style(
+export function resolveHomeGuideTourPanelStyle(
 	step: number,
 	target_rect: GuideTargetRect | null,
 	window_width?: number
@@ -58,7 +58,7 @@ export function resolve_home_guide_tour_panel_style(
 	};
 }
 
-export function split_home_guide_tour_skip_copy(body: string) {
+export function splitHomeGuideTourSkipCopy(body: string) {
 	const match = body.match(/"([^"]+)"/);
 	if (!match || match.index === undefined) {
 		return {

@@ -41,13 +41,13 @@ function confirmAction() {
 <template>
 	<UiModal
 		:model-value="props.modelValue"
-		@update:model-value="emit('cancel')"
-		@close="emit('cancel')"
 		align="center"
 		:width="props.width"
 		padding="0"
 		gap="0"
 		:modal-class="props.modalClass"
+		@update:model-value="emit('cancel')"
+		@close="emit('cancel')"
 	>
 		<section class="delete-confirm-modal" :data-testid="props.testId">
 			<div class="delete-confirm-modal-copy">

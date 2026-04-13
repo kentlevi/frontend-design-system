@@ -1,6 +1,8 @@
+import type { HomeProductKey } from '~/types/products/homeTypes';
+
 export interface FeaturedProduct {
 	id: string;
-	key: string;
+	key: HomeProductKey;
 	name: string;
 	image: string;
 	icon: string;

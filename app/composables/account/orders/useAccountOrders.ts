@@ -48,21 +48,21 @@ export function useAccountOrders() {
 			}
 
 			if (!next_orders.some((order) => order.id === active_order_id.value)) {
-				active_order_id.value = next_orders[0].id;
+				active_order_id.value = next_orders[0]?.id ?? '';
 			}
 		},
 		{ immediate: true }
 	);
 
-	function set_lifecycle(next_lifecycle: AccountOrderLifecycle) {
+	function setLifecycle(next_lifecycle: AccountOrderLifecycle) {
 		lifecycle.value = next_lifecycle;
 	}
 
-	function set_active_order(order_id: string) {
+	function setActiveOrder(order_id: string) {
 		active_order_id.value = order_id;
 	}
 
-	function toggle_detail_open() {
+	function toggleDetailOpen() {
 		is_detail_open.value = !is_detail_open.value;
 	}
 
@@ -72,8 +72,8 @@ export function useAccountOrders() {
 		is_detail_open,
 		order_groups,
 		active_order,
-		set_lifecycle,
-		set_active_order,
-		toggle_detail_open,
+		set_lifecycle: setLifecycle,
+		set_active_order: setActiveOrder,
+		toggle_detail_open: toggleDetailOpen,
 	};
 }
