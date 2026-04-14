@@ -17,6 +17,7 @@ const form_type = address_book_form_context.form_type;
 const active_form = address_book_form_context.active_form;
 const dynamic_fields = address_book_form_context.dynamic_fields;
 const form_field_errors = address_book_form_context.form_field_errors;
+const is_submitting = computed(() => address_book_form_context.is_submitting.value)
 
 const setFormType = address_book_form_context.setFormType;
 const updateActiveFormField = address_book_form_context.updateActiveFormField;
@@ -60,12 +61,12 @@ const save_label = computed(() => {
 	return translate(`account.addressBook.${label_key}`)
 })
 
-const edit_address_type_note = "Address type can't be changed to maintain data integrity and ensure smooth order processing."
+const edit_address_type_note = computed(() => translate('account.addressBook.editAddressTypeNote'))
 
 const default_toggle_copy = computed(() => {
-	if (form_type.value === 'shipping') return 'Save as my default shipping address'
-	if (form_type.value === 'drop') return 'Save as my default drop shipping address'
-	return 'Save as my default billing address'
+	if (form_type.value === 'shipping') return translate('account.addressBook.defaultToggleShipping')
+	if (form_type.value === 'drop') return translate('account.addressBook.defaultToggleDrop')
+	return translate('account.addressBook.defaultToggleBilling')
 })
 
 const default_address_tooltip_props = {
@@ -75,30 +76,30 @@ const default_address_tooltip_props = {
 	tone: 'neutral',
 	offset: 10,
 	slideDistance: 24,
-	contentWidth: '420px',
-	contentMinWidth: '420px',
-	contentMaxWidth: 'min(420px, calc(100vw - 32px))',
+	contentWidth: '480px',
+	contentMinWidth: '480px',
+	contentMaxWidth: 'min(480px, calc(100vw - 32px))',
 	mobileContentWidth: 'min(320px, calc(100vw - 32px))',
 } as const
 
 const default_address_tooltip_content = computed(() => {
 	if (form_type.value === 'shipping') {
 		return {
-			title: 'Default Shipping Address',
-			text: 'Choose this option to automatically use this address as your default shipping address for future purchases.',
+			title: translate('account.addressBook.defaultTooltipShippingTitle'),
+			text: translate('account.addressBook.defaultTooltipShippingText'),
 		}
 	}
 
 	if (form_type.value === 'billing') {
 		return {
-			title: 'Default Billing Address',
-			text: 'Choose this option to automatically use this address as your default billing address for future purchases.',
+			title: translate('account.addressBook.defaultTooltipBillingTitle'),
+			text: translate('account.addressBook.defaultTooltipBillingText'),
 		}
 	}
 
 	return {
-		title: 'Default Drop Shipping Address',
-		text: 'Choose this option to automatically use this address as your default drop shipping address for future purchases.',
+		title: translate('account.addressBook.defaultTooltipDropTitle'),
+		text: translate('account.addressBook.defaultTooltipDropText'),
 	}
 })
 
@@ -109,35 +110,32 @@ function closeModal() {
 function toggleDefaultAddressTooltip() {
 	default_address_tooltip_open.value = !default_address_tooltip_open.value
 }
+
+async function handleSubmit() {
+	if (is_submitting.value) return
+	await submitAddressForm()
+}
 </script>
 
 <template>
 	<UiModal
 		:model-value="is_form_modal_open"
 		align="top"
-		padding="0"
-		gap="0"
 		width="710px"
+		:title="modal_title"
 		modal-class="account-address-book-add-modal-shell"
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
+		<template #overlay>
+			<UiLoadingOverlay
+				:visible="is_submitting"
+				variant="modal"
+				position="absolute"
+				:label="translate('account.addressBook.saving')"
+			/>
+		</template>
+
 		<section class="account-address-book-add-modal" data-testid="account-address-book-add-modal">
-			<header class="account-address-book-add-modal-header">
-				<h3 class="account-address-book-add-modal-title">
-					{{ modal_title }}
-				</h3>
-
-				<button
-					type="button"
-					class="account-address-book-add-modal-close"
-					aria-label="Close add address modal"
-					data-testid="account-address-book-add-modal-close"
-					@click="closeModal"
-				>
-					<UiIcon name="regular-times" :size="24" />
-				</button>
-			</header>
-
 			<div class="account-address-book-add-modal-body">
 				<div class="account-address-book-add-modal-section-group">
 					<div class="account-address-book-add-modal-section">
@@ -156,7 +154,7 @@ function toggleDefaultAddressTooltip() {
 									size="40"
 									class="account-address-book-add-modal-choice"
 									:selected="form_type === option.value"
-									:disabled="form_modal_mode === 'edit'"
+									:disabled="form_modal_mode === 'edit' || is_submitting"
 									@click="setFormType(option.value)"
 								>
 									<UiIcon :name="option.icon" :size="24" />
@@ -165,7 +163,7 @@ function toggleDefaultAddressTooltip() {
 							</div>
 
 							<p v-if="form_modal_mode === 'edit'" class="account-address-book-add-modal-note">
-								<UiIcon name="regular-info-circle" :size="16" />
+								<UiIcon name="regular-info-circle" :size="20" color="var(--gray-90)" />
 								<span>{{ edit_address_type_note }}</span>
 							</p>
 						</div>
@@ -229,33 +227,35 @@ function toggleDefaultAddressTooltip() {
 				</div>
 
 			</div>
-
-			<footer class="account-address-book-add-modal-footer">
-				<div class="account-address-book-add-modal-actions">
-					<UiButton
-						type="button"
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="account-address-book-add-modal-cancel"
-						@click="closeModal"
-					>
-						{{ translate('account.addressBook.cancel') }}
-					</UiButton>
-
-					<UiButton
-						type="button"
-						variant="filled"
-						tone="neutral"
-						size="md"
-						class="account-address-book-add-modal-save"
-						@click="submitAddressForm"
-					>
-						{{ save_label }}
-					</UiButton>
-				</div>
-			</footer>
 		</section>
+
+		<template #footer>
+			<div class="account-address-book-add-modal-actions ui-modal-footer-item">
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="account-address-book-add-modal-cancel"
+					:disabled="is_submitting"
+					@click="closeFormModal"
+				>
+					{{ translate('account.addressBook.cancel') }}
+				</UiButton>
+
+				<UiButton
+					type="button"
+					variant="filled"
+					tone="neutral"
+					size="md"
+					class="account-address-book-add-modal-save"
+					:disabled="is_submitting"
+					@click="handleSubmit"
+				>
+					{{ save_label }}
+				</UiButton>
+			</div>
+		</template>
 	</UiModal>
 </template>
 
@@ -266,38 +266,10 @@ function toggleDefaultAddressTooltip() {
 	overflow: visible;
 	width: 100%;
 
-	.account-address-book-add-modal-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 18px 28px;
-		border-bottom: 1px solid var(--gray-20);
-
-		.account-address-book-add-modal-title {
-			font-size: var(--type-size-350, 2rem);
-			line-height: 1.2;
-			font-weight: var(--font-weight-bold);
-			color: var(--text-primary);
-		}
-
-		.account-address-book-add-modal-close {
-			display: grid;
-			place-items: center;
-			padding: 0;
-			border: 0;
-			background: transparent;
-			cursor: pointer;
-			color: var(--text-primary);
-			width: 24px;
-			height: 24px;
-		}
-	}
-
 	.account-address-book-add-modal-body {
 		display: flex;
 		flex-direction: column;
-		gap: 36px;
-		padding: 24px;
+		gap: 40px;
 	}
 
 	.account-address-book-add-modal-section {
@@ -321,16 +293,16 @@ function toggleDefaultAddressTooltip() {
 	.account-address-book-add-modal-group {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
+		gap: 8px;
 	}
 
 	.account-address-book-add-modal-note {
 		display: inline-flex;
-		align-items: flex-start;
-		gap: 8px;
+		align-items: center;
+		gap: 4px;
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
-		line-height: 1.5;
+		line-height: var(--type-line-100);
 	}
 
 	.account-address-book-add-modal-label {
@@ -367,16 +339,21 @@ function toggleDefaultAddressTooltip() {
 		display: none;
 	}
 
-	.account-address-book-add-modal-choice:hover {
+	.account-address-book-add-modal-choice.ui-button:hover:not(:disabled) {
 		background: var(--gray-10);
 		border-color: var(--gray-50);
 		color: var(--text-primary);
 	}
 
-	.account-address-book-add-modal-choice[data-selected='true'] {
+	.account-address-book-add-modal-choice.ui-button[data-selected='true'] {
 		background: var(--gray-10);
 		border-color: var(--gray-60);
 		color: var(--text-primary);
+
+		&:hover:not(:disabled) {
+			background: var(--gray-10);
+			border-color: var(--gray-60);
+		}
 	}
 
 	.account-address-book-add-modal-choice:disabled {
@@ -397,11 +374,7 @@ function toggleDefaultAddressTooltip() {
 		gap: 4px;
 	}
 
-	.account-address-book-add-modal-footer {
-		display: flex;
-		justify-content: flex-end;
-		padding: 0 24px 24px;
-	}
+
 
 	.account-address-book-add-modal-switch {
 		position: relative;
@@ -497,8 +470,8 @@ function toggleDefaultAddressTooltip() {
 			align-items: stretch;
 		}
 
-		.account-address-book-add-modal-footer {
-			padding: 16px 20px 20px;
+		:deep(.ui-modal-footer) {
+			padding: 0 20px 20px;
 
 			.account-address-book-add-modal-actions {
 				width: 100%;

@@ -43,9 +43,9 @@ function confirmAction() {
 		:model-value="props.modelValue"
 		align="center"
 		:width="props.width"
-		padding="0"
-		gap="0"
 		:modal-class="props.modalClass"
+		footer-class="delete-confirm-modal-footer"
+		hide-header
 		@update:model-value="emit('cancel')"
 		@close="emit('cancel')"
 	>
@@ -59,7 +59,7 @@ function confirmAction() {
 					>
 				</div>
 				<div class="delete-confirm-modal-text-wrap">
-					<h3 class="delete-confirm-modal-title">
+					<h3 v-if="props.title" class="delete-confirm-modal-title">
 						{{ props.title }}
 					</h3>
 					<p class="delete-confirm-modal-text">
@@ -67,14 +67,15 @@ function confirmAction() {
 					</p>
 				</div>
 			</div>
+		</section>
 
-			<footer class="delete-confirm-modal-actions">
+		<template #footer>
+			<div class="delete-confirm-modal-actions ui-modal-footer-item">
 				<UiButton
 					type="button"
 					variant="ghost"
 					tone="neutral"
-					size="sm"
-					:no-hover="true"
+					size="md"
 					class="delete-confirm-modal-cancel"
 					:data-testid="`${props.testId}-cancel`"
 					@click="closeModal()"
@@ -84,7 +85,7 @@ function confirmAction() {
 				<UiButton
 					type="button"
 					variant="filled"
-					:tone="props.confirmTone"
+					tone="danger"
 					size="md"
 					class="delete-confirm-modal-confirm"
 					:data-testid="`${props.testId}-confirm`"
@@ -92,7 +93,7 @@ function confirmAction() {
 				>
 					{{ props.confirmLabel }}
 				</UiButton>
-			</footer>
-		</section>
+			</div>
+		</template>
 	</UiModal>
 </template>

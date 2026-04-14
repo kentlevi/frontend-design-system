@@ -44,7 +44,12 @@
             "proceedToCheckout": "Proceed to Checkout",
             "note": "Shipping fees and discounts are calculated at checkout.",
             "availablePaymentOptions": "Available Payment Options:",
-            "securedPayments": "Secured Payments"
+            "securedPayments": "Secured Payments",
+            "emptyTitle": "Your cart is empty.",
+            "emptyDescription": "Looks like your cart is empty. Start browsing our products and add items to your cart to begin your order. You can also explore the recommended products below to quickly find items you might like.",
+            "discoverMore": "Discover more products you might like.",
+            "prevProductsSr": "Previous products",
+            "nextProductsSr": "Next products"
         }
     }
 }

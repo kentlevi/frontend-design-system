@@ -242,8 +242,6 @@ watch(
 		:model-value="is_open"
 		align="center"
 		width="640px"
-		padding="0"
-		gap="0"
 		modal-class="cart-item-edit-modal-shell"
 		:title="modal_title"
 		@update:model-value="!$event && closeModal()"
@@ -402,8 +400,10 @@ watch(
 					</div>
 				</div>
 			</div>
+		</section>
 
-			<div class="cart-item-edit-modal-actions">
+		<template #footer>
+			<div class="cart-item-edit-modal-actions ui-modal-footer-item">
 				<UiButton
 					type="button"
 					variant="ghost"
@@ -424,34 +424,16 @@ watch(
 					{{ t('cart.cartPreview.editModal.update') }}
 				</UiButton>
 			</div>
-		</section>
+		</template>
 	</UiModal>
 </template>
 
 <style lang="scss">
 .cart-item-edit-modal-shell {
 	border-radius: 18px;
-	box-shadow: 0 18px 48px rgba(12, 19, 35, 0.22);
-
-	.ui-modal-header {
-		padding: 12px 24px;
-		border-bottom: 1px solid var(--gray-30);
-		align-items: center;
-	}
-
-	.ui-modal-title {
-		font-size: var(--type-size-300);
-		line-height: var(--type-line-300);
-		color: var(--text-primary);
-	}
-
-	.ui-modal-body {
-		padding: 0;
-	}
 }
 
 .cart-item-edit-modal {
-	padding: 24px;
 	background: var(--contrast-light);
 	border-radius: inherit;
 	display: flex;
@@ -628,13 +610,8 @@ watch(
 			height: 112px;
 		}
 
-		.cart-item-edit-modal-actions {
-			justify-content: stretch;
-		}
-
-		.cart-item-edit-cancel,
-		.cart-item-edit-update {
-			flex: 1;
+		:deep(.ui-modal-footer) {
+			padding: 0 20px 20px;
 		}
 	}
 }

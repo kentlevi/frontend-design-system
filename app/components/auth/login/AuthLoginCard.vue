@@ -197,47 +197,11 @@ function handleForgotPasswordOpen() {
 
 <style lang="scss">
 .auth-login-card-shell {
-	width: 100%;
-	max-width: 588px;
 	.auth-login-card {
-		position: relative;
-		background: var(--contrast-light);
-		border: 1px solid var(--border-default);
-		border-radius: 22px;
-		box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
-		padding: 40px;
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-
-		.auth-login-card-close-wrap {
-			position: absolute;
-			top: 24px;
-			right: 24px;
-			z-index: 1;
-		}
-
-		.auth-login-card-close {
-			width: 24px;
-			height: 24px;
-			padding: 0;
-			min-height: auto;
-			border-radius: 6px;
-			box-shadow: none;
-		}
-
 		.auth-login-intro {
 			display: flex;
 			flex-direction: column;
 			gap: 40px;
-		}
-
-		.auth-login-submit {
-			width: 100%;
-			border-radius: 16px;
-			box-shadow: none;
-			font-size: var(--type-size-200);
-			line-height: var(--type-line-200);
 		}
 	}
 }

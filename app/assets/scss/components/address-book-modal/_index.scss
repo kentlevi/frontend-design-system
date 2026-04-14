@@ -1,0 +1,79 @@
+.address-book-modal {
+	position: relative;
+	background: var(--contrast-light);
+	border-radius: 16px;
+	width: 100%;
+	overflow: hidden;
+
+	.address-book-modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 24px;
+		box-shadow: 0 1px 0 0 var(--gray-50);
+		background: var(--contrast-light);
+		z-index: 2;
+
+		.address-book-modal-title {
+			font-size: var(--type-size-300);
+			line-height: var(--type-line-300);
+			font-weight: var(--font-weight-semibold);
+			color: var(--text-primary);
+		}
+
+		.address-book-modal-close {
+			display: grid;
+			place-items: center;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			cursor: pointer;
+			color: var(--text-primary);
+			width: 24px;
+			height: 24px;
+			transition: color 0.18s ease;
+
+			&:hover {
+				color: var(--text-secondary);
+			}
+
+			&:disabled {
+				cursor: default;
+				opacity: 0.5;
+			}
+		}
+	}
+
+	.address-book-modal-body {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding: 24px;
+	}
+
+	.address-book-modal-footer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 16px;
+		padding: 0 24px 24px;
+	}
+}
+
+@media (max-width: 640px) {
+	.address-book-modal {
+		.address-book-modal-header {
+			padding: 12px 20px;
+		}
+
+		.address-book-modal-body {
+			padding: 20px;
+		}
+
+		.address-book-modal-footer {
+			flex-direction: column;
+			align-items: stretch;
+			padding: 0 20px 20px;
+		}
+	}
+}

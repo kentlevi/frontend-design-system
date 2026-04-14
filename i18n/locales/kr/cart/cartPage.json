@@ -44,7 +44,12 @@
             "proceedToCheckout": "결제 진행하기",
             "note": "배송비 및 할인 금액은 결제 단계에서 계산됩니다.",
             "availablePaymentOptions": "사용 가능한 결제 수단:",
-            "securedPayments": "안전한 결제"
+            "securedPayments": "안전한 결제",
+            "emptyTitle": "장바구니가 비어 있습니다.",
+            "emptyDescription": "장바구니가 비어 있는 것 같습니다. 상품을 둘러보고 주문을 시작하려면 장바구니에 상품을 추가하세요. 아래의 추천 상품을 탐색하여 마음에 드는 상품을 빠르게 찾을 수도 있습니다.",
+            "discoverMore": "마음에 드실 만한 더 많은 상품을 찾아보세요.",
+            "prevProductsSr": "이전 상품",
+            "nextProductsSr": "다음 상품"
         }
     }
 }

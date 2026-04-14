@@ -92,6 +92,7 @@ async function submitReset() {
 		width="504px"
 		padding="40px"
 		gap="8px"
+		modal-class="upload-modal"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<div
@@ -228,9 +229,6 @@ async function submitReset() {
 
 .auth-forgot-body {
     position: relative;
-    margin: calc(var(--ui-modal-padding, 40px) * -1);
-    padding: var(--ui-modal-padding, 40px);
-    background: var(--contrast-light);
     border-radius: 14px;
     overflow: hidden;
     display: flex;

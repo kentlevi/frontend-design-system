@@ -60,7 +60,7 @@ const {
 						:src="display_avatar"
 						:alt="translate('auth.profile.details.photoTitle')"
 						class="account-profile-avatar-image"
-					/>
+					>
 					<span v-else class="account-profile-avatar-text">{{
 						initials
 					}}</span>
@@ -80,7 +80,7 @@ const {
 							accept=".jpg,.jpeg,.png"
 							data-testid="auth-profile-photo-input"
 							@change="handlePhotoPicked"
-						/>
+						>
 						<UiButton
 							variant="outline"
 							tone="neutral"
@@ -92,8 +92,8 @@ const {
 							{{
 								has_photo
 									? translate(
-											'account.profile.uploadNewPhoto'
-										)
+										'account.profile.uploadNewPhoto'
+									)
 									: translate('account.profile.uploadPhoto')
 							}}
 						</UiButton>
