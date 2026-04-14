@@ -1,15 +1,15 @@
 import { inject, provide, type InjectionKey } from 'vue'
 import type { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState'
 
-export type AddressCheckoutContext = ReturnType<typeof useAddressFormState>
+export type AddressFormCheckoutContext = ReturnType<typeof useAddressFormState>
 
-const address_checkout_context_key: InjectionKey<AddressCheckoutContext> = Symbol('address-checkout-context')
+const address_checkout_context_key: InjectionKey<AddressFormCheckoutContext> = Symbol('address-checkout-context')
 
-export function provideAddressCheckoutContext(context: AddressCheckoutContext) {
+export function provideAddressFormCheckoutContext(context: AddressFormCheckoutContext) {
 	provide(address_checkout_context_key, context)
 }
 
-export function useAddressCheckoutContext() {
+export function useAddressFormCheckoutContext() {
 	const context = inject(address_checkout_context_key)
 
 	if (!context) {

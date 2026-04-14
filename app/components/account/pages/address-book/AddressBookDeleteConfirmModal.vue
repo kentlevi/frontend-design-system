@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
-import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
+import { useAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
 
-const address_book_feature_context = useAddressBookFeatureContext()
+const address_book_delete_context = useAddressBookDeleteContext()
 
-const is_delete_modal_open = address_book_feature_context.is_delete_modal_open
-const cancelDeleteFlow = address_book_feature_context.cancelDeleteFlow
-const confirmDeleteAddress = address_book_feature_context.confirmDeleteAddress
+const is_delete_modal_open = address_book_delete_context.is_delete_modal_open
+const cancelDeleteFlow = address_book_delete_context.cancelDeleteFlow
+const confirmDeleteAddress = address_book_delete_context.confirmDeleteAddress
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressItem, AddressMap, AddressType } from '~/types/address';
+import type { AddressItem, AddressType } from '~/types/address';
 import AddressBookSection from './AddressBookSection.vue';
 import AddressBookFormModal from './AddressBookFormModal.vue';
 import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';
@@ -13,7 +13,10 @@ import { useAddressFieldStore } from '~/stores/address';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
 import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
-import { provideAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
+import { provideAddressBookFormContext } from '~/composables/account/addressBook/context/useAddressBookFormContext';
+import { provideAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
+import { provideAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
+import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -141,16 +144,10 @@ const replacement_addresses = computed<AddressItem[]>(() => {
 	return pending_type ? getReplacementAddresses(pending_type) : []
 })
 
-provideAddressBookFeatureContext({
+provideAddressBookFormContext({
 	is_form_modal_open,
 	form_modal_mode,
 	form_submit_label,
-	is_delete_modal_open,
-	is_default_shipping_modal_open,
-	replacement_addresses,
-	is_confirm_default_change_modal_open,
-	current_default_address,
-	pending_default_address,
 	form_type,
 	active_form,
 	dynamic_fields,
@@ -160,13 +157,28 @@ provideAddressBookFeatureContext({
 	updateDynamicField,
 	submitAddressForm,
 	closeFormModal,
+})
+
+provideAddressBookDeleteContext({
+	is_delete_modal_open,
+	is_default_shipping_modal_open,
+	replacement_addresses,
 	cancelDeleteFlow,
 	confirmDeleteAddress,
 	cancelDefaultShippingFlow,
 	skipDefaultShippingSelection,
 	saveDefaultShippingSelection: deleteAndSetDefault,
+})
+
+provideAddressBookDefaultContext({
+	is_confirm_default_change_modal_open,
+	current_default_address,
+	pending_default_address,
 	closeConfirmDefaultChangeModal,
 	confirmDefaultAddressChange,
+})
+
+provideAddressBookCardActionContext({
 	handleCardMenuAction,
 })
 
@@ -177,10 +189,7 @@ onMounted(() => {
 	address_field_store.getDynamicFields()
 })
 
-function handleCardMenuAction(payload: {
-	action: 'edit' | 'delete' | 'default';
-	item: AddressMap[AddressType];
-}) {
+function handleCardMenuAction(payload: AddressBookMenuPayload) {
 	if (payload.action === 'edit') {
 		openEditModal(payload.item)
 		return

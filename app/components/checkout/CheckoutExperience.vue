@@ -72,12 +72,20 @@ import CheckoutMemberShippingAddressModal from '~/components/checkout/modals/Che
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { provideAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
+import { provideAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
+import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
+import { provideAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { useInitAddresses } from '~/composables/checkout/address/useInitAddresses';
 
 /** Standalone address context (isolated from checkout_experience) */
 const address_checkout_form_state = useAddressFormState();
-provideAddressCheckoutContext(address_checkout_form_state);
+provideAddressFormCheckoutContext(address_checkout_form_state);
+
+const address_checkout_book_list_state = useAddressBookList()
+provideAddressBookListCheckoutContext(address_checkout_book_list_state)
+
+useInitAddresses()
 
 const checkout_experience = useCheckoutExperience();
 

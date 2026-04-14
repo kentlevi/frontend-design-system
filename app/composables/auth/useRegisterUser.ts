@@ -1,4 +1,4 @@
-import { sendRegisterVerification, submitRegisterVerification } from '~/services/auth/auth.service'
+import { sendRegisterVerification, submitRegisterVerification } from '~/services/auth/api.service'
 import type { RegisterPayload, RegisterVerificationPayload, RegisterVerificationResponse } from '~/types/auth/auth';
 import type { ApiResponse } from '~/types/config/api';
 
