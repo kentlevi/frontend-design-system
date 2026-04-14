@@ -2,24 +2,24 @@
 	<div :class="list_classes">
 		<template v-if="has_items">
 			<div
-				v-for="item in props.items"
-				:key="item.id"
+				v-for="item,index in items"
+				:key="index"
 				class="checkout-summary-item"
 			>
 				<div class="checkout-summary-thumb">
 					<img
-						:src="item.artworkPreviewUrl || item.product.image"
-						:alt="item.product.name"
+						:src="item.product_thumbnail"
+						:alt="item.product"
 						class="checkout-summary-thumb-image"
 					>
 				</div>
 				<div class="checkout-summary-info">
-					<div class="checkout-summary-name">{{ item.product.name }}</div>
+					<div class="checkout-summary-name">{{ item.product}}</div>
 					<div class="checkout-summary-meta">
-						{{ props.itemMeta(item.sizeLabel, item.qty) }}
+						{{ item.width }} x {{ item.width }} {{ item.quantity }}pcs.
 					</div>
 				</div>
-				<div class="checkout-summary-price">{{ props.formatPrice(item.total) }}</div>
+				<div class="checkout-summary-price">{{ item.cost }}</div>
 			</div>
 		</template>
 		<div v-else class="checkout-summary-skeleton" aria-hidden="true">
@@ -37,17 +37,19 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { CheckoutItem } from '~/types/checkout';
+import { useCartStore } from '~/stores/cart/cart.store';
 
 const props = defineProps<{
 	tone: 'guest' | 'member';
-	items: CheckoutItem[];
-	formatPrice: (value: number) => string;
-	itemMeta: (sizeLabel: string, qty: number) => string;
 }>();
 
-const has_items = computed(() => props.items.length > 0);
+const {
+	items,
+} = storeToRefs(useCartStore())
+
+const has_items = computed(() => items.value.length > 0);
 const list_classes = computed(() => ['checkout-summary-list', `is-${props.tone}`]);
+
 </script>
 
 <style scoped lang="scss">
