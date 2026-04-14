@@ -67,7 +67,6 @@ export function useCheckoutMember() {
 	);
 
 	const drop_shipping_enabled = ref(false);
-	const drop_shipping_ship_to_another_address = ref(false);
 	const drop_shipping_addresses = computed<MemberDropShippingAddress[]>(() => [
 		{
 			id: 'drop-default',
@@ -194,7 +193,6 @@ export function useCheckoutMember() {
 		active_payment_methods,
 		payment_brands: checkoutMemberPaymentBrands,
 		drop_shipping_enabled,
-		drop_shipping_ship_to_another_address,
 		drop_shipping_addresses,
 		selected_drop_shipping_address,
 		selected_drop_shipping_address_id,

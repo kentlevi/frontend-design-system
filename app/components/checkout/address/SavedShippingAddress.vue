@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressHelper } from '~/utils/address';
-import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 
 useSavedShippingAddress()
 
