@@ -1,4 +1,4 @@
-import { memberLogin, nonMemberSubmitVerification, sendNonMemberLoginVerification, socialRedirect } from "~/services/auth/auth.service";
+import { memberLogin, nonMemberSubmitVerification, sendNonMemberLoginVerification, socialRedirect } from "~/services/auth/api.service";
 import type {
 	LoginPayload,
 	LoginResponse,
@@ -8,9 +8,9 @@ import type {
 	SocialRedirectResponse,
 	SubmitNonMemberLoginVerificationPayload
 } from "~/types/auth/auth";
-import { useAuthUser } from "./useAuthUser";
 import { setGuestLoginToastPending } from "~/helpers/auth/auth.helper";
 import type { ApiResponse } from "~/types/config/api";
+import { fetchAndStoreUser } from "~/services/auth/auth.service";
 
 export function useLoginUser() {
 	async function handleMemberLogin(payload: LoginPayload): Promise<LoginResponse> {
@@ -22,10 +22,7 @@ export function useLoginUser() {
 			}
 
 			storeAuthCookie(false, payload.remember_me)
-
 			setGuestLoginToastPending()
-
-			const { fetchAndStoreUser } = useAuthUser()
 			await fetchAndStoreUser()
 
 			return response

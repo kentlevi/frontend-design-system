@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useCountry } from '@/composables/app/country/useCountry';
 import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
 import HomeGuideTour from '~/components/home/HomeGuideTour.vue';
@@ -9,13 +8,20 @@ import HomeGuideTourSkipModal from '~/components/home/HomeGuideTourSkipModal.vue
 import HomeWelcomePopover from '~/components/home/HomeWelcomePopover.vue';
 import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import AuthResetPasswordModal from '~/components/auth/login/AuthResetPasswordModal.vue';
-import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import {
+	defineAsyncComponent,
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	watch,
+} from 'vue';
 import {
 	HOME_GUIDE_TOUR_TOTAL_STEPS,
 	HOME_WELCOME_POPOVER_PENDING_KEY,
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
-import { usePasswordReset } from '~/composables/auth/usePasswordReset';
+import { useResetPassword } from '~/composables/auth/useResetPassword';
 
 const HomeFeatureHighlight = defineAsyncComponent(
 	() => import('~/components/home/HomeFeatureHighlight.vue')
@@ -37,14 +43,14 @@ definePageMeta({
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const { withCountry } = useCountry();
+const {
+	is_reset_password_modal_open,
+	is_reset_success_toast_visible,
+	initializeResetPasswordFromRoute,
+	dismissResetSuccessToast,
+} = useResetPassword();
 const isForgotPasswordModalOpen = ref(false);
 const forgotEmail = ref('');
-const isResetPasswordModalOpen = ref(false);
-const resetEmail = ref('');
-const resetToken = ref('');
-const resetExpiry = ref('');
-const isResetSuccessToastVisible = ref(false);
 const isWelcomePopoverVisible = ref(false);
 const isGuideTourVisible = ref(false);
 const isGuideDonePopoverVisible = ref(false);
@@ -99,7 +105,11 @@ function clearGuideDonePopoverAutoCloseTimer() {
 }
 
 function clearDeferredHomeInit() {
-	if (deferredHomeInitHandle !== null && import.meta.client && 'cancelIdleCallback' in window) {
+	if (
+		deferredHomeInitHandle !== null &&
+		import.meta.client &&
+		'cancelIdleCallback' in window
+	) {
 		window.cancelIdleCallback(deferredHomeInitHandle);
 		deferredHomeInitHandle = null;
 	}
@@ -120,23 +130,13 @@ function clearModalQuery() {
 	delete query.modal;
 	delete query.email;
 	delete query.token;
+	delete query.expiry;
 	router.replace({ path: route.path, query });
 }
 
 function setGuideTourBodyState(active: boolean) {
 	if (!import.meta.client) return;
 	document.body.classList.toggle('home-guide-tour-active', active);
-}
-
-function showResetSuccessToast() {
-	isResetPasswordModalOpen.value = false;
-	isResetSuccessToastVisible.value = true;
-
-	clearResetToastTimer();
-
-	resetToastTimer = setTimeout(() => {
-		isResetSuccessToastVisible.value = false;
-	}, 5000);
 }
 
 function dismissWelcomePopover() {
@@ -154,7 +154,10 @@ function closeGuideTourOnly() {
 }
 
 function openGuideTourSkipModal(resumeStep = 1) {
-	guideTourResumeStep.value = Math.min(Math.max(resumeStep, 1), HOME_GUIDE_TOUR_TOTAL_STEPS);
+	guideTourResumeStep.value = Math.min(
+		Math.max(resumeStep, 1),
+		HOME_GUIDE_TOUR_TOTAL_STEPS
+	);
 	isGuideTourSkipModalVisible.value = true;
 }
 
@@ -222,7 +225,10 @@ async function openGuideTour(step = 1) {
 	isGuideTourSkipModalVisible.value = false;
 	clearGuideDonePopoverAutoCloseTimer();
 	isGuideDonePopoverVisible.value = false;
-	guideTourStep.value = Math.min(Math.max(step, 1), HOME_GUIDE_TOUR_TOTAL_STEPS);
+	guideTourStep.value = Math.min(
+		Math.max(step, 1),
+		HOME_GUIDE_TOUR_TOTAL_STEPS
+	);
 	isGuideTourVisible.value = true;
 	setGuideTourBodyState(true);
 	await nextTick();
@@ -272,15 +278,21 @@ function openWelcomePopoverFromTrigger() {
 function runDeferredHomeInit() {
 	if (import.meta.client) {
 		const shouldShowWelcomePopover =
-			window.localStorage.getItem(HOME_WELCOME_POPOVER_PENDING_KEY) === '1';
+			window.localStorage.getItem(HOME_WELCOME_POPOVER_PENDING_KEY) ===
+			'1';
 		if (shouldShowWelcomePopover) {
 			scheduleWelcomePopover(WELCOME_POPOVER_SHOW_DELAY_MS);
 		}
-		const tourQuery = Array.isArray(route.query.tour) ? route.query.tour[0] : route.query.tour;
+		const tourQuery = Array.isArray(route.query.tour)
+			? route.query.tour[0]
+			: route.query.tour;
 		if (tourQuery === '1' || tourQuery === 'true') {
 			scheduleWelcomePopover(0);
 		}
-		window.addEventListener(HOME_WELCOME_POPOVER_TRIGGER_EVENT, openWelcomePopoverFromTrigger);
+		window.addEventListener(
+			HOME_WELCOME_POPOVER_TRIGGER_EVENT,
+			openWelcomePopoverFromTrigger
+		);
 		window.addEventListener('resize', syncGuideTourTargetRect);
 		window.addEventListener('scroll', syncGuideTourTargetRect, true);
 	}
@@ -294,42 +306,10 @@ async function openInitialHomeModalFromRoute() {
 	const emailQuery = Array.isArray(route.query.email)
 		? route.query.email[0]
 		: route.query.email;
-	const tokenQuery = Array.isArray(route.query.token)
-		? route.query.token[0]
-		: route.query.token;
-	const expiryQuery = Array.isArray(route.query.expiry)
-		? route.query.expiry[0]
-		: route.query.expiry;
 
 	if (modalQuery === 'reset-password') {
-		resetEmail.value = typeof emailQuery === 'string' ? emailQuery : '';
-		resetToken.value = typeof tokenQuery === 'string' ? tokenQuery : '';
-		resetExpiry.value = typeof expiryQuery === 'string' ? expiryQuery : '';
-
-		const { validateTokenHandler } = usePasswordReset()
-		const response = await validateTokenHandler({
-			email: resetEmail.value,
-			token: resetToken.value
-		})
-
-		if (!response.success) {
-			navigateTo(withCountry('/auth/otp-expired?email=' + resetEmail.value));
-			return
-		}
-
-		if (resetExpiry.value !== '') {
-			const expiry = parseInt(resetExpiry.value, 10);
-			const now = Math.floor(Date.now() / 1000);
-			if (now > expiry) {
-				navigateTo(withCountry('/auth/otp-expired?email=' + resetEmail.value));
-				return;
-			}
-		}
-
-		if (resetEmail.value && resetToken.value) {
-			isResetPasswordModalOpen.value = true;
-			return;
-		}
+		await initializeResetPasswordFromRoute();
+		return;
 	}
 
 	if (modalQuery !== 'forgot-password') return;
@@ -360,10 +340,23 @@ onMounted(() => {
 	}, 250);
 });
 
-watch(isResetPasswordModalOpen, (open, previous) => {
+watch(is_reset_password_modal_open, (open, previous) => {
 	if (previous && !open) {
 		clearModalQuery();
 	}
+});
+
+watch(is_reset_success_toast_visible, (visible) => {
+	if (!visible) {
+		clearResetToastTimer();
+		return;
+	}
+
+	clearResetToastTimer();
+
+	resetToastTimer = setTimeout(() => {
+		dismissResetSuccessToast();
+	}, 5000);
 });
 
 watch(isForgotPasswordModalOpen, (open, previous) => {
@@ -382,7 +375,10 @@ onBeforeUnmount(() => {
 	currentGuideTargetEl?.classList.remove('home-guide-tour-target-active');
 	currentGuideTargetEl = null;
 	if (import.meta.client) {
-		window.removeEventListener(HOME_WELCOME_POPOVER_TRIGGER_EVENT, openWelcomePopoverFromTrigger);
+		window.removeEventListener(
+			HOME_WELCOME_POPOVER_TRIGGER_EVENT,
+			openWelcomePopoverFromTrigger
+		);
 		window.removeEventListener('resize', syncGuideTourTargetRect);
 		window.removeEventListener('scroll', syncGuideTourTargetRect, true);
 	}
@@ -429,21 +425,14 @@ useHead({
 			:email="forgotEmail"
 			data-testid="home-forgot-password-modal"
 		/>
-		<AuthResetPasswordModal
-			v-model="isResetPasswordModalOpen"
-			:email="resetEmail"
-			:token="resetToken"
-			:expiry="resetExpiry"
-			data-testid="home-reset-password-modal"
-			@updated="showResetSuccessToast"
-		/>
+		<AuthResetPasswordModal data-testid="home-reset-password-modal" />
 		<UiToast
-			:visible="isResetSuccessToastVisible"
+			:visible="is_reset_success_toast_visible"
 			tone="primary"
 			:message="t('home.passwordUpdated')"
 			variant="outlined"
 			data-testid="home-reset-password-success-toast"
-			@close="isResetSuccessToastVisible = false"
+			@close="dismissResetSuccessToast"
 		/>
 		<HomeWelcomePopover
 			:visible="isWelcomePopoverVisible"
@@ -464,51 +453,54 @@ useHead({
 		/>
 		<HomeGuideTourDonePopover
 			:visible="isGuideDonePopoverVisible"
-			@close="clearGuideDonePopoverAutoCloseTimer(); isGuideDonePopoverVisible = false"
+			@close="
+				clearGuideDonePopoverAutoCloseTimer();
+				isGuideDonePopoverVisible = false;
+			"
 		/>
 	</main>
 </template>
 
 <style scoped lang="scss">
 .home-page {
-    background: var(--bg-page);
+	background: var(--bg-page);
 }
 
 .home-sections-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	width: 100%;
 }
 
 :global(.home-guide-tour-target-active) {
-    position: relative;
-    z-index: 145 !important;
-    border: 0 !important;
-    box-shadow:
-        inset 0 0 0 2px var(--brand-primary),
-        0 0 0 4px color-mix(in srgb, #ffffff 40%, transparent) !important;
+	position: relative;
+	z-index: 145 !important;
+	border: 0 !important;
+	box-shadow:
+		inset 0 0 0 2px var(--brand-primary),
+		0 0 0 4px color-mix(in srgb, #ffffff 40%, transparent) !important;
 }
 
 :global(.home-header-account-wrap.home-guide-tour-target-active) {
-    z-index: 1000000 !important;
-    background: #ffff;
-    border-radius: 12px;
+	z-index: 1000000 !important;
+	background: #ffff;
+	border-radius: 12px;
 }
 
 :global(.home-header-nav.home-guide-tour-target-active) {
-    z-index: 1000000 !important;
-    background: #ffff;
-    border-radius: 20px;
+	z-index: 1000000 !important;
+	background: #ffff;
+	border-radius: 20px;
 }
 
 :global(.ui-button.home-header-icon.home-guide-tour-target-active) {
-    position: relative !important;
-    z-index: 1000000 !important;
-    background: #ffff !important;
-    border-radius: 12px !important;
+	position: relative !important;
+	z-index: 1000000 !important;
+	background: #ffff !important;
+	border-radius: 12px !important;
 }
 
 :global(body.home-guide-tour-active .home-header-tools) {
-    pointer-events: none;
+	pointer-events: none;
 }
 </style>
