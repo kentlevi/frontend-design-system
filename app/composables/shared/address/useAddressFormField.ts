@@ -1,5 +1,6 @@
 import type { icons } from '~/data/ui/icons'
 import { useAddressFieldStore } from '~/stores/address'
+import type { CountryFieldOption } from '~/types/country_field_option'
 import type {
 	AddressDynamicFields,
 	AddressFormField,
@@ -110,6 +111,14 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		const value = options.props.form.fields?.[field_key]
 		const field = dynamic_fields.value?.find(f => f.field_key === field_key)
 
+		if (
+			field?.input_type === 'select'
+			&& hasProvinceLabel(field)
+			&& (value === '' || value === null || value === undefined)
+		) {
+			return createDefaultSelectOption(field).value
+		}
+
 		if (field?.options?.length) {
 			return field.options.find(opt => opt.id === value)?.value ?? ''
 		}
@@ -129,12 +138,44 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return options.props.errors?.[field_key] ?? ''
 	}
 
-	function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
+	function hasProvinceLabel(field: AddressDynamicFields) {
 		const normalized_label = field.field_label.toLowerCase()
+		return normalized_label.includes('province') || normalized_label.includes('metropolitan')
+	}
 
-		if (normalized_label.includes('province') || normalized_label.includes('metropolitan')) {
+	function createDefaultSelectOption(field: AddressDynamicFields): CountryFieldOption {
+		const default_label = hasProvinceLabel(field)
+			? options.translate('account.addressBook.provincePlaceholder')
+			: field.field_label
+
+		return {
+			id: '' as unknown as number,
+			country_field_id: field.id,
+			label: default_label,
+			value: default_label,
+			sort_order: -1,
+			is_active: true,
+		}
+	}
+
+	function getDynamicFieldOptions(field: AddressDynamicFields) {
+		if (field.input_type !== 'select') return field.options ?? []
+		if (!hasProvinceLabel(field)) return field.options ?? []
+
+		const current_options = field.options ?? []
+		const has_existing_default = current_options.some((option) => option.id === ('' as unknown as number))
+
+		if (has_existing_default) return current_options
+
+		return [createDefaultSelectOption(field), ...current_options]
+	}
+
+	function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
+		if (hasProvinceLabel(field)) {
 			return options.translate('account.addressBook.provincePlaceholder')
 		}
+
+		const normalized_label = field.field_label.toLowerCase()
 
 		if (normalized_label.includes('city') || normalized_label.includes('town')) {
 			return options.translate('account.addressBook.cityPlaceholder')
@@ -160,6 +201,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		getDynamicFieldValue,
 		onDynamicSelectChange,
 		getFieldError,
+		getDynamicFieldOptions,
 		getDynamicFieldPlaceholder,
 	}
 }

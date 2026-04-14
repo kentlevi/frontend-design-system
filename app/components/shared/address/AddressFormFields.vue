@@ -28,6 +28,7 @@ const {
 	getDynamicFieldValue,
 	onDynamicSelectChange,
 	getFieldError,
+	getDynamicFieldOptions,
 	getDynamicFieldPlaceholder,
 } = useAddressFormField({
 	props,
@@ -134,7 +135,7 @@ const {
 					<template #default="{ inputId, describedBy }">
 						<UiSelect
 							v-if="dynamic_field.input_type === 'select'"
-							:options="dynamic_field.options"
+							:options="getDynamicFieldOptions(dynamic_field)"
 							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
 							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
 							:trigger-class="getFieldError(`fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
@@ -233,7 +234,7 @@ const {
 				background: var(--contrast-light);
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
-				font-weight: var(--font-weight-medium, 500);
+				font-weight: var(--font-weight-regular);
 				box-shadow: none;
 
 				&.ui-button:hover:not(:disabled) {
@@ -282,6 +283,7 @@ const {
 
 		.address-form-fields-company-label-optional {
 			color: var(--text-secondary);
+			font-weight: var(--font-weight-regular);
 		}
 	}
 

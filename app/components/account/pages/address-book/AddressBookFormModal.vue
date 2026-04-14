@@ -331,7 +331,7 @@ async function handleSubmit() {
 		background: var(--contrast-light);
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-medium, 500);
+		font-weight: var(--font-weight-regular);
 		box-shadow: none;
 	}
 
@@ -357,8 +357,9 @@ async function handleSubmit() {
 	}
 
 	.account-address-book-add-modal-choice:disabled {
-		cursor: default;
-		opacity: 0.56;
+		background: var(--gray-10);
+		border-color: var(--gray-30);
+		color: var(--gray-50);
 	}
 
 	.account-address-book-add-modal-footer-row {

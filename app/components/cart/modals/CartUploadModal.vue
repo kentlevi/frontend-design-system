@@ -70,7 +70,7 @@ const removeFile = () => {
 		:model-value="is_modal_open"
 		align="center"
 		width="708px"
-		padding="0"
+		padding="24px"
 		gap="0"
 		:title="t('cart.uploadArtwork.title')"
 		modal-class="upload-modal-shell"
@@ -356,6 +356,8 @@ const removeFile = () => {
 
 .upload-note {
 	color: var(--gray-80);
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 }
 
 .upload-modal-footer {
@@ -383,4 +385,5 @@ const removeFile = () => {
 .artwork-file-input {
 	display: none;
 }
+
 </style>
