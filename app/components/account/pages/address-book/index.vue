@@ -17,6 +17,7 @@ import { provideAddressBookFormContext } from '~/composables/account/addressBook
 import { provideAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
 import { provideAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
+import { loadAddresses } from '~/services/address/address.service';
 
 withDefaults(defineProps<{
 	embedded?: boolean;

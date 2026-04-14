@@ -2,7 +2,7 @@
 	<section class="checkout-member-section">
 		<div class="checkout-member-shipping-group">
 			<div class="checkout-member-address-group">
-				<div v-if="is_member && selected_shipping_address" class="checkout-member-radio-row">
+				<div v-if="is_member" class="checkout-member-radio-row">
 					<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 						{{ t('checkout.member.myShippingAddress') }}
 					</UiRadio>
@@ -37,6 +37,10 @@
 			<UiRadio v-if="is_member && !ship_to_another_address" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
 				{{ t('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
+
+			{{ is_member }}
+			{{ ship_to_another_address }}
+			{{ selected_shipping_address_id }}
 
 			<ShippingMethod />
 
@@ -74,7 +78,7 @@ const {
 
 const {
 	ship_to_another_address,
-	selected_shipping_address
+	selected_shipping_address_id
 } = storeToRefs(useMainCheckOutStore())
 
 const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);

@@ -1,4 +1,4 @@
-import { setDefault } from "~/services/profile/address.service";
+import { setDefault } from "~/services/address/api.service";
 import { useAddressStore } from "~/stores/address";
 import type { AddressMap, AddressType } from "~/types/address";
 import { useAddressHelper } from "~/utils/address/index"

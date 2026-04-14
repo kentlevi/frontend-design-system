@@ -94,6 +94,29 @@ export const useAddressStore = defineStore('address', () => {
 		sortAddressesByDefault(type)
 	}
 
+
+
+	type AddressAction = 'fetch' | 'create' | 'update' | 'delete'
+
+	/** Loader */
+	const loader_map = ref<Record<string, boolean>>({})
+
+	function getKey(action: AddressAction, scope?: AddressType) {
+		return scope ? `${action}:${scope}` : action
+	}
+
+	function isLoading(action: AddressAction, scope?: AddressType) {
+		return !!loader_map.value[getKey(action, scope)]
+	}
+
+	function startLoading(action: AddressAction, scope?: AddressType) {
+		loader_map.value[getKey(action, scope)] = true
+	}
+
+	function stopLoading(action: AddressAction, scope?: AddressType) {
+		loader_map.value[getKey(action, scope)] = false
+	}
+
 	return {
 		shipping_address,
 		billing_address,
@@ -104,5 +127,9 @@ export const useAddressStore = defineStore('address', () => {
 		updateAddress,
 		deleteAddress,
 		setDefault,
+
+		isLoading,
+		startLoading,
+		stopLoading,
 	}
 })

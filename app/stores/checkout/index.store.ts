@@ -1,5 +1,4 @@
-import { addressFormDefaults } from "~/factories/address";
-import type { AddressFormMap, AddressMap, AddressType } from "~/types/address";
+import type { AddressMap, AddressType } from "~/types/address";
 import type { AvailablePaymentMethods } from "~/types/payments/payment"
 
 /**
@@ -12,11 +11,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		email: '',
 		verified_email: '',
 	})
-	const selected_shipping_address = ref<AddressFormMap[AddressType]>(addressFormDefaults('shipping'))
 	const selected_shipping_address_id = ref<number | null>(null)
-	const selected_billing_address = ref<AddressFormMap[AddressType]>(addressFormDefaults('billing'))
 	const selected_billing_address_id = ref<number | null>(null)
-	const selected_drop_address = ref<AddressFormMap[AddressType]>(addressFormDefaults('drop'))
 	const selected_drop_address_id = ref<number | null>(null)
 	const ship_to_another_address = ref<boolean>(false)
 	const is_shipping_billing = ref<boolean>(true)
@@ -33,24 +29,12 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		Object.assign(guest_contact_state, payload)
 	}
 
-	const setShippingAddress = (address_form: AddressFormMap[AddressType]) => {
-		selected_shipping_address.value = address_form
-	}
-
 	const setShippingAddressId = (id: number) => {
 		selected_shipping_address_id.value = id
 	}
 
-	const setBillingAddress = (address: AddressFormMap[AddressType]) => {
-		selected_billing_address.value = address
-	}
-
 	const setBillingAddressId = (id: number) => {
 		selected_billing_address_id.value = id
-	}
-
-	const setDropAddress = (address: AddressFormMap[AddressType]) => {
-		selected_drop_address.value = address
 	}
 
 	const setDropAddressId = (id: number) => {
@@ -75,24 +59,22 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_shipping_method_id.value = null
 	}
 
-	const clearShippingAddress = () => {
-		selected_shipping_address.value = addressFormDefaults('shipping')
+	const clearShippingAddressId = () => {
 		selected_shipping_address_id.value = null
 	}
 
-	const clearDropAddress = () => {
-		console.log('clear drop address');
-		selected_drop_address.value = addressFormDefaults('drop')
+	const clearBillingAddressId = () => {
+		selected_billing_address_id.value = null
+	}
+
+	const clearDropAddressId = () => {
 		selected_drop_address_id.value = null
 	}
 
 	return {
 		saved_shipping_addresses,
 		guest_contact_state,
-		selected_shipping_address,
 		selected_shipping_address_id,
-		selected_billing_address,
-		selected_drop_address,
 		selected_shipping_method_id,
 		selected_payment_method,
 		ship_to_another_address,
@@ -101,17 +83,15 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		// expose setters
 		setSavedShippingAddresses,
 		patchGuestContactState,
-		setShippingAddress,
 		setShippingAddressId,
-		setBillingAddress,
 		setBillingAddressId,
-		setDropAddress,
 		setDropAddressId,
 		setShippingMethodId,
 		setPaymentMethod,
 		cleanCheckoutStatesOnSuccess,
 
-		clearShippingAddress,
-		clearDropAddress,
+		clearShippingAddressId,
+		clearBillingAddressId,
+		clearDropAddressId,
 	}
 })

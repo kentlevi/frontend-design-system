@@ -1,6 +1,4 @@
-import { fetchUserAddresses } from "~/services/profile/address.service";
 import { useAddressStore } from "~/stores/address/address.store";
-import type { AddressType } from "~/types/address";
 
 export function useAddressBookList() {
 
