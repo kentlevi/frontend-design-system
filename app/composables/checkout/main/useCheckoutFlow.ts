@@ -11,6 +11,7 @@ export const useCheckoutFlow = () => {
 	const payment = usePaymentStrategy()
 	const { state } = storeToRefs(useUsersStore())
 	const {
+		guest_contact_state,
 		selected_shipping_method_id,
 		selected_payment_method,
 		selected_shipping_address
@@ -25,9 +26,14 @@ export const useCheckoutFlow = () => {
 		return {
 			shipping_method_id: selected_shipping_method_id.value,
 			payment_method_code: selected_payment_method.value?.code as PaymentCode,
-			email: state.value.email,
+			email: state.value.id !== 0
+				? state.value.email
+				: guest_contact_state.value.email,
 			contact_name:
-				selected_shipping_address.value?.contact_name ?? state.value.email,
+				selected_shipping_address.value?.contact_name
+				?? (state.value.id !== 0
+					? state.value.email
+					: guest_contact_state.value.email),
 			phone_number:
 				selected_shipping_address.value ? shippingPhoneNumber(selected_shipping_address.value) : ''
 		}

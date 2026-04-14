@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { useCheckoutGuestContactFeature } from '~/composables/checkout/features/useCheckoutGuestContactFeature';
 import {
 	checkoutGuestEmailTooltipContent,
 	checkoutGuestEmailTooltipProps,
 } from '~/data/checkout/tooltips';
 
 const {
-	t,
+	translate,
 	is_member,
 	email,
 	email_tooltip_open,
+	email_tooltip_ref,
 	toggleEmailTooltip,
 	openLoginModal,
-} = useCheckoutExperienceFeatureContext();
-
-const email_tooltip_ref = ref<HTMLElement | null>(null);
-
-useDismissibleTooltip(email_tooltip_ref, email_tooltip_open);
+	setGuestEmail,
+	handleGuestEmailBlur,
+} = useCheckoutGuestContactFeature();
 </script>
 
 <template>
+	<VerificationModal />
 	<section v-if="!is_member" class="checkout-member-section">
-		<h2 class="checkout-member-section-title">{{ t('checkout.guest.contactInformation') }}</h2>
+		<h2 class="checkout-member-section-title">{{ translate('checkout.guest.contactInformation') }}</h2>
 		<div class="checkout-section-body checkout-section-body--compact">
 			<div class="checkout-contact-group">
 				<div class="checkout-contact-head">
@@ -48,13 +46,20 @@ useDismissibleTooltip(email_tooltip_ref, email_tooltip_open);
 						</UiTooltip>
 					</div>
 					<div class="checkout-login-link">
-						<span class="checkout-login-link-text">{{ t('checkout.guest.loginPrompt') }}</span>
+						<span class="checkout-login-link-text">{{ translate('checkout.guest.loginPrompt') }}</span>
 						<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-login-link-action" label-class="checkout-login-link-action-label" @click="openLoginModal">
-							{{ t('checkout.guest.login') }}
+							{{ translate('checkout.guest.login') }}
 						</UiButton>
 					</div>
 				</div>
-				<UiInput v-model="email" type="email" class="checkout-input" :placeholder="t('checkout.guest.fields.email.placeholder')" />
+				<UiInput
+					:model-value="email"
+					type="email"
+					class="checkout-input"
+					:placeholder="translate('checkout.guest.fields.email.placeholder')"
+					@update:model-value="setGuestEmail"
+					@blur="handleGuestEmailBlur"
+				/>
 			</div>
 		</div>
 	</section>

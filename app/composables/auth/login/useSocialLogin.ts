@@ -3,10 +3,12 @@ import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
-import { useLoginUser } from '~/composables/auth/useLoginUser';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useRouter } from 'vue-router';
-import { fetchAndStoreUser } from '~/services/auth/auth.service';
+import {
+	fetchAndStoreUser,
+	requestSocialLoginRedirect,
+} from '~/services/auth/auth.service';
 
 export const useSocialLogin = () => {
 	const router = useRouter();
@@ -15,8 +17,7 @@ export const useSocialLogin = () => {
 
 	async function handleSocial(provider: string) {
 		try {
-			const { handleSocialLogin } = useLoginUser();
-			const response = await handleSocialLogin({ provider });
+			const response = await requestSocialLoginRedirect({ provider });
 
 			const redirect_url = response.data?.url;
 

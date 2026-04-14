@@ -1,6 +1,8 @@
 import type { ApiResponse } from '~/types/config/api'
 import type { UserIdentity, UserProfile } from '~/types/auth/user'
 
+export type LoginMemberType = 'member' | 'non-member'
+
 export type LoginResponse = ApiResponse<LoginData>
 
 export interface LoginData {
@@ -17,6 +19,11 @@ export interface LoginPayload {
 export interface NonMemberLoginVerificationPayload {
 	email: string;
 	order_number: string;
+	is_resend?: boolean;
+}
+
+export interface CheckoutNonMemberLoginVerificationPayload {
+	email: string;
 	is_resend?: boolean;
 }
 

@@ -8,7 +8,6 @@ import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { registerRewardPoints } from '~/data/auth/register';
-import { useLoginUser } from '~/composables/auth/useLoginUser';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { useRoute } from 'vue-router';
 import {
@@ -16,6 +15,7 @@ import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import { loginMemberUser } from '~/services/auth/auth.service';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -109,8 +109,7 @@ async function continueWithRegisteredEmail() {
 		return;
 	}
 
-	const { handleMemberLogin } = useLoginUser();
-	const response = await handleMemberLogin({
+	const response = await loginMemberUser({
 		email: email.value,
 		password: registered_email_password.value,
 		remember_me: false,

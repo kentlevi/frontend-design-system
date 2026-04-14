@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { storeToRefs } from 'pinia'
+import { computed, ref, watch } from 'vue';
 import { usePasswordReset } from '~/composables/auth/usePasswordReset';
+import { useLoadingOverlayStore } from '~/stores/loading_overlay'
 
 const props = withDefaults(
 	defineProps<{
@@ -18,11 +20,16 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const loading_overlay_store = useLoadingOverlayStore()
+const { overlay_entries } = storeToRefs(loading_overlay_store)
+const FORGOT_PASSWORD_LOADING_KEY = 'auth_login_forgot_password'
 
 const reset_email = ref('');
 const error_message = ref('');
 const is_sent = ref(false);
-const is_loading = ref(false);
+const is_loading = computed(
+	() => overlay_entries.value[FORGOT_PASSWORD_LOADING_KEY]?.visible ?? false
+)
 
 watch(
 	() => props.modelValue,
@@ -61,7 +68,11 @@ async function submitReset() {
 		return;
 	}
 
-	is_loading.value = true;
+	loading_overlay_store.startLoading(FORGOT_PASSWORD_LOADING_KEY, {
+		label: t('auth.login.forgot.sending'),
+		testId: 'auth-login-forgot-password-loading-overlay',
+		position: 'fixed',
+	})
 
 	try {
 		const { sendResetPasswordLinkHandler } = usePasswordReset();
@@ -80,7 +91,7 @@ async function submitReset() {
 		error_message.value =
 			error_payload?.data?.message || error_payload?.message || t('auth.login.forgot.requestFailed');
 	} finally {
-		is_loading.value = false;
+		loading_overlay_store.stopLoading(FORGOT_PASSWORD_LOADING_KEY)
 	}
 }
 </script>
@@ -108,12 +119,6 @@ async function submitReset() {
 			>
 				<UiIcon name="regular-times" :size="24" />
 			</button>
-			<UiLoadingOverlay
-				:visible="is_loading"
-				:label="t('auth.login.forgot.sending')"
-				test-id="auth-login-forgot-password-loading-overlay"
-				variant="modal"
-			/>
 			<div class="auth-forgot-header">
 				<UiLogo
 					name="musticker"

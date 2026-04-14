@@ -63,7 +63,7 @@
 			tone="neutral"
 			size="lg"
 			class="checkout-summary-submit"
-			:disabled="props.disabled || props.loading"
+			:disabled="false"
 			@click="submitCheckout"
 		>
 			{{ props.completeLabel }}
