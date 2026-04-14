@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import AuthLoginCard from '@/components/auth/login/AuthLoginCard.vue';
-const { t } = useI18n();
+import AuthLoginCard from '@/components/auth/login/AuthLoginCard.vue'
+import { useAuthLoginPage } from '@/composables/auth/login/useAuthLoginPage'
+
+const { translate } = useAuthLoginPage()
 </script>
 
 <template>
@@ -11,7 +13,7 @@ const { t } = useI18n();
 			>
 				<img
 					src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
-					:alt="t('auth.login.title')"
+					:alt="translate('auth.login.title')"
 					loading="lazy"
 					class="auth-login-illustration-image"
 				>
@@ -26,7 +28,7 @@ const { t } = useI18n();
 			>
 				<img
 					src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
-					:alt="t('auth.login.title')"
+					:alt="translate('auth.login.title')"
 					loading="lazy"
 					class="auth-login-illustration-image"
 				>

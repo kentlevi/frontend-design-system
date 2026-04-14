@@ -8,6 +8,10 @@ import type { AvailablePaymentMethods } from "~/types/payments/payment"
 export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 	const saved_shipping_addresses = ref<AddressMap[AddressType][]>([])
+	const guest_contact_state = reactive({
+		email: '',
+		verified_email: '',
+	})
 	const selected_shipping_address = ref<AddressFormMap[AddressType]>(addressFormDefaults('shipping'))
 	const selected_shipping_address_id = ref<number | null>(null)
 	const selected_billing_address = ref<AddressFormMap[AddressType]>(addressFormDefaults('billing'))
@@ -21,6 +25,12 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 	const setSavedShippingAddresses = (addresses: AddressMap[AddressType][]) => {
 		saved_shipping_addresses.value = addresses
+	}
+
+	const patchGuestContactState = (
+		payload: Partial<typeof guest_contact_state>
+	) => {
+		Object.assign(guest_contact_state, payload)
 	}
 
 	const setShippingAddress = (address_form: AddressFormMap[AddressType]) => {
@@ -78,6 +88,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 	return {
 		saved_shipping_addresses,
+		guest_contact_state,
 		selected_shipping_address,
 		selected_shipping_address_id,
 		selected_billing_address,
@@ -89,6 +100,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 		// expose setters
 		setSavedShippingAddresses,
+		patchGuestContactState,
 		setShippingAddress,
 		setShippingAddressId,
 		setBillingAddress,

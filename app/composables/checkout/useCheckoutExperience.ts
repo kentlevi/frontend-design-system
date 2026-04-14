@@ -1,7 +1,9 @@
+import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
+import { useMainCheckOutStore } from '~/stores/checkout/index.store';
 import { useCheckoutMember } from '~/composables/checkout/member/useCheckoutMember';
 import { useCheckoutCompletion } from '~/composables/checkout/completion/useCheckoutCompletion';
 import { useCheckoutTooltipState } from '~/composables/checkout/features/useCheckoutTooltipState';
@@ -14,6 +16,8 @@ export function useCheckoutExperience() {
 	const { t } = useI18n();
 	const { withCountry } = useCountry();
 	const user_store = useUsersStore();
+	const checkout_store = useMainCheckOutStore();
+	const { guest_contact_state } = storeToRefs(checkout_store)
 
 	// Use Member logic as the primary base for both guest and member
 	const member_logic = useCheckoutMember();
@@ -25,12 +29,17 @@ export function useCheckoutExperience() {
 
 	const is_member = computed(() => user_store.state.id !== 0);
 
-	// Guest-specific fields that aren't in Member logic
-	const guest_email = ref('');
 	const email = computed({
-		get: () => is_member.value ? member_logic.member_email.value : guest_email.value,
+		get: () =>
+			is_member.value
+				? member_logic.member_email.value
+				: guest_contact_state.value.email,
 		set: (val) => {
-			if (!is_member.value) guest_email.value = val;
+			if (!is_member.value) {
+				checkout_store.patchGuestContactState({
+					email: val,
+				})
+			}
 		}
 	});
 

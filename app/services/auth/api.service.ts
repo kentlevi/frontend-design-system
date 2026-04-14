@@ -1,6 +1,7 @@
 import type {
 	LoginResponse,
 	LoginPayload,
+	CheckoutNonMemberLoginVerificationPayload,
 	NonMemberLoginVerificationPayload,
 	NonMemberLoginVerificationResponse,
 	SubmitNonMemberLoginVerificationPayload,
@@ -98,10 +99,10 @@ export async function completeOnboarding(payload: OnboardingPayload): Promise<Ap
 /**
  * Checkout send verification code
  */
-export async function sendCheckoutNonMemberLoginVerification(payload: { email: string }): Promise<NonMemberLoginVerificationResponse> {
+export async function sendCheckoutNonMemberLoginVerification(payload: CheckoutNonMemberLoginVerificationPayload): Promise<NonMemberLoginVerificationResponse> {
 	const { $api } = useNuxtApp()
 
-	return await $api.post('auth/login/guest/verification/checkout', { ...payload })
+	return await $api.post('auth/checkout/guest/verification', { ...payload })
 }
 
 /**
@@ -110,5 +111,5 @@ export async function sendCheckoutNonMemberLoginVerification(payload: { email: s
 export async function checkoutNonMemberSubmitVerification(payload: SubmitNonMemberLoginVerificationPayload): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
-	return await $api.post('auth/login/guest/verification/checkout', { ...payload })
+	return await $api.post('auth/checkout/guest', { ...payload })
 }
