@@ -32,12 +32,19 @@ export function useAddressBookList() {
 
 
 
+	/** Loading status */
+	const is_loading = ref(true)
+
 	/**
      * Functions
      */
 
 	/** Fetch user addresses */
-	async function getAddresses(type: AddressType) {
+	async function getAddresses(type: AddressType, options: { silent?: boolean } = {}) {
+		if (!options.silent) {
+			is_loading.value = true
+		}
+
 		try {
 			const params = { type }
 
@@ -50,6 +57,25 @@ export function useAddressBookList() {
 			}
 		} catch {
 			console.log('error');
+		} finally {
+			if (!options.silent) {
+				is_loading.value = false
+			}
+		}
+	}
+
+	/** Fetch all address types */
+	async function fetchAllAddresses() {
+		is_loading.value = true
+
+		try {
+			await Promise.all([
+				getAddresses('shipping', { silent: true }),
+				getAddresses('billing', { silent: true }),
+				getAddresses('drop', { silent: true }),
+			])
+		} finally {
+			is_loading.value = false
 		}
 	}
 
@@ -61,7 +87,9 @@ export function useAddressBookList() {
 		has_billing_addresses,
 		has_drop_addresses,
 		has_addresses,
+		is_loading,
 
 		getAddresses,
+		fetchAllAddresses,
 	}
 }

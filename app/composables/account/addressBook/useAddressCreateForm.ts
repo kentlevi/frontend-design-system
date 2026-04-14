@@ -18,6 +18,7 @@ type UseAddressCreateFormOptions = {
 
 export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
 
+	const is_submitting = ref(false)
 	const { mapApiFieldErrors } = useAddressHelper()
 
 	/**
@@ -25,14 +26,12 @@ export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
      */
 	const address_store = useAddressStore()
 	const toast_store = useToastStore()
-	const loading_overlay_store = useLoadingOverlayStore()
 
 	/**
      * Functions
      */
 	async function createAddress() {
-		options.closeFormModal()
-		startRequestOverlay()
+		is_submitting.value = true
 
 		const type = options.form_type.value;
 		const payload = { ...options.active_form.value };
@@ -46,17 +45,16 @@ export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
 
 
 				toast_store.handleApiResponse(response)
+				options.closeFormModal()
 				options.resetForm(type);
 			} else {
 				const next_errors = mapApiFieldErrors(response.data)
 				options.form_field_errors.value = next_errors
-				options.openCreateFormModal();
 			}
 		} catch (_error: unknown) {
 			console.log(_error);
-			options.openCreateFormModal();
 		} finally {
-			loading_overlay_store.stopLoading('add_address')
+			is_submitting.value = false
 		}
 	}
 
@@ -66,16 +64,8 @@ export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
 		options.populateDynamicFields(options.form_type.value)
 	}
 
-	/** Overlays */
-	function startRequestOverlay() {
-		loading_overlay_store.startLoading('add_address', {
-			showCopy: true,
-			testId: 'account-profile-upload-avatar-overlay',
-			position: 'fixed'
-		})
-	}
-
 	return {
+		is_submitting,
 		createAddress,
 		prepareCreateModal,
 	}

@@ -24,7 +24,7 @@ withDefaults(defineProps<{
 	embedded: false,
 });
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 
 /**
  * Store
@@ -41,8 +41,8 @@ const {
 	has_billing_addresses,
 	has_drop_addresses,
 	has_addresses,
-
-	getAddresses,
+	is_loading,
+	fetchAllAddresses,
 } = useAddressBookList()
 
 const {
@@ -90,6 +90,7 @@ const {
 })
 
 const {
+	is_submitting: is_creating,
 	createAddress,
 	prepareCreateModal,
 } = useAddressCreateForm({
@@ -124,6 +125,7 @@ const {
 })
 
 const {
+	is_submitting: is_updating,
 	resetEditState,
 	openEditModal,
 	updateAddress,
@@ -139,6 +141,8 @@ const {
 	clearFormFieldErrors,
 })
 
+const is_submitting = computed(() => is_creating.value || is_updating.value)
+
 const replacement_addresses = computed<AddressItem[]>(() => {
 	const pending_type = pending_delete_address.value?.type
 	return pending_type ? getReplacementAddresses(pending_type) : []
@@ -152,6 +156,7 @@ provideAddressBookFormContext({
 	active_form,
 	dynamic_fields,
 	form_field_errors,
+	is_submitting,
 	setFormType,
 	updateActiveFormField,
 	updateDynamicField,
@@ -183,9 +188,7 @@ provideAddressBookCardActionContext({
 })
 
 onMounted(() => {
-	getAddresses('shipping')
-	getAddresses('billing')
-	getAddresses('drop')
+	fetchAllAddresses()
 	address_field_store.getDynamicFields()
 })
 
@@ -212,13 +215,13 @@ function handleOpenAddModal() {
 	openCreateFormModal()
 }
 
-function submitAddressForm() {
+async function submitAddressForm() {
 	if (form_modal_mode.value === 'edit') {
-		updateAddress()
+		await updateAddress()
 		return
 	}
 
-	createAddress()
+	await createAddress()
 }
 
 async function deleteAndSetDefault(type: AddressType, address_id: number) {
@@ -263,43 +266,69 @@ function skipDefaultShippingSelection() {
 			<div class="account-content" data-testid="account-address-book-content">
 				<header class="account-address-book-header" data-testid="account-address-book-header">
 					<h1 class="account-address-book-title" data-testid="account-address-book-title">
-						{{ translate('account.addressBook.title') }}
+						{{ t('account.addressBook.title') }}
 					</h1>
+					<UiSkeleton
+						v-if="is_loading"
+						width="164px"
+						height="var(--space-2xl)"
+						border-radius="var(--radius-xl)"
+					/>
 					<UiButton
-						v-if="has_addresses"
+						v-else-if="has_addresses"
 						variant="filled"
 						tone="neutral"
 						size="md"
 						icon="regular-plus"
+						icon-size="24"
 						icon-position="left"
 						data-testid="account-address-book-add-button"
 						@click="handleOpenAddModal"
 					>
-						{{ translate('account.addressBook.addNew') }}
+						{{ t('account.addressBook.addNew') }}
 					</UiButton>
 				</header>
 
 				<div
-					v-if="has_addresses"
+					v-if="has_addresses || is_loading"
 					class="account-address-book-sections"
 					data-testid="account-address-book-sections"
 				>
 					<div class="account-address-book-primary-group">
-						<AddressBookSection
-							v-if="has_shipping_addresses"
-							section="shipping"
-							:items="shipping_address"
-						/>
-						<AddressBookSection
-							v-if="has_billing_addresses"
-							section="billing"
-							:items="billing_address"
-						/>
-						<AddressBookSection
-							v-if="has_drop_addresses"
-							section="drop"
-							:items="drop_address"
-						/>
+						<template v-if="is_loading">
+							<AddressBookSection
+								section="shipping"
+								:items="[]"
+								loading
+							/>
+							<AddressBookSection
+								section="billing"
+								:items="[]"
+								loading
+							/>
+							<AddressBookSection
+								section="drop"
+								:items="[]"
+								loading
+							/>
+						</template>
+						<template v-else>
+							<AddressBookSection
+								v-if="has_shipping_addresses"
+								section="shipping"
+								:items="shipping_address"
+							/>
+							<AddressBookSection
+								v-if="has_billing_addresses"
+								section="billing"
+								:items="billing_address"
+							/>
+							<AddressBookSection
+								v-if="has_drop_addresses"
+								section="drop"
+								:items="drop_address"
+							/>
+						</template>
 					</div>
 				</div>
 
@@ -318,23 +347,30 @@ function skipDefaultShippingSelection() {
 					<div class="account-address-book-empty-state-content">
 						<div class="account-address-book-empty-state-copy">
 							<h2 class="account-address-book-empty-state-title">
-								{{ translate('account.addressBook.emptyTitle') }}
+								{{ t('account.addressBook.emptyTitle') }}
 							</h2>
-							<p class="account-address-book-empty-state-description">
-								{{ translate('account.addressBook.emptyDescription') }}
-							</p>
+							<i18n-t
+								keypath="account.addressBook.emptyDescription"
+								tag="p"
+								class="account-address-book-empty-state-description"
+							>
+								<template #action>
+									<strong>"{{ t('account.addressBook.addAddressLabel') }}"</strong>
+								</template>
+							</i18n-t>
 						</div>
 						<UiButton
 							variant="filled"
 							tone="neutral"
 							size="md"
+							icon-size="24"
 							icon="regular-plus"
 							icon-position="left"
 							class="account-address-book-empty-state-button"
 							data-testid="account-address-book-empty-add-button"
 							@click="handleOpenAddModal"
 						>
-							{{ translate('account.addressBook.addNew') }}
+							{{ t('account.addressBook.addNew') }}
 						</UiButton>
 					</div>
 				</section>
@@ -416,7 +452,7 @@ function skipDefaultShippingSelection() {
 					.account-address-book-empty-state-title {
 						font-size: var(--type-size-300);
 						line-height: var(--type-line-300);
-						font-weight: var(--font-weight-bold);
+						font-weight: var(--font-weight-semibold);
 						color: var(--text-primary);
 					}
 
@@ -425,6 +461,10 @@ function skipDefaultShippingSelection() {
 						font-size: var(--type-size-100);
 						line-height: var(--type-line-100);
 						color: var(--text-secondary);
+
+						strong {
+							color: var(--black-base);
+						}
 					}
 				}
 

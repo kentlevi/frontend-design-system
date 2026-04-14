@@ -6,6 +6,11 @@ import ProfileSetupPasswordModal from './ProfileSetupPasswordModal.vue';
 import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
 
 const { t } = useI18n();
+withDefaults(defineProps<{
+	loading?: boolean;
+}>(), {
+	loading: false,
+});
 const { social } = useSocialAccount();
 
 const {
@@ -53,12 +58,40 @@ const {
 
 <template>
 	<div class="account-profile-section" data-testid="account-profile-password-section">
-		<div class="account-profile-section-copy">
+		<div v-if="loading" class="account-profile-section-copy">
+			<UiSkeleton width="92px" height="36px" border-radius="8px" />
+			<UiSkeleton width="100%" height="20px" border-radius="8px" />
+			<UiSkeleton width="86%" height="20px" border-radius="8px" />
+		</div>
+		<div v-else class="account-profile-section-copy">
 			<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
 			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
 		</div>
 		<div
-			v-if="social && !has_password"
+			v-if="loading"
+			class="account-profile-stack account-profile-password-skeleton"
+			data-testid="account-profile-password-skeleton"
+		>
+			<div class="account-profile-password-skeleton-field">
+				<UiSkeleton width="128px" height="20px" border-radius="8px" />
+				<UiSkeleton width="100%" height="42px" border-radius="8px" />
+			</div>
+			<div class="account-profile-password-skeleton-field">
+				<UiSkeleton width="112px" height="20px" border-radius="8px" />
+				<UiSkeleton width="100%" height="42px" border-radius="8px" />
+				<UiSkeleton width="62%" height="16px" border-radius="8px" />
+			</div>
+			<div class="account-profile-password-skeleton-field">
+				<UiSkeleton width="152px" height="20px" border-radius="8px" />
+				<UiSkeleton width="100%" height="42px" border-radius="8px" />
+			</div>
+			<div class="account-profile-inline-actions">
+				<UiSkeleton width="136px" height="40px" border-radius="14px" />
+				<UiSkeleton width="112px" height="20px" border-radius="8px" />
+			</div>
+		</div>
+		<div
+			v-else-if="social && !has_password"
 			class="account-profile-password-setup"
 			data-testid="account-profile-password-setup"
 		>
@@ -279,6 +312,12 @@ const {
 
 <style scoped lang="scss">
 .account-profile-section {
+	.account-profile-section-copy {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
 	.account-profile-password-setup {
 		display: flex;
 		align-items: flex-end;
@@ -339,6 +378,12 @@ const {
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
+	}
+
+	.account-profile-password-skeleton-field {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 }
 

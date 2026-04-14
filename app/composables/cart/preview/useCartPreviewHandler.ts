@@ -38,7 +38,6 @@ export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 	})
 
 	const is_multiple_items = computed(() => cart_service.deletion_ids.value.length > 1)
-	const is_single_item = computed(() => Boolean(cart_service.deletion_id.value))
 
 	const deletion_item = computed(() => {
 		const targetId = cart_service.deletion_id.value;

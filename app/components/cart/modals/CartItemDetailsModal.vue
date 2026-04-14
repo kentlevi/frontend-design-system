@@ -100,8 +100,6 @@ function submitChanges() {
 		:model-value="props.modelValue"
 		align="center"
 		width="760px"
-		padding="0"
-		gap="0"
 		modal-class="cart-item-details-modal-shell"
 		:title="t('cart.cartPage.itemDetails.title')"
 		@update:model-value="emit('update:modelValue', $event)"
@@ -177,14 +175,15 @@ function submitChanges() {
 					/>
 				</div>
 			</div>
+		</section>
 
-			<footer class="cart-item-details-actions">
+		<template #footer>
+			<div class="cart-item-details-actions ui-modal-footer-item">
 				<UiButton
 					type="button"
 					variant="ghost"
 					tone="neutral"
-					size="sm"
-					:no-hover="true"
+					size="md"
 					class="cart-item-details-cancel"
 					@click="closeModal"
 				>
@@ -200,19 +199,16 @@ function submitChanges() {
 				>
 					{{ t('cart.cartPage.itemDetails.submit') }}
 				</UiButton>
-			</footer>
-		</section>
+			</div>
+		</template>
 	</UiModal>
 </template>
 
 <style lang="scss">
 .cart-item-details-modal {
 	background: var(--contrast-light);
-	border-radius: 16px;
-	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	padding: 24px;
 	gap: 24px;
 
 	.cart-item-details-file-input {
@@ -317,35 +313,5 @@ function submitChanges() {
 	border-radius: 16px;
 	overflow: hidden;
 	max-width: 760px;
-
-	.ui-modal-header {
-		padding: 18px 24px;
-		min-height: 62px;
-		border-bottom: 1px solid var(--gray-30);
-		align-items: center;
-	}
-
-	.ui-modal-title {
-		font-size: var(--type-size-300);
-		line-height: var(--type-line-300);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
-	}
-
-	.ui-modal-header-actions {
-		align-items: center;
-	}
-
-	.ui-modal-close {
-		width: 24px;
-		height: 24px;
-		min-width: 24px;
-		border-radius: 0;
-		padding: 0;
-	}
-
-	.ui-modal-body {
-		padding: 0;
-	}
 }
 </style>

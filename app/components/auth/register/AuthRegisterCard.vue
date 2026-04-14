@@ -471,36 +471,7 @@ watch(is_email_taken_error, (is_taken) => {
 
 <style lang="scss">
 .auth-register-card-shell {
-	width: 100%;
-	max-width: 588px;
-
 	.auth-register-card {
-		border: 1px solid var(--border-default);
-		background: var(--contrast-light);
-		border-radius: 22px;
-		box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
-		padding: 40px;
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		position: relative;
-
-		.auth-register-card-close-wrap {
-			position: absolute;
-			top: 24px;
-			right: 24px;
-			z-index: 1;
-		}
-
-		.auth-register-card-close {
-			width: 24px;
-			height: 24px;
-			padding: 0;
-			min-height: auto;
-			border-radius: 6px;
-			box-shadow: none;
-		}
-
 		.auth-register-head {
 			display: flex;
 			flex-direction: column;
@@ -654,11 +625,6 @@ watch(is_email_taken_error, (is_taken) => {
 
 		.auth-register-submit {
 			margin-top: 8px;
-			width: 100%;
-			border-radius: 16px;
-			box-shadow: none;
-			font-size: var(--type-size-200);
-			line-height: var(--type-line-200);
 		}
 
 		.auth-register-login {
@@ -710,19 +676,5 @@ watch(is_email_taken_error, (is_taken) => {
 			}
 		}
 	}
-}
-
-.auth-register-loading-fade-enter-active,
-.auth-register-loading-fade-leave-active {
-	transition: opacity 0.16s ease;
-}
-
-.auth-register-loading-fade-enter-from,
-.auth-register-loading-fade-leave-to {
-	opacity: 0;
-}
-
-body.has-auth-register-loading {
-	overflow: hidden;
 }
 </style>

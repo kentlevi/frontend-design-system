@@ -75,11 +75,11 @@ export function useShippingMethod() {
 
 	const buildLocalShippingItems = (items: CartItem[]): LocalShippingMethodItemPayload[] => {
 		return items.map((item) => ({
-				product_config_mapping_id: item.product_config_mapping_id,
-				quantity: item.quantity,
-				color_id: item.color_id,
-				font_id: item.font_id,
-			}))
+			product_config_mapping_id: item.product_config_mapping_id,
+			quantity: item.quantity,
+			color_id: item.color_id,
+			font_id: item.font_id,
+		}))
 	}
 
 	/* @desc map stored shipping methods into a UI-friendly shipping method structure

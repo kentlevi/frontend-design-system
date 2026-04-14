@@ -175,7 +175,7 @@ export function useAuthProfileDetailsStep() {
 	}
 
 	function isEmailRequired() {
-		return !Boolean((user_state.value.email || '').trim());
+		return !(user_state.value.email || '').trim();
 	}
 
 	function hasRequiredEmail() {

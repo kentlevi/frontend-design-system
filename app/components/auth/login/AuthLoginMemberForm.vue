@@ -135,113 +135,45 @@ const {
 </template>
 
 <style lang="scss">
-.auth-login-form {
+.auth-login-inline {
 	display: flex;
-	flex-direction: column;
-	gap: 8px;
+	justify-content: space-between;
+	align-items: center;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 
-	.auth-login-inputs {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-
-		.auth-login-field {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-
-			.auth-login-field-head {
-				min-height: 24px;
-				align-items: center;
-			}
-
-			.auth-login-field-label {
-				display: block;
-				font-size: var(--type-size-100);
-				font-weight: var(--font-weight-semibold);
-				line-height: var(--type-line-100);
-				color: var(--text-primary);
-			}
-
-			.auth-login-field-error {
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-				color: var(--error);
-			}
-
-			.auth-login-input {
-				width: 100%;
-			}
-
-			.auth-login-password-wrap {
-				position: relative;
-
-				.auth-login-password-toggle {
-					--btn-soft: transparent;
-					--btn-border: transparent;
-					padding: 0;
-					min-height: auto;
-					width: 24px;
-					height: 24px;
-					border-radius: 0;
-					box-shadow: none;
-				}
-			}
-		}
+	.auth-login-checkbox-control {
+		color: var(--text-secondary);
 	}
 
-	.auth-login-inline {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+	.auth-login-checkbox-text {
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
-
-		.auth-login-checkbox-control {
-			color: var(--text-secondary);
-		}
-
-		.auth-login-checkbox-text {
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-		}
-
-		.auth-login-link-button {
-			--btn-soft: transparent;
-			--btn-border: transparent;
-			--btn-bg: var(--text-primary);
-			color: var(--text-primary);
-			font-weight: var(--font-weight-semibold);
-			background: transparent;
-			border-color: transparent;
-			border-radius: 0;
-			padding: 0;
-			min-height: auto;
-			height: auto;
-			box-shadow: none;
-
-			&:hover,
-			&:active {
-				background: transparent;
-				filter: none;
-			}
-
-			.auth-login-link-button-label {
-				padding: 0;
-			}
-		}
 	}
 
-	@media (max-width: 1100px) {
-		.auth-login-inputs {
-			.auth-login-field {
-				.auth-login-label-row {
-					.auth-login-error {
-						font-size: var(--type-size-100);
-						line-height: var(--type-line-100);
-					}
-				}
-			}
+	.auth-login-link-button {
+		--btn-soft: transparent;
+		--btn-border: transparent;
+		--btn-bg: var(--text-primary);
+
+		color: var(--text-primary);
+		font-weight: var(--font-weight-semibold);
+		background: transparent;
+		border-color: transparent;
+		border-radius: 0;
+		padding: 0;
+		min-height: auto;
+		height: auto;
+		box-shadow: none;
+
+		&:hover,
+		&:active {
+			background: transparent;
+			filter: none;
+		}
+
+		.auth-login-link-button-label {
+			padding: 0;
 		}
 	}
 }

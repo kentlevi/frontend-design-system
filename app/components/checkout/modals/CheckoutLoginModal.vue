@@ -64,18 +64,14 @@ const {
 </template>
 
 <style lang="scss">
-.ui-modal.checkout-login-modal-shell {
-	background: transparent;
-	border: 0;
-	box-shadow: none;
-	padding: 0;
-	gap: 0;
-	width: min(588px, calc(100vw - 32px));
-}
-
-.checkout-auth-card-panel {
-	width: 100%;
-}
+// .ui-modal.checkout-login-modal-shell {
+// 	background: transparent;
+// 	border: 0;
+// 	box-shadow: none;
+// 	padding: 0;
+// 	gap: 0;
+// 	width: min(588px, calc(100vw - 32px));
+// }
 
 .checkout-auth-card-enter-active,
 .checkout-auth-card-leave-active {

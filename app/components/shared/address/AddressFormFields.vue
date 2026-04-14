@@ -207,13 +207,51 @@ const {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
-	}
 
-	.address-form-fields-label {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
+		.address-form-fields-label {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			font-weight: var(--font-weight-semibold);
+			color: var(--text-primary);
+		}
+
+		.address-form-fields-segment {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+
+			.address-form-fields-choice {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				min-height: 38px;
+				padding: 10px 16px;
+				border: 1px solid var(--gray-40);
+				border-radius: 10px;
+				color: var(--text-primary);
+				background: var(--contrast-light);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-medium, 500);
+				box-shadow: none;
+
+				&.ui-button:hover:not(:disabled) {
+					background: var(--gray-10);
+					border-color: var(--gray-50);
+					color: var(--text-primary);
+				}
+
+				&.ui-button[data-selected='true'] {
+					background: var(--gray-10);
+					border-color: var(--gray-60);
+					color: var(--text-primary);
+					&:hover:not(:disabled) {
+						border-color: var(--gray-60);
+					}
+				}
+			}
+		}
 	}
 
 	.address-form-fields-grid {
@@ -237,49 +275,14 @@ const {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
-	}
 
-	.address-form-fields-company-label-text {
-		color: var(--text-primary);
-	}
+		.address-form-fields-company-label-text {
+			color: var(--text-primary);
+		}
 
-	.address-form-fields-company-label-optional {
-		color: var(--text-secondary);
-	}
-
-	.address-form-fields-segment {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 12px;
-	}
-
-	.address-form-fields-choice {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 10px;
-		min-height: 38px;
-		padding: 10px 16px;
-		border: 1px solid var(--gray-40);
-		border-radius: 10px;
-		color: var(--text-primary);
-		background: var(--contrast-light);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-medium, 500);
-		box-shadow: none;
-	}
-
-	.address-form-fields-choice:hover {
-		background: var(--gray-10);
-		border-color: var(--gray-50);
-		color: var(--text-primary);
-	}
-
-	.address-form-fields-choice[data-selected='true'] {
-		background: var(--gray-10);
-		border-color: var(--gray-60);
-		color: var(--text-primary);
+		.address-form-fields-company-label-optional {
+			color: var(--text-secondary);
+		}
 	}
 
 	:deep(.address-form-fields-choice .ui-button-indicator) {

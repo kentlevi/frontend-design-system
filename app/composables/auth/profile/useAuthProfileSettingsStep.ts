@@ -29,7 +29,7 @@ export function useAuthProfileSettingsStep() {
 		storeToRefs(onboarding_store);
 	const { state: user_state } = storeToRefs(users_store);
 	const email_required = computed(
-		() => !Boolean((user_state.value.email || '').trim())
+		() => !(user_state.value.email || '').trim()
 	);
 	const first_name = computed(() =>
 		getNameValue(
