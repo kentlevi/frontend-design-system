@@ -226,7 +226,7 @@ function getAddressLabel(label: string) {
 					gap: 24px;
 					padding: 12px 20px;
 					justify-content: space-between;
-					align-items: flex-start;
+					align-items: center;
 
 					.account-address-book-default-modal-card-copy {
 						display: flex;

@@ -124,9 +124,9 @@
 }
 
 .ui-button[data-tone='danger'] {
-    --btn-bg: var(--error-60);
+    --btn-bg: var(--error-base);
     --btn-fg: var(--text-inverse);
-    --btn-border: var(--error-60);
+    --btn-border: var(--error-base);
     --btn-soft: var(--error-10);
 }
 
@@ -144,7 +144,6 @@
     background: var(--btn-bg);
     color: var(--btn-fg);
     border-color: var(--btn-border);
-    box-shadow: var(--shadow-md);
 
     &:hover:not(:disabled) {
         box-shadow: var(--shadow-sm);
@@ -153,7 +152,6 @@
 
     &:active:not(:disabled) {
         filter: brightness(0.94);
-        box-shadow: var(--shadow-md);
     }
 
     &:disabled {
