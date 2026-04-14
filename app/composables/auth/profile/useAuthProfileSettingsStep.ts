@@ -1,12 +1,12 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { completeOnboarding } from '~/services/auth/auth.service';
+import { completeOnboarding } from '~/services/auth/api.service';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useAuthUser } from '~/composables/auth/useAuthUser';
 import { accountProfileDefaults } from '~/data/account/profile';
 import { isValidAuthEmail } from '~/helpers/auth/auth.helper';
 import { useAuthOnboardingStore } from '~/stores/auth/onboarding.store';
 import { useUsersStore } from '~/stores/users/users.store';
+import { fetchAndStoreUser } from '~/services/auth/auth.service';
 
 function getNameValue(
 	fields: Record<string, string>,
@@ -25,12 +25,11 @@ export function useAuthProfileSettingsStep() {
 	const onboarding_store = useAuthOnboardingStore();
 	const users_store = useUsersStore();
 	const { withCountry } = useCountry();
-	const { fetchAndStoreUser } = useAuthUser();
 	const { promotions, reviews, profile_details_fields, mock_user, email } =
 		storeToRefs(onboarding_store);
 	const { state: user_state } = storeToRefs(users_store);
 	const email_required = computed(
-		() => !Boolean((user_state.value.email || '').trim())
+		() => !(user_state.value.email || '').trim()
 	);
 	const first_name = computed(() =>
 		getNameValue(

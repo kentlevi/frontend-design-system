@@ -9,7 +9,7 @@
     align-items: center;
     justify-content: center;
 
-    gap: var(--space-xxs);
+    gap: var(--space-xs);
     padding-inline: var(--space-md);
 
     border-radius: var(--radius-xl);
@@ -124,10 +124,10 @@
 }
 
 .ui-button[data-tone='danger'] {
-    --btn-bg: var(--error);
+    --btn-bg: var(--error-60);
     --btn-fg: var(--text-inverse);
-    --btn-border: var(--error);
-    --btn-soft: var(--error-bg);
+    --btn-border: var(--error-60);
+    --btn-soft: var(--error-10);
 }
 
 .ui-button[style*='--btn-bg'] {

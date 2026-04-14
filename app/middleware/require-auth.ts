@@ -1,6 +1,6 @@
 import { DEFAULT_COUNTRY, resolveSupportedCountry } from '~/constants/countries';
+import { fetchAndStoreUser } from '~/services/auth/auth.service';
 import { useUsersStore } from '~/stores/users/users.store';
-import { useAuthUser } from '~/composables/auth/useAuthUser';
 
 export default defineNuxtRouteMiddleware(async (to) => {
 	const { state } = storeToRefs(useUsersStore())
@@ -17,7 +17,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	const country = resolveSupportedCountry(firstSegment || '') || DEFAULT_COUNTRY;
 
 	try {
-		const { fetchAndStoreUser } = useAuthUser()
 		const restored = await fetchAndStoreUser()
 		if (restored) return
 	} catch {

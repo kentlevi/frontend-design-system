@@ -23,6 +23,7 @@
 }
 
 .ui-modal {
+    position: relative;
     width: 100%;
     width: min(var(--ui-modal-width, 504px), calc(100vw - 32px));
     border-radius: 14px;
@@ -31,15 +32,18 @@
     color: var(--text-primary);
     display: flex;
     flex-direction: column;
-    gap: var(--ui-modal-gap, 18px);
-    padding: var(--ui-modal-padding, 18px);
+    gap: 0;
+    padding: 0;
 }
 
 .ui-modal-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding: 12px 24px;
+    box-shadow: 0 1px 0 0 var(--gray-50);
+    z-index: 2;
 }
 
 .ui-modal-header-main {
@@ -47,9 +51,10 @@
 }
 
 .ui-modal-title {
-    
-    font-size: var(--type-size-500);
-    line-height: var(--type-line-500);
+    font-size: var(--type-size-300);
+    line-height: var(--type-line-300);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
 }
 
 .ui-modal-header-actions {
@@ -64,27 +69,58 @@
     border: 0;
     border-radius: 6px;
     background: transparent;
-    color: #000;
+    color: var(--text-primary);
     display: grid;
     place-items: center;
     padding: 0;
     cursor: pointer;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
         --btn-soft: transparent;
+        background-color: var(--gray-10);
     }
 }
 
 .ui-modal-body {
-    padding: 0;
+    padding: var(--ui-modal-padding, 24px);
     border-radius: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-modal-gap, 0);
 }
 
 .ui-modal-footer {
-    padding: 0;
+    padding: 0 24px 24px;
+    display: flex;
+    justify-content: flex-end;
+    &.delete-confirm-modal-footer {
+        padding: 16px 24px;
+        box-shadow: 0 -1px 0 0 var(--gray-50);
+    }
+    // If there are exactly two direct children (e.g. Cancel and Confirm buttons directly in slot)
+    &:has(> :nth-child(2):last-child) {
+        justify-content: space-between;
+    }
+
+    .ui-modal-footer-item {
+        display: flex;
+        gap: 16px;
+    }
+
+    @media (max-width: 767px) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 0 20px 20px;
+
+        .ui-modal-footer-item {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+            gap: 12px;
+        }
+    }
 }
 
 .ui-modal-fade-enter-active,

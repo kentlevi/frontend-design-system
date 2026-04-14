@@ -9,7 +9,6 @@
     .delete-confirm-modal-copy {
         width: 100%;
         box-sizing: border-box;
-        padding: 24px;
         display: grid;
         grid-template-columns: 52px minmax(0, 1fr);
         align-items: center;
@@ -48,17 +47,6 @@
         color: var(--text-secondary);
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
-    }
-
-    .delete-confirm-modal-actions {
-        width: 100%;
-        box-sizing: border-box;
-        border-top: 1px solid var(--border-default);
-        padding: 16px 24px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 18px;
     }
 }
 

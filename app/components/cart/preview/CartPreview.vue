@@ -67,9 +67,9 @@ watch(is_open, (v) => {
 		</Transition>
 	</Teleport>
 
-	<CartItemEditModal />
+	<CartItemEditModal v-if="is_open" />
 
-	<CartDeleteItemModal />
+	<CartDeleteItemModal v-if="is_open" />
 </template>
 <style scoped lang="scss">
 .cart-preview-shell {

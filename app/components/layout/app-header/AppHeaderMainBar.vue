@@ -7,6 +7,7 @@ import { normalizeAppPath } from '~/utils/auth/redirect';
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute();
+const cart_badge_ready = ref(false)
 
 const {
 	simple,
@@ -37,6 +38,10 @@ const {
 function isExactNavHeading(path: string) {
 	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
+
+onMounted(() => {
+	cart_badge_ready.value = true
+})
 </script>
 
 <template>
@@ -157,7 +162,7 @@ function isExactNavHeading(path: string) {
 						@focus="prefetchHeaderOverlayModules"
 					/>
 					<span
-						v-if="cart_badge_count > 0"
+						v-if="cart_badge_ready && cart_badge_count > 0"
 						class="home-header-cart-dot"
 						data-testid="app-header-cart-count"
 					>

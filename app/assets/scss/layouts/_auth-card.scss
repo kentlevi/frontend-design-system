@@ -1,0 +1,42 @@
+.auth-login-card-shell,
+.auth-register-card-shell {
+	background: var(--contrast-light);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    padding: 40px;
+    position: relative;
+
+	.auth-login-card,
+	.auth-register-card {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.auth-login-submit,
+	.auth-register-submit {
+		width: 100%;
+		border-radius: 16px;
+		box-shadow: none;
+		font-size: var(--type-size-200);
+		line-height: var(--type-line-200);
+	}
+
+	.auth-login-card-close-wrap,
+	.auth-register-card-close-wrap {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+		z-index: 1;
+	}
+
+	.auth-login-card-close,
+	.auth-register-card-close {
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		min-height: auto;
+		border-radius: 6px;
+		box-shadow: none;
+	}
+}

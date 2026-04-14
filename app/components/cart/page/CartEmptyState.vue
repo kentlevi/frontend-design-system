@@ -19,9 +19,9 @@ const {
 		<div class="cart-empty-state-content">
 			<div class="cart-empty-state-top">
 				<div class="cart-empty-state-hero">
-					<h2 class="cart-empty-state-title">Your cart is empty.</h2>
+					<h2 class="cart-empty-state-title">{{ $t('cart.cartPage.emptyTitle') }}</h2>
 					<p class="cart-empty-state-description">
-						Looks like your cart is empty. Start browsing our products and add items to your cart to begin your order. You can also explore the recommended products below to quickly find items you might like.
+						{{ $t('cart.cartPage.emptyDescription') }}
 					</p>
 				</div>
 
@@ -45,7 +45,7 @@ const {
 		<section class="cart-empty-state-discover" aria-label="Discover more products">
 			<div class="cart-empty-state-content">
 				<div class="cart-empty-state-discover-head">
-					<h3 class="cart-empty-state-discover-title">Discover more products you might like.</h3>
+					<h3 class="cart-empty-state-discover-title">{{ $t('cart.cartPage.discoverMore') }}</h3>
 					<div class="cart-empty-state-controls">
 						<UiButton
 							variant="outline"
@@ -55,7 +55,7 @@ const {
 							icon="regular-angle-left"
 							icon-size="24"
 							:disabled="!can_go_prev"
-							:sr-label="'Previous products'"
+							:sr-label="$t('cart.cartPage.prevProductsSr')"
 							aria-label="Previous products"
 							class="cart-empty-state-arrow"
 							@click="prevPage"
@@ -68,7 +68,7 @@ const {
 							icon="regular-angle-right"
 							icon-size="24"
 							:disabled="!can_go_next"
-							:sr-label="'Next products'"
+							:sr-label="$t('cart.cartPage.nextProductsSr')"
 							aria-label="Next products"
 							class="cart-empty-state-arrow"
 							@click="nextPage"

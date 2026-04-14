@@ -2,35 +2,48 @@ import { fetchPreferences, updatePreference } from "~/services/profile/preferenc
 import { useUsersStore } from "~/stores/users/users.store"
 import type { PreferenceState } from "~/types/account/preferences"
 
+const form_state = reactive<Partial<PreferenceState>>({})
+const is_loading = ref(false)
+const is_loaded = ref(false)
+const pending_request = ref<Promise<void> | null>(null)
+const is_submitting = ref(false)
+const error_message = ref('')
 
 export function usePreferenceForm() {
 	const user_store = useUsersStore()
 
-	/** Form */
-	const form_state = reactive<Partial<PreferenceState>>({})
-
-	/** UI states */
-	const is_loading = ref(false)
-	const is_submitting = ref(false)
-	const error_message = ref('')
-
 	async function loadPreferences() {
-		is_loading.value = true
-		error_message.value = ''
-
-		try {
-			const response = await fetchPreferences();
-
-			if (response.data) {
-				user_store.setPreferenceFields(response.data);
-				Object.assign(form_state, { ...response.data })
-			}
-		} catch (error: unknown) {
-			error_message.value = 'Failed to load preferences.'
-			throw error
-		} finally {
-			is_loading.value = false
+		if (pending_request.value) {
+			return pending_request.value
 		}
+
+		if (is_loaded.value) {
+			Object.assign(form_state, { ...user_store.state.preference })
+			return
+		}
+
+		pending_request.value = (async () => {
+			is_loading.value = true
+			error_message.value = ''
+
+			try {
+				const response = await fetchPreferences();
+
+				if (response.data) {
+					user_store.setPreferenceFields(response.data);
+					Object.assign(form_state, { ...response.data })
+					is_loaded.value = true
+				}
+			} catch (error: unknown) {
+				error_message.value = 'Failed to load preferences.'
+				throw error
+			} finally {
+				is_loading.value = false
+				pending_request.value = null
+			}
+		})()
+
+		return pending_request.value
 	}
 
 	async function updatePreferenceField<K extends keyof PreferenceState>(
@@ -65,6 +78,7 @@ export function usePreferenceForm() {
 	return {
 		form_state,
 		is_loading,
+		is_loaded,
 		is_submitting,
 		error_message,
 		preference: computed(() => user_store.state.preference),

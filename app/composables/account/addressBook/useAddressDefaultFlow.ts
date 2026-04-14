@@ -44,10 +44,6 @@ export function useAddressDefaultFlow(options: UseAddressDefaultFlowOptions) {
 		try {
 			const response = await setAddressDefault(type, id)
 
-			if (response?.success) {
-				address_store.setDefault(type, id)
-			}
-
 			toast_store.handleApiResponse(response)
 		} catch (_error: unknown) {
 			console.log(_error);

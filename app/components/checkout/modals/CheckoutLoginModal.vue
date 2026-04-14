@@ -58,28 +58,28 @@ async function restoreLoginModal() {
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<Transition name="checkout-auth-card" mode="out-in">
-			<div v-if="modal_mode === 'login'" key="login" class="checkout-auth-card-panel">
-				<AuthLoginCard
-					:skip-member-redirect="true"
-					:show-close-button="true"
-					:register-as-action="true"
-					:forgot-password-as-action="true"
-					:hide-non-member-order-number="true"
-					@member-login-success="emit('update:modelValue', false)"
-					@close="emit('update:modelValue', false)"
-					@open-register="modal_mode = 'register'"
-					@open-forgot-password="openForgotPasswordModal"
-				/>
-			</div>
+			<AuthLoginCard
+				v-if="modal_mode === 'login'"
+				key="login"
+				:skip-member-redirect="true"
+				:show-close-button="true"
+				:register-as-action="true"
+				:forgot-password-as-action="true"
+				:hide-non-member-order-number="true"
+				@member-login-success="emit('update:modelValue', false)"
+				@close="emit('update:modelValue', false)"
+				@open-register="modal_mode = 'register'"
+				@open-forgot-password="openForgotPasswordModal"
+			/>
 
-			<div v-else key="register" class="checkout-auth-card-panel">
-				<AuthRegisterCard
-					:show-close-button="true"
-					:login-as-action="true"
-					@close="emit('update:modelValue', false)"
-					@open-login="modal_mode = 'login'"
-				/>
-			</div>
+			<AuthRegisterCard
+				v-else
+				key="register"
+				:show-close-button="true"
+				:login-as-action="true"
+				@close="emit('update:modelValue', false)"
+				@open-login="modal_mode = 'login'"
+			/>
 		</Transition>
 	</UiModal>
 
@@ -92,18 +92,14 @@ async function restoreLoginModal() {
 </template>
 
 <style lang="scss">
-.ui-modal.checkout-login-modal-shell {
-	background: transparent;
-	border: 0;
-	box-shadow: none;
-	padding: 0;
-	gap: 0;
-	width: min(588px, calc(100vw - 32px));
-}
-
-.checkout-auth-card-panel {
-	width: 100%;
-}
+// .ui-modal.checkout-login-modal-shell {
+// 	background: transparent;
+// 	border: 0;
+// 	box-shadow: none;
+// 	padding: 0;
+// 	gap: 0;
+// 	width: min(588px, calc(100vw - 32px));
+// }
 
 .checkout-auth-card-enter-active,
 .checkout-auth-card-leave-active {

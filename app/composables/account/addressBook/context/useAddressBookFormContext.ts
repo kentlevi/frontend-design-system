@@ -11,6 +11,7 @@ export type AddressBookFormContext = {
 	is_form_modal_open: Ref<boolean>
 	form_modal_mode: Ref<'create' | 'edit'>
 	form_submit_label: ComputedRef<string>
+	is_submitting: Ref<boolean> | ComputedRef<boolean>
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
 	dynamic_fields: ComputedRef<AddressDynamicFields[]>
