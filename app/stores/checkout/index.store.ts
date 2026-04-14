@@ -66,9 +66,14 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	}
 
 	const clearShippingAddress = () => {
-		console.log('clearing shipping address data');
 		selected_shipping_address.value = addressFormDefaults('shipping')
 		selected_shipping_address_id.value = null
+	}
+
+	const clearDropAddress = () => {
+		console.log('clear drop address');
+		selected_drop_address.value = addressFormDefaults('drop')
+		selected_drop_address_id.value = null
 	}
 
 	return {
@@ -94,6 +99,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setPaymentMethod,
 		cleanCheckoutStatesOnSuccess,
 
-		clearShippingAddress
+		clearShippingAddress,
+		clearDropAddress,
 	}
 })

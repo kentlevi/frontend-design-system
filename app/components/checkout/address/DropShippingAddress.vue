@@ -1,3 +1,37 @@
+<script setup lang="ts">
+import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
+import {
+	checkoutDropShippingTooltipContent,
+	checkoutDropShippingTooltipProps,
+} from '~/data/checkout/tooltips';
+import { useDropShippingAddressUI } from '~/composables/checkout/address/useDropShippingAddressUI';
+import { useDropShippingAddress } from '~/composables/checkout/address/useDropShippingAddress';
+import CheckoutTransition from '../shared/CheckoutTransition.vue';
+
+const {
+	t,
+	is_member,
+	drop_shipping_enabled,
+	drop_shipping_ship_to_another_address,
+	selected_drop_shipping_address,
+	is_drop_shipping_address_modal_open,
+	drop_shipping_tooltip_open,
+	drop_shipping_mode_swap_wrapper_ref,
+
+	getAddressTagClass,
+	toggleDropShippingTooltip,
+} = useDropShippingAddressUI();
+
+const {
+	drop_form,
+	form_field_errors,
+	updateDropField,
+	clearDropAddress,
+	setDropAddress,
+} = useDropShippingAddress();
+
+</script>
+
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
@@ -20,35 +54,34 @@
 	</div>
 
 	<div ref="drop_shipping_swap_wrapper_ref" class="checkout-member-drop-shipping-swap-wrap">
-		<Transition
-			@before-enter="beforeEnter"
-			@enter="enter"
-			@after-enter="afterEnter"
-			@before-leave="beforeLeave"
-			@leave="leave"
-			@after-leave="afterLeave"
-		>
+		<CheckoutTransition>
 			<div v-if="drop_shipping_enabled" data-drop-shipping-panel="form" class="checkout-member-drop-shipping-form">
 				<template v-if="is_member">
 					<div class="checkout-member-address-group">
 						<div class="checkout-member-radio-row">
-							<UiRadio v-model="drop_shipping_ship_to_another_address" :value="false" name="drop-shipping-mode" class="checkout-member-radio-line">
+							<UiRadio
+								v-model="drop_shipping_ship_to_another_address"
+								:value="false"
+								name="drop-shipping-mode"
+								class="checkout-member-radio-line"
+								@click="setDropAddress()"
+							>
 								My Drop Shipping Address
 							</UiRadio>
-							<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_drop_shipping_address_modal_open = true">
+							<UiButton
+								variant="ghost"
+								tone="neutral"
+								size="sm"
+								class="checkout-member-link"
+								:no-hover="true"
+								@click="is_drop_shipping_address_modal_open = true"
+							>
 								View Drop Shipping Addresses
 							</UiButton>
 						</div>
 					</div>
 					<div ref="drop_shipping_mode_swap_wrapper_ref" class="checkout-member-drop-shipping-mode-swap-wrap">
-						<Transition
-							@before-enter="beforeEnter"
-							@enter="enter"
-							@after-enter="afterEnter"
-							@before-leave="beforeLeave"
-							@leave="leave"
-							@after-leave="afterLeave"
-						>
+						<CheckoutTransition>
 							<div v-if="!drop_shipping_ship_to_another_address" key="drop-shipping-saved" data-drop-shipping-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
 									<button type="button" class="checkout-member-address-card is-active">
@@ -81,27 +114,37 @@
 									</button>
 								</div>
 								<div class="checkout-member-address-form-head is-solo">
-									<UiRadio v-model="drop_shipping_ship_to_another_address" :value="true" name="drop-shipping-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+									<UiRadio
+										v-model="drop_shipping_ship_to_another_address"
+										:value="true"
+										name="drop-shipping-mode"
+										class="checkout-member-radio-line checkout-member-radio-line--inline"
+										@click="clearDropAddress()"
+									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>
 								</div>
 							</div>
 							<div v-else key="drop-shipping-another-address" data-drop-shipping-mode-panel="another-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-form-head">
-									<UiRadio v-model="drop_shipping_ship_to_another_address" :value="true" name="drop-shipping-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+									<UiRadio
+										v-model="drop_shipping_ship_to_another_address"
+										:value="true"
+										name="drop-shipping-mode"
+										class="checkout-member-radio-line checkout-member-radio-line--inline"
+										@click="clearDropAddress()"
+									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>
 									<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
 								</div>
 								<AddressFormFields
-									type="drop"
 									:form="drop_form"
 									:errors="form_field_errors"
 									@update:field="updateDropField"
-									@update:dynamic-field="updateDropDynamicField"
 								/>
 							</div>
-						</Transition>
+						</CheckoutTransition>
 					</div>
 				</template>
 
@@ -110,107 +153,12 @@
 						:form="drop_form"
 						:errors="form_field_errors"
 						@update:field="updateDropField"
-						@update:dynamic-field="updateDropDynamicField"
 					/>
 				</template>
 			</div>
-		</Transition>
+		</CheckoutTransition>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
-import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
-import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import {
-	checkoutDropShippingTooltipContent,
-	checkoutDropShippingTooltipProps,
-} from '~/data/checkout/tooltips';
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
-
-const {
-	enter_duration_ms,
-	leave_duration_ms,
-	beforeEnter,
-	enter,
-	afterEnter,
-	beforeLeave,
-	leave,
-	afterLeave,
-} = useCheckoutFeatureTransition();
-
-const {
-	t,
-	is_member,
-	getAddressTagClass,
-	drop_shipping_enabled,
-	drop_shipping_ship_to_another_address,
-	selected_drop_shipping_address,
-	is_drop_shipping_address_modal_open,
-	drop_shipping_tooltip_open,
-	toggleDropShippingTooltip,
-} = useCheckoutExperienceFeatureContext();
-
-const {
-	form_state,
-	form_field_errors,
-	clearFormFieldError,
-} = useAddressFormCheckoutContext();
-
-const drop_form = computed(() => form_state.drop);
-
-// refs (used)
-const drop_shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const drop_shipping_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const drop_shipping_tooltip_ref = ref<HTMLElement | null>(null);
-
-// tooltip
-useDismissibleTooltip(drop_shipping_tooltip_ref, drop_shipping_tooltip_open);
-
-// stable selector functions (prevents recreation per render)
-const getDropShippingSelector = () =>
-	drop_shipping_enabled.value ? '[data-drop-shipping-panel="form"]' : null;
-
-const getDropShippingModeSelector = () =>
-	drop_shipping_ship_to_another_address.value
-		? '[data-drop-shipping-mode-panel="another-address"]'
-		: '[data-drop-shipping-mode-panel="saved-address"]';
-
-// transitions
-useHeightTransition(
-	drop_shipping_swap_wrapper_ref,
-	drop_shipping_enabled,
-	getDropShippingSelector,
-	{ enterDurationMs: enter_duration_ms, leaveDurationMs: leave_duration_ms }
-);
-
-useHeightTransition(
-	drop_shipping_mode_swap_wrapper_ref,
-	drop_shipping_ship_to_another_address,
-	getDropShippingModeSelector,
-	{
-		enabled: () => drop_shipping_enabled.value,
-		enterDurationMs: enter_duration_ms,
-		leaveDurationMs: leave_duration_ms
-	}
-);
-
-function updateDropField(payload: UpdateFieldPayload) {
-	Object.assign(drop_form.value, {
-		[payload.field]: payload.value,
-	})
-
-	clearFormFieldError(payload.field)
-}
-
-function updateDropDynamicField(_payload: UpdateDynamicFieldPayload) {
-	// Drop form has no dynamic fields. This keeps the shared component API consistent.
-}
-</script>
 
 <style scoped lang="scss">
 .checkout-member-drop-shipping-form {
