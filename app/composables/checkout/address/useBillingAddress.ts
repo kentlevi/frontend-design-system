@@ -2,7 +2,7 @@ import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutCont
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressFieldStore } from "~/stores/address";
-import { addressFormDefaults, mapAddressToForm } from "~/factories/address";
+import { mapAddressToForm } from "~/factories/address";
 import { loadAddresses } from "~/services/address/address.service";
 
 export function useBillingAddress() {
@@ -15,15 +15,14 @@ export function useBillingAddress() {
 	const { billing_address } = useAddressBookListCheckoutContext()
 
 	const {
-		form_state,
 		form_field_errors,
-		populateDynamicFields,
+		billing_form,
 
+		populateDynamicFields,
+		resetForm,
 		updateFormFieldByType,
 		updateDynamicFieldByType,
 	} = useAddressFormCheckoutContext();
-
-	const billing_form = computed(() => form_state.billing);
 
 	async function setBillingAddress() {
 		if (billing_address.value.length === 0) await loadAddresses('billing')
@@ -36,13 +35,6 @@ export function useBillingAddress() {
 
 		Object.assign(billing_form.value, mapped_form)
 		checkout_store.setBillingAddressId(selected.id)
-	}
-
-	function resetForm() {
-		Object.assign(
-			billing_form.value,
-			addressFormDefaults('billing')
-		)
 	}
 
 	onMounted(async () => {

@@ -118,7 +118,7 @@ const {
 										:value="true"
 										name="drop-shipping-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('drop')"
 									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>
@@ -131,7 +131,7 @@ const {
 										:value="true"
 										name="drop-shipping-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('drop')"
 									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>

@@ -1,7 +1,6 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
-import { addressFormDefaults } from "~/factories/address";
 import { useAddressFieldStore } from "~/stores/address";
 
 export function useManualShippingAddress() {
@@ -22,25 +21,17 @@ export function useManualShippingAddress() {
 	} = useCheckoutExperienceFeatureContext();
 
 	const {
-		form_state,
 		form_field_errors,
+		shipping_form,
+
 		populateDynamicFields,
 		clearFormFieldError,
-
+		resetForm,
 		updateFormFieldByType,
 		updateDynamicFieldByType,
 	} = useAddressFormCheckoutContext();
 
-	const shipping_form = computed(() => form_state.shipping);
-
-	function resetForm() {
-		Object.assign(
-			shipping_form.value,
-			addressFormDefaults('shipping')
-		)
-	}
-
-	resetForm()
+	resetForm('shipping')
 
 	onMounted(async () => {
 		if (address_field_store.dynamic_address_fields.length === 0) {
@@ -53,7 +44,6 @@ export function useManualShippingAddress() {
 	return {
 		t,
 		is_member,
-		form_state,
 		form_field_errors,
 		shipping_form,
 		ship_to_another_address,

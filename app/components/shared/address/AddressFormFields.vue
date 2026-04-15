@@ -36,23 +36,6 @@ const {
 	emit,
 	translate
 })
-
-const ordered_dynamic_fields = computed(() => {
-	const priority = (field_label: string) => {
-		const normalized_label = field_label.toLowerCase()
-
-		if (normalized_label.includes('province') || normalized_label.includes('metropolitan')) return 0
-		if (normalized_label.includes('city') || normalized_label.includes('town')) return 1
-		return 2
-	}
-
-	return [...dynamic_fields.value].sort((first_field, second_field) => {
-		const priority_diff = priority(first_field.field_label) - priority(second_field.field_label)
-		if (priority_diff !== 0) return priority_diff
-
-		return (first_field.sort_order ?? 0) - (second_field.sort_order ?? 0)
-	})
-})
 </script>
 
 <template>
@@ -120,7 +103,7 @@ const ordered_dynamic_fields = computed(() => {
 		<template v-if="hasAddressLines(props.form)">
 			<div class="address-form-fields-grid address-form-fields-grid--two">
 				<UiFormField
-					v-for="(dynamic_field, index) in ordered_dynamic_fields"
+					v-for="(dynamic_field, index) in dynamic_fields"
 					:key="index"
 					:label="dynamic_field.field_label"
 					:required="dynamic_field.is_required"
