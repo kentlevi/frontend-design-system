@@ -82,7 +82,7 @@
 										:value="true"
 										name="billing-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('billing')"
 									>
 										Use Another Billing Address
 									</UiRadio>
@@ -95,7 +95,7 @@
 										:value="true"
 										name="billing-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('billing')"
 									>
 										Ship to Another Billing Address
 									</UiRadio>

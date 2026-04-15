@@ -21,6 +21,10 @@ export function useAddressFormState() {
 	const active_form = computed(() => form_state[form_type.value])
 	const form_field_errors = ref<Record<string, string>>({})
 
+	const shipping_form = computed(() => form_state.shipping)
+	const billing_form = computed(() => form_state.billing)
+	const drop_form = computed(() => form_state.drop)
+
 
 	/**
      * Functions
@@ -106,6 +110,9 @@ export function useAddressFormState() {
 		form_type,
 		active_form,
 		form_field_errors,
+		shipping_form,
+		billing_form,
+		drop_form,
 
 		setFormType,
 		populateDynamicFields,
