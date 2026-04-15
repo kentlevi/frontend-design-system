@@ -34,18 +34,19 @@ const loading_overlay_store = useLoadingOverlayStore()
 const address_field_store = useAddressFieldStore()
 const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 
+loadAddresses('shipping')
+loadAddresses('billing')
+loadAddresses('drop')
+address_field_store.getDynamicFields()
+
 const {
 	shipping_address,
 	billing_address,
 	drop_address,
-	has_shipping_addresses,
-	has_billing_addresses,
-	has_drop_addresses,
+	sections,
 	has_addresses,
 
-	is_shipping_fetching,
-	is_billing_fetching,
-	is_drop_fetching
+	is_loading,
 } = useAddressBookList()
 
 const {
@@ -190,13 +191,6 @@ provideAddressBookCardActionContext({
 	handleCardMenuAction,
 })
 
-onMounted(() => {
-	loadAddresses('shipping')
-	loadAddresses('billing')
-	loadAddresses('drop')
-	address_field_store.getDynamicFields()
-})
-
 function handleCardMenuAction(payload: AddressBookMenuPayload) {
 	if (payload.action === 'edit') {
 		openEditModal(payload.item)
@@ -274,7 +268,7 @@ function skipDefaultShippingSelection() {
 						{{ translate('account.addressBook.title') }}
 					</h1>
 					<UiSkeleton
-						v-if="is_shipping_fetching && is_billing_fetching && is_drop_fetching"
+						v-if="is_loading"
 						width="164px"
 						height="var(--space-2xl)"
 						border-radius="var(--radius-xl)"
@@ -295,43 +289,17 @@ function skipDefaultShippingSelection() {
 				</header>
 
 				<div
-					v-if="has_addresses || true"
+					v-if="has_addresses || is_loading"
 					class="account-address-book-sections"
 					data-testid="account-address-book-sections"
 				>
 					<div class="account-address-book-primary-group">
 						<AddressBookSection
-							v-if="is_shipping_fetching"
-							section="shipping"
-							:items="[]"
-							loading
-						/>
-						<AddressBookSection
-							v-if="is_billing_fetching"
-							section="billing"
-							:items="[]"
-							loading
-						/>
-						<AddressBookSection
-							v-if="is_drop_fetching"
-							section="drop"
-							:items="[]"
-							loading
-						/>
-						<AddressBookSection
-							v-if="has_shipping_addresses"
-							section="shipping"
-							:items="shipping_address"
-						/>
-						<AddressBookSection
-							v-if="has_billing_addresses"
-							section="billing"
-							:items="billing_address"
-						/>
-						<AddressBookSection
-							v-if="has_drop_addresses"
-							section="drop"
-							:items="drop_address"
+							v-for="section in sections"
+							:key="section.section"
+							:section="section.section"
+							:items="section.loading ? [] : section.items"
+							:loading="section.loading"
 						/>
 					</div>
 				</div>
