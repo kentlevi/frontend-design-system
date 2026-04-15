@@ -6,9 +6,11 @@ import type {
 	PaymentPayloadByAction
 } from "~/types/payments/payment"
 import type { CheckoutResponseData } from "~/types/checkout"
+import { useBankTransfer } from "./bank-transfer/useBankTransfer"
 
 export const usePaymentStrategy = () => {
 	const toss = useTossPayment()
+	const bank_transfer = useBankTransfer()
 
 	const handlers: Record<PaymentCode, PaymentHandlerMap> = {
 		/**Toss Pay */
@@ -24,11 +26,14 @@ export const usePaymentStrategy = () => {
 		/**Bank Transfer */
 		BT: {
 			process: (payload?: CheckoutResponseData) => {
-				console.log("BANK_TRANSFER success not implemented", payload)
+				const order_id = payload?.order?.id ?? null
+				if(!order_id) {
+					throw new Error('No order_id found')
+				}
+				bank_transfer.processBankTransfer(order_id);
 			},
 			error: (error?: Error) => {
-				alert("BANK TRANSFER PAYMENT NOT IMPLEMENTED YET")
-				console.warn("BANK_TRANSFER error not implemented", error)
+				bank_transfer.processBankTransferError(error);
 			}
 		},
 		/**Credit Card */
