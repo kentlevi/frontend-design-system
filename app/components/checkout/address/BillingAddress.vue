@@ -82,7 +82,7 @@
 										:value="true"
 										name="billing-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('billing')"
 									>
 										Use Another Billing Address
 									</UiRadio>
@@ -95,7 +95,7 @@
 										:value="true"
 										name="billing-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('billing')"
 									>
 										Ship to Another Billing Address
 									</UiRadio>
@@ -103,8 +103,8 @@
 								<AddressFormFields
 									:form="billing_form"
 									:errors="form_field_errors"
-									@update:field="updateBillingField"
-									@update:dynamic-field="updateBillingDynamicField"
+									@update:field="updateFormFieldByType"
+									@update:dynamic-field="updateDynamicFieldByType"
 								/>
 							</div>
 						</Transition>
@@ -142,8 +142,8 @@ const {
 	billing_form,
 	form_field_errors,
 
-	updateBillingField,
-	updateBillingDynamicField,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 
 	resetForm,
 	setBillingAddress,

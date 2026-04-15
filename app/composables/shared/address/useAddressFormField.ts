@@ -21,8 +21,8 @@ export type AddressFormFieldsProps = {
 }
 
 export type AddressFormFieldsEmit = {
-	(event: 'update:field', payload: UpdateFieldPayload): void
-	(event: 'update:dynamic-field', payload: UpdateDynamicFieldPayload): void
+	(event: 'update:field', type: AddressType, payload: UpdateFieldPayload): void
+	(event: 'update:dynamic-field', type: AddressType, payload: UpdateDynamicFieldPayload): void
 }
 
 type UseAddressFormFieldOptions = {
@@ -52,7 +52,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return computed({
 			get: get_value,
 			set: (value: string) => {
-				options.emit('update:field', {
+				options.emit('update:field', options.props.form.type, {
 					field,
 					value,
 				})
@@ -99,7 +99,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	)
 
 	function updateDynamicField(field_key: string, value: string | number) {
-		options.emit('update:dynamic-field', {
+		options.emit('update:dynamic-field', options.props.form.type, {
 			field_key,
 			value,
 		})

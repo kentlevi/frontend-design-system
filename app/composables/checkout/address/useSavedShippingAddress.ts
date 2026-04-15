@@ -13,9 +13,7 @@ export function useSavedShippingAddress() {
 
 	/** Contexts */
 	const { shipping_address } = useAddressBookListCheckoutContext()
-	const { form_state } = useAddressFormCheckoutContext()
-
-	const shipping_form = computed(() => form_state.shipping)
+	const { shipping_form } = useAddressFormCheckoutContext()
 
 	async function initShippingAddress() {
 		if (shipping_address.value.length === 0) await loadAddresses('shipping')

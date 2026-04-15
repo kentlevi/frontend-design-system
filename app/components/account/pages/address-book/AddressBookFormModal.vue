@@ -20,8 +20,8 @@ const form_field_errors = address_book_form_context.form_field_errors;
 const is_submitting = computed(() => address_book_form_context.is_submitting.value)
 
 const setFormType = address_book_form_context.setFormType;
-const updateActiveFormField = address_book_form_context.updateActiveFormField;
-const updateFormDynamicField = address_book_form_context.updateDynamicField;
+const updateFormFieldByType = address_book_form_context.updateFormFieldByType;
+const updateDynamicFieldByType = address_book_form_context.updateDynamicFieldByType;
 const submitAddressForm = address_book_form_context.submitAddressForm;
 const closeFormModal = address_book_form_context.closeFormModal;
 
@@ -33,7 +33,7 @@ useDismissibleTooltip(default_address_tooltip_ref, default_address_tooltip_open)
 const is_default_model = computed({
 	get: () => active_form.value.is_default ?? false,
 	set: (value: boolean) => {
-		updateActiveFormField({
+		updateFormFieldByType(active_form.value.type, {
 			field: 'is_default',
 			value,
 		})
@@ -124,6 +124,7 @@ async function handleSubmit() {
 		width="710px"
 		:title="modal_title"
 		modal-class="account-address-book-add-modal-shell"
+		:close-on-backdrop="false"
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<template #overlay>
@@ -176,8 +177,8 @@ async function handleSubmit() {
 						:errors="form_field_errors"
 						:dynamic-fields="dynamic_fields"
 						:show-label-selector="true"
-						@update:field="updateActiveFormField"
-						@update:dynamic-field="updateFormDynamicField"
+						@update:field="updateFormFieldByType"
+						@update:dynamic-field="updateDynamicFieldByType"
 					/>
 
 					<div class="account-address-book-add-modal-footer-row">

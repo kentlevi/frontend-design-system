@@ -21,6 +21,10 @@ export function useAddressFormState() {
 	const active_form = computed(() => form_state[form_type.value])
 	const form_field_errors = ref<Record<string, string>>({})
 
+	const shipping_form = computed(() => form_state.shipping)
+	const billing_form = computed(() => form_state.billing)
+	const drop_form = computed(() => form_state.drop)
+
 
 	/**
      * Functions
@@ -42,22 +46,6 @@ export function useAddressFormState() {
 		form_state[target_type].fields = mappedFields
 	}
 
-	/** Update the active form field from the modal */
-	function updateActiveFormField(payload: UpdateFieldPayload) {
-		/** Write into the parent-owned form state */
-		Object.assign(active_form.value, {
-			[payload.field]: payload.value,
-		})
-
-		clearFormFieldError(payload.field)
-	}
-
-	/** Update one dynamic field value in the active form */
-	function updateDynamicField(payload: UpdateDynamicFieldPayload) {
-		if (active_form.value.type === 'drop') return
-		active_form.value.fields[payload.field_key] = payload.value
-		clearFormFieldError(`fields.${payload.field_key}`)
-	}
 
 	/** Change the active form type */
 	function setFormType(type: AddressType) {
@@ -90,18 +78,50 @@ export function useAddressFormState() {
 		)
 	}
 
+
+
+	/**
+     * Update Form Fields by Type
+     */
+	function updateFormFieldByType(
+		type: AddressType,
+		payload: UpdateFieldPayload
+	) {
+		Object.assign(form_state[type], {
+			[payload.field]: payload.value
+		})
+		clearFormFieldError(payload.field)
+	}
+
+	function updateDynamicFieldByType(
+		type: AddressType,
+		payload: UpdateDynamicFieldPayload
+	) {
+		const form = form_state[type]
+
+		if (form.type === 'drop') return
+
+		form.fields[payload.field_key] = payload.value
+		clearFormFieldError(`fields.${payload.field_key}`)
+	}
+
 	return {
 		form_state,
 		form_type,
 		active_form,
 		form_field_errors,
+		shipping_form,
+		billing_form,
+		drop_form,
 
 		setFormType,
 		populateDynamicFields,
 		clearFormFieldError,
 		clearFormFieldErrors,
-		updateActiveFormField,
-		updateDynamicField,
+
+		updateFormFieldByType,
+		updateDynamicFieldByType,
+
 		resetForm,
 	}
 }

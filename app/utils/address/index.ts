@@ -42,18 +42,16 @@ export function useAddressHelper() {
 	function getAddressLineParts(address: AddressItem) {
 		const lines: string[] = []
 
-		if ('address_line_1' in address && address.address_line_1) lines.push(address.address_line_1)
-		if ('address_line_2' in address && address.address_line_2) lines.push(address.address_line_2)
-
 		if ('dynamic_fields' in address && Array.isArray(address.dynamic_fields)) {
 			address.dynamic_fields.forEach((field) => {
 				if (field?.value) lines.push(field.value)
 			})
 		}
 
-		if ('postcode' in address && address.postcode) lines.push(address.postcode)
+		if ('address_line_1' in address && address.address_line_1) lines.push(address.address_line_1)
+		if ('address_line_2' in address && address.address_line_2) lines.push(address.address_line_2)
 
-		if (address.type !== 'drop') lines.push(address.country.name)
+		if ('postcode' in address && address.postcode) lines.push(address.postcode)
 
 		return lines
 	}

@@ -1,9 +1,8 @@
-import type { UpdateFieldPayload } from "~/types/address";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressFieldStore } from "~/stores/address";
-import { addressFormDefaults, mapAddressToForm } from "~/factories/address";
+import { mapAddressToForm } from "~/factories/address";
 import { loadAddresses } from "~/services/address/address.service";
 
 export function useDropShippingAddress() {
@@ -16,20 +15,12 @@ export function useDropShippingAddress() {
 	const { drop_address } = useAddressBookListCheckoutContext()
 
 	const {
-		form_state,
 		form_field_errors,
-		clearFormFieldError,
+		drop_form,
+
+		resetForm,
+		updateFormFieldByType,
 	} = useAddressFormCheckoutContext();
-
-	const drop_form = computed(() => form_state.drop);
-
-	function updateDropField(payload: UpdateFieldPayload) {
-		Object.assign(drop_form.value, {
-			[payload.field]: payload.value,
-		})
-
-		clearFormFieldError(payload.field)
-	}
 
 	async function setDropAddress() {
 		if (drop_address.value.length === 0) await loadAddresses('drop')
@@ -43,17 +34,10 @@ export function useDropShippingAddress() {
 		checkout_store.setDropAddressId(selected.id)
 	}
 
-	function resetForm() {
-		Object.assign(
-			drop_form.value,
-			addressFormDefaults('drop')
-		)
-	}
-
 	return {
 		drop_form,
 		form_field_errors,
-		updateDropField,
+		updateFormFieldByType,
 
 		setDropAddress,
 		resetForm,

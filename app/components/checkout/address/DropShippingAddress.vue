@@ -24,7 +24,7 @@ const {
 const {
 	drop_form,
 	form_field_errors,
-	updateDropField,
+	updateFormFieldByType,
 	resetForm,
 	setDropAddress,
 } = useDropShippingAddress();
@@ -118,7 +118,7 @@ const {
 										:value="true"
 										name="drop-shipping-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('drop')"
 									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>
@@ -131,7 +131,7 @@ const {
 										:value="true"
 										name="drop-shipping-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="resetForm()"
+										@click="resetForm('drop')"
 									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>
@@ -140,7 +140,7 @@ const {
 								<AddressFormFields
 									:form="drop_form"
 									:errors="form_field_errors"
-									@update:field="updateDropField"
+									@update:field="updateFormFieldByType"
 								/>
 							</div>
 						</CheckoutTransition>
@@ -151,7 +151,7 @@ const {
 					<AddressFormFields
 						:form="drop_form"
 						:errors="form_field_errors"
-						@update:field="updateDropField"
+						@update:field="updateFormFieldByType"
 					/>
 				</template>
 			</div>

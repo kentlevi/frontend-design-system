@@ -1,9 +1,8 @@
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressFieldStore } from "~/stores/address";
-import { addressFormDefaults, mapAddressToForm } from "~/factories/address";
+import { mapAddressToForm } from "~/factories/address";
 import { loadAddresses } from "~/services/address/address.service";
 
 export function useBillingAddress() {
@@ -16,26 +15,14 @@ export function useBillingAddress() {
 	const { billing_address } = useAddressBookListCheckoutContext()
 
 	const {
-		form_state,
 		form_field_errors,
+		billing_form,
+
 		populateDynamicFields,
-		clearFormFieldError,
+		resetForm,
+		updateFormFieldByType,
+		updateDynamicFieldByType,
 	} = useAddressFormCheckoutContext();
-
-	const billing_form = computed(() => form_state.billing);
-
-	function updateBillingField(payload: UpdateFieldPayload) {
-		Object.assign(billing_form.value, {
-			[payload.field]: payload.value,
-		})
-
-		clearFormFieldError(payload.field)
-	}
-
-	function updateBillingDynamicField(payload: UpdateDynamicFieldPayload) {
-		billing_form.value.fields[payload.field_key] = payload.value
-		clearFormFieldError(`fields.${payload.field_key}`)
-	}
 
 	async function setBillingAddress() {
 		if (billing_address.value.length === 0) await loadAddresses('billing')
@@ -50,13 +37,6 @@ export function useBillingAddress() {
 		checkout_store.setBillingAddressId(selected.id)
 	}
 
-	function resetForm() {
-		Object.assign(
-			billing_form.value,
-			addressFormDefaults('billing')
-		)
-	}
-
 	onMounted(async () => {
 		if (address_field_store.dynamic_address_fields.length === 0) {
 			await address_field_store.getDynamicFields()
@@ -69,8 +49,8 @@ export function useBillingAddress() {
 		billing_form,
 		form_field_errors,
 
-		updateBillingField,
-		updateBillingDynamicField,
+		updateFormFieldByType,
+		updateDynamicFieldByType,
 
 		resetForm,
 		setBillingAddress,
