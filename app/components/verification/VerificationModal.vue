@@ -171,8 +171,7 @@ const {
 <style scoped lang="scss">
 .auth-verification-modal {
     position: relative;
-    margin: calc(var(--ui-modal-padding, 40px) * -1);
-    padding: var(--ui-modal-padding, 40px);
+    padding: var(--ui-modal-padding, 16px);
     border-radius: 14px;
     overflow: hidden;
     display: flex;
@@ -181,8 +180,8 @@ const {
 
     .auth-verification-close {
         position: absolute;
-        top: 24px;
-        right: 24px;
+        top: 0px;
+        right: 0px;
         width: 24px;
         height: 24px;
         padding: 0;

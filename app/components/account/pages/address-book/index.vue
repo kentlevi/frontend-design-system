@@ -58,8 +58,8 @@ const {
 	setFormType,
 	populateDynamicFields,
 	clearFormFieldErrors,
-	updateActiveFormField,
-	updateDynamicField,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 	resetForm,
 } = useAddressFormState()
 
@@ -162,8 +162,8 @@ provideAddressBookFormContext({
 	form_field_errors,
 	is_submitting,
 	setFormType,
-	updateActiveFormField,
-	updateDynamicField,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 	submitAddressForm,
 	closeFormModal,
 })

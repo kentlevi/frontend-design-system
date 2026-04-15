@@ -9,8 +9,8 @@ const {
 	form_field_errors,
 	ship_to_another_address,
 
-	updateShippingField,
-	updateShippingDynamicField,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 } = useManualShippingAddress()
 
 </script>
@@ -39,8 +39,8 @@ const {
 		<AddressFormFields
 			:form="shipping_form"
 			:errors="form_field_errors"
-			@update:field="updateShippingField"
-			@update:dynamic-field="updateShippingDynamicField"
+			@update:field="updateFormFieldByType"
+			@update:dynamic-field="updateDynamicFieldByType"
 		/>
 	</div>
 </template>

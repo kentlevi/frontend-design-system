@@ -21,8 +21,8 @@ export type AddressFormFieldsProps = {
 }
 
 export type AddressFormFieldsEmit = {
-	(event: 'update:field', payload: UpdateFieldPayload): void
-	(event: 'update:dynamic-field', payload: UpdateDynamicFieldPayload): void
+	(event: 'update:field', type: AddressType, payload: UpdateFieldPayload): void
+	(event: 'update:dynamic-field', type: AddressType, payload: UpdateDynamicFieldPayload): void
 }
 
 type UseAddressFormFieldOptions = {
@@ -52,7 +52,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return computed({
 			get: get_value,
 			set: (value: string) => {
-				options.emit('update:field', {
+				options.emit('update:field', options.props.form.type, {
 					field,
 					value,
 				})
@@ -99,7 +99,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	)
 
 	function updateDynamicField(field_key: string, value: string | number) {
-		options.emit('update:dynamic-field', {
+		options.emit('update:dynamic-field', options.props.form.type, {
 			field_key,
 			value,
 		})
@@ -111,14 +111,6 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		const value = options.props.form.fields?.[field_key]
 		const field = dynamic_fields.value?.find(f => f.field_key === field_key)
 
-		if (
-			field?.input_type === 'select'
-			&& hasProvinceLabel(field)
-			&& (value === '' || value === null || value === undefined)
-		) {
-			return createDefaultSelectOption(field).value
-		}
-
 		if (field?.options?.length) {
 			return field.options.find(opt => opt.id === value)?.value ?? ''
 		}
@@ -127,6 +119,18 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	}
 
 	function onDynamicSelectChange(field_key: string, selected_value: string | number) {
+		const field = dynamic_fields.value?.find(f => f.field_key === field_key)
+
+		if (
+			field
+			&& field.input_type === 'select'
+			&& hasProvinceLabel(field)
+			&& selected_value === getDefaultSelectOptionValue(field)
+		) {
+			updateDynamicField(field_key, '')
+			return
+		}
+
 		const option = dynamic_fields.value
 			?.find(f => f.field_key === field_key)
 			?.options?.find(opt => opt.value === selected_value)
@@ -152,10 +156,14 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 			id: '' as unknown as number,
 			country_field_id: field.id,
 			label: default_label,
-			value: default_label,
+			value: getDefaultSelectOptionValue(field),
 			sort_order: -1,
 			is_active: true,
 		}
+	}
+
+	function getDefaultSelectOptionValue(field: AddressDynamicFields) {
+		return `__placeholder__${field.field_key}`
 	}
 
 	function getDynamicFieldOptions(field: AddressDynamicFields) {
@@ -184,6 +192,13 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return field.field_label
 	}
 
+	function getDynamicFieldHighlightedValueWhenEmpty(field: AddressDynamicFields) {
+		if (field.input_type !== 'select') return null
+		if (!hasProvinceLabel(field)) return null
+
+		return getDefaultSelectOptionValue(field)
+	}
+
 	return {
 		hasAddressLines,
 		hasPhoneNumber,
@@ -202,6 +217,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		onDynamicSelectChange,
 		getFieldError,
 		getDynamicFieldOptions,
+		getDynamicFieldHighlightedValueWhenEmpty,
 		getDynamicFieldPlaceholder,
 	}
 }

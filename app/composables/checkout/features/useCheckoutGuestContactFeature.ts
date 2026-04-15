@@ -51,20 +51,8 @@ export function useCheckoutGuestContactFeature() {
 	}
 
 	function resetVerificationState() {
-		verification_store.patchModalState({
-			context: 'idle',
-			is_open: false,
-		})
-		verification_store.patchVerificationState({
-			email: '',
-			code: '',
-			error: '',
-			resend_limit_reached: '',
-			resend_cooldown_until: null,
-			is_verifying: false,
-			verified_email: '',
-			session: null,
-		})
+		verification_store.patchModalState(createVerificationModalState())
+		verification_store.patchVerificationState(createVerificationState())
 	}
 
 	function setGuestEmail(value: string) {
