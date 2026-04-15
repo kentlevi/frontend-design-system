@@ -103,8 +103,8 @@
 								<AddressFormFields
 									:form="billing_form"
 									:errors="form_field_errors"
-									@update:field="updateBillingField"
-									@update:dynamic-field="updateBillingDynamicField"
+									@update:field="updateFormFieldByType"
+									@update:dynamic-field="updateDynamicFieldByType"
 								/>
 							</div>
 						</Transition>
@@ -142,8 +142,8 @@ const {
 	billing_form,
 	form_field_errors,
 
-	updateBillingField,
-	updateBillingDynamicField,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 
 	resetForm,
 	setBillingAddress,

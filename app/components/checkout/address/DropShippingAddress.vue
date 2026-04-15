@@ -24,7 +24,7 @@ const {
 const {
 	drop_form,
 	form_field_errors,
-	updateDropField,
+	updateFormFieldByType,
 	resetForm,
 	setDropAddress,
 } = useDropShippingAddress();
@@ -140,7 +140,7 @@ const {
 								<AddressFormFields
 									:form="drop_form"
 									:errors="form_field_errors"
-									@update:field="updateDropField"
+									@update:field="updateFormFieldByType"
 								/>
 							</div>
 						</CheckoutTransition>
@@ -151,7 +151,7 @@ const {
 					<AddressFormFields
 						:form="drop_form"
 						:errors="form_field_errors"
-						@update:field="updateDropField"
+						@update:field="updateFormFieldByType"
 					/>
 				</template>
 			</div>

@@ -1,6 +1,5 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { addressFormDefaults } from "~/factories/address";
 import { useAddressFieldStore } from "~/stores/address";
@@ -27,24 +26,12 @@ export function useManualShippingAddress() {
 		form_field_errors,
 		populateDynamicFields,
 		clearFormFieldError,
+
+		updateFormFieldByType,
+		updateDynamicFieldByType,
 	} = useAddressFormCheckoutContext();
 
 	const shipping_form = computed(() => form_state.shipping);
-
-
-
-	function updateShippingField(payload: UpdateFieldPayload) {
-		Object.assign(shipping_form.value, {
-			[payload.field]: payload.value,
-		})
-
-		clearFormFieldError(payload.field)
-	}
-
-	function updateShippingDynamicField(payload: UpdateDynamicFieldPayload) {
-		shipping_form.value.fields[payload.field_key] = payload.value
-		clearFormFieldError(`fields.${payload.field_key}`)
-	}
 
 	function resetForm() {
 		Object.assign(
@@ -73,7 +60,7 @@ export function useManualShippingAddress() {
 		selected_shipping_address_id,
 
 		clearFormFieldError,
-		updateShippingField,
-		updateShippingDynamicField,
+		updateFormFieldByType,
+		updateDynamicFieldByType,
 	}
 }

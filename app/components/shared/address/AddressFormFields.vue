@@ -109,7 +109,7 @@ const ordered_dynamic_fields = computed(() => {
 					size="40"
 					class="address-form-fields-choice"
 					:selected="props.form.label === option.value"
-					@click="emit('update:field', { field: 'label', value: option.value })"
+					@click="emit('update:field', props.form.type, { field: 'label', value: option.value })"
 				>
 					<UiIcon :name="option.icon" :size="24" />
 					<span>{{ translate(`account.addressBook.tags.${option.label_key}`) }}</span>
