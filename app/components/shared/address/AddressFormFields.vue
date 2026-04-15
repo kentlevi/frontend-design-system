@@ -29,11 +29,29 @@ const {
 	onDynamicSelectChange,
 	getFieldError,
 	getDynamicFieldOptions,
+	getDynamicFieldHighlightedValueWhenEmpty,
 	getDynamicFieldPlaceholder,
 } = useAddressFormField({
 	props,
 	emit,
 	translate
+})
+
+const ordered_dynamic_fields = computed(() => {
+	const priority = (field_label: string) => {
+		const normalized_label = field_label.toLowerCase()
+
+		if (normalized_label.includes('province') || normalized_label.includes('metropolitan')) return 0
+		if (normalized_label.includes('city') || normalized_label.includes('town')) return 1
+		return 2
+	}
+
+	return [...dynamic_fields.value].sort((first_field, second_field) => {
+		const priority_diff = priority(first_field.field_label) - priority(second_field.field_label)
+		if (priority_diff !== 0) return priority_diff
+
+		return (first_field.sort_order ?? 0) - (second_field.sort_order ?? 0)
+	})
 })
 </script>
 
@@ -100,6 +118,39 @@ const {
 		</div>
 
 		<template v-if="hasAddressLines(props.form)">
+			<div class="address-form-fields-grid address-form-fields-grid--two">
+				<UiFormField
+					v-for="(dynamic_field, index) in ordered_dynamic_fields"
+					:key="index"
+					:label="dynamic_field.field_label"
+					:required="dynamic_field.is_required"
+					:show-required-mark="dynamic_field.is_required"
+					:error="getFieldError(`fields.${dynamic_field.field_key}`)"
+				>
+					<template #default="{ inputId, describedBy }">
+						<UiSelect
+							v-if="dynamic_field.input_type === 'select'"
+							:options="getDynamicFieldOptions(dynamic_field)"
+							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
+							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
+							:highlighted-value-when-empty="getDynamicFieldHighlightedValueWhenEmpty(dynamic_field)"
+							:trigger-class="getFieldError(`fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
+							@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
+						/>
+
+						<UiInput
+							v-if="dynamic_field.input_type === 'text'"
+							:id="inputId"
+							:aria-describedby="describedBy || undefined"
+							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
+							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
+							:state="getFieldError(`fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
+							@update:model-value="updateDynamicField(dynamic_field.field_key, $event)"
+						/>
+					</template>
+				</UiFormField>
+			</div>
+
 			<UiFormField
 				:label="translate('account.addressBook.streetAddress')"
 				:required="true"
@@ -122,38 +173,6 @@ const {
 					</div>
 				</template>
 			</UiFormField>
-
-			<div class="address-form-fields-grid address-form-fields-grid--two">
-				<UiFormField
-					v-for="(dynamic_field, index) in dynamic_fields"
-					:key="index"
-					:label="dynamic_field.field_label"
-					:required="dynamic_field.is_required"
-					:show-required-mark="dynamic_field.is_required"
-					:error="getFieldError(`fields.${dynamic_field.field_key}`)"
-				>
-					<template #default="{ inputId, describedBy }">
-						<UiSelect
-							v-if="dynamic_field.input_type === 'select'"
-							:options="getDynamicFieldOptions(dynamic_field)"
-							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
-							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
-							:trigger-class="getFieldError(`fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
-							@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
-						/>
-
-						<UiInput
-							v-if="dynamic_field.input_type === 'text'"
-							:id="inputId"
-							:aria-describedby="describedBy || undefined"
-							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
-							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
-							:state="getFieldError(`fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
-							@update:model-value="updateDynamicField(dynamic_field.field_key, $event)"
-						/>
-					</template>
-				</UiFormField>
-			</div>
 
 			<div class="address-form-fields-grid address-form-fields-grid--two">
 				<UiFormField
