@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressHelper } from '~/utils/address';
 
-useSavedShippingAddress()
+const {
+	shipping_form
+} = useSavedShippingAddress()
 
 const {
 	shippingPhoneNumber,
@@ -17,16 +18,12 @@ const {
 	is_shipping_address_modal_open,
 } = useCheckoutExperienceFeatureContext();
 
-const {
-	selected_shipping_address
-} = storeToRefs(useMainCheckOutStore())
-
 </script>
 
 <template>
 	<div key="saved-address" data-shipping-panel="saved-address" class="checkout-member-address-grid">
 		<button
-			v-if="selected_shipping_address"
+			v-if="shipping_form"
 			type="button"
 			class="checkout-member-address-card is-active"
 			@click="is_shipping_address_modal_open = true"
@@ -34,11 +31,11 @@ const {
 			<div class="checkout-member-address-top">
 				<div class="checkout-member-address-title-group">
 					<strong class="checkout-member-address-name">
-						{{ selected_shipping_address.contact_name }}
+						{{ shipping_form.contact_name }}
 					</strong>
 
 					<UiBadge
-						v-if="selected_shipping_address.is_default"
+						v-if="shipping_form.is_default"
 						variant="outline"
 						tone="default"
 						size="md"
@@ -53,12 +50,12 @@ const {
 
 			<div class="checkout-member-address-content">
 				<div
-					v-if="shippingPhoneNumber(selected_shipping_address)"
+					v-if="shippingPhoneNumber(shipping_form)"
 					class="checkout-member-address-row"
 				>
 					<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line checkout-member-address-line--strong">
-						{{ shippingPhoneNumber(selected_shipping_address) }}
+						{{ shippingPhoneNumber(shipping_form) }}
 					</p>
 				</div>
 
@@ -67,30 +64,30 @@ const {
 						<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 						<div class="checkout-member-address-lines">
 							<p class="checkout-member-address-line">
-								{{ getAddressLine1(selected_shipping_address) }}
-								<span v-if="getAddressLine2(selected_shipping_address)">
-									, {{ getAddressLine2(selected_shipping_address) }}
+								{{ getAddressLine1(shipping_form) }}
+								<span v-if="getAddressLine2(shipping_form)">
+									, {{ getAddressLine2(shipping_form) }}
 								</span>
 							</p>
 						</div>
 					</div>
 
 					<span
-						v-if="selected_shipping_address.label"
+						v-if="shipping_form.label"
 						class="checkout-member-address-tag"
-						:class="getAddressTagClass(selected_shipping_address.label)"
+						:class="getAddressTagClass(shipping_form.label)"
 					>
-						{{ selected_shipping_address.label }}
+						{{ shipping_form.label }}
 					</span>
 				</div>
 
 				<div
-					v-if="selected_shipping_address.company"
+					v-if="shipping_form.company"
 					class="checkout-member-address-row"
 				>
 					<UiIcon name="regular-building" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line">
-						{{ selected_shipping_address.company }}
+						{{ shipping_form.company }}
 					</p>
 				</div>
 			</div>

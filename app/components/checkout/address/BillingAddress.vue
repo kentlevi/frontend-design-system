@@ -1,7 +1,7 @@
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="billing_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="use_shipping_as_billing">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
+			<UiCheckbox v-model="use_shipping_as_billing" @click="setBillingAddress()">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
 			<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">
@@ -21,7 +21,13 @@
 			<div v-if="!use_shipping_as_billing" data-billing-panel="content" class="checkout-member-billing-panel">
 				<div class="checkout-member-billing-group">
 					<div v-if="is_member" class="checkout-member-radio-row">
-						<UiRadio v-model="billing_use_different_address" :value="false" name="billing-mode" class="checkout-member-radio-line">
+						<UiRadio
+							v-model="billing_use_different_address"
+							:value="false"
+							name="billing-mode"
+							class="checkout-member-radio-line"
+							@click="setBillingAddress()"
+						>
 							My Billing Address
 						</UiRadio>
 						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_billing_address_modal_open = true">
@@ -33,12 +39,12 @@
 						<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 							<div v-if="!billing_use_different_address && is_member" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
-									<button v-if="selected_billing_address" type="button" class="checkout-member-address-card is-active" @click="is_billing_address_modal_open = true">
+									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="is_billing_address_modal_open = true">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
-												<strong class="checkout-member-address-name">{{ selected_billing_address.recipient }}</strong>
+												<strong class="checkout-member-address-name">{{ billing_form.contact_name }}</strong>
 												<UiBadge
-													v-if="selected_billing_address.isDefault"
+													v-if="billing_form.is_default"
 													variant="outline"
 													tone="default"
 													size="md"
@@ -51,38 +57,46 @@
 											</div>
 										</div>
 										<div class="checkout-member-address-content">
-											<div v-if="selected_billing_address.phone" class="checkout-member-address-row">
-												<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
-												<p class="checkout-member-address-line checkout-member-address-line--strong">{{ selected_billing_address.phone }}</p>
-											</div>
 											<div class="checkout-member-address-row checkout-member-address-row--split">
 												<div class="checkout-member-address-row-main">
 													<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 													<div class="checkout-member-address-lines">
-														<p class="checkout-member-address-line">{{ selected_billing_address.line1 }}</p>
-														<p v-if="selected_billing_address.line2" class="checkout-member-address-line">{{ selected_billing_address.line2 }}</p>
+														<p class="checkout-member-address-line">{{ billing_form.address_line_1 }}</p>
+														<p v-if="billing_form.address_line_2" class="checkout-member-address-line">{{ billing_form.address_line_2 }}</p>
 													</div>
 												</div>
-												<span v-if="selected_billing_address.label" class="checkout-member-address-tag" :class="getAddressTagClass(selected_billing_address.label)">
-													{{ selected_billing_address.label }}
+												<span v-if="billing_form.label" class="checkout-member-address-tag" :class="getAddressTagClass(billing_form.label)">
+													{{ billing_form.label }}
 												</span>
 											</div>
-											<div v-if="selected_billing_address.company" class="checkout-member-address-row">
+											<div v-if="billing_form.company" class="checkout-member-address-row">
 												<UiIcon name="regular-building" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
-												<p class="checkout-member-address-line">{{ selected_billing_address.company }}</p>
+												<p class="checkout-member-address-line">{{ billing_form.company }}</p>
 											</div>
 										</div>
 									</button>
 								</div>
 								<div class="checkout-member-address-form-head is-solo">
-									<UiRadio v-model="billing_use_different_address" :value="true" name="billing-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+									<UiRadio
+										v-model="billing_use_different_address"
+										:value="true"
+										name="billing-mode"
+										class="checkout-member-radio-line checkout-member-radio-line--inline"
+										@click="resetForm()"
+									>
 										Use Another Billing Address
 									</UiRadio>
 								</div>
 							</div>
 							<div v-else key="billing-manual" data-billing-mode-panel="manual-address" class="checkout-member-drop-shipping-mode-panel">
 								<div v-if="is_member" class="checkout-member-address-form-head">
-									<UiRadio v-model="billing_use_different_address" :value="true" name="billing-mode" class="checkout-member-radio-line checkout-member-radio-line--inline">
+									<UiRadio
+										v-model="billing_use_different_address"
+										:value="true"
+										name="billing-mode"
+										class="checkout-member-radio-line checkout-member-radio-line--inline"
+										@click="resetForm()"
+									>
 										Ship to Another Billing Address
 									</UiRadio>
 								</div>
@@ -102,93 +116,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
+import { useBillingAddress } from '~/composables/checkout/address/useBillingAddress';
+import { useBillingAddressUI } from '~/composables/checkout/address/useBillingAddressUI';
 import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
-import { useAddressFieldStore } from '~/stores/address';
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
 
 const {
 	t,
-	is_member,
-	use_shipping_as_billing,
-	selected_billing_address,
-	billing_use_different_address,
-	billing_tooltip_open,
-	getAddressTagClass,
-	is_billing_address_modal_open,
-	toggleBillingTooltip,
-} = useCheckoutExperienceFeatureContext();
-
-const address_field_store = useAddressFieldStore();
-const {
-	form_state,
-	form_field_errors,
-	clearFormFieldError,
-	populateDynamicFields,
-} = useAddressFormCheckoutContext();
-
-const billing_form = computed(() => form_state.billing);
-
-const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
-
-const {
-	enter_duration_ms,
-	leave_duration_ms,
 	beforeEnter,
 	enter,
 	afterEnter,
 	beforeLeave,
 	leave,
 	afterLeave,
-} = useCheckoutFeatureTransition();
-
-useHeightTransition(
-	billing_swap_wrapper_ref,
-	use_shipping_as_billing,
-	() => use_shipping_as_billing.value ? null : '[data-billing-panel="content"]',
-	{ enterDurationMs: enter_duration_ms, leaveDurationMs: leave_duration_ms }
-);
-
-useHeightTransition(
-	billing_mode_swap_wrapper_ref,
+	is_member,
 	billing_use_different_address,
-	() =>
-		billing_use_different_address.value
-			? '[data-billing-mode-panel="manual-address"]'
-			: '[data-billing-mode-panel="saved-address"]',
-	{
-		enabled: () => !use_shipping_as_billing.value,
-		enterDurationMs: enter_duration_ms,
-		leaveDurationMs: leave_duration_ms,
-	}
-);
+	use_shipping_as_billing,
+	billing_tooltip_open,
+	is_billing_address_modal_open,
+	getAddressTagClass,
+	toggleBillingTooltip,
+} = useBillingAddressUI()
 
-function updateBillingField(payload: UpdateFieldPayload) {
-	Object.assign(billing_form.value, {
-		[payload.field]: payload.value,
-	})
+const {
+	billing_form,
+	form_field_errors,
 
-	clearFormFieldError(payload.field)
-}
+	updateBillingField,
+	updateBillingDynamicField,
 
-function updateBillingDynamicField(payload: UpdateDynamicFieldPayload) {
-	billing_form.value.fields[payload.field_key] = payload.value
-	clearFormFieldError(`fields.${payload.field_key}`)
-}
+	resetForm,
+	setBillingAddress,
+} = useBillingAddress()
 
-onMounted(async () => {
-	if (address_field_store.dynamic_address_fields.length === 0) {
-		await address_field_store.getDynamicFields()
-	}
-
-	populateDynamicFields('billing')
-})
 </script>
 
 <style scoped lang="scss">

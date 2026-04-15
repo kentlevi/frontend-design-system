@@ -17,6 +17,7 @@ import { provideAddressBookFormContext } from '~/composables/account/addressBook
 import { provideAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
 import { provideAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
+import { loadAddresses } from '~/services/address/address.service';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -24,7 +25,7 @@ withDefaults(defineProps<{
 	embedded: false,
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 /**
  * Store
@@ -41,8 +42,10 @@ const {
 	has_billing_addresses,
 	has_drop_addresses,
 	has_addresses,
-	is_loading,
-	fetchAllAddresses,
+
+	is_shipping_fetching,
+	is_billing_fetching,
+	is_drop_fetching
 } = useAddressBookList()
 
 const {
@@ -188,7 +191,9 @@ provideAddressBookCardActionContext({
 })
 
 onMounted(() => {
-	fetchAllAddresses()
+	loadAddresses('shipping')
+	loadAddresses('billing')
+	loadAddresses('drop')
 	address_field_store.getDynamicFields()
 })
 
@@ -266,10 +271,10 @@ function skipDefaultShippingSelection() {
 			<div class="account-content" data-testid="account-address-book-content">
 				<header class="account-address-book-header" data-testid="account-address-book-header">
 					<h1 class="account-address-book-title" data-testid="account-address-book-title">
-						{{ t('account.addressBook.title') }}
+						{{ translate('account.addressBook.title') }}
 					</h1>
 					<UiSkeleton
-						v-if="is_loading"
+						v-if="is_shipping_fetching && is_billing_fetching && is_drop_fetching"
 						width="164px"
 						height="var(--space-2xl)"
 						border-radius="var(--radius-xl)"
@@ -285,50 +290,49 @@ function skipDefaultShippingSelection() {
 						data-testid="account-address-book-add-button"
 						@click="handleOpenAddModal"
 					>
-						{{ t('account.addressBook.addNew') }}
+						{{ translate('account.addressBook.addNew') }}
 					</UiButton>
 				</header>
 
 				<div
-					v-if="has_addresses || is_loading"
+					v-if="has_addresses || true"
 					class="account-address-book-sections"
 					data-testid="account-address-book-sections"
 				>
 					<div class="account-address-book-primary-group">
-						<template v-if="is_loading">
-							<AddressBookSection
-								section="shipping"
-								:items="[]"
-								loading
-							/>
-							<AddressBookSection
-								section="billing"
-								:items="[]"
-								loading
-							/>
-							<AddressBookSection
-								section="drop"
-								:items="[]"
-								loading
-							/>
-						</template>
-						<template v-else>
-							<AddressBookSection
-								v-if="has_shipping_addresses"
-								section="shipping"
-								:items="shipping_address"
-							/>
-							<AddressBookSection
-								v-if="has_billing_addresses"
-								section="billing"
-								:items="billing_address"
-							/>
-							<AddressBookSection
-								v-if="has_drop_addresses"
-								section="drop"
-								:items="drop_address"
-							/>
-						</template>
+						<AddressBookSection
+							v-if="is_shipping_fetching"
+							section="shipping"
+							:items="[]"
+							loading
+						/>
+						<AddressBookSection
+							v-if="is_billing_fetching"
+							section="billing"
+							:items="[]"
+							loading
+						/>
+						<AddressBookSection
+							v-if="is_drop_fetching"
+							section="drop"
+							:items="[]"
+							loading
+						/>
+						<AddressBookSection
+							v-if="has_shipping_addresses"
+							section="shipping"
+							:items="shipping_address"
+						/>
+						<AddressBookSection
+							v-if="has_billing_addresses"
+							section="billing"
+							:items="billing_address"
+						/>
+						<AddressBookSection
+							v-if="has_drop_addresses"
+							section="drop"
+							:items="drop_address"
+						/>
 					</div>
 				</div>
 
@@ -347,7 +351,7 @@ function skipDefaultShippingSelection() {
 					<div class="account-address-book-empty-state-content">
 						<div class="account-address-book-empty-state-copy">
 							<h2 class="account-address-book-empty-state-title">
-								{{ t('account.addressBook.emptyTitle') }}
+								{{ translate('account.addressBook.emptyTitle') }}
 							</h2>
 							<i18n-t
 								keypath="account.addressBook.emptyDescription"
@@ -355,7 +359,7 @@ function skipDefaultShippingSelection() {
 								class="account-address-book-empty-state-description"
 							>
 								<template #action>
-									<strong>"{{ t('account.addressBook.addAddressLabel') }}"</strong>
+									<strong>"{{ translate('account.addressBook.addAddressLabel') }}"</strong>
 								</template>
 							</i18n-t>
 						</div>
@@ -370,7 +374,7 @@ function skipDefaultShippingSelection() {
 							data-testid="account-address-book-empty-add-button"
 							@click="handleOpenAddModal"
 						>
-							{{ t('account.addressBook.addNew') }}
+							{{ translate('account.addressBook.addNew') }}
 						</UiButton>
 					</div>
 				</section>

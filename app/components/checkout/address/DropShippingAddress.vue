@@ -13,7 +13,6 @@ const {
 	is_member,
 	drop_shipping_enabled,
 	drop_shipping_ship_to_another_address,
-	selected_drop_shipping_address,
 	is_drop_shipping_address_modal_open,
 	drop_shipping_tooltip_open,
 	drop_shipping_mode_swap_wrapper_ref,
@@ -26,7 +25,7 @@ const {
 	drop_form,
 	form_field_errors,
 	updateDropField,
-	clearDropAddress,
+	resetForm,
 	setDropAddress,
 } = useDropShippingAddress();
 
@@ -35,7 +34,7 @@ const {
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="drop_shipping_enabled">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
+			<UiCheckbox v-model="drop_shipping_enabled" @click="setDropAddress()">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
 			<UiTooltip :open="drop_shipping_tooltip_open" v-bind="checkoutDropShippingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleDropShippingTooltip">
@@ -87,9 +86,9 @@ const {
 									<button type="button" class="checkout-member-address-card is-active">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
-												<strong class="checkout-member-address-name">{{ selected_drop_shipping_address?.recipient }}</strong>
+												<strong class="checkout-member-address-name">{{ drop_form?.contact_name }}</strong>
 												<UiBadge
-													v-if="selected_drop_shipping_address?.isDefault"
+													v-if="drop_form?.is_default"
 													variant="outline"
 													tone="default"
 													size="md"
@@ -104,10 +103,10 @@ const {
 										<div class="checkout-member-address-content">
 											<div class="checkout-member-address-row checkout-member-address-row--split">
 												<div class="checkout-member-address-row-main">
-													<p class="checkout-member-address-line">{{ selected_drop_shipping_address?.company || 'No company provided' }}</p>
+													<p class="checkout-member-address-line">{{ drop_form?.company || 'No company provided' }}</p>
 												</div>
-												<span v-if="selected_drop_shipping_address?.label" class="checkout-member-address-tag" :class="getAddressTagClass(selected_drop_shipping_address.label)">
-													{{ selected_drop_shipping_address.label }}
+												<span v-if="drop_form?.label" class="checkout-member-address-tag" :class="getAddressTagClass(drop_form.label)">
+													{{ drop_form.label }}
 												</span>
 											</div>
 										</div>
@@ -119,7 +118,7 @@ const {
 										:value="true"
 										name="drop-shipping-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="clearDropAddress()"
+										@click="resetForm()"
 									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>
@@ -132,7 +131,7 @@ const {
 										:value="true"
 										name="drop-shipping-mode"
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
-										@click="clearDropAddress()"
+										@click="resetForm()"
 									>
 										Ship to Another Drop Shipping Address
 									</UiRadio>

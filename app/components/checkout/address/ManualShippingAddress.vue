@@ -7,8 +7,8 @@ const {
 	is_member,
 	shipping_form,
 	form_field_errors,
-	selected_shipping_address,
 	ship_to_another_address,
+
 	updateShippingField,
 	updateShippingDynamicField,
 } = useManualShippingAddress()
@@ -19,7 +19,7 @@ const {
 	<div key="manual-address" data-shipping-panel="manual-address" class="checkout-member-address-form">
 		<div v-if="is_member" class="checkout-member-address-form-head">
 			<UiRadio
-				v-if = "selected_shipping_address"
+				v-if = "ship_to_another_address"
 				v-model="ship_to_another_address"
 				:value="true"
 				name="shipping-mode"

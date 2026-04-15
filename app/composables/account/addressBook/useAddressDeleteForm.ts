@@ -1,4 +1,4 @@
-import { deleteUserAddress } from "~/services/profile/address.service"
+import { deleteUserAddress } from "~/services/address/api.service"
 import { useAddressStore } from "~/stores/address"
 import type { AddressMap, AddressType, BillingAddress, DropAddress, ShippingAddress } from "~/types/address"
 
