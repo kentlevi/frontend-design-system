@@ -33,6 +33,13 @@ export function getAuthResponseCode(payload: unknown): string {
 	return typeof code === 'string' ? code.trim() : '';
 }
 
+export function getAuthResponseSocialProvider(payload: unknown): string {
+	if (!payload || typeof payload !== 'object') return '';
+	const response = payload as { data?: { provider?: unknown } };
+	const provider = response.data?.provider;
+	return typeof provider === 'string' ? provider.trim() : '';
+}
+
 export function getAuthErrorMessage(payload: unknown): string {
 	if (!payload || typeof payload !== 'object') return '';
 	const error = payload as { data?: { message?: unknown }; message?: unknown };

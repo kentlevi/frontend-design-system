@@ -8,10 +8,8 @@ const {
 	error,
 	resend_limit_reached,
 	is_verifying,
-	computed_submit_label,
 	code_inputs,
 	input_refs,
-	translation_key,
 	can_resend,
 	modal_align,
 	test_id_prefix,
@@ -39,7 +37,7 @@ const {
 		<div class="auth-verification-modal">
 			<UiLoadingOverlay
 				:visible="is_verifying"
-				:label="computed_submit_label"
+				label="Verifying..."
 				test-id="verification-modal-loading-overlay"
 				variant="modal"
 			/>
@@ -130,7 +128,7 @@ const {
 					:data-testid="`${test_id_prefix}-submit`"
 					@click="submitVerification"
 				>
-					{{ computed_submit_label }}
+					{{ translate(`auth.verification.verify`) }}
 				</UiButton>
 
 				<p v-if="!resend_limit_reached" class="auth-verification-resend">
