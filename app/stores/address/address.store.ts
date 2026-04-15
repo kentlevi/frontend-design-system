@@ -20,6 +20,23 @@ export const useAddressStore = defineStore('address', () => {
 		})
 	}
 
+	function normalizeDefault<T extends AddressType>(
+		type: T,
+		incoming: AddressMap[T] | AddressMap[T][]
+	) {
+		const target = address_refs[type]
+		const normalized = Array.isArray(incoming) ? incoming : [incoming]
+
+		const has_default = normalized.some(addr => addr.is_default)
+
+		if (!has_default) return
+
+		target.value = target.value.map(address => ({
+			...address,
+			is_default: normalized.some(n => n.id === address.id)
+		}))
+	}
+
 	function setAddresses<T extends AddressType>(
 		type: T,
 		value: AddressMap[T] | AddressMap[T][],
@@ -33,13 +50,7 @@ export const useAddressStore = defineStore('address', () => {
 
 		/** Keep one default address per type when we append/prepend */
 		if (mode !== 'replace') {
-			const has_default = normalized_value.some((address) => address.is_default)
-
-			if (has_default) {
-				target.value.forEach((address) => {
-					address.is_default = false
-				})
-			}
+			normalizeDefault(type, normalized_value)
 		}
 
 		/** Replace existing data */
@@ -73,6 +84,8 @@ export const useAddressStore = defineStore('address', () => {
 	) {
 		const target = address_refs[type]
 		const target_index = target.value.findIndex(address => address.id === value.id)
+
+		normalizeDefault(type, value)
 
 		if (target_index === -1) return
 
