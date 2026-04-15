@@ -1,6 +1,7 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
 import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
+import { useAddressFormCheckoutContext } from "~/composables/checkout/address/context/addressFormCheckoutContext"
 
 export const useTossPayment = () => {
 
@@ -8,10 +9,10 @@ export const useTossPayment = () => {
 		completeCheckout
 	} = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
 	const checkout_store = useMainCheckOutStore()
-	const{
-		selected_shipping_address,
-		selected_billing_address
-	} = storeToRefs(checkout_store)
+
+	const { form_state } = useAddressFormCheckoutContext()
+	const shipping_form = computed(() => form_state.shipping)
+	const billing_form = computed(() => form_state.billing)
 
 	let popup: Window | null = null
 
@@ -72,8 +73,8 @@ export const useTossPayment = () => {
 
 					await completeCheckoutRequest({
 						order_id: order_id,
-						shipping_address: selected_shipping_address.value,
-						billing_address: selected_billing_address.value
+						shipping_address: shipping_form.value,
+						billing_address: billing_form.value
 					})
 					checkout_store.cleanCheckoutStatesOnSuccess()
 					completeCheckout(true, order_id)

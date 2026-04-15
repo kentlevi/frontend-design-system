@@ -4,7 +4,7 @@ import type { InitialCheckoutPayload } from "~/types/checkout"
 import { useUsersStore } from '~/stores/users/users.store';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import type { PaymentCode } from "~/types/payments/payment";
-import { useAddressHelper } from '~/utils/address';
+import { useAddressFormCheckoutContext } from "../address/context/addressFormCheckoutContext";
 
 export const useCheckoutFlow = () => {
 
@@ -14,12 +14,11 @@ export const useCheckoutFlow = () => {
 		guest_contact_state,
 		selected_shipping_method_id,
 		selected_payment_method,
-		selected_shipping_address
+
 	} = storeToRefs(useMainCheckOutStore())
 
-	const {
-		shippingPhoneNumber,
-	} = useAddressHelper()
+	const { form_state } = useAddressFormCheckoutContext()
+	const shipping_form = computed(() => form_state.shipping)
 
 	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
 
@@ -30,12 +29,12 @@ export const useCheckoutFlow = () => {
 				? state.value.email
 				: guest_contact_state.value.email,
 			contact_name:
-				selected_shipping_address.value?.contact_name
+				shipping_form.value?.contact_name
 				?? (state.value.id !== 0
 					? state.value.email
 					: guest_contact_state.value.email),
 			phone_number:
-				selected_shipping_address.value ? shippingPhoneNumber(selected_shipping_address.value) : ''
+				shipping_form.value.phone_number
 		}
 	}
 
