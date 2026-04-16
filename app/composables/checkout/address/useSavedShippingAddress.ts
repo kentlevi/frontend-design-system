@@ -1,9 +1,9 @@
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { mapAddressToForm } from "~/factories/address";
-import { useAddressFieldStore } from "~/stores/address";
+import { useAddressFieldStore } from "~/stores/user-address";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
-import { loadAddresses } from "~/services/address/address.service";
+import { loadAddresses } from "~/services/user-address/user-address.service";
 
 export function useSavedShippingAddress() {
 

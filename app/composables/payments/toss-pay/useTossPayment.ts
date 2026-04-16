@@ -10,9 +10,7 @@ export const useTossPayment = () => {
 	} = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
 	const checkout_store = useMainCheckOutStore()
 
-	const { form_state } = useAddressFormCheckoutContext()
-	const shipping_form = computed(() => form_state.shipping)
-	const billing_form = computed(() => form_state.billing)
+	const { shipping_form, billing_form } = useAddressFormCheckoutContext()
 
 	let popup: Window | null = null
 

@@ -9,7 +9,7 @@ import { useAddressBookList } from '~/composables/account/addressBook/useAddress
 import { useAddressCreateForm } from '~/composables/account/addressBook/useAddressCreateForm';
 import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
 import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
-import { useAddressFieldStore } from '~/stores/address';
+import { useAddressFieldStore } from '~/stores/user-address';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
 import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
@@ -17,7 +17,7 @@ import { provideAddressBookFormContext } from '~/composables/account/addressBook
 import { provideAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
 import { provideAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
-import { loadAddresses } from '~/services/address/address.service';
+import { loadAddresses } from '~/services/user-address/user-address.service';
 
 withDefaults(defineProps<{
 	embedded?: boolean;

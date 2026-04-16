@@ -9,7 +9,7 @@ export async function fetchUserAddresses(
 ): Promise<ApiResponse<AddressMap[AddressType][]>> {
 	const { $api } = useNuxtApp();
 
-	return $api.get(`/address`, { params })
+	return $api.get(`/user-address`, { params })
 }
 
 /**
@@ -19,7 +19,7 @@ export async function fetchDynamicFields(
 ): Promise<ApiResponse<AddressDynamicFields[]>> {
 	const { $api } = useNuxtApp();
 
-	return $api.get('/address/fields');
+	return $api.get('/user-address/fields');
 }
 
 /**
@@ -30,7 +30,7 @@ export async function addUserAddress(
 ): Promise<ApiResponse<AddressMap[AddressType]>> {
 	const { $api } = useNuxtApp()
 
-	return $api.post('/address', params);
+	return $api.post('/user-address', params);
 }
 
 /**
@@ -42,7 +42,7 @@ export async function updateUserAddress(
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
-	return $api.put(`/address/${id}`, params);
+	return $api.put(`/user-address/${id}`, params);
 }
 
 /**
@@ -53,7 +53,7 @@ export async function deleteUserAddress(
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
-	return $api.delete(`/address/${id}`);
+	return $api.delete(`/user-address/${id}`);
 }
 
 /**
@@ -64,5 +64,5 @@ export async function setDefault(
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
-	return $api.put(`/address/${id}/default`);
+	return $api.put(`/user-address/${id}/default`);
 }

@@ -1,5 +1,5 @@
 import type { icons } from '~/data/ui/icons'
-import { useAddressFieldStore } from '~/stores/address'
+import { useAddressFieldStore } from '~/stores/user-address'
 import type { CountryFieldOption } from '~/types/country_field_option'
 import type {
 	AddressDynamicFields,

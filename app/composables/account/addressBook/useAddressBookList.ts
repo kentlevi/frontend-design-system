@@ -1,4 +1,4 @@
-import { useAddressStore } from "~/stores/address/address.store";
+import { useAddressStore } from "~/stores/user-address/address.store";
 import type { AddressType } from "~/types/address";
 
 export function useAddressBookList() {

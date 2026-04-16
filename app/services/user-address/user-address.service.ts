@@ -1,6 +1,6 @@
 import type { AddressType } from "~/types/address";
 import { fetchUserAddresses } from "./api.service";
-import { useAddressStore } from "~/stores/address";
+import { useAddressStore } from "~/stores/user-address";
 
 export async function loadAddresses(type: AddressType) {
 	const store = useAddressStore()

@@ -1,4 +1,4 @@
-import { fetchDynamicFields } from "~/services/address/api.service"
+import { fetchDynamicFields } from "~/services/user-address/api.service"
 import type { AddressDynamicFields } from "~/types/address"
 
 

@@ -17,8 +17,7 @@ export const useCheckoutFlow = () => {
 
 	} = storeToRefs(useMainCheckOutStore())
 
-	const { form_state } = useAddressFormCheckoutContext()
-	const shipping_form = computed(() => form_state.shipping)
+	const { shipping_form } = useAddressFormCheckoutContext()
 
 	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
 

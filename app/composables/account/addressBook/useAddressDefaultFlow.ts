@@ -1,5 +1,5 @@
-import { setDefault } from "~/services/address/api.service";
-import { useAddressStore } from "~/stores/address";
+import { setDefault } from "~/services/user-address/api.service";
+import { useAddressStore } from "~/stores/user-address";
 import type { AddressMap, AddressType } from "~/types/address";
 import { useAddressHelper } from "~/utils/address/index"
 

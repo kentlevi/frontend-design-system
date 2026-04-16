@@ -1,5 +1,5 @@
-import { addUserAddress } from "~/services/address/api.service";
-import { useAddressStore } from "~/stores/address";
+import { addUserAddress } from "~/services/user-address/api.service";
+import { useAddressStore } from "~/stores/user-address";
 import type { AddressFormMap, AddressFormState, AddressType } from "~/types/address";
 import type { ComputedRef, Ref } from "vue";
 import { useAddressHelper } from "~/utils/address";
