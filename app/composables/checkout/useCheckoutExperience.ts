@@ -47,18 +47,12 @@ export function useCheckoutExperience() {
 	const {
 		email_tooltip_open,
 		points_tooltip_open,
-		drop_shipping_tooltip_open,
-		billing_tooltip_open,
 		toggleEmailTooltip,
 		togglePointsTooltip,
-		toggleDropShippingTooltip,
-		toggleBillingTooltip,
 	} = useCheckoutTooltipState();
 
 	// Modal States expected by the template
 	const is_shipping_address_modal_open = ref(false)
-	const is_billing_address_modal_open = ref(false);
-	const is_drop_shipping_address_modal_open = ref(false);
 	const is_accredited_banks_modal_open = ref(false);
 
 	const field_validation_by_key = checkoutFieldValidation;
@@ -73,13 +67,6 @@ export function useCheckoutExperience() {
 			size,
 			qty: qty.toLocaleString(),
 		});
-	}
-
-	function getAddressTagClass(label: string) {
-		const lower_label = label.toLowerCase();
-		if (lower_label.includes('office')) return 'checkout-member-address-tag--office';
-		if (lower_label.includes('client')) return 'checkout-member-address-tag--client';
-		return '';
 	}
 
 	return {
@@ -100,20 +87,13 @@ export function useCheckoutExperience() {
 		is_login_modal_open,
 		email_tooltip_open,
 		points_tooltip_open,
-		drop_shipping_tooltip_open,
-		billing_tooltip_open,
 		is_shipping_address_modal_open,
-		is_billing_address_modal_open,
-		is_drop_shipping_address_modal_open,
 		is_accredited_banks_modal_open,
 
 		// UI Methods
 		openLoginModal,
 		togglePointsTooltip,
-		toggleDropShippingTooltip,
-		toggleBillingTooltip,
 		toggleEmailTooltip,
-		getAddressTagClass,
 
 		// Unified Data
 		field_validation_by_key,

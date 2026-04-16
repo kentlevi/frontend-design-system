@@ -2,25 +2,32 @@ import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatur
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useDismissibleTooltip } from "../features/useDismissibleTooltip";
 import { useHeightTransition } from "../shared/useHeightTransition";
+import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useDropShippingAddressUI() {
 
+	/** Contexts */
+	const {
+		is_member,
+	} = useCheckoutExperienceFeatureContext();
+
+	const {
+		drop_shipping_tooltip_open,
+		drop_shipping_enabled,
+		is_drop_shipping_address_modal_open,
+
+		toggleDropShippingTooltip,
+		getAddressTagClass
+	} = useAddressGeneralUICheckoutContext()
+
+
+
+	const { t: translate } = useI18n();
 
 	const {
 		enter_duration_ms,
 		leave_duration_ms,
 	} = useCheckoutFeatureTransition();
-
-	const {
-		t,
-		is_member,
-		getAddressTagClass,
-		drop_shipping_enabled,
-		selected_drop_shipping_address,
-		is_drop_shipping_address_modal_open,
-		drop_shipping_tooltip_open,
-		toggleDropShippingTooltip,
-	} = useCheckoutExperienceFeatureContext();
 
 	const drop_shipping_ship_to_another_address = ref(false);
 
@@ -61,11 +68,10 @@ export function useDropShippingAddressUI() {
 	);
 
 	return {
-		t,
+		translate,
 		is_member,
 		drop_shipping_enabled,
 		drop_shipping_ship_to_another_address,
-		selected_drop_shipping_address,
 		is_drop_shipping_address_modal_open,
 		drop_shipping_tooltip_open,
 		drop_shipping_mode_swap_wrapper_ref,

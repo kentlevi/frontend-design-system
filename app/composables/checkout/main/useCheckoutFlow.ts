@@ -7,6 +7,7 @@ import type { PaymentCode } from "~/types/payments/payment";
 import { useAddressFormCheckoutContext } from "../address/context/addressFormCheckoutContext";
 import { validateAddress } from "~/services/address/address.service";
 import { useAddressHelper } from "~/utils/address";
+import { useAddressGeneralUICheckoutContext } from "../address/context/addressGeneralUICheckoutContext";
 
 export const useCheckoutFlow = () => {
 
@@ -23,9 +24,20 @@ export const useCheckoutFlow = () => {
 
 	const {
 		shipping_form,
+		drop_form,
+		billing_form,
 
 		setFormErrors
 	} = useAddressFormCheckoutContext()
+
+	const {
+		drop_shipping_enabled,
+		use_shipping_as_billing,
+	} = useAddressGeneralUICheckoutContext()
+
+
+
+
 
 	async function initValidateAddresses() {
 		const response = await validateAddress(shipping_form.value)
@@ -35,7 +47,29 @@ export const useCheckoutFlow = () => {
 			setFormErrors(shipping_form.value.type, next_errors)
 		}
 
+		if (drop_shipping_enabled.value) {
+			const response = await validateAddress(drop_form.value)
+
+			if (!response?.success) {
+				const next_errors = mapApiFieldErrors(response?.data)
+				setFormErrors(drop_form.value.type, next_errors)
+			}
+		}
+
+		if (!use_shipping_as_billing.value) {
+			const response = await validateAddress(billing_form.value)
+
+			if (!response?.success) {
+				const next_errors = mapApiFieldErrors(response?.data)
+				setFormErrors(billing_form.value.type, next_errors)
+			}
+		}
+
 	}
+
+
+
+
 
 	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
 

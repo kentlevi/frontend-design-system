@@ -7,7 +7,7 @@ import type {
 	CheckoutShippingMethodKey,
 } from '~/types/checkout/options';
 import { useUsersStore } from '~/stores/users/users.store';
-import type { MemberAddress, MemberDropShippingAddress } from '~/types/checkout';
+import type { MemberAddress } from '~/types/checkout';
 
 export function useCheckoutMember() {
 	const base = useCheckoutBase();
@@ -65,90 +65,9 @@ export function useCheckoutMember() {
 	const selected_payment_method = ref<CheckoutPaymentMethodKey>(
 		checkoutPaymentMethods.find((method) => method.defaultSelected)?.key || 'credit-card'
 	);
-
-	const drop_shipping_enabled = ref(false);
-	const drop_shipping_addresses = computed<MemberDropShippingAddress[]>(() => [
-		{
-			id: 'drop-default',
-			recipient: 'Donna Miller',
-			company: 'Femme Inc.',
-			label: 'Client',
-			isDefault: true,
-		},
-		{
-			id: 'drop-maria',
-			recipient: 'Maria Isabel Santos',
-			company: 'Golden Harvest Foods Inc.',
-			label: 'Client',
-		},
-		{
-			id: 'drop-jonathan',
-			recipient: 'Jonathan Reyes',
-			company: '',
-			label: 'Home',
-		},
-		{
-			id: 'drop-camille',
-			recipient: 'Camille Dela Torre',
-			company: '',
-			label: 'Office',
-		},
-		{
-			id: 'drop-daniel',
-			recipient: 'Daniel Navarro',
-			company: 'Vertex Financial Solutions',
-			label: 'Client',
-		},
-		{
-			id: 'drop-sophia',
-			recipient: 'Sophia Villanueva',
-			company: 'EcoSphere Innovations',
-			label: 'Client',
-		},
-	]);
-	const selected_drop_shipping_address_id = ref(drop_shipping_addresses.value[0]?.id || '');
 	const points_to_use = ref('');
 	const coupon_code = ref('');
 	const points_available = ref(13.93);
-	const billing_addresses = computed<MemberAddress[]>(() => [
-		{
-			id: 'billing-default',
-			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			phone: '+82 (551) 236-4533',
-			line1: '7F, 221 Jungang-daero, Dong-gu,',
-			line2: 'Busan 48912, Republic of Korea',
-			company: 'Summit Inc.',
-			label: 'Home',
-			isDefault: true,
-			badgeLabel: 'Default Billing',
-		},
-		{
-			id: 'billing-office-1',
-			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			line1: '12F, 45 Teheran-ro, Gangnam-gu,',
-			line2: 'Seoul 06133, Republic of Korea',
-			company: 'Haneul Tech Co., Ltd.',
-			label: 'Office',
-		},
-		{
-			id: 'billing-office-2',
-			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			line1: '5F, 88 Jungang-daero, Jung-gu,',
-			line2: 'Busan 48942, Republic of Korea',
-			company: 'Busan Marine Logistics Inc.',
-			label: 'Office',
-		},
-		{
-			id: 'billing-client',
-			recipient: 'Davy Jones',
-			line1: '9F, 102 Digital-ro, Guro-gu,',
-			line2: 'Seoul 08390, Republic of Korea',
-			company: 'Daehan Electronics Co., Ltd.',
-			label: 'Client',
-		},
-	]);
-	const selected_billing_address_id = ref(billing_addresses.value[0]?.id || '');
-	const billing_use_different_address = ref(false);
 
 	// Member specific payment pre-fills
 	base.card_number.value = '4242 4242 4242 4242';
@@ -157,12 +76,6 @@ export function useCheckoutMember() {
 
 	const selected_shipping_address = computed(
 		() => saved_shipping_addresses.value.find((address) => address.id === selected_shipping_address_id.value) || null
-	);
-	const selected_drop_shipping_address = computed(
-		() => drop_shipping_addresses.value.find((address) => address.id === selected_drop_shipping_address_id.value) || null
-	);
-	const selected_billing_address = computed(
-		() => billing_addresses.value.find((address) => address.id === selected_billing_address_id.value) || null
 	);
 
 	const active_shipping_methods = computed(() =>
@@ -192,17 +105,9 @@ export function useCheckoutMember() {
 		active_shipping_methods,
 		active_payment_methods,
 		payment_brands: checkoutMemberPaymentBrands,
-		drop_shipping_enabled,
-		drop_shipping_addresses,
-		selected_drop_shipping_address,
-		selected_drop_shipping_address_id,
 		points_available,
 		points_to_use,
 		coupon_code,
-		billing_addresses,
-		selected_billing_address,
-		selected_billing_address_id,
-		billing_use_different_address,
 		useAllPoints,
 		clearPoints,
 	};

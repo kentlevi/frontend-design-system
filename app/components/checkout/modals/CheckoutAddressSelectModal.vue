@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import type {
 	MemberAddress,
 	MemberDropShippingAddress,
@@ -61,15 +62,10 @@ function confirmSelection() {
 	closeModal();
 }
 
-function getAddressTagClass(label?: string) {
-	if (!label) return '';
 
-	const lower_label = label.toLowerCase();
-
-	if (lower_label.includes('office')) return 'checkout-address-select-modal-tag--office';
-	if (lower_label.includes('client')) return 'checkout-address-select-modal-tag--client';
-	return 'checkout-address-select-modal-tag--home';
-}
+const {
+	getAddressTagClass
+} = useAddressGeneralUICheckoutContext()
 
 function getDefaultBadgeLabel(address: SelectableAddress) {
 	if (props.variant === 'shipping') return 'Default Shipping';

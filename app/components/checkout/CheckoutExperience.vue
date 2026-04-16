@@ -76,6 +76,8 @@ import { provideAddressFormCheckoutContext } from '~/composables/checkout/addres
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
 import { provideAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { provideAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
+import { useAddressGeneralUI } from '~/composables/checkout/address/useAddressGeneralUI';
 
 /** Standalone address context (isolated from checkout_experience) */
 const address_checkout_form_state = useAddressFormState();
@@ -83,6 +85,9 @@ provideAddressFormCheckoutContext(address_checkout_form_state);
 
 const address_checkout_book_list_state = useAddressBookList()
 provideAddressBookListCheckoutContext(address_checkout_book_list_state)
+
+const address_general_ui= useAddressGeneralUI()
+provideAddressGeneralUICheckoutContext(address_general_ui)
 
 const checkout_experience = useCheckoutExperience();
 

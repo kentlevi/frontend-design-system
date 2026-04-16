@@ -1,7 +1,43 @@
+<script setup lang="ts">
+import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
+import { useBillingAddress } from '~/composables/checkout/address/useBillingAddress';
+import { useBillingAddressUI } from '~/composables/checkout/address/useBillingAddressUI';
+import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
+
+const {
+	translate,
+	beforeEnter,
+	enter,
+	afterEnter,
+	beforeLeave,
+	leave,
+	afterLeave,
+	is_member,
+	billing_use_different_address,
+	use_shipping_as_billing,
+	billing_tooltip_open,
+	is_billing_address_modal_open,
+	getAddressTagClass,
+	toggleBillingTooltip,
+} = useBillingAddressUI()
+
+const {
+	billing_form,
+	form_field_errors,
+
+	updateFormFieldByType,
+	updateDynamicFieldByType,
+
+	resetForm,
+	setBillingAddress,
+} = useBillingAddress()
+
+</script>
+
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="billing_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="use_shipping_as_billing" @click="setBillingAddress()">{{ t('checkout.member.useShippingAsBilling') }}</UiCheckbox>
+			<UiCheckbox v-model="use_shipping_as_billing" @click="setBillingAddress()">{{ translate('checkout.member.useShippingAsBilling') }}</UiCheckbox>
 			<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">
@@ -10,8 +46,8 @@
 				</template>
 
 				<div class="ui-tooltip-copy">
-					<strong class="ui-tooltip-title">{{ t('checkout.member.billingTooltip.title') }}</strong>
-					<p class="ui-tooltip-text">{{ t('checkout.member.billingTooltip.text') }}</p>
+					<strong class="ui-tooltip-title">{{ translate('checkout.member.billingTooltip.title') }}</strong>
+					<p class="ui-tooltip-text">{{ translate('checkout.member.billingTooltip.text') }}</p>
 				</div>
 			</UiTooltip>
 		</div>
@@ -114,42 +150,6 @@
 		</Transition>
 	</div>
 </template>
-
-<script setup lang="ts">
-import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import { useBillingAddress } from '~/composables/checkout/address/useBillingAddress';
-import { useBillingAddressUI } from '~/composables/checkout/address/useBillingAddressUI';
-import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
-
-const {
-	t,
-	beforeEnter,
-	enter,
-	afterEnter,
-	beforeLeave,
-	leave,
-	afterLeave,
-	is_member,
-	billing_use_different_address,
-	use_shipping_as_billing,
-	billing_tooltip_open,
-	is_billing_address_modal_open,
-	getAddressTagClass,
-	toggleBillingTooltip,
-} = useBillingAddressUI()
-
-const {
-	billing_form,
-	form_field_errors,
-
-	updateFormFieldByType,
-	updateDynamicFieldByType,
-
-	resetForm,
-	setBillingAddress,
-} = useBillingAddress()
-
-</script>
 
 <style scoped lang="scss">
 .checkout-member-billing-group,

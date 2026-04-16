@@ -9,7 +9,7 @@ import { useDropShippingAddress } from '~/composables/checkout/address/useDropSh
 import CheckoutTransition from '../shared/CheckoutTransition.vue';
 
 const {
-	t,
+	translate,
 	is_member,
 	drop_shipping_enabled,
 	drop_shipping_ship_to_another_address,
@@ -34,7 +34,7 @@ const {
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="drop_shipping_enabled" @click="setDropAddress()">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
+			<UiCheckbox v-model="drop_shipping_enabled" @click="setDropAddress()">{{ translate('checkout.member.enableDropShipping') }}</UiCheckbox>
 			<UiTooltip :open="drop_shipping_tooltip_open" v-bind="checkoutDropShippingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleDropShippingTooltip">

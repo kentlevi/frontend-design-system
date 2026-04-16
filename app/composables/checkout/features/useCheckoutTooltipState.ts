@@ -13,17 +13,17 @@ function createToggleableFlag() {
 export function useCheckoutTooltipState() {
 	const email = createToggleableFlag();
 	const points = createToggleableFlag();
-	const dropShipping = createToggleableFlag();
+	const drop_shipping = createToggleableFlag();
 	const billing = createToggleableFlag();
 
 	return {
 		email_tooltip_open: email.state,
 		points_tooltip_open: points.state,
-		drop_shipping_tooltip_open: dropShipping.state,
+		drop_shipping_tooltip_open: drop_shipping.state,
 		billing_tooltip_open: billing.state,
 		toggleEmailTooltip: email.toggle,
 		togglePointsTooltip: points.toggle,
-		toggleDropShippingTooltip: dropShipping.toggle,
+		toggleDropShippingTooltip: drop_shipping.toggle,
 		toggleBillingTooltip: billing.toggle,
 	};
 }
