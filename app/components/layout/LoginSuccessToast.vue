@@ -97,11 +97,11 @@ onBeforeUnmount(() => {
 		@close="is_visible = false"
 	>
 		<template v-if="toast_kind === 'guest'">
-			You're currently using a guest account.
+			{{ t('home.guestToastPrefix') }}
 			<NuxtLink :to="guest_register_path" class="layout-login-toast-link">
-				<strong class="layout-login-toast-link-text">Create an Account</strong>
+				<strong class="layout-login-toast-link-text">{{ t('home.guestToastCta') }}</strong>
 			</NuxtLink>
-			to access all features.
+			{{ t('home.guestToastSuffix') }}
 		</template>
 	</UiToast>
 </template>

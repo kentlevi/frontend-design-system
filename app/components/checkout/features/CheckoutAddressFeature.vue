@@ -38,10 +38,6 @@
 				{{ t('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 
-			{{ is_member }}
-			{{ ship_to_another_address }}
-			{{ selected_shipping_address_id }}
-
 			<ShippingMethod />
 
 			<DropShippingAddress/>
@@ -78,7 +74,6 @@ const {
 
 const {
 	ship_to_another_address,
-	selected_shipping_address_id
 } = storeToRefs(useMainCheckOutStore())
 
 const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);

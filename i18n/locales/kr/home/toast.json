@@ -1,6 +1,9 @@
 {
     "home": {
         "passwordUpdated": "비밀번호가 성공적으로 업데이트되었습니다.",
-        "loginSuccess": "로그인되었습니다."
+        "loginSuccess": "로그인되었습니다.",
+        "guestToastPrefix": "현재 비회원 계정으로 이용 중입니다.",
+        "guestToastCta": "계정 만들기",
+        "guestToastSuffix": "하시면 모든 기능을 이용하실 수 있습니다."
     }
 }

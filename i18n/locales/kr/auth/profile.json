@@ -6,7 +6,7 @@
                 "title": "계정 온보딩",
                 "profile": {
                     "title": "프로필 정보",
-                    "text": "개인정보, 연락처, 프로필 환경설정을 관리하세요."
+                    "text": "프로필에서 개인 정보, 연락처, 환경설정을 업데이트하고 관리하세요."
                 },
                 "settings": {
                     "title": "계정 설정",
@@ -15,10 +15,11 @@
             },
             "details": {
                 "title": "{name}님, 환영합니다! 프로필을 만들어볼까요?",
-                "subtitle": "개인정보를 관리하세요.",
+                "subtitle": "개인 정보를 관리하세요.",
                 "photoTitle": "프로필 사진 추가",
                 "photoHint1": "권장 파일 크기: 최소 800x800px",
                 "photoHint2": "지원 파일 형식: .jpg, .png",
+                "photoTooLarge": "이미지 크기가 제한보다 큽니다 (최대 3MB).",
                 "photoInvalidType": ".jpg, .jpeg, .png 파일만 업로드할 수 있습니다.",
                 "photoProcessFailed": "이미지를 처리할 수 없습니다. 다른 파일을 시도해 주세요.",
                 "upload": "사진 업로드",
@@ -26,7 +27,7 @@
                 "firstName": "이름",
                 "lastName": "성",
                 "email": "이메일 주소",
-                "emailDisabledHint": "온보딩 완료 후 Profile Settings에서 이메일을 수정할 수 있습니다.",
+                "emailDisabledHint": "온보딩 후에도 이메일을 업데이트할 수 있습니다. 완료 뒤에는 Profile Settings에서 언제든지 변경하세요.",
                 "skip": "나중에 추가",
                 "continue": "계속"
             },

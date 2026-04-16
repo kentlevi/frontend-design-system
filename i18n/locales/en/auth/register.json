@@ -2,7 +2,7 @@
     "auth": {
         "register": {
             "title": "Become a Member",
-            "subtitle": "Kickstart your journey by earning {points} points upon registering an account.",
+            "subtitle": "Register now and earn {points} points to kick off your experience.",
             "firstName": "First Name",
             "lastName": "Last Name",
             "optional": "Optional",
@@ -12,13 +12,28 @@
             "enterEmail": "Enter Email Address",
             "password": "Password",
             "enterPassword": "Enter Password",
-            "passwordHint": "Password must be at least 6 characters and include at least one uppercase letter, number, or special character.",
-            "agreePrefix": "I agree with Musticker's",
+            "passwordHint": "Your password must be at least 6 characters and should include an uppercase letter, a number, or a special character.",
+            "agreePrefix": "I agree to Musticker’s",
             "terms": "Terms of Service",
             "and": "and",
             "privacy": "Privacy Policy",
-            "promoOptIn": "Sign me up for email to receive promos, exclusive offers and marketing materials.",
+            "promoOptIn": "Sign me up for email to receive promos, exclusive offers, and marketing materials.",
             "createAccount": "Create Account",
+            "closeModal": "Close modal",
+            "termsErrorInfo": "Terms error information",
+            "emailAlreadyRegistered": {
+                "closeModal": "Close email already registered modal",
+                "title": "Email already registered.",
+                "description": {
+                    "prefix": "The email address ",
+                    "suffix": " is already registered in our system. Please enter your password to continue."
+                },
+                "password": "Password",
+                "enterPassword": "Enter Password",
+                "togglePassword": "Toggle password visibility",
+                "forgotPassword": "Forgot Password?",
+                "continue": "Continue"
+            },
             "alreadyMember": "Already a Member?",
             "signInHere": "Sign In Here",
             "validation": {

@@ -64,7 +64,7 @@ const {
 							class="checkout-member-radio-line"
 							@click="setBillingAddress()"
 						>
-							My Billing Address
+							{{ t('checkout.member.billingAddress.myBillingAddress') }}
 						</UiRadio>
 						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_billing_address_modal_open = true">
 							View Billing Addresses
@@ -88,7 +88,7 @@ const {
 													text-color="var(--gray-80)"
 												>
 													<UiIcon name="strong-file-dollar" :size="18" />
-													<span class="checkout-member-address-badge-copy">Default Billing</span>
+													<span class="checkout-member-address-badge-copy">{{ t('checkout.member.addressSelection.defaultBilling') }}</span>
 												</UiBadge>
 											</div>
 										</div>
@@ -120,7 +120,7 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('billing')"
 									>
-										Use Another Billing Address
+										{{ t('checkout.member.billingAddress.useAnotherBillingAddress') }}
 									</UiRadio>
 								</div>
 							</div>
@@ -133,7 +133,7 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('billing')"
 									>
-										Ship to Another Billing Address
+										{{ t('checkout.member.billingAddress.shipToAnotherBillingAddress') }}
 									</UiRadio>
 								</div>
 								<AddressFormFields

@@ -2,7 +2,7 @@
     "auth": {
         "login": {
             "title": "Log in to your account",
-            "subtitle": "Get exclusive benefits on your first order after signing up!",
+            "subtitle": "Sign up today and unlock exclusive perks on your first order!",
             "createAccount": "Create an account",
             "member": "Member",
             "nonMember": "Non-member",
@@ -17,6 +17,7 @@
             "enterOrderNumber": "Enter Order Number",
             "signIn": "Sign In",
             "checkOrder": "Check Your Order",
+            "closeModal": "Close modal",
             "socialLabel": "Sign in with your social accounts",
             "signInFacebook": "Sign in with Facebook",
             "signInGoogle": "Sign in with Google",
@@ -26,6 +27,7 @@
                 "sendResetEmail": "Send Password Reset Email",
                 "sending": "Sending...",
                 "returnToLogin": "Return to Login",
+                "closeModal": "Close forgot password modal",
                 "checkEmailTitle": "Please check your email",
                 "checkEmailDescription": "Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.",
                 "requestFailed": "Unable to send a reset link right now."
@@ -33,7 +35,7 @@
             "validation": {
                 "fieldBlank": "Field cannot be blank.",
                 "emailInvalid": "Email format is invalid.",
-                "credentialsMismatch": "Email address & password does not match.",
+                "credentialsMismatch": "Email address & password does not match",
                 "orderNotFound": "Order does not exist."
             }
         }

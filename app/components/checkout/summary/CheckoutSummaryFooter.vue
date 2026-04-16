@@ -2,12 +2,12 @@
 	<div :class="footer_classes">
 		<div class="checkout-summary-lines">
 			<div class="checkout-summary-line">
-				<div class="checkout-summary-line-label">Subtotal: </div>
+				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.subtotal`) }}</div>
 				<div class="checkout-summary-line-value">{{ props.formatPrice(props.subtotal) }}</div>
 			</div>
 			<div class="checkout-summary-line">
 				<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
-					<span>Shipping Fee:</span>
+					<span>{{ t(`${summary_key_base}.shippingFee`) }}</span>
 					<UiTooltip
 						v-if="has_shipping_fee_tooltip"
 						:open="shipping_fee_tooltip_open"
@@ -28,7 +28,7 @@
 								:class="{ 'is-active': shipping_fee_tooltip_open }"
 								:aria-expanded="shipping_fee_tooltip_open"
 								aria-haspopup="dialog"
-								aria-label="Show shipping fee information"
+								:aria-label="t(`${summary_key_base}.shippingFeeInfoAria`)"
 								@click="toggleShippingFeeTooltip"
 							>
 								<UiIcon
@@ -49,11 +49,11 @@
 				<div class="checkout-summary-line-value">{{ props.formatPrice(props.shippingFee) }}</div>
 			</div>
 			<div class="checkout-summary-line">
-				<div class="checkout-summary-line-label">Discounts:</div>
+				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
 				<div class="checkout-summary-line-value is-discount">{{ props.formatPrice(props.discount) }}</div>
 			</div>
 			<div class="checkout-summary-line is-total">
-				<div class="checkout-summary-line-label">Total:</div>
+				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.total`) }}</div>
 				<div class="checkout-summary-line-value">{{ props.formatPrice(props.total) }}</div>
 			</div>
 		</div>
@@ -81,6 +81,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useCheckoutFlow } from '~/composables/checkout/main/useCheckoutFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 
@@ -105,12 +106,15 @@ const props = defineProps<{
 	formatPrice: (value: number) => string;
 }>();
 
+const { t } = useI18n();
+
 const shipping_fee_tooltip_open = ref(false);
 const shipping_fee_tooltip_ref = ref<HTMLElement | null>(null);
 const has_shipping_fee_tooltip = computed(() =>
 	Boolean(props.shippingFeeTooltipTitle && props.shippingFeeTooltipText)
 );
 const footer_classes = computed(() => ['checkout-summary-footer', `is-${props.tone}`]);
+const summary_key_base = computed(() => `checkout.${props.tone}.summary`);
 
 function toggleShippingFeeTooltip() {
 	if (!has_shipping_fee_tooltip.value) return;

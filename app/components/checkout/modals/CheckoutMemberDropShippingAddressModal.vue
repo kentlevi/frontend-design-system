@@ -12,6 +12,8 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'select', value: string): void;
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -19,9 +21,9 @@ const emit = defineEmits<{
 		:model-value="props.modelValue"
 		:addresses="props.addresses"
 		:selected-address-id="props.selectedAddressId"
-		title="Select Drop Shipping Address"
+		:title="t('checkout.member.addressSelection.dropTitle')"
 		variant="drop-shipping"
-		confirm-label="Select Address"
+		:confirm-label="t('checkout.member.addressSelection.selectAddress')"
 		@update:model-value="emit('update:modelValue', $event)"
 		@select="emit('select', $event)"
 	/>

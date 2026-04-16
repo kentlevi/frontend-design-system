@@ -48,7 +48,7 @@ const {
 			</UiTooltip>
 		</div>
 		<div class="checkout-member-drop-shipping-form-note" :class="{ 'is-active': drop_shipping_enabled, 'is-muted': !is_member }">
-			{{ is_member ? 'This will be saved as your default drop shipping address.' : 'Only available for members to save addresses.' }}
+			{{ is_member ? t('checkout.member.dropShippingAddress.defaultNote') : t('checkout.member.dropShippingAddress.membersOnlyNote') }}
 		</div>
 	</div>
 
@@ -65,7 +65,7 @@ const {
 								class="checkout-member-radio-line"
 								@click="setDropAddress()"
 							>
-								My Drop Shipping Address
+								{{ t('checkout.member.dropShippingAddress.myDropShippingAddress') }}
 							</UiRadio>
 							<UiButton
 								variant="ghost"
@@ -96,14 +96,14 @@ const {
 													text-color="var(--gray-80)"
 												>
 													<UiIcon name="strong-box-full" :size="18" />
-													<span class="checkout-member-address-badge-copy">Default Drop Shipping</span>
+													<span class="checkout-member-address-badge-copy">{{ t('checkout.member.addressSelection.defaultDropShipping') }}</span>
 												</UiBadge>
 											</div>
 										</div>
 										<div class="checkout-member-address-content">
 											<div class="checkout-member-address-row checkout-member-address-row--split">
 												<div class="checkout-member-address-row-main">
-													<p class="checkout-member-address-line">{{ drop_form?.company || 'No company provided' }}</p>
+													<p class="checkout-member-address-line">{{ drop_form?.company || t('checkout.member.addressSelection.noCompanyProvided') }}</p>
 												</div>
 												<span v-if="drop_form?.label" class="checkout-member-address-tag" :class="getAddressTagClass(drop_form.label)">
 													{{ drop_form.label }}
@@ -120,7 +120,7 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('drop')"
 									>
-										Ship to Another Drop Shipping Address
+										{{ t('checkout.member.dropShippingAddress.shipToAnotherDropShippingAddress') }}
 									</UiRadio>
 								</div>
 							</div>
@@ -133,9 +133,9 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('drop')"
 									>
-										Ship to Another Drop Shipping Address
+										{{ t('checkout.member.dropShippingAddress.shipToAnotherDropShippingAddress') }}
 									</UiRadio>
-									<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
+									<div class="checkout-member-address-form-note">{{ t('checkout.member.dropShippingAddress.savedForFutureUse') }}</div>
 								</div>
 								<AddressFormFields
 									:form="drop_form"

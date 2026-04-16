@@ -23,8 +23,8 @@
 			<CheckoutSummaryCard
 				:tone="is_member ? 'member' : 'guest'"
 				:items="selected_checkout_items"
-				shipping-fee-tooltip-title="Shipping Fee"
-				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location."
+				:shipping-fee-tooltip-title="t(is_member ? 'checkout.member.summary.shippingFeeTooltipTitle' : 'checkout.guest.summary.shippingFeeTooltipTitle')"
+				:shipping-fee-tooltip-text="t(is_member ? 'checkout.member.summary.shippingFeeTooltipText' : 'checkout.guest.summary.shippingFeeTooltipText')"
 				:complete-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
 				:agreement-prefix="t(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
 				:agreement-terms="t(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"

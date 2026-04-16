@@ -31,7 +31,7 @@
 								class="checkout-member-subnote-button"
 								@click="is_accredited_banks_modal_open = true"
 							>
-								List of Accredited Banks:
+								{{ t('checkout.member.paymentMeta.accreditedBanks') }}
 							</button>
 							<div class="checkout-member-payment-brands">
 								<div v-for="brand in payment_brands" :key="brand.key" class="checkout-member-payment-brand">
@@ -79,7 +79,7 @@
 					<div class="checkout-member-payment-meta-block">
 						<div class="checkout-member-payment-transfer-meta">
 							<div class="checkout-member-payment-transfer-note">
-								Note: Kindly allow 1-2 business days for bank transfer payments to be processed and cleared.
+								{{ t('checkout.member.paymentMeta.bankTransferNote') }}
 							</div>
 							<div class="checkout-member-payment-transfer-brand">
 								<img

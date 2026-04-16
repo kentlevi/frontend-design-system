@@ -33,7 +33,7 @@ const {
 			<button
 				type="button"
 				class="auth-reset-close"
-				aria-label="Close reset password modal"
+				:aria-label="translate('auth.reset.closeModal')"
 				data-testid="auth-reset-password-close-button"
 				@click="closeResetPasswordModal"
 			>

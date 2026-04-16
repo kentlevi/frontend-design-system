@@ -9,7 +9,7 @@
             "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
             "payment": "Payment",
             "paymentSubnote": "Pay with your credit card:",
-            "useShippingAsBilling": "Use Shipping Address for Billing",
+            "useShippingAsBilling": "Use shipping address as billing address",
             "viewBillingAddresses": "View Billing Addresses",
             "orderSummary": "Order Summary",
             "noItemsSelected": "No items selected for checkout.",
@@ -21,7 +21,7 @@
                 },
                 "fullName": {
                     "label": "Full Name",
-                    "placeholder": "Enter Full Name"
+                    "placeholder": "Enter Fullname"
                 },
                 "company": {
                     "label": "Company (Optional)",
@@ -105,10 +105,13 @@
                 "subtotal": "Subtotal:",
                 "shippingFee": "Shipping Fee:",
                 "discounts": "Discounts:",
-                "total": "Total:"
+                "total": "Total:",
+                "shippingFeeInfoAria": "Show shipping fee information",
+                "shippingFeeTooltipTitle": "Shipping Fee",
+                "shippingFeeTooltipText": "The shipping fee is calculated based on your selected delivery method and location."
             },
             "agreement": {
-                "prefix": "By clicking \"Complete Checkout\", you agree with our",
+                "prefix": "By completing your checkout, you agree with our",
                 "terms": "Terms of Services",
                 "and": "and",
                 "privacy": "Privacy Policy",

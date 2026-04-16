@@ -17,6 +17,7 @@
             "enterOrderNumber": "주문번호를 입력하세요",
             "signIn": "로그인",
             "checkOrder": "주문 조회",
+            "closeModal": "모달 닫기",
             "socialLabel": "소셜 계정으로 로그인",
             "signInFacebook": "Facebook으로 로그인",
             "signInGoogle": "Google로 로그인",
@@ -26,6 +27,7 @@
                 "sendResetEmail": "비밀번호 재설정 이메일 보내기",
                 "sending": "전송 중...",
                 "returnToLogin": "로그인으로 돌아가기",
+                "closeModal": "비밀번호 찾기 모달 닫기",
                 "checkEmailTitle": "이메일을 확인해 주세요",
                 "checkEmailDescription": "비밀번호를 재설정할 수 있는 링크를 이메일에서 확인해 주세요. 몇 분 안에 보이지 않으면 스팸 폴더를 확인해 주세요.",
                 "requestFailed": "지금은 재설정 링크를 보낼 수 없습니다."

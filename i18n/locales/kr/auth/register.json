@@ -19,6 +19,21 @@
 			"privacy": "개인정보처리방침",
 			"promoOptIn": "프로모션, 독점 혜택 및 마케팅 소식을 이메일로 받겠습니다.",
 			"createAccount": "계정 만들기",
+			"closeModal": "모달 닫기",
+			"termsErrorInfo": "약관 오류 정보",
+			"emailAlreadyRegistered": {
+				"closeModal": "이미 등록된 이메일 안내 모달 닫기",
+				"title": "이미 등록된 이메일입니다.",
+				"description": {
+					"prefix": "이메일 주소 ",
+					"suffix": " 는 이미 시스템에 등록되어 있습니다. 계속하려면 비밀번호를 입력해 주세요."
+				},
+				"password": "비밀번호",
+				"enterPassword": "비밀번호를 입력하세요",
+				"togglePassword": "비밀번호 표시 전환",
+				"forgotPassword": "비밀번호를 잊으셨나요?",
+				"continue": "계속하기"
+			},
 			"alreadyMember": "이미 회원이신가요?",
 			"signInHere": "로그인하기",
 			"validation": {

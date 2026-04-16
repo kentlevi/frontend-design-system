@@ -6,7 +6,7 @@
             "editTitle": "Edit Address",
             "closeModal": "Close modal",
             "emptyTitle": "No Addresses Yet",
-            "emptyDescription": "It looks like you haven't added any addresses to your address book yet.\nTo get started, click the {action} button below and start saving your contacts for quick and easy access.",
+            "emptyDescription": "You haven’t added any addresses yet. Start by adding one to your address book.\nTo begin, press the {action} button and save your contacts for faster checkout.",
             "addAddressLabel": "Add Address",
             "saving": "Saving Address...",
             "addressType": "Address Type",

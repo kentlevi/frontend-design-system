@@ -126,6 +126,7 @@ const {
 				class="auth-login-link-button"
 				label-class="auth-login-link-button-label"
 				data-testid="auth-login-member-forgot-password-button"
+				:no-hover="true"
 				@click="openForgotPassword"
 			>
 				{{ translate('auth.login.forgotPassword') }}

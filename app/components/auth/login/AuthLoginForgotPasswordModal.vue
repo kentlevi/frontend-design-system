@@ -113,7 +113,7 @@ async function submitReset() {
 			<button
 				type="button"
 				class="auth-forgot-close"
-				aria-label="Close forgot password modal"
+				:aria-label="t('auth.login.forgot.closeModal')"
 				data-testid="auth-login-forgot-password-close-button"
 				@click="closeModal"
 			>

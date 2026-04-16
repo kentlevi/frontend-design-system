@@ -6,11 +6,11 @@
                 "title": "Account Onboarding",
                 "profile": {
                     "title": "Profile Details",
-                    "text": "Manage your personal information, contact details, and preferences in your profile."
+                    "text": "Update and manage your personal info, contact details, and preferences in your profile."
                 },
                 "settings": {
                     "title": "Account Settings",
-                    "text": "Manage your account preferences, including promotion and discount alerts, as well as your review settings."
+                    "text": "Manage your account preferences"
                 }
             },
             "details": {
@@ -19,6 +19,7 @@
                 "photoTitle": "Add Profile Photo",
                 "photoHint1": "At least 800x800px recommended file size.",
                 "photoHint2": "Accepted filetypes: .jpg and .png",
+                "photoTooLarge": "Image is larger than required (3MB max).",
                 "photoInvalidType": "Only .jpg, .jpeg, and .png files are accepted.",
                 "photoProcessFailed": "Unable to process this image. Please try a different file.",
                 "upload": "Upload Photo",
@@ -26,13 +27,13 @@
                 "firstName": "First Name",
                 "lastName": "Last Name",
                 "email": "Email Address",
-                "emailDisabledHint": "Email can be updated in Profile Settings after onboarding is completed.",
+                "emailDisabledHint": "You can update your email after onboarding. Once complete, change it anytime in your Profile settings.",
                 "skip": "Skip & Add Later",
                 "continue": "Continue"
             },
             "settings": {
                 "title": "Account Settings",
-                "subtitle": "Manage your account preferences.",
+                "subtitle": "Manage your account preferences",
                 "promotions": "Promotions & Discounts",
                 "promotionsDesc": "Receive emails about savings, new items, promotions & more.",
                 "reviews": "Reviews",

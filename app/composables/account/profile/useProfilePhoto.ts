@@ -6,6 +6,7 @@ import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
 	const { t } = useI18n()
+	const MAX_PROFILE_PHOTO_BYTES = 3 * 1024 * 1024;
 
 	/** State */
 	const user_store = useUsersStore()
@@ -46,6 +47,10 @@ export function useProfilePhoto() {
 			error.value = t('account.profile.invalidFileType')
 			return;
 		}
+		if (file.size > MAX_PROFILE_PHOTO_BYTES) {
+			error.value = t('account.profile.photoTooLarge')
+			return;
+		}
 
 		startRequestOverlay()
 
@@ -72,7 +77,13 @@ export function useProfilePhoto() {
 
 			toast_store.handleApiResponse(response)
 		} catch {
-			toast_store.showUpdateError()
+			toast_store.showToastWithTimer({
+				title: t('account.profile.photoUploadFailedTitle'),
+				message: t('account.profile.photoUploadFailedMessage'),
+				tone: 'error',
+				dismissible: true,
+				variant: 'default',
+			})
 			return
 		} finally {
 			loading_overlay_store.stopLoading('upload_avatar')
@@ -88,7 +99,13 @@ export function useProfilePhoto() {
 
 			toast_store.handleApiResponse(response)
 		} catch {
-			toast_store.showUpdateError()
+			toast_store.showToastWithTimer({
+				title: t('account.profile.photoDeleteFailedTitle'),
+				message: t('account.profile.photoDeleteFailedMessage'),
+				tone: 'error',
+				dismissible: true,
+				variant: 'default',
+			})
 			return
 		} finally {
 			loading_overlay_store.stopLoading('delete_avatar')
