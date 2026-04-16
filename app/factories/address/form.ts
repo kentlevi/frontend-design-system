@@ -1,4 +1,4 @@
-import type { AddressDynamicFields, AddressFormMap, AddressMap, AddressType, AddressWithLinesForm, BaseAddressForm, DynamicFieldDefinition } from "~/types/address"
+import type { AddressDynamicFields, AddressFormMap, AddressMap, AddressType, AddressWithLinesForm, BaseAddressForm, DynamicFieldDefinition } from "~/types/user-address"
 
 /** Create a fresh default address form based on type */
 export function addressFormDefaults<T extends AddressType>(

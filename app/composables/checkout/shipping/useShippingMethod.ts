@@ -11,6 +11,7 @@ import type {
 } from '~/types/shipping/shipping'
 import { formatShippingDateRange } from '~/utils/shipping/dateRange'
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
+import { useAddressFormCheckoutContext } from '../address/context/addressFormCheckoutContext'
 
 const selected_shipping_method = ref('')
 const shipping_method_id = ref<number | null>(null)
@@ -21,6 +22,7 @@ export function useShippingMethod() {
 	const checkout_store = useMainCheckOutStore()
 	const cart_store = useCartStore()
 	const production_shipping_store = useProductionShippingStore()
+	const { shipping_form } = useAddressFormCheckoutContext()
 
 	const { selected_ids } = storeToRefs(cart_store)
 	const { available_shipping_methods, is_loading } = storeToRefs(production_shipping_store)
@@ -53,6 +55,8 @@ export function useShippingMethod() {
 
 			const shipping_method_response = await getShippingMethodByLocalItems({
 				items: buildLocalShippingItems(selected_cart_items.value),
+				grand_total: cart_store.grand_total,
+				zip_code: shipping_form.value.postcode
 			})
 
 			const methods = Array.isArray(shipping_method_response.data)
@@ -200,6 +204,19 @@ export function useShippingMethod() {
 			void fetchShippingMethods()
 		},
 		{ immediate: true }
+	)
+
+	watch(
+		() => shipping_form.value.postcode,
+		(_postcode, _previous_postcode, on_cleanup) => {
+			const timeout = setTimeout(() => {
+				void fetchShippingMethods()
+			}, 500)
+
+			on_cleanup(() => {
+				clearTimeout(timeout)
+			})
+		}
 	)
 
 	return {

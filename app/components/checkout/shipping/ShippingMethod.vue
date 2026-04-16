@@ -38,17 +38,6 @@
 							<div class="checkout-member-choice-title">
 								{{ method.name }}
 							</div>
-							<UiBadge
-								v-if="selected_shipping_method === method.key"
-								variant="outline"
-								tone="default"
-								size="md"
-								class="checkout-member-choice-badge"
-								text-color="var(--gray-80)"
-							>
-								<UiIcon name="strong-ship" :size="18" />
-								<span class="checkout-member-choice-badge-copy">Updated</span>
-							</UiBadge>
 						</div>
 						<div class="checkout-member-choice-subtitle">
 							{{

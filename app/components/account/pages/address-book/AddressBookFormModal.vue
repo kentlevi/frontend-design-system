@@ -3,7 +3,7 @@ import type { icons } from '~/data/ui/icons';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useAddressBookFormContext } from '~/composables/account/addressBook/context/useAddressBookFormContext';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import type { AddressType } from '~/types/address';
+import type { AddressType } from '~/types/user-address';
 
 type IconName = keyof typeof icons;
 

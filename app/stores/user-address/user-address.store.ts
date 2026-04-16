@@ -1,6 +1,6 @@
-import type { AddressMap, AddressType, BillingAddress, DropAddress, ShippingAddress } from "~/types/address"
+import type { AddressMap, AddressType, BillingAddress, DropAddress, ShippingAddress } from "~/types/user-address"
 
-export const useAddressStore = defineStore('address', () => {
+export const useUserAddressStore = defineStore('user-address', () => {
 	const shipping_address = ref<ShippingAddress[]>([])
 	const billing_address = ref<BillingAddress[]>([])
 	const drop_address = ref<DropAddress[]>([])

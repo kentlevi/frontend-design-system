@@ -1,5 +1,5 @@
 import { inject, provide, type InjectionKey } from 'vue'
-import type { AddressMap, AddressType } from '~/types/address'
+import type { AddressMap, AddressType } from '~/types/user-address'
 
 export type AddressBookMenuAction = 'edit' | 'delete' | 'default'
 

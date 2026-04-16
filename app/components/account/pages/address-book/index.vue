@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressItem, AddressType } from '~/types/address';
+import type { AddressItem, AddressType } from '~/types/user-address';
 import AddressBookSection from './AddressBookSection.vue';
 import AddressBookFormModal from './AddressBookFormModal.vue';
 import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';
@@ -58,6 +58,7 @@ const {
 	setFormType,
 	populateDynamicFields,
 	clearFormFieldErrors,
+	setFormErrors,
 	updateFormFieldByType,
 	updateDynamicFieldByType,
 	resetForm,
@@ -101,8 +102,8 @@ const {
 	form_state,
 	form_type,
 	active_form,
-	form_field_errors,
 
+	setFormErrors,
 	openCreateFormModal,
 	closeFormModal,
 	resetForm,
@@ -137,8 +138,8 @@ const {
 	form_state,
 	form_type,
 	active_form,
-	form_field_errors,
 
+	setFormErrors,
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,

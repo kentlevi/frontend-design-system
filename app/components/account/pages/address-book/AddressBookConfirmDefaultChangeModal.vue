@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressItem, ShippingAddress } from '~/types/address';
+import type { AddressItem, ShippingAddress } from '~/types/user-address';
 import { useAddressHelper } from '~/utils/address';
 import { useAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 import { address_book_tag_badge_colors, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';

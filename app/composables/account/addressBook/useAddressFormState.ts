@@ -1,6 +1,6 @@
 import { addressFormDefaults } from "~/factories/address"
 import { useAddressFieldStore } from "~/stores/user-address"
-import type { AddressFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address"
+import type { AddressFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/user-address"
 
 export function useAddressFormState() {
 
@@ -19,7 +19,11 @@ export function useAddressFormState() {
 	})
 	const form_type = ref<AddressType>('shipping')
 	const active_form = computed(() => form_state[form_type.value])
-	const form_field_errors = ref<Record<string, string>>({})
+	const form_field_errors = ref<Record<AddressType, Record<string, string>>>({
+		shipping: {},
+		billing: {},
+		drop: {},
+	})
 
 	const shipping_form = computed(() => form_state.shipping)
 	const billing_form = computed(() => form_state.billing)
@@ -67,15 +71,19 @@ export function useAddressFormState() {
 	}
 
 	function clearFormFieldErrors() {
-		form_field_errors.value = {}
+		form_field_errors.value = ({
+			shipping: {},
+			billing: {},
+			drop: {},
+		})
 	}
 
-	function clearFormFieldError(field_key: string) {
-		if (!form_field_errors.value[field_key]) return
+	function clearFormFieldError(type: AddressType, field: string) {
+		delete form_field_errors.value[type]?.[field]
+	}
 
-		form_field_errors.value = Object.fromEntries(
-			Object.entries(form_field_errors.value).filter(([key]) => key !== field_key)
-		)
+	function setFormErrors(type: AddressType, errors: Record<string, string>) {
+		form_field_errors.value[type] = errors
 	}
 
 
@@ -90,7 +98,7 @@ export function useAddressFormState() {
 		Object.assign(form_state[type], {
 			[payload.field]: payload.value
 		})
-		clearFormFieldError(payload.field)
+		clearFormFieldError(type, payload.field)
 	}
 
 	function updateDynamicFieldByType(
@@ -102,7 +110,7 @@ export function useAddressFormState() {
 		if (form.type === 'drop') return
 
 		form.fields[payload.field_key] = payload.value
-		clearFormFieldError(`fields.${payload.field_key}`)
+		clearFormFieldError(type, `fields.${payload.field_key}`)
 	}
 
 	return {
@@ -118,6 +126,7 @@ export function useAddressFormState() {
 		populateDynamicFields,
 		clearFormFieldError,
 		clearFormFieldErrors,
+		setFormErrors,
 
 		updateFormFieldByType,
 		updateDynamicFieldByType,
