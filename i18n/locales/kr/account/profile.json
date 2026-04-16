@@ -10,6 +10,7 @@
             "uploadNewPhoto": "새 사진 업로드",
             "uploadPhoto": "사진 업로드",
             "photoUploadSuccess": "프로필 사진이 성공적으로 업로드되었습니다.",
+            "invalidFileType": "지원하지 않는 파일 형식입니다.",
             "delete": "삭제",
             "first_name": "이름",
             "last_name": "성",
@@ -56,6 +57,19 @@
             "millimeter": "밀리미터",
             "inch": "인치",
             "signOut": "로그아웃",
+            "change": "변경",
+            "socialLoginLinked": "이 계정은 {provider} 로그인과 연결되어 있습니다.",
+            "emailChange": {
+                "title": "이메일 변경",
+                "description": "새 이메일 주소를 입력한 뒤 \"확인\" 버튼을 눌러 진행해 주세요.",
+                "placeholder": "새 이메일 주소를 입력해 주세요.",
+                "confirm": "확인",
+                "closeModal": "이메일 변경 모달 닫기",
+                "enterNewEmail": "새 이메일 주소를 입력해 주세요.",
+                "verifyingTitle": "정보 확인 중..",
+                "verifyingDescription": "잠시만 기다려 주세요! 모든 정보가 정확한지 확인하고 있습니다."
+            },
+            "photoDeleteConfirm": "이 사진을 삭제하시겠습니까?",
             "given_name": "이름",
             "family_name": "성"
         }

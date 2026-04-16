@@ -1,5 +1,9 @@
 import type { AccountOrder } from '~/types/account/orders';
 
+const default_product_name_key = 'account.orders.mock.products.dieCutSticker';
+const default_submitter_name_key = 'account.orders.mock.submitters.joyLove';
+const default_instruction_key = 'account.orders.mock.instructions.default';
+
 export const accountOrders: AccountOrder[] = [
 	{
 		id: '62411120012',
@@ -10,7 +14,7 @@ export const accountOrders: AccountOrder[] = [
 		date: '10/11/2024',
 		statusKey: 'beforeProduction',
 		paymentStatusKey: 'unpaid',
-		paymentMethodLabel: 'Bank Transfer',
+		paymentMethodLabel: 'account.orders.mock.paymentMethods.bankTransfer',
 		actions: [
 			{ key: 'invoice', titleKey: 'viewInvoice', textKey: 'viewInvoiceText' },
 			{ key: 'paymentProof', titleKey: 'paymentProof', textKey: 'paymentProofText' },
@@ -19,11 +23,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'lackingArtwork',
 				size: '25x25mm',
@@ -33,11 +37,11 @@ export const accountOrders: AccountOrder[] = [
 			},
 			{
 				number: '002',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/account/points-icon.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '50x25mm',
@@ -62,7 +66,7 @@ export const accountOrders: AccountOrder[] = [
 		itemCount: 1,
 		date: '11/13/2024',
 		statusKey: 'checkingArtwork',
-		paymentMethodLabel: 'Credit Card',
+		paymentMethodLabel: 'account.orders.mock.paymentMethods.creditCard',
 		actions: [
 			{ key: 'invoice', titleKey: 'viewInvoice', textKey: 'viewInvoiceText' },
 			{ key: 'paymentProof', titleKey: 'paymentProof', textKey: 'paymentProofText' },
@@ -71,11 +75,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '40x40mm',
@@ -101,7 +105,7 @@ export const accountOrders: AccountOrder[] = [
 		date: '10/23/2024',
 		statusKey: 'beforeProduction',
 		paymentStatusKey: 'unpaid',
-		paymentMethodLabel: 'Bank Transfer',
+		paymentMethodLabel: 'account.orders.mock.paymentMethods.bankTransfer',
 		actions: [
 			{ key: 'invoice', titleKey: 'viewInvoice', textKey: 'viewInvoiceText' },
 			{ key: 'paymentProof', titleKey: 'paymentProof', textKey: 'paymentProofText' },
@@ -110,11 +114,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'lackingArtwork',
 				size: '30x30mm',
@@ -139,7 +143,7 @@ export const accountOrders: AccountOrder[] = [
 		date: '11/03/2024',
 		statusKey: 'beforeProduction',
 		paymentStatusKey: 'unpaid',
-		paymentMethodLabel: 'Virtual Account',
+		paymentMethodLabel: 'account.orders.mock.paymentMethods.virtualAccount',
 		actions: [
 			{ key: 'invoice', titleKey: 'viewInvoice', textKey: 'viewInvoiceText' },
 			{ key: 'paymentProof', titleKey: 'paymentProof', textKey: 'paymentProofText' },
@@ -148,11 +152,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'lackingArtwork',
 				size: '60x45mm',
@@ -176,7 +180,7 @@ export const accountOrders: AccountOrder[] = [
 		itemCount: 1,
 		date: '09/27/2024',
 		statusKey: 'completed',
-		paymentMethodLabel: 'Credit Card',
+		paymentMethodLabel: 'account.orders.mock.paymentMethods.creditCard',
 		actions: [
 			{ key: 'invoice', titleKey: 'viewInvoice', textKey: 'viewInvoiceText' },
 			{ key: 'paymentProof', titleKey: 'paymentProof', textKey: 'paymentProofText' },
@@ -185,11 +189,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '25x25mm',
@@ -214,7 +218,7 @@ export const accountOrders: AccountOrder[] = [
 		itemCount: 1,
 		date: '08/11/2024',
 		statusKey: 'completed',
-		paymentMethodLabel: 'Credit Card',
+		paymentMethodLabel: 'account.orders.mock.paymentMethods.creditCard',
 		actions: [
 			{ key: 'invoice', titleKey: 'viewInvoice', textKey: 'viewInvoiceText' },
 			{ key: 'paymentProof', titleKey: 'paymentProof', textKey: 'paymentProofText' },
@@ -223,11 +227,11 @@ export const accountOrders: AccountOrder[] = [
 		items: [
 			{
 				number: '001',
-				productName: 'Die Cut Sticker',
+				productName: default_product_name_key,
 				artworkFileName: 'yellow-bear.png',
-				artworkSubmittedBy: 'Joy Love',
+				artworkSubmittedBy: default_submitter_name_key,
 				artworkSubmittedAt: '11/20/2024 at 1:43pm',
-				artworkInstruction: 'Please make sure the colors and size is exactly perfect.',
+				artworkInstruction: default_instruction_key,
 				imageSrc: '/icons/custom/checkout/icon-box.svg',
 				artworkStatusKey: 'checkingArtwork',
 				size: '30x20mm',

@@ -2,6 +2,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
 	HEADER_MAX_RECENT_SEARCHES,
 	HEADER_SEARCH_DEBOUNCE_DELAY_MS,
+	resolveHeaderCategoryLabel,
 } from '~/data/layout/header';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
@@ -39,6 +40,15 @@ function normalizeSearchText(value: string): string {
 		.trim()
 		.toLowerCase()
 		.replace(/\s+/g, ' ');
+}
+
+function resolveTranslatedValue(
+	t: ReturnType<typeof useI18n>['t'],
+	key: string,
+	fallback: string,
+): string {
+	const translated_value = t(key);
+	return translated_value !== key ? translated_value : fallback;
 }
 
 function createEmptyPagination(per_page = search_page_size): SearchPagination {
@@ -151,18 +161,32 @@ export function useAppHeaderSearch(params: {
 		const product_id = Number(api_product.id ?? '');
 		const product_slug = normalizeText(api_product.url_slug);
 		const category_slug = normalizeText(api_product.category_url_slug);
-		const product_name = normalizeText(api_product.name);
+		const api_product_name = normalizeText(api_product.name);
 
-		if (!product_id || !product_slug || !category_slug || !product_name) {
+		if (!product_id || !product_slug || !category_slug || !api_product_name) {
 			return null;
 		}
 
-		const category_name = normalizeText(api_product.category_name) || category_slug;
-		const product_blurb = normalizeText(api_product.description);
+		const category_name = resolveHeaderCategoryLabel(
+			category_slug,
+			t,
+			normalizeText(api_product.category_name) || category_slug,
+		);
+		const product_name = resolveTranslatedValue(
+			t,
+			`product.items.${product_slug}.name`,
+			api_product_name,
+		);
+		const product_blurb = resolveTranslatedValue(
+			t,
+			`product.items.${product_slug}.blurb`,
+			normalizeText(api_product.description),
+		);
 
 		return {
 			id: `${category_slug}:${product_id}`,
 			product_id,
+			product_slug,
 			category_key: category_slug,
 			category_label: category_name,
 			name: product_name,
@@ -194,10 +218,19 @@ export function useAppHeaderSearch(params: {
 		const product_value = value as RecentSearchStorageProduct;
 		const id = normalizeText(product_value.id);
 		const product_id = product_value.product_id;
+		const product_slug = normalizeText(product_value.product_slug);
 		const category_key = normalizeText(product_value.category_key);
-		const category_label = normalizeText(product_value.category_label) || category_key;
-		const name = normalizeText(product_value.name);
-		const blurb = normalizeText(product_value.blurb);
+		const category_label = resolveHeaderCategoryLabel(
+			category_key,
+			t,
+			normalizeText(product_value.category_label) || category_key,
+		);
+		const name = product_slug
+			? resolveTranslatedValue(t, `product.items.${product_slug}.name`, normalizeText(product_value.name))
+			: normalizeText(product_value.name);
+		const blurb = product_slug
+			? resolveTranslatedValue(t, `product.items.${product_slug}.blurb`, normalizeText(product_value.blurb))
+			: normalizeText(product_value.blurb);
 		const image = normalizeText(product_value.image);
 		const to = normalizeText(product_value.to);
 
@@ -208,6 +241,7 @@ export function useAppHeaderSearch(params: {
 		return {
 			id,
 			product_id,
+			product_slug,
 			category_key,
 			category_label,
 			name,
@@ -221,6 +255,7 @@ export function useAppHeaderSearch(params: {
 		return {
 			id: item.id,
 			product_id: item.product_id,
+			product_slug: item.product_slug,
 			category_key: item.category_key,
 			category_label: item.category_label,
 			name: item.name,

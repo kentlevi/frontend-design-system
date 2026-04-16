@@ -30,7 +30,7 @@ const { year, isProduct: is_product } = toRefs(component_props);
 		</div>
 
 		<div class="home-footer-right" data-testid="app-footer-main-right">
-			<p class="home-footer-phone">1588-5218</p>
+			<p class="home-footer-phone">1899-5529</p>
 			<div class="home-footer-meta-row">
 				<p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
 				<p class="home-footer-note">{{ t('layout.footer.closed') }}</p>

@@ -197,7 +197,7 @@ const nextStep = async () => {
 <template>
 	<aside class="product-options" data-testid="product-category-options">
 		<section v-if="has_color_selection" class="product-section">
-			<h3 class="option-title" data-testid="product-category-color-title">Select your preferred color</h3>
+			<h3 class="option-title" data-testid="product-category-color-title">{{ t('product.options.selectColor') }}</h3>
 			<div
 				v-if="is_loading_features"
 				ref="color_skeleton_grid_ref"
@@ -395,7 +395,7 @@ const nextStep = async () => {
 			</section>
 
 			<section v-if="has_font_selection" class="product-section">
-				<h3 class="option-title">Select your font</h3>
+				<h3 class="option-title">{{ t('product.options.selectFont') }}</h3>
 				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
@@ -492,7 +492,7 @@ const nextStep = async () => {
 						<strong class="price-summary-value">{{ pricing_ready ? formatPrice(total) : '--' }}</strong>
 					</p>
 					<p class="price-summary-unit">
-						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} per piece)
+						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} {{ t('product.price.perPiece') }})
 					</p>
 				</div>
 			</div>

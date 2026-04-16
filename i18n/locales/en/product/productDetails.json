@@ -7,7 +7,15 @@
             "unitMm": "(Unit: mm)",
             "customSize": "Custom Size",
             "selectQuantity": "Select your preferred quantity",
-            "customQuantity": "Custom Quantity"
+            "customQuantity": "Custom Quantity",
+            "selectColor": "Select your preferred color",
+            "selectFont": "Select your font",
+            "colors": {
+                "gold": "Gold"
+            }
+        },
+        "hero": {
+            "vinylLetteringTitle": "Vinyl Lettering Sticker"
         },
         "sizes": {
             "small30": {
@@ -43,7 +51,8 @@
             "total": "Total",
             "benefitShipping": "Free shipping over $50.00",
             "benefitShipsTomorrow": "Ships tomorrow after design approval",
-            "nextStep": "Next Step"
+            "nextStep": "Next Step",
+            "perPiece": "per piece"
         }
     }
 }

@@ -5,6 +5,7 @@ import { isValidImage } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
+	const { t } = useI18n()
 
 	/** State */
 	const user_store = useUsersStore()
@@ -42,7 +43,7 @@ export function useProfilePhoto() {
 		if (!file) return;
 
 		if (!isValidImage(file)) {
-			error.value = 'File type is invalid'
+			error.value = t('account.profile.invalidFileType')
 			return;
 		}
 

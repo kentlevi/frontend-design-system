@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useOrderUploadArtworkModal } from '~/composables/account/orders/useOrderUploadArtworkModal';
+const { t } = useI18n();
 
 const emit = defineEmits<{
 	submit: [{ itemNumber: string; instructions: string; files: File[] }];
 }>();
+
+function resolveOrderText(value: string) {
+	return value.startsWith('account.') ? t(value) : value;
+}
 
 const {
 	is_open,
@@ -40,25 +45,25 @@ function submitUpload() {
 		width="720px"
 		padding="0"
 		gap="0"
-		:title="item ? `Upload Artwork - Item No. ${item.number}` : ''"
+		:title="item ? t('account.orders.upload.title', { number: item.number }) : ''"
 		modal-class="account-orders-upload-modal-shell"
 		@update:model-value="!$event && close_modal()"
 	>
 		<div v-if="item" class="account-orders-upload-modal-body">
 			<section class="account-orders-upload-details-card">
-				<h4 class="account-orders-upload-section-title">Item Details:</h4>
+				<h4 class="account-orders-upload-section-title">{{ t('account.orders.upload.itemDetails') }}</h4>
 				<div class="account-orders-upload-details-grid">
 					<div class="account-orders-upload-details-row">
-						<span class="account-orders-upload-details-label">Product:</span>
-						<strong class="account-orders-upload-details-value">{{ item.productName }}</strong>
+						<span class="account-orders-upload-details-label">{{ t('account.orders.upload.product') }}</span>
+						<strong class="account-orders-upload-details-value">{{ resolveOrderText(item.productName) }}</strong>
 					</div>
 					<div class="account-orders-upload-details-row">
-						<span class="account-orders-upload-details-label">Size:</span>
+						<span class="account-orders-upload-details-label">{{ t('account.orders.upload.size') }}</span>
 						<strong class="account-orders-upload-details-value">{{ item.size }}</strong>
 					</div>
 					<div class="account-orders-upload-details-row">
-						<span class="account-orders-upload-details-label">Quantity:</span>
-						<strong class="account-orders-upload-details-value">{{ item.quantity }} pcs</strong>
+						<span class="account-orders-upload-details-label">{{ t('account.orders.upload.quantity') }}</span>
+						<strong class="account-orders-upload-details-value">{{ item.quantity }} {{ t('account.orders.upload.pcs') }}</strong>
 					</div>
 				</div>
 			</section>
@@ -68,15 +73,15 @@ function submitUpload() {
 					<div class="account-orders-upload-dropzone-copy">
 						<p class="account-orders-upload-dropzone-title">
 							<UiIcon name="regular-upload" size="24" color="var(--text-primary)" />
-							<span>Drag and drop files to upload</span>
+							<span>{{ t('account.orders.upload.dragAndDrop') }}</span>
 						</p>
 						<p class="account-orders-upload-dropzone-meta">
-							Accepted filetypes: .eps, .ai, .psd, .pdf, .tif, .png and .jpg
+							{{ t('account.orders.upload.acceptedFiletypes') }}
 						</p>
 					</div>
 
 					<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="open_file_picker">
-						Select Files
+						{{ t('account.orders.upload.selectFiles') }}
 					</UiButton>
 				</template>
 				<template v-else>
@@ -100,7 +105,7 @@ function submitUpload() {
 
 					<div class="account-orders-upload-file-actions">
 						<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="open_file_picker">
-							Replace Image
+							{{ t('account.orders.upload.replaceImage') }}
 						</UiButton>
 						<UiButton
 							type="button"
@@ -110,7 +115,7 @@ function submitUpload() {
 							icon-only
 							icon="regular-trash"
 							icon-size="24"
-							sr-label="Remove uploaded artwork"
+							:sr-label="t('account.orders.upload.removeArtwork')"
 							width="48px"
 							height="48px"
 							@click="remove_selected_artwork"
@@ -129,13 +134,13 @@ function submitUpload() {
 			</section>
 
 			<section class="account-orders-upload-notes">
-				<h4 class="account-orders-upload-section-title">Special Instructions</h4>
+				<h4 class="account-orders-upload-section-title">{{ t('account.orders.upload.specialInstructions') }}</h4>
 				<UiTextarea
 					:model-value="special_instructions"
 					:rows="4"
 					resize="none"
 					field-class="account-orders-upload-notes-field"
-					placeholder="Enter special instruction here...."
+					:placeholder="t('account.orders.upload.specialInstructionsPlaceholder')"
 					@update:model-value="special_instructions = String($event)"
 				/>
 			</section>
@@ -144,10 +149,10 @@ function submitUpload() {
 		<template #footer>
 			<div v-if="item" class="account-orders-upload-modal-footer ui-modal-footer-item">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="close_modal">
-					Cancel
+					{{ t('account.orders.upload.cancel') }}
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="submitUpload">
-					Submit
+					{{ t('account.orders.upload.submit') }}
 				</UiButton>
 			</div>
 		</template>

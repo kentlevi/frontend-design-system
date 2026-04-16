@@ -38,7 +38,7 @@ const product_hero_media_ids = new Set([
 
 const displayed_product_title = computed(() => {
 	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return 'Vinyl Lettering Sticker';
+	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle');
 
 	// Otherwise, use the formal product name from catalog/translation
 	return selected_product.value ? getProductName(selected_product.value) : '';

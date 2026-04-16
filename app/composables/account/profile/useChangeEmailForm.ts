@@ -12,6 +12,7 @@ import {
 } from '~/utils/response/response'
 
 export function useChangeEmailForm() {
+	const { t } = useI18n()
 
 	/** OTP Cooldown handler */
 	const {
@@ -354,8 +355,8 @@ export function useChangeEmailForm() {
 	 */
 	function startRequestOverlay() {
 		loading_overlay_store.startLoading('request_email_change', {
-			label: 'Verifying Your Information...',
-			description: "Just a moment! We're making sure everything looks perfect.",
+			label: t('account.profile.emailChange.verifyingTitle'),
+			description: t('account.profile.emailChange.verifyingDescription'),
 			showCopy: true,
 			testId: 'account-profile-email-change-page-overlay',
 			position: 'fixed'

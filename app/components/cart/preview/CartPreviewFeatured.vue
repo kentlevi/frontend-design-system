@@ -11,7 +11,7 @@ const {
 	t
 } = useCartPreviewHandler('cart-preview-featured');
 
-const getProductName = (product: ProductItem) => product.name;
+const getProductName = (product: ProductItem) => t(`product.items.${product.id}.name`);
 </script>
 
 <template>

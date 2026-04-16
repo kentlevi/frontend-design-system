@@ -228,11 +228,11 @@ onMounted(() => {
 								data-testid="account-profile-email-change-button"
 								@click="openEmailChangeModal"
 							>
-								Change
+								{{ t('account.profile.change') }}
 							</UiButton>
 						</div>
 						<p v-if="social" class="account-profile-email-helper-text">
-							This account is linked to your <span class="account-profile-social-text">{{ capitalizeFirst(social) }}</span> login.
+							{{ t('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
 						</p>
 					</template>
 				</UiFormField>
@@ -256,7 +256,7 @@ onMounted(() => {
 	<!-- Modals -->
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
-		title="Are you sure you want to delete this photo?"
+		:title="t('account.profile.photoDeleteConfirm')"
 		description="This action cannot be undone. Please confirm to proceed."
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"

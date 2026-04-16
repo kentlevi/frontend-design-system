@@ -15,6 +15,7 @@ definePageMeta({
 
 const route = useRoute();
 const { withCountry } = useCountry();
+const { t } = useI18n();
 
 const dark_background = ref(false);
 const upload_modal_open = ref(false);
@@ -46,10 +47,14 @@ const artwork_preview_src = computed(() => {
 	}
 	return current_src;
 });
-const artwork_submitted_by = computed(() => item.value?.artworkSubmittedBy || 'Joy Love');
+function resolveOrderText(value: string) {
+	return value.startsWith('account.') ? t(value) : value;
+}
+
+const artwork_submitted_by = computed(() => resolveOrderText(item.value?.artworkSubmittedBy || 'account.orders.mock.submitters.joyLove'));
 const artwork_submitted_at = computed(() => item.value?.artworkSubmittedAt || '11/20/2024 at 1:43pm');
 const artwork_instruction = computed(
-	() => item.value?.artworkInstruction || 'Please make sure the colors and size is exactly perfect.'
+	() => resolveOrderText(item.value?.artworkInstruction || 'account.orders.mock.instructions.default')
 );
 
 function hideUploadToast() {
@@ -82,7 +87,7 @@ function closeTermsModal() {
 
 function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 	closeReplaceArtwork();
-	upload_toast_message.value = 'New artwork uploaded! Your previous image has been replaced successfully.';
+	upload_toast_message.value = t('account.orders.detail.uploadSuccess');
 	upload_toast_visible.value = true;
 	if (upload_toast_timeout) {
 		clearTimeout(upload_toast_timeout);
@@ -99,13 +104,13 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 		<header class="account-order-item-topbar">
 			<div class="account-order-item-topbar-inner">
 				<button type="button" class="account-order-item-topbar-button" @click="closePage">
-					Close
+					{{ t('account.orders.detail.close') }}
 				</button>
 				<h1 class="account-order-item-topbar-title">Item No. {{ item?.number }}</h1>
 				<label class="account-order-item-topbar-switch">
 					<input v-model="dark_background" type="checkbox" class="account-order-item-topbar-switch-input">
 					<span class="account-order-item-topbar-switch-track" />
-					<span class="account-order-item-topbar-switch-label">Dark Background</span>
+					<span class="account-order-item-topbar-switch-label">{{ t('account.orders.detail.darkBackground') }}</span>
 				</label>
 			</div>
 		</header>
@@ -115,15 +120,15 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 				<div class="account-order-item-preview">
 					<img :src="artwork_preview_src" :alt="artwork_file_name" class="account-order-item-image">
 				</div>
-				<h2 class="account-order-item-status-title">Your artwork is in the queue for evaluation.</h2>
+				<h2 class="account-order-item-status-title">{{ t('account.orders.detail.statusTitle') }}</h2>
 				<p class="account-order-item-status-copy">
-					If you need to make changes, you can still replace it before the review begins. Please click
-					<button type="button" class="account-order-item-inline-link" @click="openReplaceArtwork">Replace Artwork</button>.
+					{{ t('account.orders.detail.statusDescriptionPrefix') }}
+					<button type="button" class="account-order-item-inline-link" @click="openReplaceArtwork">{{ t('account.orders.replaceArtwork') }}</button>{{ t('account.orders.detail.statusDescriptionSuffix') }}
 				</p>
 			</section>
 
 			<section class="account-order-item-activity">
-				<h3 class="account-order-item-section-title">Activity Logs:</h3>
+				<h3 class="account-order-item-section-title">{{ t('account.orders.detail.activityLogs') }}</h3>
 
 				<article class="account-order-item-log-card">
 					<div class="account-order-item-log-head">
@@ -134,7 +139,7 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 								<span>{{ artwork_submitted_at }}</span>
 							</div>
 						</div>
-						<span class="account-order-item-log-badge">Submitted Artwork</span>
+						<span class="account-order-item-log-badge">{{ t('account.orders.detail.submittedArtwork') }}</span>
 					</div>
 
 					<p class="account-order-item-log-message">
@@ -147,8 +152,8 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 						</div>
 						<div class="account-order-item-log-asset-copy">
 							<strong>{{ artwork_file_name }}</strong>
-							<span>Product: {{ item?.productName }}</span>
-							<span>Size: {{ item?.size }}</span>
+							<span>{{ t('account.orders.detail.product') }} {{ item ? resolveOrderText(item.productName) : '' }}</span>
+							<span>{{ t('account.orders.size', { size: item?.size }) }}</span>
 						</div>
 					</div>
 				</article>
@@ -179,7 +184,7 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 
 		<footer class="account-order-item-footer">
 			<button type="button" class="account-order-item-footer-button" @click="openTermsModal">
-				Final Proof Terms of Service
+				{{ t('account.orders.detail.finalProofTerms') }}
 			</button>
 		</footer>
 	</section>
