@@ -11,6 +11,8 @@ export interface LocalShippingMethodItemPayload {
 
 export interface LocalShippingMethodRequest {
 	items: LocalShippingMethodItemPayload[];
+	grand_total: number;
+	zip_code?: string;
 }
 
 export interface ShippingMethodData {
