@@ -8,6 +8,7 @@ import { useAddressFormCheckoutContext } from "../address/context/addressFormChe
 import { validateAddress } from "~/services/address/address.service";
 import { useAddressHelper } from "~/utils/address";
 import { useAddressGeneralUICheckoutContext } from "../address/context/addressGeneralUICheckoutContext";
+import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
 
 export const useCheckoutFlow = () => {
 
@@ -27,7 +28,8 @@ export const useCheckoutFlow = () => {
 		drop_form,
 		billing_form,
 
-		setFormErrors
+		setFormErrors,
+		clearFormFieldErrors
 	} = useAddressFormCheckoutContext()
 
 	const {
@@ -39,41 +41,43 @@ export const useCheckoutFlow = () => {
 
 
 
-	async function initValidateAddresses() {
-		const response = await validateAddress(shipping_form.value)
+	async function validateAddresses(): Promise<boolean> {
+		clearFormFieldErrors()
 
-		if (!response?.success) {
-			const next_errors = mapApiFieldErrors(response?.data)
-			setFormErrors(shipping_form.value.type, next_errors)
-		}
+		const forms_to_validate: Array<
+		ShippingAddressForm | BillingAddressForm | DropAddressForm
+		> = [shipping_form.value]
 
 		if (drop_shipping_enabled.value) {
-			const response = await validateAddress(drop_form.value)
-
-			if (!response?.success) {
-				const next_errors = mapApiFieldErrors(response?.data)
-				setFormErrors(drop_form.value.type, next_errors)
-			}
+			forms_to_validate.push(drop_form.value)
 		}
 
 		if (!use_shipping_as_billing.value) {
-			const response = await validateAddress(billing_form.value)
-
-			if (!response?.success) {
-				const next_errors = mapApiFieldErrors(response?.data)
-				setFormErrors(billing_form.value.type, next_errors)
-			}
+			forms_to_validate.push(billing_form.value)
 		}
 
+		const results = await Promise.all(
+			forms_to_validate.map(async (form) => {
+				const response = await validateAddress(form)
+
+				if (!response?.success) {
+					const next_errors = mapApiFieldErrors(response?.data)
+					setFormErrors(form.type, next_errors)
+					return false
+				}
+
+				return true
+			})
+		)
+
+		return !results.some(result => !result)
 	}
 
 
 
 
 
-	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
-
-		initValidateAddresses()
+	const buildCheckoutPayload = (): InitialCheckoutPayload => {
 
 		return {
 			shipping_method_id: selected_shipping_method_id.value,
@@ -92,7 +96,12 @@ export const useCheckoutFlow = () => {
 	}
 
 	const submitCheckout = async () => {
-		const params = initializeSubmitCheckoutParams()
+
+		const is_valid = await validateAddresses()
+
+		if (!is_valid) return
+
+		const params = buildCheckoutPayload()
 
 		try {
 			const response = await checkoutRequest(params)
