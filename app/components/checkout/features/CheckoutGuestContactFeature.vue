@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AuthEmailAlreadyRegisteredModal from '~/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
+import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import { useCheckoutGuestContactFeature } from '~/composables/checkout/features/useCheckoutGuestContactFeature';
 import {
 	checkoutGuestEmailTooltipContent,
@@ -13,6 +15,18 @@ const {
 	email_tooltip_ref,
 	toggleEmailTooltip,
 	openLoginModal,
+	is_email_already_registered_modal_open,
+	registered_email_password,
+	registered_email_password_error,
+	registered_email_password_visible,
+	is_registered_email_forgot_password_modal_open,
+	setEmailAlreadyRegisteredModalOpen,
+	onRegisteredEmailPasswordInput,
+	setRegisteredEmailPasswordVisible,
+	continueWithRegisteredEmail,
+	openRegisteredEmailForgotPasswordModal,
+	onRegisteredEmailForgotPasswordModalChange,
+	restoreRegisteredEmailModal,
 	setGuestEmail,
 	handleGuestEmailBlur,
 } = useCheckoutGuestContactFeature();
@@ -21,33 +35,68 @@ const {
 <template>
 	<VerificationModal />
 	<section v-if="!is_member" class="checkout-member-section">
-		<h2 class="checkout-member-section-title">{{ translate('checkout.guest.contactInformation') }}</h2>
+		<h2 class="checkout-member-section-title">
+			{{ translate('checkout.guest.contactInformation') }}
+		</h2>
 		<div class="checkout-section-body checkout-section-body--compact">
 			<div class="checkout-contact-group">
 				<div class="checkout-contact-head">
-					<div ref="email_tooltip_ref" class="checkout-contact-label-wrap">
+					<div
+						ref="email_tooltip_ref"
+						class="checkout-contact-label-wrap"
+					>
 						<span class="checkout-label">
 							Email
-							<span class="checkout-label-required" aria-hidden="true">*</span>
+							<span
+								class="checkout-label-required"
+								aria-hidden="true"
+								>*</span
+							>
 						</span>
 						<UiTooltip
 							:open="email_tooltip_open"
 							v-bind="checkoutGuestEmailTooltipProps"
 						>
 							<template #trigger>
-								<button type="button" class="ui-tooltip-icon-trigger" @click="toggleEmailTooltip">
-									<UiIcon :name="email_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
+								<button
+									type="button"
+									class="ui-tooltip-icon-trigger"
+									@click="toggleEmailTooltip"
+								>
+									<UiIcon
+										:name="
+											email_tooltip_open
+												? 'strong-question-circle'
+												: 'regular-question-circle'
+										"
+										size="24"
+										color="var(--gray-90)"
+										decorative
+									/>
 								</button>
 							</template>
 							<div class="ui-tooltip-copy">
-								<strong class="ui-tooltip-title">{{ checkoutGuestEmailTooltipContent.title }}</strong>
-								<p class="ui-tooltip-text">{{ checkoutGuestEmailTooltipContent.text }}</p>
+								<strong class="ui-tooltip-title">{{
+									checkoutGuestEmailTooltipContent.title
+								}}</strong>
+								<p class="ui-tooltip-text">
+									{{ checkoutGuestEmailTooltipContent.text }}
+								</p>
 							</div>
 						</UiTooltip>
 					</div>
 					<div class="checkout-login-link">
-						<span class="checkout-login-link-text">{{ translate('checkout.guest.loginPrompt') }}</span>
-						<UiButton variant="ghost" tone="neutral" size="sm" class="checkout-login-link-action" label-class="checkout-login-link-action-label" @click="openLoginModal">
+						<span class="checkout-login-link-text">{{
+							translate('checkout.guest.loginPrompt')
+						}}</span>
+						<UiButton
+							variant="ghost"
+							tone="neutral"
+							size="sm"
+							class="checkout-login-link-action"
+							label-class="checkout-login-link-action-label"
+							@click="openLoginModal"
+						>
 							{{ translate('checkout.guest.login') }}
 						</UiButton>
 					</div>
@@ -56,13 +105,35 @@ const {
 					:model-value="email"
 					type="email"
 					class="checkout-input"
-					:placeholder="translate('checkout.guest.fields.email.placeholder')"
+					:placeholder="
+						translate('checkout.guest.fields.email.placeholder')
+					"
 					@update:model-value="setGuestEmail"
 					@blur="handleGuestEmailBlur"
 				/>
 			</div>
 		</div>
 	</section>
+
+	<AuthEmailAlreadyRegisteredModal
+		:model-value="is_email_already_registered_modal_open"
+		:email="email"
+		:password="registered_email_password"
+		:password-error="registered_email_password_error"
+		:password-visible="registered_email_password_visible"
+		@update:model-value="setEmailAlreadyRegisteredModalOpen"
+		@update:password="onRegisteredEmailPasswordInput"
+		@update:password-visible="setRegisteredEmailPasswordVisible"
+		@continue="continueWithRegisteredEmail"
+		@forgot-password="openRegisteredEmailForgotPasswordModal"
+	/>
+
+	<AuthLoginForgotPasswordModal
+		:model-value="is_registered_email_forgot_password_modal_open"
+		:email="email"
+		@update:model-value="onRegisteredEmailForgotPasswordModalChange"
+		@return-to-login="restoreRegisteredEmailModal"
+	/>
 </template>
 
 <style scoped lang="scss">
@@ -105,7 +176,6 @@ const {
 					.checkout-label-required {
 						color: var(--error);
 					}
-
 				}
 
 				.checkout-login-link {

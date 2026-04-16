@@ -1,7 +1,7 @@
 import type { Ref } from 'vue';
 import { mapAddressToForm } from '~/factories/address';
-import { updateUserAddress } from '~/services/address/api.service';
-import { useAddressFieldStore, useAddressStore } from "~/stores/address";
+import { updateUserAddress } from '~/services/user-address/api.service';
+import { useAddressFieldStore, useAddressStore } from "~/stores/user-address";
 import type { AddressFormState, AddressFormMap, AddressMap, AddressType } from "~/types/address";
 import type { CountryField } from '~/types/country_field';
 import { useAddressHelper } from '~/utils/address';

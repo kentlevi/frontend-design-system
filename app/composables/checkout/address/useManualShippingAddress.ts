@@ -1,7 +1,7 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
-import { useAddressFieldStore } from "~/stores/address";
+import { useAddressFieldStore } from "~/stores/user-address";
 
 export function useManualShippingAddress() {
 

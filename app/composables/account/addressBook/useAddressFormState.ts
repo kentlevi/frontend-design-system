@@ -1,5 +1,5 @@
 import { addressFormDefaults } from "~/factories/address"
-import { useAddressFieldStore } from "~/stores/address"
+import { useAddressFieldStore } from "~/stores/user-address"
 import type { AddressFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address"
 
 export function useAddressFormState() {

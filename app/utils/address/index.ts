@@ -1,4 +1,4 @@
-import { useAddressStore } from "~/stores/address"
+import { useAddressStore } from "~/stores/user-address"
 import type { AddressFormMap, AddressItem, AddressLineForm, AddressType } from "~/types/address"
 
 /** Check whether the form supports address lines */
