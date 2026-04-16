@@ -1,4 +1,4 @@
-import type { AddressMap, AddressType } from "~/types/address";
+import type { AddressMap, AddressType } from "~/types/user-address";
 import type { AvailablePaymentMethods } from "~/types/payments/payment"
 
 /**

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressItem, AddressType } from '~/types/address';
+import type { AddressItem, AddressType } from '~/types/user-address';
 import AddressBookSection from './AddressBookSection.vue';
 import AddressBookFormModal from './AddressBookFormModal.vue';
 import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';

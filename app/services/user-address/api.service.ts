@@ -1,4 +1,4 @@
-import type { AddressDynamicFields, AddressMap, AddressType } from "~/types/address";
+import type { AddressDynamicFields, AddressMap, AddressType } from "~/types/user-address";
 import type { ApiResponse } from "~/types/config/api";
 
 /**

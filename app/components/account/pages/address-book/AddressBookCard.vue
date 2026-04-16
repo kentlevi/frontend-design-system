@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType } from '~/types/address';
+import type { AddressMap, AddressType } from '~/types/user-address';
 import type { ComponentPublicInstance } from 'vue';
 import { useAddressHelper } from '~/utils/address';
 import { useAddressBookCardActionContext } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';

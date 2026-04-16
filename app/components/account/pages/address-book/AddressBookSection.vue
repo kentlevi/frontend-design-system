@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType } from '~/types/address';
+import type { AddressMap, AddressType } from '~/types/user-address';
 import AddressBookCard from './AddressBookCard.vue';
 
 type SectionProps = {

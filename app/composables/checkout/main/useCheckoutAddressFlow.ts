@@ -1,6 +1,6 @@
 import { fetchUserAddresses } from "~/services/user-address/api.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import type { AddressMap, AddressType } from "~/types/address";
+import type { AddressMap, AddressType } from "~/types/user-address";
 
 export const useCheckoutAddressFlow = () => {
 

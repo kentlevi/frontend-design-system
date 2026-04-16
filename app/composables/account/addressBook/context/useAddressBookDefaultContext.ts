@@ -1,5 +1,5 @@
 import { inject, provide, type InjectionKey, type Ref } from 'vue'
-import type { AddressItem, AddressType } from '~/types/address'
+import type { AddressItem, AddressType } from '~/types/user-address'
 
 export type AddressBookDefaultContext = {
 	is_confirm_default_change_modal_open: Ref<boolean>

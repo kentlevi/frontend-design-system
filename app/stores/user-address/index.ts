@@ -1,2 +1,2 @@
-export { useAddressStore } from "~/stores/user-address/address.store";
-export { useAddressFieldStore } from "~/stores/user-address/address_field.store";
+export { useUserAddressStore } from "~/stores/user-address/user-address.store";
+export { useAddressFieldStore } from "~/stores/user-address/user-address_field.store";

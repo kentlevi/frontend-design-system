@@ -2,7 +2,7 @@ import type { ProductItem } from '~/types/products/catalog';
 import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
 import type { ApiResponse } from '~/types/config/api'
 import type { PaymentCode } from '../payments/payment';
-import type { AddressFormMap, AddressType } from "~/types/address";
+import type { AddressFormMap, AddressType } from "~/types/user-address";
 
 export type CheckoutItem = {
 	id: string;

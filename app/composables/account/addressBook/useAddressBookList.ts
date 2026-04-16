@@ -1,12 +1,12 @@
-import { useAddressStore } from "~/stores/user-address/address.store";
-import type { AddressType } from "~/types/address";
+import { useUserAddressStore } from "~/stores/user-address";
+import type { AddressType } from "~/types/user-address";
 
 export function useAddressBookList() {
 
 	/**
      * Store
      */
-	const address_store = useAddressStore()
+	const address_store = useUserAddressStore()
 
 	/**
      * Variables

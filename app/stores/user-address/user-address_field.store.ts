@@ -1,5 +1,5 @@
 import { fetchDynamicFields } from "~/services/user-address/api.service"
-import type { AddressDynamicFields } from "~/types/address"
+import type { AddressDynamicFields } from "~/types/user-address"
 
 
 export const useAddressFieldStore = defineStore('dynamic_address_fields', () => {

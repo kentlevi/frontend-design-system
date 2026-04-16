@@ -1,8 +1,8 @@
 import type { Ref } from 'vue';
 import { mapAddressToForm } from '~/factories/address';
 import { updateUserAddress } from '~/services/user-address/api.service';
-import { useAddressFieldStore, useAddressStore } from "~/stores/user-address";
-import type { AddressFormState, AddressFormMap, AddressMap, AddressType } from "~/types/address";
+import { useAddressFieldStore, useUserAddressStore } from "~/stores/user-address";
+import type { AddressFormState, AddressFormMap, AddressMap, AddressType } from "~/types/user-address";
 import type { CountryField } from '~/types/country_field';
 import { useAddressHelper } from '~/utils/address';
 
@@ -25,7 +25,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 
 	/** Stores */
 	const address_field_store = useAddressFieldStore()
-	const address_store = useAddressStore()
+	const address_store = useUserAddressStore()
 	const toast_store = useToastStore()
 	const editing_address_id = ref<number | null>(null)
 	const editing_address_snapshot = ref<AddressMap[AddressType] | null>(null)

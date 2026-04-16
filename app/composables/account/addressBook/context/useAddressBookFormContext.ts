@@ -5,7 +5,7 @@ import type {
 	AddressType,
 	UpdateDynamicFieldPayload,
 	UpdateFieldPayload,
-} from '~/types/address'
+} from '~/types/user-address'
 
 export type AddressBookFormContext = {
 	is_form_modal_open: Ref<boolean>

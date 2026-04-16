@@ -9,8 +9,10 @@ import type {
 	AddressType,
 	UpdateDynamicFieldPayload,
 	UpdateFieldPayload,
-} from '~/types/address'
-import { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } from '~/utils/address'
+} from '~/types/user-address'
+import { useAddressHelper } from '~/utils/address'
+
+const { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } = useAddressHelper()
 
 type IconName = keyof typeof icons
 

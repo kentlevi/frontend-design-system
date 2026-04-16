@@ -1,6 +1,6 @@
 import { deleteUserAddress } from "~/services/user-address/api.service"
-import { useAddressStore } from "~/stores/user-address"
-import type { AddressMap, AddressType, BillingAddress, DropAddress, ShippingAddress } from "~/types/address"
+import { useUserAddressStore } from "~/stores/user-address"
+import type { AddressMap, AddressType, BillingAddress, DropAddress, ShippingAddress } from "~/types/user-address"
 
 type UseAddressDeleteFormOptions = {
 	shipping_address: Ref<ShippingAddress[]>
@@ -17,7 +17,7 @@ export function useAddressDeleteForm(options: UseAddressDeleteFormOptions) {
 	/**
      * Store
      */
-	const address_store = useAddressStore()
+	const address_store = useUserAddressStore()
 	const toast_store = useToastStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 

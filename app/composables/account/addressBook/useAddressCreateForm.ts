@@ -1,6 +1,6 @@
 import { addUserAddress } from "~/services/user-address/api.service";
-import { useAddressStore } from "~/stores/user-address";
-import type { AddressFormMap, AddressFormState, AddressType } from "~/types/address";
+import { useUserAddressStore } from "~/stores/user-address";
+import type { AddressFormMap, AddressFormState, AddressType } from "~/types/user-address";
 import type { ComputedRef, Ref } from "vue";
 import { useAddressHelper } from "~/utils/address";
 
@@ -24,7 +24,7 @@ export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
 	/**
      * Store
      */
-	const address_store = useAddressStore()
+	const address_store = useUserAddressStore()
 	const toast_store = useToastStore()
 
 	/**
