@@ -205,6 +205,10 @@ const story_rows = computed<StoryRow[]>(() => {
 		},
 	];
 });
+
+const guarantees_key_prefix = computed(() =>
+	selected_id.value ? 'product.guarantees' : 'product.guarantees.navigation'
+);
 </script>
 
 <template>
@@ -213,26 +217,26 @@ const story_rows = computed<StoryRow[]>(() => {
 			<article class="guarantee-card" data-testid="product-category-guarantee-made-today">
 				<img
 					src="/icons/custom/guarantees/delivery-truck.svg"
-					:alt="t('product.guarantees.madeToday.title')"
+					:alt="t(`${guarantees_key_prefix}.madeToday.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t('product.guarantees.madeToday.title') }}</h4>
-				<p class="product-details-text">{{ t('product.guarantees.madeToday.text') }}</p>
+				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.madeToday.title`) }}</h4>
+				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.madeToday.text`) }}</p>
 			</article>
 			<article class="guarantee-card" data-testid="product-category-guarantee-proof-review">
 				<img
 					src="/icons/custom/guarantees/proof-review.svg"
-					:alt="t('product.guarantees.proofReview.title')"
+					:alt="t(`${guarantees_key_prefix}.proofReview.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t('product.guarantees.proofReview.title') }}</h4>
-				<p class="product-details-text">{{ t('product.guarantees.proofReview.text') }}</p>
+				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.proofReview.title`) }}</h4>
+				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.proofReview.text`) }}</p>
 			</article>
 			<article class="guarantee-card" data-testid="product-category-guarantee-durability">
 				<img
 					src="/icons/custom/guarantees/weather-durability.svg"
-					:alt="t('product.guarantees.durability.title')"
+					:alt="t(`${guarantees_key_prefix}.durability.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t('product.guarantees.durability.title') }}</h4>
-				<p class="product-details-text">{{ t('product.guarantees.durability.text') }}</p>
+				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.durability.title`) }}</h4>
+				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.durability.text`) }}</p>
 			</article>
 		</div>
 	</section>

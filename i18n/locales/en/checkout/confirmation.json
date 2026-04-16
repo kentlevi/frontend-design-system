@@ -1,20 +1,20 @@
 {
-    "checkout": {
-        "confirmation": {
-            "title": "Your Order is Confirmed",
-            "goHome": "Go to Homepage",
-            "notePrefix": "Expect a Final Proof to be sent to you shortly. If you have urgent concerns, you may call at",
-            "noteSuffix": "You will receive an email confirming your order submission, please verify your shipping address.",
-            "expectedDelivery": "Expected Delivery (Express)",
-            "expectedArrival": "Your order is estimated to arrive on: {date}",
-            "orderSummary": "Order Summary",
-            "orderNumber": "Order #: {orderNumber}",
-            "summary": {
-                "subtotal": "Subtotal:",
-                "shippingFee": "Shipping Fee:",
-                "discounts": "Discounts:",
-                "total": "Total:"
-            }
-        }
+  "checkout": {
+    "confirmation": {
+      "title": "Your Order is Confirmed",
+      "goHome": "Go to Homepage",
+      "notePrefix": "Expect a Final Proof to be sent to you shortly. If you have urgent concerns, you may call at",
+      "noteSuffix": "You will receive an email confirming your order submission, please verify your shipping address.",
+      "expectedDelivery": "Expected Delivery (Express)",
+      "expectedArrival": "Your order is estimated to arrive on: {date}",
+      "orderSummary": "Order Summary",
+      "orderNumber": "Order #: {orderNumber}",
+      "summary": {
+        "subtotal": "Subtotal:",
+        "shippingFee": "Shipping Fee:",
+        "discounts": "Discounts:",
+        "total": "Total:"
+      }
     }
+  }
 }

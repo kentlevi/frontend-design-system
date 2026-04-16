@@ -176,6 +176,7 @@ async function handleSubmit() {
 						:form="active_form"
 						:errors="form_field_errors"
 						:dynamic-fields="dynamic_fields"
+						copy-context="addressBook"
 						:show-label-selector="true"
 						@update:field="updateFormFieldByType"
 						@update:dynamic-field="updateDynamicFieldByType"

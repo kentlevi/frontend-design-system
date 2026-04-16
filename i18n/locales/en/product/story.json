@@ -1,78 +1,78 @@
 {
-    "product": {
-        "story": {
-            "navigation": {
-                "stickers": {
-                    "row1": {
-                        "title": "Premium Quality",
-                        "text": "Crafted with rich colors and durable materials for a professional finish. Built to resist fading, cracking, and peeling so your sticker stays perfect longer."
-                    },
-                    "row2": {
-                        "title": "Long-Lasting Color",
-                        "text": "Experience bright, vivid prints on thick, high-quality material. Designed to endure sun, rain, and heat while keeping colors sharp and vibrant."
-                    },
-                    "row3": {
-                        "title": "Built to Last",
-                        "text": "Premium printing meets tough materials for stickers that stay vibrant over time. Resistant to weather, heat, and moisture—perfect for both indoor and outdoor use."
-                    }
-                },
-                "rollStickers": {
-                    "row1": {
-                        "title": "Efficient & Ready to Apply",
-                        "text": "Roll stickers are perfect for fast and easy application. Printed with vibrant colors on durable material, each sticker peels smoothly from the roll, making them ideal for packaging, labeling, and high-volume use."
-                    },
-                    "row2": {
-                        "title": "Smooth & Seamless",
-                        "text": "Keep your labeling process simple with roll stickers. Each piece is precisely cut and easy to peel, with vibrant colors and durable material that holds up during shipping and handling."
-                    },
-                    "row3": {
-                        "title": "Fast, Clean, Reliable",
-                        "text": "Built for efficiency, roll stickers deliver smooth peeling and consistent quality. Ideal for bulk use, they provide strong adhesion and vivid prints that keep your brand looking professional."
-                    }
-                },
-                "sheetStickers": {
-                    "row1": {
-                        "title": "More Stickers, More Creativity",
-                        "text": "Multiple designs printed on a single sheet for easy peeling and organized use. Enjoy vibrant colors, precise cuts, and durable material that keeps every sticker looking sharp and long-lasting."
-                    },
-                    "row2": {
-                        "title": "All-in-One Sheet",
-                        "text": "Keep your favorite designs together on one convenient sheet. Printed with rich colors on premium material, each sticker is cleanly cut and ready to peel whenever inspiration strikes."
-                    },
-                    "row3": {
-                        "title": "Organized and Ready to Peel",
-                        "text": "Sticker sheets keep all your designs neatly arranged and easy to use. With premium printing and durable material, every sticker stays vibrant and ready for any surface."
-                    }
-                },
-                "vinylLettering": {
-                    "row1": {
-                        "title": "Professional Character Branding",
-                        "text": "Get a high-end, painted-on look with precisely cut vinyl letters. Perfect for storefronts, vehicles, and office walls, these characters are individually cut with no background for a seamless professional finish."
-                    },
-                    "row2": {
-                        "title": "Rugged Outdoor Durability",
-                        "text": "Our premium vinyl is designed to withstand the elements. UV-resistant and waterproof, your lettering will stay sharp and vibrant through rain, sun, and snow for years to come."
-                    },
-                    "row3": {
-                        "title": "Perfectly Spaced Application",
-                        "text": "Applying complex lettering is easy with our professional transfer tape. It keeps every character perfectly aligned and spaced, ensuring a flawless installation every time."
-                    }
-                }
-            },
-            "productMode": {
-                "row1": {
-                    "title": "Timeless Perfection",
-                    "text": "Vibrant colors from premium printing and thick material. Built to last, resists fading from rain, sun, and heat. Enjoy long-lasting quality from the moment you apply it."
-                },
-                "row2": {
-                    "title": "Quick to stick, easy to peel!",
-                    "text": "Adheres smoothly and peels off cleanly without a trace. Strong yet safe, it protects surfaces and removes in one swift motion."
-                },
-                "row3": {
-                    "title": "Precisely cut to match the design",
-                    "text": "Upload your logo, illustration, or photo, and we’ll precisely cut it into a sticker along the outline. Even intricate designs are flawlessly rendered with Musticker’s unique cutting technology."
-                }
-            }
+  "product": {
+    "story": {
+      "navigation": {
+        "stickers": {
+          "row1": {
+            "title": "Premium Quality",
+            "text": "Crafted with high-quality materials and vibrant inks, every sticker delivers a professional, polished look. Designed to maintain its durability, resisting peeling, cracking, and fading over time."
+          },
+          "row2": {
+            "title": "Vivid, Long-Lasting Color",
+            "text": "Enjoy bold, bright colors that stay true. Our thick, durable materials are built to withstand sun, rain, and everyday wear, keeping your stickers looking fresh longer."
+          },
+          "row3": {
+            "title": "Durable for Any Use",
+            "text": "From indoor displays to outdoor surfaces, these stickers are made to endure. Premium printing on tough materials ensures your designs stay sharp and vibrant, no matter where you place them."
+          }
+        },
+        "rollStickers": {
+          "row1": {
+            "title": "Quick & Easy to Use",
+            "text": "Each roll sticker delivers vibrant color and durable quality you can rely on. Designed to peel easily, they keep your labeling and packaging process quick and efficient, even for high-volume projects."
+          },
+          "row2": {
+            "title": "Quick & Precise",
+            "text": "Roll stickers make labeling quick and precise, ensuring clean placement every time. Each sticker is printed in vibrant colors on durable material for lasting quality."
+          },
+          "row3": {
+            "title": "Fast, Accurate, Dependable",
+            "text": "Designed for quick application and consistent results. Each sticker maintains sharp lines, vibrant colors, and strong adhesion, delivering professional-quality labels every time."
+          }
+        },
+        "sheetStickers": {
+          "row1": {
+            "title": "More Stickers, Endless Creativity",
+            "text": "Sticker sheets give you multiple designs on a single sheet, making it easy to mix, match, and apply wherever inspiration strikes. Vivid colors and durable materials keep every sticker crisp, detailed, and long-lasting."
+          },
+          "row2": {
+            "title": "Everything in One Place",
+            "text": "Organize your favorite designs on one convenient sheet. Each sticker is printed with rich colors on premium material and precisely cut, ready to peel and use anytime."
+          },
+          "row3": {
+            "title": "Organized and Ready to Peel",
+            "text": "Sticker sheets keep your designs tidy and easy to access. With strong, durable materials and sharp printing, every sticker stays vibrant and performs beautifully on any surface."
+          }
+        },
+        "vinylLettering": {
+          "row1": {
+            "title": "Professional Character Branding",
+            "text": "Get a high-end, painted-on look with precisely cut vinyl letters. Perfect for storefronts, vehicles, and office walls, these characters are individually cut with no background for a seamless professional finish."
+          },
+          "row2": {
+            "title": "Rugged Outdoor Durability",
+            "text": "Our premium vinyl is designed to withstand the elements. UV-resistant and waterproof, your lettering will stay sharp and vibrant through rain, sun, and snow for years to come."
+          },
+          "row3": {
+            "title": "Perfectly Spaced Application",
+            "text": "Applying complex lettering is easy with our professional transfer tape. It keeps every character perfectly aligned and spaced, ensuring a flawless installation every time."
+          }
         }
+      },
+      "productMode": {
+        "row1": {
+          "title": "Timeless Perfection",
+          "text": "Vibrant colors from premium printing and thick material. Built to last, resists fading from rain, sun, and heat. Enjoy long-lasting quality from the moment you apply it."
+        },
+        "row2": {
+          "title": "Quick to stick, easy to peel!",
+          "text": "Adheres smoothly and peels off cleanly without a trace. Strong yet safe, it protects surfaces and removes in one swift motion."
+        },
+        "row3": {
+          "title": "Precisely cut to match the design",
+          "text": "Upload your logo, illustration, or photo, and we'll precisely cut it into a sticker along the outline. Even intricate designs are flawlessly rendered with Musticker's unique cutting technology."
+        }
+      }
     }
+  }
 }

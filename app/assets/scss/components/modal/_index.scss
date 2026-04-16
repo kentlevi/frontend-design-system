@@ -34,6 +34,7 @@
     flex-direction: column;
     gap: 0;
     padding: 0;
+    max-height: var(--ui-modal-max-height, calc(100vh - 80px));
 }
 
 .ui-modal-header {
@@ -88,6 +89,9 @@
     display: flex;
     flex-direction: column;
     gap: var(--ui-modal-gap, 0);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .ui-modal-footer {

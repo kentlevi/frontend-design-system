@@ -1,114 +1,114 @@
 {
-    "product": {
-        "items": {
-            "die-cut-sticker": {
-                "name": "Die-Cut Sticker",
-                "blurb": "Features thick, premium-grade material designed for durability and vibrant printing."
-            },
-            "circle-sticker": {
-                "name": "Round Sticker",
-                "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish."
-            },
-            "rectangle-sticker": {
-                "name": "Rectangular Sticker",
-                "blurb": "Durable premium material with sharp edges for clear, professional designs."
-            },
-            "square-sticker": {
-                "name": "Square Sticker",
-                "blurb": "Premium-grade material with crisp edges for balanced and modern designs."
-            },
-            "oval-sticker": {
-                "name": "Oval Sticker",
-                "blurb": "Elegant curves with vibrant, eye-catching color."
-            },
-            "rounded-sticker": {
-                "name": "Rounded Square Sticker",
-                "blurb": "Rounded corners with a sleek finish for a polished, modern look."
-            },
-            "kiss-cut-sticker": {
-                "name": "Kiss Cut Sticker",
-                "blurb": "Easy-peel sticker format with extra backing for convenient handling."
-            },
-            "sticker-sheet": {
-                "name": "Sheet Sticker",
-                "blurb": "Multiple sticker designs arranged on one sheet for easy peeling."
-            },
-            "clear-sticker": {
-                "name": "Clear Transparent Sticker",
-                "blurb": "Transparent material blends on any surface."
-            },
-            "hologram-sticker": {
-                "name": "Hologram Sticker",
-                "blurb": "Shimmering holographic effect that stands out from every angle."
-            },
-            "transfer-sticker": {
-                "name": "Transfer Sticker",
-                "blurb": "Featuring precision-cut designs that deliver a clean, professional, no-background finish."
-            },
-            "vinyl-lettering": {
-                "name": "Vinyl Lettering",
-                "blurb": "Featuring smooth, precision-cut lettering that creates a clean, polished appearance every time."
-            },
-            "custom-lettering": {
-                "name": "Vinyl Lettering",
-                "blurb": "Featuring smooth, precision-cut lettering that creates a clean, polished appearance every time."
-            },
-            "die-cut-roll": {
-                "name": "Die Cut Roll",
-                "blurb": "Precision die-cut stickers are arranged in a continuous roll for efficient application."
-            },
-            "clear-roll": {
-                "name": "Clear Roll",
-                "blurb": "Transparent labels that blend seamlessly onto packaging."
-            },
-            "circle-roll": {
-                "name": "Circle Roll",
-                "blurb": "Round labels on a roll, ideal for branding and packaging."
-            },
-            "square-roll": {
-                "name": "Square Roll",
-                "blurb": "Balanced square labels designed for clear, bold presentation."
-            },
-            "rectangle-roll": {
-                "name": "Rectangle Roll",
-                "blurb": "Great for product details, barcodes, and packaging labels."
-            },
-            "rounded-roll": {
-                "name": "Rounded Roll",
-                "blurb": "Smooth rounded corners for a refined, premium label look."
-            },
-            "oval-roll": {
-                "name": "Oval Roll",
-                "blurb": "Elegant oval labels that stand out on bottles and packaging."
-            },
-            "paper-roll": {
-                "name": "Paper Roll",
-                "blurb": "Writable paper labels for organized packaging and logistics."
-            },
-            "die-cut-sheet": {
-                "name": "Die Cut Sheet",
-                "blurb": "Custom-cut sticker shapes arranged neatly on a single sheet."
-            },
-            "circle-sheet": {
-                "name": "Circle Sheet",
-                "blurb": "Round stickers grouped on one sheet for quick, easy use."
-            },
-            "oval-sheet": {
-                "name": "Oval Sheet",
-                "blurb": "Oval stickers on a sheet for elegant, versatile labeling."
-            },
-            "square-sheet": {
-                "name": "Square Sheet",
-                "blurb": "Square stickers on a sheet for clean, organized layouts."
-            },
-            "rectangle-sheet": {
-                "name": "Rectangle Sheet",
-                "blurb": "Perfect for product info, barcodes, and packaging labels."
-            },
-            "rounded-sheet": {
-                "name": "Rounded Sheet",
-                "blurb": "Rounded-corner stickers on a sheet for a modern, softer look."
-            }
-        }
+  "product": {
+    "items": {
+      "die-cut-sticker": {
+        "name": "Die-Cut Sticker",
+        "blurb": "Features thick, premium-grade material designed for durability and vibrant printing."
+      },
+      "circle-sticker": {
+        "name": "Round Sticker",
+        "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish."
+      },
+      "rectangle-sticker": {
+        "name": "Rectangular Sticker",
+        "blurb": "Durable premium material with sharp edges for clear, professional designs."
+      },
+      "square-sticker": {
+        "name": "Square Sticker",
+        "blurb": "Premium-grade material with crisp edges for balanced and modern designs."
+      },
+      "oval-sticker": {
+        "name": "Oval Sticker",
+        "blurb": "Printed on durable premium material with smooth curved edges."
+      },
+      "rounded-sticker": {
+        "name": "Rounded Square Sticker",
+        "blurb": "Premium material with soft, rounded corners for a polished appearance."
+      },
+      "kiss-cut-sticker": {
+        "name": "Kiss Cut Stickers",
+        "blurb": "Precision cut with an easy-peel backing for convenient handling and application."
+      },
+      "sticker-sheet": {
+        "name": "Sticker Sheets",
+        "blurb": "Multiple stickers are arranged on a single sheet for easy storage and organization."
+      },
+      "clear-sticker": {
+        "name": "Clear Transparent Sticker",
+        "blurb": "Printed on transparent material that blends seamlessly with the surface."
+      },
+      "hologram-sticker": {
+        "name": "Hologram Stickers",
+        "blurb": "Reflective holographic material that creates eye-catching rainbow effects."
+      },
+      "transfer-sticker": {
+        "name": "Transfer Stickers",
+        "blurb": "Premium cutting ensures every detail of your design is sharp and clear. The result is a polished, standout finish that looks like it’s painted directly onto the surface."
+      },
+      "vinyl-lettering": {
+        "name": "Vinyl Lettering",
+        "blurb": "Featuring smooth, precision-cut lettering that creates a clean, polished appearance every time."
+      },
+      "custom-lettering": {
+        "name": "Precision-Cut Vinyl Lettering",
+        "blurb": "Designed for clean and accurate placement. Once applied, the backing is removed to reveal crisp lettering that blends seamlessly with the surface."
+      },
+      "die-cut-roll": {
+        "name": "Die Cut Roll Stickers",
+        "blurb": "Precision die-cut stickers are arranged in a continuous roll for efficient application."
+      },
+      "clear-roll": {
+        "name": "Clear Roll Stickers",
+        "blurb": "Transparent stickers in roll format for quick and organized labeling."
+      },
+      "circle-roll": {
+        "name": "Circle Roll Stickers",
+        "blurb": "Round stickers arranged in a continuous roll for easy dispensing"
+      },
+      "square-roll": {
+        "name": "Square Roll Stickers",
+        "blurb": "Square stickers supplied in roll format for efficient bulk use."
+      },
+      "rectangle-roll": {
+        "name": "Rectangle Roll Stickers",
+        "blurb": "Rectangular stickers organized in a roll for fast labeling and packaging."
+      },
+      "rounded-roll": {
+        "name": "Rounded Roll Stickers",
+        "blurb": "Rounded square stickers arranged in a roll for convenient application."
+      },
+      "oval-roll": {
+        "name": "Oval Roll Stickers",
+        "blurb": "Oval stickers supplied in roll format for organized, high-volume use."
+      },
+      "paper-roll": {
+        "name": "Paper Roll Stickers",
+        "blurb": "Paper stickers in roll format designed for everyday labeling needs."
+      },
+      "die-cut-sheet": {
+        "name": "Die Cut Sticker Sheets",
+        "blurb": "Custom-shaped stickers neatly arranged on a single sheet."
+      },
+      "circle-sheet": {
+        "name": "Circle Sticker Sheets",
+        "blurb": "Round stickers are organized on a sheet for easy access and use."
+      },
+      "oval-sheet": {
+        "name": "Oval Sticker Sheets",
+        "blurb": "Oval stickers arranged on a sheet for organized application."
+      },
+      "square-sheet": {
+        "name": "Square Sticker Sheets",
+        "blurb": "Square stickers are supplied on a sheet for convenient handling."
+      },
+      "rectangle-sheet": {
+        "name": "Rectangle Sticker Sheets",
+        "blurb": "Rectangular stickers arranged on a sheet for easy labeling."
+      },
+      "rounded-sheet": {
+        "name": "Rounded Sticker Sheets",
+        "blurb": "Rounded square stickers are organized on a sheet for quick application."
+      }
     }
+  }
 }

@@ -235,7 +235,7 @@ const nextStep = async () => {
 			<section class="product-section">
 				<div class="option-head">
 					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
 				</div>
 
 				<div v-if="is_loading_features" class="option-grid option-grid-size">
@@ -351,7 +351,7 @@ const nextStep = async () => {
 			<section class="product-section">
 				<div class="option-head">
 					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
 				</div>
 				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />

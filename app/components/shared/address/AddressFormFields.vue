@@ -35,6 +35,7 @@ const {
 	getDynamicFieldOptions,
 	getDynamicFieldHighlightedValueWhenEmpty,
 	getDynamicFieldPlaceholder,
+	resolvePlaceholderKey,
 } = useAddressFormField({
 	props,
 	emit,
@@ -75,7 +76,7 @@ const {
 						:id="inputId"
 						v-model="company_model"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="translate('account.addressBook.companyPlaceholder')"
+						:placeholder="translate(resolvePlaceholderKey('companyPlaceholder'))"
 					/>
 				</template>
 			</UiFormField>
@@ -150,12 +151,12 @@ const {
 							:id="inputId"
 							v-model="address_line_1_model"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="translate('account.addressBook.addressLine1Placeholder')"
+							:placeholder="translate(resolvePlaceholderKey('addressLine1Placeholder'))"
 							:state="getFieldError(props.form.type, 'address_line_1') ? 'error' : 'default'"
 						/>
 						<UiInput
 							v-model="address_line_2_model"
-							:placeholder="translate('account.addressBook.addressLine2Placeholder')"
+							:placeholder="translate(resolvePlaceholderKey('addressLine2Placeholder'))"
 						/>
 					</div>
 				</template>
@@ -173,7 +174,7 @@ const {
 							:id="inputId"
 							v-model="postcode_model"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="translate('account.addressBook.postalCodePlaceholder')"
+							:placeholder="translate(resolvePlaceholderKey('postalCodePlaceholder'))"
 							:state="getFieldError(props.form.type, 'postcode') ? 'error' : 'default'"
 						/>
 					</template>

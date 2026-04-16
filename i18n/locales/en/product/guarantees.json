@@ -1,18 +1,32 @@
 {
-    "product": {
-        "guarantees": {
-            "madeToday": {
-                "title": "Made today, shipped tomorrow",
-                "text": "Once your design is approved, we’ll start production right away. Most orders arrive in 1–2 days."
-            },
-            "proofReview": {
-                "title": "Online Proof Review",
-                "text": "Receive your proof right after payment. Make revisions anytime until you approve."
-            },
-            "durability": {
-                "title": "Outstanding durability and water resistance",
-                "text": "Made from thick, premium material. Long-lasting color and adhesive strength."
-            }
+  "product": {
+    "guarantees": {
+      "navigation": {
+        "madeToday": {
+          "title": "Fast Dispatch Guaranteed",
+          "text": "Approve your design today and we'll start production right away. Most orders arrived in 1-2 days."
+        },
+        "proofReview": {
+          "title": "Online Proof Review",
+          "text": "Get your online proof instantly after payment.\nRequest revisions anytime until you approve."
+        },
+        "durability": {
+          "title": "Durable and Water-resistant",
+          "text": "Printed on thick premium material and water-resistance for long-lasting durability."
         }
+      },
+      "madeToday": {
+        "title": "Fast Dispatch Guaranteed",
+        "text": "Approve your design today and we'll start production right away. Most orders arrived in 1-2 days."
+      },
+      "proofReview": {
+        "title": "Online Proof Review",
+        "text": "Get your online proof instantly after payment.\nRequest revisions anytime until you approve."
+      },
+      "durability": {
+        "title": "Durable and Water-resistant",
+        "text": "Printed on thick premium material and water-resistance for long-lasting durability."
+      }
     }
+  }
 }

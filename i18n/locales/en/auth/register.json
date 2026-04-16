@@ -1,49 +1,49 @@
 {
-    "auth": {
-        "register": {
-            "title": "Become a Member",
-            "subtitle": "Register now and earn {points} points to kick off your experience.",
-            "firstName": "First Name",
-            "lastName": "Last Name",
-            "optional": "Optional",
-            "enterFirstName": "Enter First Name",
-            "enterLastName": "Enter Last Name",
-            "email": "Email Address",
-            "enterEmail": "Enter Email Address",
-            "password": "Password",
-            "enterPassword": "Enter Password",
-            "passwordHint": "Your password must be at least 6 characters and should include an uppercase letter, a number, or a special character.",
-            "agreePrefix": "I agree to Musticker’s",
-            "terms": "Terms of Service",
-            "and": "and",
-            "privacy": "Privacy Policy",
-            "promoOptIn": "Sign me up for email to receive promos, exclusive offers, and marketing materials.",
-            "createAccount": "Create Account",
-            "closeModal": "Close modal",
-            "termsErrorInfo": "Terms error information",
-            "emailAlreadyRegistered": {
-                "closeModal": "Close email already registered modal",
-                "title": "Email already registered.",
-                "description": {
-                    "prefix": "The email address ",
-                    "suffix": " is already registered in our system. Please enter your password to continue."
-                },
-                "password": "Password",
-                "enterPassword": "Enter Password",
-                "togglePassword": "Toggle password visibility",
-                "forgotPassword": "Forgot Password?",
-                "continue": "Continue"
-            },
-            "alreadyMember": "Already a Member?",
-            "signInHere": "Sign In Here",
-            "validation": {
-                "fieldBlank": "Required",
-                "emailInvalid": "Email Format Is Invalid",
-                "emailTaken": "Email has already been taken.",
-                "mustAgree": "You must agree to the Terms of Service.",
-                "passwordRequirement": "Password does not meet the requirement.",
-                "requestFailed": "Unable to connect right now. Please try again."
-            }
-        }
+  "auth": {
+    "register": {
+      "title": "Become a Member",
+      "subtitle": "Register now and earn {points} points to kick off your experience.",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "optional": "Optional",
+      "enterFirstName": "Enter First Name",
+      "enterLastName": "Enter Last Name",
+      "email": "Email Address",
+      "enterEmail": "Enter Email Address",
+      "password": "Password",
+      "enterPassword": "Enter Password",
+      "passwordHint": "Your password must be at least 6 characters and should include an uppercase letter, a number, or a special character.",
+      "agreePrefix": "I agree to Musticker’s",
+      "terms": "Terms of Service",
+      "and": "and",
+      "privacy": "Privacy Policy",
+      "promoOptIn": "Sign me up for email to receive promos, exclusive offers, and marketing materials.",
+      "createAccount": "Create Account",
+      "closeModal": "Close modal",
+      "termsErrorInfo": "Terms error information",
+      "emailAlreadyRegistered": {
+        "closeModal": "Close email already registered modal",
+        "title": "Email is already registered.",
+        "description": {
+          "prefix": "The email address ",
+          "suffix": " is already registered in our system. Please enter your password to continue."
+        },
+        "password": "Password",
+        "enterPassword": "Enter Password",
+        "togglePassword": "Toggle password visibility",
+        "forgotPassword": "Forgot Password?",
+        "continue": "Continue"
+      },
+      "alreadyMember": "Already a Member?",
+      "signInHere": "Sign In Here",
+      "validation": {
+        "fieldBlank": "Required",
+        "emailInvalid": "Email Format Is Invalid",
+        "emailTaken": "Email has already been taken.",
+        "mustAgree": "You must agree to the Terms of Service.",
+        "passwordRequirement": "Password does not meet the requirement.",
+        "requestFailed": "Unable to connect right now. Please try again."
+      }
     }
+  }
 }
