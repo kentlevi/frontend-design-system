@@ -10,8 +10,8 @@ type UseAddressEditFormOptions = {
 	form_state: AddressFormState
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
-	form_field_errors: Ref<Record<string, string>>
 
+	setFormErrors: (type: AddressType, errors: Record<string, string>) => void
 	openEditFormModal: () => void
 	closeFormModal: () => void
 	setCreateMode: () => void
@@ -115,7 +115,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 				options.setCreateMode()
 			} else {
 				const next_errors = mapApiFieldErrors(response.data)
-				options.form_field_errors.value = next_errors
+				options.setFormErrors(type, next_errors)
 			}
 		} catch (_error: unknown) {
 			console.log(_error);

@@ -10,10 +10,10 @@ type UseAddressCreateFormOptions = {
 	resetForm: (type: AddressType) => void
 	clearFormFieldErrors: () => void
 	populateDynamicFields: (target_type: AddressType) => void
+	setFormErrors: (type: AddressType, errors: Record<string, string>) => void
 	form_state: AddressFormState
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
-	form_field_errors: Ref<Record<string, string>>
 }
 
 export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
@@ -49,7 +49,7 @@ export function useAddressCreateForm(options: UseAddressCreateFormOptions) {
 				options.resetForm(type);
 			} else {
 				const next_errors = mapApiFieldErrors(response.data)
-				options.form_field_errors.value = next_errors
+				options.setFormErrors(type, next_errors)
 			}
 		} catch (_error: unknown) {
 			console.log(_error);

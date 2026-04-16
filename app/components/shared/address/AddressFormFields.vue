@@ -3,7 +3,11 @@ import type { AddressFormFieldsEmit, AddressFormFieldsProps } from '~/composable
 import { useAddressFormField } from '~/composables/shared/address/useAddressFormField'
 
 const props = withDefaults(defineProps<AddressFormFieldsProps>(), {
-	errors: () => ({}),
+	errors: () => ({
+		shipping: {},
+		billing: {},
+		drop: {},
+	}),
 	showLabelSelector: false,
 })
 
@@ -45,7 +49,7 @@ const {
 				:label="translate('account.addressBook.fullName')"
 				:required="true"
 				:show-required-mark="true"
-				:error="getFieldError('contact_name')"
+				:error="getFieldError(props.form.type, 'contact_name')"
 			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -53,7 +57,7 @@ const {
 						v-model="contact_name_model"
 						:aria-describedby="describedBy || undefined"
 						:placeholder="translate('account.addressBook.fullNamePlaceholder')"
-						:state="getFieldError('contact_name') ? 'error' : 'default'"
+						:state="getFieldError(props.form.type, 'contact_name') ? 'error' : 'default'"
 					/>
 				</template>
 			</UiFormField>
@@ -108,7 +112,7 @@ const {
 					:label="dynamic_field.field_label"
 					:required="dynamic_field.is_required"
 					:show-required-mark="dynamic_field.is_required"
-					:error="getFieldError(`fields.${dynamic_field.field_key}`)"
+					:error="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`)"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiSelect
@@ -117,7 +121,7 @@ const {
 							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
 							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
 							:highlighted-value-when-empty="getDynamicFieldHighlightedValueWhenEmpty(dynamic_field)"
-							:trigger-class="getFieldError(`fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
+							:trigger-class="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
 							@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
 						/>
 
@@ -127,7 +131,7 @@ const {
 							:aria-describedby="describedBy || undefined"
 							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
 							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
-							:state="getFieldError(`fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
+							:state="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
 							@update:model-value="updateDynamicField(dynamic_field.field_key, $event)"
 						/>
 					</template>
@@ -138,7 +142,7 @@ const {
 				:label="translate('account.addressBook.streetAddress')"
 				:required="true"
 				:show-required-mark="true"
-				:error="getFieldError('address_line_1')"
+				:error="getFieldError(props.form.type, 'address_line_1')"
 			>
 				<template #default="{ inputId, describedBy }">
 					<div class="address-form-fields-stack">
@@ -147,7 +151,7 @@ const {
 							v-model="address_line_1_model"
 							:aria-describedby="describedBy || undefined"
 							:placeholder="translate('account.addressBook.addressLine1Placeholder')"
-							:state="getFieldError('address_line_1') ? 'error' : 'default'"
+							:state="getFieldError(props.form.type, 'address_line_1') ? 'error' : 'default'"
 						/>
 						<UiInput
 							v-model="address_line_2_model"
@@ -162,7 +166,7 @@ const {
 					:label="translate('account.addressBook.postalCode')"
 					:required="true"
 					:show-required-mark="true"
-					:error="getFieldError('postcode')"
+					:error="getFieldError(props.form.type, 'postcode')"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiInput
@@ -170,7 +174,7 @@ const {
 							v-model="postcode_model"
 							:aria-describedby="describedBy || undefined"
 							:placeholder="translate('account.addressBook.postalCodePlaceholder')"
-							:state="getFieldError('postcode') ? 'error' : 'default'"
+							:state="getFieldError(props.form.type, 'postcode') ? 'error' : 'default'"
 						/>
 					</template>
 				</UiFormField>
@@ -180,7 +184,7 @@ const {
 					:label="translate('account.addressBook.phoneNumber')"
 					:required="true"
 					:show-required-mark="true"
-					:error="getFieldError('phone_number')"
+					:error="getFieldError(props.form.type, 'phone_number')"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiInput
@@ -189,7 +193,7 @@ const {
 							type="text"
 							:aria-describedby="describedBy || undefined"
 							:placeholder="translate('account.addressBook.phonePlaceholder')"
-							:state="getFieldError('phone_number') ? 'error' : 'default'"
+							:state="getFieldError(props.form.type, 'phone_number') ? 'error' : 'default'"
 							@beforeinput="onPhoneBeforeInput"
 							@paste="onPhonePaste"
 						/>

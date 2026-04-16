@@ -58,6 +58,7 @@ const {
 	setFormType,
 	populateDynamicFields,
 	clearFormFieldErrors,
+	setFormErrors,
 	updateFormFieldByType,
 	updateDynamicFieldByType,
 	resetForm,
@@ -101,8 +102,8 @@ const {
 	form_state,
 	form_type,
 	active_form,
-	form_field_errors,
 
+	setFormErrors,
 	openCreateFormModal,
 	closeFormModal,
 	resetForm,
@@ -137,8 +138,8 @@ const {
 	form_state,
 	form_type,
 	active_form,
-	form_field_errors,
 
+	setFormErrors,
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,

@@ -18,7 +18,7 @@ type IconName = keyof typeof icons
 
 export type AddressFormFieldsProps = {
 	form: AddressFormMap[AddressType]
-	errors?: Record<string, string>
+	errors?: Record<AddressType, Record<string, string>>
 	showLabelSelector?: boolean
 }
 
@@ -140,8 +140,8 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		updateDynamicField(field_key, option?.id ?? selected_value)
 	}
 
-	function getFieldError(field_key: string) {
-		return options.props.errors?.[field_key] ?? ''
+	function getFieldError(type: AddressType, field_key: string) {
+		return options.props.errors?.[type]?.[field_key] ?? ''
 	}
 
 	function hasProvinceLabel(field: AddressDynamicFields) {

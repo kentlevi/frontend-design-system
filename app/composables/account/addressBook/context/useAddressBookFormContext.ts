@@ -15,7 +15,7 @@ export type AddressBookFormContext = {
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
 	dynamic_fields: ComputedRef<AddressDynamicFields[]>
-	form_field_errors: Ref<Record<string, string>>
+	form_field_errors: Ref<Record<AddressType, Record<string, string>>>
 	setFormType: (type: AddressType) => void
 	updateFormFieldByType: (type: AddressType, payload: UpdateFieldPayload) => void
 	updateDynamicFieldByType: (type: AddressType, payload: UpdateDynamicFieldPayload) => void

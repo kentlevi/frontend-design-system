@@ -21,15 +21,20 @@ export const useCheckoutFlow = () => {
 
 	} = storeToRefs(useMainCheckOutStore())
 
-	const { shipping_form, form_field_errors } = useAddressFormCheckoutContext()
+	const {
+		shipping_form,
+
+		setFormErrors
+	} = useAddressFormCheckoutContext()
 
 	async function initValidateAddresses() {
 		const response = await validateAddress(shipping_form.value)
 
 		if (!response?.success) {
 			const next_errors = mapApiFieldErrors(response?.data)
-			form_field_errors.value = next_errors
+			setFormErrors(shipping_form.value.type, next_errors)
 		}
+
 	}
 
 	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
