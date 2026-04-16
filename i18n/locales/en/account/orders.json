@@ -44,7 +44,66 @@
             "uploadArtwork": "Upload Artwork",
             "replaceArtwork": "Replace Artwork",
             "onHoldOrder": "On-Hold Order",
-            "cancelOrder": "Cancel Order"
+            "cancelOrder": "Cancel Order",
+            "detail": {
+                "close": "Close",
+                "darkBackground": "Dark Background",
+                "statusTitle": "Your artwork is in the queue for evaluation.",
+                "statusDescriptionPrefix": "If you need to make changes, you can still replace it before the review begins. Please click",
+                "statusDescriptionSuffix": ".",
+                "activityLogs": "Activity Logs:",
+                "submittedArtwork": "Submitted Artwork",
+                "product": "Product:",
+                "finalProofTerms": "Final Proof Terms of Service",
+                "uploadSuccess": "New artwork uploaded! Your previous image has been replaced successfully."
+            },
+            "upload": {
+                "title": "Upload Artwork - Item No. {number}",
+                "itemDetails": "Item Details:",
+                "product": "Product:",
+                "size": "Size:",
+                "quantity": "Quantity:",
+                "pcs": "pcs",
+                "dragAndDrop": "Drag and drop files to upload",
+                "acceptedFiletypes": "Accepted filetypes: .eps, .ai, .psd, .pdf, .tif, .png and .jpg",
+                "selectFiles": "Select Files",
+                "replaceImage": "Replace Image",
+                "removeArtwork": "Remove uploaded artwork",
+                "specialInstructions": "Special Instructions",
+                "specialInstructionsPlaceholder": "Enter special instruction here....",
+                "cancel": "Cancel",
+                "submit": "Submit"
+            },
+            "terms": {
+                "title": "Terms & Conditions",
+                "closeLabel": "Close terms and conditions modal",
+                "paragraph1": "If you approve the final proof and confirm your payment after 5:00PM, the order will be processed the next business day.",
+                "paragraph2": "We normally check the important details required for production. The correction of the design content, such as misspelling, is not subject to reproduction.",
+                "paragraph3": "In spite of the most modern printing machines, color difference of 5-10% and movement of 1-2mm on the actual sticker product should be acceptable due to mechanical tolerances.",
+                "turnaroundNote": "The estimated turnaround time includes printing & delivery.",
+                "noteTitle": "Note:",
+                "bumperStickerPrintNote": "Bumper Sticker is printed using digital printing. The printing resolution is lower than offset printing.",
+                "materialCurlNote": "Due to the characteristics of the material, the sticker may curl up after time. Choose coated option to avoid this issue.",
+                "cancellationTitle": "Note on Order Cancellations:",
+                "cancellationBody": "Order cancellations are only allowed during 'Before Production' status; once the status changes to 'In Production,' cancellations are disabled as printing has begun, so please review your order carefully beforehand.",
+                "close": "Close"
+            },
+            "mock": {
+                "paymentMethods": {
+                    "bankTransfer": "Bank Transfer",
+                    "creditCard": "Credit Card",
+                    "virtualAccount": "Virtual Account"
+                },
+                "products": {
+                    "dieCutSticker": "Die Cut Sticker"
+                },
+                "submitters": {
+                    "joyLove": "Joy Love"
+                },
+                "instructions": {
+                    "default": "Please make sure the colors and size is exactly perfect."
+                }
+            }
         }
     }
 }

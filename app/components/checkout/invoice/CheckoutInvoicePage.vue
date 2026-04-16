@@ -75,7 +75,7 @@ const billing_company = computed(() => billing_details.company || 'Summit Inc.')
 const invoice_items = computed(() =>
 	selected_checkout_items.value.map((item) => ({
 		id: item.id,
-		label: `${item.product.name} / ${sizeDimOnly(item.sizeLabel)}`,
+		label: `${t(`product.items.${item.product.id}.name`)} / ${sizeDimOnly(item.sizeLabel)}`,
 		qty: item.qty.toLocaleString(),
 		amount: formatPrice(item.total),
 	}))

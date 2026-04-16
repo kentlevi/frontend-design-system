@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useCartPageList } from '~/composables/cart/page/useCartPageList';
+const { t } = useI18n();
 
 const {
 	rows,
@@ -90,7 +91,7 @@ const emit = defineEmits<{
 						>
 							<img
 								:src="row.artworkPreviewUrl || row.product.image"
-								:alt="row.product.name"
+								:alt="t(`product.items.${row.product.id}.name`)"
 								class="cart-item-thumb-image"
 							>
 							<span
@@ -102,7 +103,7 @@ const emit = defineEmits<{
 							</span>
 						</button>
 						<div class="cart-item-copy">
-							<h3 class="cart-item-title">{{ row.product.name }}</h3>
+							<h3 class="cart-item-title">{{ t(`product.items.${row.product.id}.name`) }}</h3>
 							<p class="cart-item-size">{{ $t('cart.cartPage.sizeLabel', { size: sizeDimOnly(row.sizeLabel) }) }}</p>
 							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row.id)">
 								{{ getArtworkActionLabel(Boolean(row.artworkPreviewUrl)) }}

@@ -8,6 +8,7 @@ const {
 	selected_id,
 	selectProduct,
 } = useProductExperience();
+const { t } = useI18n();
 
 type StageProduct = {
 	id: string;
@@ -44,12 +45,12 @@ const category_products = computed<StageProduct[]>(() =>
 					<img
 						v-if="product.image"
 						:src="product.image"
-						:alt="product.name"
+						:alt="t(`product.items.${product.id}.name`)"
 						class="product-picker-image"
 					>
 				</div>
 				<div class="product-picker-meta">
-					<h4 class="product-picker-name">{{ product.name }}</h4>
+					<h4 class="product-picker-name">{{ t(`product.items.${product.id}.name`) }}</h4>
 				</div>
 			</button>
 		</nav>

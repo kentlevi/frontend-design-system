@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AccountPointRank } from '~/types/account/points';
+const { t } = useI18n();
 
 const props = defineProps<{
 	modelValue: boolean;
@@ -18,7 +19,7 @@ function handleModelValueChange(value: boolean) {
 <template>
 	<UiModal
 		:model-value="props.modelValue"
-		title="Ranking System"
+		:title="t('account.points.ranking.title')"
 		align="center"
 		width="1440px"
 		padding="0"
@@ -62,14 +63,14 @@ function handleModelValueChange(value: boolean) {
 						</div>
 
 						<div class="account-points-ranking-card-section">
-							<h4 class="account-points-ranking-card-label">Perks:</h4>
+							<h4 class="account-points-ranking-card-label">{{ t('account.points.ranking.perksLabel') }}</h4>
 							<ul class="account-points-ranking-card-list">
 								<li v-for="perk in rank.perks" :key="perk">{{ perk }}</li>
 							</ul>
 						</div>
 
 						<div class="account-points-ranking-card-section">
-							<h4 class="account-points-ranking-card-label">Level Up Bonus Gift:</h4>
+							<h4 class="account-points-ranking-card-label">{{ t('account.points.ranking.levelUpBonusLabel') }}</h4>
 							<ul class="account-points-ranking-card-list">
 								<li v-for="gift in rank.level_up_bonus_gifts" :key="gift">{{ gift }}</li>
 							</ul>

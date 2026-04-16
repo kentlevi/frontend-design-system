@@ -10,6 +10,7 @@
             "uploadNewPhoto": "Upload New Photo",
             "uploadPhoto": "Upload Photo",
             "photoUploadSuccess": "Profile photo uploaded successfully.",
+            "invalidFileType": "File type is invalid",
             "delete": "Delete",
             "first_name": "First Name",
             "last_name": "Last Name",
@@ -56,6 +57,19 @@
             "millimeter": "millimeter",
             "inch": "inch",
             "signOut": "Sign Out",
+            "change": "Change",
+            "socialLoginLinked": "This account is linked to your {provider} login.",
+            "emailChange": {
+                "title": "Email Change",
+                "description": "Enter your new email address and click the \"Confirm\" button to proceed.",
+                "placeholder": "Please enter your new email address.",
+                "confirm": "Confirm",
+                "closeModal": "Close email change modal",
+                "enterNewEmail": "Please enter your new email address.",
+                "verifyingTitle": "Verifying Your Information...",
+                "verifyingDescription": "Just a moment! We're making sure everything looks perfect."
+            },
+            "photoDeleteConfirm": "Are you sure you want to delete this photo?",
             
             "given_name": "First Name",
             "family_name": "Last Name"

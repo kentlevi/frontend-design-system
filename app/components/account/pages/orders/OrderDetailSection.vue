@@ -22,6 +22,10 @@ const {
 	hide_upload_toast,
 	handle_upload_submit,
 } = useOrderDetailSection(toRef(props, 'order'));
+
+function resolveOrderText(value: string) {
+	return value.startsWith('account.') ? t(value) : value;
+}
 </script>
 
 <template>
@@ -86,7 +90,7 @@ const {
 							{{ t(`account.orders.${order.paymentStatusKey}`) }}
 						</UiBadge>
 						<span class="account-orders-payment-method">
-							{{ t('account.orders.paymentMethod', { method: order.paymentMethodLabel }) }}
+							{{ t('account.orders.paymentMethod', { method: resolveOrderText(order.paymentMethodLabel) }) }}
 						</span>
 					</div>
 				</article>

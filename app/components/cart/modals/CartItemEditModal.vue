@@ -18,6 +18,10 @@ const modal_title = computed(() =>
 		? t('cart.cartPreview.editModal.sizeOnlyTitle')
 		: t('cart.cartPreview.editModal.title')
 );
+const active_item_product_name = computed(() => {
+	const product_id = active_item.value?.product.id;
+	return product_id ? t(`product.items.${product_id}.name`) : '';
+});
 
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
 const size_dropdown_ref = ref<HTMLElement | null>(null);
@@ -252,7 +256,7 @@ watch(
 				<div class="cart-item-edit-modal-thumb">
 					<img
 						:src="formatImage(active_item)"
-						:alt="active_item.artwork_file_name ?? active_item.product.name"
+						:alt="active_item.artwork_file_name ?? active_item_product_name"
 						class="cart-item-edit-modal-image"
 					>
 				</div>

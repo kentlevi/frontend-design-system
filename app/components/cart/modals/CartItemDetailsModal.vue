@@ -22,7 +22,11 @@ const local_artwork_size_label = ref('');
 const local_artwork_preview_url = ref('');
 const local_special_instructions = ref('');
 const { t } = useI18n();
-const display_item_name = computed(() => local_artwork_name.value || props.item?.product.name || '');
+const display_item_name = computed(() => {
+	if (local_artwork_name.value) return local_artwork_name.value;
+	const product_id = props.item?.product.id;
+	return product_id ? t(`product.items.${product_id}.name`) : '';
+});
 const display_item_image = computed(() => local_artwork_preview_url.value || props.item?.product.image || '');
 
 const file_extension_label = computed(() => {
