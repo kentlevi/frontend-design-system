@@ -2,8 +2,6 @@ import { useUserAddressStore } from "~/stores/user-address"
 import type { AddressFormMap, AddressItem, AddressLineForm, AddressType } from "~/types/user-address"
 
 export function useAddressHelper() {
-	const address_store = useUserAddressStore()
-
 	/** Check whether the form supports address lines */
 	function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
 		return form.type !== 'drop'
@@ -34,6 +32,8 @@ export function useAddressHelper() {
 	}
 
 	function getAddressListByType(type: AddressType) {
+		const address_store = useUserAddressStore()
+
 		if (type === 'shipping') return address_store.shipping_address
 		if (type === 'billing') return address_store.billing_address
 		return address_store.drop_address
