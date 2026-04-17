@@ -31,8 +31,8 @@ export function useBillingAddress() {
 	async function setBillingAddress() {
 		if (billing_address.value.length === 0) await loadAddresses('billing')
 
-		if (checkout_store.selected_drop_address_id) {
-			assignAddressToForm('billing', checkout_store.selected_drop_address_id)
+		if (checkout_store.selected_billing_address_id) {
+			assignAddressToForm('billing', checkout_store.selected_billing_address_id)
 			return
 		}
 
