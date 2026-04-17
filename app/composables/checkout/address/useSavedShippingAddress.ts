@@ -4,6 +4,7 @@ import { mapAddressToForm } from "~/factories/address";
 import { useAddressFieldStore } from "~/stores/user-address";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { loadAddresses } from "~/services/user-address/user-address.service";
+import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useSavedShippingAddress() {
 
@@ -14,6 +15,7 @@ export function useSavedShippingAddress() {
 	/** Contexts */
 	const { shipping_address } = useAddressBookListCheckoutContext()
 	const { shipping_form } = useAddressFormCheckoutContext()
+	const { is_shipping_address_modal_open } = useAddressGeneralUICheckoutContext()
 
 	async function initShippingAddress() {
 		if (shipping_address.value.length === 0) await loadAddresses('shipping')
@@ -32,6 +34,7 @@ export function useSavedShippingAddress() {
 	})
 
 	return {
-		shipping_form
+		shipping_form,
+		is_shipping_address_modal_open,
 	}
 }

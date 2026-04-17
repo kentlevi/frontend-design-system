@@ -52,7 +52,6 @@ export function useCheckoutExperience() {
 	} = useCheckoutTooltipState();
 
 	// Modal States expected by the template
-	const is_shipping_address_modal_open = ref(false)
 	const is_accredited_banks_modal_open = ref(false);
 
 	const field_validation_by_key = checkoutFieldValidation;
@@ -87,7 +86,6 @@ export function useCheckoutExperience() {
 		is_login_modal_open,
 		email_tooltip_open,
 		points_tooltip_open,
-		is_shipping_address_modal_open,
 		is_accredited_banks_modal_open,
 
 		// UI Methods

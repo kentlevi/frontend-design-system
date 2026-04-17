@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useAddressHelper } from '~/utils/address';
 
 const {
-	shipping_form
+	shipping_form,
+	is_shipping_address_modal_open,
 } = useSavedShippingAddress()
 
 const {
@@ -13,10 +13,6 @@ const {
 	getAddressLine1,
 	getAddressLine2
 } = useAddressHelper()
-
-const {
-	is_shipping_address_modal_open,
-} = useCheckoutExperienceFeatureContext();
 
 const { t } = useI18n();
 
