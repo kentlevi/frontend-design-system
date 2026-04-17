@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import CheckoutAddressSelectModal from '~/components/checkout/modals/CheckoutAddressSelectModal.vue';
-import type { MemberDropShippingAddress } from '~/types/checkout';
 
 const props = defineProps<{
-	modelValue: boolean;
-	addresses: MemberDropShippingAddress[];
+	modelValue: Ref<boolean>;
 	selectedAddressId: string;
 }>();
 

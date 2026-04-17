@@ -13,18 +13,6 @@ export type CheckoutItem = {
 	artworkPreviewUrl: string;
 };
 
-export type MemberAddress = {
-	id: string;
-	recipient: string;
-	phone?: string;
-	line1: string;
-	line2: string;
-	company?: string;
-	label?: string;
-	isDefault?: boolean;
-	badgeLabel?: string;
-};
-
 export type CheckoutResponseData = {
 	order?: {
 		id:number

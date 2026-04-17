@@ -9,6 +9,9 @@ export function useAddressGeneralUI() {
 		toggleBillingTooltip,
 	} = useCheckoutTooltipState()
 
+	/** Shipping */
+	const is_shipping_address_modal_open = ref(false)
+
 	/** Drop Shipping  */
 	const drop_shipping_enabled = ref(false);
 	const is_drop_shipping_address_modal_open = ref(false);
@@ -29,6 +32,15 @@ export function useAddressGeneralUI() {
 
 	return {
 		/**
+         * Shipping
+         */
+
+		/** Variables */
+		is_shipping_address_modal_open,
+
+
+
+		/**
          * Drop Shipping
          */
 
@@ -39,6 +51,8 @@ export function useAddressGeneralUI() {
 
 		/** Functions */
 		toggleDropShippingTooltip,
+
+
 
 		/**
          * Billing

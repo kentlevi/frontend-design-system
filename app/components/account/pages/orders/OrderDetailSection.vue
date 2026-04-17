@@ -165,7 +165,12 @@ function resolveOrderText(value: string) {
 						:class="line.className"
 					>
 						<span class="account-orders-total-label">
-							{{ t(`account.orders.summary.${line.key}`, line.params || {}) }}
+							{{ t(
+								line.key === 'total'
+									? 'account.orders.summary.finalTotal'
+									: `account.orders.summary.${line.key}`,
+								line.params || {}
+							) }}
 						</span>
 						<strong class="account-orders-total-value">{{ line.value }}</strong>
 					</div>

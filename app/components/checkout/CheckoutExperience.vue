@@ -51,9 +51,14 @@
 
 	<!-- Modals -->
 	<CheckoutLoginModal v-model="is_login_modal_open" />
-	<CheckoutMemberShippingAddressModal v-model="is_shipping_address_modal_open" :addresses="saved_shipping_addresses" :selected-address-id="selected_shipping_address_id" @select="selected_shipping_address_id = $event" />
-	<CheckoutMemberDropShippingAddressModal v-model="is_drop_shipping_address_modal_open" :addresses="drop_shipping_addresses" :selected-address-id="selected_drop_shipping_address_id" @select="selected_drop_shipping_address_id = $event" />
-	<CheckoutMemberBillingAddressModal v-model="is_billing_address_modal_open" :addresses="billing_addresses" :selected-address-id="selected_billing_address_id" @select="selected_billing_address_id = $event" />
+	<CheckoutAddressSelectModal
+		:title="t('checkout.member.addressSelection.shippingTitle')"
+		:copy="t('checkout.member.addressSelection.shippingDescription')"
+		variant="shipping"
+		:confirm-label="t('checkout.member.addressSelection.selectAddress')"
+	/>
+	<!-- <CheckoutMemberDropShippingAddressModal v-model="address_general_ui.is_drop_shipping_address_modal_open" :selected-address-id="selected_drop_shipping_address_id" @select="selected_drop_shipping_address_id = $event" />
+	<CheckoutMemberBillingAddressModal v-model="address_general_ui.is_billing_address_modal_open" :selected-address-id="selected_billing_address_id" @select="selected_billing_address_id = $event" /> -->
 	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
 </template>
 
@@ -68,7 +73,6 @@ import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.
 import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
 import CheckoutMemberBillingAddressModal from '~/components/checkout/modals/CheckoutMemberBillingAddressModal.vue';
 import CheckoutMemberDropShippingAddressModal from '~/components/checkout/modals/CheckoutMemberDropShippingAddressModal.vue';
-import CheckoutMemberShippingAddressModal from '~/components/checkout/modals/CheckoutMemberShippingAddressModal.vue';
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
@@ -78,6 +82,7 @@ import { useAddressBookList } from '~/composables/account/addressBook/useAddress
 import { provideAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
 import { provideAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import { useAddressGeneralUI } from '~/composables/checkout/address/useAddressGeneralUI';
+import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
 
 /** Standalone address context (isolated from checkout_experience) */
 const address_checkout_form_state = useAddressFormState();
@@ -86,7 +91,7 @@ provideAddressFormCheckoutContext(address_checkout_form_state);
 const address_checkout_book_list_state = useAddressBookList()
 provideAddressBookListCheckoutContext(address_checkout_book_list_state)
 
-const address_general_ui= useAddressGeneralUI()
+const address_general_ui = useAddressGeneralUI()
 provideAddressGeneralUICheckoutContext(address_general_ui)
 
 const checkout_experience = useCheckoutExperience();
@@ -107,19 +112,8 @@ const {
 
 	// Identifiers & UI State
 	is_login_modal_open,
-	is_drop_shipping_address_modal_open,
 	is_accredited_banks_modal_open,
-	is_billing_address_modal_open,
-	is_shipping_address_modal_open,
 
-
-	// Member Specifics (Available via spread)
-	saved_shipping_addresses,
-	selected_shipping_address_id,
-	drop_shipping_addresses,
-	selected_drop_shipping_address_id,
-	billing_addresses,
-	selected_billing_address_id,
 } = checkout_experience;
 
 provideCheckoutExperienceFeatureContext(checkout_experience);

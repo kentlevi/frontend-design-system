@@ -10,6 +10,7 @@ const props = withDefaults(
 	defineProps<{
 		modelValue: boolean;
 		email?: string;
+		showEmailInMessage?: boolean;
 		code?: string;
 		error?: string;
 		resendLimitReached?: string;
@@ -28,6 +29,7 @@ const props = withDefaults(
 	}>(),
 	{
 		email: '',
+		showEmailInMessage: true,
 		code: '',
 		error: '',
 		resendLimitReached: '',
@@ -175,7 +177,9 @@ const formatted_error_parts = computed(() => {
 					</h3>
 					<p class="auth-verification-text">
 						{{ t(`${translation_key}.messagePrefix`) }}
-						<strong class="auth-verification-email">{{ email }}</strong>{{ t(`${translation_key}.messageSuffix`) }}
+						<template v-if="showEmailInMessage">
+							<strong class="auth-verification-email">{{ email }}</strong>
+						</template>{{ t(`${translation_key}.messageSuffix`) }}
 					</p>
 				</div>
 			</div>

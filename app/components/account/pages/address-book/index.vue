@@ -328,7 +328,7 @@ function skipDefaultShippingSelection() {
 								class="account-address-book-empty-state-description"
 							>
 								<template #action>
-									<strong>"{{ translate('account.addressBook.addAddressLabel') }}"</strong>
+									<strong>{{ translate('account.addressBook.addAddressLabel') }}</strong>
 								</template>
 							</i18n-t>
 						</div>

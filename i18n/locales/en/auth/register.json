@@ -6,6 +6,7 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "optional": "Optional",
+      "lastNameOptionalLabel": "Last Name (Optional)",
       "enterFirstName": "Enter First Name",
       "enterLastName": "Enter Last Name",
       "email": "Email Address",

@@ -57,7 +57,7 @@ const {
 						:id="inputId"
 						v-model="contact_name_model"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="translate('account.addressBook.fullNamePlaceholder')"
+						:placeholder="translate(resolvePlaceholderKey('fullNamePlaceholder'))"
 						:state="getFieldError(props.form.type, 'contact_name') ? 'error' : 'default'"
 					/>
 				</template>

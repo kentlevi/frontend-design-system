@@ -177,6 +177,14 @@ function getSelectedProductBlurb() {
 	return t(`product.items.${selected_id.value}.blurb`);
 }
 
+function getProductStoryValue(row: 'row1' | 'row2' | 'row3', field: 'title' | 'text', fallback: string) {
+	if (!selected_id.value) return fallback;
+
+	const override_key = `product.story.productModeByProduct.${selected_id.value}.${row}.${field}`;
+	const override_value = t(override_key);
+	return override_value === override_key ? fallback : override_value;
+}
+
 const story_rows = computed<StoryRow[]>(() => {
 	const navigation_rows = (navigation_story_rows_by_category[category.value] || []).map((row) => ({
 		...row,
@@ -188,13 +196,13 @@ const story_rows = computed<StoryRow[]>(() => {
 	const blurb = getSelectedProductBlurb();
 	return [
 		{
-			title: t('product.story.productMode.row1.title', { name }),
-			text: t('product.story.productMode.row1.text', { blurb }),
+			title: getProductStoryValue('row1', 'title', t('product.story.productMode.row1.title', { name })),
+			text: getProductStoryValue('row1', 'text', t('product.story.productMode.row1.text', { blurb })),
 			media: getDefaultProductStoryMedia(0),
 		},
 		{
-			title: t('product.story.productMode.row2.title', { name }),
-			text: t('product.story.productMode.row2.text', { blurb }),
+			title: getProductStoryValue('row2', 'title', t('product.story.productMode.row2.title', { name })),
+			text: getProductStoryValue('row2', 'text', t('product.story.productMode.row2.text', { blurb })),
 			reverse: true,
 			media: getDefaultProductStoryMedia(1),
 		},

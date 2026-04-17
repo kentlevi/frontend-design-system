@@ -6,7 +6,7 @@
                     "title": "상품 검색",
                     "placeholder": "스티커를 검색해보세요",
                     "clear": "검색어 지우기",
-                    "suggestedTerm": "스티커",
+                    "suggestedTerm": "다이컷 스티커",
                     "noRecent": {
                         "title": "최근 검색 내역이 없습니다",
                         "textPrefix": "스티커 상품을 둘러보세요 - 예를 들어"
@@ -17,8 +17,28 @@
                     },
                     "recent": {
                         "title": "최근 검색어",
-                        "clearAll": "모두 지우기",
+                        "clearAll": "전체 삭제",
                         "remove": "최근 검색어 삭제"
+                    },
+                    "productNames": {
+                        "circle-sticker": "원형 스티커",
+                        "rectangle-sticker": "직사각형 스티커",
+                        "square-sticker": "정사각형 스티커",
+                        "oval-sticker": "타원형 스티커",
+                        "rounded-sticker": "둥근 사각 스티커",
+                        "clear-sticker": "투명 스티커",
+                        "vinyl-lettering": "레터링 스티커",
+                        "die-cut-roll": "다이컷 롤 스티커",
+                        "clear-roll": "투명 롤 스티커",
+                        "circle-roll": "원형 롤 스티커",
+                        "square-roll": "정사각형 롤 스티커",
+                        "rectangle-roll": "직사각형 롤 스티커",
+                        "oval-roll": "타원형 롤 스티커",
+                        "paper-roll": "종이 롤 스티커",
+                        "die-cut-sheet": "다이컷 시트 스티커",
+                        "circle-sheet": "원형 시트 스티커",
+                        "oval-sheet": "타원형 시트 스티커",
+                        "rounded-sheet": "둥근 사각 시트 스티커"
                     },
                     "footer": {
                         "navigate": "이동",
