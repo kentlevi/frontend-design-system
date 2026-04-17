@@ -70,13 +70,11 @@ export const useQuoteService = (_caller : string) => {
 		attribute_store.updateFonts(f)
 	}
 
-	const bindPrices = (data : PricingResponse) => {
-		console.log(data)
+	const bindPrices = async (data : PricingResponse) => {
 		attribute_store.updateQuantites(data.prices)
 
 		selection_store.updateVariantID(data.product_variant_id)
 	}
-
 
 
 

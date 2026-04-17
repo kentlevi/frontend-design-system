@@ -37,13 +37,6 @@ export const useQuoteSection = () => {
 
 	const custom_size = ref<SizeSpec>(lettering_service.default_size_spec.value)
 
-	const lettering_size = ref<SizeSpec>({
-		width: 208,
-		height: 33,
-		custom: false,
-		label: 'test',
-		src: 'test',
-	})
 
 	const custom_quantity = ref<QuantitySpec>({
 		custom: true,
@@ -70,6 +63,7 @@ export const useQuoteSection = () => {
 		quote_service.isLoadingFeatures(true)
 		quote_service.updateNavigationFlight(true)
 		quote_service.isPricingReady(false)
+
 		try {
 			// Request data from API
 			const requested_featured_data = await quote_api_service.getFeaturedData(url_slug)
@@ -102,15 +96,32 @@ export const useQuoteSection = () => {
 
 		// Existing attributes that was selected in previous products
 		const existing_attr = quote_service.recent_selection.value
-		console.log('Existing-attr:', existing_attr)
 
 		if( current_url_slug.value) {
-
 			if( existing_attr )
 				prepareUsingExistingAttr(existing_attr)
 			else
 				prepareDefaultAttr()
 		}
+	}
+
+	const definePrices = async () => {
+		if( !current_url_slug.value )
+			return
+
+		const prices = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
+			width	: size_service.src.value?.width,
+			height	: size_service.src.value?.height,
+			color_id: color_service.src.value?.id,
+			font_id	: font_service.src.value?.id,
+		} as PricingParameters)
+
+		if( !prices ) {
+			console.warn('Unable to retrieve prices.')
+			return
+		}
+
+		await quote_service.bindPrices(prices)
 	}
 
 	// Preparing the default data of each attribute
@@ -119,55 +130,47 @@ export const useQuoteSection = () => {
 			return
 
 		if( quote_service.has_color_selection.value && color_service.collection.value.length && color_service.collection.value[0])
-			color_service.applyDefault(color_service.collection.value[0])
+			color_service.assignDefault(color_service.collection.value[0])
 
 		if( quote_service.has_font_selection.value && font_service.collection.value.length && font_service.collection.value[0])
-			font_service.applyDefault(font_service.collection.value[0])
+			font_service.assignDefault(font_service.collection.value[0])
 
 
 		/** Lettering default size */
 		if( quote_service.has_lettering_editor.value )
-			size_service.applyDefault(lettering_service.default_size_spec.value)
+			size_service.assignDefault(lettering_service.default_size_spec.value)
 		/** Product default size */
 		else if( size_service.collection?.value?.length && size_service.collection.value[0])
-			size_service.applyDefault(size_service.collection.value[0])
+			size_service.assignDefault(size_service.collection.value[0])
 
 
-		const prices = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
-			width: size_service.src.value?.width,
-			height: size_service.src.value?.height,
-			color_id: color_service.src.value?.id,
-			font_id: font_service.src.value?.id,
-		} as PricingParameters)
-
-		if( !prices ) {
-			console.warn('Unable to retrieve prices.')
-			return
-		}
-
-		quote_service.bindPrices(prices)
+		await definePrices()
 	}
 
 	// Prepare using the exisintg selection of attributes
-	const prepareUsingExistingAttr = (existing_attr : AttributeSelection) => {
+	const prepareUsingExistingAttr = async (existing_attr : AttributeSelection) => {
 		const using_lettering_editor = quote_service.has_lettering_editor.value;
 		// If current product is using a lettering editor
 		if( using_lettering_editor ) {
 			if( existing_attr.lettering_text )
-				lettering_service.applyDefault(existing_attr.lettering_text)
+				lettering_service.assignDefault(existing_attr.lettering_text)
 
 			if( existing_attr.size.width && existing_attr.size.height )
 				custom_size.value = existing_attr.size
 			else
 				custom_size.value = lettering_service.default_size_spec.value
 
-			size_service.applyDefault({ ...custom_size.value, src: 'quote-section-default' })
+			size_service.assignDefault({ ...custom_size.value, src: 'quote-section-default' })
 		} else {
-			size_service.applyDefault({ ...existing_attr.size, src: 'quote-section-existing-attr'})
+			size_service.assignDefault({ ...existing_attr.size, src: 'quote-section-existing-attr'})
 		}
 
-		font_service.applyDefault(existing_attr.font ?? null)
-		color_service.applyDefault(existing_attr.color ?? null)
+		font_service.assignDefault(existing_attr.font ?? null)
+		color_service.assignDefault(existing_attr.color ?? null)
+
+		await definePrices()
+
+		quantity_service.ap
 	}
 
 	/** ✅ Color on click and change */
@@ -181,8 +184,15 @@ export const useQuoteSection = () => {
 	}
 
 
-	// ⚠️ Watching the changes of size from other component
+	// ⚠️ Watching the changes of size
 	watch(() => size_service.src, (new_size) => {
+
+		if( !new_size || !new_size?.value )
+			return
+
+		console.log(new_size.value.src)
+
+		//from other component
 		// Only if the lettering editor is active
 		// The changes of text in Vinyl Lettering editor will trigger this
 		if( quote_service.has_lettering_editor.value && new_size && new_size.value ) {
@@ -228,7 +238,6 @@ export const useQuoteSection = () => {
 		custom_qty_input,
 		custom_width_input,
 		is_vinylsize_focused,
-		lettering_size,
 
 		// 🔥 Methods
 		prepareComponent,

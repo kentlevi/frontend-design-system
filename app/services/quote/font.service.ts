@@ -21,7 +21,7 @@ export const useFontService = (caller: string) => {
 
 	const src = computed<FontSpec | null>(() => attributes_store.product_w_font && selection_store?.font ? selection_store?.font : default_src.value )
 
-	const applyDefault = (font: FontSpec | null) => {
+	const assignDefault = (font: FontSpec | null) => {
 		selection_store.updateFont(font, true)
 	}
 
@@ -41,7 +41,7 @@ export const useFontService = (caller: string) => {
 		active: attributes_store.product_w_font,
 
 		// 🔥 Methods
-		applyDefault,
+		assignDefault,
 		update,
 		updateCollection,
 	}

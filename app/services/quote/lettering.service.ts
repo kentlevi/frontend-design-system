@@ -21,7 +21,7 @@ export const useLetteringService = (caller: string) => {
 	const text = computed(() => selection_store.lettering_text)
 
 
-	const applyDefault = (text: string) => {
+	const assignDefault = (text: string) => {
 		selection_store.updateLetteringText(text, true)
 	}
 
@@ -40,7 +40,7 @@ export const useLetteringService = (caller: string) => {
 		preview_ready: selection_store.lettering_preview_ready,
 
 		// 🔥 Methods
-		applyDefault,
+		assignDefault,
 		update,
 		updateLetteringPreviewFlag: selection_store.updateLetteringPreviewFlag
 	}

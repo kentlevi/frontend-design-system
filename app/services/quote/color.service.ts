@@ -22,7 +22,7 @@ export const useColorService = (caller: string) => {
 		return attributes_store.colors ?? []
 	})
 
-	const applyDefault = (selected_color: ColorSpec | null) => {
+	const assignDefault = (selected_color: ColorSpec | null) => {
 		selection_store.updateColor(selected_color, true)
 	}
 
@@ -42,7 +42,7 @@ export const useColorService = (caller: string) => {
 		collection,
 
 		// 🔥 Methods
-		applyDefault,
+		assignDefault,
 		update,
 		updateCollection,
 	}

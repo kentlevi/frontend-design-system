@@ -11,7 +11,7 @@ export const useSizeService = (caller: string) => {
 
 	const src = computed(() => selection_store.size)
 
-	const applyDefault = (selected_size: SizeSpec) => {
+	const assignDefault = (selected_size: SizeSpec) => {
 		if( selected_size && selected_size.custom && collection && collection.value ) {
 			const matched_size = collection.value.find(e => e.width == selected_size.width &&  e.height == selected_size.height)
 
@@ -49,7 +49,7 @@ export const useSizeService = (caller: string) => {
 		collection,
 
 		// 🔥 Methods
-		applyDefault,
+		assignDefault,
 		update,
 		updateCollection,
 	}

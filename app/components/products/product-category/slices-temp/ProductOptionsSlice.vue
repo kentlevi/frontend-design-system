@@ -41,8 +41,6 @@ const {
 	inputUpdateCustomSize,
 	inputUpdateQuantity,
 	inputUpdateCustomQuantity,
-	letteringWidthUpdate,
-	letteringHeightUpdate,
 } = useProductExperience();
 
 const { t } = useI18n();
@@ -124,7 +122,6 @@ const {
 	is_loading_features,
 	has_font_selection,
 	is_pricing_ready,
-	lettering_size,
 	prepareComponent,
 	updateColor,
 	updateCustomSize,
