@@ -32,7 +32,6 @@ export function useAddressGeneralUI() {
 	}
 
 	function openSelectAddressModal(type: AddressType) {
-		console.log('tseyrsr');
 		active_address_type.value = type
 		is_select_address_modal_open.value = true
 	}
@@ -45,6 +44,7 @@ export function useAddressGeneralUI() {
 
 		/** Variables */
 
+		/** Functions */
 
 
 		/**

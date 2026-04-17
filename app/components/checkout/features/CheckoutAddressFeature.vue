@@ -5,6 +5,7 @@ import SavedAddress from '../address/SavedShippingAddress.vue';
 import DropShippingAddress from '../address/DropShippingAddress.vue';
 import { useCheckoutAddressFeature } from '../../../composables/checkout/address/useCheckoutAddressFeature';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
+import { useAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
 
 const {
 	translate,
@@ -22,13 +23,15 @@ const {
 } = useCheckoutAddressFeature()
 
 const {	openSelectAddressModal } = useSavedShippingAddress()
+
+const {	has_shipping_addresses } = useAddressBookListCheckoutContext()
 </script>
 
 <template>
 	<section class="checkout-member-section">
 		<div class="checkout-member-shipping-group">
 			<div class="checkout-member-address-group">
-				<div v-if="is_member" class="checkout-member-radio-row">
+				<div v-if="is_member && has_shipping_addresses" class="checkout-member-radio-row">
 					<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 						{{ translate('checkout.member.myShippingAddress') }}
 					</UiRadio>
@@ -47,7 +50,7 @@ const {	openSelectAddressModal } = useSavedShippingAddress()
 						@after-leave="afterLeave"
 					>
 						<SavedAddress
-							v-if="is_member && !ship_to_another_address"
+							v-if="is_member && !ship_to_another_address && has_shipping_addresses"
 							key="saved-address"
 							class="checkout-member-shipping-panel"
 						/>
@@ -60,7 +63,7 @@ const {	openSelectAddressModal } = useSavedShippingAddress()
 				</div>
 			</div>
 
-			<UiRadio v-if="is_member && !ship_to_another_address" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
+			<UiRadio v-if="is_member && !ship_to_another_address && has_shipping_addresses" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
 				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 

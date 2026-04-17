@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useCheckoutAddressSelectModal } from '~/composables/checkout/address/useCheckoutAddressSelectModal';
-import type { AddressItem, AddressType } from '~/types/user-address';
+import type { AddressItem } from '~/types/user-address';
 
 const props = withDefaults(defineProps<{
 	title: string;
 	copy?: string;
-	variant: AddressType;
 	confirmLabel?: string;
 }>(), {
 	copy: '',
@@ -15,6 +14,7 @@ const props = withDefaults(defineProps<{
 const {
 	translate,
 
+	active_address_type,
 	is_select_address_modal_open,
 	pending_selected_address_id,
 	addresses,
@@ -28,14 +28,14 @@ const {
 
 
 function getDefaultBadgeLabel(address: AddressItem) {
-	if (props.variant === 'shipping') return translate('checkout.member.addressSelection.defaultShipping');
-	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || translate('checkout.member.addressSelection.defaultBilling');
+	if (active_address_type.value === 'shipping') return translate('checkout.member.addressSelection.defaultShipping');
+	if (active_address_type.value === 'billing') return ('badgeLabel' in address && address.badgeLabel) || translate('checkout.member.addressSelection.defaultBilling');
 	return translate('checkout.member.addressSelection.defaultDropShipping');
 }
 
 function getDefaultBadgeIcon() {
-	if (props.variant === 'shipping') return 'strong-ship'
-	if (props.variant === 'billing') return 'strong-file-dollar'
+	if (active_address_type.value === 'shipping') return 'strong-ship'
+	if (active_address_type.value === 'billing') return 'strong-file-dollar'
 	return 'strong-box-full'
 }
 </script>
@@ -102,8 +102,8 @@ function getDefaultBadgeIcon() {
 							</div>
 						</div>
 
-						<div class="checkout-address-select-modal-card-body" :data-variant="props.variant">
-							<template v-if="props.variant === 'shipping'">
+						<div class="checkout-address-select-modal-card-body" :data-variant="active_address_type">
+							<template v-if="active_address_type === 'shipping'">
 								<div v-if="shippingPhoneNumber(address)" class="checkout-address-select-modal-row">
 									<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" decorative />
 									<p class="checkout-address-select-modal-line checkout-address-select-modal-line--strong">
@@ -133,7 +133,7 @@ function getDefaultBadgeIcon() {
 								</div>
 							</template>
 
-							<template v-else-if="props.variant === 'billing'">
+							<template v-else-if="active_address_type === 'billing'">
 								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split">
 									<div class="checkout-address-select-modal-lines checkout-address-select-modal-lines--stacked">
 										<p class="checkout-address-select-modal-line">{{ 'line1' in address ? address.line1 : '' }}</p>

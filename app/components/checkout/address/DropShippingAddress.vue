@@ -15,6 +15,7 @@ const {
 	drop_shipping_ship_to_another_address,
 	drop_shipping_tooltip_open,
 	drop_shipping_mode_swap_wrapper_ref,
+	has_drop_addresses,
 
 	getAddressTagClass,
 	toggleDropShippingTooltip,
@@ -56,7 +57,7 @@ const {
 	<div ref="drop_shipping_swap_wrapper_ref" class="checkout-member-drop-shipping-swap-wrap">
 		<CheckoutTransition>
 			<div v-if="drop_shipping_enabled" data-drop-shipping-panel="form" class="checkout-member-drop-shipping-form">
-				<template v-if="is_member">
+				<template v-if="is_member && has_drop_addresses">
 					<div class="checkout-member-address-group">
 						<div class="checkout-member-radio-row">
 							<UiRadio

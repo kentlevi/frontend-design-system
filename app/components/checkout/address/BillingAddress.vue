@@ -17,6 +17,7 @@ const {
 	billing_use_different_address,
 	use_shipping_as_billing,
 	billing_tooltip_open,
+	has_billing_addresses,
 
 	getAddressTagClass,
 	toggleBillingTooltip,
@@ -58,7 +59,7 @@ const {
 		<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 			<div v-if="!use_shipping_as_billing" data-billing-panel="content" class="checkout-member-billing-panel">
 				<div class="checkout-member-billing-group">
-					<div v-if="is_member" class="checkout-member-radio-row">
+					<div v-if="is_member && has_billing_addresses" class="checkout-member-radio-row">
 						<UiRadio
 							v-model="billing_use_different_address"
 							:value="false"
@@ -75,7 +76,7 @@ const {
 
 					<div ref="billing_mode_swap_wrapper_ref" class="checkout-member-drop-shipping-mode-swap-wrap">
 						<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
-							<div v-if="!billing_use_different_address && is_member" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
+							<div v-if="!billing_use_different_address && is_member && has_billing_addresses" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
 									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="openSelectAddressModal('billing')">
 										<div class="checkout-member-address-top">
@@ -127,7 +128,7 @@ const {
 								</div>
 							</div>
 							<div v-else key="billing-manual" data-billing-mode-panel="manual-address" class="checkout-member-drop-shipping-mode-panel">
-								<div v-if="is_member" class="checkout-member-address-form-head">
+								<div v-if="is_member && has_billing_addresses" class="checkout-member-address-form-head">
 									<UiRadio
 										v-model="billing_use_different_address"
 										:value="true"

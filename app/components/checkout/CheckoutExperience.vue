@@ -54,11 +54,8 @@
 	<CheckoutAddressSelectModal
 		:title="t('checkout.member.addressSelection.shippingTitle')"
 		:copy="t('checkout.member.addressSelection.shippingDescription')"
-		variant="shipping"
 		:confirm-label="t('checkout.member.addressSelection.selectAddress')"
 	/>
-	<!-- <CheckoutMemberDropShippingAddressModal v-model="address_general_ui.is_drop_shipping_address_modal_open" :selected-address-id="selected_drop_shipping_address_id" @select="selected_drop_shipping_address_id = $event" />
-	<CheckoutMemberBillingAddressModal v-model="address_general_ui.is_billing_address_modal_open" :selected-address-id="selected_billing_address_id" @select="selected_billing_address_id = $event" /> -->
 	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
 </template>
 
@@ -71,8 +68,6 @@ import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPayme
 import CheckoutAddressFeature from '~/components/checkout/features/CheckoutAddressFeature.vue';
 import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.vue';
 import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
-import CheckoutMemberBillingAddressModal from '~/components/checkout/modals/CheckoutMemberBillingAddressModal.vue';
-import CheckoutMemberDropShippingAddressModal from '~/components/checkout/modals/CheckoutMemberDropShippingAddressModal.vue';
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';

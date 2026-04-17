@@ -75,6 +75,7 @@ export function useCheckoutAddressSelectModal() {
 	return {
 		translate,
 
+		active_address_type,
 		addresses,
 		is_select_address_modal_open,
 		pending_selected_address_id,
