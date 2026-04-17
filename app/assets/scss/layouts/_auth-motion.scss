@@ -5,6 +5,11 @@
         var(--auth-shell-enter-delay, 120ms) forwards;
     position: relative;
     z-index: 2;
+
+    .auth-login-card-shell, .auth-register-card-shell {
+        max-width: 588px;
+        width: 100%;
+    }
 }
 
 .auth-illustration-enter {

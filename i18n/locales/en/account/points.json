@@ -1,129 +1,129 @@
 {
-    "account": {
-        "points": {
-            "title": "Points",
-            "tierName": "Bumper Boss",
-            "lastTierUpgrade": "Last Tier Upgrade",
-            "pointsUnit": "points",
-            "pointsSystemTitle": "Points System",
-            "pointsSystemDescription": "Collect and redeem points in our loyalty program to unlock exciting rewards and exclusive perks. Earned points can be used for payment of future purchases.",
-            "questTitle": "The Great Sticker Quest",
-            "questDescription": "Take on quests, earn points, and unlock awesome rewards!",
-            "historyTitle": "Points History",
-            "historyDescription": "Detailed record of all the points you've earned or redeemed through the loyalty program.",
-            "challengesTitle": "Challenges",
-            "viewAll": "View All",
-            "filter": "Filter",
-            "logsTitle": "Logs",
-            "expiry": "Expiry",
-            "nextTierRequirementPrefix": "You’re just",
-            "nextTierRequirementSuffix": "away from unlocking the next loyalty level.",
-            "filters": {
-                "all": "All",
-                "earned": "Earned",
-                "deducted": "Deducted"
-            },
-            "logs": {
-                "pointsEarned": "Points Earned",
-                "pointsUsed": "Points Used",
-                "stickerQuest": "Sticker Quest",
-                "rankLevelUp": "Rank level up"
-            },
-            "ranking": {
-                "title": "Ranking System",
-                "perksLabel": "Perks:",
-                "levelUpBonusLabel": "Level Up Bonus Gift:"
-            },
-            "challenges": {
-                "firstOrderVictory": {
-                    "name": "First Order Victory",
-                    "reward": "Earn 10 points."
-                },
-                "stickerExplorer": {
-                    "name": "Sticker Explorer",
-                    "reward": "Earn 5 points."
-                },
-                "mysteryHunter": {
-                    "name": "Mystery Hunter",
-                    "reward": "Earn 10% discount on your next order."
-                },
-                "speedyCheckout": {
-                    "name": "Speedy Checkout",
-                    "reward": "Get free express shipping."
-                },
-                "reviewMaster": {
-                    "name": "Review Master",
-                    "reward": "Earn 8 points."
-                },
-                "shareYourCreativity": {
-                    "name": "Share Your Creativity",
-                    "reward": "Earn 8 points."
-                },
-                "theRoyalReferral": {
-                    "name": "The Royal Referral",
-                    "reward": "Earn 10 points and a $5 discount."
-                },
-                "frequentBuyer": {
-                    "name": "Frequent Buyer",
-                    "reward": "Earn 10% discount and free express shipping."
-                },
-                "sticktasticAnniversary": {
-                    "name": "Sticktastic Anniversary",
-                    "reward": "Earn 25 points."
-                },
-                "bigSpenderBonus": {
-                    "name": "Big Spender Bonus",
-                    "reward": "Earn $20 discount voucher and 20 points."
-                },
-                "socialSharing": {
-                    "name": "Social Sharing",
-                    "reward": "Earn 5 points."
-                },
-                "charm": {
-                    "name": "Charm",
-                    "reward": "Earn 5 points."
-                }
-            },
-            "ranks": {
-                "rank1": {
-                    "label": "Rank 1",
-                    "name": "MuScout"
-                },
-                "rank2": {
-                    "label": "Rank 2",
-                    "name": "MuLeader"
-                },
-                "rank3": {
-                    "label": "Rank 3 - Current",
-                    "name": "MuBoss"
-                },
-                "rank4": {
-                    "label": "Rank 4",
-                    "name": "MuDynamo"
-                }
-            },
-            "data": {
-                "newlyRegisteredAccount": "Newly Registered Account",
-                "conversionRateLabel": "1 Point = 1 KRW",
-                "rank2SpendRequirement": "720,070원 Total Spent on Completed",
-                "rank3SpendRequirement": "1,440,140원 Total Spent on Completed",
-                "rank4SpendRequirement": "7,200,700원 Total Spent on Completed",
-                "earn05PointOnEveryPurchase": "Earn 0.5% point on every purchase.",
-                "earn1PointOnEveryPurchase": "Earn 1% point on every purchase.",
-                "earn15PointOnEveryPurchase": "Earn 1.5% point on every purchase.",
-                "earn2PointOnEveryPurchase": "Earn 2% point on every purchase.",
-                "earn4PointsJustByRegisteringYourAccount": "Earn 4 points just by registering your account.",
-                "earn8PointsAsRewardForReachingThisTier": "Earn 8 points as reward for reaching this tier.",
-                "earn12PointsAsRewardForReachingThisTier": "Earn 12 points as reward for reaching this tier.",
-                "earn16PointsAsRewardForReachingThisTier": "Earn 16 points as reward for reaching this tier.",
-                "discount7212KrwNextOrderOneTime": "7,212 KRW Discount on next order (1-Time Use)",
-                "discount10NextOrderOneTime": "10% Off Discount on next order (1-Time Use)",
-                "discount15NextOrderOneTime": "15% Off Discount on next order (1-Time Use)",
-                "freeExpressShippingOneTime": "Free Express Shipping (1-Time Use)",
-                "freeExpressShippingUnlimited": "Free Express Shipping (Unlimited Uses)",
-                "freeArtworkRevisions": "Free Artwork Revisions",
-                "doublePointsOneMonth": "Double Points Accumulation for 1 Month"
-            }
+  "account": {
+    "points": {
+      "title": "Points",
+      "tierName": "Bumper Boss",
+      "lastTierUpgrade": "Last Tier Upgrade",
+      "pointsUnit": "points",
+      "pointsSystemTitle": "Points System",
+      "pointsSystemDescription": "Earn and redeem points in our loyalty program for rewards, exclusive perks, and discounts on future purchases.",
+      "questTitle": "The Great Sticker Quest",
+      "questDescription": "Take on quests, earn points, and unlock awesome rewards!",
+      "historyTitle": "Points History",
+      "historyDescription": "Track every point you’ve earned or used in the loyalty program.",
+      "challengesTitle": "Challenges",
+      "viewAll": "View All",
+      "filter": "Filter",
+      "logsTitle": "Logs",
+      "expiry": "Expiry",
+      "nextTierRequirementPrefix": "You’re just",
+      "nextTierRequirementSuffix": "away from unlocking the next loyalty level.",
+      "filters": {
+        "all": "All",
+        "earned": "Earned",
+        "deducted": "Deducted"
+      },
+      "logs": {
+        "pointsEarned": "Points Earned",
+        "pointsUsed": "Points Used",
+        "stickerQuest": "Sticker Quest",
+        "rankLevelUp": "Rank level up"
+      },
+      "ranking": {
+        "title": "Ranking System",
+        "perksLabel": "Perks:",
+        "levelUpBonusLabel": "Level Up Bonus Gift:"
+      },
+      "challenges": {
+        "firstOrderVictory": {
+          "name": "First Order Victory",
+          "reward": "Earn 10 points."
+        },
+        "stickerExplorer": {
+          "name": "Sticker Explorer",
+          "reward": "Earn 5 points."
+        },
+        "mysteryHunter": {
+          "name": "Mystery Hunter",
+          "reward": "Earn 10% discount on your next order."
+        },
+        "speedyCheckout": {
+          "name": "Speedy Checkout",
+          "reward": "Get free express shipping."
+        },
+        "reviewMaster": {
+          "name": "Review Master",
+          "reward": "Earn 8 points."
+        },
+        "shareYourCreativity": {
+          "name": "Share Your Creativity",
+          "reward": "Earn 8 points."
+        },
+        "theRoyalReferral": {
+          "name": "The Royal Referral",
+          "reward": "Earn 10 points and a $5 discount."
+        },
+        "frequentBuyer": {
+          "name": "Frequent Buyer",
+          "reward": "Earn 10% discount and free express shipping."
+        },
+        "sticktasticAnniversary": {
+          "name": "Sticktastic Anniversary",
+          "reward": "Earn 25 points."
+        },
+        "bigSpenderBonus": {
+          "name": "Big Spender Bonus",
+          "reward": "Earn $20 discount voucher and 20 points."
+        },
+        "socialSharing": {
+          "name": "Social Sharing",
+          "reward": "Earn 5 points."
+        },
+        "charm": {
+          "name": "Charm",
+          "reward": "Earn 5 points."
         }
+      },
+      "ranks": {
+        "rank1": {
+          "label": "Rank 1",
+          "name": "MuScout"
+        },
+        "rank2": {
+          "label": "Rank 2",
+          "name": "MuLeader"
+        },
+        "rank3": {
+          "label": "Rank 3 - Current",
+          "name": "MuBoss"
+        },
+        "rank4": {
+          "label": "Rank 4",
+          "name": "MuDynamo"
+        }
+      },
+      "data": {
+        "newlyRegisteredAccount": "Newly Registered Account",
+        "conversionRateLabel": "1 Point = 1 KRW",
+        "rank2SpendRequirement": "720,070원 Total Spent on Completed",
+        "rank3SpendRequirement": "1,440,140원 Total Spent on Completed",
+        "rank4SpendRequirement": "7,200,700원 Total Spent on Completed",
+        "earn05PointOnEveryPurchase": "Earn 0.5% point on every purchase.",
+        "earn1PointOnEveryPurchase": "Earn 1% point on every purchase.",
+        "earn15PointOnEveryPurchase": "Earn 1.5% point on every purchase.",
+        "earn2PointOnEveryPurchase": "Earn 2% point on every purchase.",
+        "earn4PointsJustByRegisteringYourAccount": "Earn 4 points just by registering your account.",
+        "earn8PointsAsRewardForReachingThisTier": "Earn 8 points as reward for reaching this tier.",
+        "earn12PointsAsRewardForReachingThisTier": "Earn 12 points as reward for reaching this tier.",
+        "earn16PointsAsRewardForReachingThisTier": "Earn 16 points as reward for reaching this tier.",
+        "discount7212KrwNextOrderOneTime": "7,212 KRW Discount on next order (1-Time Use)",
+        "discount10NextOrderOneTime": "10% Off Discount on next order (1-Time Use)",
+        "discount15NextOrderOneTime": "15% Off Discount on next order (1-Time Use)",
+        "freeExpressShippingOneTime": "Free Express Shipping (1-Time Use)",
+        "freeExpressShippingUnlimited": "Free Express Shipping (Unlimited Uses)",
+        "freeArtworkRevisions": "Free Artwork Revisions",
+        "doublePointsOneMonth": "Double Points Accumulation for 1 Month"
+      }
     }
+  }
 }

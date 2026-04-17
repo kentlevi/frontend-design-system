@@ -14,15 +14,7 @@ export function useVerificationModal() {
 	const verification_cooldown = useVerificationCooldown()
 	const test_id_prefix = 'verification-modal'
 
-	const submit_label = computed(() => {
-		if (modal_state.value.context === 'checkout_guest_contact') {
-			return translate('auth.guestVerification.verify')
-		}
 
-		return translate('auth.verification.verify')
-	})
-
-	const busy_label = computed(() => translate('auth.verification.verifying'))
 	const otp_length = computed(() => authVerificationConfig.otpLength)
 	const modal_class = computed(() => {
 		if (modal_state.value.context === 'checkout_guest_contact') {

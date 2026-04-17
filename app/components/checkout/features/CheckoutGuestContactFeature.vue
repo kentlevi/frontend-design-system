@@ -50,7 +50,7 @@ const {
 							<span
 								class="checkout-label-required"
 								aria-hidden="true"
-								>*</span
+							>*</span
 							>
 						</span>
 						<UiTooltip

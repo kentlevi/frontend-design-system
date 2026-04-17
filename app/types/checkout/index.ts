@@ -25,14 +25,6 @@ export type MemberAddress = {
 	badgeLabel?: string;
 };
 
-export type MemberDropShippingAddress = {
-	id: string;
-	recipient: string;
-	company?: string;
-	label?: string;
-	isDefault?: boolean;
-};
-
 export type CheckoutResponseData = {
 	order?: {
 		id:number

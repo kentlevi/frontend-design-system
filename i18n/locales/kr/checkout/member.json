@@ -8,17 +8,53 @@
       "shipToAnotherAddress": "다른 주소로 배송",
       "shippingMethod": "배송 방법",
       "shippingNote": "참고: 오늘 주문이 확정되면 예상 배송일은 다음과 같습니다.",
-      "enableDropShipping": "드롭 배송 사용",
-      "viewDropShippingAddresses": "드롭 배송지 보기",
+      "enableDropShipping": "위탁배송 이용하기",
+      "viewDropShippingAddresses": "위탁배송지 목록 확인",
       "payment": "결제",
       "paymentSubnote": "신용카드로 결제:",
+      "paymentMeta": {
+        "accreditedBanks": "은행 목록",
+        "bankTransferNote": "참고: 계좌이체 결제가 처리되고 확인되기까지 영업일 기준 1-2일이 소요될 수 있습니다.",
+        "accreditedBanksModalTitle": "제휴 은행 목록",
+        "accreditedBanksModalClose": "닫기",
+        "accreditedBanksModalCloseAria": "제휴 은행 목록 모달 닫기"
+      },
       "viewBillingAddresses": "청구지 보기",
       "orderSummary": "주문 요약",
+      "addressSelection": {
+        "selectAddress": "주소 선택",
+        "cancel": "취소",
+        "shippingTitle": "배송지 선택",
+        "shippingDescription": "주문을 배송받을 주소를 선택해 주세요.",
+        "billingTitle": "청구지 선택",
+        "billingDescription": "이 주문에 사용할 청구지 주소를 선택해 주세요.",
+        "dropTitle": "드롭 배송지 선택",
+        "closeModal": "주소 선택 모달 닫기",
+        "noCompanyProvided": "회사 정보가 없습니다",
+        "defaultShipping": "기본 배송지",
+        "defaultBilling": "기본 청구지",
+        "defaultDropShipping": "기본 드롭 배송지"
+      },
+      "billingAddress": {
+        "myBillingAddress": "내 청구지",
+        "useAnotherBillingAddress": "다른 청구지 사용",
+        "shipToAnotherBillingAddress": "다른 청구지로 진행"
+      },
+      "shippingAddress": {
+        "savedForFutureUse": "이 주소는 나중에 다시 사용할 수 있도록 저장됩니다."
+      },
+      "dropShippingAddress": {
+        "defaultNote": "기본 드롭 배송지로 저장됩니다.",
+        "membersOnlyNote": "주소 저장은 회원만 이용할 수 있습니다.",
+        "myDropShippingAddress": "내 드롭 배송지",
+        "shipToAnotherDropShippingAddress": "다른 드롭 배송지로 배송",
+        "savedForFutureUse": "이 주소는 나중에 다시 사용할 수 있도록 저장됩니다."
+      },
       "pointsAndCoupons": "포인트 및 쿠폰",
       "points": "포인트",
       "pointsAvailable": "{value} 포인트 사용 가능",
       "pointsPlaceholder": "0 포인트",
-      "useAll": "모두 사용",
+      "useAll": "전액 사용",
       "coupon": "쿠폰",
       "couponPlaceholder": "쿠폰 코드 입력",
       "applyCoupon": "적용",
@@ -39,8 +75,8 @@
       },
       "useShippingAsBilling": "배송지를 청구지로 사용",
       "billingTooltip": {
-        "title": "ë°°ì†¡ì§€ë¥¼ ì²­êµ¬ì§€ë¡œ ì‚¬ìš©",
-        "text": "ê²°ì œ ì‹œ ì‹œê°„ì„ ì ˆì•½í•˜ê¸° ìœ„í•´ ì„ íƒí•œ ë°°ì†¡ì§€ë¥¼ ì²­êµ¬ì§€ë¡œ ì‚¬ìš©í•©ë‹ˆë‹¤. ë°°ì†¡ì§€ì™€ ì²­êµ¬ì§€ê°€ ê°™ì€ ê²½ìš°, ì´ ì˜µì…˜ì´ ë°°ì†¡ ì •ë³´ë¥¼ ì²­êµ¬ ì •ë³´ì— ìžë™ìœ¼ë¡œ ì ìš©í•˜ì—¬ ë™ì¼í•œ ë‚´ìš©ì„ ë‹¤ì‹œ ìž…ë ¥í•˜ì§€ ì•Šì•„ë„ ë©ë‹ˆë‹¤."
+        "title": "배송지를 청구지로 사용",
+        "text": "결제 시 시간을 절약하기 위해 선택한 배송지를 청구지로 사용할 수 있습니다. 배송지와 청구지가 같으면 동일한 정보를 다시 입력하지 않아도 됩니다."
       },
       "agreement": {
         "prefix": "\"결제 완료\"를 클릭하면",
@@ -53,7 +89,10 @@
         "subtotal": "소계:",
         "shippingFee": "배송비 ({method})",
         "discounts": "할인:",
-        "total": "총액:"
+        "total": "총액:",
+        "shippingFeeInfoAria": "배송비 정보 보기",
+        "shippingFeeTooltipTitle": "배송비",
+        "shippingFeeTooltipText": "배송비는 선택한 배송 방법과 지역에 따라 계산됩니다."
       }
     }
   }

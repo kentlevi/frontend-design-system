@@ -1,129 +1,129 @@
 {
-    "account": {
-        "points": {
-            "title": "포인트",
-            "tierName": "범퍼 보스",
-            "lastTierUpgrade": "최근 등급 갱신일",
-            "pointsUnit": "포인트",
-            "pointsSystemTitle": "포인트 시스템",
-            "pointsSystemDescription": "로열티 프로그램에서 포인트를 수집하고 사용하여 다양한 혜택과 특별한 리워드를 해제하세요. 적립된 포인트는 향후 구매 시 결제에 사용할 수 있습니다.",
-            "questTitle": "위대한 스티커 퀘스트",
-            "questDescription": "퀘스트에 도전하고 포인트를 적립하여 다양한 리워드를 획득하세요!",
-            "historyTitle": "포인트 히스토리",
-            "historyDescription": "로열티 프로그램을 통해 적립하거나 사용한 포인트 내역을 자세히 확인하세요.",
-            "challengesTitle": "챌린지",
-            "viewAll": "전체 보기",
-            "filter": "필터",
-            "logsTitle": "로그",
-            "expiry": "만료",
-            "nextTierRequirementPrefix": "다음 등급 달성까지",
-            "nextTierRequirementSuffix": "남았습니다.",
-            "filters": {
-                "all": "전체",
-                "earned": "적립",
-                "deducted": "차감"
-            },
-            "logs": {
-                "pointsEarned": "적립된 포인트",
-                "pointsUsed": "사용된 포인트",
-                "stickerQuest": "스티커 퀘스트",
-                "rankLevelUp": "등급 업그레이드"
-            },
-            "ranking": {
-                "title": "등급 시스템",
-                "perksLabel": "혜택:",
-                "levelUpBonusLabel": "등급 달성 보너스:"
-            },
-            "challenges": {
-                "firstOrderVictory": {
-                    "name": "첫 주문 완료",
-                    "reward": "10포인트 적립"
-                },
-                "stickerExplorer": {
-                    "name": "스티커 탐험가",
-                    "reward": "5포인트 적립"
-                },
-                "mysteryHunter": {
-                    "name": "미스터리 헌터",
-                    "reward": "다음 주문 시 10% 할인 쿠폰 지급"
-                },
-                "speedyCheckout": {
-                    "name": "스피디 체크아웃",
-                    "reward": "무료 특송 배송 혜택"
-                },
-                "reviewMaster": {
-                    "name": "리뷰 마스터",
-                    "reward": "8포인트 적립"
-                },
-                "shareYourCreativity": {
-                    "name": "나만의 창의력을 뽐내세요",
-                    "reward": "8포인트 적립"
-                },
-                "theRoyalReferral": {
-                    "name": "특별 추천 혜택",
-                    "reward": "10포인트와 5달러 할인 혜택"
-                },
-                "frequentBuyer": {
-                    "name": "단골 고객",
-                    "reward": "10% 할인과 무료 특송 배송 혜택"
-                },
-                "sticktasticAnniversary": {
-                    "name": "스티커 기념일",
-                    "reward": "25포인트 적립"
-                },
-                "bigSpenderBonus": {
-                    "name": "빅 스펜더 보너스",
-                    "reward": "20달러 할인 바우처와 20포인트 적립"
-                },
-                "socialSharing": {
-                    "name": "소셜 공유",
-                    "reward": "5포인트 적립"
-                },
-                "charm": {
-                    "name": "Charm",
-                    "reward": "5포인트 적립"
-                }
-            },
-            "ranks": {
-                "rank1": {
-                    "label": "등급 1",
-                    "name": "MuScout"
-                },
-                "rank2": {
-                    "label": "등급 2",
-                    "name": "MuLeader"
-                },
-                "rank3": {
-                    "label": "등급 3 - 현재 등급",
-                    "name": "MuBoss"
-                },
-                "rank4": {
-                    "label": "등급 4",
-                    "name": "MuDynamo"
-                }
-            },
-            "data": {
-                "newlyRegisteredAccount": "신규 가입 계정",
-                "conversionRateLabel": "1포인트 = 1KRW",
-                "rank2SpendRequirement": "누적 결제 금액 720,070원 이상",
-                "rank3SpendRequirement": "누적 결제 금액 1,440,140원 이상",
-                "rank4SpendRequirement": "누적 결제 금액 7,200,700원 이상",
-                "earn05PointOnEveryPurchase": "모든 구매 시 0.5% 포인트 적립",
-                "earn1PointOnEveryPurchase": "구매 시마다 1% 포인트 적립",
-                "earn15PointOnEveryPurchase": "구매 시마다 1.5% 포인트 적립",
-                "earn2PointOnEveryPurchase": "구매 시마다 2% 포인트 적립",
-                "earn4PointsJustByRegisteringYourAccount": "계정 가입 시 4포인트 적립",
-                "earn8PointsAsRewardForReachingThisTier": "이 등급 달성 시 8포인트 지급",
-                "earn12PointsAsRewardForReachingThisTier": "이 등급 달성 시 12포인트 지급",
-                "earn16PointsAsRewardForReachingThisTier": "이 등급 달성 시 16포인트 지급",
-                "discount7212KrwNextOrderOneTime": "다음 주문 시 7,212원 할인 (1회 사용)",
-                "discount10NextOrderOneTime": "다음 주문 시 10% 할인 (1회 사용)",
-                "discount15NextOrderOneTime": "다음 주문 시 15% 할인 (1회 사용)",
-                "freeExpressShippingOneTime": "무료 특송 배송 (1회 사용)",
-                "freeExpressShippingUnlimited": "무료 특송 배송 (무제한)",
-                "freeArtworkRevisions": "디자인 수정 무료",
-                "doublePointsOneMonth": "1개월 동안 포인트 2배 적립"
-            }
+  "account": {
+    "points": {
+      "title": "포인트",
+      "tierName": "범퍼 보스",
+      "lastTierUpgrade": "최근 등급 업그레이드",
+      "pointsUnit": "포인트",
+      "pointsSystemTitle": "포인트 시스템",
+      "pointsSystemDescription": "로열티 프로그램에서 포인트를 적립하고 리워드, 특별 혜택, 향후 구매 시 할인 혜택으로 누려보세요.",
+      "questTitle": "위대한 스티커 퀘스트",
+      "questDescription": "퀘스트에 도전하고 포인트를 적립하여 다양한 리워드를 획득하세요!",
+      "historyTitle": "포인트 내역",
+      "historyDescription": "로열티 프로그램에서 적립하거나 사용한 모든 포인트를 확인하세요.",
+      "challengesTitle": "챌린지",
+      "viewAll": "전체 보기",
+      "filter": "필터",
+      "logsTitle": "내역",
+      "expiry": "만료",
+      "nextTierRequirementPrefix": "다음 등급 달성까지",
+      "nextTierRequirementSuffix": "남았습니다.",
+      "filters": {
+        "all": "전체",
+        "earned": "적립",
+        "deducted": "차감"
+      },
+      "logs": {
+        "pointsEarned": "적립된 포인트",
+        "pointsUsed": "사용된 포인트",
+        "stickerQuest": "스티커 퀘스트",
+        "rankLevelUp": "등급 업그레이드"
+      },
+      "ranking": {
+        "title": "등급 시스템",
+        "perksLabel": "혜택 :",
+        "levelUpBonusLabel": "등급 달성 보너스"
+      },
+      "challenges": {
+        "firstOrderVictory": {
+          "name": "첫 주문 완료",
+          "reward": "10포인트 적립"
+        },
+        "stickerExplorer": {
+          "name": "스티커 탐험가",
+          "reward": "5포인트 적립"
+        },
+        "mysteryHunter": {
+          "name": "미스터리 헌터",
+          "reward": "다음 주문 시 10% 할인 쿠폰 지급"
+        },
+        "speedyCheckout": {
+          "name": "스피디 체크아웃",
+          "reward": "무료 특송 배송 혜택"
+        },
+        "reviewMaster": {
+          "name": "리뷰 마스터",
+          "reward": "8포인트 적립"
+        },
+        "shareYourCreativity": {
+          "name": "나만의 창의력을 뽐내세요",
+          "reward": "8포인트 적립"
+        },
+        "theRoyalReferral": {
+          "name": "특별 추천 혜택",
+          "reward": "10포인트와 5달러 할인 혜택"
+        },
+        "frequentBuyer": {
+          "name": "단골 고객",
+          "reward": "10% 할인과 무료 특송 배송 혜택"
+        },
+        "sticktasticAnniversary": {
+          "name": "스티커 기념일",
+          "reward": "25포인트 적립"
+        },
+        "bigSpenderBonus": {
+          "name": "빅 스펜더 보너스",
+          "reward": "20달러 할인 바우처와 20포인트 적립"
+        },
+        "socialSharing": {
+          "name": "소셜 공유",
+          "reward": "5포인트 적립"
+        },
+        "charm": {
+          "name": "Charm",
+          "reward": "5포인트 적립"
         }
+      },
+      "ranks": {
+        "rank1": {
+          "label": "등급 1",
+          "name": "MuScout"
+        },
+        "rank2": {
+          "label": "등급 2",
+          "name": "MuLeader"
+        },
+        "rank3": {
+          "label": "등급 3 - 현재 등급",
+          "name": "MuBoss"
+        },
+        "rank4": {
+          "label": "등급 4",
+          "name": "MuDynamo"
+        }
+      },
+      "data": {
+        "newlyRegisteredAccount": "신규 가입 계정",
+        "conversionRateLabel": "1포인트 = 1KRW",
+        "rank2SpendRequirement": "누적 결제 금액 720,070원 이상",
+        "rank3SpendRequirement": "누적 결제 금액 1,440,140원 이상",
+        "rank4SpendRequirement": "누적 결제 금액 7,200,700원 이상",
+        "earn05PointOnEveryPurchase": "모든 구매 시 0.5% 포인트 적립",
+        "earn1PointOnEveryPurchase": "구매 시마다 1% 포인트 적립",
+        "earn15PointOnEveryPurchase": "구매 시마다 1.5% 포인트 적립",
+        "earn2PointOnEveryPurchase": "구매 시마다 2% 포인트 적립",
+        "earn4PointsJustByRegisteringYourAccount": "계정 가입 시 4포인트 적립",
+        "earn8PointsAsRewardForReachingThisTier": "이 등급 달성 시 8포인트 지급",
+        "earn12PointsAsRewardForReachingThisTier": "이 등급 달성 시 12포인트 지급",
+        "earn16PointsAsRewardForReachingThisTier": "이 등급 달성 시 16포인트 지급",
+        "discount7212KrwNextOrderOneTime": "다음 주문 시 7,212원 할인 (1회 사용)",
+        "discount10NextOrderOneTime": "다음 주문 시 10% 할인 (1회 사용)",
+        "discount15NextOrderOneTime": "다음 주문 시 15% 할인 (1회 사용)",
+        "freeExpressShippingOneTime": "무료 특송 배송 (1회 사용)",
+        "freeExpressShippingUnlimited": "무료 특송 배송 (무제한)",
+        "freeArtworkRevisions": "디자인 수정 무료",
+        "doublePointsOneMonth": "1개월 동안 포인트 2배 적립"
+      }
     }
+  }
 }

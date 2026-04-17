@@ -196,7 +196,7 @@ watch(is_email_taken_error, (is_taken) => {
 					size="sm"
 					:no-hover="true"
 					class="auth-register-card-close"
-					aria-label="Close modal"
+					:aria-label="t('auth.register.closeModal')"
 					@click="emit('close')"
 				>
 					<UiIcon
@@ -377,7 +377,7 @@ watch(is_email_taken_error, (is_taken) => {
 								:aria-expanded="terms_error_popover_open"
 								aria-haspopup="dialog"
 								data-testid="auth-register-terms-error-button"
-								sr-label="Terms error information"
+								:sr-label="t('auth.register.termsErrorInfo')"
 								icon-only
 								:icon="terms_error_icon_strong ? 'strong-info-circle' : 'regular-info-circle'"
 								:icon-size="24"

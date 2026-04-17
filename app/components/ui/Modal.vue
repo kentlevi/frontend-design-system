@@ -18,6 +18,7 @@ const props = withDefaults(
 		modalClass?: string;
 		footerClass?: string;
 		hideHeader?: boolean;
+		maxHeight?: string;
 	}>(),
 	{
 		modelValue: false,
@@ -31,6 +32,7 @@ const props = withDefaults(
 		modalClass: '',
 		footerClass: '',
 		hideHeader: false,
+		maxHeight: '',
 	}
 );
 
@@ -44,6 +46,7 @@ const modal_style = computed(() => ({
 	'--ui-modal-width': props.width,
 	'--ui-modal-padding': props.padding || null,
 	'--ui-modal-gap': props.gap || null,
+	'--ui-modal-max-height': props.maxHeight || null,
 }));
 
 function closeModal() {

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
+import { useI18n } from 'vue-i18n';
 import type {
 	MemberAddress,
 	MemberDropShippingAddress,
@@ -19,13 +21,15 @@ const props = withDefaults(defineProps<{
 	confirmLabel?: string;
 }>(), {
 	copy: '',
-	confirmLabel: 'Select Address',
+	confirmLabel: '',
 });
 
 const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'select', value: string): void;
 }>();
+
+const { t } = useI18n();
 
 const pending_selected_address_id = ref(props.selectedAddressId);
 
@@ -61,20 +65,15 @@ function confirmSelection() {
 	closeModal();
 }
 
-function getAddressTagClass(label?: string) {
-	if (!label) return '';
 
-	const lower_label = label.toLowerCase();
-
-	if (lower_label.includes('office')) return 'checkout-address-select-modal-tag--office';
-	if (lower_label.includes('client')) return 'checkout-address-select-modal-tag--client';
-	return 'checkout-address-select-modal-tag--home';
-}
+const {
+	getAddressTagClass
+} = useAddressGeneralUICheckoutContext()
 
 function getDefaultBadgeLabel(address: SelectableAddress) {
-	if (props.variant === 'shipping') return 'Default Shipping';
-	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || 'Default Billing';
-	return 'Default Drop Shipping';
+	if (props.variant === 'shipping') return t('checkout.member.addressSelection.defaultShipping');
+	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || t('checkout.member.addressSelection.defaultBilling');
+	return t('checkout.member.addressSelection.defaultDropShipping');
 }
 
 function getDefaultBadgeIcon() {
@@ -100,7 +99,7 @@ function getDefaultBadgeIcon() {
 				<button
 					type="button"
 					class="checkout-address-select-modal-close"
-					:aria-label="`Close ${props.title.toLowerCase()}`"
+					:aria-label="t('checkout.member.addressSelection.closeModal')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
@@ -199,7 +198,7 @@ function getDefaultBadgeIcon() {
 							<template v-else>
 								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split checkout-address-select-modal-row--centered">
 									<p class="checkout-address-select-modal-line">
-										{{ address.company || 'No company provided' }}
+										{{ address.company || t('checkout.member.addressSelection.noCompanyProvided') }}
 									</p>
 									<span
 										v-if="address.label"
@@ -217,10 +216,10 @@ function getDefaultBadgeIcon() {
 
 			<footer class="checkout-address-select-modal-footer">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
-					Cancel
+					{{ t('checkout.member.addressSelection.cancel') }}
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="confirmSelection">
-					{{ props.confirmLabel }}
+					{{ props.confirmLabel || t('checkout.member.addressSelection.selectAddress') }}
 				</UiButton>
 			</footer>
 		</section>

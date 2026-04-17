@@ -20,6 +20,7 @@ export type AddressFormFieldsProps = {
 	form: AddressFormMap[AddressType]
 	errors?: Record<AddressType, Record<string, string>>
 	showLabelSelector?: boolean
+	copyContext?: 'checkout' | 'addressBook'
 }
 
 export type AddressFormFieldsEmit = {
@@ -36,6 +37,7 @@ type UseAddressFormFieldOptions = {
 export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	const address_field_store = useAddressFieldStore()
 	const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
+	const copy_context = computed(() => options.props.copyContext ?? 'checkout')
 
 	const address_label_options: Array<{
 		value: AddressLabel
@@ -151,7 +153,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 
 	function createDefaultSelectOption(field: AddressDynamicFields): CountryFieldOption {
 		const default_label = hasProvinceLabel(field)
-			? options.translate('account.addressBook.provincePlaceholder')
+			? options.translate(resolvePlaceholderKey('provincePlaceholder'))
 			: field.field_label
 
 		return {
@@ -182,16 +184,26 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 
 	function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
 		if (hasProvinceLabel(field)) {
-			return options.translate('account.addressBook.provincePlaceholder')
+			return options.translate(resolvePlaceholderKey('provincePlaceholder'))
 		}
 
 		const normalized_label = field.field_label.toLowerCase()
 
 		if (normalized_label.includes('city') || normalized_label.includes('town')) {
-			return options.translate('account.addressBook.cityPlaceholder')
+			return options.translate(resolvePlaceholderKey('cityPlaceholder'))
 		}
 
 		return field.field_label
+	}
+
+	function resolvePlaceholderKey(
+		key: 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
+	) {
+		if (copy_context.value === 'addressBook') {
+			return `account.addressBook.accountForm.${key}`
+		}
+
+		return `account.addressBook.${key}`
 	}
 
 	function getDynamicFieldHighlightedValueWhenEmpty(field: AddressDynamicFields) {
@@ -221,5 +233,6 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		getDynamicFieldOptions,
 		getDynamicFieldHighlightedValueWhenEmpty,
 		getDynamicFieldPlaceholder,
+		resolvePlaceholderKey,
 	}
 }

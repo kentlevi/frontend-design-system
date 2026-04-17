@@ -36,7 +36,7 @@ const { withCountry } = useCountry();
 
 <style scoped lang="scss">
 .home-types {
-    padding: 56px 0;
+    padding: 44px 0;
 
     .home-types-container {
         display: flex;
@@ -67,8 +67,7 @@ const { withCountry } = useCountry();
                 justify-content: center;
 
                 .home-types-image {
-                    max-width: 125px;
-                    max-height: 96px;
+                    padding: 8px 22px;
                     width: auto;
                     height: auto;
                     display: block;
@@ -79,7 +78,6 @@ const { withCountry } = useCountry();
             }
 
             .home-types-label {
-                padding-bottom: 12px;
                 font-size: var(--type-size-200);
                 font-weight: var(--font-weight-medium);
                 line-height: var(--type-line-200);

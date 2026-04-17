@@ -1,6 +1,9 @@
 {
-    "home": {
-        "passwordUpdated": "Your password has been successfully updated.",
-        "loginSuccess": "You have successfully logged in."
-    }
+  "home": {
+    "passwordUpdated": "Your password has been successfully updated.",
+    "loginSuccess": "You have successfully logged in.",
+    "guestToastPrefix": "You're currently using a guest account.",
+    "guestToastCta": "Create an Account",
+    "guestToastSuffix": "to access all features."
+  }
 }

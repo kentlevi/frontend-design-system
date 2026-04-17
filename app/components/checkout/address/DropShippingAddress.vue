@@ -9,7 +9,7 @@ import { useDropShippingAddress } from '~/composables/checkout/address/useDropSh
 import CheckoutTransition from '../shared/CheckoutTransition.vue';
 
 const {
-	t,
+	translate,
 	is_member,
 	drop_shipping_enabled,
 	drop_shipping_ship_to_another_address,
@@ -34,7 +34,7 @@ const {
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="drop_shipping_enabled" @click="setDropAddress()">{{ t('checkout.member.enableDropShipping') }}</UiCheckbox>
+			<UiCheckbox v-model="drop_shipping_enabled" @click="setDropAddress()">{{ translate('checkout.member.enableDropShipping') }}</UiCheckbox>
 			<UiTooltip :open="drop_shipping_tooltip_open" v-bind="checkoutDropShippingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleDropShippingTooltip">
@@ -48,7 +48,7 @@ const {
 			</UiTooltip>
 		</div>
 		<div class="checkout-member-drop-shipping-form-note" :class="{ 'is-active': drop_shipping_enabled, 'is-muted': !is_member }">
-			{{ is_member ? 'This will be saved as your default drop shipping address.' : 'Only available for members to save addresses.' }}
+			{{ is_member ? translate('checkout.member.dropShippingAddress.defaultNote') : translate('checkout.member.dropShippingAddress.membersOnlyNote') }}
 		</div>
 	</div>
 
@@ -65,7 +65,7 @@ const {
 								class="checkout-member-radio-line"
 								@click="setDropAddress()"
 							>
-								My Drop Shipping Address
+								{{ translate('checkout.member.dropShippingAddress.myDropShippingAddress') }}
 							</UiRadio>
 							<UiButton
 								variant="ghost"
@@ -96,14 +96,14 @@ const {
 													text-color="var(--gray-80)"
 												>
 													<UiIcon name="strong-box-full" :size="18" />
-													<span class="checkout-member-address-badge-copy">Default Drop Shipping</span>
+													<span class="checkout-member-address-badge-copy">{{ translate('checkout.member.addressSelection.defaultDropShipping') }}</span>
 												</UiBadge>
 											</div>
 										</div>
 										<div class="checkout-member-address-content">
 											<div class="checkout-member-address-row checkout-member-address-row--split">
 												<div class="checkout-member-address-row-main">
-													<p class="checkout-member-address-line">{{ drop_form?.company || 'No company provided' }}</p>
+													<p class="checkout-member-address-line">{{ drop_form?.company || translate('checkout.member.addressSelection.noCompanyProvided') }}</p>
 												</div>
 												<span v-if="drop_form?.label" class="checkout-member-address-tag" :class="getAddressTagClass(drop_form.label)">
 													{{ drop_form.label }}
@@ -120,7 +120,7 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('drop')"
 									>
-										Ship to Another Drop Shipping Address
+										{{ translate('checkout.member.dropShippingAddress.shipToAnotherDropShippingAddress') }}
 									</UiRadio>
 								</div>
 							</div>
@@ -133,9 +133,9 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('drop')"
 									>
-										Ship to Another Drop Shipping Address
+										{{ translate('checkout.member.dropShippingAddress.shipToAnotherDropShippingAddress') }}
 									</UiRadio>
-									<div class="checkout-member-address-form-note">This address will be saved for future use.</div>
+									<div class="checkout-member-address-form-note">{{ translate('checkout.member.dropShippingAddress.savedForFutureUse') }}</div>
 								</div>
 								<AddressFormFields
 									:form="drop_form"

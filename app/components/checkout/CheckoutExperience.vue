@@ -23,8 +23,8 @@
 			<CheckoutSummaryCard
 				:tone="is_member ? 'member' : 'guest'"
 				:items="selected_checkout_items"
-				shipping-fee-tooltip-title="Shipping Fee"
-				shipping-fee-tooltip-text="The shipping fee is calculated based on your selected delivery method and location."
+				:shipping-fee-tooltip-title="t(is_member ? 'checkout.member.summary.shippingFeeTooltipTitle' : 'checkout.guest.summary.shippingFeeTooltipTitle')"
+				:shipping-fee-tooltip-text="t(is_member ? 'checkout.member.summary.shippingFeeTooltipText' : 'checkout.guest.summary.shippingFeeTooltipText')"
 				:complete-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
 				:agreement-prefix="t(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
 				:agreement-terms="t(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"
@@ -76,6 +76,8 @@ import { provideAddressFormCheckoutContext } from '~/composables/checkout/addres
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
 import { provideAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { provideAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
+import { useAddressGeneralUI } from '~/composables/checkout/address/useAddressGeneralUI';
 
 /** Standalone address context (isolated from checkout_experience) */
 const address_checkout_form_state = useAddressFormState();
@@ -83,6 +85,9 @@ provideAddressFormCheckoutContext(address_checkout_form_state);
 
 const address_checkout_book_list_state = useAddressBookList()
 provideAddressBookListCheckoutContext(address_checkout_book_list_state)
+
+const address_general_ui= useAddressGeneralUI()
+provideAddressGeneralUICheckoutContext(address_general_ui)
 
 const checkout_experience = useCheckoutExperience();
 

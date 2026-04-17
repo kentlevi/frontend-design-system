@@ -1,12 +1,12 @@
 {
-    "layout": {
-        "header": {
-            "nav": {
-                "stickers": "Stickers",
-                "rollStickers": "Roll Stickers",
-                "sheetStickers": "Sheet Stickers",
-                "vinylLettering": "Vinyl Lettering"
-            }
-        }
+  "layout": {
+    "header": {
+      "nav": {
+        "stickers": "Stickers",
+        "rollStickers": "Roll Stickers",
+        "sheetStickers": "Sticker Sheets",
+        "vinylLettering": "Vinyl Lettering"
+      }
     }
+  }
 }

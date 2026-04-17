@@ -257,7 +257,7 @@ onMounted(() => {
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
 		:title="t('account.profile.photoDeleteConfirm')"
-		description="This action cannot be undone. Please confirm to proceed."
+		:description="t('account.profile.photoDeleteDescription')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"
@@ -281,8 +281,9 @@ onMounted(() => {
 		:error="email_change_otp_error"
 		:resend-limit-reached="limit_reached_error"
 		:resend-cooldown-remaining="remaining"
-		submit-label="Verify"
-		busy-label="Verifying..."
+		translation-base="account.profile.emailChangeVerification"
+		:submit-label="t('auth.verification.verify')"
+		:busy-label="t('auth.verification.verifying')"
 		align="center"
 		:show-close-button="true"
 		test-id-prefix="account-profile-email-change-verification"
@@ -295,7 +296,7 @@ onMounted(() => {
 		<template #icon>
 			<img
 				src="/illustrations/icon-verification.svg"
-				:alt="t('auth.verification.iconAlt')"
+				:alt="t('account.profile.emailChangeVerification.iconAlt')"
 				class="account-profile-email-change-verification-icon"
 			>
 		</template>

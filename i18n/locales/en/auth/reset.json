@@ -1,24 +1,25 @@
 {
-    "auth": {
-        "reset": {
-            "title": "Change Password",
-            "description": "Password must be at least 6 characters and include at least one uppercase letter, number, or special character.",
-            "newPassword": "New Password",
-            "enterNewPassword": "Enter New Password",
-            "confirmPassword": "Confirm Password",
-            "enterConfirmPassword": "Confirm New Password",
-            "togglePassword": "Toggle password visibility",
-            "toggleConfirmPassword": "Toggle confirm password visibility",
-            "submit": "Change Password",
-            "changing": "Changing...",
-            "errors": {
-                "missingLink": "Reset link is missing required information.",
-                "fillBoth": "Field cannot be blank.",
-                "passwordRequirements": "Password does not meet requirements.",
-                "mismatch": "Password does not match.",
-                "unable": "Unable to reset password.",
-                "autoLoginFailed": "Password changed, but automatic login failed."
-            }
-        }
+  "auth": {
+    "reset": {
+      "title": "Change Password",
+      "description": "Your password must be at least 6 characters and should include an uppercase letter, a number, or a special character.",
+      "newPassword": "New Password",
+      "enterNewPassword": "Enter New Password",
+      "confirmPassword": "Confirm Password",
+      "enterConfirmPassword": "Confirm New Password",
+      "togglePassword": "Toggle password visibility",
+      "toggleConfirmPassword": "Toggle confirm password visibility",
+      "closeModal": "Close reset password modal",
+      "submit": "Change Password",
+      "changing": "Changing...",
+      "errors": {
+        "missingLink": "Reset link is missing required information.",
+        "fillBoth": "Field cannot be blank.",
+        "passwordRequirements": "Password does not meet requirements.",
+        "mismatch": "Password does not match.",
+        "unable": "Unable to reset password.",
+        "autoLoginFailed": "Password changed, but automatic login failed."
+      }
     }
+  }
 }

@@ -56,7 +56,6 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 	const card_number = ref('');
 	const expiry = ref('');
 	const cvv = ref('');
-	const use_shipping_as_billing = ref(true);
 
 	const checkout_items = computed<CheckoutItem[]>(() =>
 		cart_state.value
@@ -117,6 +116,5 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 		card_number,
 		expiry,
 		cvv,
-		use_shipping_as_billing,
 	};
 }

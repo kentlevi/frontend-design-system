@@ -15,7 +15,6 @@ const {
 	test_id_prefix,
 	modal_class,
 	formatted_error_parts,
-	resend_cooldown_remaining,
 	setModalOpen,
 	submitVerification,
 	onInput,
@@ -152,7 +151,7 @@ const {
 					<b>{{ translate(`auth.verification.resendLimitReachedMiddle`) }}</b>{{ translate(`auth.verification.resendLimitReachedSuffix`) }}
 				</p>
 
-                <!-- COOLDOWN TIMER -->
+				<!-- COOLDOWN TIMER -->
 				<!-- <p
 					v-if="resend_cooldown_remaining > 0"
 					class="auth-verification-resend"

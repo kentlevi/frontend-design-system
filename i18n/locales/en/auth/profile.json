@@ -1,51 +1,52 @@
 {
-    "auth": {
+  "auth": {
+    "profile": {
+      "toast": "All set! We're excited to have you-let's get started.",
+      "sidebar": {
+        "title": "Account Onboarding",
         "profile": {
-            "toast": "All set! We're excited to have you—let's get started.",
-            "sidebar": {
-                "title": "Account Onboarding",
-                "profile": {
-                    "title": "Profile Details",
-                    "text": "Manage your personal information, contact details, and preferences in your profile."
-                },
-                "settings": {
-                    "title": "Account Settings",
-                    "text": "Manage your account preferences, including promotion and discount alerts, as well as your review settings."
-                }
-            },
-            "details": {
-                "title": "Welcome {name}! Let's create your profile.",
-                "subtitle": "Manage your personal information.",
-                "photoTitle": "Add Profile Photo",
-                "photoHint1": "At least 800x800px recommended file size.",
-                "photoHint2": "Accepted filetypes: .jpg and .png",
-                "photoInvalidType": "Only .jpg, .jpeg, and .png files are accepted.",
-                "photoProcessFailed": "Unable to process this image. Please try a different file.",
-                "upload": "Upload Photo",
-                "delete": "Delete",
-                "firstName": "First Name",
-                "lastName": "Last Name",
-                "email": "Email Address",
-                "emailDisabledHint": "Email can be updated in Profile Settings after onboarding is completed.",
-                "skip": "Skip & Add Later",
-                "continue": "Continue"
-            },
-            "settings": {
-                "title": "Account Settings",
-                "subtitle": "Manage your account preferences.",
-                "promotions": "Promotions & Discounts",
-                "promotionsDesc": "Receive emails about savings, new items, promotions & more.",
-                "reviews": "Reviews",
-                "reviewsDesc": "Receive emails everytime your order gets completed, as well as published reviews.",
-                "confirmations": "Confirmations",
-                "confirmationsDesc": "Receive emails regarding final proof, design changes and payment proof.",
-                "unit": "Unit of Measurement",
-                "unitDesc": "Choose your preferred/default unit of measurement.",
-                "billing": "Billing Address",
-                "billingDesc": "Use shipping address as your default billing address.",
-                "back": "Back",
-                "complete": "Compete Setup"
-            }
+          "title": "Profile Details",
+          "text": "Update and manage your personal info, contact details, and preferences in your profile."
+        },
+        "settings": {
+          "title": "Account Settings",
+          "text": "Manage your account preferences"
         }
+      },
+      "details": {
+        "title": "Welcome {name}! Let's create your profile.",
+        "subtitle": "Manage your personal information.",
+        "photoTitle": "Add Profile Photo",
+        "photoHint1": "At least 800x800px recommended file size.",
+        "photoHint2": "Accepted filetypes: .jpg and .png",
+        "photoTooLarge": "Image is larger than required (3MB max).",
+        "photoInvalidType": "Only .jpg, .jpeg, and .png files are accepted.",
+        "photoProcessFailed": "Unable to process this image. Please try a different file.",
+        "upload": "Upload Photo",
+        "delete": "Delete",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "emailDisabledHint": "You can update your email after onboarding. Once complete, change it anytime in your Profile settings.",
+        "skip": "Skip & Add Later",
+        "continue": "Continue"
+      },
+      "settings": {
+        "title": "Account Settings",
+        "subtitle": "Manage your account preferences",
+        "promotions": "Promotions & Discounts",
+        "promotionsDesc": "Stay updated with savings, new arrivals, promotions, and more via email.",
+        "reviews": "Reviews",
+        "reviewsDesc": "Get email updates when your orders are completed and when your reviews are published.",
+        "confirmations": "Confirmations",
+        "confirmationsDesc": "Get email updates about your final proof, design changes, and payment confirmation.",
+        "unit": "Unit of Measurement",
+        "unitDesc": "Choose your preferred/default unit of measurement.",
+        "billing": "Billing Address",
+        "billingDesc": "Use shipping address as your default billing address.",
+        "back": "Back",
+        "complete": "Compete Setup"
+      }
     }
+  }
 }

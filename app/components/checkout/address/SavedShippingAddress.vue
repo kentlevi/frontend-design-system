@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useAddressHelper } from '~/utils/address';
@@ -14,9 +15,14 @@ const {
 } = useAddressHelper()
 
 const {
-	getAddressTagClass,
 	is_shipping_address_modal_open,
 } = useCheckoutExperienceFeatureContext();
+
+const { t } = useI18n();
+
+const {
+	getAddressTagClass
+} = useAddressGeneralUICheckoutContext()
 
 </script>
 
@@ -43,7 +49,7 @@ const {
 						text-color="var(--gray-80)"
 					>
 						<UiIcon name="strong-ship" :size="18" />
-						<span class="checkout-member-address-badge-copy">Default Shipping</span>
+						<span class="checkout-member-address-badge-copy">{{ t('checkout.member.addressSelection.defaultShipping') }}</span>
 					</UiBadge>
 				</div>
 			</div>

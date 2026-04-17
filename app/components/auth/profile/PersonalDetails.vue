@@ -184,8 +184,8 @@ const {
 
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
-		title="Are you sure you want to delete this photo?"
-		description="This action cannot be undone. Please confirm to proceed."
+		:title="translate('account.profile.photoDeleteConfirm')"
+		:description="translate('account.profile.photoDeleteDescription')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"

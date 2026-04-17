@@ -1,8 +1,14 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+</script>
+
 <template>
 	<footer class="checkout-invoice-footer">
 		<div class="checkout-invoice-footer-copy">
 			<strong>Musticker</strong>
-			<span>123-45, Seongdong-gu, Seoul, 04776 South Korea</span>
+			<span>{{ t('checkout.invoice.footerAddress') }}</span>
 		</div>
 		<strong>www.musticker.com</strong>
 	</footer>

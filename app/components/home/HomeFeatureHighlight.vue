@@ -71,11 +71,8 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/home-feature-high
             gap: 20px;
 
             .home-feature-title {
-
-                font-family: var(--font-base);
                 font-size: var(--type-size-550);
                 line-height: var(--type-line-550);
-
                 color: var(--black-base);
                 font-weight: var(--font-weight-bold);
             }

@@ -101,7 +101,7 @@ export function useCheckoutGuestContactFeature() {
 		closeEmailAlreadyRegisteredModal()
 	}
 
-	function openEmailAlreadyRegisteredModal(social_provider: string) {
+	function openEmailAlreadyRegisteredModal(_social_provider: string) {
 		verification_store.patchModalState({
 			is_open: false,
 		})

@@ -162,7 +162,7 @@ onBeforeUnmount(() => {
 
 		<UiToast
 			:visible="billing_toast_visible"
-			message="Billing details updated successfully!"
+			:message="t('checkout.invoice.billingToast')"
 			tone="primary"
 			variant="outlined"
 			dismissible

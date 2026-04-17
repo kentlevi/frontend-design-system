@@ -1,9 +1,24 @@
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
+import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useBillingAddressUI() {
 
+
+	/** Contexts */
+	const {
+		is_member,
+	} = useCheckoutExperienceFeatureContext();
+
+	const {
+		billing_tooltip_open,
+		use_shipping_as_billing,
+		billing_use_different_address,
+		is_billing_address_modal_open,
+		toggleBillingTooltip,
+		getAddressTagClass
+	} = useAddressGeneralUICheckoutContext()
 
 	const {
 		enter_duration_ms,
@@ -16,17 +31,10 @@ export function useBillingAddressUI() {
 		afterLeave,
 	} = useCheckoutFeatureTransition();
 
-	const {
-		t,
-		is_member,
-		use_shipping_as_billing,
-		selected_billing_address,
-		billing_use_different_address,
-		billing_tooltip_open,
-		getAddressTagClass,
-		is_billing_address_modal_open,
-		toggleBillingTooltip,
-	} = useCheckoutExperienceFeatureContext();
+
+
+
+	const { t: translate } = useI18n()
 
 	const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
 	const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
@@ -53,7 +61,7 @@ export function useBillingAddressUI() {
 	);
 
 	return {
-		t,
+		translate,
 		beforeEnter,
 		enter,
 		afterEnter,
@@ -61,7 +69,6 @@ export function useBillingAddressUI() {
 		leave,
 		afterLeave,
 		is_member,
-		selected_billing_address,
 		billing_use_different_address,
 		use_shipping_as_billing,
 		billing_tooltip_open,

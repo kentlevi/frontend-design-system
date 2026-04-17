@@ -25,6 +25,7 @@ function getNameFieldKey(
 
 export function useAuthProfilePersonalDetails() {
 	const { t } = useI18n();
+	const MAX_PROFILE_PHOTO_BYTES = 3 * 1024 * 1024;
 	const onboarding_store = useAuthOnboardingStore();
 	const users_store = useUsersStore();
 	const profile_fields_store = useProfileFieldsStore();
@@ -166,6 +167,11 @@ export function useAuthProfilePersonalDetails() {
 		photo_error.value = '';
 		if (!isValidImage(file)) {
 			photo_error.value = t('auth.profile.details.photoInvalidType');
+			resetPhotoInput();
+			return;
+		}
+		if (file.size > MAX_PROFILE_PHOTO_BYTES) {
+			photo_error.value = t('auth.profile.details.photoTooLarge');
 			resetPhotoInput();
 			return;
 		}

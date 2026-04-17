@@ -51,8 +51,8 @@ onMounted(() => {
 				name="musticker"
 				variant="full"
 				color="colored"
-				:size="54"
-				:width="112"
+				:size="56"
+				:width="175"
 				loading="eager"
 				fetchpriority="high"
 			/>
@@ -224,7 +224,7 @@ onMounted(() => {
 
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 12px 0;
     display: grid;
     grid-template-columns: 200px 1fr 260px;
     align-items: center;
@@ -240,6 +240,7 @@ onMounted(() => {
         display: flex;
         justify-content: center;
         gap: 40px;
+		padding: 4px 0;
 
         .home-header-link {
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 type BillingDetails = {
 	fullName: string;
@@ -20,6 +21,8 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'save', value: BillingDetails): void;
 }>();
+
+const { t } = useI18n();
 
 const province_options = [
 	{ value: 'incheon', label: 'Incheon' },
@@ -68,11 +71,11 @@ function saveBillingDetails() {
 	>
 		<section class="checkout-invoice-billing-modal">
 			<header class="checkout-invoice-billing-modal-header">
-				<h3 class="checkout-invoice-billing-modal-title">Update Billing Details</h3>
+				<h3 class="checkout-invoice-billing-modal-title">{{ t('checkout.invoice.billingModal.title') }}</h3>
 				<button
 					type="button"
 					class="checkout-invoice-billing-modal-close"
-					aria-label="Close billing details modal"
+					:aria-label="t('checkout.invoice.billingModal.closeModal')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
@@ -82,7 +85,7 @@ function saveBillingDetails() {
 			<div class="checkout-invoice-billing-modal-body">
 				<div class="checkout-invoice-billing-modal-grid">
 					<UiFormField
-						label="Full Name"
+						:label="t('checkout.guest.fields.fullName.label')"
 						:required="true"
 						:show-required-mark="true"
 						head-class="checkout-form-field-head"
@@ -93,7 +96,7 @@ function saveBillingDetails() {
 					</UiFormField>
 
 					<UiFormField
-						label="Company (Optional)"
+						:label="t('checkout.guest.fields.company.label')"
 						head-class="checkout-form-field-head"
 						label-class="checkout-form-field-label"
 						label-text-class="checkout-form-field-label-text"
@@ -104,7 +107,7 @@ function saveBillingDetails() {
 
 				<div class="checkout-invoice-billing-modal-stack">
 					<UiFormField
-						label="Street Address"
+						:label="t('checkout.guest.fields.streetAddress.label')"
 						:required="true"
 						:show-required-mark="true"
 						head-class="checkout-form-field-head"
@@ -114,12 +117,12 @@ function saveBillingDetails() {
 						<UiInput v-model="form.address1" size="md" />
 					</UiFormField>
 
-					<UiInput v-model="form.address2" size="md" placeholder="Enter Address Line 2" />
+					<UiInput v-model="form.address2" size="md" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
 				</div>
 
 				<div class="checkout-invoice-billing-modal-grid">
 					<UiFormField
-						label="Province/Metropolitan City"
+						:label="t('checkout.guest.fields.province.label')"
 						:required="true"
 						:show-required-mark="true"
 						head-class="checkout-form-field-head"
@@ -136,7 +139,7 @@ function saveBillingDetails() {
 					</UiFormField>
 
 					<UiFormField
-						label="City/Town"
+						:label="t('checkout.guest.fields.city.label')"
 						:required="true"
 						:show-required-mark="true"
 						head-class="checkout-form-field-head"
@@ -149,7 +152,7 @@ function saveBillingDetails() {
 
 				<div class="checkout-invoice-billing-modal-grid checkout-invoice-billing-modal-grid--postal">
 					<UiFormField
-						label="Postal Code"
+						:label="t('checkout.guest.fields.postalCode.label')"
 						:required="true"
 						:show-required-mark="true"
 						head-class="checkout-form-field-head"
@@ -163,10 +166,10 @@ function saveBillingDetails() {
 
 			<footer class="checkout-invoice-billing-modal-footer">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
-					Cancel
+					{{ t('checkout.invoice.billingModal.cancel') }}
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="saveBillingDetails">
-					Save
+					{{ t('checkout.invoice.billingModal.save') }}
 				</UiButton>
 			</footer>
 		</section>

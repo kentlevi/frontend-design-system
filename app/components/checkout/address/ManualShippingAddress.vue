@@ -28,11 +28,11 @@ const {
 				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 			<h2 v-else style="font-size: 20px; font-weight: 600;">
-				Shipping Information
+				{{ translate('checkout.member.shippingDetails') }}
 			</h2>
 
 			<div class="checkout-member-address-form-note">
-				This address will be saved for future use.
+				{{ translate('checkout.member.shippingAddress.savedForFutureUse') }}
 			</div>
 		</div>
 

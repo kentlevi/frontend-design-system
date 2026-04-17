@@ -5,6 +5,7 @@ export const authVerificationConfig = {
 	i18n: {
 		register: 'auth.verification',
 		guest: 'auth.guestVerification',
+		profile: 'account.profile.emailChangeVerification',
 	},
 } as const;
 

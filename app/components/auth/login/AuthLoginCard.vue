@@ -49,7 +49,7 @@ const {
 					size="sm"
 					:no-hover="true"
 					class="auth-login-card-close"
-					aria-label="Close modal"
+					:aria-label="$t('auth.login.closeModal')"
 					@click="handleClose"
 				>
 					<UiIcon name="regular-times" :size="24" color="#000000" />
