@@ -14,7 +14,6 @@ export function useDropShippingAddressUI() {
 	const {
 		drop_shipping_tooltip_open,
 		drop_shipping_enabled,
-		is_drop_shipping_address_modal_open,
 
 		toggleDropShippingTooltip,
 		getAddressTagClass
@@ -72,7 +71,6 @@ export function useDropShippingAddressUI() {
 		is_member,
 		drop_shipping_enabled,
 		drop_shipping_ship_to_another_address,
-		is_drop_shipping_address_modal_open,
 		drop_shipping_tooltip_open,
 		drop_shipping_mode_swap_wrapper_ref,
 

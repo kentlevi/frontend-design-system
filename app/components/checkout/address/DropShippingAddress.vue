@@ -13,7 +13,6 @@ const {
 	is_member,
 	drop_shipping_enabled,
 	drop_shipping_ship_to_another_address,
-	is_drop_shipping_address_modal_open,
 	drop_shipping_tooltip_open,
 	drop_shipping_mode_swap_wrapper_ref,
 
@@ -24,9 +23,11 @@ const {
 const {
 	drop_form,
 	form_field_errors,
+
 	updateFormFieldByType,
 	resetForm,
 	setDropAddress,
+	openSelectAddressModal,
 } = useDropShippingAddress();
 
 </script>
@@ -73,7 +74,7 @@ const {
 								size="sm"
 								class="checkout-member-link"
 								:no-hover="true"
-								@click="is_drop_shipping_address_modal_open = true"
+								@click="openSelectAddressModal('drop')"
 							>
 								View Drop Shipping Addresses
 							</UiButton>
@@ -83,7 +84,7 @@ const {
 						<CheckoutTransition>
 							<div v-if="!drop_shipping_ship_to_another_address" key="drop-shipping-saved" data-drop-shipping-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
-									<button type="button" class="checkout-member-address-card is-active">
+									<button type="button" class="checkout-member-address-card is-active" @click="openSelectAddressModal('drop')">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
 												<strong class="checkout-member-address-name">{{ drop_form?.contact_name }}</strong>
