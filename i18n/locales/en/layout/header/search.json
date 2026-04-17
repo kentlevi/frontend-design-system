@@ -17,8 +17,28 @@
                     },
                     "recent": {
                         "title": "Recent searches",
-                        "clearAll": "Clear all",
+                        "clearAll": "Clear All",
                         "remove": "Remove recent search"
+                    },
+                    "productNames": {
+                        "circle-sticker": "Circle Stickers",
+                        "rectangle-sticker": "Rectangle Stickers",
+                        "square-sticker": "Square stickers",
+                        "oval-sticker": "Oval Stickers",
+                        "rounded-sticker": "Rounded Stickers",
+                        "clear-sticker": "Clear Stickers",
+                        "vinyl-lettering": "Vinyl Letterings",
+                        "die-cut-roll": "Die Cut Roll",
+                        "clear-roll": "Clear Rolls",
+                        "circle-roll": "Circle Rolls",
+                        "square-roll": "Square Rolls",
+                        "rectangle-roll": "Rectangle Rolls",
+                        "oval-roll": "Oval Rolls",
+                        "paper-roll": "Paper Rolls",
+                        "die-cut-sheet": "Die Cut Sheets",
+                        "circle-sheet": "Circle Sheets",
+                        "oval-sheet": "Oval Sheets",
+                        "rounded-sheet": "Rounded Sheets"
                     },
                     "footer": {
                         "navigate": "Navigate",

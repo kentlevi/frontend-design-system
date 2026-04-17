@@ -5,10 +5,10 @@ import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper'
 
 const {
 	category_data,
+	getProductName,
 	selected_id,
 	selectProduct,
 } = useProductExperience();
-const { t } = useI18n();
 
 type StageProduct = {
 	id: string;
@@ -45,12 +45,12 @@ const category_products = computed<StageProduct[]>(() =>
 					<img
 						v-if="product.image"
 						:src="product.image"
-						:alt="t(`product.items.${product.id}.name`)"
+						:alt="getProductName(product)"
 						class="product-picker-image"
 					>
 				</div>
 				<div class="product-picker-meta">
-					<h4 class="product-picker-name">{{ t(`product.items.${product.id}.name`) }}</h4>
+					<h4 class="product-picker-name">{{ getProductName(product) }}</h4>
 				</div>
 			</button>
 		</nav>

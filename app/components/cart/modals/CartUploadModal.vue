@@ -163,7 +163,7 @@ const removeFile = () => {
 			</div>
 
 			<div class="upload-notes" data-testid="product-category-upload-notes">
-				<span class="upload-notes-label">{{ t('cart.uploadArtwork.specialInstructions') }}</span>
+				<span class="upload-notes-label">{{ t('cart.uploadArtwork.modalSpecialInstructions') }}</span>
 				<UiTextarea
 					v-model="instruction"
 					class="upload-notes-textarea"

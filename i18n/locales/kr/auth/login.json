@@ -2,7 +2,7 @@
   "auth": {
     "login": {
       "title": "로그인",
-      "subtitle": "가입 후 첫 주문에서 특별한 혜택을 받아보세요!",
+      "subtitle": "오늘 회원가입하고 첫 주문 시 특별 혜택을 누려보세요!",
       "createAccount": "계정 만들기",
       "member": "회원",
       "nonMember": "비회원",
@@ -20,7 +20,8 @@
       "closeModal": "모달 닫기",
       "socialLabel": "SNS 계정으로 로그인",
       "signInFacebook": "페이스북으로 로그인",
-      "signInGoogle": "Google로 로그인하기",
+      "signInGoogle": "구글로 로그인",
+      "signInGoogleCheckout": "Google로 로그인하기",
       "forgot": {
         "title": "비밀번호를 잊으셨나요?",
         "description": "이메일을 입력하면 비밀번호 재설정 링크를 보내드립니다.",

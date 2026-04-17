@@ -25,6 +25,7 @@
       "postalCode": "Postal Code",
       "postalCodePlaceholder": "Enter Postal Code",
       "accountForm": {
+        "fullNamePlaceholder": "Enter Fullname",
         "companyPlaceholder": "Enter Company Name",
         "addressLine1Placeholder": "Enter Address Line 1",
         "addressLine2Placeholder": "Enter Address Line 2",

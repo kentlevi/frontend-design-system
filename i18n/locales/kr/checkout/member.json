@@ -70,7 +70,7 @@
         },
         "cvv": {
           "label": "CVV",
-          "placeholder": "CVV 입력"
+          "placeholder": "CVC 입력"
         }
       },
       "useShippingAsBilling": "배송지를 청구지로 사용",

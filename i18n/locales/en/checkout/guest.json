@@ -13,6 +13,7 @@
       "viewBillingAddresses": "View Billing Addresses",
       "orderSummary": "Order Summary",
       "noItemsSelected": "No items selected for checkout.",
+      "verifyingTitle": "Verifying Your Information...",
       "completeCheckout": "Complete Checkout",
       "fields": {
         "email": {

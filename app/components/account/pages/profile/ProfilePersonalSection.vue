@@ -276,6 +276,7 @@ onMounted(() => {
 
 	<AuthVerificationModal
 		:email="pending_email"
+		:show-email-in-message="false"
 		:model-value="is_otp_open"
 		:code="email_change_otp_code"
 		:error="email_change_otp_error"

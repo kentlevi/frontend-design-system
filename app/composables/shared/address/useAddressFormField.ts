@@ -197,7 +197,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	}
 
 	function resolvePlaceholderKey(
-		key: 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
+		key: 'fullNamePlaceholder' | 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
 	) {
 		if (copy_context.value === 'addressBook') {
 			return `account.addressBook.accountForm.${key}`

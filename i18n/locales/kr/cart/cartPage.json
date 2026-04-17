@@ -42,7 +42,7 @@
       "total": "합계:",
       "proceedCheckout": "결제 진행 ({count})",
       "proceedToCheckout": "주문하기",
-      "note": "배송비 및 할인 내역은 결제 시 적용됩니다.",
+      "note": "배송비 및 할인은 결제 시 적용됩니다.",
       "availablePaymentOptions": "이용 가능한 결제 수단",
       "securedPayments": "안전한 결제",
       "emptyTitle": "장바구니가 비어 있습니다",

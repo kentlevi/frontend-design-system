@@ -37,7 +37,7 @@ import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSecti
 let pending_picker_route_animation = false;
 
 export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, api_products?: Ref<Products | undefined>) {
-	const { t } = useI18n();
+	const { t, te } = useI18n();
 	const route = useRoute();
 	const router = useRouter();
 	const { withCountry, country } = useCountry();
@@ -549,6 +549,8 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	}
 
 	function getProductName(product: ProductItem) {
+		const navigation_key = `product.navigationNames.${product.id}`;
+		if (te(navigation_key)) return t(navigation_key);
 		return t(`product.items.${product.id}.name`);
 	}
 

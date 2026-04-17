@@ -41,7 +41,7 @@ const {
 				key="login"
 				class="checkout-auth-card-panel"
 			>
-				<AuthLoginCard />
+				<AuthLoginCard google-label-key="auth.login.signInGoogleCheckout" />
 			</div>
 
 			<div v-else key="register" class="checkout-auth-card-panel">

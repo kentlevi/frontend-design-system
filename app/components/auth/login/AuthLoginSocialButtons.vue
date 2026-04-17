@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { useSocialLogin } from '~/composables/auth/login/useSocialLogin';
 
+withDefaults(defineProps<{
+	googleLabelKey?: string;
+}>(), {
+	googleLabelKey: 'auth.login.signInGoogle',
+});
+
 const { t: translate } = useI18n();
 const { handleSocial } = useSocialLogin()
 </script>
@@ -47,7 +53,7 @@ const { handleSocial } = useSocialLogin()
 				<span class="auth-login-social-content">
 					<UiSocialIcon name="google" :size="24" variant="colored" />
 					<span class="auth-login-social-text">{{
-						translate('auth.login.signInGoogle')
+						translate(googleLabelKey)
 					}}</span>
 				</span>
 			</UiButton>

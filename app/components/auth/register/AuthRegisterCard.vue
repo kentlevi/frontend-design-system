@@ -246,20 +246,12 @@ watch(is_email_taken_error, (is_taken) => {
 
 				<UiFormField
 					class="auth-register-field"
-					:label="t('auth.register.lastName')"
+					:label="t('auth.register.lastNameOptionalLabel')"
 					head-class="auth-register-field-head"
 					label-class="auth-register-field-label"
 					label-text-class="auth-register-field-label-text"
 					error-class="auth-register-field-error"
 				>
-					<template #label>
-						<span class="auth-register-label">
-							{{ t('auth.register.lastName') }}
-							<span class="auth-register-optional">
-								({{ t('auth.register.optional') }})
-							</span>
-						</span>
-					</template>
 					<UiInput
 						v-model="last_name"
 						type="text"
