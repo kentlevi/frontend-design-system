@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCheckoutAddressSelectModal } from '~/composables/checkout/address/useCheckoutAddressSelectModal';
-import type { AddressType, ShippingAddress } from '~/types/user-address';
+import type { AddressItem, AddressType } from '~/types/user-address';
 
 const props = withDefaults(defineProps<{
 	title: string;
@@ -15,9 +15,9 @@ const props = withDefaults(defineProps<{
 const {
 	translate,
 
-	is_shipping_address_modal_open,
+	is_select_address_modal_open,
 	pending_selected_address_id,
-	shipping_address,
+	addresses,
 
 	closeModal,
 	confirmSelection,
@@ -27,7 +27,7 @@ const {
 } = useCheckoutAddressSelectModal()
 
 
-function getDefaultBadgeLabel(address: ShippingAddress) {
+function getDefaultBadgeLabel(address: AddressItem) {
 	if (props.variant === 'shipping') return translate('checkout.member.addressSelection.defaultShipping');
 	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || translate('checkout.member.addressSelection.defaultBilling');
 	return translate('checkout.member.addressSelection.defaultDropShipping');
@@ -42,7 +42,7 @@ function getDefaultBadgeIcon() {
 
 <template>
 	<UiModal
-		v-model="is_shipping_address_modal_open"
+		v-model="is_select_address_modal_open"
 		align="top"
 		width="720px"
 		padding="0"
@@ -69,7 +69,7 @@ function getDefaultBadgeIcon() {
 
 				<div class="checkout-address-select-modal-list">
 					<button
-						v-for="address in shipping_address"
+						v-for="address in addresses"
 						:key="address.id"
 						type="button"
 						class="checkout-address-select-modal-card"

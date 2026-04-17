@@ -13,7 +13,7 @@ export function useSavedShippingAddress() {
 	/** Contexts */
 	const { shipping_address } = useAddressBookListCheckoutContext()
 	const { shipping_form } = useAddressFormCheckoutContext()
-	const { is_shipping_address_modal_open } = useAddressGeneralUICheckoutContext()
+	const { openSelectAddressModal } = useAddressGeneralUICheckoutContext()
 
 	const { assignAddressToForm } = useAddressGeneral()
 
@@ -34,6 +34,7 @@ export function useSavedShippingAddress() {
 
 	return {
 		shipping_form,
-		is_shipping_address_modal_open,
+
+		openSelectAddressModal,
 	}
 }

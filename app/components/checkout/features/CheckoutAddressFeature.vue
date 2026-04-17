@@ -4,6 +4,7 @@ import ManualAddress from '../address/ManualShippingAddress.vue';
 import SavedAddress from '../address/SavedShippingAddress.vue';
 import DropShippingAddress from '../address/DropShippingAddress.vue';
 import { useCheckoutAddressFeature } from '../../../composables/checkout/address/useCheckoutAddressFeature';
+import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 
 const {
 	translate,
@@ -18,8 +19,9 @@ const {
 
 	shipping_swap_wrapper_ref,
 	ship_to_another_address,
-	is_shipping_address_modal_open,
 } = useCheckoutAddressFeature()
+
+const {	openSelectAddressModal } = useSavedShippingAddress()
 </script>
 
 <template>
@@ -30,7 +32,7 @@ const {
 					<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 						{{ translate('checkout.member.myShippingAddress') }}
 					</UiRadio>
-					<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_shipping_address_modal_open = true">
+					<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="openSelectAddressModal('shipping')">
 						{{ translate('checkout.member.viewShippingAddresses') }}
 					</UiButton>
 				</div>

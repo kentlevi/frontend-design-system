@@ -75,6 +75,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		saved_shipping_addresses,
 		guest_contact_state,
 		selected_shipping_address_id,
+		selected_billing_address_id,
+		selected_drop_address_id,
 		selected_shipping_method_id,
 		selected_payment_method,
 		ship_to_another_address,

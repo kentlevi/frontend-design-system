@@ -5,7 +5,8 @@ import { useAddressHelper } from '~/utils/address';
 
 const {
 	shipping_form,
-	is_shipping_address_modal_open,
+
+	openSelectAddressModal,
 } = useSavedShippingAddress()
 
 const {
@@ -28,7 +29,7 @@ const {
 			v-if="shipping_form"
 			type="button"
 			class="checkout-member-address-card is-active"
-			@click="is_shipping_address_modal_open = true"
+			@click="openSelectAddressModal('shipping')"
 		>
 			<div class="checkout-member-address-top">
 				<div class="checkout-member-address-title-group">

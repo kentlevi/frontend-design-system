@@ -1,3 +1,4 @@
+import type { AddressType } from "~/types/user-address";
 import { useCheckoutTooltipState } from "../features/useCheckoutTooltipState";
 
 export function useAddressGeneralUI() {
@@ -10,23 +11,30 @@ export function useAddressGeneralUI() {
 	} = useCheckoutTooltipState()
 
 	/** Shipping */
-	const is_shipping_address_modal_open = ref(false)
 
 	/** Drop Shipping  */
 	const drop_shipping_enabled = ref(false);
-	const is_drop_shipping_address_modal_open = ref(false);
 
 	/** Billing */
 	const use_shipping_as_billing = ref(true);
 	const billing_use_different_address = ref(false);
 	const is_billing_address_modal_open = ref(false);
 
-	/** General Function */
+	/** General */
+	const active_address_type = ref<AddressType | null>(null)
+	const is_select_address_modal_open = ref(false)
+
 	function getAddressTagClass(label: string) {
 		const lower_label = label.toLowerCase();
 		if (lower_label.includes('office')) return 'checkout-member-address-tag--office';
 		if (lower_label.includes('client')) return 'checkout-member-address-tag--client';
 		return '';
+	}
+
+	function openSelectAddressModal(type: AddressType) {
+		console.log('tseyrsr');
+		active_address_type.value = type
+		is_select_address_modal_open.value = true
 	}
 
 
@@ -36,7 +44,6 @@ export function useAddressGeneralUI() {
          */
 
 		/** Variables */
-		is_shipping_address_modal_open,
 
 
 
@@ -47,7 +54,6 @@ export function useAddressGeneralUI() {
 		/** Variables */
 		drop_shipping_tooltip_open,
 		drop_shipping_enabled,
-		is_drop_shipping_address_modal_open,
 
 		/** Functions */
 		toggleDropShippingTooltip,
@@ -67,7 +73,16 @@ export function useAddressGeneralUI() {
 		/** Functions */
 		toggleBillingTooltip,
 
-		/** General Functions */
-		getAddressTagClass
+		/**
+         * General
+         */
+
+		/** Variables */
+		is_select_address_modal_open,
+		active_address_type,
+
+		/** Functions */
+		getAddressTagClass,
+		openSelectAddressModal
 	}
 }

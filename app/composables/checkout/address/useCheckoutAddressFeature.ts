@@ -2,7 +2,6 @@ import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useCheckoutAddressFeature() {
 
@@ -13,7 +12,6 @@ export function useCheckoutAddressFeature() {
 
 	/** Contexts */
 	const { is_member } = useCheckoutExperienceFeatureContext();
-	const { is_shipping_address_modal_open } = useAddressGeneralUICheckoutContext()
 
 
 	const { t: translate } = useI18n()
@@ -58,7 +56,6 @@ export function useCheckoutAddressFeature() {
 		is_member,
 
 		shipping_swap_wrapper_ref,
-		is_shipping_address_modal_open,
 		ship_to_another_address,
 	}
 }
