@@ -12,11 +12,12 @@ const {
 	beforeLeave,
 	leave,
 	afterLeave,
+
 	is_member,
 	billing_use_different_address,
 	use_shipping_as_billing,
 	billing_tooltip_open,
-	is_billing_address_modal_open,
+
 	getAddressTagClass,
 	toggleBillingTooltip,
 } = useBillingAddressUI()
@@ -30,6 +31,7 @@ const {
 
 	resetForm,
 	setBillingAddress,
+	openSelectAddressModal,
 } = useBillingAddress()
 
 </script>
@@ -66,7 +68,7 @@ const {
 						>
 							{{ translate('checkout.member.billingAddress.myBillingAddress') }}
 						</UiRadio>
-						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_billing_address_modal_open = true">
+						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="openSelectAddressModal('billing')">
 							View Billing Addresses
 						</UiButton>
 					</div>
@@ -75,7 +77,7 @@ const {
 						<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 							<div v-if="!billing_use_different_address && is_member" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
-									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="is_billing_address_modal_open = true">
+									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="openSelectAddressModal('billing')">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
 												<strong class="checkout-member-address-name">{{ billing_form.contact_name }}</strong>
