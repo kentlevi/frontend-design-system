@@ -107,7 +107,7 @@ import AddressFormFields from '~/components/shared/address/AddressFormFields.vue
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { useAddressCheckoutContext } from '~/composables/checkout/address/context/addressCheckoutContext';
+import { useAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
 import { checkoutBillingTooltipProps } from '~/data/checkout/tooltips';
 import { useAddressFieldStore } from '~/stores/address';
 import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from '~/types/address';
@@ -130,7 +130,7 @@ const {
 	form_field_errors,
 	clearFormFieldError,
 	populateDynamicFields,
-} = useAddressCheckoutContext();
+} = useAddressFormCheckoutContext();
 
 const billing_form = computed(() => form_state.billing);
 

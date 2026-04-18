@@ -1,7 +1,6 @@
 import { defineNuxtPlugin } from '#app'
-import { useAuthUser } from '~/composables/auth/useAuthUser'
+import { fetchAndStoreUser } from '~/services/auth/auth.service'
 
-export default defineNuxtPlugin(async () => {
-	const { fetchAndStoreUser } = useAuthUser()
+export default defineNuxtPlugin(() => {
 	fetchAndStoreUser()
 })

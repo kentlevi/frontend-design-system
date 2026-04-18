@@ -10,7 +10,7 @@ import {
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
 import { normalizeAppPath } from '~/utils/auth/redirect';
-import { useAuthUser } from '~/composables/auth/useAuthUser';
+import { logoutUser } from '~/services/auth/auth.service';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -193,7 +193,6 @@ export function useAppHeaderAccount() {
 		closeAccountMenu();
 		await nextTick();
 
-		const { logoutUser } = useAuthUser();
 		await logoutUser();
 	}
 

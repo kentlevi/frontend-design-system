@@ -13,9 +13,9 @@ import {
 	isTimestampExpired,
 	useVerificationCooldown,
 } from '~/composables/auth/verification/useVerificationCooldown';
-import { useAuthUser } from '../useAuthUser';
 import { useRegisterUser } from '../useRegisterUser';
 import { normalizeAppPath } from '~/utils/auth/redirect';
+import { fetchAndStoreUser } from '~/services/auth/auth.service';
 
 type ValidationPayload = Record<string, unknown> | null | undefined;
 
@@ -475,7 +475,6 @@ export function useRegisterForm() {
 				return response;
 			}
 
-			const { fetchAndStoreUser } = useAuthUser();
 			await fetchAndStoreUser();
 
 			if (import.meta.client) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRefs } from 'vue';
-import { split_home_guide_tour_skip_copy } from '~/helpers/home/homeGuideTour.helper';
+import { splitHomeGuideTourSkipCopy } from '~/helpers/home/homeGuideTour.helper';
 
 const { t } = useI18n();
 
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 }>();
 
 const skip_modal_body_parts = computed(() => {
-	return split_home_guide_tour_skip_copy(t('home.tour.skipModal.body'));
+	return splitHomeGuideTourSkipCopy(t('home.tour.skipModal.body'));
 });
 </script>
 

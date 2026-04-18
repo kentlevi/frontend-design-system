@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { useAddressHelper } from '~/utils/address';
-import { useAddressBookFeatureContext } from '~/composables/account/addressBook/addressBookFeatureContext';
+import { useAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
 
 const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
-const address_book_feature_context = useAddressBookFeatureContext()
+const address_book_delete_context = useAddressBookDeleteContext()
 
-const is_default_shipping_modal_open = address_book_feature_context.is_default_shipping_modal_open
-const replacement_addresses = address_book_feature_context.replacement_addresses
+const is_default_shipping_modal_open = address_book_delete_context.is_default_shipping_modal_open
+const replacement_addresses = address_book_delete_context.replacement_addresses
 
-const cancelDefaultShippingFlow = address_book_feature_context.cancelDefaultShippingFlow
-const skipDefaultShippingSelection = address_book_feature_context.skipDefaultShippingSelection
-const saveDefaultShippingSelection = address_book_feature_context.saveDefaultShippingSelection
+const cancelDefaultShippingFlow = address_book_delete_context.cancelDefaultShippingFlow
+const skipDefaultShippingSelection = address_book_delete_context.skipDefaultShippingSelection
+const saveDefaultShippingSelection = address_book_delete_context.saveDefaultShippingSelection
 
 const selected_address_id = ref<number | null>(null)
 

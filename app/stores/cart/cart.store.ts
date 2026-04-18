@@ -4,6 +4,7 @@ import { useUsersStore } from '../users/users.store';
 import type { FeaturedDataResponse } from '~/types/products/attributes';
 import type { CartItem, CartRow } from '~/types/cart/cart';
 import { productCatalog } from '~/data/products/catalog';
+import type { ProductCategory } from '~/types/products/catalog';
 import { homeProductTypePathById } from '~/data/products/homeTypes';
 import { featuredProducts } from '~/data/products/featured';
 import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
@@ -75,7 +76,7 @@ export const useCartStore = defineStore('cart', () => {
 			// Note: This logic previously existed in helper/composable,
 			// now consolidated for global access.
 			let resolvedProduct: LocalizedCatalogProduct | null = null;
-			for (const category of Object.values(productCatalog)) {
+			for (const category of Object.values(productCatalog) as ProductCategory[]) {
 				const product = category.products.find(p => p.id === item.product || p.name === item.product);
 				if (product) {
 					resolvedProduct = {
@@ -155,7 +156,10 @@ export const useCartStore = defineStore('cart', () => {
 
 	const editing_item = computed(() => {
 		if (!editing_item_id.value) return null;
-		return items.value.find(item => String(item.id) === editing_item_id.value) ?? null;
+		return items.value.find(item => {
+			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
+			return currentId === editing_item_id.value;
+		}) ?? null;
 	});
 
 	const openEditModal = (itemId: string, mode: 'full' | 'size' = 'full') => {
@@ -193,7 +197,10 @@ export const useCartStore = defineStore('cart', () => {
 	};
 
 	const updateItemQty = (itemId: string, qty: number) => {
-		const index = items.value.findIndex(item => String(item.id) === itemId);
+		const index = items.value.findIndex(item => {
+			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
+			return currentId === itemId;
+		});
 		if (index !== -1 && items.value[index]) {
 			const item = items.value[index];
 			const unitPrice = item.quantity > 0 ? item.cost / item.quantity : 0;
@@ -229,7 +236,10 @@ export const useCartStore = defineStore('cart', () => {
 	};
 
 	const updateItemSize = (itemId: string, width: number, height: number) => {
-		const index = items.value.findIndex(item => String(item.id) === itemId);
+		const index = items.value.findIndex(item => {
+			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
+			return currentId === itemId;
+		});
 		if (index !== -1 && items.value[index]) {
 			items.value[index] = {
 				...items.value[index],
@@ -245,7 +255,10 @@ export const useCartStore = defineStore('cart', () => {
 		artworkPreviewUrl: string;
 		specialInstructions: string;
 	}) => {
-		const index = items.value.findIndex(item => String(item.id) === itemId);
+		const index = items.value.findIndex(item => {
+			const currentId = item.id ? String(item.id) : (item.local_identity || 'unknown');
+			return currentId === itemId;
+		});
 		if (index !== -1 && items.value[index]) {
 			items.value[index] = {
 				...items.value[index],

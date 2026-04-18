@@ -1,6 +1,6 @@
 import {
-	build_empty_fields,
-	get_profile_field_value,
+	buildEmptyFields,
+	getProfileFieldValue,
 } from '~/helpers/account/profile/personalForm.helper'
 import type {
 	PersonalFormProfile,
@@ -14,10 +14,10 @@ export function mapProfileToPersonalFormState(
 	profile: PersonalFormProfile | null
 ): PersonalFormState {
 	const user_field_values = profile?.user_field_values ?? []
-	const fields = build_empty_fields(field_definitions)
+	const fields = buildEmptyFields(field_definitions)
 
 	for (const field_definition of field_definitions) {
-		fields[field_definition.field_key] = get_profile_field_value(
+		fields[field_definition.field_key] = getProfileFieldValue(
 			user_field_values,
 			field_definition.id
 		)

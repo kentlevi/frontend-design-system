@@ -9,7 +9,6 @@ import {
 	getAuthResponseCode,
 } from '~/helpers/auth/auth.helper';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useAuthUser } from '~/composables/auth/useAuthUser';
 import {
 	GUEST_LOGIN_TOAST_PENDING_KEY,
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
@@ -18,6 +17,7 @@ import {
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { useLoginUser } from '~/composables/auth/useLoginUser';
 import { isTimestampExpired, useVerificationCooldown } from '~/composables/auth/verification/useVerificationCooldown';
+import { fetchAndStoreUser } from '~/services/auth/auth.service';
 
 interface UseLoginPageFormOptions {
 	skipMemberRedirect?: boolean;
@@ -134,7 +134,6 @@ export function useLoginPageForm(options: UseLoginPageFormOptions = {}) {
 	}
 
 	async function fetchUserProfile() {
-		const { fetchAndStoreUser } = useAuthUser();
 		setGuestLoginToastPending();
 		await fetchAndStoreUser();
 	}
