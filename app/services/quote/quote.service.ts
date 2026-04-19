@@ -77,7 +77,6 @@ export const useQuoteService = (_caller : string) => {
 	}
 
 
-
 	return {
 		// 🔥 Store
 		...storeToRefs(attribute_store),

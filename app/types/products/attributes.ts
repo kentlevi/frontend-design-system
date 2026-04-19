@@ -95,3 +95,19 @@ export interface PricingResponse {
 	product_variant_id: number,
 	prices: QuantitySpec [],
 }
+
+export interface PricePoint {
+	nr: number;
+	price: number;
+}
+
+export interface PriceCalculationResult {
+	bound_qty_diff: number;
+	qty_diff: number;
+	lower_price: number;
+	upper_price: number;
+	bound_price_diff: number;
+	bound_diff: number;
+	diff: number;
+	price: number;
+}

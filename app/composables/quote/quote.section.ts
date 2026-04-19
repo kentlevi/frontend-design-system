@@ -6,7 +6,7 @@ import { useLetteringService } from "~/services/quote/lettering.service"
 import { useQuantityService } from "~/services/quote/quantity.service"
 import { useQuoteService } from "~/services/quote/quote.service"
 import { useSizeService } from "~/services/quote/size.service"
-import type { AttributeSelection, ColorSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
+import type { AttributeSelection, ColorSpec, FontSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
 import { useCountry } from "../app/country/useCountry"
 import { formatCurrencyByCountry } from '~/utils/currency';
 
@@ -36,18 +36,26 @@ export const useQuoteSection = () => {
 
 	const custom_qty_input = ref<HTMLInputElement | null>(null)
 
+	const is_custom_qty_focus = ref(false)
+
+	const is_custom_size_focus = ref(false)
+
 	const custom_width_input = ref<HTMLInputElement | null>(null)
 
-	const is_vinylsize_focused = ref<boolean>(false)
-
 	const custom_size = ref<SizeSpec>(lettering_service.default_size_spec.value)
-
 
 	const custom_quantity = ref<QuantitySpec>({
 		custom: true,
 		nr: null,
 		price: null,
 	})
+
+	/**
+	 * Initialized a raw string variable due to component structure
+	 * UiSelect only append a single variable or index inside
+	 * That is why watching the changes of its value require to update in service state
+	 */
+	const selected_font = ref<string>("Antique Olive");
 
 
 	const prepareComponent = async (url_slug : string) => {
@@ -108,27 +116,30 @@ export const useQuoteSection = () => {
 			else
 				await prepareDefaultAttr()
 
-			// await initializeListOfPrices()
 		}
 	}
 
 	const initializeListOfPrices = async () => {
+		console.warn('Initializing prices...')
 		if( !current_url_slug.value )
 			return
 
-		const prices = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
+		const data = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
 			width	: size_service.src.value?.width,
 			height	: size_service.src.value?.height,
 			color_id: color_service.src.value?.id,
 			font_id	: font_service.src.value?.id,
 		} as PricingParameters)
 
-		if( !prices ) {
+		if( !data ) {
 			console.warn('Unable to retrieve prices.')
 			return
 		}
-
-		await quote_service.bindPrices(prices)
+		if( data.prices.length ) {
+			quantity_service.minimum.value = data.prices[0]?.nr ?? 0
+			quantity_service.maximum.value = data.prices[data.prices.length - 1]?.nr ?? 0
+		}
+		await quote_service.bindPrices(data)
 	}
 
 	const updatePrices = debounce( async(update_from : string) => {
@@ -141,7 +152,6 @@ export const useQuoteSection = () => {
 			? quantity_service.collection.value[0]
 			: null
 
-		console.log(first_def, quantity_service.src.value)
 		if(!quantity_service.src.value && first_def)
 			quantity_service.update(first_def)
 	},250)
@@ -155,8 +165,11 @@ export const useQuoteSection = () => {
 		if( quote_service.has_color_selection.value && color_service.collection.value.length && color_service.collection.value[0])
 			color_service.assignDefault(color_service.collection.value[0])
 
-		if( quote_service.has_font_selection.value && font_service.collection.value.length && font_service.collection.value[0])
-			font_service.assignDefault(font_service.collection.value[0])
+		if( quote_service.has_font_selection.value && font_service.collection.value.length && font_service.collection.value[0]) {
+			const matched_font = font_service.collection.value[0]
+			font_service.assignDefault(matched_font)
+			selected_font.value = matched_font.value
+		}
 
 
 		/** Lettering default size */
@@ -188,6 +201,9 @@ export const useQuoteSection = () => {
 		}
 
 		font_service.assignDefault(existing_attr.font ?? null)
+		if ( existing_attr.font )
+			selected_font.value = existing_attr.font.value
+
 		color_service.assignDefault(existing_attr.color ?? null)
 		quantity_service.assignDefault(existing_attr.quantity ?? null)
 	}
@@ -195,26 +211,38 @@ export const useQuoteSection = () => {
 	/** ✅ Color on click and change */
 	const updateColor = (color : ColorSpec) => {
 		color_service.update(color)
+		updatePrices('color')
+	}
+
+	/** ✅ Font on click and change */
+	const updateFont = (font : FontSpec) => {
+		font_service.update(font)
 	}
 
 	/** ✅ Custom size on-change */
 	const updateCustomSize = (field_src: string) => {
+		if( field_src == 'lettering-size-field' ) {
+			custom_size.value.custom = true
+			custom_size.value.label = 'Vinyl-Lettering'
+		}
+
 		size_service.update({ ...custom_size.value, src: field_src})
 	}
 
 
 	// ⚠️ Watching the changes of size
 	watch(() => size_service.src, (new_size) => {
-
-		if( !new_size || !new_size?.value || !new_size.value.src )
+		console.log(new_size)
+		if( !new_size || !new_size?.value )
 			return
 
-		const source = new_size.value.src
+		const source = new_size.value?.src
 
 		console.warn(`Size changed from ${source} ->`, `${new_size.value.width}x${new_size.value.height}`)
-		//from other component
-		// Only if the lettering editor is active
-		// The changes of text in Vinyl Lettering editor will trigger this
+		/**
+		 * Only if the lettering editor is active from other component
+		 * The changes of text in Vinyl Lettering editor will trigger this
+		 */
 		if( quote_service.has_lettering_editor.value && new_size && new_size.value ) {
 			if(source && source == 'lettering-editor' ) {
 				custom_size.value.width 	= new_size.value.width
@@ -229,19 +257,6 @@ export const useQuoteSection = () => {
 	})
 
 
-	// ⚠️ Watching the changes of font
-	watch(() => font_service.src, () => {
-		if( !quote_service.has_font_selection.value )
-			return
-
-
-		console.warn(`Font changed!`)
-		updatePrices('font')
-	}, {
-		immediate: true,
-		deep: true
-	})
-
 	const hideCustomSize = () => {
 		is_custom_size.value = false
 	}
@@ -253,6 +268,76 @@ export const useQuoteSection = () => {
 	const formatPrice = (value : number) => {
 		return formatCurrencyByCountry(value, country.value)
 	}
+
+	const is_vinylsize_focused = ref(false)
+	const is_font_focused = ref(false)
+
+	const onVinylSizeFocus = () => { is_vinylsize_focused.value = true }
+	const onVinylSizeBlur = () => { is_vinylsize_focused.value = false }
+
+	const onVinylFontFocus = () => { is_font_focused.value = true }
+	const onVinylFontBlur = () => { is_font_focused.value = false }
+
+	const onCustomQtyFocus = () => {
+		is_custom_qty_focus.value = true
+	}
+
+	const onCustomQtyBlur = () => {
+		is_custom_qty_focus.value = false
+	}
+
+	const onCustomSizeFocus = () => {
+		is_custom_size_focus.value = true
+	}
+
+	const onCustomSizeBlur = () => {
+		is_custom_size_focus.value = false
+	}
+
+	watch(() => selected_font.value, (new_font) => {
+		console.log(2)
+		const collection = font_service.collection.value
+		const matched = collection.find(f => f.value == new_font)
+
+		if( matched ) {
+			font_service.update(matched)
+			updatePrices('font')
+		}
+	})
+
+	const updateCustomQuantity = async (event: Event) => {
+		const input = event.target as HTMLInputElement
+
+		const filtered_char = input.value.replace(/[^0-9]/g, '')
+
+		if( filtered_char === '' ) {
+			custom_quantity.value.nr = null
+
+			quantity_service.update(custom_quantity.value)
+			return
+		}
+
+		// remove commas
+		const raw = filtered_char.replace(/,/g, '')
+		const n = Number(raw)
+
+		console.log(n)
+		if (n && !isNaN(n)) {
+			custom_quantity.value.nr = n
+			quantity_service.update(custom_quantity.value)
+
+			// Calculate the price
+			const quantities = quantity_service.collection.value ?? []
+			console.log(quantity_service.getCustomPrice(n, quantities))
+		}
+	}
+
+	const formatted_custom_qty = computed(() => {
+		if (!custom_quantity.value.nr)
+			return ''
+
+		return custom_quantity.value.nr.toLocaleString()
+	})
 
 
 	return {
@@ -283,6 +368,11 @@ export const useQuoteSection = () => {
 		custom_qty_input,
 		custom_width_input,
 		is_vinylsize_focused,
+		is_font_focused,
+		selected_font,
+		is_custom_qty_focus,
+		is_custom_size_focus,
+		formatted_custom_qty,
 
 		// 🔥 Methods
 		prepareComponent,
@@ -291,5 +381,15 @@ export const useQuoteSection = () => {
 		hideCustomSize,
 		toggleCustomQuantityField,
 		formatPrice,
+		updateFont,
+		onVinylSizeFocus,
+		onVinylSizeBlur,
+		onVinylFontFocus,
+		onVinylFontBlur,
+		updateCustomQuantity,
+		onCustomQtyFocus,
+		onCustomQtyBlur,
+		onCustomSizeFocus,
+		onCustomSizeBlur,
 	}
 }

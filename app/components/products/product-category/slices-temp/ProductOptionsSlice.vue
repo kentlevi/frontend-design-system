@@ -14,28 +14,14 @@ const {
 	total,
 	selection_navigation_in_flight,
 	is_custom_size,
-	formatted_custom_qty,
-	is_custom_size_focus,
-	is_custom_qty_focus,
-	custom_width_input,
-	custom_qty_input,
 
 	// Actions
 	proceedToNextStep,
 	showCustomSize,
 	focusWidthInput,
-	onCustomSizeFocus,
-	onCustomSizeBlur,
-	onCustomQtyFocus,
-	onCustomQtyBlur,
-	onVinylSizeFocus,
-	onVinylSizeBlur,
-	onVinylFontFocus,
-	onVinylFontBlur,
 	inputUpdateSize,
 	inputUpdateCustomSize,
 	inputUpdateQuantity,
-	inputUpdateCustomQuantity,
 } = useProductExperience();
 
 const { t } = useI18n();
@@ -93,22 +79,36 @@ const {
 	quantities: featured_quantities,
 	has_lettering_editor,
 	custom_size,
-	font : selected_font,
+	selected_font,
 	quantity: selected_quantity,
 	is_custom_qty,
 	custom_quantity,
-	is_vinylsize_focused,
 	lettering,
 	lettering_preview_ready,
 	navigation_flight,
 	is_loading_features,
 	has_font_selection,
 	is_pricing_ready,
+	is_vinylsize_focused,
+	is_custom_qty_focus,
+	custom_qty_input,
+	formatted_custom_qty,
+	is_custom_size_focus,
+	custom_width_input,
+	onVinylSizeFocus,
+	onVinylSizeBlur,
+	onVinylFontFocus,
+	onVinylFontBlur,
 	prepareComponent,
 	updateColor,
 	updateCustomSize,
 	toggleCustomQuantityField,
 	formatPrice,
+	updateCustomQuantity,
+	onCustomQtyFocus,
+	onCustomQtyBlur,
+	onCustomSizeFocus,
+	onCustomSizeBlur,
 } = useQuoteSection()
 
 const route = useRoute()
@@ -131,7 +131,7 @@ const initializeEntryPoint = () => {
 
 const lettering_field_not_ready = computed(() => !!(is_loading_features.value
 	|| navigation_flight.value
-	|| !selected_font.value
+	|| !selected_font
 	|| !lettering_preview_ready.value))
 
 
@@ -149,6 +149,7 @@ const has_pending_custom_selection = computed(() => {
 		|| missing_lettering_text
 	);
 });
+
 
 </script>
 
@@ -295,7 +296,7 @@ const has_pending_custom_selection = computed(() => {
 							class="custom-qty-input"
 							placeholder="Enter quantity"
 							@beforeinput="prevent_non_digit_input"
-							@input="inputUpdateCustomQuantity"
+							@input="updateCustomQuantity"
 							@focus="onCustomQtyFocus"
 							@blur="onCustomQtyBlur"
 						>
@@ -354,13 +355,13 @@ const has_pending_custom_selection = computed(() => {
 
 			<section v-if="has_font_selection" class="product-section">
 				<h3 class="option-title">Select your font</h3>
-				<div v-if="lettering_field_not_ready && selected_font?.value" class="option-grid">
+				<div v-if="lettering_field_not_ready && selected_font" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
 				<div v-else class="option-grid">
-					<div v-if="selected_font?.value" class="option-pill-wide">
+					<div class="option-pill-wide">
 						<UiSelect
-							v-model="selected_font.value"
+							v-model="selected_font"
 							:options="featured_fonts"
 							size="38"
 							trigger-class="custom-size-input font-select-trigger"
@@ -413,7 +414,7 @@ const has_pending_custom_selection = computed(() => {
 							placeholder="Enter Quantity"
 							class="custom-size-input custom-quantity-input"
 							@beforeinput="prevent_non_digit_input"
-							@input="inputUpdateCustomQuantity($event)"
+							@input="updateCustomQuantity($event)"
 							@focus="onCustomQtyFocus"
 							@blur="onCustomQtyBlur"
 						>
