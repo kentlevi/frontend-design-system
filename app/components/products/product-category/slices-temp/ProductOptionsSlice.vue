@@ -2,20 +2,16 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import { useQuoteSection } from '~/composables/quote/quote.section';
-import { FontSpec } from '~/types/products/attributes';
-import { SizeSpec } from '../../../../types/products/attributes';
 
 const {
 	size,
 	active_size_code,
-	quantity,
 	color,
 	pricing_ready,
 	discount_rate,
 	subtotal,
 	unit_price,
 	total,
-	formatPrice,
 	selection_navigation_in_flight,
 	is_custom_size,
 	formatted_custom_qty,
@@ -27,7 +23,6 @@ const {
 	// Actions
 	proceedToNextStep,
 	showCustomSize,
-	showCustomQty,
 	focusWidthInput,
 	onCustomSizeFocus,
 	onCustomSizeBlur,
@@ -79,20 +74,6 @@ onBeforeUnmount(() => {
 });
 
 
-const has_pending_custom_selection = computed(() => {
-	const size_source = is_custom_size.value ? custom_size.value : size.value;
-	const quantity_source = is_custom_qty.value ? custom_quantity.value : quantity.value;
-
-	const missing_size = !size_source?.width || !size_source?.height;
-	const missing_quantity = !quantity_source?.nr;
-	const missing_lettering_text = has_lettering_editor.value && !lettering.value;
-
-	return (
-		missing_size
-		|| missing_quantity
-		|| missing_lettering_text
-	);
-});
 
 const prevent_non_digit_input = (event: InputEvent) => {
 	if (!event.data) return;
@@ -113,6 +94,7 @@ const {
 	has_lettering_editor,
 	custom_size,
 	font : selected_font,
+	quantity: selected_quantity,
 	is_custom_qty,
 	custom_quantity,
 	is_vinylsize_focused,
@@ -125,6 +107,8 @@ const {
 	prepareComponent,
 	updateColor,
 	updateCustomSize,
+	toggleCustomQuantityField,
+	formatPrice,
 } = useQuoteSection()
 
 const route = useRoute()
@@ -145,18 +129,27 @@ const initializeEntryPoint = () => {
 }
 
 
-
 const lettering_field_not_ready = computed(() => !!(is_loading_features.value
 	|| navigation_flight.value
 	|| !selected_font.value
 	|| !lettering_preview_ready.value))
 
-const test_size = ref<SizeSpec>({
-	width: 208,
-	height: 30,
-	custom: true,
-	label: 'Vinyl-Lettering'
-})
+
+const has_pending_custom_selection = computed(() => {
+	const size_source = is_custom_size.value ? custom_size.value : size.value;
+	const quantity_source = is_custom_qty.value ? custom_quantity.value : selected_quantity?.value;
+
+	const missing_size = !size_source?.width || !size_source?.height;
+	const missing_quantity = !quantity_source?.nr;
+	const missing_lettering_text = has_lettering_editor.value && !lettering.value;
+
+	return (
+		missing_size
+		|| missing_quantity
+		|| missing_lettering_text
+	);
+});
+
 </script>
 
 <template>
@@ -275,7 +268,7 @@ const test_size = ref<SizeSpec>({
 						:key="qty.nr ?? `qty-${index}`"
 						type="button"
 						class="option-pill"
-						:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
+						:class="{ 'is-active': !is_custom_qty && selected_quantity?.nr === qty.nr }"
 						@click="inputUpdateQuantity(qty)"
 					>
 						<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
@@ -285,7 +278,7 @@ const test_size = ref<SizeSpec>({
 						v-if="!is_custom_qty"
 						type="button"
 						class="option-pill option-pill-wide"
-						@click="showCustomQty"
+						@click="toggleCustomQuantityField"
 					>
 						{{ t('product.options.customQuantity') }}
 					</button>
@@ -340,7 +333,7 @@ const test_size = ref<SizeSpec>({
 							@beforeinput="prevent_non_digit_input"
 							@focus="onVinylSizeFocus"
 							@blur="onVinylSizeBlur"
-							@input="updateCustomSize('lettering-field')"
+							@input="updateCustomSize('lettering-size-field')"
 						>
 						<span class="size-separator">x</span>
 						<input
@@ -353,7 +346,7 @@ const test_size = ref<SizeSpec>({
 							@beforeinput="prevent_non_digit_input"
 							@focus="onVinylSizeFocus"
 							@blur="onVinylSizeBlur"
-							@input="updateCustomSize('lettering-field')"
+							@input="updateCustomSize('lettering-size-field')"
 						>
 					</div>
 				</div>
@@ -391,7 +384,7 @@ const test_size = ref<SizeSpec>({
 						:key="qty.nr ?? `vinyl-qty-${index}`"
 						type="button"
 						class="option-pill"
-						:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
+						:class="{ 'is-active': !is_custom_qty && selected_quantity?.nr === qty.nr }"
 						@click="inputUpdateQuantity(qty)"
 					>
 						<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
@@ -401,7 +394,7 @@ const test_size = ref<SizeSpec>({
 						v-if="!is_custom_qty"
 						type="button"
 						class="option-pill option-pill-wide"
-						@click="showCustomQty"
+						@click="toggleCustomQuantityField"
 					>
 						{{ t('product.options.customQuantity') }}
 					</button>

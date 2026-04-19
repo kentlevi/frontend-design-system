@@ -58,6 +58,9 @@ export default defineNuxtConfig({
 		css: {
 			devSourcemap: false,
 		},
+		optimizeDeps: {
+			include: ['lodash-es']
+		}
 	},
 
 	modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n', '@pinia-plugin-persistedstate/nuxt'],

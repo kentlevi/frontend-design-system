@@ -24,7 +24,7 @@ export const useQuoteView = () => {
 	watch(() => size_service.src, (new_size) => {
 		// Only if the lettering editor is active
 		if( quote_service.has_lettering_editor.value && new_size && new_size.value ) {
-			if( new_size.value.src && new_size.value.src == 'lettering-field' ) {
+			if( new_size.value.src && new_size.value.src == 'lettering-size-field' ) {
 				lettering_size.value.width 	= Number(new_size.value.width)
 				lettering_size.value.height	= Number(new_size.value.height)
 			}
@@ -47,7 +47,7 @@ export const useQuoteView = () => {
 	// ⚠️ Watching the changes of text
 	watch(() => lettering_text.value , (new_text) => {
 		if( quote_service.has_lettering_editor.value ) {
-			lettering_size.value = { ...lettering_size.value, src: 'lettering-text' }
+			lettering_size.value = { ...lettering_size.value, src: 'lettering-editor' }
 			lettering_service.update(lettering_size.value, new_text)
 		}
 	}, {

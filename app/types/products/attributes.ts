@@ -88,7 +88,7 @@ export interface PricingParameters {
 	height: number
 	color_id?: number
 	font_id?: number
-	quantity: number
+	quantity?: number
 }
 
 export interface PricingResponse {

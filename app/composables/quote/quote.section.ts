@@ -1,3 +1,4 @@
+import { debounce } from "lodash-es"
 import { useQuoteApiService } from "~/services/quote/api.service"
 import { useColorService } from "~/services/quote/color.service"
 import { useFontService } from "~/services/quote/font.service"
@@ -6,6 +7,8 @@ import { useQuantityService } from "~/services/quote/quantity.service"
 import { useQuoteService } from "~/services/quote/quote.service"
 import { useSizeService } from "~/services/quote/size.service"
 import type { AttributeSelection, ColorSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
+import { useCountry } from "../app/country/useCountry"
+import { formatCurrencyByCountry } from '~/utils/currency';
 
 export const useQuoteSection = () => {
 
@@ -22,6 +25,8 @@ export const useQuoteSection = () => {
 	const color_service = useColorService('quote-section')
 
 	const quantity_service = useQuantityService('quote-section')
+
+	const { country } = useCountry()
 
 	const current_url_slug = ref<string|null>(null)
 
@@ -99,13 +104,15 @@ export const useQuoteSection = () => {
 
 		if( current_url_slug.value) {
 			if( existing_attr )
-				prepareUsingExistingAttr(existing_attr)
+				await prepareUsingExistingAttr(existing_attr)
 			else
-				prepareDefaultAttr()
+				await prepareDefaultAttr()
+
+			// await initializeListOfPrices()
 		}
 	}
 
-	const definePrices = async () => {
+	const initializeListOfPrices = async () => {
 		if( !current_url_slug.value )
 			return
 
@@ -124,8 +131,24 @@ export const useQuoteSection = () => {
 		await quote_service.bindPrices(prices)
 	}
 
+	const updatePrices = debounce( async(update_from : string) => {
+		console.warn(`Updating prices - [${update_from}]!!!`)
+		await initializeListOfPrices()
+
+		const first_def = quantity_service.collection
+			&& quantity_service.collection.value
+			&& quantity_service.collection.value.length
+			? quantity_service.collection.value[0]
+			: null
+
+		console.log(first_def, quantity_service.src.value)
+		if(!quantity_service.src.value && first_def)
+			quantity_service.update(first_def)
+	},250)
+
 	// Preparing the default data of each attribute
 	const prepareDefaultAttr = async () => {
+		console.warn('Preparing default selection!!!')
 		if( !current_url_slug.value )
 			return
 
@@ -143,12 +166,11 @@ export const useQuoteSection = () => {
 		else if( size_service.collection?.value?.length && size_service.collection.value[0])
 			size_service.assignDefault(size_service.collection.value[0])
 
-
-		await definePrices()
 	}
 
 	// Prepare using the exisintg selection of attributes
 	const prepareUsingExistingAttr = async (existing_attr : AttributeSelection) => {
+		console.warn('Preparing existing selection!!!')
 		const using_lettering_editor = quote_service.has_lettering_editor.value;
 		// If current product is using a lettering editor
 		if( using_lettering_editor ) {
@@ -167,10 +189,7 @@ export const useQuoteSection = () => {
 
 		font_service.assignDefault(existing_attr.font ?? null)
 		color_service.assignDefault(existing_attr.color ?? null)
-
-		await definePrices()
-
-		quantity_service.ap
+		quantity_service.assignDefault(existing_attr.quantity ?? null)
 	}
 
 	/** ✅ Color on click and change */
@@ -187,20 +206,37 @@ export const useQuoteSection = () => {
 	// ⚠️ Watching the changes of size
 	watch(() => size_service.src, (new_size) => {
 
-		if( !new_size || !new_size?.value )
+		if( !new_size || !new_size?.value || !new_size.value.src )
 			return
 
-		console.log(new_size.value.src)
+		const source = new_size.value.src
 
+		console.warn(`Size changed from ${source} ->`, `${new_size.value.width}x${new_size.value.height}`)
 		//from other component
 		// Only if the lettering editor is active
 		// The changes of text in Vinyl Lettering editor will trigger this
 		if( quote_service.has_lettering_editor.value && new_size && new_size.value ) {
-			if(new_size.value.src && new_size.value.src == 'lettering-text' ) {
+			if(source && source == 'lettering-editor' ) {
 				custom_size.value.width 	= new_size.value.width
 				custom_size.value.height	= new_size.value.height
 			}
 		}
+
+		updatePrices('size')
+	}, {
+		immediate: true,
+		deep: true
+	})
+
+
+	// ⚠️ Watching the changes of font
+	watch(() => font_service.src, () => {
+		if( !quote_service.has_font_selection.value )
+			return
+
+
+		console.warn(`Font changed!`)
+		updatePrices('font')
 	}, {
 		immediate: true,
 		deep: true
@@ -208,6 +244,14 @@ export const useQuoteSection = () => {
 
 	const hideCustomSize = () => {
 		is_custom_size.value = false
+	}
+
+	const toggleCustomQuantityField = () => {
+		is_custom_qty.value = !is_custom_qty.value
+	}
+
+	const formatPrice = (value : number) => {
+		return formatCurrencyByCountry(value, country.value)
 	}
 
 
@@ -226,6 +270,7 @@ export const useQuoteSection = () => {
 		lettering: lettering_service.text,
 		font: font_service.src,
 		color: color_service.src,
+		quantity: quantity_service.src,
 		lettering_preview_ready: quote_service.lettering_preview_ready,
 		navigation_flight : quote_service.navigation_flight,
 
@@ -244,5 +289,7 @@ export const useQuoteSection = () => {
 		updateColor,
 		updateCustomSize,
 		hideCustomSize,
+		toggleCustomQuantityField,
+		formatPrice,
 	}
 }
