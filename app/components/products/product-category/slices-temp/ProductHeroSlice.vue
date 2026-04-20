@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, watch } from 'vue';
 import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
@@ -66,7 +66,7 @@ const should_play_preview_video = computed(() =>
 );
 
 const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug}.blurb`)
+	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug.value}.blurb`)
 );
 
 watch(

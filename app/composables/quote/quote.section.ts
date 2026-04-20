@@ -6,7 +6,7 @@ import { useLetteringService } from "~/services/quote/lettering.service"
 import { useQuantityService } from "~/services/quote/quantity.service"
 import { useQuoteService } from "~/services/quote/quote.service"
 import { useSizeService } from "~/services/quote/size.service"
-import type { AttributeSelection, ColorSpec, FontSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
+import type { AttributeSelection, ColorSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
 import { useCountry } from "../app/country/useCountry"
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { usePricingService } from "~/services/quote/pricing.service"
@@ -121,10 +121,13 @@ export const useQuoteSection = () => {
 				await prepareUsingExistingAttr(existing_attr)
 			else
 				await prepareDefaultAttr()
-
 		}
 	}
 
+	/**
+	 * Every changes in attribute is required to trigger this method
+	 * To fetch new set of quantities and re-calculate
+	*/
 	const updatePrices = debounce( async(update_from : string) => {
 		console.warn(`Updating prices - [${update_from}]!!!`)
 		await initializePriceList()
@@ -138,9 +141,9 @@ export const useQuoteSection = () => {
 		if(!quantity_service.src.value && first_def) {
 			quantity_service.update(first_def)
 		}
-
-		if( quantity_service.src.value )
+		else if( quantity_service.src.value ) {
 			pricing_service.define(quantity_service.src.value)
+		}
 	}, 250)
 
 	const initializePriceList = async () => {
@@ -162,14 +165,29 @@ export const useQuoteSection = () => {
 		/** Bind prices */
 		await pricing_service.bindPrices(data)
 
+		/** Dismiss if API data is empty */
 		if( !data.prices.length )
 			return
 
+		const current_selected_qty = quantity_service.src.value
+
+		/** If no existing selection, first value in the list will be the default */
+		if( !current_selected_qty ) {
+			quantity_service.update(data.prices[0] as QuantitySpec)
+			return
+		}
+
+
+		/** Try to check current quantity if already exist in new quantity list */
 		const matched_quantity = data.prices.find(e => e.nr == quantity_service.src.value?.nr )
+
 		if( matched_quantity )
 			quantity_service.update(matched_quantity)
-		else
-			quantity_service.update(data.prices[0] as QuantitySpec)
+		else if(current_selected_qty && current_selected_qty.custom ) {
+			is_custom_qty.value = true
+			custom_quantity.value = current_selected_qty
+			calculateCustomQuantity()
+		}
 	}
 
 
@@ -220,9 +238,10 @@ export const useQuoteSection = () => {
 			}
 		}
 
-		font_service.assignDefault(existing_attr.font ?? null)
-		if ( existing_attr.font )
+		if ( existing_attr.font ) {
+			font_service.assignDefault(existing_attr.font)
 			selected_font.value = existing_attr.font.value
+		}
 
 		color_service.assignDefault(existing_attr.color ?? null)
 		quantity_service.assignDefault(existing_attr.quantity ?? null)
@@ -242,10 +261,6 @@ export const useQuoteSection = () => {
 		updatePrices('color')
 	}
 
-	/** ✅ Font on click and change */
-	const updateFont = (font : FontSpec) => {
-		font_service.update(font)
-	}
 
 	/** ✅ Custom size on-change */
 	const updateCustomSize = (field_src: string) => {
@@ -323,11 +338,11 @@ export const useQuoteSection = () => {
 
 			quantity_service.update(custom_quantity.value)
 			// Calculate the price
-			recalculateTotalPrice()
+			calculateCustomQuantity()
 		}
 	}
 
-	const recalculateTotalPrice = () => {
+	const calculateCustomQuantity = () => {
 		console.warn('Recalculation')
 		const n = custom_quantity.value.nr
 		if( !n )
@@ -403,8 +418,6 @@ export const useQuoteSection = () => {
 		resetCustomSize()
 		quote_service.resetAllSelection()
 	}
-
-	
 
 
 	// ⚠️ Watching the changes of size
@@ -490,7 +503,6 @@ export const useQuoteSection = () => {
 		hideCustomSize,
 		toggleCustomQuantityField,
 		formatPrice,
-		updateFont,
 		onVinylSizeFocus,
 		onVinylSizeBlur,
 		onVinylFontFocus,
