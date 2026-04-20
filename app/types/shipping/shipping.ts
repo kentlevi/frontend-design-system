@@ -1,4 +1,5 @@
 import type { ApiResponse } from '~/types/config/api'
+import type { DynamicFieldDefinition } from '../user-address';
 
 export type ShippingMethodResponse = ApiResponse<ShippingMethodData[]>
 
@@ -11,8 +12,14 @@ export interface LocalShippingMethodItemPayload {
 
 export interface LocalShippingMethodRequest {
 	items: LocalShippingMethodItemPayload[];
-	grand_total: number;
 	zip_code?: string;
+	fields: DynamicFieldDefinition
+}
+
+export interface AuthenticatedShippingMethodRequest {
+	cart_item_ids: number[];
+	zip_code?: string;
+	fields: DynamicFieldDefinition
 }
 
 export interface ShippingMethodData {

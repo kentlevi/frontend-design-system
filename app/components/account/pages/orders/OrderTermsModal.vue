@@ -52,7 +52,7 @@ function closeModal() {
 					</p>
 
 					<section class="account-order-terms-modal-section">
-						<h4 class="account-order-terms-modal-section-title">{{ t('account.orders.terms.noteTitle') }}</h4>
+						<h4 class="account-order-terms-modal-section-title">{{ t('account.orders.terms.orderTermsNoteTitle') }}</h4>
 						<ul class="account-order-terms-modal-list">
 							<li>
 								{{ t('account.orders.terms.bumperStickerPrintNote') }}

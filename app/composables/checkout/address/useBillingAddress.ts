@@ -2,8 +2,9 @@ import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutCont
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressFieldStore } from "~/stores/user-address";
-import { mapAddressToForm } from "~/factories/address";
 import { loadAddresses } from "~/services/user-address/user-address.service";
+import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useAddressGeneral } from "./useAddressGeneral";
 
 export function useBillingAddress() {
 
@@ -13,6 +14,9 @@ export function useBillingAddress() {
 
 	/** Context */
 	const { billing_address } = useAddressBookListCheckoutContext()
+	const { openSelectAddressModal } = useAddressGeneralUICheckoutContext()
+
+	const { assignAddressToForm } = useAddressGeneral()
 
 	const {
 		form_field_errors,
@@ -27,14 +31,12 @@ export function useBillingAddress() {
 	async function setBillingAddress() {
 		if (billing_address.value.length === 0) await loadAddresses('billing')
 
-		const selected = billing_address.value.find(a => a.is_default) ?? billing_address.value[0] ?? null
+		if (checkout_store.selected_billing_address_id) {
+			assignAddressToForm('billing', checkout_store.selected_billing_address_id)
+			return
+		}
 
-		if (!selected) return
-
-		const mapped_form = mapAddressToForm(selected, address_field_store.dynamic_address_fields)
-
-		Object.assign(billing_form.value, mapped_form)
-		checkout_store.setBillingAddressId(selected.id)
+		assignAddressToForm('billing')
 	}
 
 	onMounted(async () => {
@@ -54,5 +56,6 @@ export function useBillingAddress() {
 
 		resetForm,
 		setBillingAddress,
+		openSelectAddressModal,
 	}
 }

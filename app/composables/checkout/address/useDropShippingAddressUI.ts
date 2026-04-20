@@ -2,6 +2,7 @@ import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatur
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useDismissibleTooltip } from "../features/useDismissibleTooltip";
 import { useHeightTransition } from "../shared/useHeightTransition";
+import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useDropShippingAddressUI() {
@@ -14,12 +15,13 @@ export function useDropShippingAddressUI() {
 	const {
 		drop_shipping_tooltip_open,
 		drop_shipping_enabled,
-		is_drop_shipping_address_modal_open,
 
 		toggleDropShippingTooltip,
 		getAddressTagClass
 	} = useAddressGeneralUICheckoutContext()
 
+
+	const {	has_drop_addresses } = useAddressBookListCheckoutContext()
 
 
 	const { t: translate } = useI18n();
@@ -72,9 +74,9 @@ export function useDropShippingAddressUI() {
 		is_member,
 		drop_shipping_enabled,
 		drop_shipping_ship_to_another_address,
-		is_drop_shipping_address_modal_open,
 		drop_shipping_tooltip_open,
 		drop_shipping_mode_swap_wrapper_ref,
+		has_drop_addresses,
 
 		getAddressTagClass,
 		toggleDropShippingTooltip,

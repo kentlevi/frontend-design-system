@@ -26,7 +26,7 @@ export const header_nav_link_config = [
 	},
 	{
 		key: 'roll',
-		labelKey: 'layout.header.nav.rollStickers',
+		labelKey: 'layout.header.nav.homeRollStickers',
 		to: '/roll-stickers',
 	},
 	{

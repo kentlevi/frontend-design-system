@@ -1,62 +1,20 @@
 import { computed, ref } from 'vue';
 import { useCheckoutBase } from '../shared/useCheckoutBase';
 import { checkoutMemberPaymentBrands, checkoutPaymentMethods, checkoutShippingMethods } from '~/data/checkout/options';
-import { getProfileFieldValue, normalizeAccountName } from '~/utils/account/accountProfile';
 import type {
 	CheckoutPaymentMethodKey,
 	CheckoutShippingMethodKey,
 } from '~/types/checkout/options';
 import { useUsersStore } from '~/stores/users/users.store';
-import type { MemberAddress } from '~/types/checkout';
 
 export function useCheckoutMember() {
 	const base = useCheckoutBase();
 	const user_store = useUsersStore();
 	const mock_user = useCookie<{ firstName?: string; lastName?: string; email?: string } | null>('mock_user');
 
-	const fields = computed(() => user_store.state.profile?.user_field_values ?? []);
-	const normalized_name = computed(() =>
-		normalizeAccountName(
-			getProfileFieldValue(fields.value, 'first_name') || mock_user.value?.firstName || 'Joy',
-			getProfileFieldValue(fields.value, 'last_name') || mock_user.value?.lastName || 'Love'
-		)
-	);
-
 	// Member specific email
 	const member_email = computed(() => user_store.state.email || mock_user.value?.email || 'joy.love@musticker.com');
 
-	const saved_shipping_addresses = computed<MemberAddress[]>(() => [
-		{
-			id: 'addr-default',
-			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			phone: '+82 (551) 236-4533',
-			line1: '176-6, Yusan-ri, Gusan-myeon,',
-			line2: 'Gaseong-si, Incheon 01000, Republic of Korea',
-			company: 'Summit Inc.',
-			label: 'Home',
-			isDefault: true,
-		},
-		{
-			id: 'addr-office',
-			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			phone: '+1 (818) 922-5542',
-			line1: '9F, 310 Teheran-ro, Gangnam-gu,',
-			line2: 'Seoul 06241, Republic of Korea',
-			company: 'Lock&Lock Inc.',
-			label: 'Office',
-		},
-		{
-			id: 'addr-client',
-			recipient: `${normalized_name.value.firstName} ${normalized_name.value.lastName}`.trim() || 'Joy Love',
-			phone: '+1 (963) 524-8858',
-			line1: '18F, 45 Gwanggyo Jungang-ro, Yeongtong-gu,',
-			line2: 'Suwon-si, Gyeonggi-do 41577, Republic of Korea',
-			company: 'Lock&Lock Inc.',
-			label: 'Client',
-		},
-	]);
-
-	const selected_shipping_address_id = ref(saved_shipping_addresses.value[0]?.id || '');
 	const ship_to_another_address = ref(false);
 
 	const selected_shipping_method = ref<CheckoutShippingMethodKey>(
@@ -73,10 +31,6 @@ export function useCheckoutMember() {
 	base.card_number.value = '4242 4242 4242 4242';
 	base.expiry.value = '12/28';
 	base.cvv.value = '123';
-
-	const selected_shipping_address = computed(
-		() => saved_shipping_addresses.value.find((address) => address.id === selected_shipping_address_id.value) || null
-	);
 
 	const active_shipping_methods = computed(() =>
 		checkoutShippingMethods.filter((method) => method.enabled !== false)
@@ -96,9 +50,6 @@ export function useCheckoutMember() {
 	return {
 		...base,
 		member_email,
-		saved_shipping_addresses,
-		selected_shipping_address,
-		selected_shipping_address_id,
 		ship_to_another_address,
 		selected_shipping_method,
 		selected_payment_method,

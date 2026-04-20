@@ -1,4 +1,6 @@
 import type { ApiResponse } from '~/types/config/api'
+import type { CartItem } from '../cart/cart'
+import type { DynamicFieldDefinition } from '../user-address'
 
 export interface AvailableShippingMethod {
 	production_shipping_id: number
@@ -23,4 +25,11 @@ export interface ProductionShippingStoreState {
 	is_loading: boolean
 	is_loaded: boolean
 	error_message: string
+}
+
+export interface FetchShippingMethodsPayload {
+	is_authenticated: boolean
+	selected_cart_items: CartItem[]
+	postcode?: string
+	fields: DynamicFieldDefinition
 }

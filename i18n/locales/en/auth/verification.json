@@ -14,7 +14,7 @@
             "verifying": "Verifying...",
             "closeModal": "Close modal",
             "resendPrefix": "Didn't get the code? Check your spam folder or ",
-            "resendCta": "Resend Code",
+            "resendCta": "request a new one",
             "resendSuffix": ".",
             "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",
             "resendLimitReachedPrefix": "For security reasons, you can request up to",

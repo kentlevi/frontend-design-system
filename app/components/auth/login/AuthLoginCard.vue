@@ -8,6 +8,12 @@ import AuthLoginSocialButtons from '@/components/auth/login/AuthLoginSocialButto
 import AuthLoginVerificationModal from '@/components/auth/login/AuthLoginVerificationModal.vue'
 import { useAuthLoginCard } from '@/composables/auth/login/useAuthLoginCard'
 
+withDefaults(defineProps<{
+	googleLabelKey?: string;
+}>(), {
+	googleLabelKey: 'auth.login.signInGoogle',
+});
+
 const {
 	member_type,
 	is_non_member,
@@ -88,7 +94,10 @@ const {
 				{{ submit_label }}
 			</UiButton>
 
-			<AuthLoginSocialButtons v-if="!is_non_member" />
+			<AuthLoginSocialButtons
+				v-if="!is_non_member"
+				:google-label-key="googleLabelKey"
+			/>
 		</div>
 
 		<AuthLoginForgotPasswordModal

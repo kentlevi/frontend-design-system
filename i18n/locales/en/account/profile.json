@@ -81,8 +81,8 @@
       "emailChangeVerification": {
         "title": "Verification Required",
         "iconAlt": "Verification icon",
-        "messagePrefix": "We'll send a verification code to ",
-        "messageSuffix": " to ensure your security. The code will expire in 5 minutes.",
+        "messagePrefix": "We’ll send a verification code to your email to ensure your security. The code will expire in 5 minutes.",
+        "messageSuffix": "",
         "enterCode": "Please enter the code:",
         "verify": "Verify",
         "verifying": "Verifying...",

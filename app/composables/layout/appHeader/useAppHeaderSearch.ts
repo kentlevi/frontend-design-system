@@ -52,6 +52,18 @@ function resolveTranslatedValue(
 	return translated_value !== key ? translated_value : fallback;
 }
 
+function resolveSearchProductName(
+	t: ReturnType<typeof useI18n>['t'],
+	product_slug: string,
+	fallback: string,
+): string {
+	return resolveTranslatedValue(
+		t,
+		`layout.header.search.modal.productNames.${product_slug}`,
+		resolveTranslatedValue(t, `product.items.${product_slug}.name`, fallback),
+	);
+}
+
 function createEmptyPagination(per_page = search_page_size): SearchPagination {
 	return {
 		current_page: 1,
@@ -174,11 +186,7 @@ export function useAppHeaderSearch(params: {
 			t,
 			normalizeText(api_product.category_name) || category_slug,
 		);
-		const product_name = resolveTranslatedValue(
-			t,
-			`product.items.${product_slug}.name`,
-			api_product_name,
-		);
+		const product_name = resolveSearchProductName(t, product_slug, api_product_name);
 		const product_blurb = resolveTranslatedValue(
 			t,
 			`product.items.${product_slug}.blurb`,
@@ -208,11 +216,7 @@ export function useAppHeaderSearch(params: {
 				product_slug: product.id,
 				category_key: category.key,
 				category_label,
-				name: resolveTranslatedValue(
-					t,
-					`product.items.${product.id}.name`,
-					product.name,
-				),
+				name: resolveSearchProductName(t, product.id, product.name),
 				blurb: resolveTranslatedValue(
 					t,
 					`product.items.${product.id}.blurb`,
@@ -281,7 +285,7 @@ export function useAppHeaderSearch(params: {
 			normalizeText(product_value.category_label) || category_key,
 		);
 		const name = product_slug
-			? resolveTranslatedValue(t, `product.items.${product_slug}.name`, normalizeText(product_value.name))
+			? resolveSearchProductName(t, product_slug, normalizeText(product_value.name))
 			: normalizeText(product_value.name);
 		const blurb = product_slug
 			? resolveTranslatedValue(t, `product.items.${product_slug}.blurb`, normalizeText(product_value.blurb))

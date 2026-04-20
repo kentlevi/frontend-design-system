@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useAddressHelper } from '~/utils/address';
 
 const {
-	shipping_form
+	shipping_form,
+
+	openSelectAddressModal,
 } = useSavedShippingAddress()
 
 const {
@@ -13,10 +14,6 @@ const {
 	getAddressLine1,
 	getAddressLine2
 } = useAddressHelper()
-
-const {
-	is_shipping_address_modal_open,
-} = useCheckoutExperienceFeatureContext();
 
 const { t } = useI18n();
 
@@ -32,7 +29,7 @@ const {
 			v-if="shipping_form"
 			type="button"
 			class="checkout-member-address-card is-active"
-			@click="is_shipping_address_modal_open = true"
+			@click="openSelectAddressModal('shipping')"
 		>
 			<div class="checkout-member-address-top">
 				<div class="checkout-member-address-title-group">

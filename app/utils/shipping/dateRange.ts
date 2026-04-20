@@ -4,10 +4,16 @@ type DateParts = {
 	year: number
 }
 
+const lang_map = {
+	kr: 'ko-KR',
+	us: 'en-US',
+	ph: 'en-PH'
+}
+
 function getDateParts(timestamp: number): DateParts {
 	const user_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-	const formatter = new Intl.DateTimeFormat('en-US', {
+	const { locale } = useI18n()
+	const formatter = new Intl.DateTimeFormat(lang_map[locale.value], {
 		month: 'long',
 		day: 'numeric',
 		year: 'numeric',

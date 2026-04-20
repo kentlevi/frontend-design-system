@@ -259,7 +259,7 @@ export function useCheckoutGuestContactFeature() {
 			loading_overlay_store.startLoading(
 				CHECKOUT_GUEST_VERIFICATION_LOADING_KEY,
 				{
-					label: translate('auth.verification.verifying'),
+					label: translate('checkout.guest.verifyingTitle'),
 					testId: 'checkout-guest-contact-verification-loading-overlay',
 					position: 'fixed',
 				}

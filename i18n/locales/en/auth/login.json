@@ -21,6 +21,7 @@
       "socialLabel": "Sign in with your social accounts",
       "signInFacebook": "Sign in with Facebook",
       "signInGoogle": "Sign in with Google",
+      "signInGoogleCheckout": "Sign in with Google",
       "forgot": {
         "title": "Forgot your password?",
         "description": "Enter your user account's verified email address and we will send you a password reset link.",

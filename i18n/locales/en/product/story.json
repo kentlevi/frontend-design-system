@@ -72,6 +72,253 @@
           "title": "Precisely cut to match the design",
           "text": "Upload your logo, illustration, or photo, and we'll precisely cut it into a sticker along the outline. Even intricate designs are flawlessly rendered with Musticker's unique cutting technology."
         }
+      },
+      "productModeByProduct": {
+        "die-cut-sticker": {
+          "row1": {
+            "title": "Vibrant, Durable Custom Prints",
+            "text": "Premium printing delivers rich, vibrant colors on thick, resilient material. Designed to resist sun, rain, and heat so your design stays sharp and eye‑catching over time."
+          },
+          "row2": {
+            "title": "Stick Fast, Easy to Peel",
+            "text": "The adhesive lays down smoothly and stays firmly in place. When you remove it, it peels cleanly without residue or surface damage."
+          }
+        },
+        "circle-sticker": {
+          "row1": {
+            "title": "Custom Round Stickers that Grab Attention",
+            "text": "Crisp circular edges frame your design with balance and clarity. Full‑color printing brings out rich, vibrant hues on premium material that looks polished on any surface."
+          },
+          "row2": {
+            "title": "Stick Fast, Easy to Peel",
+            "text": "The adhesive lays down smoothly and stays firmly in place. When you remove it, it peels cleanly without residue or surface damage."
+          }
+        },
+        "rectangle-sticker": {
+          "row1": {
+            "title": "Custom Rectangular Stickers with Extra Space",
+            "text": "The extended shape creates room for logos, text, and graphics while keeping everything crisp and legible. Full‑color, high‑resolution printing ensures your design stays sharp and readable at a glance."
+          },
+          "row2": {
+            "title": "Durable Construction for Everyday Use",
+            "text": "Crafted with thick, premium material that maintains vibrant color and resist wear from handling. A reliable adhesive holds securely on smooth surfaces while keeping a clean finish."
+          }
+        },
+        "square-sticker": {
+          "row1": {
+            "title": "Balanced Design That Stands Out",
+            "text": "A clean format frames your artwork with natural balance, helping logos, graphics, and text look organized and easy to read. High-resolution printing brings out bold color and fine detail for a polished, eye-catching result."
+          },
+          "row2": {
+            "title": "Quality You Can Count On",
+            "text": "Produced on thick, premium material that keeps colors vivid and details sharp through handling. Strong adhesive holds firmly in place while maintaining a professional finish."
+          }
+        },
+        "oval-sticker": {
+          "row1": {
+            "title": "Soft Curves, Refined Presentation",
+            "text": "A smooth, curved shape gives your artwork a more elegant frame, helping designs feel polished and distinctive. High-resolution printing reveals rich color and sharp detail for a professional finish that stands out."
+          },
+          "row2": {
+            "title": "Durable Quality That Lasts",
+            "text": "Printed on premium material that keeps colors vibrant and graphics sharp through everyday use. Strong adhesive holds securely on smooth surfaces while maintaining a polished look."
+          }
+        },
+        "rounded-sticker": {
+          "row1": {
+            "title": "Modern Shape with Softer Corners",
+            "text": "Printed on premium material that keeps colors vibrant and graphics sharp through everyday use. Strong adhesive holds securely on smooth surfaces while maintaining a polished look."
+          },
+          "row2": {
+            "title": "Built for Everyday Performance",
+            "text": "Printed on thick, high-quality material designed to handle regular use. The adhesive holds securely on smooth surfaces while maintaining a clean, professional appearance."
+          }
+        },
+        "kiss-cut-sticker": {
+          "row1": {
+            "title": "Easy to Peel, Easy to Handle",
+            "text": "The design is precisely cut while the backing stays intact, making each sticker simple to handle and apply. The extra border protects delicate shapes and makes peeling quick and effortless."
+          },
+          "row2": {
+            "title": "Crisp Printing, Precise Detail",
+            "text": "Rich color and sharp lines bring even intricate artwork to life. Printed on high-quality material that maintains clarity and vibrancy over time."
+          }
+        },
+        "sticker-sheet": {
+          "row1": {
+            "title": "All-in-One Sheet",
+            "text": "Keep multiple designs together on one sheet for effortless access and tidy organization. Each layout lets every sticker stay visible and ready whenever inspiration strikes."
+          },
+          "row2": {
+            "title": "Crisp Printing, Clean Cuts",
+            "text": "High-resolution printing brings color and detail to life, while precision cutting ensures smooth edges and consistent quality across every sticker."
+          }
+        },
+        "clear-sticker": {
+          "row1": {
+            "title": "Sleek, Seamless Design",
+            "text": "Transparent material lets your artwork blend naturally with the surface for a polished, professional look. Perfect for modern packaging, minimal branding, and designs that stand out without borders."
+          },
+          "row2": {
+            "title": "Vivid & Clear",
+            "text": "High-resolution printing preserves bright, bold colors while keeping backgrounds fully transparent. Premium materials resist fading and maintain clarity over time."
+          }
+        },
+        "hologram-sticker": {
+          "row1": {
+            "title": "Shimmering Impact",
+            "text": "Reflective holographic material creates shifting rainbow effects that change with light. Every design catches attention and adds a bold, eye-catching finish."
+          },
+          "row2": {
+            "title": "Vibrant & Durable",
+            "text": "Premium holographic material keeps colors rich and bright while standing up to everyday handling. The finish stays vibrant and reflective over time."
+          }
+        },
+        "transfer-sticker": {
+          "row1": {
+            "title": "Crisp, Professional Designs"
+          }
+        },
+        "clear-roll": {
+          "row1": {
+            "title": "Seamless Labels for Modern Packaging",
+            "text": "Transparent stickers on a roll let your designs blend naturally with any surface, creating a sleek, professional appearance. Perfect for packaging, product labeling, and projects that need a clean, border-free finish."
+          },
+          "row2": {
+            "title": "Vibrant Printing, Long-Lasting Clarity",
+            "text": "High-resolution printing keeps colors bright and bold while maintaining full transparency. Premium materials resist fading and wear, ensuring every sticker stays sharp over time."
+          }
+        },
+        "circle-roll": {
+          "row1": {
+            "title": "Smooth Circles, Instant Impact",
+            "text": "Every sticker on the roll features clean, precise edges that make your designs stand out. Vibrant printing on durable material ensures each circle pops on any surface."
+          },
+          "row2": {
+            "title": "Bold Colors, Durable Material",
+            "text": "Made with premium materials, these stickers keep their color and detail through frequent handling. Strong adhesive guarantees they stay put without lifting or fading."
+          }
+        },
+        "square-roll": {
+          "row1": {
+            "title": "Balanced Design, Ready to Use",
+            "text": "Sharp edges frame your artwork for a clean, organized look. High-resolution printing delivers bold color and crisp detail, with each sticker ready to peel straight from the roll."
+          },
+          "row2": {
+            "title": "Durable and Vibrant",
+            "text": "Printed on premium material, these stickers maintain vibrant colors and sharp details despite frequent handling. Strong adhesive keeps every piece secure while delivering a professional finish."
+          }
+        },
+        "rectangle-roll": {
+          "row1": {
+            "title": "Extra Space, Ready on a Roll",
+            "text": "The longer layout gives logos, text, and graphics more room to stay clear and readable. Printed in high resolution, these roll stickers keep colors rich and details sharp at a glance."
+          },
+          "row2": {
+            "title": "Extra Space, Ready on a Roll",
+            "text": "Printed on thick, durable material that holds color through regular use. A dependable adhesive keeps each label secure on smooth surfaces while maintaining a clean, professional finish."
+          }
+        },
+        "rounded-roll": {
+          "row1": {
+            "title": "Smooth Corners, Modern Look",
+            "text": "Clean edges with rounded corners give designs a polished, contemporary look. Printed on durable material with vibrant color and sharp detail, with each sticker prepared in an easy-to-use roll format."
+          },
+          "row2": {
+            "title": "Built for Everyday Use",
+            "text": "Produced on thick, high-quality material that holds color well through regular handling. A strong adhesive keeps each sticker secure on smooth surfaces while maintaining a professional finish."
+          }
+        },
+        "oval-roll": {
+          "row1": {
+            "title": "Elegant Curves, Polished Look",
+            "text": "Smooth oval shapes give your artwork a refined frame that feels clean and distinctive. Printed in high resolution, these roll stickers reveal rich color and sharp detail that stand out on packaging and labels."
+          },
+          "row2": {
+            "title": "Durable Quality That Lasts",
+            "text": "Produced on premium material that keeps colors vibrant and graphics crisp through regular use. A reliable adhesive keeps each sticker secure on smooth surfaces while maintaining a polished finish."
+          }
+        },
+        "die-cut-roll": {
+          "row1": {
+            "title": "Precision-Cut Designs",
+            "text": "Each sticker is cut to its unique shape with exacting detail. The roll format keeps them organized and ready for fast application, making high-volume labeling effortless."
+          },
+          "row2": {
+            "title": "Consistent, Reliable Quality",
+            "text": "Vibrant printing and durable materials ensure every design stays sharp. Consistent cutting delivers a professional look on every sticker, built to withstand everyday use."
+          }
+        },
+        "paper-roll": {
+          "row1": {
+            "title": "Practical Stickers for Everyday Use",
+            "text": "Add a personal touch with bright, write-on designs. Perfect for notes, signatures, scrapbooks, or any project that needs a cute, artsy accent."
+          },
+          "row2": {
+            "title": "Clear, Durable Prints",
+            "text": "High-quality printing keeps colors bright on sturdy material. Each piece is easy to write on, sticks securely, and stays gentle for everyday handling."
+          }
+        },
+        "die-cut-sheet": {
+          "row1": {
+            "title": "Multiple Designs, Organized Layout",
+            "text": "Individually die-cut designs are organised on a single sheet for a clean, structured layout. Each sticker is easy to access, making them ideal for collections, planners, and creative use."
+          },
+          "row2": {
+            "title": "Crisp Printing, Clean Edges",
+            "text": "High-resolution printing delivers bold colour and crisp detail across every design. Precision die-cutting ensures smooth edges and a consistent, professional finish."
+          }
+        },
+        "circle-sheet": {
+          "row1": {
+            "title": "Perfect Circles, Ready to Use",
+            "text": "Have each sticker neatly arranged in a convenient sheet layout with clean, precise edges that highlight your design. Vibrant printing and durable material help every sticker stand out."
+          },
+          "row2": {
+            "title": "Vibrant Prints, Durable Material",
+            "text": "Premium materials keep colors rich and sharp through everyday handling. The reliable adhesive helps each circle stay firmly in place without lifting, fading, or losing detail."
+          }
+        },
+        "oval-sheet": {
+          "row1": {
+            "title": "Smooth Curves, Tidy Arrangement",
+            "text": "Graceful oval shapes bring a polished look to your designs. Arranged neatly together in one layout, they stay organized and easy to peel whenever you need them."
+          },
+          "row2": {
+            "title": "Bold Prints, Built to Last",
+            "text": "Premium materials keep colors rich and vibrant while resisting fading from sun and moisture. Each oval maintains smooth edges and crisp detail through everyday use."
+          }
+        },
+        "square-sheet": {
+          "row1": {
+            "title": "Crisp Squares, Perfectly Aligned",
+            "text": "Crisp square designs are neatly arranged in a convenient sheet format, keeping every sticker organized and ready to use. Clean edges frame your artwork with bold, balanced appeal."
+          },
+          "row2": {
+            "title": "Durable and Long-Lasting",
+            "text": "Thick material and premium printing help maintain vivid color and sharp detail. The strong adhesive keeps each sticker securely applied through everyday handling and use."
+          }
+        },
+        "rectangle-sheet": {
+          "row1": {
+            "title": "Room to Shine, Sheet-Ready Layout",
+            "text": "Rectangular stickers offer plenty of space for text, logos, and graphics while staying neatly organized in a convenient sheet. Perfect for branding, packaging, and high-volume projects."
+          },
+          "row2": {
+            "title": "Bold, Reliable Prints",
+            "text": "Premium materials keep colors vibrant and designs sharp, with smooth edges and clear detail. Strong adhesive ensures each sticker stays securely in place over time."
+          }
+        },
+        "rounded-sheet": {
+          "row1": {
+            "title": "Organized and Ready for Action",
+            "text": "Soft corners and a modern look give these designs a sleek, contemporary feel. Arranged neatly together, they’re easy to access and maintain a consistent, organized presentation on the sheet."
+          },
+          "row2": {
+            "title": "Durable and Vivid",
+            "text": "Rich, bold colors stay sharp thanks to high-quality printing. Thick, resilient material and reliable adhesive ensure designs stay put over time."
+          }
+        }
       }
     }
   }

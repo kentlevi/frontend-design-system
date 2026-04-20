@@ -1,6 +1,7 @@
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
+import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useBillingAddressUI() {
@@ -20,6 +21,8 @@ export function useBillingAddressUI() {
 		getAddressTagClass
 	} = useAddressGeneralUICheckoutContext()
 
+	const {	has_billing_addresses } = useAddressBookListCheckoutContext()
+
 	const {
 		enter_duration_ms,
 		leave_duration_ms,
@@ -30,6 +33,7 @@ export function useBillingAddressUI() {
 		leave,
 		afterLeave,
 	} = useCheckoutFeatureTransition();
+
 
 
 
@@ -73,6 +77,7 @@ export function useBillingAddressUI() {
 		use_shipping_as_billing,
 		billing_tooltip_open,
 		is_billing_address_modal_open,
+		has_billing_addresses,
 		getAddressTagClass,
 		toggleBillingTooltip,
 	}

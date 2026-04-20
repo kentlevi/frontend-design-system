@@ -12,11 +12,13 @@ const {
 	beforeLeave,
 	leave,
 	afterLeave,
+
 	is_member,
 	billing_use_different_address,
 	use_shipping_as_billing,
 	billing_tooltip_open,
-	is_billing_address_modal_open,
+	has_billing_addresses,
+
 	getAddressTagClass,
 	toggleBillingTooltip,
 } = useBillingAddressUI()
@@ -30,6 +32,7 @@ const {
 
 	resetForm,
 	setBillingAddress,
+	openSelectAddressModal,
 } = useBillingAddress()
 
 </script>
@@ -56,7 +59,7 @@ const {
 		<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 			<div v-if="!use_shipping_as_billing" data-billing-panel="content" class="checkout-member-billing-panel">
 				<div class="checkout-member-billing-group">
-					<div v-if="is_member" class="checkout-member-radio-row">
+					<div v-if="is_member && has_billing_addresses" class="checkout-member-radio-row">
 						<UiRadio
 							v-model="billing_use_different_address"
 							:value="false"
@@ -64,18 +67,18 @@ const {
 							class="checkout-member-radio-line"
 							@click="setBillingAddress()"
 						>
-							{{ t('checkout.member.billingAddress.myBillingAddress') }}
+							{{ translate('checkout.member.billingAddress.myBillingAddress') }}
 						</UiRadio>
-						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_billing_address_modal_open = true">
+						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="openSelectAddressModal('billing')">
 							View Billing Addresses
 						</UiButton>
 					</div>
 
 					<div ref="billing_mode_swap_wrapper_ref" class="checkout-member-drop-shipping-mode-swap-wrap">
 						<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
-							<div v-if="!billing_use_different_address && is_member" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
+							<div v-if="!billing_use_different_address && is_member && has_billing_addresses" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
-									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="is_billing_address_modal_open = true">
+									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="openSelectAddressModal('billing')">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
 												<strong class="checkout-member-address-name">{{ billing_form.contact_name }}</strong>
@@ -88,7 +91,7 @@ const {
 													text-color="var(--gray-80)"
 												>
 													<UiIcon name="strong-file-dollar" :size="18" />
-													<span class="checkout-member-address-badge-copy">{{ t('checkout.member.addressSelection.defaultBilling') }}</span>
+													<span class="checkout-member-address-badge-copy">{{ translate('checkout.member.addressSelection.defaultBilling') }}</span>
 												</UiBadge>
 											</div>
 										</div>
@@ -120,12 +123,12 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('billing')"
 									>
-										{{ t('checkout.member.billingAddress.useAnotherBillingAddress') }}
+										{{ translate('checkout.member.billingAddress.useAnotherBillingAddress') }}
 									</UiRadio>
 								</div>
 							</div>
 							<div v-else key="billing-manual" data-billing-mode-panel="manual-address" class="checkout-member-drop-shipping-mode-panel">
-								<div v-if="is_member" class="checkout-member-address-form-head">
+								<div v-if="is_member && has_billing_addresses" class="checkout-member-address-form-head">
 									<UiRadio
 										v-model="billing_use_different_address"
 										:value="true"
@@ -133,7 +136,7 @@ const {
 										class="checkout-member-radio-line checkout-member-radio-line--inline"
 										@click="resetForm('billing')"
 									>
-										{{ t('checkout.member.billingAddress.shipToAnotherBillingAddress') }}
+										{{ translate('checkout.member.billingAddress.shipToAnotherBillingAddress') }}
 									</UiRadio>
 								</div>
 								<AddressFormFields

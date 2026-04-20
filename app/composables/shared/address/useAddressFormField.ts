@@ -12,8 +12,6 @@ import type {
 } from '~/types/user-address'
 import { useAddressHelper } from '~/utils/address'
 
-const { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } = useAddressHelper()
-
 type IconName = keyof typeof icons
 
 export type AddressFormFieldsProps = {
@@ -38,6 +36,8 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	const address_field_store = useAddressFieldStore()
 	const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 	const copy_context = computed(() => options.props.copyContext ?? 'checkout')
+
+	const { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } = useAddressHelper()
 
 	const address_label_options: Array<{
 		value: AddressLabel
@@ -197,7 +197,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	}
 
 	function resolvePlaceholderKey(
-		key: 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
+		key: 'fullNamePlaceholder' | 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
 	) {
 		if (copy_context.value === 'addressBook') {
 			return `account.addressBook.accountForm.${key}`

@@ -1,97 +1,53 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
-import { useI18n } from 'vue-i18n';
-import type {
-	MemberAddress,
-	MemberDropShippingAddress,
-} from '~/types/checkout';
-
-type AddressVariant = 'shipping' | 'billing' | 'drop-shipping';
-
-type SelectableAddress = MemberAddress | MemberDropShippingAddress;
+import { useCheckoutAddressSelectModal } from '~/composables/checkout/address/useCheckoutAddressSelectModal';
+import type { AddressItem } from '~/types/user-address';
 
 const props = withDefaults(defineProps<{
-	modelValue: boolean;
-	addresses: SelectableAddress[];
-	selectedAddressId: string;
 	title: string;
 	copy?: string;
-	variant: AddressVariant;
 	confirmLabel?: string;
 }>(), {
 	copy: '',
 	confirmLabel: '',
 });
 
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void;
-	(e: 'select', value: string): void;
-}>();
-
-const { t } = useI18n();
-
-const pending_selected_address_id = ref(props.selectedAddressId);
-
-const active_address_id = computed(() =>
-	pending_selected_address_id.value || props.addresses[0]?.id || ''
-);
-
-watch(
-	() => props.modelValue,
-	(is_open) => {
-		if (!is_open) return;
-		pending_selected_address_id.value = props.selectedAddressId || props.addresses[0]?.id || '';
-	}
-);
-
-watch(
-	() => props.selectedAddressId,
-	(next_id) => {
-		if (props.modelValue) {
-			pending_selected_address_id.value = next_id || props.addresses[0]?.id || '';
-		}
-	}
-);
-
-function closeModal() {
-	emit('update:modelValue', false);
-}
-
-function confirmSelection() {
-	if (active_address_id.value) {
-		emit('select', active_address_id.value);
-	}
-	closeModal();
-}
-
-
 const {
-	getAddressTagClass
-} = useAddressGeneralUICheckoutContext()
+	translate,
 
-function getDefaultBadgeLabel(address: SelectableAddress) {
-	if (props.variant === 'shipping') return t('checkout.member.addressSelection.defaultShipping');
-	if (props.variant === 'billing') return ('badgeLabel' in address && address.badgeLabel) || t('checkout.member.addressSelection.defaultBilling');
-	return t('checkout.member.addressSelection.defaultDropShipping');
+	active_address_type,
+	is_select_address_modal_open,
+	pending_selected_address_id,
+	addresses,
+
+	closeModal,
+	confirmSelection,
+	getAddressTagClass,
+	shippingPhoneNumber,
+	buildAddressLines,
+} = useCheckoutAddressSelectModal()
+
+
+function getDefaultBadgeLabel(address: AddressItem) {
+	if (active_address_type.value === 'shipping') return translate('checkout.member.addressSelection.defaultShipping');
+	if (active_address_type.value === 'billing') return ('badgeLabel' in address && address.badgeLabel) || translate('checkout.member.addressSelection.defaultBilling');
+	return translate('checkout.member.addressSelection.defaultDropShipping');
 }
 
 function getDefaultBadgeIcon() {
-	if (props.variant === 'shipping') return 'strong-ship'
-	if (props.variant === 'billing') return 'strong-file-dollar'
+	if (active_address_type.value === 'shipping') return 'strong-ship'
+	if (active_address_type.value === 'billing') return 'strong-file-dollar'
 	return 'strong-box-full'
 }
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.modelValue"
+		v-model="is_select_address_modal_open"
 		align="top"
 		width="720px"
 		padding="0"
 		gap="0"
 		modal-class="checkout-address-select-modal-shell"
-		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<section class="checkout-address-select-modal">
 			<header class="checkout-address-select-modal-header">
@@ -99,7 +55,7 @@ function getDefaultBadgeIcon() {
 				<button
 					type="button"
 					class="checkout-address-select-modal-close"
-					:aria-label="t('checkout.member.addressSelection.closeModal')"
+					:aria-label="translate('checkout.member.addressSelection.closeModal')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
@@ -113,25 +69,25 @@ function getDefaultBadgeIcon() {
 
 				<div class="checkout-address-select-modal-list">
 					<button
-						v-for="address in props.addresses"
+						v-for="address in addresses"
 						:key="address.id"
 						type="button"
 						class="checkout-address-select-modal-card"
-						:class="{ 'is-active': active_address_id === address.id }"
+						:class="{ 'is-active': pending_selected_address_id === address.id }"
 						@click="pending_selected_address_id = address.id"
 					>
 						<div class="checkout-address-select-modal-card-top">
 							<div class="checkout-address-select-modal-title-group">
 								<span
 									class="checkout-address-select-modal-radio"
-									:class="{ 'is-active': active_address_id === address.id }"
+									:class="{ 'is-active': pending_selected_address_id === address.id }"
 									aria-hidden="true"
 								>
 									<span class="checkout-address-select-modal-radio-dot" />
 								</span>
-								<strong class="checkout-address-select-modal-name">{{ address.recipient }}</strong>
+								<strong class="checkout-address-select-modal-name">{{ address.contact_name }}</strong>
 								<UiBadge
-									v-if="address.isDefault"
+									v-if="address.is_default"
 									variant="outline"
 									tone="default"
 									size="md"
@@ -146,12 +102,12 @@ function getDefaultBadgeIcon() {
 							</div>
 						</div>
 
-						<div class="checkout-address-select-modal-card-body" :data-variant="props.variant">
-							<template v-if="props.variant === 'shipping'">
-								<div v-if="'phone' in address && address.phone" class="checkout-address-select-modal-row">
+						<div class="checkout-address-select-modal-card-body" :data-variant="active_address_type">
+							<template v-if="active_address_type === 'shipping'">
+								<div v-if="shippingPhoneNumber(address)" class="checkout-address-select-modal-row">
 									<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" decorative />
 									<p class="checkout-address-select-modal-line checkout-address-select-modal-line--strong">
-										{{ address.phone }}
+										{{ shippingPhoneNumber(address) }}
 									</p>
 								</div>
 
@@ -159,8 +115,7 @@ function getDefaultBadgeIcon() {
 									<div class="checkout-address-select-modal-row-main">
 										<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" decorative />
 										<div class="checkout-address-select-modal-lines">
-											<p class="checkout-address-select-modal-line">{{ 'line1' in address ? address.line1 : '' }}</p>
-											<p class="checkout-address-select-modal-line">{{ 'line2' in address ? address.line2 : '' }}</p>
+											<p class="checkout-address-select-modal-line">{{ buildAddressLines(address) }}</p>
 										</div>
 									</div>
 									<span
@@ -178,7 +133,7 @@ function getDefaultBadgeIcon() {
 								</div>
 							</template>
 
-							<template v-else-if="props.variant === 'billing'">
+							<template v-else-if="active_address_type === 'billing'">
 								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split">
 									<div class="checkout-address-select-modal-lines checkout-address-select-modal-lines--stacked">
 										<p class="checkout-address-select-modal-line">{{ 'line1' in address ? address.line1 : '' }}</p>
@@ -198,7 +153,7 @@ function getDefaultBadgeIcon() {
 							<template v-else>
 								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split checkout-address-select-modal-row--centered">
 									<p class="checkout-address-select-modal-line">
-										{{ address.company || t('checkout.member.addressSelection.noCompanyProvided') }}
+										{{ address.company || translate('checkout.member.addressSelection.noCompanyProvided') }}
 									</p>
 									<span
 										v-if="address.label"
@@ -216,10 +171,10 @@ function getDefaultBadgeIcon() {
 
 			<footer class="checkout-address-select-modal-footer">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
-					{{ t('checkout.member.addressSelection.cancel') }}
+					{{ translate('checkout.member.addressSelection.cancel') }}
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="confirmSelection">
-					{{ props.confirmLabel || t('checkout.member.addressSelection.selectAddress') }}
+					{{ props.confirmLabel || translate('checkout.member.addressSelection.selectAddress') }}
 				</UiButton>
 			</footer>
 		</section>
