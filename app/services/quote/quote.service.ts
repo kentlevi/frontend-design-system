@@ -1,5 +1,5 @@
 import { useAttributesStore, useSelectionStore } from "~/stores/product";
-import type { FeaturedDataResponse, FontSpec, PricingResponse } from "~/types/products/attributes";
+import type { FeaturedDataResponse, FontSpec } from "~/types/products/attributes";
 
 export const useQuoteService = (_caller : string) => {
 	const attribute_store = useAttributesStore()
@@ -38,10 +38,6 @@ export const useQuoteService = (_caller : string) => {
 		selection_store.updateLoadingFeaturesFlag(value)
 	}
 
-	const isPricingReady = (value : boolean) => {
-		selection_store.updatePricingFlag(value)
-	}
-
 	const assignFeaturedData = async (f_data : FeaturedDataResponse) => {
 
 		selection_store.updateMappingID(f_data.product.pcm_id)
@@ -70,12 +66,6 @@ export const useQuoteService = (_caller : string) => {
 		attribute_store.updateFonts(f)
 	}
 
-	const bindPrices = async (data : PricingResponse) => {
-		attribute_store.updateQuantites(data.prices)
-
-		selection_store.updateVariantID(data.product_variant_id)
-	}
-
 
 	return {
 		// 🔥 Store
@@ -92,7 +82,6 @@ export const useQuoteService = (_caller : string) => {
 		assignFeaturedData,
 		isLoadingFeatures,
 		updateNavigationFlight : selection_store.updateNavigationFlight,
-		bindPrices,
-		isPricingReady,
+		resetAllSelection: selection_store.reset,
 	}
 }

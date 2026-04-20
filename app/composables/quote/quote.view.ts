@@ -1,3 +1,4 @@
+import type VinylLetteringDesigner from "~/components/products/product-category/VinylLetteringDesigner.vue"
 import { useColorService } from "~/services/quote/color.service"
 import { useFontService } from "~/services/quote/font.service"
 import { useLetteringService } from "~/services/quote/lettering.service"
@@ -20,6 +21,16 @@ export const useQuoteView = () => {
 
 	const lettering_text = ref<string>(lettering_service.text.value)
 
+	const vinyl_designer_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null)
+
+	const updateSizeByCard  = (selected_size : SizeSpec) => {
+		size_service.update(selected_size)
+	}
+
+	const setVinylDesignerRef = (instance: InstanceType<typeof VinylLetteringDesigner> | null) => {
+		vinyl_designer_ref.value = instance;
+	}
+
 	// ⚠️ Watching the changes of size from other component
 	watch(() => size_service.src, (new_size) => {
 		// Only if the lettering editor is active
@@ -36,7 +47,7 @@ export const useQuoteView = () => {
 
 	// ⚠️ Watching the changes of font from other component
 	watch(() => font_service.src, () => {
-		if( quote_service.has_lettering_editor.value ) {
+		if( quote_service.has_lettering_editor.value && lettering_text.value) {
 			lettering_service.update(lettering_size.value, lettering_text.value)
 		}
 	}, {
@@ -54,6 +65,13 @@ export const useQuoteView = () => {
 		immediate: true,
 	})
 
+	watch(() => lettering_service.flag.value, (new_value) => {
+		if( new_value == 'default' )
+			lettering_text.value = lettering_service.text.value
+	})
+
+
+
 
 	return {
 		// 🔥 States
@@ -67,8 +85,13 @@ export const useQuoteView = () => {
 		selected_font: font_service.src,
 		selected_color: color_service.src,
 		navigation_flight : quote_service.navigation_flight,
+		sizes: size_service.collection,
+		size: size_service.src,
+		vinyl_designer_ref,
 
 		// 🔥 Methods
 		updateLetteringPreviewFlag: lettering_service.updateLetteringPreviewFlag,
+		updateSizeByCard,
+		setVinylDesignerRef,
 	}
 }

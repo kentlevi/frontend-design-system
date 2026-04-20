@@ -6,16 +6,7 @@ import VinylLetteringDesigner from '~/components/products/product-category/Vinyl
 import { useQuoteView } from '~/composables/quote/quote.view';
 
 const {
-	selected_product,
-	getProductBlurb,
 	selection_navigation_in_flight,
-	size_feature_cards,
-	active_size_code,
-
-	// Lettering state from quote handler
-	color,
-	setVinylDesignerRef,
-	selectSizeByCode,
 } = useProductExperience();
 
 const { t } = useI18n();
@@ -34,14 +25,14 @@ const displayed_product_title = computed(() => {
 	return t(`product.items.${product_url_slug.value}.name`);
 });
 
-const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : (selected_product.value ? getProductBlurb(selected_product.value) : '')
-);
+
 
 const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4'); // ⚠️ REVISION!!!
 const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png'); // ⚠️ REVISION!!!
 
 const {
+	sizes: size_feature_cards,
+	size: selected_size,
 	url_slug : product_url_slug,
 	has_lettering_editor,
 	is_loading_features,
@@ -50,10 +41,12 @@ const {
 	selected_font,
 	selected_color,
 	navigation_flight,
+	vinyl_designer_ref,
 	updateLetteringPreviewFlag,
+	updateSizeByCard,
+	setVinylDesignerRef,
 } = useQuoteView()
 
-const vinyl_designer_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null);
 const hero_media_product_id = computed(() => {
 	return product_url_slug.value ?? null
 });
@@ -70,6 +63,10 @@ const demo_hero_poster_url = computed(() =>
 
 const should_play_preview_video = computed(() =>
 	Boolean(product_url_slug.value) && !has_lettering_editor.value && !selection_navigation_in_flight.value
+);
+
+const displayed_product_blurb = computed(() =>
+	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug}.blurb`)
 );
 
 watch(
@@ -152,7 +149,7 @@ const hide_lettering_editor = computed(() => (
 				v-model:width="lettering_size.width"
 				v-model:height="lettering_size.height"
 				:font="selected_font?.value ?? ''"
-				:color-key="selected_color?.keyword || color?.hex_code || 'black'"
+				:color-key="selected_color?.keyword || selected_color?.hex_code || 'black'"
 				:redirecting="selection_navigation_in_flight"
 				:is-loading-features="is_loading_features"
 				:selection-navigation-in-flight="selection_navigation_in_flight"
@@ -170,11 +167,11 @@ const hide_lettering_editor = computed(() => (
 				type="button"
 				class="mini-feature"
 				:class="{
-					'is-active': !has_lettering_editor && active_size_code === featured_size_cards.code,
+					'is-active': !has_lettering_editor && selected_size?.width == featured_size_cards.width && selected_size?.height == featured_size_cards.height,
 					'is-disabled': has_lettering_editor
 				}"
 				:disabled="has_lettering_editor"
-				@click="selectSizeByCode(featured_size_cards.code)"
+				@click="updateSizeByCard(featured_size_cards)"
 			>
 				<img
 					v-if="featured_size_cards.image"

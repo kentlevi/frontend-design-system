@@ -9,8 +9,11 @@ import { useSizeService } from "~/services/quote/size.service"
 import type { AttributeSelection, ColorSpec, FontSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
 import { useCountry } from "../app/country/useCountry"
 import { formatCurrencyByCountry } from '~/utils/currency';
+import { usePricingService } from "~/services/quote/pricing.service"
 
 export const useQuoteSection = () => {
+
+	const { country } = useCountry()
 
 	const quote_service = useQuoteService('quote-section')
 
@@ -26,7 +29,7 @@ export const useQuoteSection = () => {
 
 	const quantity_service = useQuantityService('quote-section')
 
-	const { country } = useCountry()
+	const pricing_service = usePricingService('quote-section')
 
 	const current_url_slug = ref<string|null>(null)
 
@@ -50,6 +53,11 @@ export const useQuoteSection = () => {
 		price: null,
 	})
 
+	const pricing_ready = computed(() => quantity_service.src.value?.price )
+
+	const selection_navigation_in_flight = ref<boolean>(false)
+
+
 	/**
 	 * Initialized a raw string variable due to component structure
 	 * UiSelect only append a single variable or index inside
@@ -57,25 +65,25 @@ export const useQuoteSection = () => {
 	 */
 	const selected_font = ref<string>("Antique Olive");
 
-
+	/** Starting point in every product selection */
 	const prepareComponent = async (url_slug : string) => {
 		// Request data from API and assign to attributes state handler
+		selection_navigation_in_flight.value = true
+		resetAllField()
 		await initializeFeaturedData(url_slug)
 
 		// Used the fetched data from API to be initialized in all fields
 		await provisionResource()
+		selection_navigation_in_flight.value = false
 	}
 
-	// Initialize locally
+	/** Initialize locally */
 	const initializeFeaturedData = async (url_slug : string) => {
-
-		console.warn('✅ Initializing Featured Data:')
-
 		current_url_slug.value = url_slug
 
 		quote_service.isLoadingFeatures(true)
 		quote_service.updateNavigationFlight(true)
-		quote_service.isPricingReady(false)
+		pricing_service.isPricingReady(false)
 
 		try {
 			// Request data from API
@@ -93,17 +101,15 @@ export const useQuoteSection = () => {
 		} finally {
 			quote_service.isLoadingFeatures(false)
 			quote_service.updateNavigationFlight(false)
-			quote_service.isPricingReady(true)
+			pricing_service.isPricingReady(true)
 		}
 
 		return true
 
 	}
 
-	// Distribute resources
+	/** Distribute resources */
 	const provisionResource = async () => {
-		console.warn('✅ Provision Resource:')
-
 		if( !current_url_slug.value )
 			return
 
@@ -119,32 +125,9 @@ export const useQuoteSection = () => {
 		}
 	}
 
-	const initializeListOfPrices = async () => {
-		console.warn('Initializing prices...')
-		if( !current_url_slug.value )
-			return
-
-		const data = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
-			width	: size_service.src.value?.width,
-			height	: size_service.src.value?.height,
-			color_id: color_service.src.value?.id,
-			font_id	: font_service.src.value?.id,
-		} as PricingParameters)
-
-		if( !data ) {
-			console.warn('Unable to retrieve prices.')
-			return
-		}
-		if( data.prices.length ) {
-			quantity_service.minimum.value = data.prices[0]?.nr ?? 0
-			quantity_service.maximum.value = data.prices[data.prices.length - 1]?.nr ?? 0
-		}
-		await quote_service.bindPrices(data)
-	}
-
 	const updatePrices = debounce( async(update_from : string) => {
 		console.warn(`Updating prices - [${update_from}]!!!`)
-		await initializeListOfPrices()
+		await initializePriceList()
 
 		const first_def = quantity_service.collection
 			&& quantity_service.collection.value
@@ -152,13 +135,46 @@ export const useQuoteSection = () => {
 			? quantity_service.collection.value[0]
 			: null
 
-		if(!quantity_service.src.value && first_def)
+		if(!quantity_service.src.value && first_def) {
 			quantity_service.update(first_def)
-	},250)
+		}
+
+		if( quantity_service.src.value )
+			pricing_service.define(quantity_service.src.value)
+	}, 250)
+
+	const initializePriceList = async () => {
+		if( !current_url_slug.value )
+			return
+
+		const data = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
+			width	: size_service.src.value?.width,
+			height	: size_service.src.value?.height,
+			color_id: quote_service.has_color_selection.value ? color_service.src.value?.id : null,
+			font_id	: quote_service.has_font_selection.value ? font_service.src.value?.id : null,
+		} as PricingParameters)
+
+		if( !data ) {
+			console.warn('Unable to retrieve prices.')
+			return
+		}
+
+		/** Bind prices */
+		await pricing_service.bindPrices(data)
+
+		if( !data.prices.length )
+			return
+
+		const matched_quantity = data.prices.find(e => e.nr == quantity_service.src.value?.nr )
+		if( matched_quantity )
+			quantity_service.update(matched_quantity)
+		else
+			quantity_service.update(data.prices[0] as QuantitySpec)
+	}
+
 
 	// Preparing the default data of each attribute
 	const prepareDefaultAttr = async () => {
-		console.warn('Preparing default selection!!!')
 		if( !current_url_slug.value )
 			return
 
@@ -183,7 +199,6 @@ export const useQuoteSection = () => {
 
 	// Prepare using the exisintg selection of attributes
 	const prepareUsingExistingAttr = async (existing_attr : AttributeSelection) => {
-		console.warn('Preparing existing selection!!!')
 		const using_lettering_editor = quote_service.has_lettering_editor.value;
 		// If current product is using a lettering editor
 		if( using_lettering_editor ) {
@@ -198,6 +213,11 @@ export const useQuoteSection = () => {
 			size_service.assignDefault({ ...custom_size.value, src: 'quote-section-default' })
 		} else {
 			size_service.assignDefault({ ...existing_attr.size, src: 'quote-section-existing-attr'})
+
+			if( existing_attr.size.custom ) {
+				custom_size.value = existing_attr.size
+				setCustomSizeVisible()
+			}
 		}
 
 		font_service.assignDefault(existing_attr.font ?? null)
@@ -206,6 +226,14 @@ export const useQuoteSection = () => {
 
 		color_service.assignDefault(existing_attr.color ?? null)
 		quantity_service.assignDefault(existing_attr.quantity ?? null)
+
+		if( existing_attr.quantity ) {
+
+			if( quantity_service.collection.value )
+				pricing_service.defineLimits(quantity_service.collection.value)
+
+			pricing_service.define(existing_attr.quantity)
+		}
 	}
 
 	/** ✅ Color on click and change */
@@ -224,37 +252,13 @@ export const useQuoteSection = () => {
 		if( field_src == 'lettering-size-field' ) {
 			custom_size.value.custom = true
 			custom_size.value.label = 'Vinyl-Lettering'
+		} else {
+			custom_size.value.custom = true
+			custom_size.value.label = 'Custom-Size'
 		}
 
 		size_service.update({ ...custom_size.value, src: field_src})
 	}
-
-
-	// ⚠️ Watching the changes of size
-	watch(() => size_service.src, (new_size) => {
-		console.log(new_size)
-		if( !new_size || !new_size?.value )
-			return
-
-		const source = new_size.value?.src
-
-		console.warn(`Size changed from ${source} ->`, `${new_size.value.width}x${new_size.value.height}`)
-		/**
-		 * Only if the lettering editor is active from other component
-		 * The changes of text in Vinyl Lettering editor will trigger this
-		 */
-		if( quote_service.has_lettering_editor.value && new_size && new_size.value ) {
-			if(source && source == 'lettering-editor' ) {
-				custom_size.value.width 	= new_size.value.width
-				custom_size.value.height	= new_size.value.height
-			}
-		}
-
-		updatePrices('size')
-	}, {
-		immediate: true,
-		deep: true
-	})
 
 
 	const hideCustomSize = () => {
@@ -290,20 +294,13 @@ export const useQuoteSection = () => {
 		is_custom_size_focus.value = true
 	}
 
+	const hideCustomQty = async () => {
+		is_custom_qty.value = false
+	}
+
 	const onCustomSizeBlur = () => {
 		is_custom_size_focus.value = false
 	}
-
-	watch(() => selected_font.value, (new_font) => {
-		console.log(2)
-		const collection = font_service.collection.value
-		const matched = collection.find(f => f.value == new_font)
-
-		if( matched ) {
-			font_service.update(matched)
-			updatePrices('font')
-		}
-	})
 
 	const updateCustomQuantity = async (event: Event) => {
 		const input = event.target as HTMLInputElement
@@ -321,15 +318,38 @@ export const useQuoteSection = () => {
 		const raw = filtered_char.replace(/,/g, '')
 		const n = Number(raw)
 
-		console.log(n)
 		if (n && !isNaN(n)) {
 			custom_quantity.value.nr = n
-			quantity_service.update(custom_quantity.value)
 
+			quantity_service.update(custom_quantity.value)
 			// Calculate the price
-			const quantities = quantity_service.collection.value ?? []
-			console.log(quantity_service.getCustomPrice(n, quantities))
+			recalculateTotalPrice()
 		}
+	}
+
+	const recalculateTotalPrice = () => {
+		console.warn('Recalculation')
+		const n = custom_quantity.value.nr
+		if( !n )
+			return
+
+		// Calculate the price
+		const quantities = quantity_service.collection.value ?? []
+
+		const matched = quantities.find(e => e.nr == n)
+
+		if( matched ) {
+			custom_quantity.value.price = matched.price
+		} else {
+			const price_computation = pricing_service.getCustomPrice(n, quantities)
+
+			if( price_computation && price_computation.price)
+				custom_quantity.value.price = price_computation.price
+		}
+
+		pricing_service.define(custom_quantity.value)
+		quantity_service.update(custom_quantity.value)
+		// pricing_service.
 	}
 
 	const formatted_custom_qty = computed(() => {
@@ -337,6 +357,89 @@ export const useQuoteSection = () => {
 			return ''
 
 		return custom_quantity.value.nr.toLocaleString()
+	})
+
+	const updateSelectedQuantity = async (sqty: QuantitySpec) => {
+		hideCustomQty()
+
+		pricing_service.define(sqty)
+		await quantity_service.update(sqty)
+	}
+
+	const updateSize = async (ssize: SizeSpec) => {
+		hideCustomSize()
+		await size_service.update(ssize)
+	}
+
+	const resetCustomSize = () => {
+		custom_size.value.width = null
+		custom_size.value.height = null
+	}
+
+	const showCustomSize = async () => {
+		resetCustomSize()
+		await setCustomSizeVisible()
+	}
+
+	const setCustomSizeVisible = async () => {
+		is_custom_size.value = true
+
+		await nextTick()
+
+		custom_width_input.value?.focus()
+		custom_width_input.value?.select()
+	}
+
+	const focusWidthInput = () => {
+		custom_width_input.value?.focus()
+		custom_width_input.value?.select()
+	}
+
+	const resetAllField = () => {
+		is_custom_size.value = false
+		is_custom_qty.value = false
+		is_custom_qty_focus.value = false
+		is_custom_size_focus.value = false
+		resetCustomSize()
+		quote_service.resetAllSelection()
+	}
+
+	
+
+
+	// ⚠️ Watching the changes of size
+	watch(() => size_service.src, (new_size) => {
+		if( !new_size || !new_size?.value )
+			return
+
+		const source = new_size.value?.src
+
+		/**
+		 * Only if the lettering editor is active from other component
+		 * The changes of text in Vinyl Lettering editor will trigger this
+		 */
+		if( quote_service.has_lettering_editor.value && new_size && new_size.value ) {
+			if(source && source == 'lettering-editor' ) {
+				custom_size.value.width 	= new_size.value.width
+				custom_size.value.height	= new_size.value.height
+			}
+		}
+
+		updatePrices('size')
+	}, {
+		immediate: true,
+		deep: true
+	})
+
+
+	watch(() => selected_font.value, (new_font) => {
+		const collection = font_service.collection.value
+		const matched = collection.find(f => f.value == new_font)
+
+		if( matched ) {
+			font_service.update(matched)
+			updatePrices('font')
+		}
 	})
 
 
@@ -358,6 +461,10 @@ export const useQuoteSection = () => {
 		quantity: quantity_service.src,
 		lettering_preview_ready: quote_service.lettering_preview_ready,
 		navigation_flight : quote_service.navigation_flight,
+		total_price : pricing_service.total,
+		discount_rate: pricing_service.discount_rate,
+		sub_total: pricing_service.sub_total,
+		unit_price: pricing_service.unit_price,
 
 		// 🔥 Local States
 		current_url_slug,
@@ -373,6 +480,8 @@ export const useQuoteSection = () => {
 		is_custom_qty_focus,
 		is_custom_size_focus,
 		formatted_custom_qty,
+		pricing_ready,
+		selection_navigation_in_flight,
 
 		// 🔥 Methods
 		prepareComponent,
@@ -391,5 +500,11 @@ export const useQuoteSection = () => {
 		onCustomQtyBlur,
 		onCustomSizeFocus,
 		onCustomSizeBlur,
+		updateSelectedQuantity,
+		hideCustomQty,
+		updateSize,
+		showCustomSize,
+		focusWidthInput,
+		resetAllField,
 	}
 }

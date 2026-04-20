@@ -4,24 +4,7 @@ import { useProductExperience } from '~/composables/products/categoryExperience/
 import { useQuoteSection } from '~/composables/quote/quote.section';
 
 const {
-	size,
-	active_size_code,
-	color,
-	pricing_ready,
-	discount_rate,
-	subtotal,
-	unit_price,
-	total,
-	selection_navigation_in_flight,
-	is_custom_size,
-
-	// Actions
 	proceedToNextStep,
-	showCustomSize,
-	focusWidthInput,
-	inputUpdateSize,
-	inputUpdateCustomSize,
-	inputUpdateQuantity,
 } = useProductExperience();
 
 const { t } = useI18n();
@@ -80,6 +63,8 @@ const {
 	has_lettering_editor,
 	custom_size,
 	selected_font,
+	color : selected_color,
+	size : selected_size,
 	quantity: selected_quantity,
 	is_custom_qty,
 	custom_quantity,
@@ -95,6 +80,12 @@ const {
 	formatted_custom_qty,
 	is_custom_size_focus,
 	custom_width_input,
+	total_price,
+	discount_rate,
+	sub_total,
+	unit_price,
+	is_custom_size,
+	selection_navigation_in_flight,
 	onVinylSizeFocus,
 	onVinylSizeBlur,
 	onVinylFontFocus,
@@ -109,6 +100,10 @@ const {
 	onCustomQtyBlur,
 	onCustomSizeFocus,
 	onCustomSizeBlur,
+	updateSelectedQuantity,
+	updateSize,
+	showCustomSize,
+	focusWidthInput,
 } = useQuoteSection()
 
 const route = useRoute()
@@ -116,6 +111,7 @@ const has_color_selection = ref<boolean>(true)
 const color_skeleton_count = ref<number>(14)
 const quantity_skeleton_count = ref<number>(10)
 
+const prices_ready = computed(() => Boolean(total_price && total_price.value))
 onMounted(async () => {
 	initializeEntryPoint()
 })
@@ -136,7 +132,7 @@ const lettering_field_not_ready = computed(() => !!(is_loading_features.value
 
 
 const has_pending_custom_selection = computed(() => {
-	const size_source = is_custom_size.value ? custom_size.value : size.value;
+	const size_source = is_custom_size.value ? custom_size.value : selected_size.value;
 	const quantity_source = is_custom_qty.value ? custom_quantity.value : selected_quantity?.value;
 
 	const missing_size = !size_source?.width || !size_source?.height;
@@ -171,14 +167,14 @@ const has_pending_custom_selection = computed(() => {
 					:key="'color-'+key+'-'+(fcolor.id ?? key)"
 					type="button"
 					class="color-swatch"
-					:class="{ 'is-active': color?.id === fcolor.id }"
+					:class="{ 'is-active': selected_color?.id === fcolor.id }"
 					:aria-label="fcolor.name"
 					@click="updateColor(fcolor)"
 				>
 					<span class="color-swatch-tooltip">{{ fcolor.name }}</span>
 					<span class="color-swatch-core" :style="fcolor.style">
 						<UiIcon
-							v-if="color?.id === fcolor.id"
+							v-if="selected_color?.id === fcolor.id"
 							name="regular-check"
 							:size="24"
 							class="color-swatch-check"
@@ -207,8 +203,8 @@ const has_pending_custom_selection = computed(() => {
 						:key="'size-'+key+'-'+(fsize.code ?? key)"
 						type="button"
 						class="option-pill"
-						:class="{ 'is-active': !is_custom_size && active_size_code === fsize.code }"
-						@click="inputUpdateSize(fsize)"
+						:class="{ 'is-active': !is_custom_size && selected_size?.code === fsize.code }"
+						@click="updateSize(fsize)"
 					>
 						<span class="size-pill-name">{{ fsize.label }}</span>
 						<span class="size-pill-dim">({{ fsize.width }}x{{ fsize.height }})</span>
@@ -232,24 +228,26 @@ const has_pending_custom_selection = computed(() => {
 						@click.self="focusWidthInput"
 					>
 						<input
+							v-if="custom_size"
 							ref="custom_width_input"
-							:value="custom_size?.width"
+							v-model="custom_size.width"
 							type="number"
 							class="custom-size-input"
 							placeholder="Width"
 							@beforeinput="prevent_non_digit_input"
-							@input="inputUpdateCustomSize($event, 'width')"
+							@input="updateCustomSize('size-width-field')"
 							@focus="onCustomSizeFocus"
 							@blur="onCustomSizeBlur"
 						>
 						<span class="size-separator">x</span>
 						<input
-							:value="custom_size?.height"
+							v-if="custom_size"
+							v-model="custom_size.height"
 							type="number"
 							class="custom-size-input"
 							placeholder="Height"
 							@beforeinput="prevent_non_digit_input"
-							@input="inputUpdateCustomSize($event, 'height')"
+							@input="updateCustomSize('size-height-field')"
 							@focus="onCustomSizeFocus"
 							@blur="onCustomSizeBlur"
 						>
@@ -270,7 +268,7 @@ const has_pending_custom_selection = computed(() => {
 						type="button"
 						class="option-pill"
 						:class="{ 'is-active': !is_custom_qty && selected_quantity?.nr === qty.nr }"
-						@click="inputUpdateQuantity(qty)"
+						@click="updateSelectedQuantity(qty)"
 					>
 						<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
 						<span class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</span>
@@ -296,7 +294,7 @@ const has_pending_custom_selection = computed(() => {
 							class="custom-qty-input"
 							placeholder="Enter quantity"
 							@beforeinput="prevent_non_digit_input"
-							@input="updateCustomQuantity"
+							@input="updateCustomQuantity($event)"
 							@focus="onCustomQtyFocus"
 							@blur="onCustomQtyBlur"
 						>
@@ -386,7 +384,7 @@ const has_pending_custom_selection = computed(() => {
 						type="button"
 						class="option-pill"
 						:class="{ 'is-active': !is_custom_qty && selected_quantity?.nr === qty.nr }"
-						@click="inputUpdateQuantity(qty)"
+						@click="updateSelectedQuantity(qty)"
 					>
 						<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
 						<strong class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</strong>
@@ -442,16 +440,16 @@ const has_pending_custom_selection = computed(() => {
 						<UiSkeleton width="100px" height="12px" class="price-summary-skeleton-unit" />
 					</div>
 				</div>
-				<div v-else class="price-summary-stack">
-					<p v-if="pricing_ready" class="price-summary-row discount">
+				<div v-else-if="prices_ready" class="price-summary-stack">
+					<p v-if="sub_total != total_price" class="price-summary-row discount">
 						<strong class="price-discount-rate">-{{ Math.round(discount_rate * 100)}}%</strong>
-						<span class="price-summary-strike">{{ formatPrice(subtotal) }}</span>
+						<span class="price-summary-strike">{{ formatPrice(sub_total) }}</span>
 					</p>
 					<p class="price-summary-row total">
-						<strong class="price-summary-value">{{ pricing_ready ? formatPrice(total) : '--' }}</strong>
+						<strong class="price-summary-value">{{ prices_ready ? formatPrice(total_price) : '--' }}</strong>
 					</p>
-					<p class="price-summary-unit">
-						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} per piece)
+					<p v-if="sub_total != total_price" class="price-summary-unit">
+						({{ prices_ready ? formatPrice(unit_price) : '--' }} per piece)
 					</p>
 				</div>
 			</div>

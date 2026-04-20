@@ -21,6 +21,8 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 	const lettering_text = ref<string>('')
 
+	const lettering_flag = ref<string>('')
+
 	const lettering_file = ref<File>()
 
 	const shipping_fee = ref<number>(0)
@@ -122,6 +124,8 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	const updateLetteringText = (txt: string, default_value: boolean = false) => {
 		lettering_text.value = txt
 
+		lettering_flag.value = default_value ? 'default' : 'edited'
+
 		if(!default_value)
 			saveSelection()
 	}
@@ -168,6 +172,14 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		is_pricing_ready.value = v
 	}
 
+	const reset = () => {
+		url_slug.value = ''
+		product_variant_id.value = 0
+		color.value = null
+		font.value = null
+		lettering_text.value = ''
+	}
+
 	return {
 		product_config_mapping_id,
 		product_variant_id,
@@ -188,6 +200,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		navigation_flight,
 		is_loading_features,
 		is_pricing_ready,
+		lettering_flag,
 		updateMappingID,
 		updateProductSlug,
 		clearSelection,
@@ -206,5 +219,6 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		updateVariantID,
 		updateLoadingFeaturesFlag,
 		updatePricingFlag,
+		reset,
 	}
 })

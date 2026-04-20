@@ -20,13 +20,14 @@ export const useLetteringService = (caller: string) => {
 
 	const text = computed(() => selection_store.lettering_text)
 
+	const flag = computed(() => selection_store.lettering_flag)
+
 
 	const assignDefault = (text: string) => {
 		selection_store.updateLetteringText(text, true)
 	}
 
 	const update = (size: SizeSpec, txt : string) => {
-
 		selection_store.updateLetteringText(txt)
 		selection_store.updateSize(size)
 	}
@@ -38,6 +39,7 @@ export const useLetteringService = (caller: string) => {
 		size,
 		text,
 		preview_ready: selection_store.lettering_preview_ready,
+		flag,
 
 		// 🔥 Methods
 		assignDefault,
