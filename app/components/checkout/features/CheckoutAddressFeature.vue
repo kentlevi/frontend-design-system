@@ -6,16 +6,11 @@ import DropShippingAddress from '../address/DropShippingAddress.vue';
 import { useCheckoutAddressFeature } from '../../../composables/checkout/address/useCheckoutAddressFeature';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 import { useAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import CheckoutTransition from '../shared/CheckoutTransition.vue';
 
 const {
 	translate,
 
-	beforeEnter,
-	enter,
-	afterEnter,
-	beforeLeave,
-	leave,
-	afterLeave,
 	is_member,
 
 	shipping_swap_wrapper_ref,
@@ -41,14 +36,7 @@ const {	has_shipping_addresses } = useAddressBookListCheckoutContext()
 				</div>
 
 				<div ref="shipping_swap_wrapper_ref" class="checkout-member-shipping-swap-wrap">
-					<Transition
-						@before-enter="beforeEnter"
-						@enter="enter"
-						@after-enter="afterEnter"
-						@before-leave="beforeLeave"
-						@leave="leave"
-						@after-leave="afterLeave"
-					>
+					<CheckoutTransition>
 						<SavedAddress
 							v-if="is_member && !ship_to_another_address && has_shipping_addresses"
 							key="saved-address"
@@ -59,7 +47,7 @@ const {	has_shipping_addresses } = useAddressBookListCheckoutContext()
 							key="manual-address"
 							class="checkout-member-shipping-panel"
 						/>
-					</Transition>
+					</CheckoutTransition>
 				</div>
 			</div>
 
