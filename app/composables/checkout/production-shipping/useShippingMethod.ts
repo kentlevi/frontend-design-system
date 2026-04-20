@@ -50,7 +50,7 @@ export function useShippingMethod() {
 				is_authenticated,
 				selected_cart_items: selected_cart_items.value,
 				postcode: shipping_form.value.postcode,
-				grand_total: cart_store.grand_total
+				fields: shipping_form.value.fields
 			}
 		)
 
@@ -155,9 +155,20 @@ export function useShippingMethod() {
 		{ immediate: true }
 	)
 
+	const isFormComplete = computed(() => {
+		const { postcode, fields } = shipping_form.value
+
+		return (
+			postcode &&
+			Object.values(fields).every(value => value)
+		)
+	})
+
 	watch(
-		() => shipping_form.value.postcode,
-		(_postcode, _previous_postcode, on_cleanup) => {
+		isFormComplete,
+		(isComplete, _old, on_cleanup) => {
+			if (!isComplete) return
+
 			const timeout = setTimeout(() => {
 				void fetchShippingMethods()
 			}, 500)

@@ -1,5 +1,3 @@
-// ~/services/production-shipping/production-shipping.service.ts
-
 import { getShippingMethodByCartItems, getShippingMethodByLocalItems } from '~/services/production-shipping/api.service'
 import { useProductionShippingStore } from '~/stores/production-shipping/production-shipping.store'
 import type { CartItem } from '~/types/cart/cart'
@@ -29,13 +27,14 @@ export async function fetchShippingMethodsService(
                 cart_item_ids: payload.selected_cart_items
                     .map(item => item.id)
                     .filter((id): id is number => id !== null),
-                zip_code: payload.postcode
+                zip_code: payload.postcode,
+                fields: payload.fields
             })
         } else {
             response = await getShippingMethodByLocalItems({
                 items: buildLocalShippingItems(payload.selected_cart_items),
-                grand_total: payload.grand_total,
-                zip_code: payload.postcode
+                zip_code: payload.postcode,
+                fields: payload.fields
             })
         }
 
@@ -64,7 +63,6 @@ function buildLocalShippingItems(items: CartItem[]): LocalShippingMethodItemPayl
     return items.map(item => ({
         product_config_mapping_id: item.product_config_mapping_id,
         quantity: item.quantity,
-        cost: item.cost,
         color_id: item.color_id,
         font_id: item.font_id
     }))

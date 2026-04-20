@@ -16,6 +16,14 @@ export const getShippingMethodByCartItems = async (params: AuthenticatedShipping
         query.append('zip_code', params.zip_code)
     }
 
+    if (params.fields) {
+        Object.entries(params.fields).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                query.append(`fields[${key}]`, String(value))
+            }
+        })
+    }
+
     return $api.get(`/shipping/shipping-methods?${query.toString()}`)
 }
 

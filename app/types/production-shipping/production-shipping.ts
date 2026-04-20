@@ -1,5 +1,6 @@
 import type { ApiResponse } from '~/types/config/api'
 import type { CartItem } from '../cart/cart'
+import type { DynamicFieldDefinition } from '../user-address'
 
 export interface AvailableShippingMethod {
 	production_shipping_id: number
@@ -30,5 +31,5 @@ export interface FetchShippingMethodsPayload {
 	is_authenticated: boolean
 	selected_cart_items: CartItem[]
 	postcode?: string
-	grand_total: number
+	fields: DynamicFieldDefinition
 }
