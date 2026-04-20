@@ -19,6 +19,7 @@ const props = withDefaults(
 		footerClass?: string;
 		hideHeader?: boolean;
 		maxHeight?: string;
+		scrollable?: boolean;
 	}>(),
 	{
 		modelValue: false,
@@ -33,6 +34,7 @@ const props = withDefaults(
 		footerClass: '',
 		hideHeader: false,
 		maxHeight: '',
+		scrollable: false,
 	}
 );
 
@@ -101,7 +103,12 @@ onBeforeUnmount(() => {
 				@click="onBackdropClick"
 			>
 				<div
-					:class="['ui-modal', 'auth-shell-enter', modalClass]"
+					:class="[
+						'ui-modal',
+						'auth-shell-enter',
+						{ 'ui-modal--scrollable': scrollable },
+						modalClass,
+					]"
 					role="dialog"
 					aria-modal="true"
 					:aria-label="title || 'Modal'"

@@ -2,7 +2,7 @@
   "checkout": {
     "guest": {
       "contactInformation": "Contact Information",
-      "loginPrompt": "Already have an account?",
+      "loginPrompt": "Already have an account? ",
       "login": "Login",
       "shippingInformation": "Shipping Information",
       "shippingMethod": "Shipping Method",
@@ -54,7 +54,7 @@
           "placeholder": "Enter Card Number"
         },
         "expiration": {
-          "label": "Expiration",
+          "label": "Expiration*",
           "placeholder": "MM/YY"
         },
         "cvv": {
@@ -113,7 +113,7 @@
       },
       "agreement": {
         "prefix": "By completing your checkout, you agree with our",
-        "terms": "Terms of Services",
+        "terms": "Terms of Service",
         "and": "and",
         "privacy": "Privacy Policy",
         "suffix": "."

@@ -44,6 +44,12 @@ export function useAccountOrders() {
 		return filtered_orders.value.find((order) => order.id === active_order_id.value) ?? filtered_orders.value[0] ?? null;
 	});
 
+	const empty_state_key = computed(() => {
+		if (filtered_orders.value.length > 0) return null;
+		if (search_query.value.trim()) return 'searchNoResults';
+		return lifecycle.value === 'active' ? 'allCaughtUp' : 'noOrders';
+	});
+
 	watch(
 		filtered_orders,
 		(next_orders) => {
@@ -77,6 +83,7 @@ export function useAccountOrders() {
 		is_detail_open,
 		order_groups,
 		active_order,
+		empty_state_key,
 		set_lifecycle: setLifecycle,
 		set_active_order: setActiveOrder,
 		toggle_detail_open: toggleDetailOpen,

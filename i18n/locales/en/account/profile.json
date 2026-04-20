@@ -14,6 +14,8 @@
       "invalidFileType": "File type is invalid",
       "photoUploadFailedTitle": "Upload Failed",
       "photoUploadFailedMessage": "Unable to upload your photo right now. Please try again later.",
+      "photoUploadTimedOutMessage": "The upload timed out. Please try again later.",
+      "photoUploadNetworkIssueMessage": "Unable to upload due to a network issue. Please try again.",
       "photoDeleteFailedTitle": "Delete Failed",
       "photoDeleteFailedMessage": "Unable to delete your photo right now. Please try again later.",
       "delete": "Delete",

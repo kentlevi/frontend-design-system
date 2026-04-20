@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
+
 const { t } = useI18n();
+const { selected_id } = useProductExperience();
 
 defineProps<{
 	canGoPrev: boolean;
@@ -10,6 +13,13 @@ const emit = defineEmits<{
 	(e: 'prev'): void;
 	(e: 'next'): void;
 }>();
+
+const reviews_headline_key = computed(() =>
+	selected_id.value ? 'product.reviews.headline' : 'product.reviews.navigationHeadline'
+);
+const reviews_description_key = computed(() =>
+	selected_id.value ? 'product.reviews.description' : 'product.reviews.navigationDescription'
+);
 </script>
 
 <template>
@@ -29,8 +39,8 @@ const emit = defineEmits<{
 			<span class="rating-score" data-testid="product-reviews-rating-score">5.0</span>
 		</div>
 
-		<h2 class="product-reviews-headline" data-testid="product-reviews-headline">{{ t('product.reviews.headline') }}</h2>
-		<p class="product-reviews-description" data-testid="product-reviews-description">{{ t('product.reviews.description') }}</p>
+		<h2 class="product-reviews-headline" data-testid="product-reviews-headline">{{ t(reviews_headline_key) }}</h2>
+		<p class="product-reviews-description" data-testid="product-reviews-description">{{ t(reviews_description_key) }}</p>
 
 		<div class="product-reviews-controls" data-testid="product-reviews-controls">
 			<UiButton

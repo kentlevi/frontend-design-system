@@ -189,7 +189,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						<div class="home-search-empty-copy">
 							<h4 class="home-search-heading">{{ t('layout.header.search.modal.noRecent.title') }}</h4>
 							<p class="home-search-empty-text">
-								{{ t('layout.header.search.modal.noRecent.textPrefix') }}
+								{{ t('layout.header.search.modal.noRecent.text') }}
 								<UiButton
 									variant="ghost"
 									tone="default"
@@ -198,8 +198,9 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									data-testid="app-header-search-suggest-empty-recent-button"
 									@click="applySuggestedSearch"
 								>
-									"{{ search_empty_suggested_term }}"
+									{{ t('layout.header.search.modal.suggestedTermLabel', { term: search_empty_suggested_term }) }}
 								</UiButton>
+								{{ t('layout.header.search.modal.noRecent.suffix') }}
 							</p>
 						</div>
 					</div>
@@ -215,7 +216,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						<div class="home-search-empty-copy">
 							<h4 class="home-search-heading">{{ t('layout.header.search.modal.noResult.title') }}</h4>
 							<p class="home-search-empty-text">
-								{{ t('layout.header.search.modal.noResult.textPrefix') }}
+								{{ t('layout.header.search.modal.noResult.text') }}
 								<UiButton
 									variant="ghost"
 									tone="default"
@@ -224,8 +225,9 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									data-testid="app-header-search-suggest-empty-result-button"
 									@click="applySuggestedSearch"
 								>
-									"{{ search_empty_suggested_term }}"
+									{{ t('layout.header.search.modal.suggestedTermLabel', { term: search_empty_suggested_term }) }}
 								</UiButton>
+								{{ t('layout.header.search.modal.noResult.suffix') }}
 							</p>
 						</div>
 					</div>

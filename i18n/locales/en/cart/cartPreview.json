@@ -18,6 +18,8 @@
       "proceedToCheckout": "Proceed to Checkout",
       "redirectingToCart": "Redirecting to cart",
       "closeFeaturedItems": "Close featured items",
+      "itemRemovedSuccess": "Item removed successfully.",
+      "removeConfirmTitle": "Remove this item from your cart?",
       "editModal": {
         "title": "Edit Size and Quantity",
         "sizeOnlyTitle": "Edit Size",

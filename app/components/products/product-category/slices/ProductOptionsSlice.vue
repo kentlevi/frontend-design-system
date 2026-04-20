@@ -39,6 +39,7 @@ const {
 	has_lettering_editor,
 	vinyl_preview_ready,
 	url_slug,
+	selected_id,
 
 	// Actions
 	proceedToNextStep,
@@ -166,6 +167,17 @@ const quantity_skeleton_count = computed(() => {
 	const default_quantity_count = quantity_options.length || 8;
 
 	return resolved_quantity_count.value || remembered_count || default_quantity_count;
+});
+
+const ships_tomorrow_benefit = computed(() => {
+	const product_specific_key = selected_id.value
+		? `product.price.benefitShipsTomorrowByProduct.${selected_id.value}`
+		: '';
+	const product_specific_copy = product_specific_key ? t(product_specific_key) : '';
+
+	return product_specific_copy && product_specific_copy !== product_specific_key
+		? product_specific_copy
+		: t('product.price.benefitShipsTomorrow');
 });
 
 const has_pending_custom_selection = computed(() => {
@@ -469,7 +481,7 @@ const nextStep = async () => {
 			<div class="price-summary-top">
 				<ul class="price-benefits">
 					<li>{{ t('product.price.benefitShipping') }}</li>
-					<li>{{ t('product.price.benefitShipsTomorrow') }}</li>
+					<li>{{ ships_tomorrow_benefit }}</li>
 				</ul>
 
 				<div v-if="is_loading_features" class="price-summary-stack">

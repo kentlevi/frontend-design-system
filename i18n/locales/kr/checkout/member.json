@@ -52,20 +52,21 @@
       },
       "pointsAndCoupons": "포인트 및 쿠폰",
       "points": "포인트",
-      "pointsAvailable": "{value} 포인트 사용 가능",
+      "pointsAvailable": "{value} 보유 포인트",
       "pointsPlaceholder": "0 포인트",
       "useAll": "전액 사용",
       "coupon": "쿠폰",
       "couponPlaceholder": "쿠폰 코드 입력",
       "applyCoupon": "적용",
       "completeCheckout": "결제 완료",
+      "loginSuccess": "성공적으로 로그인되었습니다. 주문을 계속 진행해 주세요",
       "fields": {
         "cardNumber": {
           "label": "카드 번호",
           "placeholder": "카드 번호 입력"
         },
         "expiration": {
-          "label": "유효기간",
+          "label": "유효 기간",
           "placeholder": "MM/YY"
         },
         "cvv": {
@@ -79,15 +80,15 @@
         "text": "결제 시 시간을 절약하기 위해 선택한 배송지를 청구지로 사용할 수 있습니다. 배송지와 청구지가 같으면 동일한 정보를 다시 입력하지 않아도 됩니다."
       },
       "agreement": {
-        "prefix": "\"결제 완료\"를 클릭하면",
-        "terms": "이용약관",
-        "and": "및",
+        "prefix": "결제를 완료하면 당사의 ",
+        "terms": "서비스 이용약관",
+        "and": " 및 ",
         "privacy": "개인정보 처리방침",
         "suffix": "에 동의하는 것으로 간주됩니다."
       },
       "summary": {
         "subtotal": "소계:",
-        "shippingFee": "배송비 ({method})",
+        "shippingFee": "배송비({method})",
         "discounts": "할인:",
         "total": "총액:",
         "shippingFeeInfoAria": "배송비 정보 보기",

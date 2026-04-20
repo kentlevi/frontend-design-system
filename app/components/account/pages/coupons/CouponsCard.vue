@@ -44,6 +44,7 @@ const { t } = useI18n();
 
 	.account-coupons-card-copy {
 		.account-coupons-card-title {
+			font-weight: var(--font-weight-semibold);;
 			font-size: var(--type-size-400);
 			line-height: var(--type-line-400);
 		}

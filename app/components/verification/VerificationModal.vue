@@ -36,9 +36,10 @@ const {
 		<div class="auth-verification-modal">
 			<UiLoadingOverlay
 				:visible="is_verifying"
-				label="Verifying..."
+				:label="translate('auth.verification.verifying')"
 				test-id="verification-modal-loading-overlay"
 				variant="modal"
+				position="absolute"
 			/>
 
 			<UiButton

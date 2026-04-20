@@ -64,6 +64,7 @@ function getAddressLabel(label: string) {
 		width="710px"
 		:title="default_selection_title"
 		modal-class="account-address-book-default-modal-shell"
+		scrollable
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-default-modal" data-testid="account-address-book-default-modal">

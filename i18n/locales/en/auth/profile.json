@@ -33,7 +33,7 @@
       },
       "settings": {
         "title": "Account Settings",
-        "subtitle": "Manage your account preferences",
+        "subtitle": "Manage your account settings, including promo alerts, discount notifications, and review preferences.",
         "promotions": "Promotions & Discounts",
         "promotionsDesc": "Stay updated with savings, new arrivals, promotions, and more via email.",
         "reviews": "Reviews",

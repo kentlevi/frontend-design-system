@@ -122,8 +122,7 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 				</div>
 				<h2 class="account-order-item-status-title">{{ t('account.orders.detail.statusTitle') }}</h2>
 				<p class="account-order-item-status-copy">
-					{{ t('account.orders.detail.statusDescriptionPrefix') }}
-					<button type="button" class="account-order-item-inline-link" @click="openReplaceArtwork">{{ t('account.orders.replaceArtwork') }}</button>{{ t('account.orders.detail.statusDescriptionSuffix') }}
+					{{ t('account.orders.detail.statusDescriptionPrefix') }}<button type="button" class="account-order-item-inline-link" @click="openReplaceArtwork">{{ t('account.orders.replaceArtwork') }}</button>{{ t('account.orders.detail.statusDescriptionSuffix') }}
 				</p>
 			</section>
 
@@ -153,7 +152,7 @@ function handleReplaceArtworkSubmit(_payload: { itemNumber: string }) {
 						<div class="account-order-item-log-asset-copy">
 							<strong>{{ artwork_file_name }}</strong>
 							<span>{{ t('account.orders.detail.product') }} {{ item ? resolveOrderText(item.productName) : '' }}</span>
-							<span>{{ t('account.orders.size', { size: item?.size }) }}</span>
+							<span>{{ t('account.orders.detail.stickerSize', { size: item?.size }) }}</span>
 						</div>
 					</div>
 				</article>

@@ -59,13 +59,14 @@
       "couponPlaceholder": "0 pts",
       "applyCoupon": "Apply",
       "completeCheckout": "Complete Checkout",
+      "loginSuccess": "You have successfully logged in. Continue completing your order.",
       "fields": {
         "cardNumber": {
           "label": "Card Number",
           "placeholder": "Enter Card Number"
         },
         "expiration": {
-          "label": "Expiration",
+          "label": "Expiration*",
           "placeholder": "MM/YY"
         },
         "cvv": {

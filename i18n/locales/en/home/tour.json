@@ -1,11 +1,11 @@
 {
   "home": {
     "welcome": {
-      "title": "Hi {name}👋, welcome to the fun side! 🎉",
+      "title": "Hi {name} 👋, welcome to the fun side! 🎉",
       "defaultName": "there",
-      "bodyPrefix": "As a thank you for registering, ",
-      "bodyHighlight": "you've earned {points} points to kickstart your journey.",
-      "bodySuffix": " If you need a hand, this guided tour will walk you through the key features to help you get started.",
+      "bodyPrefix": "As a thank you for signing up, ",
+      "bodyHighlight": "you’ve earned {points} points to get started.",
+      "bodySuffix": " This guided tour will introduce the key features and help you make the most of your account.",
       "skip": "Skip",
       "getStarted": "Get Started"
     },
@@ -21,19 +21,19 @@
       },
       "stepLabel": "Step {current} of {total}",
       "step1": {
-        "title": "Your Profile at a Glance 😎",
-        "body": "Manage everything from your profile page: track your points and coupons, view order history, read and write reviews, and request quotes."
+        "title": "Your Profile at a Glance",
+        "body": "Everything in one place: track loyalty points and coupons, view orders, write reviews, and request quotes from your profile."
       },
       "step2": {
         "title": "Explore Our Products 🧐",
-        "body": "Navigate product categories in the header to quickly find sticker types that match your needs."
+        "body": "Explore all our products in one place. Use the product links in the header to quickly find the perfect stickers for your needs."
       },
       "step3": {
         "title": "Easy Product Search 🔎",
-        "body": "Use the search icon in the header to find products instantly by name and keyword."
+        "body": "Need help finding something? Use the search icon in the header, the banner search bar, or keyboard shortcuts to locate products quickly."
       },
       "step4": {
-        "title": "You're ready to go! 🥳",
+        "title": "You’re ready to go! 🙌",
         "body": "For helpful tips and tutorials, check out the “Getting Started” guide in your account dropdown."
       }
     }

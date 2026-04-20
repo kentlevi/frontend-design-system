@@ -7,13 +7,44 @@
                     "placeholder": "스티커를 검색해보세요",
                     "clear": "검색어 지우기",
                     "suggestedTerm": "다이컷 스티커",
+                    "suggestedTermLabel": "\"{term}\"",
                     "noRecent": {
                         "title": "최근 검색 내역이 없습니다",
-                        "textPrefix": "스티커 상품을 둘러보세요 - 예를 들어"
+                        "text": "어떤 제품을 주문할 지 모르겠다면?",
+                        "suffix": " 와 같은 인기 제품을 확인해보세요."
                     },
                     "noResult": {
                         "title": "검색 결과가 없습니다",
-                        "textPrefix": "검색어를 바꾸거나 인기 옵션을 확인해보세요 -"
+                        "text": "다른 검색어를 입력하거나",
+                        "suffix": "와 같은 인기 제품을 둘러보세요."
+                    },
+                    "productDescriptions": {
+                        "die-cut-sticker": "디자인에 맞게 완벽하게 구현되는 정밀 커팅",
+                        "circle-sticker": "브랜딩과 다양한 프로젝트에 자주 활용되는 클래식 원형",
+                        "rectangle-sticker": "로고, 텍스트, 그래픽에 횔용하기 좋은 다재다능한 형태",
+                        "square-sticker": "모던하고 깔끔한 무드를 완성하는 정사각형",
+                        "oval-sticker": "선명하고 눈길을 사로잡는 색상과 함께 우아한 곡선형 스티커",
+                        "rounded-sticker": "부드러운 모서리로 친근하고 깔끔한 마감",
+                        "kiss-cut-sticker": "손쉽게 뗴어낼 수 있는 뒷면으로 깔끔하게 부착 가능",
+                        "clear-sticker": "어떤 배경과도 자연스럽게 어우러지는 투명 소재",
+                        "hologram-sticker": "빛에 따라 반짝이는 화려한 홀로그램",
+                        "transfer-sticker": "텍스트, 로고, 데칼 작업에 최적화된 스티커",
+                        "vinyl-lettering": "벽면, 유리창, 간판에 딱 맞는 선명한 스티커",
+                        "die-cut-roll": "빠르고 효율적인 라벨링을 위한 맞춤형 롤 스티커",
+                        "clear-roll": "디자인을 돋보이게 하는 투명 롤 스티커",
+                        "circle-roll": "봉인용 씰이나 브랜딩에 적합한 클래식 원형 롤 스티커",
+                        "square-roll": "깔끔한 엣지로 로고와 그래픽의 균형을 잡아주는 정사각형 롤 스티커",
+                        "rectangle-roll": "제품 정보나 브랜드 상세 내용을 담기에 충분히 담아내는 직사각형 롤 스티커",
+                        "rounded-roll": "부드러운 곡선 모서리로 패키징의 완성도를 높여주는 둥근 사각 롤 스티커",
+                        "oval-roll": "병이나 용기 위에서 더욱 돋보이는 감각적인 타원형 롤 스티커",
+                        "paper-roll": "기록과 관리를 한 번에, 필기가 가능한 종이 롤 스티커",
+                        "sticker-sheet": "한 장에 담긴 다채로운 구성, 세트 제작과패키징에 최적화",
+                        "die-cut-sheet": "정교한 개별 칼선으로 한 장에 모두 담아낸 시트 스티커",
+                        "circle-sheet": "손쉬운 보관과 빠른 사용을 위한 원형 시트 스티커",
+                        "oval-sheet": "제품 라벨에 고급스러운 느낌을 더해주는 우아한 타원형 시트 스티커",
+                        "square-sheet": "디자인의 균형을 잡아주는 단정하고 깔끔한 정사각형 시트 스티커",
+                        "rectangle-sheet": "성함부터 제품 정보, 바코드까지 여유있게 담아내는 직사각형 시트 스티커",
+                        "rounded-sheet": "부드러운 모서리 처리로 모던하고 감각적인 시트 스티커"
                     },
                     "recent": {
                         "title": "최근 검색어",
@@ -33,11 +64,14 @@
                         "circle-roll": "원형 롤 스티커",
                         "square-roll": "정사각형 롤 스티커",
                         "rectangle-roll": "직사각형 롤 스티커",
+                        "rounded-roll": "둥근 사각형 롤 스티커",
                         "oval-roll": "타원형 롤 스티커",
                         "paper-roll": "종이 롤 스티커",
                         "die-cut-sheet": "다이컷 시트 스티커",
                         "circle-sheet": "원형 시트 스티커",
                         "oval-sheet": "타원형 시트 스티커",
+                        "square-sheet": "정사각형 시트",
+                        "rectangle-sheet": "직사각형 시트",
                         "rounded-sheet": "둥근 사각 시트 스티커"
                     },
                     "footer": {

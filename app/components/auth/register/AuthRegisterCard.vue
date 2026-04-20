@@ -185,6 +185,7 @@ watch(is_email_taken_error, (is_taken) => {
 			:label="t('auth.register.createAccount')"
 			test-id="auth-register-loading-overlay"
 			variant="modal"
+			position="absolute"
 		/>
 
 		<div class="auth-register-card" data-testid="auth-register-card">
@@ -359,6 +360,8 @@ watch(is_email_taken_error, (is_taken) => {
 						content-testid="auth-register-terms-error-popover"
 						class="auth-register-terms-error-tooltip"
 						content-class="auth-register-terms-error-tooltip-content"
+						content-width="max-content"
+						content-max-width="min(320px, calc(100vw - 32px))"
 					>
 						<template #trigger>
 							<UiButton
@@ -606,13 +609,6 @@ watch(is_email_taken_error, (is_taken) => {
 			.auth-register-terms-error-popover-icon {
 				flex-shrink: 0;
 			}
-
-			.auth-register-terms-error-tooltip-content {
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-				height: 40px;
-				padding: 8px 16px 8px 12px;
-			}
 		}
 
 		.auth-register-submit {
@@ -662,11 +658,15 @@ watch(is_email_taken_error, (is_taken) => {
 				text-align: left;
 				max-width: none;
 
-				.auth-register-terms-error-tooltip-content {
-					min-width: 220px;
-				}
 			}
 		}
 	}
+}
+
+:deep(.auth-register-terms-error-tooltip-content) {
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
+	min-height: 40px;
+	padding: 8px 16px 8px 12px;
 }
 </style>

@@ -15,7 +15,20 @@
             "sampleRequestPrefix": "투명 스티커",
             "sampleRequestDetails": "투명 스티커 / 200x200mm / 10pcs",
             "messagePlaceholder": "메시지를 입력하세요...",
-            "send": "전송"
+            "send": "전송",
+            "confirmation": {
+                "title": "견적 요청 완료!",
+                "description": "견적 요청이 정상적으로 접수되었습니다. 담당 팀에서 내용을 검토한 후 빠른 시일내에 견적서를 보내드리겠습니다.",
+                "continueBrowsing": "계속 둘러보기"
+            },
+            "notification": {
+                "emailSubject": "[견적 요청] 새로운 견적 요청 {email}님의 새로운 견적 요청 {quoteId}",
+                "emailHeader": "새로운 견적 요청 안내",
+                "emailMessage": "고객의 요청 사항을 검토하신 후, 사양에 맞는 견적을 준비해 주세요.",
+                "emailSummary": "{email}님으로부터 새로운 견적 요청이 접수되었습니다.",
+                "quoteNoLabel": "견적 번호",
+                "replyButton": "지금 답변하기"
+            }
         }
     }
 }

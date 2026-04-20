@@ -64,6 +64,18 @@ function resolveSearchProductName(
 	);
 }
 
+function resolveSearchProductBlurb(
+	t: ReturnType<typeof useI18n>['t'],
+	product_slug: string,
+	fallback: string,
+): string {
+	return resolveTranslatedValue(
+		t,
+		`layout.header.search.modal.productDescriptions.${product_slug}`,
+		resolveTranslatedValue(t, `product.items.${product_slug}.blurb`, fallback),
+	);
+}
+
 function createEmptyPagination(per_page = search_page_size): SearchPagination {
 	return {
 		current_page: 1,
@@ -187,9 +199,9 @@ export function useAppHeaderSearch(params: {
 			normalizeText(api_product.category_name) || category_slug,
 		);
 		const product_name = resolveSearchProductName(t, product_slug, api_product_name);
-		const product_blurb = resolveTranslatedValue(
+		const product_blurb = resolveSearchProductBlurb(
 			t,
-			`product.items.${product_slug}.blurb`,
+			product_slug,
 			normalizeText(api_product.description),
 		);
 
@@ -217,11 +229,7 @@ export function useAppHeaderSearch(params: {
 				category_key: category.key,
 				category_label,
 				name: resolveSearchProductName(t, product.id, product.name),
-				blurb: resolveTranslatedValue(
-					t,
-					`product.items.${product.id}.blurb`,
-					product.blurb,
-				),
+				blurb: resolveSearchProductBlurb(t, product.id, product.blurb),
 				image: resolveSearchImage(product.image),
 				to: withCountry(`/${category.key}/${product.id}`),
 			}));
@@ -288,7 +296,7 @@ export function useAppHeaderSearch(params: {
 			? resolveSearchProductName(t, product_slug, normalizeText(product_value.name))
 			: normalizeText(product_value.name);
 		const blurb = product_slug
-			? resolveTranslatedValue(t, `product.items.${product_slug}.blurb`, normalizeText(product_value.blurb))
+			? resolveSearchProductBlurb(t, product_slug, normalizeText(product_value.blurb))
 			: normalizeText(product_value.blurb);
 		const image = normalizeText(product_value.image);
 		const to = normalizeText(product_value.to);

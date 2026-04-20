@@ -48,6 +48,7 @@ function getDefaultBadgeIcon() {
 		padding="0"
 		gap="0"
 		modal-class="checkout-address-select-modal-shell"
+		scrollable
 	>
 		<section class="checkout-address-select-modal">
 			<header class="checkout-address-select-modal-header">

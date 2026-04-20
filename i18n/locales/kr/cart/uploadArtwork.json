@@ -1,14 +1,14 @@
 {
   "cart": {
     "uploadArtwork": {
-      "title": "아트워크 업로드",
-      "dragDropTitle": "파일을 드래그하거나 업로드하세요",
-      "acceptedTypes": "지원 형식: .eps, .ai, .psd, .pdf, .tif, .png, .jpg",
+      "title": "디자인 파일 업로드",
+      "dragDropTitle": "파일을 여기로 드래그하여 업로드하세요.",
+      "acceptedTypes": "지원 파일 형식: .eps, .ai, .psd, .pdf, .tif, .png 및 .jpg",
       "selectFiles": "파일 선택",
       "replaceImage": "이미지 교체",
       "specialInstructions": "기타 요청사항",
       "modalSpecialInstructions": "기타 요청 사항",
-      "specialInstructionsPlaceholder": "요청 사항을 입력해 주세요...",
+      "specialInstructionsPlaceholder": "여기에 상세 주문 요청 사항을 입력해 주세요",
       "note": "디자인 파일이 아직 준비되지 않으셨나요? 장바구니 페이지 또는 결제 후 대시보드에서 언제든지 업로드하실 수 있습니다.",
       "skipUploadLater": "건너뛰고 나중에 업로드하기",
       "addToCart": "장바구니 담기"

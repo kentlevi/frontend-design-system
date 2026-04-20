@@ -9,7 +9,7 @@
       "dateIssued": "발행일: {issuedDate}",
       "billingDetails": "청구 정보:",
       "billingName": "이름:",
-      "billingAddress": "주소",
+      "billingAddress": "배송지 주소",
       "billingCompany": "회사명",
       "editBillingInfo": "청구 정보 수정",
       "totals": {

@@ -46,6 +46,7 @@ const defaultLoaderRef = ref<HTMLElement | null>(null);
 let loaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 const has_custom_loader = computed(() => Boolean(slots.default));
+const is_page_overlay = computed(() => props.position === 'fixed' && props.variant !== 'modal');
 
 const overlay_style = computed<CSSProperties>(() => {
 	const is_modal = props.variant === 'modal';
@@ -73,7 +74,7 @@ function destroyLoaderAnimation() {
 }
 
 function setBodyScrollLock(locked: boolean) {
-	if (typeof document === 'undefined' || props.position !== 'fixed') return;
+	if (typeof document === 'undefined' || !is_page_overlay.value) return;
 
 	const body = document.body;
 	const current_lock_count = Number(body.dataset[BODY_LOCK_COUNT_KEY] || '0');
@@ -160,7 +161,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<Teleport v-if="props.position === 'fixed'" to="body">
+	<Teleport v-if="is_page_overlay" to="body">
 		<Transition :name="props.transitionName">
 			<div
 				v-if="props.visible"

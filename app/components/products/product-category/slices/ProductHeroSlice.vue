@@ -6,7 +6,7 @@ import VinylLetteringDesigner from '~/components/products/product-category/Vinyl
 
 const {
 	selected_product,
-	getProductName,
+	getProductPageName,
 	getProductBlurb,
 	selection_navigation_in_flight,
 	is_loading_features,
@@ -41,7 +41,7 @@ const displayed_product_title = computed(() => {
 	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle');
 
 	// Otherwise, use the formal product name from catalog/translation
-	return selected_product.value ? getProductName(selected_product.value) : '';
+	return selected_product.value ? getProductPageName(selected_product.value) : '';
 });
 
 const displayed_product_blurb = computed(() =>
@@ -172,7 +172,9 @@ onBeforeUnmount(() => {
 					loading="lazy"
 					class="mini-feature-image"
 				>
-				<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
+				<h4 class="mini-feature-title">
+					{{ t(`product.sizes.${featured_size_cards.code}.featureLabel`, t(`product.sizes.${featured_size_cards.code}.label`)) }}
+				</h4>
 				<p class="mini-feature-description">
 					{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 				</p>
@@ -219,12 +221,10 @@ onBeforeUnmount(() => {
 	}
 
 	.product-preview-features {
-		border-bottom: 1px solid var(--border-default);
 		display: grid;
 		gap: 24px;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		margin-top: 0;
-		max-height: 200px;
 
 		.mini-feature {
 			align-items: center;

@@ -3,12 +3,12 @@
     "confirmation": {
       "title": "Your Order is Confirmed",
       "goHome": "Go to Homepage",
-      "notePrefix": "Expect a Final Proof to be sent to you shortly. If you have urgent concerns, you may call at",
-      "noteSuffix": "You will receive an email confirming your order submission, please verify your shipping address.",
+      "note": "Your final proof will arrive shortly. For immediate assistance, call {phone} or email {email}. You will receive an email confirming your order submission, please verify your shipping address.",
       "expectedDelivery": "Expected Delivery (Express)",
-      "expectedArrival": "Your order is estimated to arrive on: {date}",
+      "expectedArrival": "Your order is expected to arrive by {date}.",
       "orderSummary": "Order Summary",
-      "orderNumber": "Order #: {orderNumber}",
+      "orderNumberLabel": "Order #:",
+      "orderNumber": "{orderNumber}",
       "summary": {
         "subtotal": "Subtotal:",
         "shippingFee": "Shipping Fee:",
