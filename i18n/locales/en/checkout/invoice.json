@@ -9,7 +9,7 @@
       "dateIssued": "Date Issued: {issuedDate}",
       "billingDetails": "Billing Details:",
       "billingName": "Name:",
-      "billingAddress": "Address:",
+      "billingAddress": "Billing Address:",
       "billingCompany": "Company:",
       "editBillingInfo": "Edit Billing Info",
       "totals": {

@@ -27,13 +27,14 @@
         "title": "Email is already registered.",
         "description": {
           "prefix": "The email address ",
-          "suffix": " is already registered in our system. Please enter your password to continue."
+          "suffix": " is already registered. Please enter your password to continue."
         },
         "password": "Password",
         "enterPassword": "Enter Password",
         "togglePassword": "Toggle password visibility",
         "forgotPassword": "Forgot Password?",
-        "continue": "Continue"
+        "continue": "Continue",
+        "socialHint": "An account with this email address is already registered through social media login. Please continue logging in with your Google account."
       },
       "alreadyMember": "Already a Member?",
       "signInHere": "Sign In Here",

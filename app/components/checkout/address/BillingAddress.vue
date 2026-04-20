@@ -40,7 +40,7 @@ const {
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="billing_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="use_shipping_as_billing" @click="setBillingAddress()">{{ translate('checkout.member.useShippingAsBilling') }}</UiCheckbox>
+			<UiCheckbox v-model="use_shipping_as_billing" @update:model-value="setBillingAddress">{{ translate('checkout.member.useShippingAsBilling') }}</UiCheckbox>
 			<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">

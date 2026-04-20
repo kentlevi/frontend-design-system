@@ -44,6 +44,7 @@ const {
 				:label="translate('auth.reset.changing')"
 				test-id="auth-reset-password-loading-overlay"
 				variant="modal"
+				position="absolute"
 			/>
 			<div class="auth-reset-content">
 				<div class="auth-reset-header">

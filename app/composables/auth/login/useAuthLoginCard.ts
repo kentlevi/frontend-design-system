@@ -319,7 +319,7 @@ export function useAuthLoginCard() {
 			if (import.meta.client) {
 				window.localStorage.setItem(
 					HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
-					'1'
+					is_checkout_mode.value ? 'checkout' : '1'
 				)
 				window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY)
 				window.dispatchEvent(

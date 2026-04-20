@@ -37,6 +37,15 @@
     max-height: var(--ui-modal-max-height, calc(100vh - 80px));
 }
 
+.ui-modal--scrollable {
+    overflow: hidden;
+
+    .ui-modal-body {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+}
+
 .ui-modal-header {
     display: flex;
     align-items: center;
@@ -91,7 +100,7 @@
     gap: var(--ui-modal-gap, 0);
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
+    overflow-y: visible;
 }
 
 .ui-modal-footer {

@@ -169,7 +169,9 @@ function getDefaultProductStoryMedia(index: 0 | 1 | 2): StoryMedia {
 
 function getSelectedProductName() {
 	if (!selected_id.value) return '';
-	return t(`product.items.${selected_id.value}.name`);
+	const page_key = `product.pageNames.${selected_id.value}`;
+	const page_value = t(page_key);
+	return page_value === page_key ? t(`product.items.${selected_id.value}.name`) : page_value;
 }
 
 function getSelectedProductBlurb() {
@@ -207,8 +209,8 @@ const story_rows = computed<StoryRow[]>(() => {
 			media: getDefaultProductStoryMedia(1),
 		},
 		{
-			title: t('product.story.productMode.row3.title', { name }),
-			text: t('product.story.productMode.row3.text', { blurb }),
+			title: getProductStoryValue('row3', 'title', t('product.story.productMode.row3.title', { name })),
+			text: getProductStoryValue('row3', 'text', t('product.story.productMode.row3.text', { blurb })),
 			media: getDefaultProductStoryMedia(2),
 		},
 	];

@@ -7,13 +7,44 @@
                     "placeholder": "Find your stickers...",
                     "clear": "Clear search",
                     "suggestedTerm": "Die Cut Stickers",
+                    "suggestedTermLabel": "\"{term}.\"",
                     "noRecent": {
                         "title": "No recent searches",
-                        "textPrefix": "Start exploring our sticker products - try searching for"
+                        "text": "Not sure where to start? Check out popular picks like",
+                        "suffix": ""
                     },
                     "noResult": {
                         "title": "No results found",
-                        "textPrefix": "Try refining your search or explore popular options like"
+                        "text": "Try a different search or browse popular picks like",
+                        "suffix": ""
+                    },
+                    "productDescriptions": {
+                        "die-cut-sticker": "Precision-cut to follow your design perfectly.",
+                        "circle-sticker": "Classic round shape for branding and projects.",
+                        "rectangle-sticker": "Versatile shape for logos, text, or graphics.",
+                        "square-sticker": "Clean-cut squares for a modern, polished look.",
+                        "oval-sticker": "Elegant curves with vibrant, eye-catching color.",
+                        "rounded-sticker": "Soft corners for a friendly, clean finish.",
+                        "kiss-cut-sticker": "Easy-peel backing for a smooth application.",
+                        "clear-sticker": "Transparent material blends on any surface.",
+                        "hologram-sticker": "Shimmering finish that shifts with light.",
+                        "transfer-sticker": "Designed for clean text, logos, and decals.",
+                        "vinyl-lettering": "Crisp letters perfect for walls, windows, and signs.",
+                        "die-cut-roll": "Custom-shaped roll stickers for fast, efficient labeling.",
+                        "clear-roll": "Transparent roll labels that let your design stand out.",
+                        "circle-roll": "Classic round roll labels for seals and branding.",
+                        "square-roll": "Square roll stickers with clean edges for balanced logos and graphics.",
+                        "rectangle-roll": "Roll stickers with extra space for product details and branding.",
+                        "rounded-roll": "Soft-corner roll stickers that give packaging a polished look.",
+                        "oval-roll": "Oval roll stickers that stand out on bottles and jars.",
+                        "paper-roll": "Writable paper roll stickers for shipping, notes, and inventory.",
+                        "sticker-sheet": "Multiple stickers on one sheet, perfect for sets and packs.",
+                        "die-cut-sheet": "Custom-cut stickers arranged neatly on a single sheet.",
+                        "circle-sheet": "Round Sticker Sheets for easy storage and quick peeling.",
+                        "oval-sheet": "Elegant oval Sticker Sheets that bring a refined look to product labels.",
+                        "square-sheet": "Square Sticker Sheets that keep designs clean and organized.",
+                        "rectangle-sheet": "Sticker Sheets with extra space for names, product info, and barcodes.",
+                        "rounded-sheet": "Soft-corner Sticker Sheets for a smooth, modern presentation."
                     },
                     "recent": {
                         "title": "Recent searches",

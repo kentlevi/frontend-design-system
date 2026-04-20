@@ -1,4 +1,4 @@
-﻿{
+{
     "auth": {
         "verification": {
             "title": "인증이 필요합니다",
@@ -10,16 +10,17 @@
             "invalidCode": "인증 번호가 일치하지 않습니다. 다시 입력해 주세요.",
             "verify": "인증하기",
             "verifyEmailAddress": "이메일 인증하기",
-            "verifying": "인증 중...",
+            "verifying": "잠시만 기다려 주세요! 모든 정보가 정확한지 확인하고 있습니다.",
             "closeModal": "모달 닫기",
-            "resendPrefix": "인증 번호를 받지 못하셨나요? 스팸 폴더를 확인하거나 ",
-            "resendCta": "새 인증 번호를 요청해주세요",
-            "resendSuffix": ".",
+            "resendPrefix": "인증 번호를 받지 못하셨나요? 스팸 메일함을 확인하거나 ",
+            "resendCta": "'번호 재전송'을 클릭해 주세요",
+            "resendSuffix": "",
             "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요.",
-            "expiredCode":  "인증 번호가 만료되었습니다. 아래 \"번호 재전송\" 버튼을 눌러 새로운 번호를 받아 주세요",
+            "expiredCode": "인증 번호가 만료되었습니다. 아래 \"번호 재전송\" 버튼을 눌러 새로운 번호를 받아 주세요",
             "resendLimitReachedPrefix": "보안상의 이유로, 최대",
             "resendLimitReachedMiddle": "시간당 5개의 코드",
-            "resendLimitReachedSuffix": "까지 요청할 수 있습니다. 잠시 후 다시 시도해 주세요."
+            "resendLimitReachedSuffix": ". 나중에 다시 시도해 주세요.",
+            "emailUpdatePrompt": "새로운 이메일 주소를 입력하고 \"확인\" 버튼을 클릭하여 계속 진행하세요."
         }
     }
 }

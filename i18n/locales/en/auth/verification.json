@@ -11,15 +11,16 @@
             "expiredCode": "This verification code has expired. Click the “Resend Code” button below to get a new one.",
             "verify": "Verify",
             "verifyEmailAddress": "Verify Email Address",
-            "verifying": "Verifying...",
+            "verifying": "Just a moment! We're making sure everything looks perfect.",
             "closeModal": "Close modal",
-            "resendPrefix": "Didn't get the code? Check your spam folder or ",
-            "resendCta": "request a new one",
+            "resendPrefix": "Didn’t get the code? Check your spam folder or ",
+            "resendCta": "click Resend Code",
             "resendSuffix": ".",
             "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",
             "resendLimitReachedPrefix": "For security reasons, you can request up to",
             "resendLimitReachedMiddle": "5 codes per hour",
-            "resendLimitReachedSuffix": ". Please try again later."
+            "resendLimitReachedSuffix": ". Please try again later.",
+            "emailUpdatePrompt": "Enter your new email address and click “Confirm” to continue."
         }
     }
 }

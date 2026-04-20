@@ -82,6 +82,10 @@
           "row2": {
             "title": "Stick Fast, Easy to Peel",
             "text": "The adhesive lays down smoothly and stays firmly in place. When you remove it, it peels cleanly without residue or surface damage."
+          },
+          "row3": {
+            "title": "Precisely cut to match the design",
+            "text": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
           }
         },
         "circle-sticker": {
@@ -92,6 +96,10 @@
           "row2": {
             "title": "Stick Fast, Easy to Peel",
             "text": "The adhesive lays down smoothly and stays firmly in place. When you remove it, it peels cleanly without residue or surface damage."
+          },
+          "row3": {
+            "title": "Quick, Hassle-Free Circles",
+            "text": "Upload your artwork and transform it into custom round stickers with sharp detail and smooth edges. Great for laptops, water bottles, packaging, product labels, and promotional gear."
           }
         },
         "rectangle-sticker": {
@@ -102,6 +110,10 @@
           "row2": {
             "title": "Durable Construction for Everyday Use",
             "text": "Crafted with thick, premium material that maintains vibrant color and resist wear from handling. A reliable adhesive holds securely on smooth surfaces while keeping a clean finish."
+          },
+          "row3": {
+            "title": "Perfect for Labels and Packaging",
+            "text": "Upload your artwork and Musticker will produce rectangular stickers with precise edges and professional detail. Ideal for product labels, branded packaging, informational tags, and promotional use."
           }
         },
         "square-sticker": {
@@ -111,7 +123,11 @@
           },
           "row2": {
             "title": "Quality You Can Count On",
-            "text": "Produced on thick, premium material that keeps colors vivid and details sharp through handling. Strong adhesive holds firmly in place while maintaining a professional finish."
+            "text": "Premium printing, precise cuts, vibrant colors, and durable materials for lasting quality."
+          },
+          "row3": {
+            "title": "Perfect for Branding and Display",
+            "text": "Upload your artwork and Musticker produces crisp, precisely cut stickers ready for display. Perfect for packaging, product labels, laptops, water bottles, and promotional materials."
           }
         },
         "oval-sticker": {
@@ -122,6 +138,10 @@
           "row2": {
             "title": "Durable Quality That Lasts",
             "text": "Printed on premium material that keeps colors vibrant and graphics sharp through everyday use. Strong adhesive holds securely on smooth surfaces while maintaining a polished look."
+          },
+          "row3": {
+            "title": "Perfect for Labels, Packaging, and Promotions",
+            "text": "Upload your artwork and Musticker will create oval stickers with crisp edges and precise detail. Ideal for product packaging, specialty labels, laptops, bottles, and promotional branding."
           }
         },
         "rounded-sticker": {
@@ -132,6 +152,10 @@
           "row2": {
             "title": "Built for Everyday Performance",
             "text": "Printed on thick, high-quality material designed to handle regular use. The adhesive holds securely on smooth surfaces while maintaining a clean, professional appearance."
+          },
+          "row3": {
+            "title": "Perfect for Creative Branding",
+            "text": "Upload your artwork and Musticker will produce rounded square stickers with sharp detail and smooth edges. The versatile shape works beautifully for packaging, merchandise, promotions, and branded materials."
           }
         },
         "kiss-cut-sticker": {
@@ -142,6 +166,10 @@
           "row2": {
             "title": "Crisp Printing, Precise Detail",
             "text": "Rich color and sharp lines bring even intricate artwork to life. Printed on high-quality material that maintains clarity and vibrancy over time."
+          },
+          "row3": {
+            "title": "Designed for Convenience",
+            "text": "Upload your artwork and Musticker will produce kiss cut stickers ready to peel and apply. The protective backing makes them ideal for packaging inserts, promotional giveaways, and branded merchandise."
           }
         },
         "sticker-sheet": {
@@ -152,6 +180,10 @@
           "row2": {
             "title": "Crisp Printing, Clean Cuts",
             "text": "High-resolution printing brings color and detail to life, while precision cutting ensures smooth edges and consistent quality across every sticker."
+          },
+          "row3": {
+            "title": "Perfect for Creative Sets",
+            "text": "Upload your artwork and have each design arranged neatly for easy use. Stickers peel away smoothly, making them perfect for planners, packaging, branding, and promotional sets."
           }
         },
         "clear-sticker": {
@@ -162,6 +194,10 @@
           "row2": {
             "title": "Vivid & Clear",
             "text": "High-resolution printing preserves bright, bold colors while keeping backgrounds fully transparent. Premium materials resist fading and maintain clarity over time."
+          },
+          "row3": {
+            "title": "Perfect for Elegant Branding",
+            "text": "Upload your design and Musticker prints it precisely on clear material. Every detail remains sharp and professional, ideal for glass, bottles, product labels, and premium packaging."
           }
         },
         "hologram-sticker": {
@@ -172,11 +208,16 @@
           "row2": {
             "title": "Vibrant & Durable",
             "text": "Premium holographic material keeps colors rich and bright while standing up to everyday handling. The finish stays vibrant and reflective over time."
+          },
+          "row3": {
+            "title": "Premium Branding",
+            "text": "Upload your artwork and Musticker produces holographic stickers with crisp detail and striking shine. Perfect for branding, collectibles, packaging, and promotional designs."
           }
         },
         "transfer-sticker": {
           "row1": {
-            "title": "Crisp, Professional Designs"
+            "title": "Crisp, Professional Designs",
+            "text": "Premium cutting ensures every detail of your design is sharp and clear. The result is a polished, standout finish that looks like it’s painted directly onto the surface."
           }
         },
         "clear-roll": {
@@ -187,6 +228,10 @@
           "row2": {
             "title": "Vibrant Printing, Long-Lasting Clarity",
             "text": "High-resolution printing keeps colors bright and bold while maintaining full transparency. Premium materials resist fading and wear, ensuring every sticker stays sharp over time."
+          },
+          "row3": {
+            "title": "Perfect for Packaging and Branding",
+            "text": "Each sticker peels smoothly from the roll for quick, effortless use. Crisp edges and precise printing make them ideal for glass, bottles, product labels, and high-volume projects."
           }
         },
         "circle-roll": {
@@ -197,6 +242,10 @@
           "row2": {
             "title": "Bold Colors, Durable Material",
             "text": "Made with premium materials, these stickers keep their color and detail through frequent handling. Strong adhesive guarantees they stay put without lifting or fading."
+          },
+          "row3": {
+            "title": "Quick, Hassle-Free Circles",
+            "text": "Upload your artwork and turn it into vibrant, precision-cut stickers on a roll. Each piece peels easily and is ready for fast application, making them perfect for laptops, water bottles, packaging, product labels, and promotional gear."
           }
         },
         "square-roll": {
@@ -207,6 +256,10 @@
           "row2": {
             "title": "Durable and Vibrant",
             "text": "Printed on premium material, these stickers maintain vibrant colors and sharp details despite frequent handling. Strong adhesive keeps every piece secure while delivering a professional finish."
+          },
+          "row3": {
+            "title": "Perfect for Branding and Packaging",
+            "text": "Upload your artwork so each sticker is cut precisely for immediate use. The roll format makes peeling and dispensing simple, ideal for packaging, product labels, laptops, bottles, and promotional projects."
           }
         },
         "rectangle-roll": {
@@ -217,6 +270,10 @@
           "row2": {
             "title": "Extra Space, Ready on a Roll",
             "text": "Printed on thick, durable material that holds color through regular use. A dependable adhesive keeps each label secure on smooth surfaces while maintaining a clean, professional finish."
+          },
+          "row3": {
+            "title": "Made for Daily Handling",
+            "text": "Upload your artwork so each rectangular sticker is precisely cut and ready to use. The roll format allows easy dispensing, ideal for packaging, product labels, bottles, and promotions."
           }
         },
         "rounded-roll": {
@@ -227,6 +284,10 @@
           "row2": {
             "title": "Built for Everyday Use",
             "text": "Produced on thick, high-quality material that holds color well through regular handling. A strong adhesive keeps each sticker secure on smooth surfaces while maintaining a professional finish."
+          },
+          "row3": {
+            "title": "Versatile for Branding",
+            "text": "Upload your artwork and Musticker produces multiple rounded square stickers. Every piece is ready for branding, promotions, and product labeling."
           }
         },
         "oval-roll": {
@@ -237,6 +298,10 @@
           "row2": {
             "title": "Durable Quality That Lasts",
             "text": "Produced on premium material that keeps colors vibrant and graphics crisp through regular use. A reliable adhesive keeps each sticker secure on smooth surfaces while maintaining a polished finish."
+          },
+          "row3": {
+            "title": "Made for Easy Labeling",
+            "text": "Upload your artwork and Musticker produces multiple oval stickers. Smooth edges and sharp detail make them perfect for product labels, branding, and decorative applications."
           }
         },
         "die-cut-roll": {
@@ -247,6 +312,10 @@
           "row2": {
             "title": "Consistent, Reliable Quality",
             "text": "Vibrant printing and durable materials ensure every design stays sharp. Consistent cutting delivers a professional look on every sticker, built to withstand everyday use."
+          },
+          "row3": {
+            "title": "Ready for Fast Application",
+            "text": "Upload your artwork to begin Musticker’s precision cutting. Every shape and detail is preserved exactly as designed, and each sticker is ready for fast, effortless application."
           }
         },
         "paper-roll": {
@@ -257,6 +326,10 @@
           "row2": {
             "title": "Clear, Durable Prints",
             "text": "High-quality printing keeps colors bright on sturdy material. Each piece is easy to write on, sticks securely, and stays gentle for everyday handling."
+          },
+          "row3": {
+            "title": "Perfect for Branding and Projects",
+            "text": "Neatly arranged on rolls, each piece peels smoothly and is ideal for planners, gift tags, crafts, and creative branding projects."
           }
         },
         "die-cut-sheet": {
@@ -267,6 +340,10 @@
           "row2": {
             "title": "Crisp Printing, Clean Edges",
             "text": "High-resolution printing delivers bold colour and crisp detail across every design. Precision die-cutting ensures smooth edges and a consistent, professional finish."
+          },
+          "row3": {
+            "title": "Ideal for Creative Sets",
+            "text": "Upload your artwork and each die-cut design is arranged on a sheet for immediate use. The format allows for easy peeling, perfect for packaging, branding, laptops, bottles, and promotional projects."
           }
         },
         "circle-sheet": {
@@ -277,6 +354,10 @@
           "row2": {
             "title": "Vibrant Prints, Durable Material",
             "text": "Premium materials keep colors rich and sharp through everyday handling. The reliable adhesive helps each circle stay firmly in place without lifting, fading, or losing detail."
+          },
+          "row3": {
+            "title": "Great for Planners and Branding",
+            "text": "Upload your artwork and turn it into vibrant, precision cut circles arranged for easy peeling. Ideal for packaging, product labels, laptops, water bottles, and promotional materials."
           }
         },
         "oval-sheet": {
@@ -287,6 +368,10 @@
           "row2": {
             "title": "Bold Prints, Built to Last",
             "text": "Premium materials keep colors rich and vibrant while resisting fading from sun and moisture. Each oval maintains smooth edges and crisp detail through everyday use."
+          },
+          "row3": {
+            "title": "Perfect for Labels and Branding",
+            "text": "Upload your artwork and create multiple oval stickers in a convenient sheet. Each design features smooth edges and crisp detail, ideal for product labels, branding, and decorative uses."
           }
         },
         "square-sheet": {
@@ -297,6 +382,10 @@
           "row2": {
             "title": "Durable and Long-Lasting",
             "text": "Thick material and premium printing help maintain vivid color and sharp detail. The strong adhesive keeps each sticker securely applied through everyday handling and use."
+          },
+          "row3": {
+            "title": "Perfect for Branding and Projects",
+            "text": "Upload your artwork and have it turned into precision-cut squares arranged for easy peeling. Perfect for product labels, promotional packs, packaging, and creative projects."
           }
         },
         "rectangle-sheet": {
@@ -307,6 +396,10 @@
           "row2": {
             "title": "Bold, Reliable Prints",
             "text": "Premium materials keep colors vibrant and designs sharp, with smooth edges and clear detail. Strong adhesive ensures each sticker stays securely in place over time."
+          },
+          "row3": {
+            "title": "Ideal for Packaging and Promotions",
+            "text": "Upload your artwork and have it arranged into precision-cut rectangular stickers arranged for easy peeling. Ideal for product labels, promotional materials, and creative projects."
           }
         },
         "rounded-sheet": {
@@ -317,6 +410,10 @@
           "row2": {
             "title": "Durable and Vivid",
             "text": "Rich, bold colors stay sharp thanks to high-quality printing. Thick, resilient material and reliable adhesive ensure designs stay put over time."
+          },
+          "row3": {
+            "title": "Perfect for Merchandise and Branding",
+            "text": "Upload your artwork to Musticker and turn it into multiple stickers on a sheet. Each piece peels easily, perfect for packaging, promotions, and creative projects."
           }
         }
       }

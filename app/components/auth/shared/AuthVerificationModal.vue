@@ -146,6 +146,7 @@ const formatted_error_parts = computed(() => {
 				:label="computed_submit_label"
 				test-id="auth-verification-loading-overlay"
 				variant="modal"
+				position="absolute"
 			/>
 
 			<UiButton

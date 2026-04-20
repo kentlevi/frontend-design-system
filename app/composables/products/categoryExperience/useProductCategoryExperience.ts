@@ -554,6 +554,12 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		return t(`product.items.${product.id}.name`);
 	}
 
+	function getProductPageName(product: ProductItem) {
+		const page_key = `product.pageNames.${product.id}`;
+		if (te(page_key)) return t(page_key);
+		return t(`product.items.${product.id}.name`);
+	}
+
 	function getProductBlurb(product: ProductItem) {
 		return t(`product.items.${product.id}.blurb`);
 	}
@@ -733,6 +739,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			formatCurrencyByCountry(value, country.value),
 		quantityPrice,
 		getProductName,
+		getProductPageName,
 		getProductBlurb,
 		selectSizeByCode,
 		setVinylPreviewReady,

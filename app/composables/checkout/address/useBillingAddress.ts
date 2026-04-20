@@ -14,12 +14,13 @@ export function useBillingAddress() {
 
 	/** Context */
 	const { billing_address } = useAddressBookListCheckoutContext()
-	const { openSelectAddressModal } = useAddressGeneralUICheckoutContext()
+	const { use_shipping_as_billing, openSelectAddressModal } = useAddressGeneralUICheckoutContext()
 
 	const { assignAddressToForm } = useAddressGeneral()
 
 	const {
 		form_field_errors,
+		shipping_form,
 		billing_form,
 
 		populateDynamicFields,
@@ -29,6 +30,11 @@ export function useBillingAddress() {
 	} = useAddressFormCheckoutContext();
 
 	async function setBillingAddress() {
+		if (use_shipping_as_billing.value) {
+			setBillingAsShipping()
+			return;
+		}
+
 		if (billing_address.value.length === 0) await loadAddresses('billing')
 
 		if (checkout_store.selected_billing_address_id) {
@@ -38,6 +44,22 @@ export function useBillingAddress() {
 
 		assignAddressToForm('billing')
 	}
+
+	function setBillingAsShipping() {
+		Object.assign(billing_form.value, shipping_form.value, {
+			type: 'billing'
+		})
+	}
+
+	watch(
+		shipping_form,
+		() => {
+			if (use_shipping_as_billing.value) {
+				setBillingAsShipping()
+			}
+		},
+		{ deep: true }
+	)
 
 	onMounted(async () => {
 		if (address_field_store.dynamic_address_fields.length === 0) {

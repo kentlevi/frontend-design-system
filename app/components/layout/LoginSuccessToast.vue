@@ -16,7 +16,7 @@ const guest_login_mode = useCookie<string | number | null>('guest_login_mode', {
 	path: '/',
 });
 const is_visible = ref(false);
-const toast_kind = ref<'member' | 'guest'>('member');
+const toast_kind = ref<'member' | 'guest' | 'checkout'>('member');
 let hide_toast_timer: ReturnType<typeof setTimeout> | null = null;
 let show_toast_timer: ReturnType<typeof setTimeout> | null = null;
 const SHOW_TOAST_DELAY_MS = 120;
@@ -36,7 +36,7 @@ function clearShowToastTimer() {
 	show_toast_timer = null;
 }
 
-function showToast(kind: 'member' | 'guest') {
+function showToast(kind: 'member' | 'guest' | 'checkout') {
 	clearShowToastTimer();
 	clearHideToastTimer();
 	show_toast_timer = setTimeout(() => {
@@ -52,15 +52,22 @@ function showToast(kind: 'member' | 'guest') {
 
 function consumePendingLoginSuccessToast() {
 	if (!import.meta.client) return;
-	const is_member_pending =
-		window.localStorage.getItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY) === '1';
+	const pending_value = window.localStorage.getItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
+	const is_member_pending = !!pending_value;
 	const is_guest_pending =
 		window.localStorage.getItem(GUEST_LOGIN_TOAST_PENDING_KEY) === '1';
 	if (!is_member_pending && !is_guest_pending) return;
 
 	window.localStorage.removeItem(HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY);
 	window.localStorage.removeItem(GUEST_LOGIN_TOAST_PENDING_KEY);
-	showToast(is_guest_pending || is_guest_session.value ? 'guest' : 'member');
+
+	if (is_guest_pending || is_guest_session.value) {
+		showToast('guest');
+	} else if (pending_value === 'checkout') {
+		showToast('checkout');
+	} else {
+		showToast('member');
+	}
 }
 
 onMounted(() => {
@@ -90,7 +97,13 @@ onBeforeUnmount(() => {
 	<UiToast
 		:visible="is_visible"
 		tone="primary"
-		:message="toast_kind === 'guest' ? '' : t('home.loginSuccess')"
+		:message="
+			toast_kind === 'guest'
+				? ''
+				: toast_kind === 'checkout'
+					? t('checkout.member.loginSuccess')
+					: t('home.loginSuccess')
+		"
 		variant="outlined"
 		class="layout-login-toast"
 		data-testid="layout-login-success-toast"

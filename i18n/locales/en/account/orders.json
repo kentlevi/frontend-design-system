@@ -4,22 +4,61 @@
       "title": "My Orders",
       "active": "Active",
       "inactive": "Inactive",
+      "empty": {
+        "noOrdersTitle": "No orders found.",
+        "noOrdersDescription": "No orders match your filters. Check your selections or reset filters to view all orders.",
+        "allCaughtUpTitle": "You're all caught up!",
+        "allCaughtUpDescription": "All caught up! You have no orders left to receive. Try adjusting your filters or check back later.",
+        "searchNoResultsTitle": "No orders found.",
+        "searchNoResultsDescription": "That order number doesn’t match any records. Please double-check and try again."
+      },
+      "months": {
+        "january": "January",
+        "febuary": "Febuary",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      },
       "selectDate": "Select Dates:",
       "filters": "Filters:",
+      "filterOptions": {
+        "thisWeek": "This Week",
+        "thisMonth": "This Month",
+        "last7Days": "Last 7 days",
+        "last30Days": "Last 30 days",
+        "orderStatus": "Order Status"
+      },
       "searchPlaceholder": "Search Order #",
       "sections": {
         "ongoing": "On-going",
         "actionRequired": "Action Required",
         "completed": "Completed"
       },
+      "shippingAddress": "Shipping Address:",
+      "receiver": "Receiver:",
       "orderLabel": "Order #: {orderNumber}",
       "meta": "{count} item(s) | Order Date: {date}",
       "status": {
         "beforeProduction": "Before Production",
         "checkingArtwork": "Checking Artwork",
-        "completed": "Completed"
+        "toReceive": "To Receive",
+        "onHold": "Onhold",
+        "cancelled": "Cancelled",
+        "completed": "Completed",
+        "needsApproval": "Needs Approval",
+        "checkFinalProof": "Check Final Proof",
+        "approvedPendingOthers": "Approved - Pending Others",
+        "failedEvaluation": "Failed Evaluation"
       },
       "moreDetails": "More Details",
+      "lessDetails": "Less Details",
       "viewInvoice": "View Invoice",
       "viewInvoiceText": "Access and review detailed invoice information.",
       "paymentProof": "Payment Proof",
@@ -46,17 +85,21 @@
       "replaceArtwork": "Replace Artwork",
       "onHoldOrder": "On-Hold Order",
       "cancelOrder": "Cancel Order",
+      "reorder": "Reorder",
+      "resubmitArtwork": "Resubmit Artwork",
       "detail": {
         "close": "Close",
         "darkBackground": "Dark Background",
         "statusTitle": "Your artwork is in the queue for evaluation.",
-        "statusDescriptionPrefix": "If you need to make changes, you can still replace it before the review begins. Please click",
-        "statusDescriptionSuffix": ".",
+        "statusDescriptionPrefix": "Need to make changes? You can replace your artwork before the review starts. Click “",
+        "statusDescriptionSuffix": ".”",
         "activityLogs": "Activity Logs:",
         "submittedArtwork": "Submitted Artwork",
         "product": "Product:",
+        "stickerSize": "Sticker Size: {size}",
         "finalProofTerms": "Final Proof Terms of Service",
-        "uploadSuccess": "New artwork uploaded! Your previous image has been replaced successfully."
+        "uploadSuccess": "New artwork uploaded! Your previous image has been successfully replaced.",
+        "itemUploadSuccess": "Artwork for Item No. {number} uploaded successfully"
       },
       "upload": {
         "title": "Upload Artwork - Item No. {number}",
@@ -105,6 +148,30 @@
         "instructions": {
           "default": "Please make sure the colors and size is exactly perfect."
         }
+      },
+      "artworkFlow": {
+        "requestChanges": "Request Changes",
+        "approve": "Approve",
+        "proofLabel": "Proof#{number}",
+        "proofNumber1": "Proof#1",
+        "proofNumber2": "Proof #2",
+        "proofNumber3": "Proof #3",
+        "submittedSuccess": "Your requested changes have been submitted successfully.",
+        "evaluatingQueue": "Your revision has been received and is now queued for evaluation.",
+        "passedEvaluation": "Your artwork passed evaluation.",
+        "chooseToProceed": "You can now choose from the available options to proceed.",
+        "proofApproved": "Proof #{number} is approved.",
+        "proof1Approved": "Proof #1 is approved.",
+        "wantToMakeChanges": "Want to make changes? Click “Request Changes” before production. No edits can be made afterward.",
+        "completeRemainingSteps": "Artwork approved! Complete the remaining steps to proceed with printing.",
+        "underEvaluation": "Your artwork is currently under evaluation.",
+        "reviewingNotification": "We’re currently reviewing your artwork. You’ll be notified when it’s done.",
+        "failedEvaluation": "Your artwork failed evaluation.",
+        "feedbackRevisedVersion": "Please review the feedback and submit an updated version.",
+        "evaluationFeedback": "Evaluation Feedback",
+        "staffComment": "Staff Comment:",
+        "downloadPdf": "Download PDF",
+        "sendRequest": "Send Request"
       }
     }
   }

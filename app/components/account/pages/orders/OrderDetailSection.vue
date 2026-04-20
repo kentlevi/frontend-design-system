@@ -57,7 +57,7 @@ function resolveOrderText(value: string) {
 					:name="isDetailOpen ? 'regular-chevron-up' : 'regular-chevron-down'"
 					:size="20"
 				/>
-				<span>{{ t('account.orders.moreDetails') }}</span>
+				<span>{{ t(isDetailOpen ? 'account.orders.lessDetails' : 'account.orders.moreDetails') }}</span>
 			</button>
 		</header>
 

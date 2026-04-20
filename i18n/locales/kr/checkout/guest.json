@@ -2,7 +2,7 @@
   "checkout": {
     "guest": {
       "contactInformation": "연락처 정보",
-      "loginPrompt": "이미 계정이 있으신가요?",
+      "loginPrompt": "이미 계정이 있으신가요? ",
       "login": "로그인",
       "shippingInformation": "배송 정보",
       "shippingMethod": "배송 방법",
@@ -54,7 +54,7 @@
           "placeholder": "카드 번호를 입력하세요"
         },
         "expiration": {
-          "label": "유효기간",
+          "label": "유효 기간",
           "placeholder": "MM/YY"
         },
         "cvv": {
@@ -112,11 +112,11 @@
         "shippingFeeTooltipText": "배송비는 선택한 배송 방법과 지역에 따라 계산됩니다."
       },
       "agreement": {
-        "prefix": "\"결제 완료\"를 클릭하면 다음 약관에 동의하게 됩니다:",
+        "prefix": "결제를 완료하면 당사의 ",
         "terms": "서비스 이용약관",
         "and": "및",
         "privacy": "개인정보 처리방침",
-        "suffix": "."
+        "suffix": "에 동의하는 것으로 간주됩니다."
       }
     }
   }

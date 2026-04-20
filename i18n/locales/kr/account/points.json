@@ -6,7 +6,14 @@
       "lastTierUpgrade": "최근 등급 업그레이드",
       "pointsUnit": "포인트",
       "pointsSystemTitle": "포인트 시스템",
-      "pointsSystemDescription": "로열티 프로그램에서 포인트를 적립하고 리워드, 특별 혜택, 향후 구매 시 할인 혜택으로 누려보세요.",
+      "pointsSystemDescription": "모든 구매를 가치 있게 만드세요! 로열티 프로그램의 모든 주문과 활동을 통해 포인트를 적립하고 리워드를 잠금 해제하세요.",
+      "loyaltyIntro": "로열티 프로그램에서 포인트를 적립하고 리워드, 특별 혜택, 향후 구매 시 할인 혜택으로 누려보세요.",
+      "pointsSpec": {
+        "title": "포인트 유의사항",
+        "exclusionRule": "포인트는 배송비나 디자인 제작 비용으로 사용할 수 없습니다.",
+        "expiryRule": "적립된 포인트는 1년 후 해당 월 말일에 소멸됩니다.",
+        "deductionRule": "포인트 사용시 소멸 예정일이 가장 가까운 포인트부터 먼저 차감됩니다."
+      },
       "questTitle": "위대한 스티커 퀘스트",
       "questDescription": "퀘스트에 도전하고 포인트를 적립하여 다양한 리워드를 획득하세요!",
       "historyTitle": "포인트 내역",
@@ -16,8 +23,14 @@
       "filter": "필터",
       "logsTitle": "내역",
       "expiry": "만료",
+      "expireyCol": "만료일",
       "nextTierRequirementPrefix": "다음 등급 달성까지",
       "nextTierRequirementSuffix": "남았습니다.",
+      "questsConquered": "완료한 퀘스트",
+      "viewOptions": "보기 옵션",
+      "notCompleted": "미완료",
+      "rewardLabel": "보상",
+      "acquiredLabel": "달성 시",
       "filters": {
         "all": "전체",
         "earned": "적립",
@@ -37,47 +50,63 @@
       "challenges": {
         "firstOrderVictory": {
           "name": "첫 주문 완료",
+          "description": "첫 번째 주문을 완료하세요",
           "reward": "10포인트 적립"
         },
         "stickerExplorer": {
           "name": "스티커 탐험가",
+          "description": "스티커 컬렉션을 둘러보고 마음에 드는 상품 10개를 찾아보세요!",
           "reward": "5포인트 적립"
         },
         "mysteryHunter": {
           "name": "미스터리 헌터",
+          "description": "사이트 곳곳에 숨겨진 스티커 아이콘을 찾아보세요",
           "reward": "다음 주문 시 10% 할인 쿠폰 지급"
         },
         "speedyCheckout": {
           "name": "스피디 체크아웃",
-          "reward": "무료 특송 배송 혜택"
+          "description": "빠르고 간편한 결제 시스템으로 3분 이내에 주문을 완료하세요",
+          "reward": "이번 주문에 대해 무료 특송 배송 헤택을 누리세요!"
+        },
+        "threesACharm": {
+          "name": "세 가지 매력",
+          "description": "한 번의 주문에 서로 다른 스티커 3가지를 조합해 보세요!",
+          "reward": "총 결제 금액의 15% 할인 헤택을 드립니다."
+        },
+        "socialSharing": {
+          "name": "소셜 공유",
+          "description": "소셜 미디어에 나만의 스티커 디자인을 공유하고 포인트를 적립하세요!",
+          "reward": "다음 주문시 10% 할인 및 3포인트 적립"
         },
         "reviewMaster": {
           "name": "리뷰 마스터",
+          "description": "구매하신 상품에 대한 리뷰를 남기고 포인트를 받으세요!",
           "reward": "8포인트 적립"
         },
         "shareYourCreativity": {
           "name": "나만의 창의력을 뽐내세요",
+          "description": "온라인에 스티커를 자랑해 보세요. 저희를 태그하는 것도 잊지 마세요!",
           "reward": "8포인트 적립"
         },
         "theRoyalReferral": {
           "name": "특별 추천 혜택",
-          "reward": "10포인트와 5달러 할인 혜택"
+          "description": "친구를 초대하여 함께 쇼핑하세요. 친구가 첫 주문을 완료하면 보상을 드립니다!",
+          "reward": "10포인트 적립 및 다음 구매시 5원 할인"
         },
         "frequentBuyer": {
           "name": "단골 고객",
-          "reward": "10% 할인과 무료 특송 배송 혜택"
+          "description": "한 달 이내에 5번 주문하세요",
+          "reward": "다음 주문시 10%할인 및 무료 특송 배송 혜택을 드립니다!"
         },
         "sticktasticAnniversary": {
           "name": "스티커 기념일",
-          "reward": "25포인트 적립"
+          "description": "저희와 함께한 1주년을 축하합니다. 소중한 고객이 되어주셔서 감사합니다!",
+          "reward": "감사의 마음을 담아 25포인트를 드립니다!"
         },
         "bigSpenderBonus": {
           "name": "빅 스펜더 보너스",
-          "reward": "20달러 할인 바우처와 20포인트 적립"
-        },
-        "socialSharing": {
-          "name": "소셜 공유",
-          "reward": "5포인트 적립"
+          "description": "한 번의 주문으로 288,499원 이상 구매하고 보상을 받으세요!",
+          "reward": "다음 구매시 20원 할인 및 20포인트 적립"
         },
         "charm": {
           "name": "Charm",

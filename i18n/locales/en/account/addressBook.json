@@ -35,6 +35,8 @@
       },
       "phoneNumber": "Phone Number",
       "phonePlaceholder": "Enter Phone/Landline Number",
+      "invalidPhone": "Invalid phone number.",
+      "addressAddedSuccess": "Address has been added successfully!",
       "saveAsDefault": "Save as my default address",
       "editAddress": "Edit Address",
       "deleteAddress": "Delete",

@@ -6,58 +6,80 @@
       "square-sticker": "Square Stickers",
       "rounded-sticker": "Rounded Square Stickers"
     },
+    "pageNames": {
+      "kiss-cut-sticker": "Kiss Cut Sticker",
+      "sticker-sheet": "Sheet Stickers",
+      "clear-sticker": "Clear Sticker",
+      "hologram-sticker": "Hologram Sticker",
+      "transfer-sticker": "Transfer Sticker",
+      "custom-lettering": "Vinyl Lettering Sticker",
+      "square-roll": "Square Roll"
+    },
     "items": {
       "die-cut-sticker": {
         "name": "Die-Cut Sticker",
-        "blurb": "Features thick, premium-grade material designed for durability and vibrant printing."
+        "blurb": "Features thick, premium-grade material designed for durability and vibrant printing.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "circle-sticker": {
         "name": "Round Sticker",
-        "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish."
+        "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "rectangle-sticker": {
         "name": "Rectangular Sticker",
-        "blurb": "Durable premium material with sharp edges for clear, professional designs."
+        "blurb": "Durable premium material with sharp edges for clear, professional designs.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "square-sticker": {
         "name": "Square Sticker",
-        "blurb": "Premium-grade material with crisp edges for balanced and modern designs."
+        "blurb": "Premium-grade material with crisp edges for balanced and modern designs.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "oval-sticker": {
         "name": "Oval Sticker",
-        "blurb": "Printed on durable premium material with smooth curved edges."
+        "blurb": "Printed on durable premium material with smooth curved edges.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "rounded-sticker": {
         "name": "Rounded Square Sticker",
-        "blurb": "Premium material with soft, rounded corners for a polished appearance."
+        "blurb": "Premium material with soft, rounded corners for a polished appearance.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "kiss-cut-sticker": {
         "name": "Kiss Cut Stickers",
-        "blurb": "Precision cut with an easy-peel backing for convenient handling and application."
+        "blurb": "Precision cut with an easy-peel backing for convenient handling and application.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "sticker-sheet": {
         "name": "Sticker Sheets",
-        "blurb": "Multiple stickers are arranged on a single sheet for easy storage and organization."
+        "blurb": "Multiple stickers are arranged on a single sheet for easy storage and organization.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology.",
+        "tagline": "Neat, Ready, and Reliable"
       },
       "clear-sticker": {
         "name": "Clear Transparent Sticker",
-        "blurb": "Printed on transparent material that blends seamlessly with the surface."
+        "blurb": "Printed on transparent material that blends seamlessly with the surface.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "hologram-sticker": {
         "name": "Hologram Stickers",
-        "blurb": "Reflective holographic material that creates eye-catching rainbow effects."
+        "blurb": "Reflective holographic material that creates eye-catching rainbow effects.",
+        "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "transfer-sticker": {
         "name": "Transfer Stickers",
-        "blurb": "Premium cutting ensures every detail of your design is sharp and clear. The result is a polished, standout finish that looks like it’s painted directly onto the surface."
+        "blurb": "Featuring precision-cut designs that deliver a clean, professional, no-background finish."
       },
       "vinyl-lettering": {
         "name": "Vinyl Lettering",
-        "blurb": "Featuring smooth, precision-cut lettering that creates a clean, polished appearance every time."
+        "blurb": "Featuring smooth, precision-cut lettering that creates a clean, polished appearance every time.",
+        "tagline": "Crisp, Professional Finish"
       },
       "custom-lettering": {
         "name": "Precision-Cut Vinyl Lettering",
-        "blurb": "Designed for clean and accurate placement. Once applied, the backing is removed to reveal crisp lettering that blends seamlessly with the surface."
+        "blurb": "Designed for clean and accurate placement. Once applied, the backing is removed to reveal crisp lettering that blends seamlessly with the surface.",
+        "tagline": "Your Text"
       },
       "die-cut-roll": {
         "name": "Die Cut Roll Stickers",
@@ -81,7 +103,7 @@
       },
       "rounded-roll": {
         "name": "Rounded Roll Stickers",
-        "blurb": "Rounded square stickers arranged in a roll for convenient application."
+        "blurb": "Rounded square stickers are arranged in a roll for convenient application."
       },
       "oval-roll": {
         "name": "Oval Roll Stickers",

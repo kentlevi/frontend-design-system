@@ -24,6 +24,39 @@ export function useProfilePhoto() {
 		file_input.value?.click();
 	}
 
+	function getPhotoUploadErrorMessageKey(error: unknown) {
+		const error_name =
+			error instanceof Error
+				? error.name.toLowerCase()
+				: String((error as { name?: string } | null)?.name ?? '').toLowerCase()
+		const error_message =
+			error instanceof Error
+				? error.message.toLowerCase()
+				: String((error as { message?: string } | null)?.message ?? error ?? '').toLowerCase()
+
+		if (
+			error_name.includes('abort')
+			|| error_message.includes('timed out')
+			|| error_message.includes('timeout')
+			|| error_message.includes('408')
+		) {
+			return 'account.profile.photoUploadTimedOutMessage'
+		}
+
+		if (
+			error_name.includes('network')
+			|| error_message.includes('network')
+			|| error_message.includes('failed to fetch')
+			|| error_message.includes('fetcherror')
+			|| error_message.includes('load failed')
+			|| error_message.includes('offline')
+		) {
+			return 'account.profile.photoUploadNetworkIssueMessage'
+		}
+
+		return 'account.profile.photoUploadFailedMessage'
+	}
+
 	/**
      * Handles file selection from the input
      *
@@ -76,10 +109,10 @@ export function useProfilePhoto() {
 			user_store.setProfileField('file_name', file_name)
 
 			toast_store.handleApiResponse(response)
-		} catch {
+		} catch (error) {
 			toast_store.showToastWithTimer({
 				title: t('account.profile.photoUploadFailedTitle'),
-				message: t('account.profile.photoUploadFailedMessage'),
+				message: t(getPhotoUploadErrorMessageKey(error)),
 				tone: 'error',
 				dismissible: true,
 				variant: 'default',
