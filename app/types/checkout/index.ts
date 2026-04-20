@@ -32,8 +32,9 @@ export type InitialCheckoutPayload = {
 
 export type completeCheckoutPayload = {
 	order_id : number
-	shipping_address:AddressFormMap[AddressType] | null
-	billing_address: AddressFormMap[AddressType] | null
+	shipping_address:AddressFormMap[AddressType]
+	billing_address: AddressFormMap[AddressType]
+	drop_address: AddressFormMap[AddressType] | null
 }
 
 export type CheckoutApiResponse = ApiResponse<CheckoutResponseData>

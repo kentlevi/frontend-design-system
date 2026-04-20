@@ -1,4 +1,3 @@
-import type { AddressMap, AddressType } from "~/types/user-address";
 import type { AvailablePaymentMethods } from "~/types/payments/payment"
 
 /**
@@ -6,7 +5,6 @@ import type { AvailablePaymentMethods } from "~/types/payments/payment"
  */
 export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
-	const saved_shipping_addresses = ref<AddressMap[AddressType][]>([])
 	const guest_contact_state = reactive({
 		email: '',
 		verified_email: '',
@@ -14,14 +12,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const selected_shipping_address_id = ref<number | null>(null)
 	const selected_billing_address_id = ref<number | null>(null)
 	const selected_drop_address_id = ref<number | null>(null)
+
 	const ship_to_another_address = ref<boolean>(false)
-	const is_shipping_billing = ref<boolean>(true)
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
-
-	const setSavedShippingAddresses = (addresses: AddressMap[AddressType][]) => {
-		saved_shipping_addresses.value = addresses
-	}
 
 	const patchGuestContactState = (
 		payload: Partial<typeof guest_contact_state>
@@ -54,9 +48,11 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	 */
 	const cleanCheckoutStatesOnSuccess = () => {
 		selected_payment_method.value = null
-		is_shipping_billing.value = true
 		ship_to_another_address.value = false
 		selected_shipping_method_id.value = null
+		clearShippingAddressId()
+		clearBillingAddressId()
+		clearDropAddressId()
 	}
 
 	const clearShippingAddressId = () => {
@@ -72,7 +68,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	}
 
 	return {
-		saved_shipping_addresses,
 		guest_contact_state,
 		selected_shipping_address_id,
 		selected_billing_address_id,
@@ -80,10 +75,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_shipping_method_id,
 		selected_payment_method,
 		ship_to_another_address,
-		is_shipping_billing,
 
 		// expose setters
-		setSavedShippingAddresses,
 		patchGuestContactState,
 		setShippingAddressId,
 		setBillingAddressId,
