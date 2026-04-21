@@ -22,7 +22,7 @@
         },
         "fullName": {
           "label": "Full Name",
-          "placeholder": "Enter Fullname"
+          "placeholder": "Enter Full Name"
         },
         "company": {
           "label": "Company (Optional)",
@@ -46,7 +46,7 @@
           "placeholder": "Enter Postal Code"
         },
         "phone": {
-          "label": "Phone Number",
+          "label": "Contact Number",
           "placeholder": "Enter Phone/Landline Number"
         },
         "cardNumber": {
