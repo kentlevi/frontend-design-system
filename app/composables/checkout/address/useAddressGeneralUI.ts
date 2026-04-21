@@ -14,6 +14,7 @@ export function useAddressGeneralUI() {
 
 	/** Drop Shipping  */
 	const drop_shipping_enabled = ref(false);
+	const drop_shipping_ship_to_another_address = ref(false);
 
 	/** Billing */
 	const use_shipping_as_billing = ref(true);
@@ -54,6 +55,7 @@ export function useAddressGeneralUI() {
 		/** Variables */
 		drop_shipping_tooltip_open,
 		drop_shipping_enabled,
+		drop_shipping_ship_to_another_address,
 
 		/** Functions */
 		toggleDropShippingTooltip,

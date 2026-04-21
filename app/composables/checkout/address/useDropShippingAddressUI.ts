@@ -15,6 +15,7 @@ export function useDropShippingAddressUI() {
 	const {
 		drop_shipping_tooltip_open,
 		drop_shipping_enabled,
+		drop_shipping_ship_to_another_address,
 
 		toggleDropShippingTooltip,
 		getAddressTagClass
@@ -31,7 +32,6 @@ export function useDropShippingAddressUI() {
 		leave_duration_ms,
 	} = useCheckoutFeatureTransition();
 
-	const drop_shipping_ship_to_another_address = ref(false);
 
 	// refs (used)
 	const drop_shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
