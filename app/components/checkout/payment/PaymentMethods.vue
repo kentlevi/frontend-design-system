@@ -97,7 +97,6 @@
 </template>
 
 <script setup lang="ts">
-import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
@@ -107,7 +106,6 @@ import { useMainCheckOutStore } from '~/stores/checkout/index.store';
 const {
 	t,
 	payment_brands,
-	billing_tooltip_open,
 	card_number,
 	expiry,
 	cvv,
@@ -115,7 +113,6 @@ const {
 } = useCheckoutExperienceFeatureContext();
 
 const payment_meta_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const billing_tooltip_ref = ref<HTMLElement | null>(null);
 
 const {
 	enter_duration_ms,
@@ -136,8 +133,6 @@ const {
 const {
 	selected_payment_method
 } = storeToRefs(useMainCheckOutStore())
-
-useDismissibleTooltip(billing_tooltip_ref, billing_tooltip_open);
 
 useHeightTransition(
 	payment_meta_swap_wrapper_ref,

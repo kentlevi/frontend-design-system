@@ -24,10 +24,6 @@
 			:privacy-path="props.privacyPath"
 			:disabled="props.disabled"
 			:loading="props.loading"
-			:subtotal="props.subtotal"
-			:shipping-fee="props.shippingFee"
-			:discount="props.discount"
-			:total="props.total"
 			:format-price="props.formatPrice"
 		/>
 	</section>
@@ -55,10 +51,6 @@ const props = defineProps<{
 	privacyPath: string;
 	disabled?: boolean;
 	loading?: boolean;
-	subtotal: number;
-	shippingFee: number;
-	discount: number;
-	total: number;
 	formatPrice: (value: number) => string;
 	itemMeta: (sizeLabel: string, qty: number) => string;
 }>();

@@ -28,12 +28,14 @@ export type InitialCheckoutPayload = {
 	email?: string
 	contact_name?:string
 	phone_number?:string
+	selected_cart_ids?:string[] | number[]
 }
 
 export type completeCheckoutPayload = {
 	order_id : number
-	shipping_address:AddressFormMap[AddressType] | null
-	billing_address: AddressFormMap[AddressType] | null
+	shipping_address:AddressFormMap[AddressType]
+	billing_address: AddressFormMap[AddressType]
+	drop_address: AddressFormMap[AddressType] | null
 }
 
 export type CheckoutApiResponse = ApiResponse<CheckoutResponseData>

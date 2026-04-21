@@ -14,7 +14,7 @@ export function useBillingAddress() {
 
 	/** Context */
 	const { billing_address } = useAddressBookListCheckoutContext()
-	const { use_shipping_as_billing, openSelectAddressModal } = useAddressGeneralUICheckoutContext()
+	const { use_shipping_as_billing, billing_use_different_address, openSelectAddressModal } = useAddressGeneralUICheckoutContext()
 
 	const { assignAddressToForm } = useAddressGeneral()
 
@@ -30,6 +30,8 @@ export function useBillingAddress() {
 	} = useAddressFormCheckoutContext();
 
 	async function setBillingAddress() {
+		billing_use_different_address.value = false
+
 		if (use_shipping_as_billing.value) {
 			setBillingAsShipping()
 			return;
