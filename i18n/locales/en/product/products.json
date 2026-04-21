@@ -1,48 +1,90 @@
 {
   "product": {
     "navigationNames": {
+      "die-cut-sticker": "Die Cut Sticker",
       "circle-sticker": "Round Stickers",
       "rectangle-sticker": "Rectangular Stickers",
       "square-sticker": "Square Stickers",
-      "rounded-sticker": "Rounded Square Stickers"
+      "oval-sticker": "Oval Stickers",
+      "rounded-sticker": "Rounded Square Stickers",
+      "kiss-cut-sticker": "Kiss Cut Stickers",
+      "sticker-sheet": "Sticker Sheets",
+      "clear-sticker": "Clear Stickers",
+      "hologram-sticker": "Hologram Stickers",
+      "transfer-sticker": "Transfer Stickers",
+      "vinyl-lettering": "Vinyl Lettering",
+      "die-cut-roll": "Die Cut Roll Stickers",
+      "clear-roll": "Clear Roll Stickers",
+      "circle-roll": "Circle Roll Stickers",
+      "square-roll": "Square Roll Stickers",
+      "rectangle-roll": "Rectangle Roll Stickers",
+      "rounded-roll": "Rounded Roll Stickers",
+      "oval-roll": "Oval Roll Stickers",
+      "paper-roll": "Paper Roll Stickers",
+      "die-cut-sheet": "Die Cut Sheet Stickers",
+      "circle-sheet": "Circle Sheet Stickers",
+      "oval-sheet": "Oval Sheet Stickers",
+      "square-sheet": "Square Sheet Stickers",
+      "rectangle-sheet": "Rectangle Sheet Stickers",
+      "rounded-sheet": "Rounded Corner Sheet Stickers"
     },
     "pageNames": {
-      "kiss-cut-sticker": "Kiss Cut Sticker",
+      "die-cut-sticker": "Die Cut Sticker",
+      "circle-sticker": "Round Stickers",
+      "rectangle-sticker": "Rectangular Stickers",
+      "square-sticker": "Square Stickers",
+      "oval-sticker": "Oval Stickers",
+      "rounded-sticker": "Rounded Square Stickers",
+      "kiss-cut-sticker": "Kiss Cut Stickers",
       "sticker-sheet": "Sheet Stickers",
-      "clear-sticker": "Clear Sticker",
-      "hologram-sticker": "Hologram Sticker",
-      "transfer-sticker": "Transfer Sticker",
-      "custom-lettering": "Vinyl Lettering Sticker",
-      "square-roll": "Square Roll"
+      "clear-sticker": "Clear Stickers",
+      "hologram-sticker": "Hologram Stickers",
+      "transfer-sticker": "Transfer Stickers",
+      "vinyl-lettering": "Vinyl Lettering",
+      "custom-lettering": "Vinyl Lettering",
+      "die-cut-roll": "Die Cut Roll Stickers",
+      "clear-roll": "Clear Roll Stickers",
+      "circle-roll": "Circle Roll Stickers",
+      "square-roll": "Square Roll Stickers",
+      "rectangle-roll": "Rectangle Roll Stickers",
+      "rounded-roll": "Rounded Roll Stickers",
+      "oval-roll": "Oval Roll Stickers",
+      "paper-roll": "Paper Roll Stickers",
+      "die-cut-sheet": "Die Cut Sheet Stickers",
+      "circle-sheet": "Circle Sheet Stickers",
+      "oval-sheet": "Oval Sheet Stickers",
+      "square-sheet": "Square Sheet Stickers",
+      "rectangle-sheet": "Rectangle Sheet Stickers",
+      "rounded-sheet": "Rounded Corner Sheet Stickers"
     },
     "items": {
       "die-cut-sticker": {
-        "name": "Die-Cut Sticker",
+        "name": "Die Cut Sticker",
         "blurb": "Features thick, premium-grade material designed for durability and vibrant printing.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "circle-sticker": {
-        "name": "Round Sticker",
+        "name": "Round Stickers",
         "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "rectangle-sticker": {
-        "name": "Rectangular Sticker",
+        "name": "Rectangular Stickers",
         "blurb": "Durable premium material with sharp edges for clear, professional designs.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "square-sticker": {
-        "name": "Square Sticker",
+        "name": "Square Stickers",
         "blurb": "Premium-grade material with crisp edges for balanced and modern designs.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "oval-sticker": {
-        "name": "Oval Sticker",
+        "name": "Oval Stickers",
         "blurb": "Printed on durable premium material with smooth curved edges.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "rounded-sticker": {
-        "name": "Rounded Square Sticker",
+        "name": "Rounded Square Stickers",
         "blurb": "Premium material with soft, rounded corners for a polished appearance.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
@@ -58,7 +100,7 @@
         "tagline": "Neat, Ready, and Reliable"
       },
       "clear-sticker": {
-        "name": "Clear Transparent Sticker",
+        "name": "Clear Stickers",
         "blurb": "Printed on transparent material that blends seamlessly with the surface.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
@@ -77,7 +119,7 @@
         "tagline": "Crisp, Professional Finish"
       },
       "custom-lettering": {
-        "name": "Precision-Cut Vinyl Lettering",
+        "name": "Vinyl Lettering",
         "blurb": "Designed for clean and accurate placement. Once applied, the backing is removed to reveal crisp lettering that blends seamlessly with the surface.",
         "tagline": "Your Text"
       },
@@ -114,27 +156,27 @@
         "blurb": "Paper stickers in roll format designed for everyday labeling needs."
       },
       "die-cut-sheet": {
-        "name": "Die Cut Sticker Sheets",
+        "name": "Die Cut Sheet Stickers",
         "blurb": "Custom-shaped stickers neatly arranged on a single sheet."
       },
       "circle-sheet": {
-        "name": "Circle Sticker Sheets",
+        "name": "Circle Sheet Stickers",
         "blurb": "Round stickers are organized on a sheet for easy access and use."
       },
       "oval-sheet": {
-        "name": "Oval Sticker Sheets",
+        "name": "Oval Sheet Stickers",
         "blurb": "Oval stickers arranged on a sheet for organized application."
       },
       "square-sheet": {
-        "name": "Square Sticker Sheets",
+        "name": "Square Sheet Stickers",
         "blurb": "Square stickers are supplied on a sheet for convenient handling."
       },
       "rectangle-sheet": {
-        "name": "Rectangle Sticker Sheets",
+        "name": "Rectangle Sheet Stickers",
         "blurb": "Rectangular stickers arranged on a sheet for easy labeling."
       },
       "rounded-sheet": {
-        "name": "Rounded Sticker Sheets",
+        "name": "Rounded Corner Sheet Stickers",
         "blurb": "Rounded square stickers are organized on a sheet for quick application."
       }
     }
