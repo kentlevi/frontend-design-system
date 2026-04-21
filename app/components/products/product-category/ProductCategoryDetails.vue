@@ -25,12 +25,13 @@ const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
 	},
 	{
 		type: 'video',
-		src: 'products/die-cut-sticker/features/02-watermelon-design-on-tablet-video.mp4',
-		poster: 'products/die-cut-sticker/features/02-watermelon-design-on-tablet-placeholder.png',
+		src: 'products/die-cut-sticker/features/02-product-story-video.mp4',
+		poster: 'products/die-cut-sticker/features/02-product-story-placeholder.png',
 	},
 	{
-		type: 'image',
-		src: 'products/die-cut-sticker/features/03-multiple-diecut-stickers-in-hand-placeholder.png',
+		type: 'video',
+		src: 'products/die-cut-sticker/features/03-product-story-video.mp4',
+		poster: 'products/die-cut-sticker/features/03-product-story-placeholder.png'
 	},
 ];
 
