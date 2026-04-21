@@ -16,8 +16,6 @@ const props = defineProps<{
 	agreementSuffix: string;
 	termsPath: string;
 	privacyPath: string;
-	disabled?: boolean;
-	loading?: boolean;
 	formatPrice: (value: number) => string;
 }>();
 
@@ -30,6 +28,16 @@ const has_shipping_fee_tooltip = computed(() =>
 );
 const footer_classes = computed(() => ['checkout-summary-footer', `is-${props.tone}`]);
 const summary_key_base = computed(() => `checkout.${props.tone}.summary`);
+
+const is_mounted = ref<boolean>(false)
+
+const {
+	selected_total,
+	total_cost,
+	submitCheckout,
+} = useCheckoutFlow();
+const { listenPaymentResult } = useTossPayment();
+let cleanup_payment_result_listener: (() => void) | null = null;
 
 function toggleShippingFeeTooltip() {
 	if (!has_shipping_fee_tooltip.value) return;
@@ -52,23 +60,15 @@ function handleShippingFeeTooltipEscape(event: KeyboardEvent) {
 	closeShippingFeeTooltip();
 }
 
-const {
-	discount,
-	shipping_fee,
-	selected_total,
-	getCheckoutTotalCost,
-	submitCheckout,
-} = useCheckoutFlow();
-const { listenPaymentResult } = useTossPayment();
-let cleanup_payment_result_listener: (() => void) | null = null;
-
 onMounted(() => {
+	is_mounted.value = true
 	cleanup_payment_result_listener = listenPaymentResult();
 	window.addEventListener('pointerdown', handleShippingFeeTooltipPointerDown, true);
 	window.addEventListener('keydown', handleShippingFeeTooltipEscape);
 });
 
 onBeforeUnmount(() => {
+	is_mounted.value = false
 	cleanup_payment_result_listener?.();
 	window.removeEventListener('pointerdown', handleShippingFeeTooltipPointerDown, true);
 	window.removeEventListener('keydown', handleShippingFeeTooltipEscape);
@@ -80,7 +80,14 @@ onBeforeUnmount(() => {
 		<div class="checkout-summary-lines">
 			<div class="checkout-summary-line">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.subtotal`) }}</div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(selected_total) }}</div>
+				<div class="checkout-summary-line-value">
+					<span v-if="is_mounted">
+						{{ props.formatPrice(selected_total) }}
+					</span>
+					<span v-else>
+						{{ props.formatPrice(0) }}
+					</span>
+				</div>
 			</div>
 			<div class="checkout-summary-line">
 				<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
@@ -123,15 +130,22 @@ onBeforeUnmount(() => {
 						</div>
 					</UiTooltip>
 				</div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(shipping_fee) }}</div>
+				<div class="checkout-summary-line-value">{{ props.formatPrice(0) }}</div>
 			</div>
 			<div class="checkout-summary-line">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
-				<div class="checkout-summary-line-value is-discount">{{ props.formatPrice(discount) }}</div>
+				<div class="checkout-summary-line-value is-discount">{{ props.formatPrice(0) }}</div>
 			</div>
 			<div class="checkout-summary-line is-total">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.total`) }}</div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(getCheckoutTotalCost()) }}</div>
+				<div class="checkout-summary-line-value">
+					<span v-if="is_mounted">
+						{{ props.formatPrice(total_cost) }}
+					</span>
+					<span v-else>
+						{{ props.formatPrice(0) }}
+					</span>
+				</div>
 			</div>
 		</div>
 

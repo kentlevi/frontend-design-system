@@ -10,6 +10,7 @@ import { useAddressHelper } from "~/utils/address";
 import { useAddressGeneralUICheckoutContext } from "../address/context/addressGeneralUICheckoutContext";
 import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
 import { useCartStore } from "~/stores/cart";
+import { useCartService } from "~/services/cart/cart.service";
 
 export const useCheckoutFlow = () => {
 
@@ -17,11 +18,8 @@ export const useCheckoutFlow = () => {
 
 	const payment = usePaymentStrategy()
 	const { state } = storeToRefs(useUsersStore())
-	const { selected_total } = storeToRefs(useCartStore());
+	const { selected_total } = useCartService();
 	const {
-		discount,
-		shipping_fee,
-		total_cost,
 		guest_contact_state,
 		selected_shipping_method_id,
 		selected_payment_method,
@@ -44,6 +42,7 @@ export const useCheckoutFlow = () => {
 		use_shipping_as_billing,
 	} = useAddressGeneralUICheckoutContext()
 
+	const total_cost = computed(() => selected_total.value)
 
 
 
@@ -80,10 +79,6 @@ export const useCheckoutFlow = () => {
 		return !results.some(result => !result)
 	}
 
-
-
-
-
 	const buildCheckoutPayload = (): InitialCheckoutPayload => {
 
 		return {
@@ -103,15 +98,8 @@ export const useCheckoutFlow = () => {
 		}
 	}
 
-	/**
-	 * Use this function to compute for total cost of the order in checkout
-	 * Note: For display purposes only
-	 * @return number
-	 */
-	const getCheckoutTotalCost = (): number => {
-		total_cost.value = selected_total.value
-		return total_cost.value
-	}
+
+
 
 	const submitCheckout = async () => {
 
@@ -137,10 +125,8 @@ export const useCheckoutFlow = () => {
 	}
 
 	return {
-		discount,
-		shipping_fee,
 		selected_total,
-		getCheckoutTotalCost,
+		total_cost,
 		submitCheckout
 	}
 }

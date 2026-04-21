@@ -64,6 +64,7 @@ function buildLocalShippingItems(items: CartItem[]): LocalShippingMethodItemPayl
         product_config_mapping_id: item.product_config_mapping_id,
         quantity: item.quantity,
         color_id: item.color_id,
-        font_id: item.font_id
+        font_id: item.font_id,
+        cost: item.cost
     }))
 }
