@@ -33,14 +33,7 @@
 				:agreement-suffix="t(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
 				:terms-path="withCountry('/terms-of-use')"
 				:privacy-path="withCountry('/privacy-policy')"
-				:disabled="selected_checkout_items.length === 0"
-				:loading="completing_checkout"
-				:subtotal="order_subtotal"
-				:shipping-fee="order_shipping_fee"
-				:discount="order_discount"
-				:total="order_total"
 				:format-price="formatPrice"
-				:item-meta="itemMeta"
 			>
 				<template #after-items>
 					<CheckoutMemberPerksFeature />
@@ -99,11 +92,6 @@ const {
 	completing_checkout,
 	complete_loader_ref,
 	selected_checkout_items,
-	itemMeta,
-	order_subtotal,
-	order_shipping_fee,
-	order_discount,
-	order_total,
 
 	// Identifiers & UI State
 	is_login_modal_open,

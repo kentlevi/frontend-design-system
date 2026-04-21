@@ -1,11 +1,33 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import CheckoutSummaryFooter from '~/components/checkout/summary/CheckoutSummaryFooter.vue';
+import CheckoutSummaryHeader from '~/components/checkout/summary/CheckoutSummaryHeader.vue';
+import CheckoutSummaryItems from '~/components/checkout/summary/CheckoutSummaryItems.vue';
+
+const props = defineProps<{
+	tone: 'guest' | 'member';
+	shippingFeeTooltipTitle?: string;
+	shippingFeeTooltipText?: string;
+	completeLabel: string;
+	agreementPrefix: string;
+	agreementTerms: string;
+	agreementAnd: string;
+	agreementPrivacy: string;
+	agreementSuffix: string;
+	termsPath: string;
+	privacyPath: string;
+	formatPrice: (value: number) => string;
+}>();
+
+const card_classes = computed(() => ['checkout-summary-card', `is-${props.tone}`]);
+</script>
+
 <template>
 	<section :class="card_classes">
 		<CheckoutSummaryHeader />
 		<CheckoutSummaryItems
 			:tone="props.tone"
-			:items="props.items"
 			:format-price="props.formatPrice"
-			:item-meta="props.itemMeta"
 		/>
 
 		<slot name="after-items" />
@@ -22,41 +44,10 @@
 			:agreement-suffix="props.agreementSuffix"
 			:terms-path="props.termsPath"
 			:privacy-path="props.privacyPath"
-			:disabled="props.disabled"
-			:loading="props.loading"
 			:format-price="props.formatPrice"
 		/>
 	</section>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue';
-import type { CheckoutItem } from '~/types/checkout';
-import CheckoutSummaryFooter from '~/components/checkout/summary/CheckoutSummaryFooter.vue';
-import CheckoutSummaryHeader from '~/components/checkout/summary/CheckoutSummaryHeader.vue';
-import CheckoutSummaryItems from '~/components/checkout/summary/CheckoutSummaryItems.vue';
-
-const props = defineProps<{
-	tone: 'guest' | 'member';
-	items: CheckoutItem[];
-	shippingFeeTooltipTitle?: string;
-	shippingFeeTooltipText?: string;
-	completeLabel: string;
-	agreementPrefix: string;
-	agreementTerms: string;
-	agreementAnd: string;
-	agreementPrivacy: string;
-	agreementSuffix: string;
-	termsPath: string;
-	privacyPath: string;
-	disabled?: boolean;
-	loading?: boolean;
-	formatPrice: (value: number) => string;
-	itemMeta: (sizeLabel: string, qty: number) => string;
-}>();
-
-const card_classes = computed(() => ['checkout-summary-card', `is-${props.tone}`]);
-</script>
 
 <style scoped lang="scss">
 .checkout-summary-card {
