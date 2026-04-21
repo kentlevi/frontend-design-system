@@ -28,6 +28,7 @@ export type InitialCheckoutPayload = {
 	email?: string
 	contact_name?:string
 	phone_number?:string
+	selected_cart_ids?:string[] | number[]
 }
 
 export type completeCheckoutPayload = {

@@ -16,6 +16,9 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const ship_to_another_address = ref<boolean>(false)
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
+	const shipping_fee = ref<number>(0)
+	const discount = ref<number>(0)
+	const total_cost = ref<number>(0)
 
 	const patchGuestContactState = (
 		payload: Partial<typeof guest_contact_state>
@@ -75,6 +78,9 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_shipping_method_id,
 		selected_payment_method,
 		ship_to_another_address,
+		shipping_fee,
+		discount,
+		total_cost,
 
 		// expose setters
 		patchGuestContactState,
