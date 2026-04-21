@@ -155,29 +155,29 @@ export function useShippingMethod() {
 		{ immediate: true }
 	)
 
-	const isFormComplete = computed(() => {
-		const { postcode, fields } = shipping_form.value
+	// const isFormComplete = computed(() => {
+	// 	const { postcode, fields } = shipping_form.value
 
-		return (
-			postcode &&
-			Object.values(fields).every(value => value)
-		)
-	})
+	// 	return (
+	// 		postcode &&
+	// 		Object.values(fields).every(value => value)
+	// 	)
+	// })
 
-	watch(
-		isFormComplete,
-		(isComplete, _old, on_cleanup) => {
-			if (!isComplete) return
+	// watch(
+	// 	isFormComplete,
+	// 	(isComplete, _old, on_cleanup) => {
+	// 		if (!isComplete) return
 
-			const timeout = setTimeout(() => {
-				void fetchShippingMethods()
-			}, 500)
+	// 		const timeout = setTimeout(() => {
+	// 			void fetchShippingMethods()
+	// 		}, 500)
 
-			on_cleanup(() => {
-				clearTimeout(timeout)
-			})
-		}
-	)
+	// 		on_cleanup(() => {
+	// 			clearTimeout(timeout)
+	// 		})
+	// 	}
+	// )
 
 	return {
 		translate,

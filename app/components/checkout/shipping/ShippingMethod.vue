@@ -7,7 +7,6 @@ const {
 	is_loading,
 	active_shipping_methods,
 	selected_shipping_key,
-	selected_shipping_method,
 	selectShippingMethod,
 } = useShippingMethod();
 </script>
