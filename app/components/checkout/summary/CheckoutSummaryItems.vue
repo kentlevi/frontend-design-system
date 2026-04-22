@@ -9,13 +9,21 @@ const props = defineProps<{
 	formatPrice: (value: number) => string;
 }>();
 
-const { loading, items } = useCartPreviewHandler('cart-preview-items');
+const {
+	loading,
+	items,
+	getCartItems
+} = useCartPreviewHandler('checkout-summary-items');
 
 const list_classes = computed(() => ['checkout-summary-list', `is-${props.tone}`]);
 
 const {
 	formatImage,
 } = useCartPreviewItem();
+
+onMounted(async()=>{
+	await getCartItems()
+})
 
 </script>
 
@@ -47,7 +55,7 @@ const {
 				<div class="checkout-summary-info">
 					<div class="checkout-summary-name">{{ item.product }}</div>
 					<div class="checkout-summary-meta">
-						{{item.width}}x{{ item.height }} {{ item.quantity.toLocaleString() }}
+						{{item.width}} x {{ item.height }} {{ item.quantity.toLocaleString() }}
 					</div>
 				</div>
 				<div class="checkout-summary-price">{{ formattedPrice(item.cost) }}</div>

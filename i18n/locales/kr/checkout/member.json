@@ -4,6 +4,7 @@
       "shippingDetails": "배송 정보",
       "viewShippingAddresses": "배송지 보기",
       "myShippingAddress": "내 배송지",
+      "discountsAndPerks" : "할인과 쿠폰",
       "defaultBadge": "기본",
       "shipToAnotherAddress": "다른 주소로 배송",
       "shippingMethod": "배송 방법",
