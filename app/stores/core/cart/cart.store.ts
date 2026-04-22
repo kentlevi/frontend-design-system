@@ -15,11 +15,15 @@ export const useCartStore = defineStore('cart', () => {
 
 	const selected_ids = ref<string[]>([])
 
+	const deletable_ids  = ref<string[]>([])
+
 	const cart_user_id = computed(() => user_store.state?.id ?? null)
 
 	const selected_item = ref<CartItem | null>(null)
 
 	const selected_item_id = computed(() => selected_item.value && selected_item.value.id ? selected_item.value.id : null)
+
+	const is_authenticated = computed(() => user_store.state?.id ?? null)
 
 	const all_selected = computed({
 		get: () => items.value.length > 0 && selected_ids.value.length === items.value.length,
@@ -36,15 +40,16 @@ export const useCartStore = defineStore('cart', () => {
 		number_of_items.value--
 	}
 
+
 	const saveItemLocally = (item: CartItem) => {
 		items.value.unshift(item)
 		grand_total.value += Number(item.cost)
 		addNumber()
 
 		// Default check the new item
-		const itemId = item.id ? String(item.id) : (item.local_identity || 'unknown');
-		if (!selected_ids.value.includes(itemId)) {
-			selected_ids.value.push(itemId);
+		const item_id = item.id ? String(item.id) : (item.local_identity || 'unknown');
+		if (!selected_ids.value.includes(item_id)) {
+			selected_ids.value.push(item_id);
 		}
 	}
 
@@ -68,6 +73,30 @@ export const useCartStore = defineStore('cart', () => {
 		}
 	}
 
+	const setDeletableItems = (local_identities : string []) => {
+		if( !local_identities.length )
+			return
+
+		deletable_ids.value = local_identities
+	}
+
+	const emptyDeletableItems = () => {
+		deletable_ids.value = []
+	}
+
+	const syncNumber = (total_count: number, total_cost: number) => {
+		number_of_items.value = Number(total_count)
+		grand_total.value = Number(total_cost)
+	}
+
+	const emptyCart = () => {
+		number_of_items.value = 0
+		grand_total.value = 0
+		items.value = []
+		selected_ids.value = []
+		deletable_ids.value = []
+	}
+
 	return {
 		// 🔥 States
 		items,
@@ -79,6 +108,8 @@ export const useCartStore = defineStore('cart', () => {
 		selected_item,
 		selected_item_id,
 		all_selected,
+		deletable_ids,
+		is_authenticated,
 
 		// 🔥 Methods
 		addNumber,
@@ -87,11 +118,15 @@ export const useCartStore = defineStore('cart', () => {
 		addSelected,
 		removeSelected,
 		updateUploadedItem,
+		setDeletableItems,
+		emptyDeletableItems,
+		syncNumber,
+		emptyCart,
 	}
 }, {
 	persist: {
 		key: 'mu_cart',
 		storage: persistedState.localStorage,
-		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids', 'has_initialized_demo'],
+		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids'],
 	}
 })

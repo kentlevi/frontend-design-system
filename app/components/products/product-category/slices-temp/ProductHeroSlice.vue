@@ -80,7 +80,6 @@ const displayed_product_blurb = computed(() =>
 watch(
 	vinyl_designer_ref,
 	(instance) => {
-		console.log(instance)
 		setVinylDesignerRef(instance);
 	},
 	{ immediate: true }

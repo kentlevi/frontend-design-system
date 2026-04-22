@@ -7,13 +7,13 @@ const {
 	deletionTitle,
 	deletionDescription,
 	deletionConfirmLabel,
-	confirmDeleteItem,
-	closeDeleteModal,
 } = useCartPreviewHandler('cart-delete-modal-component');
 
 
 const {
 	open_deletion_modal,
+	cancelDeletion,
+	confirmDeletion,
 } = useCartDeletion('delete-item-modal')
 </script>
 
@@ -24,7 +24,7 @@ const {
 		:description="deletionDescription"
 		:confirm-label="deletionConfirmLabel"
 		test-id="cart-item-delete-modal"
-		@cancel="closeDeleteModal"
-		@confirm="confirmDeleteItem"
+		@cancel="cancelDeletion"
+		@confirm="confirmDeletion"
 	/>
 </template>

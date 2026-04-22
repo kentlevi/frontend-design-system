@@ -1,43 +1,40 @@
-import { useCartService } from "~/services/cart/cart.service"
-import { useCartStore } from "~/stores/cart"
+import { useCartService } from "~/services/core/cart/cart.service"
 
 export const useCartPageItem = (caller : string) => {
 
-	const cart_service = useCartService()
+	const cart_service = useCartService('cart-page-item')
 
-	const cart_store = useCartStore()
-
-	const openDeleteModal = (ids: (string|number)[]) => {
-		if( !ids || !ids.length )
-			return
-
-		cart_service.setForDeleteItems(ids)
+	const setAllSelected = (v : boolean) => {
+		cart_service.all_selected.value = v
 	}
 
-	const setAllSelected = (all_checked  : boolean ) => {
-		cart_service.all_selected.value = all_checked
-	}
+	const deleteSelectedItems = (local_identity: string | null = null) => {
+		const deletable = ref<string[]>([])
 
-	const getArtworkActionLabel = (has_artwork: boolean) =>
-		has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
+		if( local_identity )
+			deletable.value.push(local_identity)
+		else
+			deletable.value = cart_service.selected_ids.value
 
-	const openEditSize = (item_id: string) => {
-		cart_service.openEditSizeModal(item_id)
+
+		console.warn(`Deleting ${deletable.value.length} item(s)!`)
+		cart_service.setDeletableItems(deletable.value)
 	}
 
 	return {
 		// 🔥 Store states
-		...storeToRefs(cart_store),
+		items		: cart_service.items,
+		selected_ids: cart_service.selected_ids,
+		all_selected: cart_service.all_selected,
 
 		// 🔥 States
 		caller,
 
 		// 🔥 Methods
-		openDeleteModal,
-		toggleSelection: cart_service.toggleSelection,
-		formatImage: cart_service.formatImage,
 		setAllSelected,
-		getArtworkActionLabel,
-		openEditSize,
+		deleteSelectedItems,
+		formatImage		: cart_service.formatImage,
+		toggleSelection : cart_service.toggleSelection,
+		selectAllItem 	: cart_service.selectAllItem,
 	}
 }

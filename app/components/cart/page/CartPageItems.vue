@@ -25,18 +25,24 @@ const {
 	all_selected,
 
 	// 🔥 Methods
-	openDeleteModal,
-	toggleSelection,
 	formatImage,
-	setAllSelected,
-	getArtworkActionLabel,
-	openEditSize,
+	deleteSelectedItems,
+	toggleSelection,
+	selectAllItem,
 } = useCartPageItem('cart-page-items')
 
 const emit = defineEmits<{
 	(e: 'openItemDetails', itemId: string): void;
 	(e: 'openArtworkPicker', itemId: string): void;
 }>();
+
+const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
+
+const openEditSize = (local_identity : string) => {
+	console.log(local_identity)
+}
+
+
 </script>
 
 <template>
@@ -47,7 +53,7 @@ const emit = defineEmits<{
 				:model-value="all_selected"
 				box-class="cart-check-row-box"
 				icon-class="cart-check-row-icon"
-				@update:model-value="setAllSelected"
+				@update:model-value="selectAllItem"
 			>
 				{{ $t('cart.cartPage.selectAll', { count: items.length }) }}
 			</UiCheckbox>
@@ -58,7 +64,7 @@ const emit = defineEmits<{
 				size="md"
 				label-class="cart-remove-btn-label"
 				:disabled="selected_ids.length === 0"
-				@click="openDeleteModal(selected_ids)"
+				@click="deleteSelectedItems()"
 			>
 				<UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
 				{{ $t('cart.cartPage.remove') }}
@@ -83,9 +89,8 @@ const emit = defineEmits<{
 				:model-value="selected_ids.includes(row.local_identity)"
 				box-class="cart-check-row-box"
 				icon-class="cart-check-row-icon"
-				@update:model-value="toggleSelection(row.local_identity, $event)"
+				@update:model-value="toggleSelection(row.local_identity)"
 			/>
-
 			<div class="cart-row-main">
 				<div class="cart-item">
 					<div class="cart-item-main">
@@ -200,7 +205,7 @@ const emit = defineEmits<{
 				icon="regular-trash"
 				icon-size="24"
 				:sr-label="$t('cart.cartPage.removeItemSr')"
-				@click="openDeleteModal([row.local_identity])"
+				@click="deleteSelectedItems(row.local_identity)"
 			/>
 		</article>
 	</section>

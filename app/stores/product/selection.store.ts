@@ -192,7 +192,6 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	}
 
 	const updateLetteringEditorRef = (instance: InstanceType<typeof VinylLetteringDesigner> | null) => {
-		console.log(instance)
 		lettering_editor_ref.value = instance;
 	}
 

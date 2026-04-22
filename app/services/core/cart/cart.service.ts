@@ -25,6 +25,70 @@ export const useCartService = (caller : string) => {
 
 	const is_authenticated = computed(() => auth_user.id && auth_user.email )
 
+	const config = useRuntimeConfig()
+
+	const page = ref<number>(1)
+
+	const per_page = ref<number>(10)
+
+	const calculateCartItems = async () => {
+		if( cart_store.is_authenticated ) {
+			const cart_numbers = await cart_api_service.requestCartNumbers()
+			if( !cart_numbers ) {
+				return
+			}
+
+			cart_store.syncNumber(cart_numbers.total_count, cart_numbers.total_cost)
+		} else {
+			const tot_cost = cart_store.items.reduce((acc: number, item: CartItem) => {
+				return acc + item.cost
+			}, 0)
+			cart_store.syncNumber(cart_store.items.length, tot_cost)
+		}
+	}
+
+	const requestItems = async () => {
+		cart_store.loading = true;
+		try {
+			// calculate the numbers of cart items everytime request new data from database
+			calculateCartItems()
+
+			const cart_items = await cart_api_service.requestCartItems(page.value, per_page.value)
+			if( !cart_items )
+				return
+
+			if( cart_items.length )
+				populateItems(cart_items)
+			else
+				cart_store.emptyCart()
+		} finally {
+			cart_store.loading = false;
+		}
+	}
+
+
+	/**
+	 * This will populate and arrange the items inside the  items state
+	 */
+	const populateItems = (cart_items: Partial<CartItem>[]) => {
+		const local_drafts = cart_store.items.filter((item: CartItem) => item.id === null)
+
+		/**
+		 * Prevent duplication:
+		 * - If a draft was just saved, its local_identity will now be in the server data.
+		 */
+		const incoming_identities = new Set(cart_items.map((i: Partial<CartItem>) => i.local_identity))
+
+		const unique_drafts = local_drafts.filter(
+			(draft: CartItem) => !incoming_identities.has(draft.local_identity)
+		)
+
+		cart_store.items = [...unique_drafts, ...cart_items] as CartItem[]
+
+		// Default check select all after population
+		cart_store.selected_ids = cart_store.items.map((item) => item.local_identity);
+	}
+
 	const generateLocalIdentity = (): string => {
 
 		let identifier: string = ''
@@ -45,6 +109,20 @@ export const useCartService = (caller : string) => {
 		}
 
 		return identifier
+	}
+
+	const is_absolute_url = (value: string | null | undefined) => Boolean(value && /^(https?:)?\/\//i.test(value))
+
+	const formatImage = (item: CartItem) => {
+		let f = is_absolute_url(item.product_thumbnail)
+			? String(item.product_thumbnail)
+			: `${config.public.file_url}${item.product_thumbnail}`
+
+		if( item.id && item.artwork_file && item.file_path) {
+			f = `${config.public.s3_file_url}${item.file_path}${item.artwork_file}`
+		}
+
+		return f
 	}
 
 	const saveItemLocally = (item: CartItem) => {
@@ -180,12 +258,39 @@ export const useCartService = (caller : string) => {
 		if( result && result.item && result.item.id && item.local_identity )
 			cart_store.updateUploadedItem(item.local_identity, result.item.id)
 	}
+
+	/** Adding/Removing selected item */
+	const toggleSelection = (local_identity : string) => {
+		/**
+		 * If the selected item already exist in a selected state
+		 * Execute removal or else add it as selected item
+		 * */
+		if( cart_store.selected_ids.includes(local_identity) )
+			cart_store.removeSelected(local_identity)
+		else
+			cart_store.addSelected(local_identity)
+	}
+
+	const selectAllItem = (v : boolean) => {
+		cart_store.all_selected = v
+	}
+
 	return {
-		// 🔥 States
+		// 🔥 Cart States
+		...storeToRefs(cart_store),
+
+		// 🔥 Local States
 		caller,
 
 		// 🔥 Methods
+		requestItems,
 		addItem,
 		saveItemLocally,
+		formatImage,
+		generateLocalIdentity,
+		toggleSelection,
+		selectAllItem,
+		setDeletableItems 		: cart_store.setDeletableItems,
+		emptyDeletableItems 	: cart_store.emptyDeletableItems,
 	}
 }

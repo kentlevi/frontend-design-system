@@ -1,4 +1,4 @@
-import type { CartItemAPI, CartItemCreationSpec } from "~/types/cart/cart"
+import type { CartItemAPI, CartItemCreationSpec, ExpectedCartItemData, ResponseNumberSpec } from "~/types/cart/cart"
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl"
 
 export const useCartApiService = (caller: string) => {
@@ -55,6 +55,46 @@ export const useCartApiService = (caller: string) => {
 		return data;
 	}
 
+
+	const requestDeletion = async (local_identities: string[]) => {
+		const { success, message } = await $api.post('cart/delete',
+			{ local_identities: local_identities }
+		)
+
+		if( !success ) {
+			console.warn(message)
+			return null
+		}
+
+		return success;
+	}
+
+	// Requesting cart items from database
+	const requestCartItems = async (page?: number, per_page?: number): Promise<ExpectedCartItemData []> => {
+		const { success, message, data } = await $api.get<ExpectedCartItemData []>('cart', { params: { page, per_page }})
+
+		if(!success || !data) {
+			console.warn(message)
+			return []
+		}
+
+		if (!data.length)
+			return []
+
+		return data
+	}
+
+	const requestCartNumbers = async() => {
+		const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
+
+		if( !success || !data ) {
+			console.warn(message)
+			return
+		}
+
+		return data
+	}
+
 	return {
 		// 🔥 States
 		caller,
@@ -62,5 +102,8 @@ export const useCartApiService = (caller: string) => {
 		// 🔥 Methods
 		sendToS3,
 		sendToServer,
+		requestDeletion,
+		requestCartItems,
+		requestCartNumbers,
 	}
 }
