@@ -43,10 +43,10 @@ const menu_actions = computed(() => {
 	] as const
 })
 
-const shipping_phone_number = computed(() => shippingPhoneNumber(props.item))
+const shipping_phone_number = computed(() => props.item ? shippingPhoneNumber(props.item) : '')
 
 /** Build all visible address lines for the template */
-const address_line_text = computed(() => buildAddressLines(props.item).trim())
+const address_line_text = computed(() => props.item ? buildAddressLines(props.item).trim() : '')
 
 function getAddressLabel(label: string) {
 	return getTranslatedAddressBookLabel(label, t)
@@ -86,6 +86,8 @@ function handleWindowKeydown(event: KeyboardEvent) {
 }
 
 function handleMenuAction(action: MenuActionKey) {
+	if (!props?.item) return
+
 	closeMenu()
 	address_book_card_action_context.handleCardMenuAction({
 		action,
@@ -135,9 +137,9 @@ onBeforeUnmount(() => {
 	>
 		<header class="account-address-book-card-header">
 			<div class="account-address-book-card-title-row">
-				<h3 class="account-address-book-card-name">{{ props.item.contact_name }}</h3>
+				<h3 class="account-address-book-card-name">{{ props.item?.contact_name }}</h3>
 				<UiBadge
-					v-if="props.item.is_default && props.item.type === 'shipping'"
+					v-if="props.item?.is_default && props.item.type === 'shipping'"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -148,7 +150,7 @@ onBeforeUnmount(() => {
 					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeShipping') }}</span>
 				</UiBadge>
 				<UiBadge
-					v-else-if="props.item.is_default && props.item.type === 'billing'"
+					v-else-if="props.item?.is_default && props.item?.type === 'billing'"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -159,7 +161,7 @@ onBeforeUnmount(() => {
 					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeBilling') }}</span>
 				</UiBadge>
 				<UiBadge
-					v-else-if="props.item.is_default && props.item.type === 'drop'"
+					v-else-if="props.item?.is_default && props.item?.type === 'drop'"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -170,7 +172,7 @@ onBeforeUnmount(() => {
 					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeDrop') }}</span>
 				</UiBadge>
 				<UiBadge
-					v-else-if="props.item.is_default"
+					v-else-if="props.item?.is_default"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -192,7 +194,7 @@ onBeforeUnmount(() => {
 						'account-address-book-menu-button',
 						{ 'account-address-book-menu-button--active': is_menu_open }
 					]"
-					:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-button`"
+					:data-testid="`account-address-book-item-menu-${props.item?.type}-${props.index}-button`"
 					@click="toggleMenu"
 				>
 					<UiIcon name="regular-ellipsis-horizontal" :size="24" />
@@ -202,7 +204,7 @@ onBeforeUnmount(() => {
 					<div
 						v-if="is_menu_open"
 						class="account-address-book-menu-dropdown"
-						:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}`"
+						:data-testid="`account-address-book-item-menu-${props.item?.type}-${props.index}`"
 					>
 						<button
 							v-for="action in menu_actions"
@@ -213,7 +215,7 @@ onBeforeUnmount(() => {
 								'account-address-book-menu-item--danger': action.tone === 'danger',
 								'account-address-book-menu-item--active': active_menu_action === action.key,
 							}"
-							:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-${action.key}`"
+							:data-testid="`account-address-book-item-menu-${props.item?.type}-${props.index}-${action.key}`"
 							@click="handleMenuAction(action.key)"
 						>
 							{{ action.label }}
@@ -223,7 +225,7 @@ onBeforeUnmount(() => {
 			</div>
 		</header>
 		<div class="account-address-book-card-body">
-			<div v-if="shipping_phone_number || address_line_text || props.item.company" class="account-address-book-card-copy">
+			<div v-if="shipping_phone_number || address_line_text || props.item?.company" class="account-address-book-card-copy">
 				<p v-if="shipping_phone_number" class="account-address-book-card-phone">
 					{{ shipping_phone_number }}
 				</p>
@@ -231,17 +233,17 @@ onBeforeUnmount(() => {
 					{{ address_line_text }}
 				</p>
 
-				<span v-if="props.item.company" class="account-address-book-card-company">
+				<span v-if="props.item?.company" class="account-address-book-card-company">
 					{{ props.item.company }}
 				</span>
 			</div>
 			<UiBadge
-				v-if="props.item.label"
+				v-if="props.item?.label"
 				variant="tonal"
 				tone="default"
 				size="md"
-				:bg-color="address_book_tag_badge_colors[props.item.label.toLowerCase() as keyof typeof address_book_tag_badge_colors]?.bgColor || 'var(--gray-10)'"
-				:text-color="address_book_tag_badge_colors[props.item.label.toLowerCase() as keyof typeof address_book_tag_badge_colors]?.textColor || 'var(--gray-60)'"
+				:bg-color="address_book_tag_badge_colors[props?.item.label.toLowerCase() as keyof typeof address_book_tag_badge_colors]?.bgColor || 'var(--gray-10)'"
+				:text-color="address_book_tag_badge_colors[props?.item.label.toLowerCase() as keyof typeof address_book_tag_badge_colors]?.textColor || 'var(--gray-60)'"
 			>
 				{{ getAddressLabel(props.item.label) }}
 			</UiBadge>

@@ -33,6 +33,16 @@ export const usePaymentStrategy = () => {
 				toss.closePaymentPopup()
 			}
 		},
+		/**Bank Transfer using Toss Integration */
+		CC_TOSS: {
+			process: (payload?: CheckoutResponseData) => {
+				const url = payload?.payment_information?.redirect_url || null
+				toss.openPaymentPopup(url)
+			},
+			error: () => {
+				toss.closePaymentPopup()
+			}
+		},
 		/**Bank Transfer */
 		BT: {
 			process: (payload?: CheckoutResponseData) => {
