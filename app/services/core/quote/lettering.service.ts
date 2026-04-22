@@ -22,6 +22,8 @@ export const useLetteringService = (caller: string) => {
 
 	const flag = computed(() => selection_store.lettering_flag)
 
+	const editor_ref = computed(() => selection_store.lettering_editor_ref)
+
 
 	const assignDefault = (text: string) => {
 		selection_store.updateLetteringText(text, true)
@@ -32,6 +34,13 @@ export const useLetteringService = (caller: string) => {
 		selection_store.updateSize(size)
 	}
 
+	const updateFile = (f : File) => {
+		if( !f )
+			return
+
+		selection_store.updateLetteringFile(f)
+	}
+
 	return {
 		// 🔥 States
 		caller,
@@ -40,10 +49,13 @@ export const useLetteringService = (caller: string) => {
 		text,
 		preview_ready: selection_store.lettering_preview_ready,
 		flag,
+		editor_ref,
 
 		// 🔥 Methods
 		assignDefault,
 		update,
-		updateLetteringPreviewFlag: selection_store.updateLetteringPreviewFlag
+		updateLetteringPreviewFlag: selection_store.updateLetteringPreviewFlag,
+		updateLetteringEditorRef: selection_store.updateLetteringEditorRef,
+		updateFile,
 	}
 }

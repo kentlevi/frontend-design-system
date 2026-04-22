@@ -1,15 +1,16 @@
 import { debounce } from "lodash-es"
-import { useQuoteApiService } from "~/services/quote/api.service"
-import { useColorService } from "~/services/quote/color.service"
-import { useFontService } from "~/services/quote/font.service"
-import { useLetteringService } from "~/services/quote/lettering.service"
-import { useQuantityService } from "~/services/quote/quantity.service"
-import { useQuoteService } from "~/services/quote/quote.service"
-import { useSizeService } from "~/services/quote/size.service"
+import { useQuoteApiService } from "~/services/core/quote/api.service"
+import { useColorService } from "~/services/core/quote/color.service"
+import { useFontService } from "~/services/core/quote/font.service"
+import { useLetteringService } from "~/services/core/quote/lettering.service"
+import { useQuantityService } from "~/services/core/quote/quantity.service"
+import { useQuoteService } from "~/services/core/quote/quote.service"
+import { useSizeService } from "~/services/core/quote/size.service"
 import type { AttributeSelection, ColorSpec, PricingParameters, QuantitySpec, SizeSpec } from "~/types/products/attributes"
 import { useCountry } from "../app/country/useCountry"
 import { formatCurrencyByCountry } from '~/utils/currency';
-import { usePricingService } from "~/services/quote/pricing.service"
+import { usePricingService } from "~/services/core/quote/pricing.service"
+import { useUploadService } from "~/services/product/upload.service"
 
 export const useQuoteSection = () => {
 
@@ -31,6 +32,8 @@ export const useQuoteSection = () => {
 
 	const pricing_service = usePricingService('quote-section')
 
+	const upload_service = useUploadService()
+
 	const current_url_slug = ref<string|null>(null)
 
 	const is_custom_size = ref<boolean>(!!quote_service.size.value?.custom)
@@ -47,6 +50,8 @@ export const useQuoteSection = () => {
 
 	const custom_size = ref<SizeSpec>(lettering_service.default_size_spec.value)
 
+	const add_to_cart_loading = ref<boolean>(false)
+
 	const custom_quantity = ref<QuantitySpec>({
 		custom: true,
 		nr: null,
@@ -56,7 +61,6 @@ export const useQuoteSection = () => {
 	const pricing_ready = computed(() => quantity_service.src.value?.price )
 
 	const selection_navigation_in_flight = ref<boolean>(false)
-
 
 	/**
 	 * Initialized a raw string variable due to component structure
@@ -147,7 +151,7 @@ export const useQuoteSection = () => {
 	}, 250)
 
 	const initializePriceList = async () => {
-		if( !current_url_slug.value )
+		if( !current_url_slug.value || !size_service.src.value?.width || !size_service.src.value?.height )
 			return
 
 		const data = await quote_api_service.getFeaturedPricing(current_url_slug.value, {
@@ -419,6 +423,50 @@ export const useQuoteSection = () => {
 		quote_service.resetAllSelection()
 	}
 
+	const prepareLetteringResult = async () => {
+		try {
+			add_to_cart_loading.value = true;
+
+			const editor = lettering_service.editor_ref.value;
+			if (!editor) {
+				console.warn('No editor ref!')
+				return;
+			}
+
+			const blob = await editor.generateImage();
+			if (!blob) {
+				console.warn('No blob created!')
+				return
+			}
+
+			const file = new File([blob], 'lettering.png', { type: 'image/png' });
+			lettering_service.updateFile(file);
+			upload_service.setArtwork(file)
+
+			await quote_service.dispatchItem();
+
+			return;
+		} catch(error) {
+			console.error(error)
+		} finally {
+			add_to_cart_loading.value = false;
+		}
+	}
+
+	const nextStep = () => {
+		if( quote_service.product_navigation_in_flight.value || add_to_cart_loading.value )
+			return
+
+		if( quote_service.has_lettering_editor.value ) {
+			console.warn('Adding cart automatically!')
+			prepareLetteringResult()
+			upload_service.openPreview();
+		} else {
+			console.warn('Opening uploading modal!')
+			upload_service.openModal()
+		}
+	}
+
 
 	// ⚠️ Watching the changes of size
 	watch(() => size_service.src, (new_size) => {
@@ -518,5 +566,6 @@ export const useQuoteSection = () => {
 		showCustomSize,
 		focusWidthInput,
 		resetAllField,
+		nextStep,
 	}
 }

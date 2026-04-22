@@ -1,9 +1,9 @@
 import type VinylLetteringDesigner from "~/components/products/product-category/VinylLetteringDesigner.vue"
-import { useColorService } from "~/services/quote/color.service"
-import { useFontService } from "~/services/quote/font.service"
-import { useLetteringService } from "~/services/quote/lettering.service"
-import { useQuoteService } from "~/services/quote/quote.service"
-import { useSizeService } from "~/services/quote/size.service"
+import { useColorService } from "~/services/core/quote/color.service"
+import { useFontService } from "~/services/core/quote/font.service"
+import { useLetteringService } from "~/services/core/quote/lettering.service"
+import { useQuoteService } from "~/services/core/quote/quote.service"
+import { useSizeService } from "~/services/core/quote/size.service"
 import type { SizeSpec } from "~/types/products/attributes"
 
 export const useQuoteView = () => {
@@ -21,14 +21,10 @@ export const useQuoteView = () => {
 
 	const lettering_text = ref<string>(lettering_service.text.value)
 
-	const vinyl_designer_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null)
+	const vinyl_designer_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null);
 
 	const updateSizeByCard  = (selected_size : SizeSpec) => {
 		size_service.update(selected_size)
-	}
-
-	const setVinylDesignerRef = (instance: InstanceType<typeof VinylLetteringDesigner> | null) => {
-		vinyl_designer_ref.value = instance;
 	}
 
 	// ⚠️ Watching the changes of size from other component
@@ -88,10 +84,11 @@ export const useQuoteView = () => {
 		sizes: size_service.collection,
 		size: size_service.src,
 		vinyl_designer_ref,
+		product_navigation_in_flight: quote_service.product_navigation_in_flight,
 
 		// 🔥 Methods
 		updateLetteringPreviewFlag: lettering_service.updateLetteringPreviewFlag,
 		updateSizeByCard,
-		setVinylDesignerRef,
+		setVinylDesignerRef : lettering_service.updateLetteringEditorRef,
 	}
 }

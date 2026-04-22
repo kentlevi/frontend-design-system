@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
-import { useQuoteSection } from '~/composables/quote/quote.section';
-
-const {
-	proceedToNextStep,
-} = useProductExperience();
+import { useQuoteSection } from '~/composables/quote/useQuoteSection';
 
 const { t } = useI18n();
 const color_skeleton_grid_ref = ref<HTMLElement | null>(null);
@@ -50,9 +45,6 @@ const prevent_non_digit_input = (event: InputEvent) => {
 	event.preventDefault();
 };
 
-const nextStep = async () => {
-	await proceedToNextStep();
-};
 
 
 const {
@@ -104,6 +96,7 @@ const {
 	updateSize,
 	showCustomSize,
 	focusWidthInput,
+	nextStep,
 } = useQuoteSection()
 
 const route = useRoute()

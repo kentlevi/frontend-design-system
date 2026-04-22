@@ -1,5 +1,5 @@
 import { storeToRefs } from 'pinia'
-import { useUploadStore } from '~/stores/product/useUploadStore'
+import { useUploadStore } from '~/stores/product/upload.store'
 
 export const useUploadService = () => {
 	const upload_store = useUploadStore()

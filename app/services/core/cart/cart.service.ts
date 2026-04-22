@@ -1,0 +1,191 @@
+import { useUploadService } from "~/services/product/upload.service"
+import { useCartStore } from "~/stores/core/cart/cart.store"
+import { useAttributesStore, useSelectionStore } from "~/stores/product"
+import { useUsersStore } from "~/stores/users/users.store"
+import type { CartItem } from "~/types/cart/cart"
+import { useCartApiService } from "./api.service"
+
+export const useCartService = (caller : string) => {
+
+	const attributes_store = useAttributesStore()
+
+	const selection_store = useSelectionStore()
+
+	const cart_store = useCartStore()
+
+	const user_store = useUsersStore()
+
+	const auth_user = user_store.state
+
+	const upload_service = useUploadService()
+
+	const cart_api_service = useCartApiService('cart-service')
+
+	const uploading_file = ref<boolean>(false)
+
+	const is_authenticated = computed(() => auth_user.id && auth_user.email )
+
+	const generateLocalIdentity = (): string => {
+
+		let identifier: string = ''
+
+		let is_duplicate = true
+
+		while (is_duplicate) {
+			// Create a short unique string (e.g., "sj-1712401234-a7b2")
+			const timestamp = Date.now()
+
+			const randomPart = Math.random().toString(36).substring(2, 6)
+
+			identifier = `mu-${timestamp}-${randomPart}`
+
+			// Check if this ID already exists in your current items array
+			is_duplicate = cart_store.items.some((item: CartItem) => item.local_identity === identifier)
+
+		}
+
+		return identifier
+	}
+
+	const saveItemLocally = (item: CartItem) => {
+		cart_store.items.unshift(item)
+		cart_store.grand_total += Number(item.cost)
+		cart_store.addNumber()
+
+		// Default check the new item
+		cart_store.addSelected(item.local_identity)
+	}
+
+
+	/**
+	 * Dispatch and save added cart.
+	 * @param has_artwork boolean
+	 */
+	const addItem = async () => {
+		console.warn('Adding Item!')
+		if(!attributes_store.product || !selection_store.product_config_mapping_id ) {
+			console.warn('Product data is missing!')
+			return false
+		}
+
+		else if( !selection_store.size || !selection_store.size.width || !selection_store.size.height ) {
+			console.warn('Dimensions is missing!')
+			return false;
+		}
+
+		else if( !selection_store.quantity || !selection_store.quantity.nr ) {
+			console.warn('Quantity is missing!')
+			return false;
+		}
+
+		// End of validation
+
+		const user_id = ref<number | null>(null)
+
+		if( user_store && user_store.state && user_store.state.id )
+			user_id.value = user_store.state.id
+
+
+		// 🔥 Creating temporary ID — this will be use when the api already responded
+		const item_id = generateLocalIdentity();
+
+		const uploaded_file = ref<string>('')
+
+		const artwork_file_name = ref<string>('')
+
+		const has_artwork_file = Boolean(upload_service.artwork_file.value)
+
+		if( has_artwork_file ) {
+
+			if(!upload_service.artwork_file.value) {
+				console.warn("Artwork file is required!")
+				return
+			}
+
+			uploading_file.value = true
+			// Upload the artwork file to S3 when artwork is provided.
+			const { ok, message, filename } = await cart_api_service.sendToS3(upload_service.artwork_file.value)
+
+			uploading_file.value = false
+			console.log(ok)
+			if( !ok || !ok.value ) {
+				console.warn(message)
+				return false
+			}
+			artwork_file_name.value = upload_service.artwork_file.value.name
+			uploaded_file.value = filename.value
+		}
+
+		// Build the cart item payload for local state and API sync.
+		const item = ref<CartItem>({
+			id: null,
+			user_id: user_id.value,
+			product_config_mapping_id: selection_store.product_config_mapping_id,
+			url_slug: attributes_store.product.url_slug,
+			product: attributes_store.product.name,
+			product_thumbnail: attributes_store.product.image,
+			color: selection_store.color?.name ?? null,
+			color_id: selection_store.color?.id ?? null,
+			font: selection_store.font?.label ?? null,
+			font_id: selection_store.font?.id ?? null,
+			width: selection_store.size.width,
+			height: selection_store.size.height,
+			quantity: selection_store.quantity.nr,
+			cost: selection_store.quantity.price ?? 0,
+			lettering_text: selection_store.lettering_text,
+			artwork_file: has_artwork_file ? uploaded_file.value : null,
+			artwork_file_name: has_artwork_file ? artwork_file_name.value : null,
+			artwork_preview: has_artwork_file ? upload_service.artwork_preview.value : null,
+			instruction: selection_store.instruction,
+			local_identity: item_id,
+		})
+
+
+		// 🔥 Store new item in local storage before uploading it to our database.
+		console.log('Saving item locally!')
+		cart_store.saveItemLocally(item.value)
+
+		// 🔥 Sending the new item to API
+		if( is_authenticated.value ) {
+			console.log('sending to server')
+			sendItemToServer(item.value)
+		}
+
+		return true
+	}
+
+	/**
+	 * Preparing the data to be sent to API server
+	 */
+	const sendItemToServer = async (item : CartItem) => {
+		// Send the new item to the API.
+		const cart_payload = {
+			product_config_mapping_id: item.product_config_mapping_id,
+			color_id: item.color_id,
+			font_id: item.font_id,
+			width: item.width,
+			height: item.height,
+			quantity: item.quantity,
+			lettering_text: item.lettering_text,
+			artwork_file: item.artwork_file,
+			artwork_file_name: item.artwork_file_name,
+			instruction: item.instruction,
+			local_identity: item.local_identity,
+		}
+
+		/** Forward the prepared data to actual API request  */
+		const result = await cart_api_service.sendToServer(cart_payload)
+
+		/** If API request successfully process, must update the item save locally to its created unique ID by API */
+		if( result && result.item && result.item.id && item.local_identity )
+			cart_store.updateUploadedItem(item.local_identity, result.item.id)
+	}
+	return {
+		// 🔥 States
+		caller,
+
+		// 🔥 Methods
+		addItem,
+		saveItemLocally,
+	}
+}

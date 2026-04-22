@@ -1,10 +1,13 @@
 import { useAttributesStore, useSelectionStore } from "~/stores/product";
 import type { FeaturedDataResponse, FontSpec } from "~/types/products/attributes";
+import { useCartService } from "../cart/cart.service";
 
 export const useQuoteService = (_caller : string) => {
 	const attribute_store = useAttributesStore()
 
 	const selection_store = useSelectionStore()
+
+	const cart_service = useCartService('quote-service')
 
 	const has_lettering_editor = computed(() => {
 		if( !selection_store.url_slug )
@@ -66,7 +69,6 @@ export const useQuoteService = (_caller : string) => {
 		attribute_store.updateFonts(f)
 	}
 
-
 	return {
 		// 🔥 Store
 		...storeToRefs(attribute_store),
@@ -83,5 +85,6 @@ export const useQuoteService = (_caller : string) => {
 		isLoadingFeatures,
 		updateNavigationFlight : selection_store.updateNavigationFlight,
 		resetAllSelection: selection_store.reset,
+		dispatchItem : cart_service.addItem,
 	}
 }

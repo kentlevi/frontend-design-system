@@ -3,7 +3,7 @@ import CartItemDetailsModal from '~/components/cart/modals/CartItemDetailsModal.
 import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
 import CartEmptyState from './CartEmptyState.vue';
 import CartPageHeader from './CartPageHeader.vue';
-import CartPageList from './CartPageList.vue';
+import CartPageItems from './CartPageItems.vue';
 import CartPageSummary from './CartPageSummary.vue';
 import CartPageSkeleton from './CartPageSkeleton.vue';
 import CartDeleteItemModal from '~/components/cart/modals/CartDeleteItemModal.vue';
@@ -45,11 +45,10 @@ const {
 					/>
 
 					<section class="cart-page-layout">
-						<CartPageList
+						<CartPageItems
 							@open-item-details="openItemDetails"
 							@open-artwork-picker="openArtworkPicker"
 						/>
-
 						<CartPageSummary />
 					</section>
 				</template>

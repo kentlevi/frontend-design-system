@@ -32,10 +32,10 @@ export const usePricingService = (caller : string) => {
 			|| !minimum_qty.value.price
 		) {
 			if( !data || !data.nr || !data.price )
-				console.log('Invalid data', data)
+				console.warn('Invalid data', data)
 
 			if( !minimum_qty || !minimum_qty.value || !minimum_qty.value.nr || !minimum_qty.value.price )
-				console.log('Invalidd minimum quantity.', minimum_qty)
+				console.warn('Invalidd minimum quantity.', minimum_qty)
 
 			return
 		}

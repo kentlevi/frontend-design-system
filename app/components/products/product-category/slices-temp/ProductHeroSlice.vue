@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, watch } from 'vue';
-import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
-import { useQuoteView } from '~/composables/quote/quote.view';
+import { useQuoteView } from '~/composables/quote/useQuoteView';
 
-const {
-	selection_navigation_in_flight,
-} = useProductExperience();
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
@@ -19,7 +15,7 @@ const displayed_product_title = computed(() => {
 		return ''
 
 	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return 'Vinyl Lettering Sticker'; // ⚠️ REVISION!!!
+	if (has_lettering_editor.value) return 'Vinyl Lettering Sticker'; // ⚠️ REQUIRES REVISION!!!
 
 	// Otherwise, use the formal product name from catalog/translation
 	return t(`product.items.${product_url_slug.value}.name`);
@@ -42,13 +38,25 @@ const {
 	selected_color,
 	navigation_flight,
 	vinyl_designer_ref,
+	product_navigation_in_flight,
 	updateLetteringPreviewFlag,
 	updateSizeByCard,
 	setVinylDesignerRef,
 } = useQuoteView()
 
+
+const product_hero_media_ids = new Set([
+	'clear-sticker',
+	'die-cut-sticker',
+	'hologram-sticker',
+	'kiss-cut-sticker',
+	'sticker-sheet',
+	'vinyl-lettering',
+]);
+
 const hero_media_product_id = computed(() => {
-	return product_url_slug.value ?? null
+	const selected_id = product_url_slug.value ?? null
+	return selected_id && product_hero_media_ids.has(selected_id) ? selected_id : null;
 });
 const demo_hero_video_url = computed(() =>
 	hero_media_product_id.value
@@ -62,7 +70,7 @@ const demo_hero_poster_url = computed(() =>
 );
 
 const should_play_preview_video = computed(() =>
-	Boolean(product_url_slug.value) && !has_lettering_editor.value && !selection_navigation_in_flight.value
+	Boolean(product_url_slug.value) && !has_lettering_editor.value && !product_navigation_in_flight.value
 );
 
 const displayed_product_blurb = computed(() =>
@@ -72,6 +80,7 @@ const displayed_product_blurb = computed(() =>
 watch(
 	vinyl_designer_ref,
 	(instance) => {
+		console.log(instance)
 		setVinylDesignerRef(instance);
 	},
 	{ immediate: true }
@@ -84,7 +93,7 @@ onBeforeUnmount(() => {
 
 const hide_lettering_editor = computed(() => (
 	is_loading_features.value
-	|| selection_navigation_in_flight.value
+	|| product_navigation_in_flight.value
 	|| navigation_flight.value
 	|| (has_lettering_editor.value
 		&& !selected_font.value)
@@ -106,7 +115,7 @@ const hide_lettering_editor = computed(() => (
 		<div
 			v-if="!has_lettering_editor"
 			class="product-preview-media"
-			:class="{ 'is-loading': selection_navigation_in_flight }"
+			:class="{ 'is-loading': product_navigation_in_flight }"
 			data-testid="product-category-preview-media"
 		>
 			<img
@@ -150,9 +159,9 @@ const hide_lettering_editor = computed(() => (
 				v-model:height="lettering_size.height"
 				:font="selected_font?.value ?? ''"
 				:color-key="selected_color?.keyword || selected_color?.hex_code || 'black'"
-				:redirecting="selection_navigation_in_flight"
+				:redirecting="product_navigation_in_flight"
 				:is-loading-features="is_loading_features"
-				:selection-navigation-in-flight="selection_navigation_in_flight"
+				:selection-navigation-in-flight="product_navigation_in_flight"
 				:lettering-navigation-flight="navigation_flight"
 				:has-lettering-editor="has_lettering_editor"
 				data-testid="product-category-vinyl-designer"

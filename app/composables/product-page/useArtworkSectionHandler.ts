@@ -85,6 +85,11 @@ export const useArtworkSectionHandler = () => {
 		artwork.value = null;
 	}
 
+	const resetForm = () => {
+		instruction.value = ''
+		unsetFile()
+	}
+
 
 	/**
 	 * Handles the file drop feature in artwork form
@@ -138,7 +143,20 @@ export const useArtworkSectionHandler = () => {
 
 	const sendItemToServer = async (item : CartItem) => {
 		// Send the new item to the API.
-		const result = await cart_service.sendToServer(item)
+		const cart_payload = {
+			product_config_mapping_id: item.product_config_mapping_id,
+			color_id: item.color_id,
+			font_id: item.font_id,
+			width: item.width,
+			height: item.height,
+			quantity: item.quantity,
+			lettering_text: item.lettering_text,
+			artwork_file: item.artwork_file,
+			artwork_file_name: item.artwork_file_name,
+			instruction: item.instruction,
+			local_identity: item.local_identity,
+		}
+		const result = await cart_service.sendToServer(cart_payload)
 
 		if( result && result.item && result.item.id && item.local_identity )
 			cart_service.updateUploadedItem(item.local_identity, result.item.id)
@@ -149,15 +167,10 @@ export const useArtworkSectionHandler = () => {
 	 * Dispatch and save added cart.
 	 * @param has_artwork boolean
 	 */
-	const dispatchItem = async (has_artwork : boolean = false) => {
+	const dispatchItem = async (skip_uploading : boolean = false) => {
 		// Validation
 		if( uploading.value ) {
-			console.warn('Uploading is no the process!')
-			return false
-		}
-
-		if( has_artwork && !has_uploaded_file.value ) {
-			console.warn('No artwork selected.')
+			console.warn('Uploading is in the process!')
 			return false
 		}
 
@@ -192,7 +205,8 @@ export const useArtworkSectionHandler = () => {
 		const uploaded_file = ref<string>('')
 
 		// Handle uploading the artwork file to S3 when needed.
-		if( has_artwork ) {
+		const submit_with_file = !skip_uploading && has_uploaded_file.value
+		if( submit_with_file ) {
 
 			if(!artwork.value) {
 				console.warn("Artwork file is required!")
@@ -229,9 +243,9 @@ export const useArtworkSectionHandler = () => {
 			quantity: selection_store.quantity.nr,
 			cost: selection_store.quantity.price ?? 0,
 			lettering_text: selection_store.lettering_text,
-			artwork_file: has_artwork ? uploaded_file.value : null,
-			artwork_file_name: has_artwork ? artwork_file_name.value : null,
-			artwork_preview: has_artwork ? artwork_preview.value : null,
+			artwork_file: submit_with_file ? uploaded_file.value : null,
+			artwork_file_name: submit_with_file ? artwork_file_name.value : null,
+			artwork_preview: submit_with_file ? artwork_preview.value : null,
 			instruction: instruction.value,
 			local_identity: item_id,
 		}
@@ -268,5 +282,6 @@ export const useArtworkSectionHandler = () => {
 		handleDrop,
 		fileChange,
 		unsetFile,
+		resetForm,
 	}
 }
