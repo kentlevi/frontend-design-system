@@ -23,7 +23,14 @@ export const useCartService = (caller : string) => {
 
 	const uploading_file = ref<boolean>(false)
 
-	const is_authenticated = computed(() => auth_user.id && auth_user.email )
+	const is_authenticated = computed(() => Boolean(auth_user.id && auth_user.email) )
+
+	watch(() => user_store.is_authenticated, (authorized) => {
+		if( authorized )
+			calculateCartItems()
+		else
+			cart_store.emptyCart()
+	})
 
 	const config = useRuntimeConfig()
 
@@ -32,7 +39,7 @@ export const useCartService = (caller : string) => {
 	const per_page = ref<number>(10)
 
 	const calculateCartItems = async () => {
-		if( cart_store.is_authenticated ) {
+		if( user_store.is_authenticated ) {
 			const cart_numbers = await cart_api_service.requestCartNumbers()
 			if( !cart_numbers ) {
 				return
@@ -137,7 +144,6 @@ export const useCartService = (caller : string) => {
 	 * @param has_artwork boolean
 	 */
 	const addItem = async () => {
-		console.warn('Adding Item!')
 		if(!attributes_store.product || !selection_store.product_config_mapping_id ) {
 			console.warn('Product data is missing!')
 			return false
@@ -182,13 +188,11 @@ export const useCartService = (caller : string) => {
 			const { ok, message, filename } = await cart_api_service.sendToS3(upload_service.artwork_file.value)
 
 			uploading_file.value = false
-			console.log(ok)
 			if( !ok || !ok.value ) {
 				console.warn(message)
 				return false
 			}
 			artwork_file_name.value = upload_service.artwork_file.value.name
-			console.log(upload_service.artwork_preview.value)
 
 			uploaded_file.value = filename.value
 		}
@@ -219,12 +223,10 @@ export const useCartService = (caller : string) => {
 
 
 		// 🔥 Store new item in local storage before uploading it to our database.
-		console.log('Saving item locally!')
 		saveItemLocally(item.value)
 
 		// 🔥 Sending the new item to API
 		if( is_authenticated.value ) {
-			console.log('sending to server')
 			sendItemToServer(item.value)
 		}
 
@@ -276,12 +278,27 @@ export const useCartService = (caller : string) => {
 		cart_store.all_selected = v
 	}
 
+	const selected_total_cost = computed(() => {
+		if( !cart_store.selected_ids.length )
+			return 0
+
+		const tot_cost = cart_store.items.reduce((acc: number, item: CartItem) => {
+			if( cart_store.selected_ids.includes(item.local_identity) )
+				return acc + item.cost
+
+			return acc;
+		}, 0)
+
+		return tot_cost;
+	})
+
 	return {
 		// 🔥 Cart States
 		...storeToRefs(cart_store),
 
 		// 🔥 Local States
 		caller,
+		selected_total_cost,
 
 		// 🔥 Methods
 		requestItems,

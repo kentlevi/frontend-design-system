@@ -5,15 +5,14 @@ import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
 import { formattedPrice } from '~/utils/currency';
 
-const { loading, items, deleteCartItem } = useCartPreview('cart-preview-items');
+
+/** 🔥 This composable were using real data from API and functionality */
+const { loading, items, deleteCartItem, formatImage } = useCartPreview('cart-preview-items');
 
 const {
 	editCartItem,
 } = useCartPreviewItem();
 
-const {
-	formatImage
-} = useCartPreview('cart-preview-item')
 
 defineEmits<{
 	'edit-item': [item: CartItem];
