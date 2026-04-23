@@ -284,6 +284,10 @@ const {
             color: var(--error);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
+
+            strong {
+                font-weight: var(--font-weight-bold);
+            }
         }
     }
 

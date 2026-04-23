@@ -12,7 +12,7 @@
       "invalidCode": "Oops! That verification code doesn't match. Try entering it again.",
       "requestFailed": "We couldn't send a verification code right now.",
       "closeModal": "Close modal",
-      "resendPrefix": "Didn't receive any? Please check your spam or ",
+      "resendPrefix": "Didn't get the code? Check your spam folder or ",
       "resendCta": "Resend Code",
       "resendSuffix": ".",
       "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",

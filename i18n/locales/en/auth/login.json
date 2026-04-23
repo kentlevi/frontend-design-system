@@ -37,7 +37,7 @@
         "fieldBlank": "Field cannot be blank.",
         "emailInvalid": "Email format is invalid.",
         "credentialsMismatch": "Email address & password does not match",
-        "orderNotFound": "Order does not exist."
+        "orderNotFound": "Order does not exist"
       }
     }
   }

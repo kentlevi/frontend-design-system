@@ -25,25 +25,25 @@
           "placeholder": "성함을 입력해 주세요"
         },
         "company": {
-          "label": "회사명 (선택)",
-          "placeholder": "회사명을 입력하세요"
+          "label": "회사명 (선택사항)",
+          "placeholder": "화사명을 입력해 주세요"
         },
         "streetAddress": {
           "label": "도로명 주소",
-          "line1Placeholder": "주소 1을 입력하세요",
-          "line2Placeholder": "주소 2를 입력하세요"
+          "line1Placeholder": "주소1을 입력해 주세요",
+          "line2Placeholder": "주소2를  입력해 주세요"
         },
         "province": {
           "label": "시/도",
-          "placeholder": "도/직할시를 선택하세요"
+          "placeholder": "시/도를 선택해 주세요"
         },
         "city": {
           "label": "시/군/구",
-          "placeholder": "시/군/구를 입력하세요"
+          "placeholder": "시/군/구를 입력해 주세요"
         },
         "postalCode": {
           "label": "우편번호",
-          "placeholder": "우편번호를 입력하세요"
+          "placeholder": "우편번호를 입력해 주세요"
         },
         "phone": {
           "label": "전화번호",

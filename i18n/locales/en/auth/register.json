@@ -14,7 +14,7 @@
       "password": "Password",
       "enterPassword": "Enter Password",
       "passwordHint": "Your password must be at least 6 characters and should include an uppercase letter, a number, or a special character.",
-      "agreePrefix": "I agree to Musticker’s",
+      "agreePrefix": "I agree to Musticker’s ",
       "terms": "Terms of Service",
       "and": "and",
       "privacy": "Privacy Policy",
