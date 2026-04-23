@@ -44,7 +44,7 @@ export const useOrderDetailSection = (order: Ref<AccountOrder>) => {
 	}
 
 	const handle_upload_submit = (payload: { itemNumber: string }) => {
-		upload_toast_message.value = `Artwork for Item No. ${payload.itemNumber} uploaded successfully!`
+		upload_toast_message.value = t('account.orders.detail.itemUploadSuccess', { number: payload.itemNumber })
 		upload_toast_visible.value = true
 
 		if (upload_toast_timeout) {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const props = defineProps<{
 	open: boolean;
 }>();
@@ -24,11 +25,11 @@ function closeModal() {
 	>
 		<section class="account-order-terms-modal">
 			<header class="account-order-terms-modal-header">
-				<h3 class="account-order-terms-modal-title">Terms & Conditions</h3>
+				<h3 class="account-order-terms-modal-title">{{ t('account.orders.terms.title') }}</h3>
 				<button
 					type="button"
 					class="account-order-terms-modal-close"
-					aria-label="Close terms and conditions modal"
+					:aria-label="t('account.orders.terms.closeLabel')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" :size="24" color="var(--text-primary)" decorative />
@@ -38,35 +39,35 @@ function closeModal() {
 			<div class="account-order-terms-modal-body">
 				<div class="account-order-terms-modal-content">
 					<p>
-						If you approve the final proof and confirm your payment <strong>after 5:00PM</strong>, the order will be processed the next business day.
+						{{ t('account.orders.terms.paragraph1') }}
 					</p>
 					<p>
-						We normally check the important details required for production. The correction of the design content (<strong>such as misspelling</strong>) is not subject to reproduction.
+						{{ t('account.orders.terms.paragraph2') }}
 					</p>
 					<p>
-						In spite of the most modern printing machines, <strong>color difference of 5-10% and movement of 1-2mm</strong> on the actual sticker product should be acceptable due to mechanical tolerances.
+						{{ t('account.orders.terms.paragraph3') }}
 					</p>
 					<p>
-						The estimated turnaround time includes printing & delivery.
+						{{ t('account.orders.terms.turnaroundNote') }}
 					</p>
 
 					<section class="account-order-terms-modal-section">
-						<h4 class="account-order-terms-modal-section-title">Note:</h4>
+						<h4 class="account-order-terms-modal-section-title">{{ t('account.orders.terms.orderTermsNoteTitle') }}</h4>
 						<ul class="account-order-terms-modal-list">
 							<li>
-								Bumper Sticker is printed using digital printing. The printing resolution is lower than offset printing.
+								{{ t('account.orders.terms.bumperStickerPrintNote') }}
 							</li>
 							<li>
-								Due to the characteristics of the material, the sticker may curl up after time. Choose coated option to avoid this issue.
+								{{ t('account.orders.terms.materialCurlNote') }}
 							</li>
 						</ul>
 					</section>
 
 					<section class="account-order-terms-modal-section">
-						<h4 class="account-order-terms-modal-section-title">Note on Order Cancellations:</h4>
+						<h4 class="account-order-terms-modal-section-title">{{ t('account.orders.terms.cancellationTitle') }}</h4>
 						<ul class="account-order-terms-modal-list">
 							<li>
-								Order cancellations are only allowed during 'Before Production' status; once the status changes to 'In Production,' cancellations are disabled as printing has begun, so please review your order carefully beforehand.
+								{{ t('account.orders.terms.cancellationBody') }}
 							</li>
 						</ul>
 					</section>
@@ -82,7 +83,7 @@ function closeModal() {
 					class="account-order-terms-modal-button"
 					@click="closeModal"
 				>
-					Close
+					{{ t('account.orders.terms.close') }}
 				</UiButton>
 			</footer>
 		</section>

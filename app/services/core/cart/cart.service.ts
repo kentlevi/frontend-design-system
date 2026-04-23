@@ -292,8 +292,8 @@ export const useCartService = (caller : string) => {
 		toggleSelection,
 		selectAllItem,
 		calculateCartItems,
-		setDeletableItems 		: cart_store.setDeletableItems,
-		emptyDeletableItems 	: cart_store.emptyDeletableItems,
-		removeItems 			: cart_store.removeItems,
+		setDeletableItems	: cart_store.setDeletableItems,
+		emptyDeletableItems	: cart_store.emptyDeletableItems,
+		removeItems			: cart_store.removeItems,
 	}
 }

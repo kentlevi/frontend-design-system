@@ -10,6 +10,7 @@ const props = withDefaults(
 	defineProps<{
 		modelValue: boolean;
 		email?: string;
+		showEmailInMessage?: boolean;
 		code?: string;
 		error?: string;
 		resendLimitReached?: string;
@@ -28,6 +29,7 @@ const props = withDefaults(
 	}>(),
 	{
 		email: '',
+		showEmailInMessage: true,
 		code: '',
 		error: '',
 		resendLimitReached: '',
@@ -117,12 +119,12 @@ const formatted_error_parts = computed(() => {
 	if (!props.error) return [];
 
 	return props.error
-		.split(/(<b>.*?<\/b>)/g)
+		.split(/(\[b\].*?\[\/b\]|<b>.*?<\/b>)/g)
 		.filter(Boolean)
 		.map(part => {
-			const match = part.match(/^<b>(.*?)<\/b>$/);
+			const match = part.match(/^<b>(.*?)<\/b>$|^\[b\](.*?)\[\/b\]$/);
 			return {
-				text: match ? match[1] : part,
+				text: match ? (match[1] || match[2] || '') : part,
 				is_bold: Boolean(match),
 			};
 		});
@@ -144,6 +146,7 @@ const formatted_error_parts = computed(() => {
 				:label="computed_submit_label"
 				test-id="auth-verification-loading-overlay"
 				variant="modal"
+				position="absolute"
 			/>
 
 			<UiButton
@@ -175,7 +178,9 @@ const formatted_error_parts = computed(() => {
 					</h3>
 					<p class="auth-verification-text">
 						{{ t(`${translation_key}.messagePrefix`) }}
-						<strong class="auth-verification-email">{{ email }}</strong>{{ t(`${translation_key}.messageSuffix`) }}
+						<template v-if="showEmailInMessage">
+							<strong class="auth-verification-email">{{ email }}</strong>
+						</template>{{ t(`${translation_key}.messageSuffix`) }}
 					</p>
 				</div>
 			</div>
@@ -370,6 +375,10 @@ const formatted_error_parts = computed(() => {
             color: var(--error);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
+
+            strong {
+                font-weight: var(--font-weight-bold);
+            }
         }
     }
 

@@ -1,23 +1,21 @@
 <script setup lang="ts">
-const { t } = useI18n();
+import { useAuthLoginMemberForm } from '@/composables/auth/login/useAuthLoginMemberForm'
 
-defineProps<{
-	showPassword: boolean;
-	keepSignedIn: boolean;
-	email: string;
-	password: string;
-	emailError?: string;
-	passwordError?: string;
-	passwordInvalid?: boolean;
-}>();
-
-const emit = defineEmits<{
-	(e: 'togglePassword'): void;
-	(e: 'update:keepSignedIn', value: boolean): void;
-	(e: 'update:email', value: string): void;
-	(e: 'update:password', value: string): void;
-	(e: 'openForgotPassword'): void;
-}>();
+const {
+	translate,
+	show_password,
+	keep_signed_in,
+	member_email,
+	member_password,
+	member_email_error,
+	member_password_error,
+	member_invalid_credentials,
+	togglePassword,
+	setKeepSignedIn,
+	setMemberEmail,
+	setMemberPassword,
+	openForgotPassword,
+} = useAuthLoginMemberForm()
 </script>
 
 <template>
@@ -25,8 +23,8 @@ const emit = defineEmits<{
 		<div class="auth-login-inputs">
 			<UiFormField
 				class="auth-login-field"
-				:label="t('auth.login.email')"
-				:error="emailError"
+				:label="translate('auth.login.email')"
+				:error="member_email_error"
 				error-test-id="auth-login-member-email-error"
 				:required="true"
 				head-class="auth-login-field-head"
@@ -39,21 +37,21 @@ const emit = defineEmits<{
 						:id="inputId"
 						class="auth-login-input"
 						size="md"
-						:state="emailError ? 'error' : 'default'"
-						:aria-invalid="emailError ? 'true' : 'false'"
+						:state="member_email_error ? 'error' : 'default'"
+						:aria-invalid="member_email_error ? 'true' : 'false'"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="t('auth.login.enterEmail')"
-						:model-value="email"
+						:placeholder="translate('auth.login.enterEmail')"
+						:model-value="member_email"
 						data-testid="auth-login-member-email-input"
-						@update:model-value="emit('update:email', $event)"
+						@update:model-value="setMemberEmail"
 					/>
 				</template>
 			</UiFormField>
 
 			<UiFormField
 				class="auth-login-field"
-				:label="t('auth.login.password')"
-				:error="passwordError"
+				:label="translate('auth.login.password')"
+				:error="member_password_error"
 				error-test-id="auth-login-member-password-error"
 				:required="true"
 				head-class="auth-login-field-head"
@@ -67,14 +65,22 @@ const emit = defineEmits<{
 							:id="inputId"
 							class="auth-login-input"
 							size="md"
-							:state="passwordError || passwordInvalid ? 'error' : 'default'"
-							:aria-invalid="passwordError || passwordInvalid ? 'true' : 'false'"
+							:state="
+								member_password_error || member_invalid_credentials
+									? 'error'
+									: 'default'
+							"
+							:aria-invalid="
+								member_password_error || member_invalid_credentials
+									? 'true'
+									: 'false'
+							"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="t('auth.login.enterPassword')"
-							:type="showPassword ? 'text' : 'password'"
-							:model-value="password"
+							:placeholder="translate('auth.login.enterPassword')"
+							:type="show_password ? 'text' : 'password'"
+							:model-value="member_password"
 							data-testid="auth-login-member-password-input"
-							@update:model-value="emit('update:password', $event)"
+							@update:model-value="setMemberPassword"
 						>
 							<template #icon-right>
 								<UiButton
@@ -82,13 +88,17 @@ const emit = defineEmits<{
 									tone="neutral"
 									size="sm"
 									class="auth-login-password-toggle"
-									:aria-label="t('auth.login.togglePassword')"
+									:aria-label="translate('auth.login.togglePassword')"
 									data-testid="auth-login-member-password-toggle-button"
-									:sr-label="t('auth.login.togglePassword')"
+									:sr-label="translate('auth.login.togglePassword')"
 									icon-only
-									:icon="showPassword ? 'regular-eye' : 'regular-eye-slash'"
+									:icon="
+										show_password
+											? 'regular-eye'
+											: 'regular-eye-slash'
+									"
 									:icon-size="24"
-									@click="emit('togglePassword')"
+									@click="togglePassword"
 								/>
 							</template>
 						</UiInput>
@@ -100,11 +110,13 @@ const emit = defineEmits<{
 		<div class="auth-login-inline">
 			<UiCheckbox
 				class="auth-login-checkbox-control"
-				:model-value="keepSignedIn"
+				:model-value="keep_signed_in"
 				data-testid="auth-login-member-keep-signed-in"
-				@update:model-value="emit('update:keepSignedIn', $event)"
+				@update:model-value="setKeepSignedIn"
 			>
-				<span class="auth-login-checkbox-text">{{ t('auth.login.keepSignedIn') }}</span>
+				<span class="auth-login-checkbox-text">{{
+					translate('auth.login.keepSignedIn')
+				}}</span>
 			</UiCheckbox>
 
 			<UiButton
@@ -114,126 +126,56 @@ const emit = defineEmits<{
 				class="auth-login-link-button"
 				label-class="auth-login-link-button-label"
 				data-testid="auth-login-member-forgot-password-button"
-				@click="emit('openForgotPassword')"
+				:no-hover="true"
+				@click="openForgotPassword"
 			>
-				{{ t('auth.login.forgotPassword') }}
+				{{ translate('auth.login.forgotPassword') }}
 			</UiButton>
 		</div>
 	</div>
 </template>
 
 <style lang="scss">
-.auth-login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.auth-login-inline {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 
-        .auth-login-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+	.auth-login-checkbox-control {
+		color: var(--text-secondary);
+	}
 
-            .auth-login-field {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
+	.auth-login-checkbox-text {
+		font-size: var(--type-size-100);
+		line-height: var(--type-line-100);
+	}
 
-                .auth-login-field-head {
-                    min-height: 24px;
-                    align-items: center;
-                }
+	.auth-login-link-button {
+		--btn-soft: transparent;
+		--btn-border: transparent;
+		--btn-bg: var(--text-primary);
 
-                .auth-login-field-label {
-                    display: block;
+		color: var(--text-primary);
+		font-weight: var(--font-weight-semibold);
+		background: transparent;
+		border-color: transparent;
+		border-radius: 0;
+		padding: 0;
+		min-height: auto;
+		height: auto;
+		box-shadow: none;
 
-                    font-size: var(--type-size-100);
-                    font-weight: var(--font-weight-semibold);
-                    line-height: var(--type-line-100);
-                    color: var(--text-primary);
-                }
+		&:hover,
+		&:active {
+			background: transparent;
+			filter: none;
+		}
 
-                .auth-login-field-error {
-
-                    font-size: var(--type-size-100);
-                    line-height: var(--type-line-100);
-                    color: var(--error);
-                }
-
-            .auth-login-input {
-                width: 100%;
-            }
-
-            .auth-login-password-wrap {
-                position: relative;
-
-                .auth-login-password-toggle {
-                    --btn-soft: transparent;
-                    --btn-border: transparent;
-                    padding: 0;
-                    min-height: auto;
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 0;
-                    box-shadow: none;
-                }
-            }
-        }
-    }
-
-    .auth-login-inline {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--type-size-100);
-        line-height: var(--type-line-100);
-
-        .auth-login-checkbox-control {
-            color: var(--text-secondary);
-        }
-
-        .auth-login-checkbox-text {
-            font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-        }
-
-        .auth-login-link-button {
-            --btn-soft: transparent;
-            --btn-border: transparent;
-            --btn-bg: var(--text-primary);
-
-            color: var(--text-primary);
-            font-weight: var(--font-weight-semibold);
-            background: transparent;
-            border-color: transparent;
-            border-radius: 0;
-            padding: 0;
-            min-height: auto;
-            height: auto;
-            box-shadow: none;
-
-            &:hover,
-            &:active {
-                background: transparent;
-                filter: none;
-            }
-
-            .auth-login-link-button-label {
-                padding: 0;
-            }
-        }
-    }
-
-    @media (max-width: 1100px) {
-        .auth-login-inputs {
-            .auth-login-field {
-                .auth-login-label-row {
-                    .auth-login-error {
-                        font-size: var(--type-size-100);
-                        line-height: var(--type-line-100);
-                    }
-                }
-            }
-        }
-    }
+		.auth-login-link-button-label {
+			padding: 0;
+		}
+	}
 }
 </style>

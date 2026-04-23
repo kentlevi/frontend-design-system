@@ -1,0 +1,7 @@
+{
+    "checkout": {
+        "shipping": {
+            "longer_date_message": "예상 배송일:"
+        }
+    }
+}

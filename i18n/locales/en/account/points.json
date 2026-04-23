@@ -1,23 +1,158 @@
 {
-    "account": {
-        "points": {
-            "title": "Points",
-            "tierName": "Bumper Boss",
-            "lastTierUpgrade": "Last Tier Upgrade",
-            "pointsUnit": "points",
-            "pointsSystemTitle": "Points System",
-            "pointsSystemDescription": "Collect and redeem points in our loyalty program to unlock exciting rewards and exclusive perks. Earned points can be used for payment of future purchases.",
-            "questTitle": "The Great Sticker Quest",
-            "questDescription": "Our loyalty program turns your shopping into a rewarding journey. Earn points and unlock challenges with every order or interaction!",
-            "historyTitle": "Points History",
-            "historyDescription": "Detailed record of all the points you've earned or redeemed through the loyalty program.",
-            "challengesTitle": "Challenges",
-            "viewAll": "View All",
-            "filter": "Filter",
-            "logsTitle": "Logs",
-            "expiry": "Expiry",
-            "nextTierRequirementPrefix": "You need at least",
-            "nextTierRequirementSuffix": "total spent on completed order to unlock next level."
+  "account": {
+    "points": {
+      "title": "Points",
+      "tierName": "Bumper Boss",
+      "lastTierUpgrade": "Last Tier Upgrade",
+      "pointsUnit": "points",
+      "pointsSystemTitle": "Points System",
+      "pointsSystemDescription": "Make every purchase count! Earn points and unlock rewards with every order and interaction in our loyalty program.",
+      "loyaltyIntro": "Earn and redeem points in our loyalty program for rewards, exclusive perks, and discounts on future purchases.",
+      "pointsSpec": {
+        "title": "Points Specification:",
+        "exclusionRule": "Points cannot be redeemed for shipping costs or artwork creation fees.",
+        "expiryRule": "Earned points expire one year later, at the end of that month.",
+        "deductionRule": "Points closest to expiration are used first when redeeming."
+      },
+      "questTitle": "The Great Sticker Quest",
+      "questDescription": "Take on quests, earn points, and unlock awesome rewards!",
+      "historyTitle": "Points History",
+      "historyDescription": "Track every point you’ve earned or used in the loyalty program.",
+      "challengesTitle": "Challenges",
+      "viewAll": "View All",
+      "filter": "Filter",
+      "logsTitle": "Logs",
+      "expiry": "Expiry",
+      "expireyCol": "Expirey:",
+      "nextTierRequirementPrefix": "You’re just",
+      "nextTierRequirementSuffix": "away from unlocking the next loyalty level.",
+      "questsConquered": "Quests Conquered",
+      "viewOptions": "View Options",
+      "notCompleted": "Not Completed",
+      "rewardLabel": "Reward:",
+      "acquiredLabel": "Acquired:",
+      "filters": {
+        "all": "All",
+        "earned": "Earned",
+        "deducted": "Deducted"
+      },
+      "logs": {
+        "pointsEarned": "Points Earned",
+        "pointsUsed": "Points Used",
+        "stickerQuest": "Sticker Quest",
+        "rankLevelUp": "Rank level up"
+      },
+      "ranking": {
+        "title": "Ranking System",
+        "perksLabel": "Perks:",
+        "levelUpBonusLabel": "Level Up Bonus Gift:"
+      },
+      "challenges": {
+        "firstOrderVictory": {
+          "name": "First Order Victory",
+          "description": "Place your first order.",
+          "reward": "Earn 10 points."
+        },
+        "stickerExplorer": {
+          "name": "Sticker Explorer",
+          "description": "Explore our collection and find 10 sticker products you’ll love!",
+          "reward": "Earn 5 points."
+        },
+        "mysteryHunter": {
+          "name": "Mystery Hunter",
+          "description": "Find hidden sticker icons on the site.",
+          "reward": "Earn 10% discount on your next order."
+        },
+        "speedyCheckout": {
+          "name": "Speedy Checkout",
+          "description": "Place your order in under 3 minutes with our fast, easy checkout.",
+          "reward": "Enjoy free express shipping on your current order!"
+        },
+        "threesACharm": {
+          "name": "Three’s a Charm",
+          "description": "Mix and match 3 different sticker styles in a single order!",
+          "reward": "Get a 15% discount on the total bill."
+        },
+        "socialSharing": {
+          "name": "Social Sharing",
+          "description": "Share your ticket design on social media and earn points!",
+          "reward": "10% off your next order and 3 points."
+        },
+        "reviewMaster": {
+          "name": "Review Master",
+          "description": "Leave a review for any product you’ve purchased and earn points!",
+          "reward": "Earn 8 points."
+        },
+        "shareYourCreativity": {
+          "name": "Share Your Creativity",
+          "description": "Show off your stickers online and don’t forget to tag us!",
+          "reward": "Earn 8 points."
+        },
+        "theRoyalReferral": {
+          "name": "The Royal Referral",
+          "description": "Invite a friend to shop with us and reward yourself when they make their first order!",
+          "reward": "Get 10 points and a 5원  discount on your next purchase."
+        },
+        "frequentBuyer": {
+          "name": "Frequent Buyer",
+          "description": "Place 5 orders within a month.",
+          "reward": "Get 10% off your next order plus free express shipping!"
+        },
+        "sticktasticAnniversary": {
+          "name": "Sticktastic Anniversary",
+          "description": "Cheers to 1 year with us—thanks for being a valued customer!",
+          "reward": "Earn 25 points as our way of saying thanks!"
+        },
+        "bigSpenderBonus": {
+          "name": "Big Spender Bonus",
+          "description": "Make a purchase of 288,499원 or more in one order and unlock rewards!",
+          "reward": "Earn 20원  discount for your next purchase and earn 20 points."
+        },
+        "charm": {
+          "name": "Charm",
+          "reward": "Earn 5 points."
         }
+      },
+      "ranks": {
+        "rank1": {
+          "label": "Rank 1",
+          "name": "MuScout"
+        },
+        "rank2": {
+          "label": "Rank 2",
+          "name": "MuLeader"
+        },
+        "rank3": {
+          "label": "Rank 3 - Current",
+          "name": "MuBoss"
+        },
+        "rank4": {
+          "label": "Rank 4",
+          "name": "MuDynamo"
+        }
+      },
+      "data": {
+        "newlyRegisteredAccount": "Newly Registered Account",
+        "conversionRateLabel": "1 Point = 1 KRW",
+        "rank2SpendRequirement": "720,070원 Total Spent on Completed",
+        "rank3SpendRequirement": "1,440,140원 Total Spent on Completed",
+        "rank4SpendRequirement": "7,200,700원 Total Spent on Completed",
+        "earn05PointOnEveryPurchase": "Earn 0.5% point on every purchase.",
+        "earn1PointOnEveryPurchase": "Earn 1% point on every purchase.",
+        "earn15PointOnEveryPurchase": "Earn 1.5% point on every purchase.",
+        "earn2PointOnEveryPurchase": "Earn 2% point on every purchase.",
+        "earn4PointsJustByRegisteringYourAccount": "Earn 4 points just by registering your account.",
+        "earn8PointsAsRewardForReachingThisTier": "Earn 8 points as reward for reaching this tier.",
+        "earn12PointsAsRewardForReachingThisTier": "Earn 12 points as reward for reaching this tier.",
+        "earn16PointsAsRewardForReachingThisTier": "Earn 16 points as reward for reaching this tier.",
+        "discount7212KrwNextOrderOneTime": "7,212원 Discount on next order (1-Time Use)",
+        "discount10NextOrderOneTime": "10% Off Discount on next order (1-Time Use)",
+        "discount15NextOrderOneTime": "15% Off Discount on next order (1-Time Use)",
+        "freeExpressShippingOneTime": "Free Express Shipping (1-Time Use)",
+        "freeExpressShippingUnlimited": "Free Express Shipping (Unlimited Uses)",
+        "freeArtworkRevisions": "Free Artwork Revisions",
+        "doublePointsOneMonth": "Double Points Accumulation for 1 Month"
+      }
     }
+  }
 }

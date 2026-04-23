@@ -1,39 +1,39 @@
-import { useAddressStore } from "~/stores/address"
-import type { AddressFormMap, AddressItem, AddressLineForm, AddressType } from "~/types/address"
-
-/** Check whether the form supports address lines */
-export function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
-	return form.type !== 'drop'
-}
-
-/** Check whether the form supports phone number */
-export function hasPhoneNumber(form: AddressFormMap[AddressType]): form is AddressFormMap['shipping'] {
-	return form.type === 'shipping'
-}
-
-/** Blocks non-digit keyboard input for phone fields */
-export function onPhoneBeforeInput(event: InputEvent) {
-	// allow delete/backspace/etc (event.data can be null)
-	if (!event.data) return
-
-	if (/\D/.test(event.data)) {
-		event.preventDefault()
-	}
-}
-
-/** Blocks non-digit paste input for phone fields */
-export function onPhonePaste(event: ClipboardEvent) {
-	const pasted = event.clipboardData?.getData('text') ?? ''
-
-	if (/\D/.test(pasted)) {
-		event.preventDefault()
-	}
-}
+import { useUserAddressStore } from "~/stores/user-address"
+import type { AddressFormMap, AddressItem, AddressLineForm, AddressType } from "~/types/user-address"
 
 export function useAddressHelper() {
-	const address_store = useAddressStore()
+	/** Check whether the form supports address lines */
+	function hasAddressLines(form: AddressFormMap[AddressType]): form is AddressLineForm {
+		return form.type !== 'drop'
+	}
+
+	/** Check whether the form supports phone number */
+	function hasPhoneNumber(form: AddressFormMap[AddressType]): form is AddressFormMap['shipping'] {
+		return form.type === 'shipping'
+	}
+
+	/** Blocks non-digit keyboard input for phone fields */
+	function onPhoneBeforeInput(event: InputEvent) {
+	// allow delete/backspace/etc (event.data can be null)
+		if (!event.data) return
+
+		if (/\D/.test(event.data)) {
+			event.preventDefault()
+		}
+	}
+
+	/** Blocks non-digit paste input for phone fields */
+	function onPhonePaste(event: ClipboardEvent) {
+		const pasted = event.clipboardData?.getData('text') ?? ''
+
+		if (/\D/.test(pasted)) {
+			event.preventDefault()
+		}
+	}
 
 	function getAddressListByType(type: AddressType) {
+		const address_store = useUserAddressStore()
+
 		if (type === 'shipping') return address_store.shipping_address
 		if (type === 'billing') return address_store.billing_address
 		return address_store.drop_address
@@ -42,18 +42,16 @@ export function useAddressHelper() {
 	function getAddressLineParts(address: AddressItem) {
 		const lines: string[] = []
 
-		if ('address_line_1' in address && address.address_line_1) lines.push(address.address_line_1)
-		if ('address_line_2' in address && address.address_line_2) lines.push(address.address_line_2)
-
 		if ('dynamic_fields' in address && Array.isArray(address.dynamic_fields)) {
 			address.dynamic_fields.forEach((field) => {
 				if (field?.value) lines.push(field.value)
 			})
 		}
 
-		if ('postcode' in address && address.postcode) lines.push(address.postcode)
+		if ('address_line_1' in address && address.address_line_1) lines.push(address.address_line_1)
+		if ('address_line_2' in address && address.address_line_2) lines.push(address.address_line_2)
 
-		if (address.type !== 'drop') lines.push(address.country.name)
+		if ('postcode' in address && address.postcode) lines.push(address.postcode)
 
 		return lines
 	}
@@ -103,6 +101,10 @@ export function useAddressHelper() {
 	}
 
 	return {
+		hasAddressLines,
+		hasPhoneNumber,
+		onPhoneBeforeInput,
+		onPhonePaste,
 		getAddressListByType,
 		getAddressLineParts,
 		buildAddressLines,

@@ -81,7 +81,7 @@
 
 .ui-select-menu {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 3px);
     left: 0;
     right: 0;
     z-index: 120;
@@ -163,9 +163,9 @@
     color: var(--text-primary);
 }
 
-.ui-select-option.is-selected .ui-select-option-label {
-    font-weight: var(--font-weight-semibold);
-}
+// .ui-select-option.is-selected .ui-select-option-label {
+//     font-weight: var(--font-weight-semibold);
+// }
 
 .ui-select-option-description {
     

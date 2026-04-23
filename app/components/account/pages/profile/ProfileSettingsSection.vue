@@ -1,27 +1,48 @@
 <script setup lang="ts">
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 
+withDefaults(defineProps<{
+	loading?: boolean;
+}>(), {
+	loading: false,
+});
+
 const { t } = useI18n();
 
 const {
 	form_state: preference_form_state,
-	loadPreferences,
 	updatePreferenceField
 } = usePreferenceForm();
-
-
-onMounted(() => {
-	loadPreferences();
-});
 </script>
 
 <template>
 	<div class="account-profile-section" data-testid="account-profile-settings-section">
-		<div class="account-profile-section-copy">
+		<div v-if="loading" class="account-profile-section-copy">
+			<UiSkeleton width="92px" height="36px" border-radius="8px" />
+			<UiSkeleton width="100%" height="20px" border-radius="8px" />
+			<UiSkeleton width="84%" height="20px" border-radius="8px" />
+		</div>
+		<div v-else class="account-profile-section-copy">
 			<h2 class="account-profile-section-title">{{ t('account.profile.settings') }}</h2>
 			<p class="account-profile-section-description">{{ t('account.profile.settingsDesc') }}</p>
 		</div>
-		<div class="account-profile-settings" data-testid="account-profile-settings">
+		<div v-if="loading" class="account-profile-settings" data-testid="account-profile-settings-skeleton">
+			<div class="account-profile-setting-row">
+				<div class="account-profile-setting-copy account-profile-setting-copy--skeleton">
+					<UiSkeleton width="140px" height="20px" border-radius="8px" />
+					<UiSkeleton width="280px" height="20px" border-radius="8px" />
+				</div>
+				<UiSkeleton width="42px" height="24px" border-radius="999px" />
+			</div>
+			<div class="account-profile-setting-row">
+				<div class="account-profile-setting-copy account-profile-setting-copy--skeleton">
+					<UiSkeleton width="82px" height="20px" border-radius="8px" />
+					<UiSkeleton width="360px" height="20px" border-radius="8px" />
+				</div>
+				<UiSkeleton width="42px" height="24px" border-radius="999px" />
+			</div>
+		</div>
+		<div v-else class="account-profile-settings" data-testid="account-profile-settings">
 			<div class="account-profile-setting-row" data-testid="account-profile-setting-promotions">
 				<div class="account-profile-setting-copy">
 					<h3 class="account-profile-setting-title">{{ t('account.profile.promotions') }}</h3>
@@ -63,6 +84,12 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .account-profile-section {
+	.account-profile-section-copy {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
 	.account-profile-settings {
 		display: flex;
 		flex-direction: column;
@@ -77,6 +104,10 @@ onMounted(() => {
 			.account-profile-setting-copy {
 				display: flex;
 				flex-direction: column;
+
+				&.account-profile-setting-copy--skeleton {
+					gap: 4px;
+				}
 			}
 
 			.account-profile-setting-title {

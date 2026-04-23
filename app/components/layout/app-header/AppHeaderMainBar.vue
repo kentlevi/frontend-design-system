@@ -7,6 +7,7 @@ import { normalizeAppPath } from '~/utils/auth/redirect';
 const { t } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute();
+const cart_badge_ready = ref(false)
 
 const {
 	simple,
@@ -37,6 +38,10 @@ const {
 function isExactNavHeading(path: string) {
 	return normalizeAppPath(route.path) === normalizeAppPath(path);
 }
+
+onMounted(() => {
+	cart_badge_ready.value = true
+})
 </script>
 
 <template>
@@ -46,8 +51,8 @@ function isExactNavHeading(path: string) {
 				name="musticker"
 				variant="full"
 				color="colored"
-				:size="54"
-				:width="112"
+				:size="56"
+				:width="175"
 				loading="eager"
 				fetchpriority="high"
 			/>
@@ -157,7 +162,7 @@ function isExactNavHeading(path: string) {
 						@focus="prefetchHeaderOverlayModules"
 					/>
 					<span
-						v-if="cart_badge_count > 0"
+						v-if="cart_badge_ready && cart_badge_count > 0"
 						class="home-header-cart-dot"
 						data-testid="app-header-cart-count"
 					>
@@ -219,7 +224,7 @@ function isExactNavHeading(path: string) {
 
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 12px 0;
     display: grid;
     grid-template-columns: 200px 1fr 260px;
     align-items: center;
@@ -235,6 +240,7 @@ function isExactNavHeading(path: string) {
         display: flex;
         justify-content: center;
         gap: 40px;
+		padding: 4px 0;
 
         .home-header-link {
 

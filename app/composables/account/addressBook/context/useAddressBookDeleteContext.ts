@@ -1,5 +1,5 @@
 import { inject, provide, type ComputedRef, type InjectionKey, type Ref } from 'vue'
-import type { AddressItem, AddressType } from '~/types/address'
+import type { AddressItem, AddressType } from '~/types/user-address'
 
 export type AddressBookDeleteContext = {
 	is_delete_modal_open: Ref<boolean>

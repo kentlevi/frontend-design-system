@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import type { CheckoutItem } from '~/types/checkout';
+
+const { t } = useI18n();
+
+const props = defineProps<{
+	title: string;
+	orderNumberLabel: string;
+	orderDetailsPath: string;
+	items: CheckoutItem[];
+	itemMeta: (sizeLabel: string, qty: number) => string;
+	formatPrice: (value: number) => string;
+	subtotalLabel: string;
+	shippingFeeLabel: string;
+	discountLabel: string;
+	totalLabel: string;
+	subtotal: number;
+	shippingFee: number;
+	discount: number;
+	total: number;
+}>();
+</script>
+
 <template>
 	<section class="checkout-confirmation-summary">
 		<header class="checkout-confirmation-summary-head">
@@ -16,12 +39,12 @@
 				<div class="checkout-confirmation-item-thumb">
 					<img
 						:src="item.artworkPreviewUrl || item.product.image"
-						:alt="item.product.name"
+						:alt="t(`product.items.${item.product.id}.name`)"
 						class="checkout-confirmation-item-image"
 					>
 				</div>
 				<div class="checkout-confirmation-item-copy">
-					<div class="checkout-confirmation-item-name">{{ item.product.name }}</div>
+					<div class="checkout-confirmation-item-name">{{ t(`product.items.${item.product.id}.name`) }}</div>
 					<div class="checkout-confirmation-item-meta">{{ props.itemMeta(item.sizeLabel, item.qty) }}</div>
 				</div>
 				<div class="checkout-confirmation-item-price">{{ props.formatPrice(item.total) }}</div>
@@ -48,27 +71,6 @@
 		</div>
 	</section>
 </template>
-
-<script setup lang="ts">
-import type { CheckoutItem } from '~/types/checkout';
-
-const props = defineProps<{
-	title: string;
-	orderNumberLabel: string;
-	orderDetailsPath: string;
-	items: CheckoutItem[];
-	itemMeta: (sizeLabel: string, qty: number) => string;
-	formatPrice: (value: number) => string;
-	subtotalLabel: string;
-	shippingFeeLabel: string;
-	discountLabel: string;
-	totalLabel: string;
-	subtotal: number;
-	shippingFee: number;
-	discount: number;
-	total: number;
-}>();
-</script>
 
 <style scoped lang="scss">
 .checkout-confirmation-summary {

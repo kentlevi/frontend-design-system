@@ -19,10 +19,11 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const is_submitting = ref(false);
 const reset_email = ref('');
 const error_message = ref('');
 const is_sent = ref(false);
-const is_loading = ref(false);
+// Local loading state used instead of global store
 
 watch(
 	() => props.modelValue,
@@ -61,7 +62,7 @@ async function submitReset() {
 		return;
 	}
 
-	is_loading.value = true;
+	is_submitting.value = true;
 
 	try {
 		const { sendResetPasswordLinkHandler } = usePasswordReset();
@@ -80,7 +81,7 @@ async function submitReset() {
 		error_message.value =
 			error_payload?.data?.message || error_payload?.message || t('auth.login.forgot.requestFailed');
 	} finally {
-		is_loading.value = false;
+		is_submitting.value = false;
 	}
 }
 </script>
@@ -92,8 +93,18 @@ async function submitReset() {
 		width="504px"
 		padding="40px"
 		gap="8px"
+		modal-class="upload-modal"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
+		<template #overlay>
+			<UiLoadingOverlay
+				:visible="is_submitting"
+				variant="modal"
+				position="absolute"
+				:label="t('auth.login.forgot.sending')"
+				test-id="auth-login-forgot-password-loading-overlay"
+			/>
+		</template>
 		<div
 			class="auth-forgot-body"
 			:class="is_sent ? 'auth-forgot-body-success' : 'auth-forgot-body-default'"
@@ -101,18 +112,12 @@ async function submitReset() {
 			<button
 				type="button"
 				class="auth-forgot-close"
-				aria-label="Close forgot password modal"
+				:aria-label="t('auth.login.forgot.closeModal')"
 				data-testid="auth-login-forgot-password-close-button"
 				@click="closeModal"
 			>
 				<UiIcon name="regular-times" :size="24" />
 			</button>
-			<UiLoadingOverlay
-				:visible="is_loading"
-				:label="t('auth.login.forgot.sending')"
-				test-id="auth-login-forgot-password-loading-overlay"
-				variant="modal"
-			/>
 			<div class="auth-forgot-header">
 				<UiLogo
 					name="musticker"
@@ -164,10 +169,10 @@ async function submitReset() {
 						size="lg"
 						class="auth-forgot-submit"
 						data-testid="auth-login-forgot-password-submit-button"
-						:disabled="is_loading"
+						:disabled="is_submitting"
 						@click="submitReset"
 					>
-						{{ is_loading ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
+						{{ is_submitting ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
 					</UiButton>
 
 					<UiButton
@@ -219,7 +224,7 @@ async function submitReset() {
     }
 
     .auth-forgot-title {
-
+		font-weight: var(--font-weight-semibold);
         font-size: var(--type-size-500);
         line-height: var(--type-line-500);
         color: var(--text-primary);
@@ -230,7 +235,6 @@ async function submitReset() {
     position: relative;
     margin: calc(var(--ui-modal-padding, 40px) * -1);
     padding: var(--ui-modal-padding, 40px);
-    background: var(--contrast-light);
     border-radius: 14px;
     overflow: hidden;
     display: flex;

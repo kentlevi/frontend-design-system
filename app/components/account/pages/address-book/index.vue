@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AddressItem, AddressType } from '~/types/address';
+import type { AddressItem, AddressType } from '~/types/user-address';
 import AddressBookSection from './AddressBookSection.vue';
 import AddressBookFormModal from './AddressBookFormModal.vue';
 import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';
@@ -9,7 +9,7 @@ import { useAddressBookList } from '~/composables/account/addressBook/useAddress
 import { useAddressCreateForm } from '~/composables/account/addressBook/useAddressCreateForm';
 import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
 import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
-import { useAddressFieldStore } from '~/stores/address';
+import { useAddressFieldStore } from '~/stores/user-address';
 import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
 import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
@@ -17,6 +17,7 @@ import { provideAddressBookFormContext } from '~/composables/account/addressBook
 import { provideAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
 import { provideAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
+import { loadAddresses } from '~/services/user-address/user-address.service';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -33,16 +34,19 @@ const loading_overlay_store = useLoadingOverlayStore()
 const address_field_store = useAddressFieldStore()
 const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 
+loadAddresses('shipping')
+loadAddresses('billing')
+loadAddresses('drop')
+address_field_store.getDynamicFields()
+
 const {
 	shipping_address,
 	billing_address,
 	drop_address,
-	has_shipping_addresses,
-	has_billing_addresses,
-	has_drop_addresses,
+	sections,
 	has_addresses,
 
-	getAddresses,
+	is_loading,
 } = useAddressBookList()
 
 const {
@@ -54,8 +58,9 @@ const {
 	setFormType,
 	populateDynamicFields,
 	clearFormFieldErrors,
-	updateActiveFormField,
-	updateDynamicField,
+	setFormErrors,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 	resetForm,
 } = useAddressFormState()
 
@@ -90,14 +95,15 @@ const {
 })
 
 const {
+	is_submitting: is_creating,
 	createAddress,
 	prepareCreateModal,
 } = useAddressCreateForm({
 	form_state,
 	form_type,
 	active_form,
-	form_field_errors,
 
+	setFormErrors,
 	openCreateFormModal,
 	closeFormModal,
 	resetForm,
@@ -124,6 +130,7 @@ const {
 })
 
 const {
+	is_submitting: is_updating,
 	resetEditState,
 	openEditModal,
 	updateAddress,
@@ -131,13 +138,15 @@ const {
 	form_state,
 	form_type,
 	active_form,
-	form_field_errors,
 
+	setFormErrors,
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,
 	clearFormFieldErrors,
 })
+
+const is_submitting = computed(() => is_creating.value || is_updating.value)
 
 const replacement_addresses = computed<AddressItem[]>(() => {
 	const pending_type = pending_delete_address.value?.type
@@ -152,9 +161,10 @@ provideAddressBookFormContext({
 	active_form,
 	dynamic_fields,
 	form_field_errors,
+	is_submitting,
 	setFormType,
-	updateActiveFormField,
-	updateDynamicField,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 	submitAddressForm,
 	closeFormModal,
 })
@@ -182,13 +192,6 @@ provideAddressBookCardActionContext({
 	handleCardMenuAction,
 })
 
-onMounted(() => {
-	getAddresses('shipping')
-	getAddresses('billing')
-	getAddresses('drop')
-	address_field_store.getDynamicFields()
-})
-
 function handleCardMenuAction(payload: AddressBookMenuPayload) {
 	if (payload.action === 'edit') {
 		openEditModal(payload.item)
@@ -212,13 +215,13 @@ function handleOpenAddModal() {
 	openCreateFormModal()
 }
 
-function submitAddressForm() {
+async function submitAddressForm() {
 	if (form_modal_mode.value === 'edit') {
-		updateAddress()
+		await updateAddress()
 		return
 	}
 
-	createAddress()
+	await createAddress()
 }
 
 async function deleteAndSetDefault(type: AddressType, address_id: number) {
@@ -265,12 +268,19 @@ function skipDefaultShippingSelection() {
 					<h1 class="account-address-book-title" data-testid="account-address-book-title">
 						{{ translate('account.addressBook.title') }}
 					</h1>
+					<UiSkeleton
+						v-if="is_loading"
+						width="164px"
+						height="var(--space-2xl)"
+						border-radius="var(--radius-xl)"
+					/>
 					<UiButton
-						v-if="has_addresses"
+						v-else-if="has_addresses"
 						variant="filled"
 						tone="neutral"
 						size="md"
 						icon="regular-plus"
+						icon-size="24"
 						icon-position="left"
 						data-testid="account-address-book-add-button"
 						@click="handleOpenAddModal"
@@ -280,25 +290,17 @@ function skipDefaultShippingSelection() {
 				</header>
 
 				<div
-					v-if="has_addresses"
+					v-if="has_addresses || is_loading"
 					class="account-address-book-sections"
 					data-testid="account-address-book-sections"
 				>
 					<div class="account-address-book-primary-group">
 						<AddressBookSection
-							v-if="has_shipping_addresses"
-							section="shipping"
-							:items="shipping_address"
-						/>
-						<AddressBookSection
-							v-if="has_billing_addresses"
-							section="billing"
-							:items="billing_address"
-						/>
-						<AddressBookSection
-							v-if="has_drop_addresses"
-							section="drop"
-							:items="drop_address"
+							v-for="section in sections"
+							:key="section.section"
+							:section="section.section"
+							:items="section.loading ? [] : section.items"
+							:loading="section.loading"
 						/>
 					</div>
 				</div>
@@ -320,14 +322,21 @@ function skipDefaultShippingSelection() {
 							<h2 class="account-address-book-empty-state-title">
 								{{ translate('account.addressBook.emptyTitle') }}
 							</h2>
-							<p class="account-address-book-empty-state-description">
-								{{ translate('account.addressBook.emptyDescription') }}
-							</p>
+							<i18n-t
+								keypath="account.addressBook.emptyDescription"
+								tag="p"
+								class="account-address-book-empty-state-description"
+							>
+								<template #action>
+									<strong>"{{ translate('account.addressBook.addAddressLabel') }}"</strong>
+								</template>
+							</i18n-t>
 						</div>
 						<UiButton
 							variant="filled"
 							tone="neutral"
 							size="md"
+							icon-size="24"
 							icon="regular-plus"
 							icon-position="left"
 							class="account-address-book-empty-state-button"
@@ -416,7 +425,7 @@ function skipDefaultShippingSelection() {
 					.account-address-book-empty-state-title {
 						font-size: var(--type-size-300);
 						line-height: var(--type-line-300);
-						font-weight: var(--font-weight-bold);
+						font-weight: var(--font-weight-semibold);
 						color: var(--text-primary);
 					}
 
@@ -425,6 +434,11 @@ function skipDefaultShippingSelection() {
 						font-size: var(--type-size-100);
 						line-height: var(--type-line-100);
 						color: var(--text-secondary);
+						white-space: pre-line;
+
+						strong {
+							color: var(--black-base);
+						}
 					}
 				}
 

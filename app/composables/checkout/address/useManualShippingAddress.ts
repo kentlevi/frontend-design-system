@@ -1,19 +1,17 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
-import type { UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/address";
-import { useAddressFieldStore } from "~/stores/address";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
+import { useAddressFieldStore } from "~/stores/user-address";
 
 export function useManualShippingAddress() {
 
 	/** Stores */
-	const address_field_store = useAddressFieldStore();
+	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
 	const {
-		selected_shipping_address,
 		ship_to_another_address,
+		selected_shipping_address_id,
 	} = storeToRefs(checkout_store)
-	const { clearShippingAddress } = checkout_store
 
 
 
@@ -23,37 +21,17 @@ export function useManualShippingAddress() {
 	} = useCheckoutExperienceFeatureContext();
 
 	const {
-		form_state,
 		form_field_errors,
-		clearFormFieldError,
+		shipping_form,
+
 		populateDynamicFields,
+		clearFormFieldError,
+		resetForm,
+		updateFormFieldByType,
+		updateDynamicFieldByType,
 	} = useAddressFormCheckoutContext();
 
-	const shipping_form = computed(() => form_state.shipping);
-
-
-
-	function updateShippingField(payload: UpdateFieldPayload) {
-		Object.assign(shipping_form.value, {
-			[payload.field]: payload.value,
-		})
-
-		clearFormFieldError(payload.field)
-
-		Object.assign(selected_shipping_address.value, shipping_form.value)
-	}
-
-	function updateShippingDynamicField(payload: UpdateDynamicFieldPayload) {
-		shipping_form.value.fields[payload.field_key] = payload.value
-		clearFormFieldError(`fields.${payload.field_key}`)
-
-		Object.assign(selected_shipping_address.value, shipping_form.value)
-	}
-
-
-
-	/** Clear data before component mounts */
-	clearShippingAddress()
+	resetForm('shipping')
 
 	onMounted(async () => {
 		if (address_field_store.dynamic_address_fields.length === 0) {
@@ -66,15 +44,13 @@ export function useManualShippingAddress() {
 	return {
 		t,
 		is_member,
-		form_state,
 		form_field_errors,
 		shipping_form,
-		selected_shipping_address,
 		ship_to_another_address,
+		selected_shipping_address_id,
 
 		clearFormFieldError,
-		populateDynamicFields,
-		updateShippingField,
-		updateShippingDynamicField,
+		updateFormFieldByType,
+		updateDynamicFieldByType,
 	}
 }

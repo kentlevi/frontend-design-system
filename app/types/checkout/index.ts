@@ -2,7 +2,7 @@ import type { ProductItem } from '~/types/products/catalog';
 import type { LocalizedCatalogProduct } from '~/helpers/cart/cartState.helper';
 import type { ApiResponse } from '~/types/config/api'
 import type { PaymentCode } from '../payments/payment';
-import type { AddressMap, AddressType } from "~/types/address";
+import type { AddressFormMap, AddressType } from "~/types/user-address";
 
 export type CheckoutItem = {
 	id: string;
@@ -13,27 +13,10 @@ export type CheckoutItem = {
 	artworkPreviewUrl: string;
 };
 
-export type MemberAddress = {
-	id: string;
-	recipient: string;
-	phone?: string;
-	line1: string;
-	line2: string;
-	company?: string;
-	label?: string;
-	isDefault?: boolean;
-	badgeLabel?: string;
-};
-
-export type MemberDropShippingAddress = {
-	id: string;
-	recipient: string;
-	company?: string;
-	label?: string;
-	isDefault?: boolean;
-};
-
 export type CheckoutResponseData = {
+	order?: {
+		id:number
+	}
 	payment_information?: {
 		redirect_url?: string
 	}
@@ -45,12 +28,15 @@ export type InitialCheckoutPayload = {
 	email?: string
 	contact_name?:string
 	phone_number?:string
+	selected_cart_ids?:string[] | number[]
 }
 
 export type completeCheckoutPayload = {
 	order_id : number
-	shipping_address:AddressMap[AddressType] | null
-	billing_address: AddressMap[AddressType] | null
+	shipping_address:AddressFormMap[AddressType]
+	billing_address: AddressFormMap[AddressType]
+	drop_address: AddressFormMap[AddressType] | null
+	selected_cart_ids: string[]
 }
 
 export type CheckoutApiResponse = ApiResponse<CheckoutResponseData>

@@ -4,37 +4,110 @@ import type { InitialCheckoutPayload } from "~/types/checkout"
 import { useUsersStore } from '~/stores/users/users.store';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import type { PaymentCode } from "~/types/payments/payment";
-import { useAddressHelper } from '~/utils/address';
+import { useAddressFormCheckoutContext } from "../address/context/addressFormCheckoutContext";
+import { validateAddress } from "~/services/address/address.service";
+import { useAddressHelper } from "~/utils/address";
+import { useAddressGeneralUICheckoutContext } from "../address/context/addressGeneralUICheckoutContext";
+import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
+import { useCartStore } from "~/stores/cart";
+import { useCartService } from "~/services/cart/cart.service";
 
 export const useCheckoutFlow = () => {
 
+	const { mapApiFieldErrors } = useAddressHelper()
+
 	const payment = usePaymentStrategy()
 	const { state } = storeToRefs(useUsersStore())
+	const { selected_total } = useCartService();
 	const {
+		guest_contact_state,
 		selected_shipping_method_id,
 		selected_payment_method,
-		selected_shipping_address
 	} = storeToRefs(useMainCheckOutStore())
+	const {
+		selected_ids,
+	} = storeToRefs(useCartStore())
 
 	const {
-		shippingPhoneNumber,
-	} = useAddressHelper()
+		shipping_form,
+		drop_form,
+		billing_form,
 
-	const initializeSubmitCheckoutParams = (): InitialCheckoutPayload => {
+		setFormErrors,
+		clearFormFieldErrors
+	} = useAddressFormCheckoutContext()
+
+	const {
+		drop_shipping_enabled,
+		use_shipping_as_billing,
+	} = useAddressGeneralUICheckoutContext()
+
+	const total_cost = computed(() => selected_total.value)
+
+
+
+
+	async function validateAddresses(): Promise<boolean> {
+		clearFormFieldErrors()
+
+		const forms_to_validate: Array<
+		ShippingAddressForm | BillingAddressForm | DropAddressForm
+		> = [shipping_form.value]
+
+		if (drop_shipping_enabled.value) {
+			forms_to_validate.push(drop_form.value)
+		}
+
+		if (!use_shipping_as_billing.value) {
+			forms_to_validate.push(billing_form.value)
+		}
+
+		const results = await Promise.all(
+			forms_to_validate.map(async (form) => {
+				const response = await validateAddress(form)
+
+				if (!response?.success) {
+					const next_errors = mapApiFieldErrors(response?.data)
+					setFormErrors(form.type, next_errors)
+					return false
+				}
+
+				return true
+			})
+		)
+
+		return !results.some(result => !result)
+	}
+
+	const buildCheckoutPayload = (): InitialCheckoutPayload => {
 
 		return {
 			shipping_method_id: selected_shipping_method_id.value,
 			payment_method_code: selected_payment_method.value?.code as PaymentCode,
-			email: state.value.email,
+			email: state.value.id !== 0
+				? state.value.email
+				: guest_contact_state.value.email,
 			contact_name:
-				selected_shipping_address.value?.contact_name ?? state.value.email,
+				shipping_form.value?.contact_name
+				?? (state.value.id !== 0
+					? state.value.email
+					: guest_contact_state.value.email),
 			phone_number:
-				selected_shipping_address.value ? shippingPhoneNumber(selected_shipping_address.value) : ''
+				shipping_form.value.phone_number,
+			selected_cart_ids: selected_ids.value,
 		}
 	}
 
+
+
+
 	const submitCheckout = async () => {
-		const params = initializeSubmitCheckoutParams()
+
+		const is_valid = await validateAddresses()
+
+		if (!is_valid) return
+
+		const params = buildCheckoutPayload()
 
 		try {
 			const response = await checkoutRequest(params)
@@ -52,6 +125,8 @@ export const useCheckoutFlow = () => {
 	}
 
 	return {
+		selected_total,
+		total_cost,
 		submitCheckout
 	}
 }

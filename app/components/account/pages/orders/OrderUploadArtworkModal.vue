@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useOrderUploadArtworkModal } from '~/composables/account/orders/useOrderUploadArtworkModal';
+const { t } = useI18n();
 
 const emit = defineEmits<{
 	submit: [{ itemNumber: string; instructions: string; files: File[] }];
 }>();
+
+function resolveOrderText(value: string) {
+	return value.startsWith('account.') ? t(value) : value;
+}
 
 const {
 	is_open,
@@ -40,169 +45,121 @@ function submitUpload() {
 		width="720px"
 		padding="0"
 		gap="0"
+		:title="item ? t('account.orders.upload.title', { number: item.number }) : ''"
 		modal-class="account-orders-upload-modal-shell"
 		@update:model-value="!$event && close_modal()"
 	>
-		<section v-if="item" class="account-orders-upload-modal">
-			<header class="account-orders-upload-modal-header">
-				<h3 class="account-orders-upload-modal-title">Upload Artwork - Item No. {{ item.number }}</h3>
-				<button
-					type="button"
-					class="account-orders-upload-modal-close"
-					aria-label="Close upload artwork modal"
-					@click="close_modal"
-				>
-					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
-				</button>
-			</header>
+		<div v-if="item" class="account-orders-upload-modal-body">
+			<section class="account-orders-upload-details-card">
+				<h4 class="account-orders-upload-section-title">{{ t('account.orders.upload.itemDetails') }}</h4>
+				<div class="account-orders-upload-details-grid">
+					<div class="account-orders-upload-details-row">
+						<span class="account-orders-upload-details-label">{{ t('account.orders.upload.product') }}</span>
+						<strong class="account-orders-upload-details-value">{{ resolveOrderText(item.productName) }}</strong>
+					</div>
+					<div class="account-orders-upload-details-row">
+						<span class="account-orders-upload-details-label">{{ t('account.orders.upload.size') }}</span>
+						<strong class="account-orders-upload-details-value">{{ item.size }}</strong>
+					</div>
+					<div class="account-orders-upload-details-row">
+						<span class="account-orders-upload-details-label">{{ t('account.orders.upload.quantity') }}</span>
+						<strong class="account-orders-upload-details-value">{{ item.quantity }} {{ t('account.orders.upload.pcs') }}</strong>
+					</div>
+				</div>
+			</section>
 
-			<div class="account-orders-upload-modal-body">
-				<section class="account-orders-upload-details-card">
-					<h4 class="account-orders-upload-section-title">Item Details:</h4>
-					<div class="account-orders-upload-details-grid">
-						<div class="account-orders-upload-details-row">
-							<span class="account-orders-upload-details-label">Product:</span>
-							<strong class="account-orders-upload-details-value">{{ item.productName }}</strong>
+			<section class="account-orders-upload-dropzone">
+				<template v-if="!primary_file">
+					<div class="account-orders-upload-dropzone-copy">
+						<p class="account-orders-upload-dropzone-title">
+							<UiIcon name="regular-upload" size="24" color="var(--text-primary)" />
+							<span>{{ t('account.orders.upload.dragAndDrop') }}</span>
+						</p>
+						<p class="account-orders-upload-dropzone-meta">
+							{{ t('account.orders.upload.acceptedFiletypes') }}
+						</p>
+					</div>
+
+					<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="open_file_picker">
+						{{ t('account.orders.upload.selectFiles') }}
+					</UiButton>
+				</template>
+				<template v-else>
+					<div class="account-orders-upload-dropzone-copy account-orders-upload-dropzone-copy--file">
+						<div class="account-orders-upload-file-thumb">
+							<img
+								v-if="primary_file_preview_url"
+								:src="primary_file_preview_url"
+								:alt="primary_file.name"
+								class="account-orders-upload-file-image"
+							>
+							<UiIcon v-else name="regular-file-image" size="24" color="var(--text-primary)" />
 						</div>
-						<div class="account-orders-upload-details-row">
-							<span class="account-orders-upload-details-label">Size:</span>
-							<strong class="account-orders-upload-details-value">{{ item.size }}</strong>
-						</div>
-						<div class="account-orders-upload-details-row">
-							<span class="account-orders-upload-details-label">Quantity:</span>
-							<strong class="account-orders-upload-details-value">{{ item.quantity }} pcs</strong>
+						<div class="account-orders-upload-file-copy">
+							<p class="account-orders-upload-dropzone-title">{{ primary_file.name }}</p>
+							<p class="account-orders-upload-dropzone-meta">
+								{{ primary_file_extension }} | {{ primary_file_size_label }}
+							</p>
 						</div>
 					</div>
-				</section>
 
-				<section class="account-orders-upload-dropzone">
-					<template v-if="!primary_file">
-						<div class="account-orders-upload-dropzone-copy">
-							<p class="account-orders-upload-dropzone-title">
-								<UiIcon name="regular-upload" size="24" color="var(--text-primary)" />
-								<span>Drag and drop files to upload</span>
-							</p>
-							<p class="account-orders-upload-dropzone-meta">
-								Accepted filetypes: .eps, .ai, .psd, .pdf, .tif, .png and .jpg
-							</p>
-						</div>
-
-						<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="open_file_picker">
-							Select Files
+					<div class="account-orders-upload-file-actions">
+						<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="open_file_picker">
+							{{ t('account.orders.upload.replaceImage') }}
 						</UiButton>
-					</template>
-					<template v-else>
-						<div class="account-orders-upload-dropzone-copy account-orders-upload-dropzone-copy--file">
-							<div class="account-orders-upload-file-thumb">
-								<img
-									v-if="primary_file_preview_url"
-									:src="primary_file_preview_url"
-									:alt="primary_file.name"
-									class="account-orders-upload-file-image"
-								>
-								<UiIcon v-else name="regular-file-image" size="24" color="var(--text-primary)" />
-							</div>
-							<div class="account-orders-upload-file-copy">
-								<p class="account-orders-upload-dropzone-title">{{ primary_file.name }}</p>
-								<p class="account-orders-upload-dropzone-meta">
-									{{ primary_file_extension }} | {{ primary_file_size_label }}
-								</p>
-							</div>
-						</div>
+						<UiButton
+							type="button"
+							variant="outline"
+							tone="neutral"
+							size="md"
+							icon-only
+							icon="regular-trash"
+							icon-size="24"
+							:sr-label="t('account.orders.upload.removeArtwork')"
+							width="48px"
+							height="48px"
+							@click="remove_selected_artwork"
+						/>
+					</div>
+				</template>
 
-						<div class="account-orders-upload-file-actions">
-							<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="open_file_picker">
-								Replace Image
-							</UiButton>
-							<UiButton
-								type="button"
-								variant="outline"
-								tone="neutral"
-								size="md"
-								icon-only
-								icon="regular-trash"
-								icon-size="24"
-								sr-label="Remove uploaded artwork"
-								width="48px"
-								height="48px"
-								@click="remove_selected_artwork"
-							/>
-						</div>
-					</template>
+				<input
+					ref="file_input_ref"
+					type="file"
+					multiple
+					accept=".eps,.ai,.psd,.pdf,.tif,.png,.jpg,.jpeg"
+					class="account-orders-upload-hidden-input"
+					@change="handle_file_change"
+				>
+			</section>
 
-					<input
-						ref="file_input_ref"
-						type="file"
-						multiple
-						accept=".eps,.ai,.psd,.pdf,.tif,.png,.jpg,.jpeg"
-						class="account-orders-upload-hidden-input"
-						@change="handle_file_change"
-					>
-				</section>
+			<section class="account-orders-upload-notes">
+				<h4 class="account-orders-upload-section-title">{{ t('account.orders.upload.specialInstructions') }}</h4>
+				<UiTextarea
+					:model-value="special_instructions"
+					:rows="4"
+					resize="none"
+					field-class="account-orders-upload-notes-field"
+					:placeholder="t('account.orders.upload.specialInstructionsPlaceholder')"
+					@update:model-value="special_instructions = String($event)"
+				/>
+			</section>
+		</div>
 
-				<section class="account-orders-upload-notes">
-					<h4 class="account-orders-upload-section-title">Special Instructions</h4>
-					<UiTextarea
-						:model-value="special_instructions"
-						:rows="4"
-						resize="none"
-						field-class="account-orders-upload-notes-field"
-						placeholder="Enter special instruction here...."
-						@update:model-value="special_instructions = String($event)"
-					/>
-				</section>
-			</div>
-
-			<footer class="account-orders-upload-modal-footer">
+		<template #footer>
+			<div v-if="item" class="account-orders-upload-modal-footer ui-modal-footer-item">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="close_modal">
-					Cancel
+					{{ t('account.orders.upload.cancel') }}
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="submitUpload">
-					Submit
+					{{ t('account.orders.upload.submit') }}
 				</UiButton>
-			</footer>
-		</section>
+			</div>
+		</template>
 	</UiModal>
 </template>
 
 <style scoped lang="scss">
-.account-orders-upload-modal {
-	display: grid;
-	grid-template-rows: auto minmax(0, 1fr) auto;
-	background: var(--contrast-light);
-	border: 1px solid var(--gray-40);
-	border-radius: 12px;
-	overflow: hidden;
-}
-
-.account-orders-upload-modal-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 18px 24px;
-	border-bottom: 1px solid var(--gray-40);
-}
-
-.account-orders-upload-modal-title {
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.account-orders-upload-modal-close {
-	border: 0;
-	background: transparent;
-	padding: 0;
-	width: 24px;
-	height: 24px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-}
-
 .account-orders-upload-modal-body {
 	display: grid;
 	gap: 24px;
@@ -334,8 +291,6 @@ function submitUpload() {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: 16px;
-	padding: 16px 24px 24px;
 }
 
 @media (max-width: 760px) {

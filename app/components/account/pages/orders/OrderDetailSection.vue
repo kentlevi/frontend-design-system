@@ -22,6 +22,10 @@ const {
 	hide_upload_toast,
 	handle_upload_submit,
 } = useOrderDetailSection(toRef(props, 'order'));
+
+function resolveOrderText(value: string) {
+	return value.startsWith('account.') ? t(value) : value;
+}
 </script>
 
 <template>
@@ -53,7 +57,7 @@ const {
 					:name="isDetailOpen ? 'regular-chevron-up' : 'regular-chevron-down'"
 					:size="20"
 				/>
-				<span>{{ t('account.orders.moreDetails') }}</span>
+				<span>{{ t(isDetailOpen ? 'account.orders.lessDetails' : 'account.orders.moreDetails') }}</span>
 			</button>
 		</header>
 
@@ -86,7 +90,7 @@ const {
 							{{ t(`account.orders.${order.paymentStatusKey}`) }}
 						</UiBadge>
 						<span class="account-orders-payment-method">
-							{{ t('account.orders.paymentMethod', { method: order.paymentMethodLabel }) }}
+							{{ t('account.orders.paymentMethod', { method: resolveOrderText(order.paymentMethodLabel) }) }}
 						</span>
 					</div>
 				</article>
@@ -161,7 +165,12 @@ const {
 						:class="line.className"
 					>
 						<span class="account-orders-total-label">
-							{{ t(`account.orders.summary.${line.key}`, line.params || {}) }}
+							{{ t(
+								line.key === 'total'
+									? 'account.orders.summary.finalTotal'
+									: `account.orders.summary.${line.key}`,
+								line.params || {}
+							) }}
 						</span>
 						<strong class="account-orders-total-value">{{ line.value }}</strong>
 					</div>

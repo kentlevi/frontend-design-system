@@ -1,3 +1,55 @@
+<script setup lang="ts">
+import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
+import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
+import { usePaymentMethod } from '~/composables/payments/usePaymentMethod';
+import { useMainCheckOutStore } from '~/stores/checkout/index.store';
+
+const {
+	t,
+	payment_brands,
+	is_accredited_banks_modal_open,
+} = useCheckoutExperienceFeatureContext();
+
+const payment_meta_swap_wrapper_ref = ref<HTMLElement | null>(null);
+
+const {
+	enter_duration_ms,
+	leave_duration_ms,
+	beforeEnter,
+	enter,
+	afterEnter,
+	beforeLeave,
+	leave,
+	afterLeave,
+} = useCheckoutFeatureTransition();
+
+const {
+	available_payment_methods,
+	getAvailablePaymentMethod
+} = usePaymentMethod()
+
+const {
+	selected_payment_method
+} = storeToRefs(useMainCheckOutStore())
+
+useHeightTransition(
+	payment_meta_swap_wrapper_ref,
+	selected_payment_method,
+	() =>
+		selected_payment_method.value?.code === 'CC'
+			? '[data-payment-panel="credit-card"]'
+			: selected_payment_method.value?.code === 'BT_TOSS'
+				? '[data-payment-panel="bank-transfer"]'
+				: null,
+	{ enterDurationMs: enter_duration_ms, leaveDurationMs: leave_duration_ms }
+);
+
+onMounted(async()=>{
+	await getAvailablePaymentMethod()
+})
+</script>
+
 <template>
 	<div class="checkout-member-payment-group">
 		<div class="checkout-member-card-grid checkout-member-card-grid--payments">
@@ -31,7 +83,7 @@
 								class="checkout-member-subnote-button"
 								@click="is_accredited_banks_modal_open = true"
 							>
-								List of Accredited Banks:
+								{{ t('checkout.member.paymentMeta.accreditedBanks') }}
 							</button>
 							<div class="checkout-member-payment-brands">
 								<div v-for="brand in payment_brands" :key="brand.key" class="checkout-member-payment-brand">
@@ -39,47 +91,13 @@
 								</div>
 							</div>
 						</div>
-						<div class="checkout-member-field-stack">
-							<UiFormField
-								:label="t('checkout.member.fields.cardNumber.label')"
-								:required="true"
-								:show-required-mark="true"
-								head-class="checkout-form-field-head"
-								label-class="checkout-form-field-label"
-								label-text-class="checkout-form-field-label-text"
-							>
-								<UiInput v-model="card_number" size="md" :placeholder="t('checkout.member.fields.cardNumber.placeholder')" />
-							</UiFormField>
-							<div class="checkout-member-field-grid">
-								<UiFormField
-									:label="t('checkout.member.fields.expiration.label')"
-									:required="true"
-									:show-required-mark="true"
-									head-class="checkout-form-field-head"
-									label-class="checkout-form-field-label"
-									label-text-class="checkout-form-field-label-text"
-								>
-									<UiInput v-model="expiry" size="md" :placeholder="t('checkout.member.fields.expiration.placeholder')" />
-								</UiFormField>
-								<UiFormField
-									:label="t('checkout.member.fields.cvv.label')"
-									:required="true"
-									:show-required-mark="true"
-									head-class="checkout-form-field-head"
-									label-class="checkout-form-field-label"
-									label-text-class="checkout-form-field-label-text"
-								>
-									<UiInput v-model="cvv" size="md" :placeholder="t('checkout.member.fields.cvv.placeholder')" />
-								</UiFormField>
-							</div>
-						</div>
 					</div>
 				</div>
-				<div v-else-if="selected_payment_method?.code === 'BT'" data-payment-panel="bank-transfer" class="checkout-member-payment-meta-panel">
+				<div v-else-if="selected_payment_method?.code === 'BT_TOSS'" data-payment-panel="bank-transfer" class="checkout-member-payment-meta-panel">
 					<div class="checkout-member-payment-meta-block">
 						<div class="checkout-member-payment-transfer-meta">
 							<div class="checkout-member-payment-transfer-note">
-								Note: Kindly allow 1-2 business days for bank transfer payments to be processed and cleared.
+								{{ t('checkout.member.paymentMeta.bankTransferNote') }}
 							</div>
 							<div class="checkout-member-payment-transfer-brand">
 								<img
@@ -95,66 +113,6 @@
 		</div>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
-import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { usePaymentMethod } from '~/composables/payments/usePaymentMethod';
-import { useMainCheckOutStore } from '~/stores/checkout/index.store';
-
-const {
-	t,
-	payment_brands,
-	billing_tooltip_open,
-	card_number,
-	expiry,
-	cvv,
-	is_accredited_banks_modal_open,
-} = useCheckoutExperienceFeatureContext();
-
-const payment_meta_swap_wrapper_ref = ref<HTMLElement | null>(null);
-const billing_tooltip_ref = ref<HTMLElement | null>(null);
-
-const {
-	enter_duration_ms,
-	leave_duration_ms,
-	beforeEnter,
-	enter,
-	afterEnter,
-	beforeLeave,
-	leave,
-	afterLeave,
-} = useCheckoutFeatureTransition();
-
-const {
-	available_payment_methods,
-	getAvailablePaymentMethod
-} = usePaymentMethod()
-
-const {
-	selected_payment_method
-} = storeToRefs(useMainCheckOutStore())
-
-useDismissibleTooltip(billing_tooltip_ref, billing_tooltip_open);
-
-useHeightTransition(
-	payment_meta_swap_wrapper_ref,
-	selected_payment_method,
-	() =>
-		selected_payment_method.value?.code === 'CC'
-			? '[data-payment-panel="credit-card"]'
-			: selected_payment_method.value?.code === 'BT'
-				? '[data-payment-panel="bank-transfer"]'
-				: null,
-	{ enterDurationMs: enter_duration_ms, leaveDurationMs: leave_duration_ms }
-);
-
-onMounted(async()=>{
-	await getAvailablePaymentMethod()
-})
-</script>
 
 <style scoped lang="scss">
 .checkout-member-payment-group,

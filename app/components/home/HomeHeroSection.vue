@@ -51,7 +51,7 @@ async function onOrderNowClick() {
 <style scoped lang="scss">
 .home-hero {
     background: var(--brand-primary);
-    padding: 92px 0;
+    height: 336px;
 
     .home-hero-container {
         display: flex;
@@ -59,6 +59,7 @@ async function onOrderNowClick() {
         align-items: center;
         position: relative;
         max-width: 1200px;
+        height: 100%;
         margin: 0 auto;
 
         .home-hero-art {
@@ -66,13 +67,14 @@ async function onOrderNowClick() {
             left: 144px;
             z-index: 1;
             pointer-events: none;
-            max-height: 274px;
-            max-width: 225px;
+            max-height: 248px;
+            max-width: 204px;
 
             .home-hero-art-image {
                 object-fit: contain;
                 display: block;
                 position: relative;
+                height: 100%;
             }
         }
 

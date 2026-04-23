@@ -1,6 +1,6 @@
-import { setDefault } from "~/services/profile/address.service";
-import { useAddressStore } from "~/stores/address";
-import type { AddressMap, AddressType } from "~/types/address";
+import { setDefault } from "~/services/user-address/api.service";
+import { useUserAddressStore } from "~/stores/user-address";
+import type { AddressMap, AddressType } from "~/types/user-address";
 import { useAddressHelper } from "~/utils/address/index"
 
 type UseAddressDefaultFlowOptions = {
@@ -17,7 +17,7 @@ export function useAddressDefaultFlow(options: UseAddressDefaultFlowOptions) {
 	/**
      * Store
      */
-	const address_store = useAddressStore()
+	const address_store = useUserAddressStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 	const toast_store = useToastStore()
 
@@ -43,10 +43,6 @@ export function useAddressDefaultFlow(options: UseAddressDefaultFlowOptions) {
 
 		try {
 			const response = await setAddressDefault(type, id)
-
-			if (response?.success) {
-				address_store.setDefault(type, id)
-			}
 
 			toast_store.handleApiResponse(response)
 		} catch (_error: unknown) {

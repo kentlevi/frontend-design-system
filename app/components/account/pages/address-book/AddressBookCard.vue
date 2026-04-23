@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { AddressMap, AddressType } from '~/types/address';
+import type { AddressMap, AddressType } from '~/types/user-address';
 import type { ComponentPublicInstance } from 'vue';
 import { useAddressHelper } from '~/utils/address';
 import { useAddressBookCardActionContext } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
+import { address_book_tag_badge_colors, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';
 
 const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
 const address_book_card_action_context = useAddressBookCardActionContext()
@@ -10,8 +11,9 @@ const address_book_card_action_context = useAddressBookCardActionContext()
 type MenuActionKey = 'edit' | 'delete' | 'default';
 
 type CardProps = {
-	item: AddressMap[AddressType];
-	index: number;
+	item?: AddressMap[AddressType];
+	index?: number;
+	loading?: boolean;
 };
 
 const props = defineProps<CardProps>()
@@ -19,6 +21,7 @@ const props = defineProps<CardProps>()
 const { t } = useI18n();
 const menu_wrap_ref = ref<HTMLElement | null>(null)
 const is_menu_open = ref(false)
+const active_menu_action = ref<MenuActionKey | null>(null)
 
 const menu_actions = computed(() => {
 	return [
@@ -40,25 +43,14 @@ const menu_actions = computed(() => {
 	] as const
 })
 
-const tag_badge_colors = {
-	home: {
-		bgColor: 'var(--aloha-10)',
-		textColor: 'var(--aloha-60)',
-	},
-	office: {
-		bgColor: 'var(--neon-blue-10)',
-		textColor: 'var(--neon-blue-60)',
-	},
-	client: {
-		bgColor: 'var(--azure-10)',
-		textColor: 'var(--azure-60)',
-	},
-} as const;
-
-const shipping_phone_number = computed(() => shippingPhoneNumber(props.item))
+const shipping_phone_number = computed(() => props.item ? shippingPhoneNumber(props.item) : '')
 
 /** Build all visible address lines for the template */
-const address_line_text = computed(() => buildAddressLines(props.item))
+const address_line_text = computed(() => props.item ? buildAddressLines(props.item).trim() : '')
+
+function getAddressLabel(label: string) {
+	return getTranslatedAddressBookLabel(label, t)
+}
 
 function setMenuWrapRef(element: Element | ComponentPublicInstance | null) {
 	menu_wrap_ref.value = element instanceof HTMLElement ? element : null
@@ -66,10 +58,15 @@ function setMenuWrapRef(element: Element | ComponentPublicInstance | null) {
 
 function closeMenu() {
 	is_menu_open.value = false
+	active_menu_action.value = null
 }
 
 function toggleMenu() {
-	is_menu_open.value = !is_menu_open.value
+	if (is_menu_open.value) {
+		closeMenu()
+	} else {
+		is_menu_open.value = true
+	}
 }
 
 function handleDocumentClick(event: MouseEvent) {
@@ -89,6 +86,8 @@ function handleWindowKeydown(event: KeyboardEvent) {
 }
 
 function handleMenuAction(action: MenuActionKey) {
+	if (!props?.item) return
+
 	closeMenu()
 	address_book_card_action_context.handleCardMenuAction({
 		action,
@@ -109,14 +108,38 @@ onBeforeUnmount(() => {
 
 <template>
 	<article
+		v-if="props.loading"
 		class="account-address-book-card"
-		:data-testid="`account-address-book-item-${props.item.type}-${props.index}`"
+	>
+		<header class="account-address-book-card-header">
+			<UiSkeleton width="120px" height="24px" />
+			<UiSkeleton width="40px" height="40px" border-radius="var(--radius-xl)" />
+		</header>
+		<div class="account-address-book-card-body">
+			<div class="account-address-book-card-copy account-address-book-card-copy--skeleton">
+				<UiSkeleton width="140px" height="20px" />
+				<UiSkeleton width="100%" height="20px" />
+				<UiSkeleton width="80px" height="20px" />
+			</div>
+			<UiSkeleton
+				width="64px"
+				height="32px"
+				border-radius="16px"
+				class="account-address-book-card-badge-skeleton"
+			/>
+		</div>
+	</article>
+
+	<article
+		v-else
+		class="account-address-book-card"
+		:data-testid="`account-address-book-item-${props.item?.type}-${props.index}`"
 	>
 		<header class="account-address-book-card-header">
 			<div class="account-address-book-card-title-row">
-				<h3 class="account-address-book-card-name">{{ props.item.contact_name }}</h3>
+				<h3 class="account-address-book-card-name">{{ props.item?.contact_name }}</h3>
 				<UiBadge
-					v-if="props.item.is_default && props.item.type === 'shipping'"
+					v-if="props.item?.is_default && props.item.type === 'shipping'"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -124,10 +147,10 @@ onBeforeUnmount(() => {
 					text-color="var(--gray-80)"
 				>
 					<UiIcon name="strong-ship" :size="18" />
-					<span class="account-address-book-card-default-badge-copy">Default Shipping</span>
+					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeShipping') }}</span>
 				</UiBadge>
 				<UiBadge
-					v-else-if="props.item.is_default && props.item.type === 'billing'"
+					v-else-if="props.item?.is_default && props.item?.type === 'billing'"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -135,10 +158,10 @@ onBeforeUnmount(() => {
 					text-color="var(--gray-80)"
 				>
 					<UiIcon name="strong-file-dollar" :size="18" />
-					<span class="account-address-book-card-default-badge-copy">Default Billing</span>
+					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeBilling') }}</span>
 				</UiBadge>
 				<UiBadge
-					v-else-if="props.item.is_default && props.item.type === 'drop'"
+					v-else-if="props.item?.is_default && props.item?.type === 'drop'"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -146,10 +169,10 @@ onBeforeUnmount(() => {
 					text-color="var(--gray-80)"
 				>
 					<UiIcon name="strong-box-full" :size="18" />
-					<span class="account-address-book-card-default-badge-copy">Default Drop Shipping</span>
+					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeDrop') }}</span>
 				</UiBadge>
 				<UiBadge
-					v-else-if="props.item.is_default"
+					v-else-if="props.item?.is_default"
 					variant="outline"
 					tone="default"
 					size="md"
@@ -167,8 +190,11 @@ onBeforeUnmount(() => {
 					height="40px"
 					width="40px"
 					:no-hover="true"
-					class="account-address-book-menu-button"
-					:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-button`"
+					:class="[
+						'account-address-book-menu-button',
+						{ 'account-address-book-menu-button--active': is_menu_open }
+					]"
+					:data-testid="`account-address-book-item-menu-${props.item?.type}-${props.index}-button`"
 					@click="toggleMenu"
 				>
 					<UiIcon name="regular-ellipsis-horizontal" :size="24" />
@@ -178,7 +204,7 @@ onBeforeUnmount(() => {
 					<div
 						v-if="is_menu_open"
 						class="account-address-book-menu-dropdown"
-						:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}`"
+						:data-testid="`account-address-book-item-menu-${props.item?.type}-${props.index}`"
 					>
 						<button
 							v-for="action in menu_actions"
@@ -187,8 +213,9 @@ onBeforeUnmount(() => {
 							class="account-address-book-menu-item"
 							:class="{
 								'account-address-book-menu-item--danger': action.tone === 'danger',
+								'account-address-book-menu-item--active': active_menu_action === action.key,
 							}"
-							:data-testid="`account-address-book-item-menu-${props.item.type}-${props.index}-${action.key}`"
+							:data-testid="`account-address-book-item-menu-${props.item?.type}-${props.index}-${action.key}`"
 							@click="handleMenuAction(action.key)"
 						>
 							{{ action.label }}
@@ -198,35 +225,28 @@ onBeforeUnmount(() => {
 			</div>
 		</header>
 		<div class="account-address-book-card-body">
-			<div class="account-address-book-card-footer">
-				<div class="account-address-book-card-copy">
-					<p v-if="shipping_phone_number" class="account-address-book-card-phone">
-						{{ shipping_phone_number }}
-					</p>
+			<div v-if="shipping_phone_number || address_line_text || props.item?.company" class="account-address-book-card-copy">
+				<p v-if="shipping_phone_number" class="account-address-book-card-phone">
+					{{ shipping_phone_number }}
+				</p>
+				<p v-if="address_line_text" class="account-address-book-card-address">
+					{{ address_line_text }}
+				</p>
 
-					<div style="display: flex; gap: 4px;">
-						<p
-							class="account-address-book-card-address"
-						>
-							{{ address_line_text }}
-						</p>
-					</div>
-
-					<span v-if="props.item.company" class="account-address-book-card-company">
-						{{ props.item.company }}
-					</span>
-				</div>
-				<UiBadge
-					v-if="props.item.label"
-					variant="tonal"
-					tone="default"
-					size="md"
-					:bg-color="tag_badge_colors[props.item.label.toLowerCase() as keyof typeof tag_badge_colors]?.bgColor || 'var(--gray-10)'"
-					:text-color="tag_badge_colors[props.item.label.toLowerCase() as keyof typeof tag_badge_colors]?.textColor || 'var(--gray-60)'"
-				>
-					{{ t(`account.addressBook.tags.${props.item.label}`) }}
-				</UiBadge>
+				<span v-if="props.item?.company" class="account-address-book-card-company">
+					{{ props.item.company }}
+				</span>
 			</div>
+			<UiBadge
+				v-if="props.item?.label"
+				variant="tonal"
+				tone="default"
+				size="md"
+				:bg-color="address_book_tag_badge_colors[props?.item.label.toLowerCase() as keyof typeof address_book_tag_badge_colors]?.bgColor || 'var(--gray-10)'"
+				:text-color="address_book_tag_badge_colors[props?.item.label.toLowerCase() as keyof typeof address_book_tag_badge_colors]?.textColor || 'var(--gray-60)'"
+			>
+				{{ getAddressLabel(props.item.label) }}
+			</UiBadge>
 		</div>
 	</article>
 </template>
@@ -280,6 +300,10 @@ onBeforeUnmount(() => {
 				color: var(--text-primary);
 				flex-shrink: 0;
 				padding: 0;
+
+				&.account-address-book-menu-button--active {
+					background-color: var(--gray-40) !important;
+				}
 			}
 
 			.account-address-book-menu-dropdown {
@@ -309,16 +333,13 @@ onBeforeUnmount(() => {
 					cursor: pointer;
 					transition: background-color 0.18s ease, color 0.18s ease;
 
-					&:hover {
-						background: var(--gray-10);
+					&:hover,
+					&.account-address-book-menu-item--active {
+						background: var(--gray-20);
 					}
 
 					&.account-address-book-menu-item--danger {
 						color: var(--error-60, #ff3838);
-
-						&:hover {
-							background: color-mix(in srgb, var(--error-10, #fff0f0) 100%, transparent);
-						}
 					}
 				}
 			}
@@ -327,31 +348,40 @@ onBeforeUnmount(() => {
 
 	.account-address-book-card-body {
 		padding: 20px 24px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
 
-		.account-address-book-card-phone {
-			color: var(--text-primary);
-			font-size: var(--type-size-100);
-			font-weight: var(--font-weight-semibold);
-			line-height: var(--type-line-100);
-		}
-
-		.account-address-book-card-address {
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-			color: var(--text-secondary);
-		}
-
-		.account-address-book-card-footer {
+		.account-address-book-card-copy {
 			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 24px;
+			flex-direction: column;
 
+			&.account-address-book-card-copy--skeleton {
+				flex: 1;
+				gap: 4px;
+			}
+
+			.account-address-book-card-phone,
+			.account-address-book-card-address,
 			.account-address-book-card-company {
-				color: var(--text-secondary);
 				font-size: var(--type-size-100);
 				line-height: var(--type-line-100);
 			}
+
+			.account-address-book-card-phone {
+				color: var(--text-primary);
+				font-weight: var(--font-weight-semibold);
+			}
+
+			.account-address-book-card-address,
+			.account-address-book-card-company {
+				color: var(--text-secondary);
+			}
+		}
+
+		.account-address-book-card-badge-skeleton {
+			flex-shrink: 0;
 		}
 	}
 }
@@ -387,10 +417,8 @@ onBeforeUnmount(() => {
 		}
 
 		.account-address-book-card-body {
-			.account-address-book-card-footer {
-				align-items: flex-start;
-				flex-direction: column;
-			}
+			align-items: flex-start;
+			flex-direction: column;
 		}
 	}
 }

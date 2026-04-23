@@ -39,6 +39,7 @@ const {
 	has_lettering_editor,
 	vinyl_preview_ready,
 	url_slug,
+	selected_id,
 
 	// Actions
 	proceedToNextStep,
@@ -168,6 +169,17 @@ const quantity_skeleton_count = computed(() => {
 	return resolved_quantity_count.value || remembered_count || default_quantity_count;
 });
 
+const ships_tomorrow_benefit = computed(() => {
+	const product_specific_key = selected_id.value
+		? `product.price.benefitShipsTomorrowByProduct.${selected_id.value}`
+		: '';
+	const product_specific_copy = product_specific_key ? t(product_specific_key) : '';
+
+	return product_specific_copy && product_specific_copy !== product_specific_key
+		? product_specific_copy
+		: t('product.price.benefitShipsTomorrow');
+});
+
 const has_pending_custom_selection = computed(() => {
 	const size_source = is_custom_size.value ? custom_size.value : size.value;
 	const quantity_source = is_custom_qty.value ? custom_quantity.value : quantity.value;
@@ -197,7 +209,7 @@ const nextStep = async () => {
 <template>
 	<aside class="product-options" data-testid="product-category-options">
 		<section v-if="has_color_selection" class="product-section">
-			<h3 class="option-title" data-testid="product-category-color-title">Select your preferred color</h3>
+			<h3 class="option-title" data-testid="product-category-color-title">{{ t('product.options.selectColor') }}</h3>
 			<div
 				v-if="is_loading_features"
 				ref="color_skeleton_grid_ref"
@@ -235,7 +247,7 @@ const nextStep = async () => {
 			<section class="product-section">
 				<div class="option-head">
 					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
 				</div>
 
 				<div v-if="is_loading_features" class="option-grid option-grid-size">
@@ -351,7 +363,7 @@ const nextStep = async () => {
 			<section class="product-section">
 				<div class="option-head">
 					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
 				</div>
 				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -395,7 +407,7 @@ const nextStep = async () => {
 			</section>
 
 			<section v-if="has_font_selection" class="product-section">
-				<h3 class="option-title">Select your font</h3>
+				<h3 class="option-title">{{ t('product.options.selectFont') }}</h3>
 				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
@@ -469,7 +481,7 @@ const nextStep = async () => {
 			<div class="price-summary-top">
 				<ul class="price-benefits">
 					<li>{{ t('product.price.benefitShipping') }}</li>
-					<li>{{ t('product.price.benefitShipsTomorrow') }}</li>
+					<li>{{ ships_tomorrow_benefit }}</li>
 				</ul>
 
 				<div v-if="is_loading_features" class="price-summary-stack">
@@ -492,7 +504,7 @@ const nextStep = async () => {
 						<strong class="price-summary-value">{{ pricing_ready ? formatPrice(total) : '--' }}</strong>
 					</p>
 					<p class="price-summary-unit">
-						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} per piece)
+						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} {{ t('product.price.perPiece') }})
 					</p>
 				</div>
 			</div>

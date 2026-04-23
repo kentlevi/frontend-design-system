@@ -5,10 +5,15 @@ import type { AccountOrder, AccountOrderLifecycle, AccountOrderSection } from '~
 const section_order: AccountOrderSection[] = ['ongoing', 'actionRequired', 'completed'];
 
 export function useAccountOrders() {
+	const { t } = useI18n();
 	const lifecycle = ref<AccountOrderLifecycle>('active');
 	const search_query = ref('');
 	const is_detail_open = ref(true);
 	const active_order_id = ref(accountOrders[0]?.id ?? '');
+
+	function resolveOrderText(value: string) {
+		return value.startsWith('account.') ? t(value) : value;
+	}
 
 	const filtered_orders = computed(() => {
 		const normalized_query = search_query.value.trim().toLowerCase();
@@ -20,7 +25,7 @@ export function useAccountOrders() {
 			return [
 				order.id,
 				order.date,
-				order.paymentMethodLabel,
+				resolveOrderText(order.paymentMethodLabel),
 				order.statusKey,
 			].some((value) => value.toLowerCase().includes(normalized_query));
 		});
@@ -37,6 +42,12 @@ export function useAccountOrders() {
 
 	const active_order = computed<AccountOrder | null>(() => {
 		return filtered_orders.value.find((order) => order.id === active_order_id.value) ?? filtered_orders.value[0] ?? null;
+	});
+
+	const empty_state_key = computed(() => {
+		if (filtered_orders.value.length > 0) return null;
+		if (search_query.value.trim()) return 'searchNoResults';
+		return lifecycle.value === 'active' ? 'allCaughtUp' : 'noOrders';
 	});
 
 	watch(
@@ -72,6 +83,7 @@ export function useAccountOrders() {
 		is_detail_open,
 		order_groups,
 		active_order,
+		empty_state_key,
 		set_lifecycle: setLifecycle,
 		set_active_order: setActiveOrder,
 		toggle_detail_open: toggleDetailOpen,

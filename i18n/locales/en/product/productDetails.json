@@ -1,49 +1,80 @@
 {
-    "product": {
-        "selectedBanner": "{name} selected",
-        "changeProduct": "Change product",
-        "options": {
-            "selectSize": "Select your preferred size",
-            "unitMm": "(Unit: mm)",
-            "customSize": "Custom Size",
-            "selectQuantity": "Select your preferred quantity",
-            "customQuantity": "Custom Quantity"
-        },
-        "sizes": {
-            "small30": {
-                "label": "Small 30×30"
-            },
-            "medium75": {
-                "label": "Medium 75×75"
-            },
-            "large100": {
-                "label": "Large 100×100"
-            },
-            "extraLarge125": {
-                "label": "Extra Large 125×125"
-            }
-        },
-        "featureCards": {
-            "small": {
-                "description": "Great for small stickers on phones and helmets."
-            },
-            "medium": {
-                "description": "Perfect for tumblers, notebooks, and diaries."
-            },
-            "large": {
-                "description": "Ideal for prominent surfaces."
-            },
-            "extraLarge": {
-                "description": "Perfect size for cars, iceboxes, or toolboxes."
-            }
-        },
-        "price": {
-            "subtotal": "Subtotal",
-            "discount": "Discount",
-            "total": "Total",
-            "benefitShipping": "Free shipping over $50.00",
-            "benefitShipsTomorrow": "Ships tomorrow after design approval",
-            "nextStep": "Next Step"
-        }
+  "product": {
+    "selectedBanner": "{name} selected",
+    "changeProduct": "Change product",
+    "options": {
+      "selectSize": "Select your preferred size",
+      "unitMm": "(Unit: mm)",
+      "productPageUnitMm": "(Unit: mm)",
+      "customSize": "Custom Size",
+      "selectQuantity": "Select your preferred quantity",
+      "customQuantity": "Custom Quantity",
+      "selectColor": "Select your preferred color",
+      "selectFont": "Select your font",
+      "colors": {
+        "gold": "Gold",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "purple": "Purple",
+        "pink": "Pink",
+        "yellowOrange": "Yellow Orange",
+        "silver": "Silver",
+        "bronze": "Bronze",
+        "fullColor": "Full Color"
+      }
+    },
+    "hero": {
+      "vinylLetteringTitle": "Vinyl Lettering"
+    },
+    "sizes": {
+      "small30": {
+        "label": "Small 30x30"
+      },
+      "medium75": {
+        "label": "Medium 75x75 (Most Popular)",
+        "featureLabel": "Medium 75x75"
+      },
+      "large100": {
+        "label": "Large 100x100"
+      },
+      "extraLarge125": {
+        "label": "Extra Large 125x125"
+      }
+    },
+    "featureCards": {
+      "small": {
+        "description": "Compact size for phone cases, earbuds, water bottles, and other small accessories."
+      },
+      "medium": {
+        "description": "Everyday size for laptops, notebooks, journals, and personal gear."
+      },
+      "large": {
+        "description": "Statement size for packaging, product boxes, folders, and branded merchandise."
+      },
+      "extraLarge": {
+        "description": "High-visibility size for car windows, coolers, storage bins, and larger surfaces."
+      },
+      "effortlessApplication": {
+        "title": "Effortless Application",
+        "description": "Apply your design with ease. Resulting in a crisp, professional finish that sits seamlessly on any surface."
+      },
+      "designedForPrecision": {
+        "title": "Apply with Confidence",
+        "description": "Each design is carefully cut from your uploaded artwork, transferring flawlessly for a crisp and polished final result."
+      }
+    },
+    "price": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Total",
+      "benefitShipping": "- Free shipping over 50,000 JYP",
+      "benefitShipsTomorrow": "- Ships tomorrow after design approval.",
+      "benefitShipsTomorrowByProduct": {
+        "die-cut-sticker": "- Ships tomorrow after design approval",
+        "square-sticker": "- Ships fast once you approve your design."
+      },
+      "nextStep": "Next Step",
+      "perPiece": "per piece"
     }
+  }
 }

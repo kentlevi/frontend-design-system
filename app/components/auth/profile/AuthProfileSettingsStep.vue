@@ -70,7 +70,7 @@ const {
 											.checked
 									)
 								"
-							/>
+							>
 							<span class="auth-profile-switch-track" />
 						</label>
 					</div>
@@ -99,7 +99,7 @@ const {
 											.checked
 									)
 								"
-							/>
+							>
 							<span class="auth-profile-switch-track" />
 						</label>
 					</div>

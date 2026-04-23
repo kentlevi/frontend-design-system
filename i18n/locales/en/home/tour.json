@@ -1,41 +1,41 @@
 {
-    "home": {
-        "welcome": {
-            "title": "Hi {name}👋, welcome to the fun side! 🎉",
-            "defaultName": "there",
-            "bodyPrefix": "As a thank you for registering, ",
-            "bodyHighlight": "you've earned {points} points to kickstart your journey.",
-            "bodySuffix": " If you need a hand, this guided tour will walk you through the key features to help you get started.",
-            "skip": "Skip",
-            "getStarted": "Get Started"
-        },
-        "tour": {
-            "close": "Close guide tour",
-            "next": "Next",
-            "done": "Done",
-            "skipModal": {
-                "title": "Skip Guided Tour?",
-                "body": "No worries! You can explore on your own for now. If you'd like a walkthrough later, you can access the guided tour anytime by clicking \"Getting Started\" under your account dropdown menu.",
-                "continue": "Continue Tour",
-                "skipNow": "Yes, Skip for Now"
-            },
-            "stepLabel": "Step {current} of {total}",
-            "step1": {
-                "title": "Your Profile at a Glance 😎",
-                "body": "Manage everything from your profile page: track your points and coupons, view order history, read and write reviews, and request quotes."
-            },
-            "step2": {
-                "title": "Explore Our Products 🧐",
-                "body": "Navigate product categories in the header to quickly find sticker types that match your needs."
-            },
-            "step3": {
-                "title": "Easy Product Search 🔎",
-                "body": "Use the search icon in the header to find products instantly by name and keyword."
-            },
-            "step4": {
-                "title": "You're ready to go! 🥳",
-                "body": "For more information and tutorials, check out our \"Getting Started\" guide located on the account dropdown panel."
-            }
-        }
+  "home": {
+    "welcome": {
+      "title": "Hi {name} 👋, welcome to the fun side! 🎉",
+      "defaultName": "there",
+      "bodyPrefix": "As a thank you for signing up, ",
+      "bodyHighlight": "you’ve earned {points} points to get started.",
+      "bodySuffix": " This guided tour will introduce the key features and help you make the most of your account.",
+      "skip": "Skip",
+      "getStarted": "Get Started"
+    },
+    "tour": {
+      "close": "Close guide tour",
+      "next": "Next",
+      "done": "Done",
+      "skipModal": {
+        "title": "Skip Guided Tour?",
+        "body": "Feel free to explore at your own pace. When you’re ready, the guided tour is available anytime under “Getting Started” in your account dropdown.",
+        "continue": "Continue Tour",
+        "skipNow": "Yes, Skip for Now"
+      },
+      "stepLabel": "Step {current} of {total}",
+      "step1": {
+        "title": "Your Profile at a Glance",
+        "body": "Everything in one place: track loyalty points and coupons, view orders, write reviews, and request quotes from your profile."
+      },
+      "step2": {
+        "title": "Explore Our Products 🧐",
+        "body": "Explore all our products in one place. Use the product links in the header to quickly find the perfect stickers for your needs."
+      },
+      "step3": {
+        "title": "Easy Product Search 🔎",
+        "body": "Need help finding something? Use the search icon in the header, the banner search bar, or keyboard shortcuts to locate products quickly."
+      },
+      "step4": {
+        "title": "You’re ready to go! 🙌",
+        "body": "For helpful tips and tutorials, check out the “Getting Started” guide in your account dropdown."
+      }
     }
+  }
 }

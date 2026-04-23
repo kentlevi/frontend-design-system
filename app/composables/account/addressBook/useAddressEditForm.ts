@@ -1,8 +1,8 @@
 import type { Ref } from 'vue';
 import { mapAddressToForm } from '~/factories/address';
-import { updateUserAddress } from '~/services/profile/address.service';
-import { useAddressFieldStore, useAddressStore } from "~/stores/address";
-import type { AddressFormState, AddressFormMap, AddressMap, AddressType } from "~/types/address";
+import { updateUserAddress } from '~/services/user-address/api.service';
+import { useAddressFieldStore, useUserAddressStore } from "~/stores/user-address";
+import type { AddressFormState, AddressFormMap, AddressMap, AddressType } from "~/types/user-address";
 import type { CountryField } from '~/types/country_field';
 import { useAddressHelper } from '~/utils/address';
 
@@ -10,8 +10,8 @@ type UseAddressEditFormOptions = {
 	form_state: AddressFormState
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
-	form_field_errors: Ref<Record<string, string>>
 
+	setFormErrors: (type: AddressType, errors: Record<string, string>) => void
 	openEditFormModal: () => void
 	closeFormModal: () => void
 	setCreateMode: () => void
@@ -20,14 +20,13 @@ type UseAddressEditFormOptions = {
 
 export function useAddressEditForm(options: UseAddressEditFormOptions) {
 
+	const is_submitting = ref(false)
 	const { mapApiFieldErrors } = useAddressHelper()
 
 	/** Stores */
 	const address_field_store = useAddressFieldStore()
-	const address_store = useAddressStore()
+	const address_store = useUserAddressStore()
 	const toast_store = useToastStore()
-	const loading_overlay_store = useLoadingOverlayStore()
-
 	const editing_address_id = ref<number | null>(null)
 	const editing_address_snapshot = ref<AddressMap[AddressType] | null>(null)
 
@@ -59,8 +58,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 			options.closeFormModal()
 			return
 		}
-		options.closeFormModal()
-		startUpdateOverlay()
+		is_submitting.value = true
 
 		const type = options.form_type.value
 		const editing_address = editing_address_snapshot.value
@@ -112,17 +110,17 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 				}
 
 				toast_store.handleApiResponse(response)
+				options.closeFormModal()
 				resetEditState()
 				options.setCreateMode()
 			} else {
 				const next_errors = mapApiFieldErrors(response.data)
-				options.form_field_errors.value = next_errors
-				options.openEditFormModal()
+				options.setFormErrors(type, next_errors)
 			}
 		} catch (_error: unknown) {
 			console.log(_error);
 		} finally {
-			loading_overlay_store.stopLoading('update_address')
+			is_submitting.value = false
 		}
 	}
 
@@ -137,16 +135,8 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 		return field_value
 	}
 
-	/** Overlays */
-	function startUpdateOverlay() {
-		loading_overlay_store.startLoading('update_address', {
-			showCopy: true,
-			testId: 'account-profile-upload-avatar-overlay',
-			position: 'fixed'
-		})
-	}
-
 	return {
+		is_submitting,
 		resetEditState,
 		openEditModal,
 		updateAddress,

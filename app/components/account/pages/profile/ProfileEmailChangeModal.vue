@@ -45,7 +45,7 @@ const { t } = useI18n();
 			<button
 				type="button"
 				class="account-profile-email-change-modal-close"
-				aria-label="Close email change modal"
+				:aria-label="t('account.profile.emailChange.closeModal')"
 				data-testid="account-profile-email-change-modal-close"
 				@click="closeEmailChangeModal"
 			>
@@ -62,9 +62,9 @@ const { t } = useI18n();
 				</div>
 
 				<div class="account-profile-email-change-modal-text-wrap">
-					<h3 class="account-profile-email-change-modal-title">Email Change</h3>
+					<h3 class="account-profile-email-change-modal-title">{{ t('account.profile.emailChange.title') }}</h3>
 					<p class="account-profile-email-change-modal-text">
-						Enter your new email address and click the <strong class="change-strong">"Confirm"</strong> button to proceed.
+						{{ t('account.profile.emailChange.description') }}
 					</p>
 				</div>
 			</div>
@@ -86,7 +86,7 @@ const { t } = useI18n();
 								type="email"
 								:aria-describedby="describedBy || undefined"
 								:state="emailChangeError ? 'error' : 'default'"
-								placeholder="Please enter your new email address."
+								:placeholder="t('account.profile.emailChange.placeholder')"
 								input-class="account-profile-email-change-input"
 								data-testid="account-profile-email-change-input"
 								@update:model-value="handlePendingEmailChange"
@@ -106,7 +106,7 @@ const { t } = useI18n();
 					data-testid="account-profile-email-change-modal-confirm"
 					@click="confirmEmailChange"
 				>
-					Confirm
+					{{ t('account.profile.emailChange.confirm') }}
 				</UiButton>
 			</div>
 		</section>

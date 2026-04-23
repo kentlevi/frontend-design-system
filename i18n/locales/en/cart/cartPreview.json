@@ -1,39 +1,41 @@
 {
-    "cart": {
-        "cartPreview": {
-            "previewTitle": "Cart Preview ({count})",
-            "continueShopping": "Continue Shopping",
-            "emptyIconAlt": "Empty shopping basket",
-            "emptyTitle": "Your cart is currently empty.",
-            "emptyDescription": "Explore our menu to add items to your cart, or pick from the featured favorites below.",
-            "size": "Size",
-            "quantity": "Quantity",
-            "featuredItems": "Featured Items:",
-            "startsAt": "Starts at:",
-            "customize": "Customize",
-            "total": "Total:",
-            "noteLabel": "Note:",
-            "note": "Shipping fees and discounts are calculated at checkout.",
-            "viewCart": "View Cart",
-            "proceedToCheckout": "Proceed to Checkout",
-            "redirectingToCart": "Redirecting to cart",
-            "closeFeaturedItems": "Close featured items",
-            "editModal": {
-                "title": "Edit Size and Quantity",
-                "sizeOnlyTitle": "Edit Size",
-                "widthPlaceholder": "Width",
-                "heightPlaceholder": "Height",
-                "cancel": "Cancel",
-                "update": "Update",
-                "customSize": "Custom Size",
-                "customQuantity": "Custom Quantity"
-            },
-            "aria": {
-                "saveItemChanges": "Save item changes",
-                "cancelItemChanges": "Cancel item changes",
-                "editItem": "Edit item",
-                "removeItem": "Remove item"
-            }
-        }
+  "cart": {
+    "cartPreview": {
+      "previewTitle": "Cart Preview ({count})",
+      "continueShopping": "Continue Shopping",
+      "emptyIconAlt": "Empty shopping basket",
+      "emptyTitle": "Your cart is currently empty.",
+      "emptyDescription": "Browse our menu to add items to your cart, or choose from the featured favorites below.",
+      "size": "Size",
+      "quantity": "Quantity",
+      "featuredItems": "Featured Items:",
+      "startsAt": "Starts at:",
+      "customize": "Customize",
+      "total": "Total:",
+      "noteLabel": "Note:",
+      "note": "Shipping fees and discounts are calculated at checkout.",
+      "viewCart": "View Cart",
+      "proceedToCheckout": "Proceed to Checkout",
+      "redirectingToCart": "Redirecting to cart",
+      "closeFeaturedItems": "Close featured items",
+      "itemRemovedSuccess": "Item removed successfully.",
+      "removeConfirmTitle": "Remove this item from your cart?",
+      "editModal": {
+        "title": "Edit Size and Quantity",
+        "sizeOnlyTitle": "Edit Size",
+        "widthPlaceholder": "Width",
+        "heightPlaceholder": "Height",
+        "cancel": "Cancel",
+        "update": "Update",
+        "customSize": "Custom Size",
+        "customQuantity": "Custom Quantity"
+      },
+      "aria": {
+        "saveItemChanges": "Save item changes",
+        "cancelItemChanges": "Cancel item changes",
+        "editItem": "Edit item",
+        "removeItem": "Remove item"
+      }
     }
+  }
 }

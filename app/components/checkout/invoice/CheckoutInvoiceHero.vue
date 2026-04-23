@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 defineProps<{
 	invoiceNumber: string;
 	issuedDate: string;
@@ -28,20 +32,20 @@ defineEmits<{
 		</div>
 
 		<div class="checkout-invoice-meta">
-			<div class="checkout-invoice-number">Invoice #: {{ invoiceNumber }}</div>
-			<div class="checkout-invoice-date">Date Issued: {{ issuedDate }}</div>
+			<div class="checkout-invoice-number">{{ t('checkout.invoice.invoiceNumber', { invoiceNumber }) }}</div>
+			<div class="checkout-invoice-date">{{ t('checkout.invoice.dateIssued', { issuedDate }) }}</div>
 		</div>
 
 		<div class="checkout-invoice-billing">
 			<div class="checkout-invoice-billing-copy">
-				<div class="checkout-invoice-billing-title">Billing Details:</div>
-				<div class="checkout-invoice-billing-line">Name: <strong>{{ billingName }}</strong></div>
-				<div class="checkout-invoice-billing-line">Address: <strong>{{ billingAddress }}</strong></div>
-				<div class="checkout-invoice-billing-line">Company: <strong>{{ billingCompany }}</strong></div>
+				<div class="checkout-invoice-billing-title">{{ t('checkout.invoice.billingDetails') }}</div>
+				<div class="checkout-invoice-billing-line">{{ t('checkout.invoice.billingName') }} <strong>{{ billingName }}</strong></div>
+				<div class="checkout-invoice-billing-line">{{ t('checkout.invoice.billingAddress') }} <strong>{{ billingAddress }}</strong></div>
+				<div class="checkout-invoice-billing-line">{{ t('checkout.invoice.billingCompany') }} <strong>{{ billingCompany }}</strong></div>
 			</div>
 
 			<button type="button" class="checkout-invoice-billing-button" @click="$emit('edit-billing')">
-				Edit Billing Info
+				{{ t('checkout.invoice.editBillingInfo') }}
 			</button>
 		</div>
 	</section>

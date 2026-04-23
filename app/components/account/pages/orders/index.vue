@@ -16,6 +16,7 @@ const {
 	is_detail_open,
 	order_groups,
 	active_order,
+	empty_state_key,
 	set_lifecycle,
 	set_active_order,
 	toggle_detail_open,
@@ -122,7 +123,12 @@ const accent_class_map = {
 					</div>
 				</div>
 
-				<div class="account-orders-layout" data-testid="account-orders-layout">
+				<div v-if="empty_state_key" class="account-orders-empty" data-testid="account-orders-empty">
+					<h2 class="account-orders-empty-title">{{ t(`account.orders.empty.${empty_state_key}Title`) }}</h2>
+					<p class="account-orders-empty-description">{{ t(`account.orders.empty.${empty_state_key}Description`) }}</p>
+				</div>
+
+				<div v-else class="account-orders-layout" data-testid="account-orders-layout">
 					<OrdersSidebar
 						:order-groups="order_groups"
 						:active-order-id="active_order?.id"
@@ -242,6 +248,32 @@ const accent_class_map = {
 			grid-template-columns: 320px minmax(0, 1fr);
 			gap: 24px;
 			align-items: start;
+		}
+
+		.account-orders-empty {
+			min-height: 320px;
+			border: 1px solid var(--border-default);
+			border-radius: 12px;
+			background: var(--contrast-light);
+			display: grid;
+			place-items: center;
+			text-align: center;
+			padding: 32px 24px;
+
+			.account-orders-empty-title {
+				font-size: var(--type-size-400);
+				line-height: var(--type-line-400);
+				font-weight: var(--font-weight-bold);
+				margin: 0 0 12px;
+			}
+
+			.account-orders-empty-description {
+				max-width: 560px;
+				margin: 0;
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				color: var(--text-secondary);
+			}
 		}
 	}
 }

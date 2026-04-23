@@ -1,50 +1,178 @@
 {
-    "account": {
-        "orders": {
-            "title": "My Orders",
-            "active": "Active",
-            "inactive": "Inactive",
-            "selectDate": "Select Date",
-            "filters": "Filters",
-            "searchPlaceholder": "Search Order #",
-            "sections": {
-                "ongoing": "On-Going",
-                "actionRequired": "Action Required",
-                "completed": "Completed"
-            },
-            "orderLabel": "Order #: {orderNumber}",
-            "meta": "{count} item(s) | Order Date: {date}",
-            "status": {
-                "beforeProduction": "Before Production",
-                "checkingArtwork": "Checking Artwork",
-                "completed": "Completed"
-            },
-            "moreDetails": "More Details",
-            "viewInvoice": "View Invoice",
-            "viewInvoiceText": "Access and review detailed invoice information.",
-            "paymentProof": "Payment Proof",
-            "paymentProofText": "Production will commence after payment completion.",
-            "sendMessage": "Send a Message",
-            "sendMessageText": "Need an update or want to make changes?",
-            "unpaid": "Unpaid",
-            "paymentMethod": "Method: {method}",
-            "orderSummary": "Order Summary:",
-            "itemNumber": "Item No. {number}",
-            "lackingArtwork": "Lacking Artwork",
-            "checkingArtwork": "Checking Artwork",
-            "size": "Size: {size}",
-            "quantity": "Quantity: {quantity}",
-            "summary": {
-                "subtotal": "Subtotal:",
-                "shippingFee": "Shipping Fee: ({method})",
-                "discounts": "Discounts:",
-                "total": "Total:"
-            },
-            "shippingMethod": "Express Shipping",
-            "uploadArtwork": "Upload Artwork",
-            "replaceArtwork": "Replace Artwork",
-            "onHoldOrder": "On-Hold Order",
-            "cancelOrder": "Cancel Order"
+  "account": {
+    "orders": {
+      "title": "My Orders",
+      "active": "Active",
+      "inactive": "Inactive",
+      "empty": {
+        "noOrdersTitle": "No orders found.",
+        "noOrdersDescription": "No orders match your filters. Check your selections or reset filters to view all orders.",
+        "allCaughtUpTitle": "You're all caught up!",
+        "allCaughtUpDescription": "All caught up! You have no orders left to receive. Try adjusting your filters or check back later.",
+        "searchNoResultsTitle": "No orders found.",
+        "searchNoResultsDescription": "That order number doesn’t match any records. Please double-check and try again."
+      },
+      "months": {
+        "january": "January",
+        "febuary": "Febuary",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      },
+      "selectDate": "Select Dates:",
+      "filters": "Filters:",
+      "filterOptions": {
+        "thisWeek": "This Week",
+        "thisMonth": "This Month",
+        "last7Days": "Last 7 days",
+        "last30Days": "Last 30 days",
+        "orderStatus": "Order Status"
+      },
+      "searchPlaceholder": "Search Order #",
+      "sections": {
+        "ongoing": "On-going",
+        "actionRequired": "Action Required",
+        "completed": "Completed"
+      },
+      "shippingAddress": "Shipping Address:",
+      "receiver": "Receiver:",
+      "orderLabel": "Order #: {orderNumber}",
+      "meta": "{count} item(s) | Order Date: {date}",
+      "status": {
+        "beforeProduction": "Before Production",
+        "checkingArtwork": "Checking Artwork",
+        "toReceive": "To Receive",
+        "onHold": "Onhold",
+        "cancelled": "Cancelled",
+        "completed": "Completed",
+        "needsApproval": "Needs Approval",
+        "checkFinalProof": "Check Final Proof",
+        "approvedPendingOthers": "Approved - Pending Others",
+        "failedEvaluation": "Failed Evaluation"
+      },
+      "moreDetails": "More Details",
+      "lessDetails": "Less Details",
+      "viewInvoice": "View Invoice",
+      "viewInvoiceText": "Access and review detailed invoice information.",
+      "paymentProof": "Payment Proof",
+      "paymentProofText": "Production will commence after payment completion.",
+      "sendMessage": "Send a Message",
+      "sendMessageText": "Need an update or want to make changes?",
+      "unpaid": "Unpaid",
+      "paymentMethod": "Method: {method}",
+      "orderSummary": "Order Summary:",
+      "itemNumber": "Item No. {number}",
+      "lackingArtwork": "Lacking Artwork",
+      "checkingArtwork": "Checking Artwork",
+      "size": "Size: {size}",
+      "quantity": "Quantity: {quantity}",
+      "summary": {
+        "subtotal": "Subtotal:",
+        "shippingFee": "Shipping Fee: ({method})",
+        "discounts": "Discounts:",
+        "total": "Total:",
+        "finalTotal": "Total:"
+      },
+      "shippingMethod": "Express Shipping",
+      "uploadArtwork": "Upload Artwork",
+      "replaceArtwork": "Replace Artwork",
+      "onHoldOrder": "On-Hold Order",
+      "cancelOrder": "Cancel Order",
+      "reorder": "Reorder",
+      "resubmitArtwork": "Resubmit Artwork",
+      "detail": {
+        "close": "Close",
+        "darkBackground": "Dark Background",
+        "statusTitle": "Your artwork is in the queue for evaluation.",
+        "statusDescriptionPrefix": "Need to make changes? You can replace your artwork before the review starts. Click “",
+        "statusDescriptionSuffix": ".”",
+        "activityLogs": "Activity Logs:",
+        "submittedArtwork": "Submitted Artwork",
+        "product": "Product:",
+        "stickerSize": "Sticker Size: {size}",
+        "finalProofTerms": "Final Proof Terms of Service",
+        "uploadSuccess": "New artwork uploaded! Your previous image has been successfully replaced.",
+        "itemUploadSuccess": "Artwork for Item No. {number} uploaded successfully"
+      },
+      "upload": {
+        "title": "Upload Artwork - Item No. {number}",
+        "itemDetails": "Item Details:",
+        "product": "Product:",
+        "size": "Size:",
+        "quantity": "Quantity:",
+        "pcs": "pcs",
+        "dragAndDrop": "Drag and Drop files to upload",
+        "acceptedFiletypes": "Accepted file types: .eps, .ai, .psd, .pdf, .tif, .png and .jpg",
+        "selectFiles": "Select Files",
+        "replaceImage": "Replace image",
+        "removeArtwork": "Remove uploaded artwork",
+        "specialInstructions": "Special Instructions",
+        "specialInstructionsPlaceholder": "Enter special instructions here....",
+        "cancel": "Cancel",
+        "submit": "Submit"
+      },
+      "terms": {
+        "title": "Terms & Conditions",
+        "closeLabel": "Close terms and conditions modal",
+        "paragraph1": "If you approve the final proof and confirm your payment after 5:00PM, the order will be processed the next business day.",
+        "paragraph2": "We normally check the important details required for production. The correction of the design content, such as misspelling, is not subject to reproduction.",
+        "paragraph3": "In spite of the most modern printing machines, color difference of 5-10% and movement of 1-2mm on the actual sticker product should be acceptable due to mechanical tolerances.",
+        "turnaroundNote": "The estimated turnaround time includes printing & delivery.",
+        "noteTitle": "Note:",
+        "orderTermsNoteTitle": "Note:",
+        "bumperStickerPrintNote": "Bumper Sticker is printed using digital printing. The printing resolution is lower than offset printing.",
+        "materialCurlNote": "Due to the characteristics of the material, the sticker may curl up after time. Choose coated option to avoid this issue.",
+        "cancellationTitle": "Note on Order Cancellations:",
+        "cancellationBody": "Order cancellations are only allowed during 'Before Production' status; once the status changes to 'In Production,' cancellations are disabled as printing has begun, so please review your order carefully beforehand.",
+        "close": "Close"
+      },
+      "mock": {
+        "paymentMethods": {
+          "bankTransfer": "Bank Transfer",
+          "creditCard": "Credit Card",
+          "virtualAccount": "Virtual Account"
+        },
+        "products": {
+          "dieCutSticker": "Die Cut Sticker"
+        },
+        "submitters": {
+          "joyLove": "Joy Love"
+        },
+        "instructions": {
+          "default": "Please make sure the colors and size is exactly perfect."
         }
+      },
+      "artworkFlow": {
+        "requestChanges": "Request Changes",
+        "approve": "Approve",
+        "proofLabel": "Proof#{number}",
+        "proofNumber1": "Proof#1",
+        "proofNumber2": "Proof #2",
+        "proofNumber3": "Proof #3",
+        "submittedSuccess": "Your requested changes have been submitted successfully.",
+        "evaluatingQueue": "Your revision has been received and is now queued for evaluation.",
+        "passedEvaluation": "Your artwork passed evaluation.",
+        "chooseToProceed": "You can now choose from the available options to proceed.",
+        "proofApproved": "Proof #{number} is approved.",
+        "proof1Approved": "Proof #1 is approved.",
+        "wantToMakeChanges": "Want to make changes? Click “Request Changes” before production. No edits can be made afterward.",
+        "completeRemainingSteps": "Artwork approved! Complete the remaining steps to proceed with printing.",
+        "underEvaluation": "Your artwork is currently under evaluation.",
+        "reviewingNotification": "We’re currently reviewing your artwork. You’ll be notified when it’s done.",
+        "failedEvaluation": "Your artwork failed evaluation.",
+        "feedbackRevisedVersion": "Please review the feedback and submit an updated version.",
+        "evaluationFeedback": "Evaluation Feedback",
+        "staffComment": "Staff Comment:",
+        "downloadPdf": "Download PDF",
+        "sendRequest": "Send Request"
+      }
     }
+  }
 }

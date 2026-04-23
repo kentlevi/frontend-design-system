@@ -8,6 +8,15 @@ import { useUsersStore } from '~/stores/users/users.store'
 import type { PersonalFormApiResponse, ProfileFieldDefinition } from '~/types/account/profile'
 import type { ApiResponse } from '~/types/config/api'
 
+const field_definitions = ref<ProfileFieldDefinition[]>([])
+const form_state = reactive(personal_form_defaults())
+const initial_fields = ref<Record<string, string>>({})
+const is_loading = ref(false)
+const is_loaded = ref(false)
+const pending_request = ref<Promise<void> | null>(null)
+const is_updating = ref(false)
+const field_errors = ref<Record<string, string>>({})
+
 export function usePersonalForm() {
 	/** Store */
 	const user_store = useUsersStore()
@@ -16,13 +25,6 @@ export function usePersonalForm() {
 	const loading_overlay_store = useLoadingOverlayStore()
 
 	const dynamic_profile_fields = computed(() => profile_fields_store.dynamic_profile_fields)
-
-	const field_definitions = ref<ProfileFieldDefinition[]>([])
-	const form_state = reactive(personal_form_defaults())
-	const initial_fields = ref<Record<string, string>>({})
-	const is_loading = ref(false)
-	const is_updating = ref(false)
-	const field_errors = ref<Record<string, string>>({})
 
 	const has_changes = computed(() => {
 		clearFieldErrors()
@@ -39,42 +41,56 @@ export function usePersonalForm() {
 	})
 
 	async function loadPersonalForm() {
-		is_loading.value = true
+		if (pending_request.value) {
+			return pending_request.value
+		}
 
-		try {
-			if (profile_fields_store.dynamic_profile_fields.length === 0) {
-				const response = await fetchPersonalFieldDefinitions()
+		if (is_loaded.value) {
+			return
+		}
 
-				if (response.data) {
-					field_definitions.value = response.data
+		pending_request.value = (async () => {
+			is_loading.value = true
 
-					profile_fields_store.setDynamicProfileFields(field_definitions.value)
+			try {
+				if (profile_fields_store.dynamic_profile_fields.length === 0) {
+					const response = await fetchPersonalFieldDefinitions()
+
+					if (response.data) {
+						field_definitions.value = response.data
+
+						profile_fields_store.setDynamicProfileFields(field_definitions.value)
+					}
+				} else {
+					field_definitions.value = profile_fields_store.dynamic_profile_fields
 				}
-			} else {
-				field_definitions.value = profile_fields_store.dynamic_profile_fields
-			}
-			/**
+				/**
              * Map values to its fields
              */
-			const mapped_form = mapProfileToPersonalFormState(
-				field_definitions.value,
-				user_store.state.profile
-			)
+				const mapped_form = mapProfileToPersonalFormState(
+					field_definitions.value,
+					user_store.state.profile
+				)
 
-			/**
+				/**
              * Keep fallback values for fields that have no mapped value yet
              */
-			form_state.fields = {
-				...mapped_form.fields,
+				form_state.fields = {
+					...mapped_form.fields,
+				}
+				initial_fields.value = {
+					...mapped_form.fields,
+				}
+				is_loaded.value = true
+			} catch (_error: unknown) {
+				console.log(_error);
+			} finally {
+				is_loading.value = false
+				pending_request.value = null
 			}
-			initial_fields.value = {
-				...mapped_form.fields,
-			}
-		} catch (_error: unknown) {
-			console.log(_error);
-		} finally {
-			is_loading.value = false
-		}
+		})()
+
+		return pending_request.value
 	}
 
 	async function submitPersonalForm() {
@@ -201,6 +217,7 @@ export function usePersonalForm() {
 		form_state,
 		has_changes,
 		is_loading,
+		is_loaded,
 		is_updating,
 		field_errors,
 		dynamic_profile_fields,

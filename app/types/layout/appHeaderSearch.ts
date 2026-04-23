@@ -3,6 +3,7 @@ import type { ApiResponse } from '~/types/config/api';
 export type SearchItem = {
 	id: string;
 	product_id: number;
+	product_slug: string;
 	category_key: string;
 	category_label: string;
 	name: string;
@@ -62,6 +63,7 @@ export type SearchApiMeta = {
 export type RecentSearchStorageProduct = {
 	id?: unknown;
 	product_id?: number;
+	product_slug?: unknown;
 	category_key?: unknown;
 	category_label?: unknown;
 	name?: unknown;

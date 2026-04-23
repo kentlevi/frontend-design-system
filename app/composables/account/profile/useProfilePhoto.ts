@@ -5,6 +5,8 @@ import { isValidImage } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
+	const { t } = useI18n()
+	const MAX_PROFILE_PHOTO_BYTES = 3 * 1024 * 1024;
 
 	/** State */
 	const user_store = useUsersStore()
@@ -20,6 +22,39 @@ export function useProfilePhoto() {
 	function openFilePicker() {
 		resetPhotoInput()
 		file_input.value?.click();
+	}
+
+	function getPhotoUploadErrorMessageKey(error: unknown) {
+		const error_name =
+			error instanceof Error
+				? error.name.toLowerCase()
+				: String((error as { name?: string } | null)?.name ?? '').toLowerCase()
+		const error_message =
+			error instanceof Error
+				? error.message.toLowerCase()
+				: String((error as { message?: string } | null)?.message ?? error ?? '').toLowerCase()
+
+		if (
+			error_name.includes('abort')
+			|| error_message.includes('timed out')
+			|| error_message.includes('timeout')
+			|| error_message.includes('408')
+		) {
+			return 'account.profile.photoUploadTimedOutMessage'
+		}
+
+		if (
+			error_name.includes('network')
+			|| error_message.includes('network')
+			|| error_message.includes('failed to fetch')
+			|| error_message.includes('fetcherror')
+			|| error_message.includes('load failed')
+			|| error_message.includes('offline')
+		) {
+			return 'account.profile.photoUploadNetworkIssueMessage'
+		}
+
+		return 'account.profile.photoUploadFailedMessage'
 	}
 
 	/**
@@ -42,7 +77,11 @@ export function useProfilePhoto() {
 		if (!file) return;
 
 		if (!isValidImage(file)) {
-			error.value = 'File type is invalid'
+			error.value = t('account.profile.invalidFileType')
+			return;
+		}
+		if (file.size > MAX_PROFILE_PHOTO_BYTES) {
+			error.value = t('account.profile.photoTooLarge')
 			return;
 		}
 
@@ -70,8 +109,14 @@ export function useProfilePhoto() {
 			user_store.setProfileField('file_name', file_name)
 
 			toast_store.handleApiResponse(response)
-		} catch {
-			toast_store.showUpdateError()
+		} catch (error) {
+			toast_store.showToastWithTimer({
+				title: t('account.profile.photoUploadFailedTitle'),
+				message: t(getPhotoUploadErrorMessageKey(error)),
+				tone: 'error',
+				dismissible: true,
+				variant: 'default',
+			})
 			return
 		} finally {
 			loading_overlay_store.stopLoading('upload_avatar')
@@ -87,7 +132,13 @@ export function useProfilePhoto() {
 
 			toast_store.handleApiResponse(response)
 		} catch {
-			toast_store.showUpdateError()
+			toast_store.showToastWithTimer({
+				title: t('account.profile.photoDeleteFailedTitle'),
+				message: t('account.profile.photoDeleteFailedMessage'),
+				tone: 'error',
+				dismissible: true,
+				variant: 'default',
+			})
 			return
 		} finally {
 			loading_overlay_store.stopLoading('delete_avatar')

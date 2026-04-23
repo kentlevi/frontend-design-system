@@ -5,19 +5,20 @@ import type {
 	AddressType,
 	UpdateDynamicFieldPayload,
 	UpdateFieldPayload,
-} from '~/types/address'
+} from '~/types/user-address'
 
 export type AddressBookFormContext = {
 	is_form_modal_open: Ref<boolean>
 	form_modal_mode: Ref<'create' | 'edit'>
 	form_submit_label: ComputedRef<string>
+	is_submitting: Ref<boolean> | ComputedRef<boolean>
 	form_type: Ref<AddressType>
 	active_form: ComputedRef<AddressFormMap[AddressType]>
 	dynamic_fields: ComputedRef<AddressDynamicFields[]>
-	form_field_errors: Ref<Record<string, string>>
+	form_field_errors: Ref<Record<AddressType, Record<string, string>>>
 	setFormType: (type: AddressType) => void
-	updateActiveFormField: (payload: UpdateFieldPayload) => void
-	updateDynamicField: (payload: UpdateDynamicFieldPayload) => void
+	updateFormFieldByType: (type: AddressType, payload: UpdateFieldPayload) => void
+	updateDynamicFieldByType: (type: AddressType, payload: UpdateDynamicFieldPayload) => void
 	submitAddressForm: () => void
 	closeFormModal: () => void
 }

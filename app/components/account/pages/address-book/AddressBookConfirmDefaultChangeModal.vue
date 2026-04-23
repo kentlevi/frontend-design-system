@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { AddressItem, ShippingAddress } from '~/types/address';
+import type { AddressItem, ShippingAddress } from '~/types/user-address';
 import { useAddressHelper } from '~/utils/address';
 import { useAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
+import { address_book_tag_badge_colors, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';
 
+const { t: translate } = useI18n()
 const { buildAddressLines } = useAddressHelper()
 const address_book_default_context = useAddressBookDefaultContext()
 
@@ -13,44 +15,40 @@ const pending_default_address = address_book_default_context.pending_default_add
 const closeConfirmDefaultChangeModal = address_book_default_context.closeConfirmDefaultChangeModal
 const confirmDefaultAddressChange = address_book_default_context.confirmDefaultAddressChange
 
-const tag_badge_colors = {
-	home: {
-		bgColor: 'var(--aloha-10)',
-		textColor: 'var(--aloha-60)',
-	},
-	office: {
-		bgColor: 'var(--neon-blue-10)',
-		textColor: 'var(--neon-blue-60)',
-	},
-	client: {
-		bgColor: 'var(--azure-10)',
-		textColor: 'var(--azure-60)',
-	},
-} as const
-
 const address_type_copy = computed(() => {
-	if (!pending_default_address.value) return 'address'
-	return pending_default_address.value.type === 'drop'
-		? 'drop shipping address'
-		: `${pending_default_address.value.type} address`
+	if (!pending_default_address.value) return translate('account.addressBook.confirmDefaultChangeTypeAddress', { type: '' }).trim()
+
+	const type = pending_default_address.value.type
+	if (type === 'drop') return translate('account.addressBook.confirmDefaultChangeTypeDrop')
+	if (type === 'shipping') return translate('account.addressBook.confirmDefaultChangeTypeShipping')
+	return translate('account.addressBook.confirmDefaultChangeTypeBilling')
 })
 
 const modal_title = computed(() => {
-	if (!pending_default_address.value) return 'Confirm Default Address Change'
+	if (!pending_default_address.value) return translate('account.addressBook.confirmDefaultChangeTitle')
 
-	const type_label = pending_default_address.value.type === 'drop'
-		? 'Drop Shipping'
-		: `${pending_default_address.value.type.charAt(0).toUpperCase()}${pending_default_address.value.type.slice(1)}`
+	const type = pending_default_address.value.type
+	const key = `confirmDefaultChangeTitle${type.charAt(0).toUpperCase()}${type.slice(1)}`
 
-	return `Confirm Default ${type_label} Address Change`
+	return translate(`account.addressBook.${key}`)
 })
 
 const modal_description = computed(() => {
-	return `You're about to set this as your default ${address_type_copy.value}. Confirm to proceed.`
+	return translate('account.addressBook.confirmDefaultChangeDescription', {
+		type: address_type_copy.value,
+	})
+})
+const current_default_address_lines = computed(() => {
+	if (!current_default_address.value) return ''
+	return buildAddressLines(current_default_address.value).trim()
+})
+const pending_default_address_lines = computed(() => {
+	if (!pending_default_address.value) return ''
+	return buildAddressLines(pending_default_address.value).trim()
 })
 
 function getLabelCopy(label: AddressItem['label']) {
-	return label.charAt(0).toUpperCase() + label.slice(1)
+	return getTranslatedAddressBookLabel(label, translate)
 }
 
 function isShippingAddress(address: AddressItem): address is ShippingAddress {
@@ -79,29 +77,12 @@ function confirmModal() {
 	<UiModal
 		:model-value="is_confirm_default_change_modal_open"
 		align="center"
-		padding="0"
-		gap="0"
 		width="710px"
+		:title="modal_title"
 		modal-class="account-address-book-confirm-default-modal-shell"
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-confirm-default-modal" data-testid="account-address-book-confirm-default-modal">
-			<header class="account-address-book-confirm-default-modal-header">
-				<h3 class="account-address-book-confirm-default-modal-title">
-					{{ modal_title }}
-				</h3>
-
-				<button
-					type="button"
-					class="account-address-book-confirm-default-modal-close"
-					aria-label="Close confirm default address change modal"
-					data-testid="account-address-book-confirm-default-modal-close"
-					@click="cancelModal"
-				>
-					<UiIcon name="regular-times" :size="24" />
-				</button>
-			</header>
-
 			<div class="account-address-book-confirm-default-modal-body">
 				<p class="account-address-book-confirm-default-modal-description">
 					{{ modal_description }}
@@ -122,39 +103,38 @@ function confirmModal() {
 								size="md"
 								class="account-address-book-confirm-default-modal-default-badge"
 							>
-								Default
+								{{ translate('account.addressBook.default') }}
 							</UiBadge>
 						</header>
 
 						<div class="account-address-book-confirm-default-modal-card-body">
-							<p
-								v-if="isShippingAddress(current_default_address)"
-								class="account-address-book-confirm-default-modal-card-phone"
-							>
-								{{ current_default_address.phone_number }}
-							</p>
-
 							<div class="account-address-book-confirm-default-modal-card-address-row">
-								<p class="account-address-book-confirm-default-modal-card-address">
-									{{ buildAddressLines(current_default_address) }}
-								</p>
-
+								<div v-if="current_default_address_lines || current_default_address.company" class="account-address-book-confirm-default-modal-card-info">
+									<p
+										v-if="isShippingAddress(current_default_address)"
+										class="account-address-book-confirm-default-modal-card-phone"
+									>
+										{{ current_default_address.phone_number }}
+									</p>
+									<p v-if="current_default_address_lines" class="account-address-book-confirm-default-modal-card-address">
+										{{ current_default_address_lines }}
+									</p>
+									<p v-if="current_default_address.company" class="account-address-book-confirm-default-modal-card-company">
+										{{ current_default_address.company }}
+									</p>
+								</div>
 								<UiBadge
 									v-if="current_default_address.label"
 									variant="tonal"
 									tone="default"
 									size="md"
-									:bg-color="tag_badge_colors[current_default_address.label]?.bgColor || 'var(--gray-10)'"
-									:text-color="tag_badge_colors[current_default_address.label]?.textColor || 'var(--gray-60)'"
+									:bg-color="address_book_tag_badge_colors[current_default_address.label]?.bgColor || 'var(--gray-10)'"
+									:text-color="address_book_tag_badge_colors[current_default_address.label]?.textColor || 'var(--gray-60)'"
 									class="account-address-book-confirm-default-modal-label-badge"
 								>
 									{{ getLabelCopy(current_default_address.label) }}
 								</UiBadge>
 							</div>
-
-							<p v-if="current_default_address.company" class="account-address-book-confirm-default-modal-card-company">
-								{{ current_default_address.company }}
-							</p>
 						</div>
 					</article>
 
@@ -170,40 +150,42 @@ function confirmModal() {
 						</header>
 
 						<div class="account-address-book-confirm-default-modal-card-body">
-							<p
-								v-if="isShippingAddress(pending_default_address)"
-								class="account-address-book-confirm-default-modal-card-phone"
-							>
-								{{ pending_default_address.phone_number }}
-							</p>
-
 							<div class="account-address-book-confirm-default-modal-card-address-row">
-								<p class="account-address-book-confirm-default-modal-card-address">
-									{{ buildAddressLines(pending_default_address) }}
-								</p>
+								<div v-if="pending_default_address_lines || pending_default_address.company" class="account-address-book-confirm-default-modal-card-info">
+									<p
+										v-if="isShippingAddress(pending_default_address)"
+										class="account-address-book-confirm-default-modal-card-phone"
+									>
+										{{ pending_default_address.phone_number }}
+									</p>
+									<p v-if="pending_default_address_lines" class="account-address-book-confirm-default-modal-card-address">
+										{{ pending_default_address_lines }}
+									</p>
+									<p v-if="pending_default_address.company" class="account-address-book-confirm-default-modal-card-company">
+										{{ pending_default_address.company }}
+									</p>
+								</div>
 
 								<UiBadge
 									v-if="pending_default_address.label"
 									variant="tonal"
 									tone="default"
 									size="md"
-									:bg-color="tag_badge_colors[pending_default_address.label]?.bgColor || 'var(--gray-10)'"
-									:text-color="tag_badge_colors[pending_default_address.label]?.textColor || 'var(--gray-60)'"
+									:bg-color="address_book_tag_badge_colors[pending_default_address.label]?.bgColor || 'var(--gray-10)'"
+									:text-color="address_book_tag_badge_colors[pending_default_address.label]?.textColor || 'var(--gray-60)'"
 									class="account-address-book-confirm-default-modal-label-badge"
 								>
 									{{ getLabelCopy(pending_default_address.label) }}
 								</UiBadge>
 							</div>
-
-							<p v-if="pending_default_address.company" class="account-address-book-confirm-default-modal-card-company">
-								{{ pending_default_address.company }}
-							</p>
 						</div>
 					</article>
 				</div>
 			</div>
+		</section>
 
-			<footer class="account-address-book-confirm-default-modal-actions">
+		<template #footer>
+			<div class="account-address-book-confirm-default-modal-actions ui-modal-footer-item">
 				<UiButton
 					type="button"
 					variant="ghost"
@@ -212,7 +194,7 @@ function confirmModal() {
 					class="account-address-book-confirm-default-modal-cancel"
 					@click="cancelModal"
 				>
-					Cancel
+					{{ translate('account.addressBook.cancel') }}
 				</UiButton>
 
 				<UiButton
@@ -223,10 +205,10 @@ function confirmModal() {
 					class="account-address-book-confirm-default-modal-confirm"
 					@click="confirmModal"
 				>
-					Confirm
+					{{ translate('account.addressBook.confirm') }}
 				</UiButton>
-			</footer>
-		</section>
+			</div>
+		</template>
 	</UiModal>
 </template>
 
@@ -234,39 +216,12 @@ function confirmModal() {
 .account-address-book-confirm-default-modal {
 	background: var(--contrast-light);
 	border-radius: 16px;
-	overflow: hidden;
 	width: 100%;
-
-	.account-address-book-confirm-default-modal-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 20px 24px;
-		border-bottom: 1px solid var(--gray-20);
-
-		.account-address-book-confirm-default-modal-title {
-			font-size: var(--type-size-300);
-			line-height: var(--type-line-300);
-			font-weight: var(--font-weight-bold);
-			color: var(--text-primary);
-		}
-
-		.account-address-book-confirm-default-modal-close {
-			display: grid;
-			place-items: center;
-			padding: 0;
-			border: 0;
-			background: transparent;
-			cursor: pointer;
-			color: var(--text-primary);
-		}
-	}
 
 	.account-address-book-confirm-default-modal-body {
 		display: flex;
 		flex-direction: column;
-		gap: 28px;
-		padding: 28px 24px 0;
+		gap: 24px;
 
 		.account-address-book-confirm-default-modal-description {
 			color: var(--text-secondary);
@@ -276,9 +231,9 @@ function confirmModal() {
 
 		.account-address-book-confirm-default-modal-compare {
 			display: grid;
-			grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr);
+			grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
 			align-items: stretch;
-			gap: 20px;
+			gap: 16px;
 
 			.account-address-book-confirm-default-modal-arrow {
 				display: grid;
@@ -289,24 +244,27 @@ function confirmModal() {
 			.account-address-book-confirm-default-modal-card {
 				display: flex;
 				flex-direction: column;
-				border: 1px solid var(--border-default);
+				border: 1px solid transparent;
+				box-shadow: 0 0 0 1px var(--border-default);
 				border-radius: 12px;
 				background: var(--contrast-light);
 				overflow: hidden;
 
 				&.account-address-book-confirm-default-modal-card--next {
-					border-color: var(--green-50, #59d94f);
+					box-shadow: 0 0 0 1px var(--success-base);
+					.account-address-book-confirm-default-modal-card-head {
+						border-color: var(--success-base);
+					}
 				}
 
 				.account-address-book-confirm-default-modal-card-head {
 					display: flex;
 					align-items: center;
 					gap: 12px;
-					padding: 18px 20px;
+					padding: 12px 20px;
 					border-bottom: 1px solid var(--gray-20);
 
 					.account-address-book-confirm-default-modal-card-name {
-						flex: 1 1 auto;
 						font-size: var(--type-size-200);
 						line-height: var(--type-line-200);
 						font-weight: var(--font-weight-semibold);
@@ -323,7 +281,7 @@ function confirmModal() {
 					display: flex;
 					flex-direction: column;
 					gap: 10px;
-					padding: 18px 20px;
+					padding: 12px 20px;
 
 					.account-address-book-confirm-default-modal-card-phone {
 						color: var(--text-primary);
@@ -343,10 +301,15 @@ function confirmModal() {
 						display: flex;
 						align-items: flex-start;
 						justify-content: space-between;
-						gap: 16px;
+						gap: 24px;
+
+						.account-address-book-confirm-default-modal-card-info {
+							display: flex;
+							flex-direction: column;
+							max-width: 176px;
+						}
 
 						.account-address-book-confirm-default-modal-card-address {
-							flex: 1 1 auto;
 							word-break: break-word;
 						}
 
@@ -356,19 +319,6 @@ function confirmModal() {
 					}
 				}
 			}
-		}
-	}
-
-	.account-address-book-confirm-default-modal-actions {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 12px;
-		padding: 26px 24px 24px;
-
-		.account-address-book-confirm-default-modal-confirm {
-			min-width: 88px;
-			border-radius: 18px;
 		}
 	}
 }
@@ -402,7 +352,7 @@ function confirmModal() {
 			}
 		}
 
-		.account-address-book-confirm-default-modal-actions {
+		:deep(.ui-modal-footer) {
 			flex-direction: column;
 			align-items: stretch;
 			padding: 20px;

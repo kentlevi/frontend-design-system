@@ -1,11 +1,11 @@
 {
-    "home": {
-        "productTypes": {
-            "dieCut": "Die Cut Stickers",
-            "dieCutRoll": "Die Cut Roll Stickers",
-            "sheet": "Sticker Sheet",
-            "hologram": "Hologram Stickers",
-            "vinyl": "Vinyl Lettering"
-        }
+  "home": {
+    "productTypes": {
+      "dieCut": "Die Cut Sticker",
+      "dieCutRoll": "Die Cut Roll Stickers",
+      "sheet": "Sticker Sheets",
+      "hologram": "Hologram Stickers",
+      "vinyl": "Vinyl Lettering"
     }
+  }
 }

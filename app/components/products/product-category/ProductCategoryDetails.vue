@@ -25,12 +25,13 @@ const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
 	},
 	{
 		type: 'video',
-		src: 'products/die-cut-sticker/features/02-watermelon-design-on-tablet-video.mp4',
-		poster: 'products/die-cut-sticker/features/02-watermelon-design-on-tablet-placeholder.png',
+		src: 'products/die-cut-sticker/features/02-product-story-video.mp4',
+		poster: 'products/die-cut-sticker/features/02-product-story-placeholder.png',
 	},
 	{
-		type: 'image',
-		src: 'products/die-cut-sticker/features/03-multiple-diecut-stickers-in-hand-placeholder.png',
+		type: 'video',
+		src: 'products/die-cut-sticker/features/03-product-story-video.mp4',
+		poster: 'products/die-cut-sticker/features/03-product-story-placeholder.png'
 	},
 ];
 
@@ -169,12 +170,22 @@ function getDefaultProductStoryMedia(index: 0 | 1 | 2): StoryMedia {
 
 function getSelectedProductName() {
 	if (!selected_id.value) return '';
-	return t(`product.items.${selected_id.value}.name`);
+	const page_key = `product.pageNames.${selected_id.value}`;
+	const page_value = t(page_key);
+	return page_value === page_key ? t(`product.items.${selected_id.value}.name`) : page_value;
 }
 
 function getSelectedProductBlurb() {
 	if (!selected_id.value) return '';
 	return t(`product.items.${selected_id.value}.blurb`);
+}
+
+function getProductStoryValue(row: 'row1' | 'row2' | 'row3', field: 'title' | 'text', fallback: string) {
+	if (!selected_id.value) return fallback;
+
+	const override_key = `product.story.productModeByProduct.${selected_id.value}.${row}.${field}`;
+	const override_value = t(override_key);
+	return override_value === override_key ? fallback : override_value;
 }
 
 const story_rows = computed<StoryRow[]>(() => {
@@ -188,23 +199,27 @@ const story_rows = computed<StoryRow[]>(() => {
 	const blurb = getSelectedProductBlurb();
 	return [
 		{
-			title: t('product.story.productMode.row1.title', { name }),
-			text: t('product.story.productMode.row1.text', { blurb }),
+			title: getProductStoryValue('row1', 'title', t('product.story.productMode.row1.title', { name })),
+			text: getProductStoryValue('row1', 'text', t('product.story.productMode.row1.text', { blurb })),
 			media: getDefaultProductStoryMedia(0),
 		},
 		{
-			title: t('product.story.productMode.row2.title', { name }),
-			text: t('product.story.productMode.row2.text', { blurb }),
+			title: getProductStoryValue('row2', 'title', t('product.story.productMode.row2.title', { name })),
+			text: getProductStoryValue('row2', 'text', t('product.story.productMode.row2.text', { blurb })),
 			reverse: true,
 			media: getDefaultProductStoryMedia(1),
 		},
 		{
-			title: t('product.story.productMode.row3.title', { name }),
-			text: t('product.story.productMode.row3.text', { blurb }),
+			title: getProductStoryValue('row3', 'title', t('product.story.productMode.row3.title', { name })),
+			text: getProductStoryValue('row3', 'text', t('product.story.productMode.row3.text', { blurb })),
 			media: getDefaultProductStoryMedia(2),
 		},
 	];
 });
+
+const guarantees_key_prefix = computed(() =>
+	selected_id.value ? 'product.guarantees' : 'product.guarantees.navigation'
+);
 </script>
 
 <template>
@@ -213,26 +228,26 @@ const story_rows = computed<StoryRow[]>(() => {
 			<article class="guarantee-card" data-testid="product-category-guarantee-made-today">
 				<img
 					src="/icons/custom/guarantees/delivery-truck.svg"
-					:alt="t('product.guarantees.madeToday.title')"
+					:alt="t(`${guarantees_key_prefix}.madeToday.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t('product.guarantees.madeToday.title') }}</h4>
-				<p class="product-details-text">{{ t('product.guarantees.madeToday.text') }}</p>
+				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.madeToday.title`) }}</h4>
+				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.madeToday.text`) }}</p>
 			</article>
 			<article class="guarantee-card" data-testid="product-category-guarantee-proof-review">
 				<img
 					src="/icons/custom/guarantees/proof-review.svg"
-					:alt="t('product.guarantees.proofReview.title')"
+					:alt="t(`${guarantees_key_prefix}.proofReview.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t('product.guarantees.proofReview.title') }}</h4>
-				<p class="product-details-text">{{ t('product.guarantees.proofReview.text') }}</p>
+				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.proofReview.title`) }}</h4>
+				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.proofReview.text`) }}</p>
 			</article>
 			<article class="guarantee-card" data-testid="product-category-guarantee-durability">
 				<img
 					src="/icons/custom/guarantees/weather-durability.svg"
-					:alt="t('product.guarantees.durability.title')"
+					:alt="t(`${guarantees_key_prefix}.durability.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t('product.guarantees.durability.title') }}</h4>
-				<p class="product-details-text">{{ t('product.guarantees.durability.text') }}</p>
+				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.durability.title`) }}</h4>
+				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.durability.text`) }}</p>
 			</article>
 		</div>
 	</section>

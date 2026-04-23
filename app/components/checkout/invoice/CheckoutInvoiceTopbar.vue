@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 defineProps<{
 	onClose: () => void;
 	onPrint: () => void;
@@ -10,17 +14,17 @@ defineProps<{
 	<header class="checkout-invoice-topbar">
 		<div class="checkout-invoice-topbar-inner">
 			<button type="button" class="checkout-invoice-topbar-button" @click="onClose">
-				Close
+				{{ t('checkout.invoice.close') }}
 			</button>
-			<h1 class="checkout-invoice-topbar-title">Invoice</h1>
+			<h1 class="checkout-invoice-topbar-title">{{ t('checkout.invoice.title') }}</h1>
 			<div class="checkout-invoice-topbar-actions">
 				<button type="button" class="checkout-invoice-topbar-button checkout-invoice-topbar-button--icon" @click="onPrint">
 					<UiIcon name="regular-print" size="18" color="currentColor" decorative />
-					Print
+					{{ t('checkout.invoice.print') }}
 				</button>
 				<button type="button" class="checkout-invoice-topbar-button checkout-invoice-topbar-button--icon" @click="onDownload">
 					<UiIcon name="regular-download" size="18" color="currentColor" decorative />
-					Download Invoice
+					{{ t('checkout.invoice.download') }}
 				</button>
 			</div>
 		</div>

@@ -2,7 +2,9 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
 	HEADER_MAX_RECENT_SEARCHES,
 	HEADER_SEARCH_DEBOUNCE_DELAY_MS,
+	resolveHeaderCategoryLabel,
 } from '~/data/layout/header';
+import { productCatalog } from '~/data/products/catalog';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import {
@@ -41,6 +43,39 @@ function normalizeSearchText(value: string): string {
 		.replace(/\s+/g, ' ');
 }
 
+function resolveTranslatedValue(
+	t: ReturnType<typeof useI18n>['t'],
+	key: string,
+	fallback: string,
+): string {
+	const translated_value = t(key);
+	return translated_value !== key ? translated_value : fallback;
+}
+
+function resolveSearchProductName(
+	t: ReturnType<typeof useI18n>['t'],
+	product_slug: string,
+	fallback: string,
+): string {
+	return resolveTranslatedValue(
+		t,
+		`layout.header.search.modal.productNames.${product_slug}`,
+		resolveTranslatedValue(t, `product.items.${product_slug}.name`, fallback),
+	);
+}
+
+function resolveSearchProductBlurb(
+	t: ReturnType<typeof useI18n>['t'],
+	product_slug: string,
+	fallback: string,
+): string {
+	return resolveTranslatedValue(
+		t,
+		`layout.header.search.modal.productDescriptions.${product_slug}`,
+		resolveTranslatedValue(t, `product.items.${product_slug}.blurb`, fallback),
+	);
+}
+
 function createEmptyPagination(per_page = search_page_size): SearchPagination {
 	return {
 		current_page: 1,
@@ -69,14 +104,15 @@ function createRecentSearchStorageEntry(
 }
 
 function dedupeSearchItems(items: SearchItem[]): SearchItem[] {
-	const seen_ids = new Set<string>();
+	const seen_keys = new Set<string>();
 
 	return items.filter((item) => {
-		if (seen_ids.has(item.id)) {
+		const dedupe_key = `${item.category_key}:${item.product_slug}`;
+		if (seen_keys.has(dedupe_key)) {
 			return false;
 		}
 
-		seen_ids.add(item.id);
+		seen_keys.add(dedupe_key);
 		return true;
 	});
 }
@@ -151,18 +187,28 @@ export function useAppHeaderSearch(params: {
 		const product_id = Number(api_product.id ?? '');
 		const product_slug = normalizeText(api_product.url_slug);
 		const category_slug = normalizeText(api_product.category_url_slug);
-		const product_name = normalizeText(api_product.name);
+		const api_product_name = normalizeText(api_product.name);
 
-		if (!product_id || !product_slug || !category_slug || !product_name) {
+		if (!product_id || !product_slug || !category_slug || !api_product_name) {
 			return null;
 		}
 
-		const category_name = normalizeText(api_product.category_name) || category_slug;
-		const product_blurb = normalizeText(api_product.description);
+		const category_name = resolveHeaderCategoryLabel(
+			category_slug,
+			t,
+			normalizeText(api_product.category_name) || category_slug,
+		);
+		const product_name = resolveSearchProductName(t, product_slug, api_product_name);
+		const product_blurb = resolveSearchProductBlurb(
+			t,
+			product_slug,
+			normalizeText(api_product.description),
+		);
 
 		return {
 			id: `${category_slug}:${product_id}`,
 			product_id,
+			product_slug,
 			category_key: category_slug,
 			category_label: category_name,
 			name: product_name,
@@ -170,6 +216,51 @@ export function useAppHeaderSearch(params: {
 			image: resolveSearchImage(api_product.image),
 			to: withCountry(`/${category_slug}/${product_slug}`),
 		};
+	}
+
+	function createLocalCatalogSearchItems(): SearchItem[] {
+		return Object.values(productCatalog).flatMap((category) => {
+			const category_label = resolveHeaderCategoryLabel(category.key, t, category.title);
+
+			return category.products.map((product) => ({
+				id: `${category.key}:${product.id}`,
+				product_id: 0,
+				product_slug: product.id,
+				category_key: category.key,
+				category_label,
+				name: resolveSearchProductName(t, product.id, product.name),
+				blurb: resolveSearchProductBlurb(t, product.id, product.blurb),
+				image: resolveSearchImage(product.image),
+				to: withCountry(`/${category.key}/${product.id}`),
+			}));
+		});
+	}
+
+	function searchCatalogProductsLocally(query: string): SearchItem[] {
+		const normalized_query = normalizeSearchText(query);
+		if (!normalized_query) return [];
+
+		const ranked_results = createLocalCatalogSearchItems()
+			.map((item) => {
+				const normalized_name = normalizeSearchText(item.name);
+				const normalized_blurb = normalizeSearchText(item.blurb);
+				const normalized_category = normalizeSearchText(item.category_label);
+				const normalized_slug = normalizeSearchText(item.product_slug);
+
+				let score = -1;
+				if (normalized_name === normalized_query) score = 400;
+				else if (normalized_slug === normalized_query) score = 360;
+				else if (normalized_name.startsWith(normalized_query)) score = 320;
+				else if (normalized_name.includes(normalized_query)) score = 280;
+				else if (normalized_category.includes(normalized_query)) score = 160;
+				else if (normalized_blurb.includes(normalized_query)) score = 120;
+
+				return score >= 0 ? { item, score } : null;
+			})
+			.filter((entry): entry is { item: SearchItem; score: number } => Boolean(entry))
+			.sort((left, right) => right.score - left.score || left.item.name.localeCompare(right.item.name));
+
+		return ranked_results.map(entry => entry.item);
 	}
 
 	function resolvePaginationMeta(meta: Record<string, unknown> | null, fallback_page: number): SearchPagination {
@@ -194,10 +285,19 @@ export function useAppHeaderSearch(params: {
 		const product_value = value as RecentSearchStorageProduct;
 		const id = normalizeText(product_value.id);
 		const product_id = product_value.product_id;
+		const product_slug = normalizeText(product_value.product_slug);
 		const category_key = normalizeText(product_value.category_key);
-		const category_label = normalizeText(product_value.category_label) || category_key;
-		const name = normalizeText(product_value.name);
-		const blurb = normalizeText(product_value.blurb);
+		const category_label = resolveHeaderCategoryLabel(
+			category_key,
+			t,
+			normalizeText(product_value.category_label) || category_key,
+		);
+		const name = product_slug
+			? resolveSearchProductName(t, product_slug, normalizeText(product_value.name))
+			: normalizeText(product_value.name);
+		const blurb = product_slug
+			? resolveSearchProductBlurb(t, product_slug, normalizeText(product_value.blurb))
+			: normalizeText(product_value.blurb);
 		const image = normalizeText(product_value.image);
 		const to = normalizeText(product_value.to);
 
@@ -208,6 +308,7 @@ export function useAppHeaderSearch(params: {
 		return {
 			id,
 			product_id,
+			product_slug,
 			category_key,
 			category_label,
 			name,
@@ -221,6 +322,7 @@ export function useAppHeaderSearch(params: {
 		return {
 			id: item.id,
 			product_id: item.product_id,
+			product_slug: item.product_slug,
 			category_key: item.category_key,
 			category_label: item.category_label,
 			name: item.name,
@@ -510,7 +612,7 @@ export function useAppHeaderSearch(params: {
 	}
 
 	function saveRecentSearchInBackground(item: SearchItem) {
-		if (is_authenticated.value) {
+		if (is_authenticated.value && item.product_id > 0) {
 			void (async () => {
 				try {
 					const response = await saveRecentSearchedProducts({
@@ -610,13 +712,17 @@ export function useAppHeaderSearch(params: {
 			const response_products = Array.isArray(response.data?.products)
 				? response.data.products
 				: [];
-			const mapped_results = response_products
+			const api_results = response_products
 				.map(mapApiProductToSearchItem)
 				.filter((item): item is SearchItem => Boolean(item));
+			const local_results = append
+				? []
+				: searchCatalogProductsLocally(current_search_query);
+			const mapped_results = dedupeSearchItems([...local_results, ...api_results]);
 
 			search_results.value = append
-				? dedupeSearchItems([...search_results.value, ...mapped_results])
-				: dedupeSearchItems(mapped_results);
+				? dedupeSearchItems([...search_results.value, ...api_results])
+				: mapped_results;
 
 			search_pagination.value = resolvePaginationMeta(
 				response.meta as SearchApiMeta | null,

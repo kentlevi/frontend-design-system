@@ -1,28 +1,35 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
+import { useCartPreviewItem } from '~/composables/cart/preview/useCartPreviewItem';
+import { formattedPrice } from '~/utils/currency';
+
+const props = defineProps<{
+	tone: 'guest' | 'member';
+	formatPrice: (value: number) => string;
+}>();
+
+const {
+	loading,
+	items,
+	getCartItems
+} = useCartPreviewHandler('checkout-summary-items');
+
+const list_classes = computed(() => ['checkout-summary-list', `is-${props.tone}`]);
+
+const {
+	formatImage,
+} = useCartPreviewItem();
+
+onMounted(async()=>{
+	await getCartItems()
+})
+
+</script>
+
 <template>
 	<div :class="list_classes">
-		<template v-if="has_items">
-			<div
-				v-for="item in props.items"
-				:key="item.id"
-				class="checkout-summary-item"
-			>
-				<div class="checkout-summary-thumb">
-					<img
-						:src="item.artworkPreviewUrl || item.product.image"
-						:alt="item.product.name"
-						class="checkout-summary-thumb-image"
-					>
-				</div>
-				<div class="checkout-summary-info">
-					<div class="checkout-summary-name">{{ item.product.name }}</div>
-					<div class="checkout-summary-meta">
-						{{ props.itemMeta(item.sizeLabel, item.qty) }}
-					</div>
-				</div>
-				<div class="checkout-summary-price">{{ props.formatPrice(item.total) }}</div>
-			</div>
-		</template>
-		<div v-else class="checkout-summary-skeleton" aria-hidden="true">
+		<div v-if="loading" class="checkout-summary-skeleton" aria-hidden="true">
 			<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
 				<div class="checkout-summary-thumb skeleton-block" />
 				<div class="checkout-summary-info">
@@ -32,23 +39,30 @@
 				<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--price" />
 			</div>
 		</div>
+		<div v-else>
+			<div
+				v-for="(item,index) in items"
+				:key="index"
+				class="checkout-summary-item"
+			>
+				<div class="checkout-summary-thumb">
+					<img
+						:src="formatImage(item)"
+						:alt="item.artwork_file_name ?? item.artwork_preview ?? item.product_thumbnail"
+						class="checkout-summary-thumb-image"
+					>
+				</div>
+				<div class="checkout-summary-info">
+					<div class="checkout-summary-name">{{ item.product }}</div>
+					<div class="checkout-summary-meta">
+						{{item.width}} x {{ item.height }} {{ item.quantity.toLocaleString() }}
+					</div>
+				</div>
+				<div class="checkout-summary-price">{{ formattedPrice(item.cost) }}</div>
+			</div>
+		</div>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue';
-import type { CheckoutItem } from '~/types/checkout';
-
-const props = defineProps<{
-	tone: 'guest' | 'member';
-	items: CheckoutItem[];
-	formatPrice: (value: number) => string;
-	itemMeta: (sizeLabel: string, qty: number) => string;
-}>();
-
-const has_items = computed(() => props.items.length > 0);
-const list_classes = computed(() => ['checkout-summary-list', `is-${props.tone}`]);
-</script>
 
 <style scoped lang="scss">
 .checkout-summary-list {

@@ -1,23 +1,158 @@
-﻿{
-    "account": {
-        "points": {
-            "title": "포인트",
-            "tierName": "범퍼 보스",
-            "lastTierUpgrade": "최근 등급 갱신일",
-            "pointsUnit": "포인트",
-            "pointsSystemTitle": "포인트 시스템",
-            "pointsSystemDescription": "로열티 프로그램에서 포인트를 수집하고 사용하여 다양한 혜택과 특별한 리워드를 해제하세요. 적립된 포인트는 향후 구매 시 결제에 사용할 수 있습니다.",
-            "questTitle": "위대한 스티커 퀘스트",
-            "questDescription": "쇼핑을 더 보람 있는 여정으로 만드는 로열티 프로그램입니다. 주문과 활동마다 포인트를 적립하고 챌린지를 해제하세요!",
-            "historyTitle": "포인트 히스토리",
-            "historyDescription": "로열티 프로그램을 통해 적립하거나 사용한 포인트 내역을 자세히 확인하세요.",
-            "challengesTitle": "챌린지",
-            "viewAll": "전체 보기",
-            "filter": "필터",
-            "logsTitle": "로그",
-            "expiry": "만료",
-            "nextTierRequirementPrefix": "다음 레벨 해제를 위해 최소",
-            "nextTierRequirementSuffix": "의 완료된 주문 결제금액이 필요합니다."
+{
+  "account": {
+    "points": {
+      "title": "포인트",
+      "tierName": "범퍼 보스",
+      "lastTierUpgrade": "최근 등급 업그레이드",
+      "pointsUnit": "포인트",
+      "pointsSystemTitle": "포인트 시스템",
+      "pointsSystemDescription": "모든 구매를 가치 있게 만드세요! 로열티 프로그램의 모든 주문과 활동을 통해 포인트를 적립하고 리워드를 잠금 해제하세요.",
+      "loyaltyIntro": "로열티 프로그램에서 포인트를 적립하고 리워드, 특별 혜택, 향후 구매 시 할인 혜택으로 누려보세요.",
+      "pointsSpec": {
+        "title": "포인트 유의사항",
+        "exclusionRule": "포인트는 배송비나 디자인 제작 비용으로 사용할 수 없습니다.",
+        "expiryRule": "적립된 포인트는 1년 후 해당 월 말일에 소멸됩니다.",
+        "deductionRule": "포인트 사용시 소멸 예정일이 가장 가까운 포인트부터 먼저 차감됩니다."
+      },
+      "questTitle": "위대한 스티커 퀘스트",
+      "questDescription": "퀘스트에 도전하고 포인트를 적립하여 다양한 리워드를 획득하세요!",
+      "historyTitle": "포인트 내역",
+      "historyDescription": "로열티 프로그램에서 적립하거나 사용한 모든 포인트를 확인하세요.",
+      "challengesTitle": "챌린지",
+      "viewAll": "전체 보기",
+      "filter": "필터",
+      "logsTitle": "내역",
+      "expiry": "만료",
+      "expireyCol": "만료일",
+      "nextTierRequirementPrefix": "다음 등급 달성까지",
+      "nextTierRequirementSuffix": "남았습니다.",
+      "questsConquered": "완료한 퀘스트",
+      "viewOptions": "보기 옵션",
+      "notCompleted": "미완료",
+      "rewardLabel": "보상",
+      "acquiredLabel": "달성 시",
+      "filters": {
+        "all": "전체",
+        "earned": "적립",
+        "deducted": "차감"
+      },
+      "logs": {
+        "pointsEarned": "적립된 포인트",
+        "pointsUsed": "사용된 포인트",
+        "stickerQuest": "스티커 퀘스트",
+        "rankLevelUp": "등급 업그레이드"
+      },
+      "ranking": {
+        "title": "등급 시스템",
+        "perksLabel": "혜택",
+        "levelUpBonusLabel": "등급 달성 보너스"
+      },
+      "challenges": {
+        "firstOrderVictory": {
+          "name": "첫 주문 완료",
+          "description": "첫 번째 주문을 완료하세요",
+          "reward": "10포인트 적립"
+        },
+        "stickerExplorer": {
+          "name": "스티커 탐험가",
+          "description": "스티커 컬렉션을 둘러보고 마음에 드는 상품 10개를 찾아보세요!",
+          "reward": "5포인트 적립"
+        },
+        "mysteryHunter": {
+          "name": "미스터리 헌터",
+          "description": "사이트 곳곳에 숨겨진 스티커 아이콘을 찾아보세요",
+          "reward": "다음 주문 시 10% 할인 쿠폰 지급"
+        },
+        "speedyCheckout": {
+          "name": "스피디 체크아웃",
+          "description": "빠르고 간편한 결제 시스템으로 3분 이내에 주문을 완료하세요",
+          "reward": "이번 주문에 대해 무료 특송 배송 헤택을 누리세요!"
+        },
+        "threesACharm": {
+          "name": "세 가지 매력",
+          "description": "한 번의 주문에 서로 다른 스티커 3가지를 조합해 보세요!",
+          "reward": "총 결제 금액의 15% 할인 헤택을 드립니다."
+        },
+        "socialSharing": {
+          "name": "소셜 공유",
+          "description": "소셜 미디어에 나만의 스티커 디자인을 공유하고 포인트를 적립하세요!",
+          "reward": "다음 주문시 10% 할인 및 3포인트 적립"
+        },
+        "reviewMaster": {
+          "name": "리뷰 마스터",
+          "description": "구매하신 상품에 대한 리뷰를 남기고 포인트를 받으세요!",
+          "reward": "8포인트 적립"
+        },
+        "shareYourCreativity": {
+          "name": "나만의 창의력을 뽐내세요",
+          "description": "온라인에 스티커를 자랑해 보세요. 저희를 태그하는 것도 잊지 마세요!",
+          "reward": "8포인트 적립"
+        },
+        "theRoyalReferral": {
+          "name": "특별 추천 혜택",
+          "description": "친구를 초대하여 함께 쇼핑하세요. 친구가 첫 주문을 완료하면 보상을 드립니다!",
+          "reward": "10포인트 적립 및 다음 구매시 5원 할인"
+        },
+        "frequentBuyer": {
+          "name": "단골 고객",
+          "description": "한 달 이내에 5번 주문하세요",
+          "reward": "다음 주문시 10%할인 및 무료 특송 배송 혜택을 드립니다!"
+        },
+        "sticktasticAnniversary": {
+          "name": "스티커 기념일",
+          "description": "저희와 함께한 1주년을 축하합니다. 소중한 고객이 되어주셔서 감사합니다!",
+          "reward": "감사의 마음을 담아 25포인트를 드립니다!"
+        },
+        "bigSpenderBonus": {
+          "name": "빅 스펜더 보너스",
+          "description": "한 번의 주문으로 288,499원 이상 구매하고 보상을 받으세요!",
+          "reward": "다음 구매시 20원 할인 및 20포인트 적립"
+        },
+        "charm": {
+          "name": "Charm",
+          "reward": "5포인트 적립"
         }
+      },
+      "ranks": {
+        "rank1": {
+          "label": "등급 1",
+          "name": "MuScout"
+        },
+        "rank2": {
+          "label": "등급 2",
+          "name": "MuLeader"
+        },
+        "rank3": {
+          "label": "등급 3 - 현재 등급",
+          "name": "MuBoss"
+        },
+        "rank4": {
+          "label": "등급 4",
+          "name": "MuDynamo"
+        }
+      },
+      "data": {
+        "newlyRegisteredAccount": "신규 가입 계정",
+        "conversionRateLabel": "1포인트 = 1KRW",
+        "rank2SpendRequirement": "누적 결제 금액 720,070원 이상",
+        "rank3SpendRequirement": "누적 결제 금액 1,440,140원 이상",
+        "rank4SpendRequirement": "누적 결제 금액 7,200,700원 이상",
+        "earn05PointOnEveryPurchase": "모든 구매 시 0.5% 포인트 적립",
+        "earn1PointOnEveryPurchase": "구매 시마다 1% 포인트 적립",
+        "earn15PointOnEveryPurchase": "구매 시마다 1.5% 포인트 적립",
+        "earn2PointOnEveryPurchase": "구매 시마다 2% 포인트 적립",
+        "earn4PointsJustByRegisteringYourAccount": "계정 가입 시 4포인트 적립",
+        "earn8PointsAsRewardForReachingThisTier": "이 등급 달성 시 8포인트 지급",
+        "earn12PointsAsRewardForReachingThisTier": "이 등급 달성 시 12포인트 지급",
+        "earn16PointsAsRewardForReachingThisTier": "이 등급 달성 시 16포인트 지급",
+        "discount7212KrwNextOrderOneTime": "다음 주문 시 7,212원 할인 (1회 사용)",
+        "discount10NextOrderOneTime": "다음 주문 시 10% 할인 (1회 사용)",
+        "discount15NextOrderOneTime": "다음 주문 시 15% 할인 (1회 사용)",
+        "freeExpressShippingOneTime": "무료 특송 배송 (1회 사용)",
+        "freeExpressShippingUnlimited": "무료 특송 배송 (무제한)",
+        "freeArtworkRevisions": "디자인 수정 무료",
+        "doublePointsOneMonth": "1개월 동안 포인트 2배 적립"
+      }
     }
+  }
 }

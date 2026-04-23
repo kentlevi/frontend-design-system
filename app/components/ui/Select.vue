@@ -25,6 +25,7 @@ defineOptions({
 const props = withDefaults(
 	defineProps<{
 		modelValue?: SelectValue | null;
+		highlightedValueWhenEmpty?: SelectValue | null;
 		options?: SelectOption[];
 		size?: SelectSizeValue;
 		placeholder?: string;
@@ -41,6 +42,7 @@ const props = withDefaults(
 	}>(),
 	{
 		modelValue: null,
+		highlightedValueWhenEmpty: null,
 		options: () => [],
 		size: 'md',
 		placeholder: 'Select option',
@@ -73,6 +75,13 @@ let suppress_toggle_until = 0;
 const selected_option = computed(() =>
 	props.options.find((item) => item.value === props.modelValue) ?? null
 );
+const highlighted_option_value = computed<SelectValue | null>(() => {
+	if (props.modelValue !== null && props.modelValue !== '') {
+		return props.modelValue
+	}
+
+	return props.highlightedValueWhenEmpty
+})
 
 const filtered_options = computed(() => {
 	if (!props.searchable) return props.options;
@@ -265,9 +274,9 @@ onBeforeUnmount(() => {
 						:key="option.value"
 						type="button"
 						:class="['ui-select-option', props.optionClass, {
-							'is-selected': option.value === props.modelValue,
+							'is-selected': option.value === highlighted_option_value,
 						}]"
-						:tabindex="option.value === props.modelValue ? 0 : -1"
+						:tabindex="option.value === highlighted_option_value ? 0 : -1"
 						@mousedown.prevent="selectOption(option)"
 					>
 						<div class="ui-select-option-copy">
@@ -287,9 +296,9 @@ onBeforeUnmount(() => {
 					v-if="pinned_option"
 					type="button"
 					:class="['ui-select-option', 'ui-select-option--pinned', props.optionClass, {
-						'is-selected': pinned_option.value === props.modelValue,
+						'is-selected': pinned_option.value === highlighted_option_value,
 					}]"
-					:tabindex="pinned_option.value === props.modelValue ? 0 : -1"
+					:tabindex="pinned_option.value === highlighted_option_value ? 0 : -1"
 					@mousedown.prevent="selectOption(pinned_option)"
 				>
 					<div class="ui-select-option-copy">

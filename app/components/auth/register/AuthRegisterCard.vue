@@ -8,7 +8,6 @@ import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { registerRewardPoints } from '~/data/auth/register';
-import { useLoginUser } from '~/composables/auth/useLoginUser';
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import { useRoute } from 'vue-router';
 import {
@@ -16,6 +15,7 @@ import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
+import { loginMemberUser } from '~/services/auth/auth.service';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -109,8 +109,7 @@ async function continueWithRegisteredEmail() {
 		return;
 	}
 
-	const { handleMemberLogin } = useLoginUser();
-	const response = await handleMemberLogin({
+	const response = await loginMemberUser({
 		email: email.value,
 		password: registered_email_password.value,
 		remember_me: false,
@@ -186,6 +185,7 @@ watch(is_email_taken_error, (is_taken) => {
 			:label="t('auth.register.createAccount')"
 			test-id="auth-register-loading-overlay"
 			variant="modal"
+			position="absolute"
 		/>
 
 		<div class="auth-register-card" data-testid="auth-register-card">
@@ -197,7 +197,7 @@ watch(is_email_taken_error, (is_taken) => {
 					size="sm"
 					:no-hover="true"
 					class="auth-register-card-close"
-					aria-label="Close modal"
+					:aria-label="t('auth.register.closeModal')"
 					@click="emit('close')"
 				>
 					<UiIcon
@@ -247,20 +247,12 @@ watch(is_email_taken_error, (is_taken) => {
 
 				<UiFormField
 					class="auth-register-field"
-					:label="t('auth.register.lastName')"
+					:label="t('auth.register.lastNameOptionalLabel')"
 					head-class="auth-register-field-head"
 					label-class="auth-register-field-label"
 					label-text-class="auth-register-field-label-text"
 					error-class="auth-register-field-error"
 				>
-					<template #label>
-						<span class="auth-register-label">
-							{{ t('auth.register.lastName') }}
-							<span class="auth-register-optional">
-								({{ t('auth.register.optional') }})
-							</span>
-						</span>
-					</template>
 					<UiInput
 						v-model="last_name"
 						type="text"
@@ -368,6 +360,8 @@ watch(is_email_taken_error, (is_taken) => {
 						content-testid="auth-register-terms-error-popover"
 						class="auth-register-terms-error-tooltip"
 						content-class="auth-register-terms-error-tooltip-content"
+						content-width="max-content"
+						content-max-width="min(320px, calc(100vw - 32px))"
 					>
 						<template #trigger>
 							<UiButton
@@ -378,7 +372,7 @@ watch(is_email_taken_error, (is_taken) => {
 								:aria-expanded="terms_error_popover_open"
 								aria-haspopup="dialog"
 								data-testid="auth-register-terms-error-button"
-								sr-label="Terms error information"
+								:sr-label="t('auth.register.termsErrorInfo')"
 								icon-only
 								:icon="terms_error_icon_strong ? 'strong-info-circle' : 'regular-info-circle'"
 								:icon-size="24"
@@ -472,36 +466,7 @@ watch(is_email_taken_error, (is_taken) => {
 
 <style lang="scss">
 .auth-register-card-shell {
-	width: 100%;
-	max-width: 588px;
-
 	.auth-register-card {
-		border: 1px solid var(--border-default);
-		background: var(--contrast-light);
-		border-radius: 22px;
-		box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
-		padding: 40px;
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		position: relative;
-
-		.auth-register-card-close-wrap {
-			position: absolute;
-			top: 24px;
-			right: 24px;
-			z-index: 1;
-		}
-
-		.auth-register-card-close {
-			width: 24px;
-			height: 24px;
-			padding: 0;
-			min-height: auto;
-			border-radius: 6px;
-			box-shadow: none;
-		}
-
 		.auth-register-head {
 			display: flex;
 			flex-direction: column;
@@ -644,22 +609,10 @@ watch(is_email_taken_error, (is_taken) => {
 			.auth-register-terms-error-popover-icon {
 				flex-shrink: 0;
 			}
-
-			.auth-register-terms-error-tooltip-content {
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-				height: 40px;
-				padding: 8px 16px 8px 12px;
-			}
 		}
 
 		.auth-register-submit {
 			margin-top: 8px;
-			width: 100%;
-			border-radius: 16px;
-			box-shadow: none;
-			font-size: var(--type-size-200);
-			line-height: var(--type-line-200);
 		}
 
 		.auth-register-login {
@@ -705,25 +658,15 @@ watch(is_email_taken_error, (is_taken) => {
 				text-align: left;
 				max-width: none;
 
-				.auth-register-terms-error-tooltip-content {
-					min-width: 220px;
-				}
 			}
 		}
 	}
 }
 
-.auth-register-loading-fade-enter-active,
-.auth-register-loading-fade-leave-active {
-	transition: opacity 0.16s ease;
-}
-
-.auth-register-loading-fade-enter-from,
-.auth-register-loading-fade-leave-to {
-	opacity: 0;
-}
-
-body.has-auth-register-loading {
-	overflow: hidden;
+:deep(.auth-register-terms-error-tooltip-content) {
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
+	min-height: 40px;
+	padding: 8px 16px 8px 12px;
 }
 </style>

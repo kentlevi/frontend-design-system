@@ -1,39 +1,41 @@
 {
-    "cart": {
-        "cartPreview": {
-            "previewTitle": "장바구니 미리보기 ({count})",
-            "continueShopping": "쇼핑 계속하기",
-            "emptyIconAlt": "비어 있는 장바구니",
-            "emptyTitle": "장바구니가 비어 있습니다.",
-            "emptyDescription": "메뉴에서 상품을 추가하거나, 아래 추천 상품을 확인해 보세요.",
-            "size": "사이즈",
-            "quantity": "수량",
-            "featuredItems": "추천 상품:",
-            "startsAt": "시작가:",
-            "customize": "커스터마이즈",
-            "total": "합계:",
-            "noteLabel": "참고:",
-            "note": "배송비와 할인은 결제 단계에서 계산됩니다.",
-            "viewCart": "장바구니 보기",
-            "proceedToCheckout": "결제 진행",
-            "redirectingToCart": "장바구니로 이동 중",
-            "closeFeaturedItems": "추천 상품 닫기",
-            "editModal": {
-                "title": "사이즈 및 수량 수정",
-                "sizeOnlyTitle": "사이즈 수정",
-                "widthPlaceholder": "가로",
-                "heightPlaceholder": "세로",
-                "cancel": "취소",
-                "update": "수정하기",
-                "customSize": "직접 입력",
-                "customQuantity": "직접 입력"
-            },
-            "aria": {
-                "saveItemChanges": "상품 변경 저장",
-                "cancelItemChanges": "상품 변경 취소",
-                "editItem": "상품 수정",
-                "removeItem": "상품 삭제"
-            }
-        }
+  "cart": {
+    "cartPreview": {
+      "previewTitle": "장바구니 미리보기 ({count})",
+      "continueShopping": "쇼핑 계속하기",
+      "emptyIconAlt": "비어 있는 장바구니",
+      "emptyTitle": "현재 장바구니가 비어 있습니다.",
+      "emptyDescription": "메뉴를 둘러보고 장바구니에 담거나 아래 추천 상품 중에서 선택해 보세요.",
+      "size": "사이즈",
+      "quantity": "수량",
+      "featuredItems": "추천 상품",
+      "startsAt": "시작가",
+      "customize": "맞춤 제작",
+      "total": "합계:",
+      "noteLabel": "참고:",
+      "note": "배송비와 할인은 결제 단계에서 계산됩니다.",
+      "viewCart": "장바구니 보기",
+      "proceedToCheckout": "결제 진행",
+      "redirectingToCart": "장바구니로 이동 중",
+      "closeFeaturedItems": "추천 상품 닫기",
+      "itemRemovedSuccess": "상품이 성공적으로 삭제되었습니다.",
+      "removeConfirmTitle": "장바구니에서 이 상품을 삭제하시겠습니까?",
+      "editModal": {
+        "title": "사이즈 및 수량 수정",
+        "sizeOnlyTitle": "사이즈 수정",
+        "widthPlaceholder": "가로",
+        "heightPlaceholder": "세로",
+        "cancel": "취소",
+        "update": "수정하기",
+        "customSize": "맞춤 사이즈",
+        "customQuantity": "맞춤 수량"
+      },
+      "aria": {
+        "saveItemChanges": "상품 변경 저장",
+        "cancelItemChanges": "상품 변경 취소",
+        "editItem": "상품 수정",
+        "removeItem": "상품 삭제"
+      }
     }
+  }
 }

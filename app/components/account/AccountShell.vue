@@ -102,7 +102,7 @@ const tabs = [
 	{ key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'regular-star' },
 	{ key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'regular-ticket' },
 	{ key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'regular-comments' },
-	{ key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequests'), to: '/account/quote-requests', icon: 'regular-file-details' },
+	{ key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequest'), to: '/account/quote-requests', icon: 'regular-file-details' },
 ] as const;
 </script>
 

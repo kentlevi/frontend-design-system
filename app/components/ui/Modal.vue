@@ -16,6 +16,10 @@ const props = withDefaults(
 		gap?: string;
 		align?: 'top' | 'center' | 'bottom';
 		modalClass?: string;
+		footerClass?: string;
+		hideHeader?: boolean;
+		maxHeight?: string;
+		scrollable?: boolean;
 	}>(),
 	{
 		modelValue: false,
@@ -23,10 +27,14 @@ const props = withDefaults(
 		closeOnBackdrop: true,
 		closeOnEsc: true,
 		width: '504px',
-		padding: '40px',
-		gap: '18px',
+		padding: '',
+		gap: '',
 		align: 'top',
 		modalClass: '',
+		footerClass: '',
+		hideHeader: false,
+		maxHeight: '',
+		scrollable: false,
 	}
 );
 
@@ -38,8 +46,9 @@ const attrs = useAttrs();
 
 const modal_style = computed(() => ({
 	'--ui-modal-width': props.width,
-	'--ui-modal-padding': props.padding,
-	'--ui-modal-gap': props.gap,
+	'--ui-modal-padding': props.padding || null,
+	'--ui-modal-gap': props.gap || null,
+	'--ui-modal-max-height': props.maxHeight || null,
 }));
 
 function closeModal() {
@@ -94,13 +103,20 @@ onBeforeUnmount(() => {
 				@click="onBackdropClick"
 			>
 				<div
-					:class="['ui-modal', 'auth-shell-enter', modalClass]"
+					:class="[
+						'ui-modal',
+						'auth-shell-enter',
+						{ 'ui-modal--scrollable': scrollable },
+						modalClass,
+					]"
 					role="dialog"
 					aria-modal="true"
 					:aria-label="title || 'Modal'"
 					:style="modal_style"
 					v-bind="attrs"
 				>
+					<slot name="overlay" />
+
 					<header
 						v-if="title || $slots.header || $slots.actions"
 						class="ui-modal-header"
@@ -127,7 +143,7 @@ onBeforeUnmount(() => {
 								<UiIcon
 									name="regular-times"
 									:size="24"
-									color="#000000"
+									color="currentColor"
 								/>
 							</UiButton>
 						</div>
@@ -137,7 +153,11 @@ onBeforeUnmount(() => {
 						<slot />
 					</div>
 
-					<footer v-if="$slots.footer" class="ui-modal-footer">
+					<footer
+						v-if="$slots.footer"
+						class="ui-modal-footer"
+						:class="footerClass"
+					>
 						<slot name="footer" />
 					</footer>
 				</div>

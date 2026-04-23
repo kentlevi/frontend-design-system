@@ -1,10 +1,10 @@
 {
     "home": {
         "cta": {
-            "titleLine1": "First time ordering?",
-            "titleLine2": "There's no need to worry",
-            "primary": "Order Now",
-            "secondary": "Inquire About Production"
+            "titleLine1": "New here? We make it simple",
+            "titleLine2": "from start to finish.",
+            "primary": "Order Now!",
+            "secondary": "Production Inquiry"
         }
     }
 }

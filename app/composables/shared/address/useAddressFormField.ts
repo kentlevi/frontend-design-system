@@ -1,5 +1,6 @@
 import type { icons } from '~/data/ui/icons'
-import { useAddressFieldStore } from '~/stores/address'
+import { useAddressFieldStore } from '~/stores/user-address'
+import type { CountryFieldOption } from '~/types/country_field_option'
 import type {
 	AddressDynamicFields,
 	AddressFormField,
@@ -8,20 +9,21 @@ import type {
 	AddressType,
 	UpdateDynamicFieldPayload,
 	UpdateFieldPayload,
-} from '~/types/address'
-import { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } from '~/utils/address'
+} from '~/types/user-address'
+import { useAddressHelper } from '~/utils/address'
 
 type IconName = keyof typeof icons
 
 export type AddressFormFieldsProps = {
 	form: AddressFormMap[AddressType]
-	errors?: Record<string, string>
+	errors?: Record<AddressType, Record<string, string>>
 	showLabelSelector?: boolean
+	copyContext?: 'checkout' | 'addressBook'
 }
 
 export type AddressFormFieldsEmit = {
-	(event: 'update:field', payload: UpdateFieldPayload): void
-	(event: 'update:dynamic-field', payload: UpdateDynamicFieldPayload): void
+	(event: 'update:field', type: AddressType, payload: UpdateFieldPayload): void
+	(event: 'update:dynamic-field', type: AddressType, payload: UpdateDynamicFieldPayload): void
 }
 
 type UseAddressFormFieldOptions = {
@@ -33,6 +35,9 @@ type UseAddressFormFieldOptions = {
 export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	const address_field_store = useAddressFieldStore()
 	const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
+	const copy_context = computed(() => options.props.copyContext ?? 'checkout')
+
+	const { hasAddressLines, hasPhoneNumber, onPhoneBeforeInput, onPhonePaste } = useAddressHelper()
 
 	const address_label_options: Array<{
 		value: AddressLabel
@@ -51,7 +56,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return computed({
 			get: get_value,
 			set: (value: string) => {
-				options.emit('update:field', {
+				options.emit('update:field', options.props.form.type, {
 					field,
 					value,
 				})
@@ -98,7 +103,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	)
 
 	function updateDynamicField(field_key: string, value: string | number) {
-		options.emit('update:dynamic-field', {
+		options.emit('update:dynamic-field', options.props.form.type, {
 			field_key,
 			value,
 		})
@@ -118,6 +123,18 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	}
 
 	function onDynamicSelectChange(field_key: string, selected_value: string | number) {
+		const field = dynamic_fields.value?.find(f => f.field_key === field_key)
+
+		if (
+			field
+			&& field.input_type === 'select'
+			&& hasProvinceLabel(field)
+			&& selected_value === getDefaultSelectOptionValue(field)
+		) {
+			updateDynamicField(field_key, '')
+			return
+		}
+
 		const option = dynamic_fields.value
 			?.find(f => f.field_key === field_key)
 			?.options?.find(opt => opt.value === selected_value)
@@ -125,22 +142,75 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		updateDynamicField(field_key, option?.id ?? selected_value)
 	}
 
-	function getFieldError(field_key: string) {
-		return options.props.errors?.[field_key] ?? ''
+	function getFieldError(type: AddressType, field_key: string) {
+		return options.props.errors?.[type]?.[field_key] ?? ''
+	}
+
+	function hasProvinceLabel(field: AddressDynamicFields) {
+		const normalized_label = field.field_label.toLowerCase()
+		return normalized_label.includes('province') || normalized_label.includes('metropolitan')
+	}
+
+	function createDefaultSelectOption(field: AddressDynamicFields): CountryFieldOption {
+		const default_label = hasProvinceLabel(field)
+			? options.translate(resolvePlaceholderKey('provincePlaceholder'))
+			: field.field_label
+
+		return {
+			id: '' as unknown as number,
+			country_field_id: field.id,
+			label: default_label,
+			value: getDefaultSelectOptionValue(field),
+			sort_order: -1,
+			is_active: true,
+		}
+	}
+
+	function getDefaultSelectOptionValue(field: AddressDynamicFields) {
+		return `__placeholder__${field.field_key}`
+	}
+
+	function getDynamicFieldOptions(field: AddressDynamicFields) {
+		if (field.input_type !== 'select') return field.options ?? []
+		if (!hasProvinceLabel(field)) return field.options ?? []
+
+		const current_options = field.options ?? []
+		const has_existing_default = current_options.some((option) => option.id === ('' as unknown as number))
+
+		if (has_existing_default) return current_options
+
+		return [createDefaultSelectOption(field), ...current_options]
 	}
 
 	function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
-		const normalized_label = field.field_label.toLowerCase()
-
-		if (normalized_label.includes('province') || normalized_label.includes('metropolitan')) {
-			return options.translate('account.addressBook.provincePlaceholder')
+		if (hasProvinceLabel(field)) {
+			return options.translate(resolvePlaceholderKey('provincePlaceholder'))
 		}
 
+		const normalized_label = field.field_label.toLowerCase()
+
 		if (normalized_label.includes('city') || normalized_label.includes('town')) {
-			return options.translate('account.addressBook.cityPlaceholder')
+			return options.translate(resolvePlaceholderKey('cityPlaceholder'))
 		}
 
 		return field.field_label
+	}
+
+	function resolvePlaceholderKey(
+		key: 'fullNamePlaceholder' | 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
+	) {
+		if (copy_context.value === 'addressBook') {
+			return `account.addressBook.accountForm.${key}`
+		}
+
+		return `account.addressBook.${key}`
+	}
+
+	function getDynamicFieldHighlightedValueWhenEmpty(field: AddressDynamicFields) {
+		if (field.input_type !== 'select') return null
+		if (!hasProvinceLabel(field)) return null
+
+		return getDefaultSelectOptionValue(field)
 	}
 
 	return {
@@ -160,6 +230,9 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		getDynamicFieldValue,
 		onDynamicSelectChange,
 		getFieldError,
+		getDynamicFieldOptions,
+		getDynamicFieldHighlightedValueWhenEmpty,
 		getDynamicFieldPlaceholder,
+		resolvePlaceholderKey,
 	}
 }

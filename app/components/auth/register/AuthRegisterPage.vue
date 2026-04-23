@@ -49,7 +49,7 @@ const { t } = useI18n();
         top: 0;
         left: 0;
         right: 0;
-        height: 380px;
+        height: 336px;
         background: var(--brand-primary);
         z-index: 0;
     }
@@ -57,37 +57,34 @@ const { t } = useI18n();
     .auth-register-top {
         min-height: 560px;
         background: transparent;
-        padding: 42px 24px 100px;
+        padding: 44px  0 100px;
         display: grid;
-        grid-template-columns:
-            minmax(150px, 240px) min(760px, calc(100vw - 180px)) minmax(150px, 240px);
+        grid-template-columns: minmax(150px, 306px) min(588px, calc(100vw - 180px)) minmax(150px, 306px);
         align-items: start;
         justify-content: center;
-        gap: 34px;
         position: relative;
         z-index: 1;
 
         .auth-register-illustration {
             width: 100%;
-            height: 400px;
             display: flex;
-            align-items: flex-start;
+            align-items: flex-end;
             justify-content: center;
 
             .auth-register-kid-falling,
             .auth-register-kid-standing {
                 width: auto;
-                max-width: 260px;
+                max-width: 242px;
                 object-fit: contain;
                 display: block;
             }
 
             .auth-register-kid-falling {
-                height: 296px !important;
+                height: 248px;
             }
 
             .auth-register-kid-standing {
-                height: 400px !important;
+                height: 352px;
             }
         }
 

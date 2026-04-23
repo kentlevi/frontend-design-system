@@ -1,20 +1,20 @@
 {
-    "checkout": {
-        "confirmation": {
-            "title": "주문이 확인되었습니다",
-            "goHome": "홈페이지로 이동",
-            "notePrefix": "곧 최종 시안이 발송될 예정입니다. 급한 문의가 있으시면",
-            "noteSuffix": "로 연락해 주세요. 주문 접수 확인 이메일이 발송되오니 배송 주소를 꼭 확인해 주세요.",
-            "expectedDelivery": "예상 배송일 (빠른 배송)",
-            "expectedArrival": "주문 예상 도착일: {date}",
-            "orderSummary": "주문 요약",
-            "orderNumber": "주문번호: {orderNumber}",
-            "summary": {
-                "subtotal": "소계:",
-                "shippingFee": "배송비:",
-                "discounts": "할인:",
-                "total": "합계:"
-            }
-        }
+  "checkout": {
+    "confirmation": {
+      "title": "주문이 완료되었습니다!",
+      "goHome": "홈페이지로 이동",
+      "note": "최종 시안이 곧 발송될 예정입니다. 빠른 도움이 필요하시면 고객센터({phone}) 또는 이메일({email})로 문의해 주세요. 주문 접수 확인 이메일이 발송될 예정이니, 입력하신 배송지 주소를 확인해 주시기 바랍니다.",
+      "expectedDelivery": "배송 예정일 (빠른 배송)",
+      "expectedArrival": "주문하신 상품은 {date}까지 도착할 예정입니다.",
+      "orderSummary": "주문 요약",
+      "orderNumberLabel": "주문 번호",
+      "orderNumber": "{orderNumber}",
+      "summary": {
+        "subtotal": "소계:",
+        "shippingFee": "배송비",
+        "discounts": "할인:",
+        "total": "합계:"
+      }
     }
+  }
 }

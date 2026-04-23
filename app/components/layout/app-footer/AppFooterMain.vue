@@ -23,14 +23,14 @@ const { year, isProduct: is_product } = toRefs(component_props);
 				{{ t('layout.footer.meta2') }}
 			</p>
 			<p class="home-footer-copy">
-				&copy; GLOPHICS Corp. {{ year }}
+				{{ t('layout.footer.copyright') }} {{ year }}
 				<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
 				<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
 			</p>
 		</div>
 
 		<div class="home-footer-right" data-testid="app-footer-main-right">
-			<p class="home-footer-phone">1588-5218</p>
+			<p class="home-footer-phone">1899-5529</p>
 			<div class="home-footer-meta-row">
 				<p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
 				<p class="home-footer-note">{{ t('layout.footer.closed') }}</p>

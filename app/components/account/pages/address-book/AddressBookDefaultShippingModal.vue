@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAddressHelper } from '~/utils/address';
 import { useAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
+import { address_book_tag_badge_colors, capitalizeAddressBookLabel, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';
+const { t } = useI18n()
 
 const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
 const address_book_delete_context = useAddressBookDeleteContext()
@@ -14,20 +16,13 @@ const saveDefaultShippingSelection = address_book_delete_context.saveDefaultShip
 
 const selected_address_id = ref<number | null>(null)
 
-const tag_badge_colors = {
-	home: {
-		bgColor: 'var(--aloha-10)',
-		textColor: 'var(--aloha-60)',
-	},
-	office: {
-		bgColor: 'var(--neon-blue-10)',
-		textColor: 'var(--neon-blue-60)',
-	},
-	client: {
-		bgColor: 'var(--azure-10)',
-		textColor: 'var(--azure-60)',
-	},
-} as const
+const default_selection_type = computed(() => replacement_addresses.value[0]?.type ?? 'shipping')
+const default_selection_title = computed(() => {
+	return t(`account.addressBook.selectNewDefaultTitle${capitalizeAddressBookLabel(default_selection_type.value)}`)
+})
+const default_selection_description = computed(() => {
+	return t(`account.addressBook.selectNewDefaultDescription${capitalizeAddressBookLabel(default_selection_type.value)}`)
+})
 
 watch(() => is_default_shipping_modal_open.value, (is_open) => {
 	if (is_open) {
@@ -56,38 +51,26 @@ async function saveSelection() {
 
 	await saveDefaultShippingSelection(selected_address.type, selected_address_id.value)
 }
+
+function getAddressLabel(label: string) {
+	return getTranslatedAddressBookLabel(label, t)
+}
 </script>
 
 <template>
 	<UiModal
 		:model-value="is_default_shipping_modal_open"
 		align="center"
-		padding="0"
-		gap="0"
 		width="710px"
+		:title="default_selection_title"
 		modal-class="account-address-book-default-modal-shell"
+		scrollable
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-default-modal" data-testid="account-address-book-default-modal">
-			<header class="account-address-book-default-modal-header">
-				<h3 class="account-address-book-default-modal-title">
-					Select New Default Shipping Address
-				</h3>
-
-				<button
-					type="button"
-					class="account-address-book-default-modal-close"
-					aria-label="Close select default shipping address modal"
-					data-testid="account-address-book-default-modal-close"
-					@click="cancelModal"
-				>
-					<UiIcon name="regular-times" :size="24" />
-				</button>
-			</header>
-
 			<div class="account-address-book-default-modal-body">
 				<p class="account-address-book-default-modal-description">
-					Your default shipping address has been deleted. Please select a new default address now, or you can choose one later.
+					{{ default_selection_description }}
 				</p>
 
 				<div class="account-address-book-default-modal-list">
@@ -110,70 +93,77 @@ async function saveSelection() {
 						</div>
 
 						<div class="account-address-book-default-modal-card-body">
-							<p v-if="shippingPhoneNumber(address)" class="account-address-book-default-modal-card-phone">
-								{{ shippingPhoneNumber(address) }}
-							</p>
-							<p class="account-address-book-default-modal-card-address">
-								{{ buildAddressLines(address) }}
-							</p>
-							<div class="account-address-book-default-modal-card-footer">
-								<span v-if="address.company" class="account-address-book-default-modal-card-company">
+							<div
+								v-if="shippingPhoneNumber(address) || buildAddressLines(address).trim() || address.company"
+								class="account-address-book-default-modal-card-copy"
+							>
+								<p v-if="shippingPhoneNumber(address)" class="account-address-book-default-modal-card-phone">
+									{{ shippingPhoneNumber(address) }}
+								</p>
+								<p v-if="buildAddressLines(address).trim()" class="account-address-book-default-modal-card-address">
+									{{ buildAddressLines(address) }}
+								</p>
+								<p v-if="address.company" class="account-address-book-default-modal-card-company">
 									{{ address.company }}
-								</span>
+								</p>
+							</div>
+							<div class="account-address-book-default-modal-card-footer">
 								<UiBadge
 									v-if="address.label"
 									variant="tonal"
 									tone="default"
 									size="md"
-									:bg-color="tag_badge_colors[address.label]?.bgColor || 'var(--gray-10)'"
-									:text-color="tag_badge_colors[address.label]?.textColor || 'var(--gray-60)'"
+									:bg-color="address_book_tag_badge_colors[address.label]?.bgColor || 'var(--gray-10)'"
+									:text-color="address_book_tag_badge_colors[address.label]?.textColor || 'var(--gray-60)'"
 								>
-									{{ address.label.charAt(0).toUpperCase() + address.label.slice(1) }}
+									{{ getAddressLabel(address.label) }}
 								</UiBadge>
 							</div>
 						</div>
 					</label>
 				</div>
-
-				<footer class="account-address-book-default-modal-actions">
-					<UiButton
-						type="button"
-						variant="ghost"
-						tone="neutral"
-						size="md"
-						class="account-address-book-default-modal-cancel"
-						@click="cancelModal"
-					>
-						Cancel
-					</UiButton>
-
-					<div class="account-address-book-default-modal-actions-right">
-						<UiButton
-							type="button"
-							variant="ghost"
-							tone="neutral"
-							size="md"
-							class="account-address-book-default-modal-skip"
-							@click="skipSelection"
-						>
-							Skip &amp; Select Later
-						</UiButton>
-
-						<UiButton
-							type="button"
-							variant="filled"
-							tone="neutral"
-							size="md"
-							class="account-address-book-default-modal-save"
-							:disabled="selected_address_id === null"
-							@click="saveSelection"
-						>
-							Save
-						</UiButton>
-					</div>
-				</footer>
 			</div>
 		</section>
+
+		<template #footer>
+			<div class="account-address-book-default-modal-actions ui-modal-footer-item">
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="account-address-book-default-modal-cancel"
+					@click="cancelModal"
+				>
+					{{ t('account.addressBook.cancel') }}
+				</UiButton>
+			</div>
+
+			<div class="account-address-book-default-modal-actions-right ui-modal-footer-item">
+				<UiButton
+					type="button"
+					variant="ghost"
+					tone="neutral"
+					size="md"
+					class="account-address-book-default-modal-skip"
+					@click="skipSelection"
+				>
+					{{ t('account.addressBook.skipAndSelectLater') }}
+				</UiButton>
+
+				<UiButton
+					type="button"
+					variant="filled"
+					tone="neutral"
+					size="md"
+					class="account-address-book-default-modal-save"
+					:disabled="selected_address_id === null"
+					@click="saveSelection"
+				>
+					{{ t('account.addressBook.save') }}
+				</UiButton>
+			</div>
+		</template>
 	</UiModal>
 </template>
 
@@ -181,39 +171,12 @@ async function saveSelection() {
 .account-address-book-default-modal {
 	background: var(--contrast-light);
 	border-radius: 16px;
-	overflow: hidden;
 	width: 100%;
-
-	.account-address-book-default-modal-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 18px 24px;
-		border-bottom: 1px solid var(--gray-20);
-
-		.account-address-book-default-modal-title {
-			font-size: var(--type-size-300);
-			line-height: var(--type-line-300);
-			font-weight: var(--font-weight-bold);
-			color: var(--text-primary);
-		}
-
-		.account-address-book-default-modal-close {
-			display: grid;
-			place-items: center;
-			padding: 0;
-			border: 0;
-			background: transparent;
-			cursor: pointer;
-			color: var(--text-primary);
-		}
-	}
 
 	.account-address-book-default-modal-body {
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
-		padding: 28px 24px 24px;
 
 		.account-address-book-default-modal-description {
 			color: var(--text-secondary);
@@ -237,15 +200,18 @@ async function saveSelection() {
 				transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
 				&[data-selected='true'] {
-					border-color: var(--border-strong);
-					box-shadow: var(--shadow-sm);
+					border-color: var(--gray-60);
+					background-color: var(--gray-40);
+					.account-address-book-default-modal-card-head {
+						border-color: var(--gray-60);
+					}
 				}
 
 				.account-address-book-default-modal-card-head {
 					display: flex;
 					align-items: center;
 					gap: 12px;
-					padding: 18px 20px;
+					padding: 12px 20px;
 					border-bottom: 1px solid var(--gray-20);
 
 					.account-address-book-default-modal-card-name {
@@ -258,49 +224,44 @@ async function saveSelection() {
 
 				.account-address-book-default-modal-card-body {
 					display: flex;
-					flex-direction: column;
-					gap: 8px;
-					padding: 18px 20px;
+					gap: 24px;
+					padding: 12px 20px;
+					justify-content: space-between;
+					align-items: center;
 
-					.account-address-book-default-modal-card-phone {
-						color: var(--text-primary);
-						font-size: var(--type-size-100);
-						font-weight: var(--font-weight-semibold);
-						line-height: var(--type-line-100);
+					.account-address-book-default-modal-card-copy {
+						display: flex;
+						flex-direction: column;
+
+						.account-address-book-default-modal-card-phone,
+						.account-address-book-default-modal-card-address,
+						.account-address-book-default-modal-card-company {
+							font-size: var(--type-size-100);
+							line-height: var(--type-line-100);
+						}
+
+						.account-address-book-default-modal-card-phone {
+							color: var(--text-primary);
+							font-weight: var(--font-weight-semibold);
+						}
+
+						.account-address-book-default-modal-card-address {
+							color: var(--text-secondary);
+						}
+
+						.account-address-book-default-modal-card-company {
+							color: var(--text-secondary);
+						}
 					}
 
-					.account-address-book-default-modal-card-address,
-					.account-address-book-default-modal-card-company {
-						color: var(--text-secondary);
-						font-size: var(--type-size-100);
-						line-height: var(--type-line-100);
-					}
+
 
 					.account-address-book-default-modal-card-footer {
 						display: flex;
 						align-items: center;
-						justify-content: space-between;
 						gap: 16px;
+						flex-shrink: 0;
 					}
-				}
-			}
-		}
-
-		.account-address-book-default-modal-actions {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 16px;
-			padding-top: 12px;
-
-			.account-address-book-default-modal-actions-right {
-				display: inline-flex;
-				align-items: center;
-				gap: 12px;
-
-				.account-address-book-default-modal-save {
-					min-width: 74px;
-					border-radius: 18px;
 				}
 			}
 		}
@@ -321,18 +282,14 @@ async function saveSelection() {
 			.account-address-book-default-modal-list {
 				.account-address-book-default-modal-card {
 					.account-address-book-default-modal-card-body {
+						flex-direction: column;
+						align-items: stretch;
+
 						.account-address-book-default-modal-card-footer {
-							flex-direction: column;
-							align-items: stretch;
+							justify-content: flex-start;
 						}
 					}
 				}
-			}
-
-			.account-address-book-default-modal-actions,
-			.account-address-book-default-modal-actions-right {
-				flex-direction: column;
-				align-items: stretch;
 			}
 		}
 	}

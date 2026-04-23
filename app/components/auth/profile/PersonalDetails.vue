@@ -60,7 +60,7 @@ const {
 						:src="display_avatar"
 						:alt="translate('auth.profile.details.photoTitle')"
 						class="account-profile-avatar-image"
-					/>
+					>
 					<span v-else class="account-profile-avatar-text">{{
 						initials
 					}}</span>
@@ -80,7 +80,7 @@ const {
 							accept=".jpg,.jpeg,.png"
 							data-testid="auth-profile-photo-input"
 							@change="handlePhotoPicked"
-						/>
+						>
 						<UiButton
 							variant="outline"
 							tone="neutral"
@@ -92,8 +92,8 @@ const {
 							{{
 								has_photo
 									? translate(
-											'account.profile.uploadNewPhoto'
-										)
+										'account.profile.uploadNewPhoto'
+									)
 									: translate('account.profile.uploadPhoto')
 							}}
 						</UiButton>
@@ -184,8 +184,8 @@ const {
 
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
-		title="Are you sure you want to delete this photo?"
-		description="This action cannot be undone. Please confirm to proceed."
+		:title="translate('account.profile.photoDeleteConfirm')"
+		:description="translate('account.profile.photoDeleteDescription')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"

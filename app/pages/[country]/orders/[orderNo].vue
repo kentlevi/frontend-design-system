@@ -23,6 +23,10 @@ const {
 	sizeDimOnly,
 } = useCheckoutGuest();
 const primary_item = computed(() => selected_checkout_items.value[0] || null);
+const primary_item_product_name = computed(() => {
+	const product_id = primary_item.value?.product.id;
+	return product_id ? t(`product.items.${product_id}.name`) : '';
+});
 </script>
 
 <template>
@@ -78,7 +82,7 @@ const primary_item = computed(() => selected_checkout_items.value[0] || null);
 						<div class="order-details-item-thumb">
 							<img
 								:src="primary_item?.artworkPreviewUrl || primary_item?.product.image || '/icons/custom/checkout/icon-box.svg'"
-								:alt="primary_item?.product.name || t('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
+								:alt="primary_item_product_name || t('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
 						</div>
 						<div class="order-details-item-copy">
 							<div class="order-details-item-heading">

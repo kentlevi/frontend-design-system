@@ -23,7 +23,7 @@ export const featuredProducts: FeaturedProduct[] = [
 	{
 		id: 'die-cut-roll',
 		key: 'dieCutRoll',
-		name: 'Die Cut Roll',
+		name: 'Die Cut Roll Stickers',
 		image: '/illustrations/products/roll-stickers/die-cut-labels.svg',
 		icon: 'strong-star',
 		blurb: 'Stickers on a roll.',
@@ -32,7 +32,7 @@ export const featuredProducts: FeaturedProduct[] = [
 	{
 		id: 'sticker-sheet',
 		key: 'sheet',
-		name: 'Sticker Sheet',
+		name: 'Sticker Sheets',
 		image: '/illustrations/products/stickers/sheet.svg',
 		icon: 'strong-stars',
 		blurb: 'Multiple stickers on a sheet.',
@@ -41,7 +41,7 @@ export const featuredProducts: FeaturedProduct[] = [
 	{
 		id: 'hologram-sticker',
 		key: 'hologram',
-		name: 'Hologram Sticker',
+		name: 'Hologram Stickers',
 		image: '/illustrations/products/stickers/hologram.svg',
 		icon: 'strong-star',
 		blurb: 'Premium holographic finish.',

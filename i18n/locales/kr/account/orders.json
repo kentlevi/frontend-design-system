@@ -1,50 +1,178 @@
 {
-    "account": {
-        "orders": {
-            "title": "주문 내역",
-            "active": "진행 중",
-            "inactive": "보관됨",
-            "selectDate": "날짜 선택",
-            "filters": "필터",
-            "searchPlaceholder": "주문 번호 검색",
-            "sections": {
-                "ongoing": "진행 중",
-                "actionRequired": "조치 필요",
-                "completed": "완료됨"
-            },
-            "orderLabel": "주문 #: {orderNumber}",
-            "meta": "{count}개 품목 | 주문일: {date}",
-            "status": {
-                "beforeProduction": "제작 전",
-                "checkingArtwork": "아트워크 확인 중",
-                "completed": "완료됨"
-            },
-            "moreDetails": "상세 보기",
-            "viewInvoice": "인보이스 보기",
-            "viewInvoiceText": "상세 인보이스 정보를 확인할 수 있습니다.",
-            "paymentProof": "결제 증빙",
-            "paymentProofText": "결제 완료 후 제작이 시작됩니다.",
-            "sendMessage": "메시지 보내기",
-            "sendMessageText": "수정 요청이나 진행 문의가 필요하신가요?",
-            "unpaid": "미결제",
-            "paymentMethod": "결제 수단: {method}",
-            "orderSummary": "주문 요약:",
-            "itemNumber": "상품 번호 {number}",
-            "lackingArtwork": "아트워크 미제출",
-            "checkingArtwork": "아트워크 확인 중",
-            "size": "사이즈: {size}",
-            "quantity": "수량: {quantity}",
-            "summary": {
-                "subtotal": "소계:",
-                "shippingFee": "배송비: ({method})",
-                "discounts": "할인:",
-                "total": "합계:"
-            },
-            "shippingMethod": "빠른 배송",
-            "uploadArtwork": "아트워크 업로드",
-            "replaceArtwork": "아트워크 교체",
-            "onHoldOrder": "주문 보류",
-            "cancelOrder": "주문 취소"
+  "account": {
+    "orders": {
+      "title": "주문 현황",
+      "active": "진행 중",
+      "inactive": "이전 내역",
+      "empty": {
+        "noOrdersTitle": "주문 내역이 없습니다.",
+        "noOrdersDescription": "필터 조건에 부합하는 주문 내역이 없습니다. 선택 사항을 확인하거나 필터를 초기화하여 전체 주문을 확인해 주세요.",
+        "allCaughtUpTitle": "모두 확인했습니다!",
+        "allCaughtUpDescription": "현재 수령 대기 중인 주문이 없습니다. 필터를 조정하거나 나중에 다시 확인해 주세요.",
+        "searchNoResultsTitle": "주문 내역을 찾을 수 없습니다.",
+        "searchNoResultsDescription": "입력하신 주문 번호와 일치하는 내역이 없습니다. 다시 한번 확인 후 시도해 주세요."
+      },
+      "months": {
+        "january": "1월",
+        "febuary": "2월",
+        "march": "3월",
+        "april": "4월",
+        "may": "5월",
+        "june": "6월",
+        "july": "7월",
+        "august": "8월",
+        "september": "9월",
+        "october": "10월",
+        "november": "11월",
+        "december": "12월"
+      },
+      "selectDate": "날짜 선택",
+      "filters": "필터",
+      "filterOptions": {
+        "thisWeek": "이번 주",
+        "thisMonth": "이번 달",
+        "last7Days": "최근 7일",
+        "last30Days": "최근 30일",
+        "orderStatus": "주문 상태"
+      },
+      "searchPlaceholder": "주문 번호 검색",
+      "sections": {
+        "ongoing": "진행 중",
+        "actionRequired": "추가 조치 필요",
+        "completed": "완료"
+      },
+      "shippingAddress": "상세 정보 보기",
+      "receiver": "수취인",
+      "orderLabel": "주문 #: {orderNumber}",
+      "meta": "{count}개 품목 | 주문일: {date}",
+      "status": {
+        "beforeProduction": "제작 준비 중",
+        "checkingArtwork": "디자인 검토 중",
+        "toReceive": "배송 중",
+        "onHold": "보류중",
+        "cancelled": "취소됨",
+        "completed": "완료됨",
+        "needsApproval": "승인 대기 중",
+        "checkFinalProof": "최종 시안 확인",
+        "approvedPendingOthers": "승인 완료 - 대기 중",
+        "failedEvaluation": "부적격"
+      },
+      "moreDetails": "상세 정보",
+      "lessDetails": "간략히 보기",
+      "viewInvoice": "청구서 보기",
+      "viewInvoiceText": "청구서 상세 정보를 확인하고 검토할 수 있습니다.",
+      "paymentProof": "결제 확인",
+      "paymentProofText": "결제 완료 후 제작이 시작됩니다.",
+      "sendMessage": "문의하기",
+      "sendMessageText": "업데이트가 필요하거나 변경 사항이 있으신가요?",
+      "unpaid": "미결제",
+      "paymentMethod": "결제 수단: {method}",
+      "orderSummary": "주문 요약",
+      "itemNumber": "품목 No.{number}",
+      "lackingArtwork": "디자인 파일 없음",
+      "checkingArtwork": "아트워크 확인 중",
+      "size": "사이즈 : {size}",
+      "quantity": "수량 : {quantity}개",
+      "summary": {
+        "subtotal": "소계",
+        "shippingFee": "배송비 ({method})",
+        "discounts": "할인 금액",
+        "total": "합계",
+        "finalTotal": "최종 결제 금액"
+      },
+      "shippingMethod": "빠른 배송",
+      "uploadArtwork": "디자인 업로드하기",
+      "replaceArtwork": "디자인 교체",
+      "onHoldOrder": "주문 보류",
+      "cancelOrder": "주문 취소",
+      "reorder": "재주문하기",
+      "resubmitArtwork": "디자인 재전송",
+      "detail": {
+        "close": "닫기",
+        "darkBackground": "어두운 배경",
+        "statusTitle": "디자인 검토 대기 중입니다.",
+        "statusDescriptionPrefix": "수정이 필요하신가요? 검토가 시작되기 전에는 디자인을 교체할 수 있습니다. \"",
+        "statusDescriptionSuffix": "\"를 클릭해 주세요.",
+        "activityLogs": "활동 내역",
+        "submittedArtwork": "디자인 제출 완료",
+        "product": "상품",
+        "stickerSize": "스티커 사이즈 : {size}",
+        "finalProofTerms": "최종 시안 이용 약관",
+        "uploadSuccess": "새로운 디자인 파일이 성공적으로 업로드되었습니다! 이전 이미지가 새로운 파일로 교체되었습니다.",
+        "itemUploadSuccess": "업로드 완료 - 품목 No.{number}"
+      },
+      "upload": {
+        "title": "디자인 업로드 - 품목 No.{number}",
+        "itemDetails": "상품 정보",
+        "product": "상품:",
+        "size": "사이즈:",
+        "quantity": "수량",
+        "pcs": "개",
+        "dragAndDrop": "파일을 여기로 드래그하여 업로드하세요.",
+        "acceptedFiletypes": "지원 파일 형식: .eps, .ai, .psd, .pdf, .tif, .png 및 .jpg",
+        "selectFiles": "파일 선택하기",
+        "replaceImage": "이미지 교체",
+        "removeArtwork": "업로드한 디자인 삭제",
+        "specialInstructions": "추가 요청 사항",
+        "specialInstructionsPlaceholder": "기타 요청사항을 입력해주세요",
+        "cancel": "취소",
+        "submit": "제출"
+      },
+      "terms": {
+        "title": "이용 약관",
+        "closeLabel": "이용 약관 모달 닫기",
+        "paragraph1": "최종 시안을 승인하고 오후 5시 이후에 결제를 완료하시면 주문은 다음 영업일에 처리됩니다.",
+        "paragraph2": "당사는 일반적으로 제작에 필요한 주요 사항을 확인합니다. 오탈자와 같은 디자인 내용 수정은 재제작 대상이 아닙니다.",
+        "paragraph3": "최신 인쇄 기기를 사용함에도 불구하고, 기계적 허용 오차로 인해 실제 스티커 제품에서 5~10%의 색상 차이 및 1~2mm의 밀림 현상이 발생할 수 있으며 이는 정상 범위로 간주됩니다.",
+        "turnaroundNote": "예상 제작 기간에는 인쇄 및 배송 시간이 포함됩니다.",
+        "noteTitle": "참고",
+        "orderTermsNoteTitle": "참고 사항",
+        "bumperStickerPrintNote": "범퍼 스티커는 디지털 인쇄 방식으로 제작됩니다. 인쇄 해상도가 오프셋 인쇄보다 낮습니다.",
+        "materialCurlNote": "소재 특성상 시간이 지나면 스티커 가장자리가 말려 올라갈 수 있습니다. 이를 방지하려면 코팅 옵션을 선택해 주세요.",
+        "cancellationTitle": "주문 취소 관련 유의사항",
+        "cancellationBody": "주문 취소는 '제작 준비 중' 상태에서만 가능합니다. '제작 중'으로 상태가 변경되면 인쇄가 시작되어 취소가 불가하므로, 주문 전 내용을 신중히 검토해 주시기 바랍니다.",
+        "close": "닫기"
+      },
+      "mock": {
+        "paymentMethods": {
+          "bankTransfer": "무통장 입금",
+          "creditCard": "신용카드",
+          "virtualAccount": "가상계좌"
+        },
+        "products": {
+          "dieCutSticker": "다이컷 스티커"
+        },
+        "submitters": {
+          "joyLove": "Joy Love"
+        },
+        "instructions": {
+          "default": "색상과 사이즈가 정확하게 맞는지 꼭 확인해 주세요."
         }
+      },
+      "artworkFlow": {
+        "requestChanges": "수정 요청",
+        "approve": "승인",
+        "proofLabel": "시안 #{number}",
+        "proofNumber1": "시안 #1",
+        "submittedSuccess": "수정 요청이 성공적으로 제출되었습니다.",
+        "evaluatingQueue": "수정 사항이 접수되었으며, 현재 검토 대기 중입니다.",
+        "passedEvaluation": "디자인 검토가 승인되었습니다.",
+        "chooseToProceed": "아래 옵션 중 하나를 선택하여 진행해 주세요.",
+        "proofApproved": "시안 #{number} 이 승인되었습니다.",
+        "proof1Approved": "시안 #1 이 승인되었습니다.",
+        "wantToMakeChanges": "수정이 필요하신가요? 제작이 시작되기 전에 \"수정 요청\" 버튼을 눌러주세요. 제작이 시작된 후에는 수정이 불가능합니다.",
+        "completeRemainingSteps": "디자인이 승인되었습니다! 인쇄를 진행하기 위해 남은 단계를 완료해 주세요.",
+        "underEvaluation": "디자인 검토 중입니다.",
+        "reviewingNotification": "현재 디자인을 검토하고 있습니다. 검토가 완료되면 알림을 보내드리겠습니다.",
+        "failedEvaluation": "디자인 검토에 실패했습니다.",
+        "feedbackRevisedVersion": "피드백을 확인하고 수정된 파일을 제출해 주세요.",
+        "evaluationFeedback": "검토 피드백",
+        "staffComment": "담당자 의견",
+        "downloadPdf": "PDF 다운로드",
+        "sendRequest": "요청 보내기",
+        "proofNumber2": "시안 #2",
+        "proofNumber3": "시안 #3"
+      }
     }
+  }
 }

@@ -1,27 +1,44 @@
+<script setup lang="ts">
+import ShippingMethod from '../shipping/ShippingMethod.vue';
+import ManualAddress from '../address/ManualShippingAddress.vue';
+import SavedAddress from '../address/SavedShippingAddress.vue';
+import DropShippingAddress from '../address/DropShippingAddress.vue';
+import { useCheckoutAddressFeature } from '../../../composables/checkout/address/useCheckoutAddressFeature';
+import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
+import { useAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import CheckoutTransition from '../shared/CheckoutTransition.vue';
+
+const {
+	translate,
+
+	is_member,
+
+	shipping_swap_wrapper_ref,
+	ship_to_another_address,
+} = useCheckoutAddressFeature()
+
+const {	openSelectAddressModal } = useSavedShippingAddress()
+
+const {	has_shipping_addresses } = useAddressBookListCheckoutContext()
+</script>
+
 <template>
 	<section class="checkout-member-section">
 		<div class="checkout-member-shipping-group">
 			<div class="checkout-member-address-group">
-				<div v-if="is_member && selected_shipping_address" class="checkout-member-radio-row">
+				<div v-if="is_member && has_shipping_addresses" class="checkout-member-radio-row">
 					<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
-						{{ t('checkout.member.myShippingAddress') }}
+						{{ translate('checkout.member.myShippingAddress') }}
 					</UiRadio>
-					<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="is_shipping_address_modal_open = true">
-						{{ t('checkout.member.viewShippingAddresses') }}
+					<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="openSelectAddressModal('shipping')">
+						{{ translate('checkout.member.viewShippingAddresses') }}
 					</UiButton>
 				</div>
 
 				<div ref="shipping_swap_wrapper_ref" class="checkout-member-shipping-swap-wrap">
-					<Transition
-						@before-enter="beforeEnter"
-						@enter="enter"
-						@after-enter="afterEnter"
-						@before-leave="beforeLeave"
-						@leave="leave"
-						@after-leave="afterLeave"
-					>
+					<CheckoutTransition>
 						<SavedAddress
-							v-if="is_member && !ship_to_another_address"
+							v-if="is_member && !ship_to_another_address && has_shipping_addresses"
 							key="saved-address"
 							class="checkout-member-shipping-panel"
 						/>
@@ -30,12 +47,12 @@
 							key="manual-address"
 							class="checkout-member-shipping-panel"
 						/>
-					</Transition>
+					</CheckoutTransition>
 				</div>
 			</div>
 
-			<UiRadio v-if="is_member && !ship_to_another_address" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
-				{{ t('checkout.member.shipToAnotherAddress') }}
+			<UiRadio v-if="is_member && !ship_to_another_address && has_shipping_addresses" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
+				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 
 			<ShippingMethod />
@@ -44,56 +61,6 @@
 		</div>
 	</section>
 </template>
-
-<script setup lang="ts">
-import { useCheckoutFeatureTransition } from '~/composables/checkout/features/useCheckoutFeatureTransition';
-import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { useHeightTransition } from '~/composables/checkout/shared/useHeightTransition';
-import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import ShippingMethod from '../shipping/ShippingMethod.vue';
-import ManualAddress from '../address/ManualShippingAddress.vue';
-import SavedAddress from '../address/SavedShippingAddress.vue';
-import DropShippingAddress from '../address/DropShippingAddress.vue';
-
-const {
-	enter_duration_ms,
-	leave_duration_ms,
-	beforeEnter,
-	enter,
-	afterEnter,
-	beforeLeave,
-	leave,
-	afterLeave,
-} = useCheckoutFeatureTransition();
-
-const {
-	t,
-	is_member,
-	is_shipping_address_modal_open,
-} = useCheckoutExperienceFeatureContext();
-
-const {
-	ship_to_another_address,
-	selected_shipping_address
-} = storeToRefs(useMainCheckOutStore())
-
-const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
-
-const getSelector = () =>
-	ship_to_another_address.value
-		? '[data-shipping-panel="manual-address"]'
-		: '[data-shipping-panel="saved-address"]';
-
-useHeightTransition(
-	shipping_swap_wrapper_ref,
-	ship_to_another_address,
-	getSelector,
-	{
-		enterDurationMs: enter_duration_ms,
-		leaveDurationMs: leave_duration_ms
-	}
-);
-</script>
 
 <style scoped lang="scss">
 .checkout-member-section {

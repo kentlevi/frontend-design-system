@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import AuthLoginCard from '@/components/auth/login/AuthLoginCard.vue';
-const { t } = useI18n();
+import AuthLoginCard from '@/components/auth/login/AuthLoginCard.vue'
+import { useAuthLoginPage } from '@/composables/auth/login/useAuthLoginPage'
+
+const { translate } = useAuthLoginPage()
 </script>
 
 <template>
@@ -11,7 +13,7 @@ const { t } = useI18n();
 			>
 				<img
 					src="/illustrations/products/sticker-kids/kid-laptop-sticker.svg"
-					:alt="t('auth.login.title')"
+					:alt="translate('auth.login.title')"
 					loading="lazy"
 					class="auth-login-illustration-image"
 				>
@@ -26,7 +28,7 @@ const { t } = useI18n();
 			>
 				<img
 					src="/illustrations/products/sticker-kids/kid-making-stickers.svg"
-					:alt="t('auth.login.title')"
+					:alt="translate('auth.login.title')"
 					loading="lazy"
 					class="auth-login-illustration-image"
 				>
@@ -48,7 +50,7 @@ const { t } = useI18n();
         top: 0;
         left: 0;
         right: 0;
-        height: 380px;
+        height: 336px;
         background: var(--brand-primary);
         z-index: 0;
     }
@@ -56,20 +58,17 @@ const { t } = useI18n();
     .auth-login-top {
         min-height: 560px;
         background: transparent;
-        padding: 42px 24px 100px;
+        padding: 44px  0 100px;
         display: grid;
-        grid-template-columns:
-            minmax(150px, 240px) min(760px, calc(100vw - 180px))
-            minmax(150px, 240px);
+        grid-template-columns: minmax(150px, 306px) min(588px, calc(100vw - 180px)) minmax(150px, 306px);
         align-items: start;
         justify-content: center;
-        gap: 34px;
         position: relative;
         z-index: 1;
 
         .auth-login-illustration {
             width: 100%;
-            height: 320px;
+            height: 248px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -77,7 +76,6 @@ const { t } = useI18n();
             .auth-login-illustration-image {
                 width: auto;
                 height: 100%;
-                max-width: 260px;
                 object-fit: contain;
                 display: block;
             }

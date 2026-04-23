@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AccountPointRank } from '~/types/account/points';
+const { t } = useI18n();
 
 const props = defineProps<{
 	modelValue: boolean;
@@ -18,7 +19,7 @@ function handleModelValueChange(value: boolean) {
 <template>
 	<UiModal
 		:model-value="props.modelValue"
-		title="Ranking System"
+		:title="t('account.points.ranking.title')"
 		align="center"
 		width="1440px"
 		padding="0"
@@ -62,14 +63,14 @@ function handleModelValueChange(value: boolean) {
 						</div>
 
 						<div class="account-points-ranking-card-section">
-							<h4 class="account-points-ranking-card-label">Perks:</h4>
+							<h4 class="account-points-ranking-card-label">{{ t('account.points.ranking.perksLabel') }}</h4>
 							<ul class="account-points-ranking-card-list">
 								<li v-for="perk in rank.perks" :key="perk">{{ perk }}</li>
 							</ul>
 						</div>
 
 						<div class="account-points-ranking-card-section">
-							<h4 class="account-points-ranking-card-label">Level Up Bonus Gift:</h4>
+							<h4 class="account-points-ranking-card-label">{{ t('account.points.ranking.levelUpBonusLabel') }}</h4>
 							<ul class="account-points-ranking-card-list">
 								<li v-for="gift in rank.level_up_bonus_gifts" :key="gift">{{ gift }}</li>
 							</ul>
@@ -85,44 +86,9 @@ function handleModelValueChange(value: boolean) {
 .account-points-ranking-modal-shell {
 	width: min(1440px, calc(100vw - 32px)) !important;
 	max-width: min(1440px, calc(100vw - 32px));
-
-	.ui-modal-header {
-		min-height: 72px;
-		padding: 0 20px 0 24px;
-		border-bottom: 1px solid var(--border-default);
-		align-items: center;
-	}
-
-	.ui-modal-header-main {
-		display: flex;
-		align-items: center;
-		min-height: 72px;
-	}
-
-	.ui-modal-title {
-		font-size: 20px;
-		line-height: 1;
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
-
-	.ui-modal-header-actions {
-		align-items: center;
-	}
-
-	.ui-modal-close {
-		width: 24px;
-		height: 24px;
-		padding: 0;
-		min-height: auto;
-		border-radius: 0;
-		box-shadow: none;
-	}
 }
 
 .account-points-ranking-modal {
-	padding: 24px 24px 22px;
-
 	.account-points-ranking-modal-grid {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));

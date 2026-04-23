@@ -1,86 +1,6 @@
-<template>
-	<div :class="footer_classes">
-		<div class="checkout-summary-lines">
-			<div class="checkout-summary-line">
-				<div class="checkout-summary-line-label">Subtotal: </div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(props.subtotal) }}</div>
-			</div>
-			<div class="checkout-summary-line">
-				<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
-					<span>Shipping Fee:</span>
-					<UiTooltip
-						v-if="has_shipping_fee_tooltip"
-						:open="shipping_fee_tooltip_open"
-						side="right"
-						align="center"
-						mobile-side="bottom"
-						tone="neutral"
-						:offset="10"
-						:slide-distance="24"
-						role="dialog"
-						content-class="checkout-summary-tooltip-content"
-						class="checkout-summary-tooltip"
-					>
-						<template #trigger>
-							<button
-								type="button"
-								class="checkout-summary-tooltip-trigger"
-								:class="{ 'is-active': shipping_fee_tooltip_open }"
-								:aria-expanded="shipping_fee_tooltip_open"
-								aria-haspopup="dialog"
-								aria-label="Show shipping fee information"
-								@click="toggleShippingFeeTooltip"
-							>
-								<UiIcon
-									:name="shipping_fee_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
-									size="24"
-									color="var(--gray-90)"
-									decorative
-								/>
-							</button>
-						</template>
-
-						<div class="checkout-summary-tooltip-copy">
-							<strong class="checkout-summary-tooltip-title">{{ props.shippingFeeTooltipTitle }}</strong>
-							<p class="checkout-summary-tooltip-text">{{ props.shippingFeeTooltipText }}</p>
-						</div>
-					</UiTooltip>
-				</div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(props.shippingFee) }}</div>
-			</div>
-			<div class="checkout-summary-line">
-				<div class="checkout-summary-line-label">Discounts:</div>
-				<div class="checkout-summary-line-value is-discount">{{ props.formatPrice(props.discount) }}</div>
-			</div>
-			<div class="checkout-summary-line is-total">
-				<div class="checkout-summary-line-label">Total:</div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(props.total) }}</div>
-			</div>
-		</div>
-
-		<UiButton
-			variant="filled"
-			tone="neutral"
-			size="lg"
-			class="checkout-summary-submit"
-			:disabled="props.disabled || props.loading"
-			@click="submitCheckout"
-		>
-			{{ props.completeLabel }}
-		</UiButton>
-
-		<div class="checkout-summary-agreement">
-			<span class="checkout-summary-agreement-text">{{ props.agreementPrefix }}</span>
-			<NuxtLink :to="props.termsPath" class="checkout-summary-agreement-link">{{ props.agreementTerms }}</NuxtLink>
-			<span class="checkout-summary-agreement-text">{{ props.agreementAnd }}</span>
-			<NuxtLink :to="props.privacyPath" class="checkout-summary-agreement-link">{{ props.agreementPrivacy }}</NuxtLink>
-			<span class="checkout-summary-agreement-text">{{ props.agreementSuffix }}</span>
-		</div>
-	</div>
-</template>
-
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useCheckoutFlow } from '~/composables/checkout/main/useCheckoutFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 
@@ -96,14 +16,10 @@ const props = defineProps<{
 	agreementSuffix: string;
 	termsPath: string;
 	privacyPath: string;
-	disabled?: boolean;
-	loading?: boolean;
-	subtotal: number;
-	shippingFee: number;
-	discount: number;
-	total: number;
 	formatPrice: (value: number) => string;
 }>();
+
+const { t } = useI18n();
 
 const shipping_fee_tooltip_open = ref(false);
 const shipping_fee_tooltip_ref = ref<HTMLElement | null>(null);
@@ -111,6 +27,17 @@ const has_shipping_fee_tooltip = computed(() =>
 	Boolean(props.shippingFeeTooltipTitle && props.shippingFeeTooltipText)
 );
 const footer_classes = computed(() => ['checkout-summary-footer', `is-${props.tone}`]);
+const summary_key_base = computed(() => `checkout.${props.tone}.summary`);
+
+const is_mounted = ref<boolean>(false)
+
+const {
+	selected_total,
+	total_cost,
+	submitCheckout,
+} = useCheckoutFlow();
+const { listenPaymentResult } = useTossPayment();
+let cleanup_payment_result_listener: (() => void) | null = null;
 
 function toggleShippingFeeTooltip() {
 	if (!has_shipping_fee_tooltip.value) return;
@@ -133,22 +60,115 @@ function handleShippingFeeTooltipEscape(event: KeyboardEvent) {
 	closeShippingFeeTooltip();
 }
 
-const { submitCheckout } = useCheckoutFlow();
-const { listenPaymentResult } = useTossPayment();
-let cleanup_payment_result_listener: (() => void) | null = null;
-
 onMounted(() => {
+	is_mounted.value = true
 	cleanup_payment_result_listener = listenPaymentResult();
 	window.addEventListener('pointerdown', handleShippingFeeTooltipPointerDown, true);
 	window.addEventListener('keydown', handleShippingFeeTooltipEscape);
 });
 
 onBeforeUnmount(() => {
+	is_mounted.value = false
 	cleanup_payment_result_listener?.();
 	window.removeEventListener('pointerdown', handleShippingFeeTooltipPointerDown, true);
 	window.removeEventListener('keydown', handleShippingFeeTooltipEscape);
 });
 </script>
+
+<template>
+	<div :class="footer_classes">
+		<div class="checkout-summary-lines">
+			<div class="checkout-summary-line">
+				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.subtotal`) }}</div>
+				<div class="checkout-summary-line-value">
+					<span v-if="is_mounted">
+						{{ props.formatPrice(selected_total) }}
+					</span>
+					<span v-else>
+						{{ props.formatPrice(0) }}
+					</span>
+				</div>
+			</div>
+			<div class="checkout-summary-line">
+				<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
+					<span>{{ t(`${summary_key_base}.shippingFee`) }}</span>
+					<UiTooltip
+						v-if="has_shipping_fee_tooltip"
+						:open="shipping_fee_tooltip_open"
+						side="right"
+						align="center"
+						mobile-side="bottom"
+						tone="neutral"
+						:offset="10"
+						:slide-distance="24"
+						role="dialog"
+						content-class="checkout-summary-tooltip-content"
+						class="checkout-summary-tooltip"
+					>
+						<template #trigger>
+							<button
+								type="button"
+								class="checkout-summary-tooltip-trigger"
+								:class="{ 'is-active': shipping_fee_tooltip_open }"
+								:aria-expanded="shipping_fee_tooltip_open"
+								aria-haspopup="dialog"
+								:aria-label="t(`${summary_key_base}.shippingFeeInfoAria`)"
+								@click="toggleShippingFeeTooltip"
+							>
+								<UiIcon
+									:name="shipping_fee_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'"
+									size="24"
+									color="var(--gray-90)"
+									decorative
+								/>
+							</button>
+						</template>
+
+						<div class="checkout-summary-tooltip-copy">
+							<strong class="checkout-summary-tooltip-title">{{ props.shippingFeeTooltipTitle }}</strong>
+							<p class="checkout-summary-tooltip-text">{{ props.shippingFeeTooltipText }}</p>
+						</div>
+					</UiTooltip>
+				</div>
+				<div class="checkout-summary-line-value">{{ props.formatPrice(0) }}</div>
+			</div>
+			<div class="checkout-summary-line">
+				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
+				<div class="checkout-summary-line-value is-discount">{{ props.formatPrice(0) }}</div>
+			</div>
+			<div class="checkout-summary-line is-total">
+				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.total`) }}</div>
+				<div class="checkout-summary-line-value">
+					<span v-if="is_mounted">
+						{{ props.formatPrice(total_cost) }}
+					</span>
+					<span v-else>
+						{{ props.formatPrice(0) }}
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<UiButton
+			variant="filled"
+			tone="neutral"
+			size="lg"
+			class="checkout-summary-submit"
+			:disabled="false"
+			@click="submitCheckout"
+		>
+			{{ props.completeLabel }}
+		</UiButton>
+
+		<div class="checkout-summary-agreement">
+			<span class="checkout-summary-agreement-text">{{ props.agreementPrefix }}</span>
+			<NuxtLink :to="props.termsPath" class="checkout-summary-agreement-link">{{ props.agreementTerms }}</NuxtLink>
+			<span class="checkout-summary-agreement-text">{{ props.agreementAnd }}</span>
+			<NuxtLink :to="props.privacyPath" class="checkout-summary-agreement-link">{{ props.agreementPrivacy }}</NuxtLink>
+			<span class="checkout-summary-agreement-text">{{ props.agreementSuffix }}</span>
+		</div>
+	</div>
+</template>
 
 <style scoped lang="scss">
 .checkout-summary-footer {

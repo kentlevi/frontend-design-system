@@ -3,7 +3,11 @@ import type { AddressFormFieldsEmit, AddressFormFieldsProps } from '~/composable
 import { useAddressFormField } from '~/composables/shared/address/useAddressFormField'
 
 const props = withDefaults(defineProps<AddressFormFieldsProps>(), {
-	errors: () => ({}),
+	errors: () => ({
+		shipping: {},
+		billing: {},
+		drop: {},
+	}),
 	showLabelSelector: false,
 })
 
@@ -28,7 +32,10 @@ const {
 	getDynamicFieldValue,
 	onDynamicSelectChange,
 	getFieldError,
+	getDynamicFieldOptions,
+	getDynamicFieldHighlightedValueWhenEmpty,
 	getDynamicFieldPlaceholder,
+	resolvePlaceholderKey,
 } = useAddressFormField({
 	props,
 	emit,
@@ -43,15 +50,15 @@ const {
 				:label="translate('account.addressBook.fullName')"
 				:required="true"
 				:show-required-mark="true"
-				:error="getFieldError('contact_name')"
+				:error="getFieldError(props.form.type, 'contact_name')"
 			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
 						v-model="contact_name_model"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="translate('account.addressBook.fullNamePlaceholder')"
-						:state="getFieldError('contact_name') ? 'error' : 'default'"
+						:placeholder="translate(resolvePlaceholderKey('fullNamePlaceholder'))"
+						:state="getFieldError(props.form.type, 'contact_name') ? 'error' : 'default'"
 					/>
 				</template>
 			</UiFormField>
@@ -59,8 +66,7 @@ const {
 			<UiFormField :label="translate('account.addressBook.companyOptional')">
 				<template #label>
 					<span class="address-form-fields-company-label">
-						<span class="address-form-fields-company-label-text">Company</span>
-						<span class="address-form-fields-company-label-optional">(Optional)</span>
+						<span class="address-form-fields-company-label-text">{{ translate('account.addressBook.companyOptional') }}</span>
 					</span>
 				</template>
 
@@ -69,7 +75,7 @@ const {
 						:id="inputId"
 						v-model="company_model"
 						:aria-describedby="describedBy || undefined"
-						:placeholder="translate('account.addressBook.companyPlaceholder')"
+						:placeholder="translate(resolvePlaceholderKey('companyPlaceholder'))"
 					/>
 				</template>
 			</UiFormField>
@@ -90,7 +96,7 @@ const {
 					size="40"
 					class="address-form-fields-choice"
 					:selected="props.form.label === option.value"
-					@click="emit('update:field', { field: 'label', value: option.value })"
+					@click="emit('update:field', props.form.type, { field: 'label', value: option.value })"
 				>
 					<UiIcon :name="option.icon" :size="24" />
 					<span>{{ translate(`account.addressBook.tags.${option.label_key}`) }}</span>
@@ -99,29 +105,6 @@ const {
 		</div>
 
 		<template v-if="hasAddressLines(props.form)">
-			<UiFormField
-				:label="translate('account.addressBook.streetAddress')"
-				:required="true"
-				:show-required-mark="true"
-				:error="getFieldError('address_line_1')"
-			>
-				<template #default="{ inputId, describedBy }">
-					<div class="address-form-fields-stack">
-						<UiInput
-							:id="inputId"
-							v-model="address_line_1_model"
-							:aria-describedby="describedBy || undefined"
-							:placeholder="translate('account.addressBook.addressLine1Placeholder')"
-							:state="getFieldError('address_line_1') ? 'error' : 'default'"
-						/>
-						<UiInput
-							v-model="address_line_2_model"
-							:placeholder="translate('account.addressBook.addressLine2Placeholder')"
-						/>
-					</div>
-				</template>
-			</UiFormField>
-
 			<div class="address-form-fields-grid address-form-fields-grid--two">
 				<UiFormField
 					v-for="(dynamic_field, index) in dynamic_fields"
@@ -129,15 +112,16 @@ const {
 					:label="dynamic_field.field_label"
 					:required="dynamic_field.is_required"
 					:show-required-mark="dynamic_field.is_required"
-					:error="getFieldError(`fields.${dynamic_field.field_key}`)"
+					:error="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`)"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiSelect
 							v-if="dynamic_field.input_type === 'select'"
-							:options="dynamic_field.options"
+							:options="getDynamicFieldOptions(dynamic_field)"
 							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
 							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
-							:trigger-class="getFieldError(`fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
+							:highlighted-value-when-empty="getDynamicFieldHighlightedValueWhenEmpty(dynamic_field)"
+							:trigger-class="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
 							@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
 						/>
 
@@ -147,27 +131,50 @@ const {
 							:aria-describedby="describedBy || undefined"
 							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
 							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
-							:state="getFieldError(`fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
+							:state="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`) ? 'error' : 'default'"
 							@update:model-value="updateDynamicField(dynamic_field.field_key, $event)"
 						/>
 					</template>
 				</UiFormField>
 			</div>
 
+			<UiFormField
+				:label="translate('account.addressBook.streetAddress')"
+				:required="true"
+				:show-required-mark="true"
+				:error="getFieldError(props.form.type, 'address_line_1')"
+			>
+				<template #default="{ inputId, describedBy }">
+					<div class="address-form-fields-stack">
+						<UiInput
+							:id="inputId"
+							v-model="address_line_1_model"
+							:aria-describedby="describedBy || undefined"
+							:placeholder="translate(resolvePlaceholderKey('addressLine1Placeholder'))"
+							:state="getFieldError(props.form.type, 'address_line_1') ? 'error' : 'default'"
+						/>
+						<UiInput
+							v-model="address_line_2_model"
+							:placeholder="translate(resolvePlaceholderKey('addressLine2Placeholder'))"
+						/>
+					</div>
+				</template>
+			</UiFormField>
+
 			<div class="address-form-fields-grid address-form-fields-grid--two">
 				<UiFormField
 					:label="translate('account.addressBook.postalCode')"
 					:required="true"
 					:show-required-mark="true"
-					:error="getFieldError('postcode')"
+					:error="getFieldError(props.form.type, 'postcode')"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiInput
 							:id="inputId"
 							v-model="postcode_model"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="translate('account.addressBook.postalCodePlaceholder')"
-							:state="getFieldError('postcode') ? 'error' : 'default'"
+							:placeholder="translate(resolvePlaceholderKey('postalCodePlaceholder'))"
+							:state="getFieldError(props.form.type, 'postcode') ? 'error' : 'default'"
 						/>
 					</template>
 				</UiFormField>
@@ -177,7 +184,7 @@ const {
 					:label="translate('account.addressBook.phoneNumber')"
 					:required="true"
 					:show-required-mark="true"
-					:error="getFieldError('phone_number')"
+					:error="getFieldError(props.form.type, 'phone_number')"
 				>
 					<template #default="{ inputId, describedBy }">
 						<UiInput
@@ -186,7 +193,7 @@ const {
 							type="text"
 							:aria-describedby="describedBy || undefined"
 							:placeholder="translate('account.addressBook.phonePlaceholder')"
-							:state="getFieldError('phone_number') ? 'error' : 'default'"
+							:state="getFieldError(props.form.type, 'phone_number') ? 'error' : 'default'"
 							@beforeinput="onPhoneBeforeInput"
 							@paste="onPhonePaste"
 						/>
@@ -207,13 +214,51 @@ const {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
-	}
 
-	.address-form-fields-label {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
+		.address-form-fields-label {
+			font-size: var(--type-size-100);
+			line-height: var(--type-line-100);
+			font-weight: var(--font-weight-semibold);
+			color: var(--text-primary);
+		}
+
+		.address-form-fields-segment {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+
+			.address-form-fields-choice {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				min-height: 38px;
+				padding: 10px 16px;
+				border: 1px solid var(--gray-40);
+				border-radius: 10px;
+				color: var(--text-primary);
+				background: var(--contrast-light);
+				font-size: var(--type-size-100);
+				line-height: var(--type-line-100);
+				font-weight: var(--font-weight-regular);
+				box-shadow: none;
+
+				&.ui-button:hover:not(:disabled) {
+					background: var(--gray-10);
+					border-color: var(--gray-50);
+					color: var(--text-primary);
+				}
+
+				&.ui-button[data-selected='true'] {
+					background: var(--gray-10);
+					border-color: var(--gray-60);
+					color: var(--text-primary);
+					&:hover:not(:disabled) {
+						border-color: var(--gray-60);
+					}
+				}
+			}
+		}
 	}
 
 	.address-form-fields-grid {
@@ -237,49 +282,15 @@ const {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
-	}
 
-	.address-form-fields-company-label-text {
-		color: var(--text-primary);
-	}
+		.address-form-fields-company-label-text {
+			color: var(--text-primary);
+		}
 
-	.address-form-fields-company-label-optional {
-		color: var(--text-secondary);
-	}
-
-	.address-form-fields-segment {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 12px;
-	}
-
-	.address-form-fields-choice {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 10px;
-		min-height: 38px;
-		padding: 10px 16px;
-		border: 1px solid var(--gray-40);
-		border-radius: 10px;
-		color: var(--text-primary);
-		background: var(--contrast-light);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-medium, 500);
-		box-shadow: none;
-	}
-
-	.address-form-fields-choice:hover {
-		background: var(--gray-10);
-		border-color: var(--gray-50);
-		color: var(--text-primary);
-	}
-
-	.address-form-fields-choice[data-selected='true'] {
-		background: var(--gray-10);
-		border-color: var(--gray-60);
-		color: var(--text-primary);
+		.address-form-fields-company-label-optional {
+			color: var(--text-secondary);
+			font-weight: var(--font-weight-regular);
+		}
 	}
 
 	:deep(.address-form-fields-choice .ui-button-indicator) {

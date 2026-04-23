@@ -4,6 +4,7 @@
       "shippingDetails": "Shipping Details",
       "viewShippingAddresses": "View Shipping Address",
       "myShippingAddress": "My Shipping Address",
+      "discountsAndPerks" : "Discounts and Coupons",
       "defaultBadge": "Default",
       "shipToAnotherAddress": "Ship to Another Address",
       "shippingMethod": "Shipping Method",
@@ -12,24 +13,61 @@
       "viewDropShippingAddresses": "View Drop Shipping Addresses",
       "payment": "Payment",
       "paymentSubnote": "Pay with your credit card:",
+      "paymentMeta": {
+        "accreditedBanks": "List of Accredited Banks:",
+        "bankTransferNote": "Note: Kindly allow 1-2 business days for bank transfer payments to be processed and cleared.",
+        "accreditedBanksModalTitle": "List of Accredited Banks",
+        "accreditedBanksModalClose": "Close",
+        "accreditedBanksModalCloseAria": "Close accredited banks modal"
+      },
       "viewBillingAddresses": "View Billing Addresses",
       "orderSummary": "Order Summary",
+      "addressSelection": {
+        "selectAddress": "Select Address",
+        "cancel": "Cancel",
+        "shippingTitle": "Select Shipping Address",
+        "shippingDescription": "Please select the address where you'd like us to deliver your order.",
+        "billingTitle": "Select Billing Address",
+        "billingDescription": "Please select the billing address you'd like us to use for this order.",
+        "dropTitle": "Select Drop Shipping Address",
+        "closeModal": "Close address selection modal",
+        "noCompanyProvided": "No company provided",
+        "defaultShipping": "Default Shipping",
+        "defaultBilling": "Default Billing",
+        "defaultDropShipping": "Default Drop Shipping"
+      },
+      "billingAddress": {
+        "myBillingAddress": "My Billing Address",
+        "useAnotherBillingAddress": "Use Another Billing Address",
+        "shipToAnotherBillingAddress": "Ship to Another Billing Address"
+      },
+      "shippingAddress": {
+        "savedForFutureUse": "This address will be saved for future use."
+      },
+      "dropShippingAddress": {
+        "defaultNote": "This will be saved as your default drop shipping address.",
+        "membersOnlyNote": "Only available for members to save addresses.",
+        "myDropShippingAddress": "My Drop Shipping Address",
+        "shipToAnotherDropShippingAddress": "Ship to Another Drop Shipping Address",
+        "savedForFutureUse": "This address will be saved for future use."
+      },
       "pointsAndCoupons": "Points & Coupons",
       "points": "Points",
-      "pointsAvailable": "{value} pts. available",
+      "pointsAvailable": "{value}pts. available",
       "pointsPlaceholder": "0 pts",
       "useAll": "Use All",
       "coupon": "Coupon",
       "couponPlaceholder": "0 pts",
       "applyCoupon": "Apply",
       "completeCheckout": "Complete Checkout",
+      "loginSuccess": "You have successfully logged in. Continue completing your order.",
       "fields": {
         "cardNumber": {
           "label": "Card Number",
           "placeholder": "Enter Card Number"
         },
         "expiration": {
-          "label": "Expiration",
+          "label": "Expiration*",
           "placeholder": "MM/YY"
         },
         "cvv": {
@@ -37,13 +75,13 @@
           "placeholder": "CVV"
         }
       },
-      "useShippingAsBilling": "Use Shipping Address for Billing",
+      "useShippingAsBilling": "Use shipping address as billing address",
       "billingTooltip": {
         "title": "Use Shipping Address for Billing",
         "text": "Use your selected shipping address as your billing address to save time during checkout. When both addresses are the same, this option automatically applies your shipping details to billing, so you won't need to enter the same information twice."
       },
       "agreement": {
-        "prefix": "By clicking \"Complete Checkout\", you agree with our",
+        "prefix": "By completing your checkout, you agree with our",
         "terms": "Terms of Service",
         "and": "and",
         "privacy": "Privacy Policy",
@@ -51,9 +89,12 @@
       },
       "summary": {
         "subtotal": "Subtotal:",
-        "shippingFee": "Shipping Fee ({method})",
+        "shippingFee": "Shipping Fee: ({method})",
         "discounts": "Discounts:",
-        "total": "Total:"
+        "total": "Total:",
+        "shippingFeeInfoAria": "Show shipping fee information",
+        "shippingFeeTooltipTitle": "Shipping Fee",
+        "shippingFeeTooltipText": "The shipping fee is calculated based on your selected delivery method and location."
       }
     }
   }

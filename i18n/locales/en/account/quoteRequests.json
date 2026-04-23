@@ -15,7 +15,20 @@
             "sampleRequestPrefix": "Transparent Sticker",
             "sampleRequestDetails": "Transparent Sticker / 200x200mm / 10pcs",
             "messagePlaceholder": "Enter message here...",
-            "send": "Send"
+            "send": "Send",
+            "confirmation": {
+                "title": "Quote request sent!",
+                "description": "We’ve received your quote request. Our team will review it and provide a quotation soon.",
+                "continueBrowsing": "Continue Browsing"
+            },
+            "notification": {
+                "emailSubject": "[Quote Request] New Quote Request {quoteId} from {email}",
+                "emailHeader": "New Quote Request",
+                "emailMessage": "Please review the request details and prepare the appropriate quotation based on the client’s specifications.",
+                "emailSummary": "New quote request received from {email}",
+                "quoteNoLabel": "QUOTE NO.:",
+                "replyButton": "Reply Now"
+            }
         }
     }
 }

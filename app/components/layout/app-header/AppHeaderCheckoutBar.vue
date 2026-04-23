@@ -3,6 +3,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { header_checkout_config } from '~/data/layout/header';
 
 const { withCountry } = useCountry();
+const { t } = useI18n();
 </script>
 
 <template>
@@ -10,12 +11,12 @@ const { withCountry } = useCountry();
 		<div class="checkout-header-inner">
 			<div class="checkout-header-left">
 				<NuxtLink :to="withCountry('/')" class="checkout-header-logo" aria-label="Musticker">
-					<UiLogo name="musticker" variant="full" color="colored" :width="112" :size="54" />
+					<UiLogo name="musticker" variant="full" color="colored" :width="175" :size="56" />
 				</NuxtLink>
 				<span class="checkout-header-divider" aria-hidden="true" />
 				<p class="checkout-header-title">
 					<UiIcon name="regular-shield" :size="32" color="var(--text-primary)" />
-					{{ header_checkout_config.title }}
+					{{ t(header_checkout_config.title_key) }}
 				</p>
 			</div>
 
@@ -35,14 +36,14 @@ const { withCountry } = useCountry();
 
 <style scoped lang="scss">
 .checkout-header {
-    border-bottom: 1px solid var(--gray-30);
+    box-shadow: 0 1px 0 0 var(--gray-30);
     background: var(--bg-page);
 
     .checkout-header-inner {
         max-width: 1200px;
         margin: 0 auto;
         min-height: 74px;
-        padding: 20px 0;
+        padding: 12px 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -51,10 +52,14 @@ const { withCountry } = useCountry();
         .checkout-header-left {
             display: inline-flex;
             align-items: center;
-            gap: 14px;
+            gap: 24px;
 
             .checkout-header-logo {
-                height: fit-content;
+                display: inline-flex;
+                align-items: center;
+                justify-self: start;
+                width: -moz-fit-content;
+                width: fit-content;
             }
 
             .checkout-header-divider {
@@ -68,8 +73,8 @@ const { withCountry } = useCountry();
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                font-size: var(--type-size-300);
-                font-weight: var(--font-weight-semibold);
+                font-size: var(--type-size-350);
+                font-weight: var(--font-weight-bold);
                 line-height: var(--type-line-200);
                 color: var(--text-primary);
             }

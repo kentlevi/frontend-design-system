@@ -1,53 +1,49 @@
-import type { UpdateFieldPayload } from "~/types/address";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
-import { useAddressFieldStore } from "~/stores/address";
-import { mapAddressToForm } from "~/factories/address";
+import { loadAddresses } from "~/services/user-address/user-address.service";
+import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useAddressGeneral } from "./useAddressGeneral";
 
 export function useDropShippingAddress() {
 
 	/** Stores */
-	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
-	const { clearDropAddress } = checkout_store
+	const { drop_shipping_ship_to_another_address, openSelectAddressModal } = useAddressGeneralUICheckoutContext()
 
 	/** Context */
 	const { drop_address } = useAddressBookListCheckoutContext()
 
+	const { assignAddressToForm } = useAddressGeneral()
+
 	const {
-		form_state,
 		form_field_errors,
-		clearFormFieldError,
+		drop_form,
+
+		resetForm,
+		updateFormFieldByType,
 	} = useAddressFormCheckoutContext();
 
-	const drop_form = computed(() => form_state.drop);
+	async function setDropAddress() {
+		drop_shipping_ship_to_another_address.value = false
 
-	function updateDropField(payload: UpdateFieldPayload) {
-		Object.assign(drop_form.value, {
-			[payload.field]: payload.value,
-		})
+		if (drop_address.value.length === 0) await loadAddresses('drop')
 
-		clearFormFieldError(payload.field)
-	}
+		if (checkout_store.selected_drop_address_id) {
+			assignAddressToForm('drop', checkout_store.selected_drop_address_id)
+			return
+		}
 
-	function setDropAddress() {
-		const selected = drop_address.value.find(a => a.is_default) ?? drop_address.value[0] ?? null
-
-		if (!selected) return
-
-		const mapped_form = mapAddressToForm(selected, address_field_store.dynamic_address_fields)
-
-		checkout_store.setDropAddress(mapped_form)
-		checkout_store.setDropAddressId(selected.id)
+		assignAddressToForm('drop')
 	}
 
 	return {
 		drop_form,
 		form_field_errors,
-		updateDropField,
+		updateFormFieldByType,
 
-		clearDropAddress,
 		setDropAddress,
+		resetForm,
+		openSelectAddressModal,
 	}
 }

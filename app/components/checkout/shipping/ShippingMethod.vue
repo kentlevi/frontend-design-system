@@ -1,3 +1,16 @@
+<script setup lang="ts">
+import { useShippingMethod } from '~/composables/checkout/production-shipping/useShippingMethod';
+import ShippingMethodSkeletonLoader from '~/components/checkout/shipping/SkeletonShippingMethod.vue';
+
+const {
+	translate,
+	is_loading,
+	active_shipping_methods,
+	selected_shipping_key,
+	selectShippingMethod,
+} = useShippingMethod();
+</script>
+
 <template>
 	<div class="checkout-member-block">
 		<div class="checkout-member-block-head">
@@ -23,7 +36,7 @@
 					type="button"
 					class="checkout-member-choice-card"
 					:class="{
-						'is-active': selected_shipping_method === method.key,
+						'is-active': selected_shipping_key === method.key,
 					}"
 					@click="selectShippingMethod(method.key)"
 				>
@@ -38,17 +51,6 @@
 							<div class="checkout-member-choice-title">
 								{{ method.name }}
 							</div>
-							<UiBadge
-								v-if="selected_shipping_method === method.key"
-								variant="outline"
-								tone="default"
-								size="md"
-								class="checkout-member-choice-badge"
-								text-color="var(--gray-80)"
-							>
-								<UiIcon name="strong-ship" :size="18" />
-								<span class="checkout-member-choice-badge-copy">Updated</span>
-							</UiBadge>
 						</div>
 						<div class="checkout-member-choice-subtitle">
 							{{
@@ -67,20 +69,6 @@
 		</template>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { useShippingMethod } from '~/composables/checkout/shipping/useShippingMethod';
-import ShippingMethodSkeletonLoader from '~/components/checkout/shipping/SkeletonShippingMethod.vue';
-
-const { t: translate } = useI18n();
-
-const {
-	is_loading,
-	active_shipping_methods,
-	selected_shipping_method,
-	selectShippingMethod,
-} = useShippingMethod();
-</script>
 
 <style scoped lang="scss">
 .checkout-member-block {
