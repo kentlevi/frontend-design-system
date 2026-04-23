@@ -276,12 +276,27 @@ export const useCartService = (caller : string) => {
 		cart_store.all_selected = v
 	}
 
+	const selected_total_cost = computed(() => {
+		if( !cart_store.selected_ids.length )
+			return 0
+
+		const tot_cost = cart_store.items.reduce((acc: number, item: CartItem) => {
+			if( cart_store.selected_ids.includes(item.local_identity) )
+				return acc + item.cost
+
+			return acc;
+		}, 0)
+
+		return tot_cost;
+	})
+
 	return {
 		// 🔥 Cart States
 		...storeToRefs(cart_store),
 
 		// 🔥 Local States
 		caller,
+		selected_total_cost,
 
 		// 🔥 Methods
 		requestItems,
