@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
+import { useCartPreview } from '~/composables/cart/useCartPreview';
 
 const {
-	grand_total,
 	formatPrice,
 	redirecting_to_cart,
 	goToCart,
@@ -10,6 +10,10 @@ const {
 	close,
 	t
 } = useCartPreviewHandler('cart-preview-footer');
+
+const {
+	grand_total
+} = useCartPreview('cart-preview-footer')
 </script>
 
 <template>

@@ -17,7 +17,7 @@ export type CartEmptyProduct = {
 	to: string;
 };
 
-export const useCartStore = defineStore('cart', () => {
+export const useCartStore = defineStore('cart-static', () => {
 	const user_store = useUsersStore();
 
 	const items = ref<CartItem[]>([]);
@@ -307,7 +307,7 @@ export const useCartStore = defineStore('cart', () => {
 	};
 }, {
 	persist: {
-		key: 'mu_cart',
+		key: 'mu_static_cart',
 		storage: persistedState.localStorage,
 		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids', 'has_initialized_demo'],
 	}

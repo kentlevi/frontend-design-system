@@ -6,20 +6,25 @@ import CartPreviewFeatured from './CartPreviewFeatured.vue';
 import CartPreviewFooter from './CartPreviewFooter.vue';
 import CartPreviewHeader from './CartPreviewHeader.vue';
 import CartPreviewItems from './CartPreviewItems.vue';
+import { useCartPreview } from '~/composables/cart/useCartPreview';
 const CartItemEditModal = defineAsyncComponent(() => import('~/components/cart/modals/CartItemEditModal.vue'));
 const CartDeleteItemModal = defineAsyncComponent(() => import('~/components/cart/modals/CartDeleteItemModal.vue'));
 
 const {
-	number_of_items,
-	loading,
 	featured_items,
 	redirecting_to_cart,
 	saving_inline_edit,
 	redirect_loader_ref,
-	composePreview,
-	is_open,
 	t
 } = useCartPreviewHandler('cart-preview');
+
+
+const {
+	is_open,
+	number_of_items,
+	loading,
+	composePreview,
+} = useCartPreview('cart-preview')
 
 watch(is_open, (v) => {
 	if( v ) {

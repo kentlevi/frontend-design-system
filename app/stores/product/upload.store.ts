@@ -9,6 +9,7 @@ export const useUploadStore = defineStore('product-upload', () => {
 	// Artwork state
 	const artwork_file = ref<File | null>(null)
 	const artwork_preview = ref<string>('')
+	const artwork_file_name = ref<string|null>(null)
 	const instruction = ref<string>('')
 
 	// Progress state
@@ -34,6 +35,7 @@ export const useUploadStore = defineStore('product-upload', () => {
 	const setArtwork = (file: File | null, preview: string = '') => {
 		artwork_file.value = file
 		artwork_preview.value = preview
+		artwork_file_name.value = file?.name ?? null
 	}
 
 	const clearArtwork = () => {

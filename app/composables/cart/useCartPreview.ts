@@ -1,0 +1,40 @@
+import { useCartService } from "~/services/core/cart/cart.service"
+import { useUploadService } from "~/services/product/upload.service"
+
+export const useCartPreview = (caller: string) => {
+
+	const cart_service = useCartService('cart-preview')
+
+	const upload_service = useUploadService()
+
+	const is_open = computed({
+		get: () => upload_service.is_preview_open.value,
+		set: (val) => upload_service.is_preview_open.value = val
+	})
+
+	const composePreview = async () => {
+		cart_service.requestItems()
+	}
+
+	const deleteCartItem = (local_identity : string) => {
+		if ( !local_identity )
+			return;
+
+		cart_service.setDeletableItems([local_identity])
+	}
+
+	return {
+		// 🔥 Local States
+		caller,
+		is_open,
+		number_of_items : cart_service.number_of_items,
+		loading: cart_service.loading,
+		items: cart_service.items,
+		grand_total: cart_service.grand_total,
+
+		// 🔥 Methods
+		composePreview,
+		formatImage: cart_service.formatImage,
+		deleteCartItem,
+	}
+}

@@ -3,10 +3,14 @@ import { useCartService } from '~/services/cart/cart.service'
 import { useAppHeaderAccount } from '~/composables/layout/appHeader/useAppHeaderAccount'
 import { useAppHeaderCartPreview } from '~/composables/layout/appHeader/useAppHeaderCartPreview'
 import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/appHeader/useAppHeaderKeyboardShortcuts'
+import { useCartService as useCartCoreService } from '~/services/core/cart/cart.service'
 
 export function useAppHeader() {
 	const route = useRoute()
 	const cart_service = useCartService('app-header')
+
+	const cart_core_service = useCartCoreService('app-header')
+
 	const {
 		account_open,
 		account_menu_ref,
@@ -60,7 +64,7 @@ export function useAppHeader() {
 	const should_lock_body_scroll = computed(
 		() => cart_preview_open.value || search_modal_open.value
 	)
-	const cart_badge_count = computed(() => cart_service.number_of_items.value)
+	const cart_badge_count = computed(() => cart_core_service.number_of_items.value)
 
 	async function prefetchHeaderOverlayModules() {
 		if (prefetched_header_overlays.value) return

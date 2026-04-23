@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import type { SizeSpec, QuantitySpec, AttributeSelection, ColorSpec, FontSpec } from '../../types/products/attributes'
+import type VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue'
 
 export const useSelectionStore = defineStore('attr-selection', () => {
-
 
 	const selections = ref<Record<string, AttributeSelection>>({})
 
@@ -10,15 +10,19 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 
 	const product_config_mapping_id = ref<number>()
 
+	const product_variant_id = ref<number>()
+
 	const size = ref<SizeSpec>()
 
 	const quantity = ref<QuantitySpec>()
 
-	const color = ref<ColorSpec | null>()
+	const color = ref<ColorSpec | null>(null)
 
-	const font = ref<FontSpec | null>()
+	const font = ref<FontSpec | null>(null)
 
-	const lettering_text = ref('')
+	const lettering_text = ref<string>('')
+
+	const lettering_flag = ref<string>('')
 
 	const lettering_file = ref<File>()
 
@@ -31,6 +35,20 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	const price = ref<number>(0)
 
 	const unit_price = ref<number>(0)
+
+	const lettering_preview_ready = ref<boolean>(false)
+
+	const navigation_flight = ref<boolean>(false)
+
+	const product_navigation_in_flight = ref<boolean>(false)
+
+	const is_loading_features = ref<boolean>(false)
+
+	const is_pricing_ready = ref<boolean>(false)
+
+	const lettering_editor_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null)
+
+	const instruction = ref<string>('')
 
 	const updateMappingID = (mapping_id: number) => {
 		product_config_mapping_id.value = mapping_id
@@ -45,7 +63,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 	}
 
 	const saveSelection = () => {
-		if( !url_slug.value || !size.value || !quantity.value)
+		if( !url_slug.value || !size.value || !quantity.value )
 			return
 
 		const selected_color = color && color?.value ? color.value : null
@@ -66,6 +84,7 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		}
 	}
 
+	/** ✅ Updating the state of size */
 	const updateSize = ( selected_size 	: SizeSpec, default_value?: boolean ) => {
 		size.value = selected_size
 
@@ -92,22 +111,27 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 			return 0
 	}
 
-	const updateColor = (selected_color: ColorSpec, default_value?: boolean) => {
+	const updateColor = (selected_color: ColorSpec | null, default_value?: boolean) => {
 		color.value = selected_color
 
 		if(!default_value)
 			saveSelection()
 	}
 
-	const updateFont = (selected_font: FontSpec, default_value?: boolean) => {
+	const updateFont = (selected_font: FontSpec | null, default_value?: boolean) => {
 		font.value = selected_font
 
 		if(!default_value)
 			saveSelection()
 	}
 
-	const updateLetteringText = (txt: string, default_value?: boolean) => {
+	/**
+	 * ✅ Update the state of lettering text
+	 */
+	const updateLetteringText = (txt: string, default_value: boolean = false) => {
 		lettering_text.value = txt
+
+		lettering_flag.value = default_value ? 'default' : 'edited'
 
 		if(!default_value)
 			saveSelection()
@@ -134,8 +158,46 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		lettering_file.value = undefined
 	}
 
+
+	const updateLetteringPreviewFlag= (v : boolean ) => {
+		lettering_preview_ready.value = v
+	}
+
+	const updateNavigationFlight = (v : boolean) => {
+		navigation_flight.value = v
+	}
+
+	const updateVariantID = (variant_id : number) => {
+		product_variant_id.value = variant_id
+	}
+
+	const updateLoadingFeaturesFlag = (v : boolean) => {
+		is_loading_features.value = v
+	}
+
+	const updatePricingFlag = (v : boolean) => {
+		is_pricing_ready.value = v
+	}
+
+	const updateProductSelectionFlight = (v : boolean) => {
+		product_navigation_in_flight.value = v
+	}
+
+	const reset = () => {
+		url_slug.value = ''
+		product_variant_id.value = 0
+		color.value = null
+		font.value = null
+		lettering_text.value = ''
+	}
+
+	const updateLetteringEditorRef = (instance: InstanceType<typeof VinylLetteringDesigner> | null) => {
+		lettering_editor_ref.value = instance;
+	}
+
 	return {
 		product_config_mapping_id,
+		product_variant_id,
 		url_slug,
 		size,
 		quantity,
@@ -149,6 +211,14 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		discounted_price,
 		price,
 		unit_price,
+		lettering_preview_ready,
+		navigation_flight,
+		product_navigation_in_flight,
+		is_loading_features,
+		is_pricing_ready,
+		lettering_flag,
+		lettering_editor_ref,
+		instruction,
 		updateMappingID,
 		updateProductSlug,
 		clearSelection,
@@ -162,5 +232,13 @@ export const useSelectionStore = defineStore('attr-selection', () => {
 		updateLetteringText,
 		updateLetteringFile,
 		clearLetteringState,
+		updateLetteringPreviewFlag,
+		updateNavigationFlight,
+		updateVariantID,
+		updateLoadingFeaturesFlag,
+		updatePricingFlag,
+		reset,
+		updateProductSelectionFlight,
+		updateLetteringEditorRef,
 	}
 })

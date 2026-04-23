@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { nextTick } from 'vue';
 import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
+import { useCartService } from '~/services/core/cart/cart.service';
 
 const { t } = useI18n();
+const cart_service = useCartService('upload-modal')
 
 const {
 	is_modal_open,
@@ -14,12 +16,12 @@ const {
 	uploading,
 	is_dragging,
 	has_uploaded_file,
-	dispatchItem,
 	handleDrop,
 	fileChange,
 	unsetFile,
 	closeModal,
 	openPreview,
+	resetForm,
 } = useArtworkSectionHandler()
 
 const skipUpload = async () => {
@@ -27,7 +29,7 @@ const skipUpload = async () => {
 		return
 
 	console.warn('Skip-Uploading')
-	await dispatchItem()
+	await cart_service.addItem()
 	closeModal()
 	await nextTick()
 	openPreview()
@@ -36,7 +38,7 @@ const skipUpload = async () => {
 const addToCart = async () => {
 	console.warn('Adding cart...')
 
-	const dispatched = await dispatchItem(has_uploaded_file.value)
+	const dispatched = await cart_service.addItem()
 
 	if( dispatched ) {
 		closeModal()
@@ -62,6 +64,11 @@ const removeFile = () => {
 	if (artwork_input.value)
 		artwork_input.value.value = '';
 }
+
+watch(() => is_modal_open.value, (n) => {
+	if( n )
+		resetForm()
+})
 
 </script>
 

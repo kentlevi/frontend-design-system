@@ -345,12 +345,14 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 		if (current_base === new_base) {
 			selection_navigation_in_flight.value = false;
+			selectionStore.updateProductSelectionFlight(false)
 			return;
 		}
 
 		pending_picker_route_animation = true;
 		picker_slide_transition_enabled.value = true;
 		selection_navigation_in_flight.value = true;
+		selectionStore.updateProductSelectionFlight(false)
 
 		const target_path = withCountry(`/${category.value}/${slug}`);
 
@@ -359,6 +361,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		// Fallback safety to clear flight if navigation hangs
 		selection_navigation_timer = setTimeout(() => {
 			selection_navigation_in_flight.value = false;
+			selectionStore.updateProductSelectionFlight(false)
 		}, 1000);
 	};
 
@@ -677,10 +680,16 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		cancelPendingPickerSlide();
 		picker_slide_transition_enabled.value = false;
 		selection_navigation_in_flight.value = false;
+		selectionStore.updateProductSelectionFlight(false)
 		preserve_upload_modal_on_next_route_sync = false;
 		setSelectionScrollLock(false);
 		setOverlayBodyScrollLock(false);
 	});
+
+	watch(() => selection_navigation_in_flight.value, (new_value) => {
+		console.warn('selection flight change.', new_value)
+		selectionStore.updateProductSelectionFlight(new_value)
+	})
 
 	const context = {
 		// States from Quote Handler

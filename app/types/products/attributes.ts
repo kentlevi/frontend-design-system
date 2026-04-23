@@ -34,6 +34,7 @@ export interface SizeSpec {
 	code?: string | null,
 	image?: string | null,
 	desc_key?: string | null,
+	src?: string
 }
 
 export interface QuantitySpec {
@@ -58,13 +59,6 @@ export interface AttributeSelection {
 	lettering_file: File | null
 }
 
-export interface LetteringSpec {
-	active: 'width' | 'height',
-	width: number | null,
-	height: number | null,
-	text: string,
-}
-
 export interface FeaturedDataResponse {
 	product: {
 		pcm_id: number
@@ -87,4 +81,33 @@ export interface FeaturedDataResponse {
 		product_variant_id: number,
 		data: QuantitySpec[],
 	}
+}
+
+export interface PricingParameters {
+	width: number
+	height: number
+	color_id?: number
+	font_id?: number
+	quantity?: number
+}
+
+export interface PricingResponse {
+	product_variant_id: number,
+	prices: QuantitySpec [],
+}
+
+export interface PricePoint {
+	nr: number;
+	price: number;
+}
+
+export interface PriceCalculationResult {
+	bound_qty_diff: number;
+	qty_diff: number;
+	lower_price: number;
+	upper_price: number;
+	bound_price_diff: number;
+	bound_diff: number;
+	diff: number;
+	price: number;
 }

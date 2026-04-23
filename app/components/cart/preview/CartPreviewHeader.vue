@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
+import { useCartPreview } from '~/composables/cart/useCartPreview';
 
-const { number_of_items, t, close } = useCartPreviewHandler('cart-preview-header');
+const {  t, close } = useCartPreviewHandler('cart-preview-header');
+
+const  { number_of_items } = useCartPreview('cart-preview-header')
 </script>
 
 <template>

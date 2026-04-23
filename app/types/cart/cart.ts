@@ -17,8 +17,8 @@ export interface CartItem {
 	artwork_file: string | null
 	artwork_file_name: string | null
 	instruction: string | null
-	local_identity: string | null
-	artwork_preview?: string | null
+	local_identity: string
+	artwork_preview: string | null
 	file_path?: string | null
 }
 

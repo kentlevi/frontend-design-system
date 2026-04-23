@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import ProductPickerSlice from '~/components/products/product-category/slices/ProductPickerSlice.vue';
-import ProductHeroSlice from '~/components/products/product-category/slices/ProductHeroSlice.vue';
-import ProductOptionsSlice from '~/components/products/product-category/slices/ProductOptionsSlice.vue';
+// import ProductHeroSlice from '~/components/products/product-category/slices/ProductHeroSlice.vue';
+// import ProductOptionsSlice from '~/components/products/product-category/slices/ProductOptionsSlice.vue';
+import ProductHeroSlice from '~/components/products/product-category/slices-temp/ProductHeroSlice.vue';
+import ProductOptionsSlice from '~/components/products/product-category/slices-temp/ProductOptionsSlice.vue';
 
 const {
 	has_picked_product,
