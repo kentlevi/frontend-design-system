@@ -1,4 +1,4 @@
-import { useCartStore } from '~/stores/cart'
+import { useCartStore } from '~/stores/core/cart/cart.store'
 import { useProductionShippingStore } from '~/stores/production-shipping/production-shipping.store'
 import { formatShippingDateRange } from '~/utils/shipping/dateRange'
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
@@ -36,11 +36,8 @@ export function useShippingMethod() {
 
 	const selected_cart_items = computed(() =>
 		cart_store.items.filter((item) => {
-			const item_id = item.id !== null
-				? String(item.id)
-				: (item.local_identity || '')
-
-			return selected_ids.value.includes(item_id)
+			const local_identity = item.local_identity
+			return selected_ids.value.includes(local_identity)
 		})
 	)
 
