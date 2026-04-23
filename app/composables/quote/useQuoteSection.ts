@@ -11,6 +11,7 @@ import { useCountry } from "../app/country/useCountry"
 import { formatCurrencyByCountry } from '~/utils/currency';
 import { usePricingService } from "~/services/core/quote/pricing.service"
 import { useUploadService } from "~/services/product/upload.service"
+import { convertFileBase64 } from "~/utils/file/file"
 
 export const useQuoteSection = () => {
 
@@ -441,7 +442,10 @@ export const useQuoteSection = () => {
 
 			const file = new File([blob], 'lettering.png', { type: 'image/png' });
 			lettering_service.updateFile(file);
-			upload_service.setArtwork(file)
+
+			const lettering_preview = await convertFileBase64(file);
+
+			upload_service.setArtwork(file, lettering_preview)
 
 			await quote_service.dispatchItem();
 

@@ -32,6 +32,16 @@ export const useCartStore = defineStore('cart', () => {
 		},
 	});
 
+	const addItem = (item: CartItem) => {
+		console.log(item)
+		items.value.unshift(item)
+		grand_total.value += Number(item.cost)
+		addNumber()
+
+		// Default check the new item
+		addSelected(item.local_identity)
+	}
+
 	const addNumber = () => {
 		number_of_items.value++
 	}
@@ -40,18 +50,6 @@ export const useCartStore = defineStore('cart', () => {
 		number_of_items.value--
 	}
 
-
-	const saveItemLocally = (item: CartItem) => {
-		items.value.unshift(item)
-		grand_total.value += Number(item.cost)
-		addNumber()
-
-		// Default check the new item
-		const item_id = item.id ? String(item.id) : (item.local_identity || 'unknown');
-		if (!selected_ids.value.includes(item_id)) {
-			selected_ids.value.push(item_id);
-		}
-	}
 
 	const addSelected = (local_identity: string) => {
 		if (!selected_ids.value.includes(local_identity))
@@ -68,8 +66,6 @@ export const useCartStore = defineStore('cart', () => {
 
 		if( index !== -1 && items.value[index] ) {
 			items.value[index].id = new_id
-			if( items.value[index]?.artwork_preview )
-				items.value[index].artwork_preview = null
 		}
 	}
 
@@ -97,6 +93,10 @@ export const useCartStore = defineStore('cart', () => {
 		deletable_ids.value = []
 	}
 
+	const removeItems = () => {
+		items.value = items.value.filter(e => !deletable_ids.value.includes(e.local_identity) )
+	}
+
 	return {
 		// 🔥 States
 		items,
@@ -114,7 +114,6 @@ export const useCartStore = defineStore('cart', () => {
 		// 🔥 Methods
 		addNumber,
 		reduceNumber,
-		saveItemLocally,
 		addSelected,
 		removeSelected,
 		updateUploadedItem,
@@ -122,6 +121,8 @@ export const useCartStore = defineStore('cart', () => {
 		emptyDeletableItems,
 		syncNumber,
 		emptyCart,
+		removeItems,
+		addItem,
 	}
 }, {
 	persist: {

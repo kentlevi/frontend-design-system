@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import UiSkeleton from '~/components/ui/Skeleton.vue';
-import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import { useCartPreviewItem } from '~/composables/cart/preview/useCartPreviewItem';
+import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
 import { formattedPrice } from '~/utils/currency';
 
-const { loading, items } = useCartPreviewHandler('cart-preview-items');
+const { loading, items, deleteCartItem } = useCartPreview('cart-preview-items');
 
 const {
-	formatImage,
-	deleteCartItem,
 	editCartItem,
 } = useCartPreviewItem();
+
+const {
+	formatImage
+} = useCartPreview('cart-preview-item')
 
 defineEmits<{
 	'edit-item': [item: CartItem];
@@ -117,7 +119,7 @@ defineEmits<{
 								:icon-size="24"
 								sr-label="Remove item"
 								data-testid="product-category-cart-item-delete-button"
-								@click="deleteCartItem(item.id || item.local_identity)"
+								@click="deleteCartItem(item.local_identity)"
 							/>
 						</div>
 					</div>

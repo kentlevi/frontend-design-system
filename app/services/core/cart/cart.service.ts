@@ -120,18 +120,15 @@ export const useCartService = (caller : string) => {
 
 		if( item.id && item.artwork_file && item.file_path) {
 			f = `${config.public.s3_file_url}${item.file_path}${item.artwork_file}`
+		} else if( item.artwork_preview ) {
+			f = item.artwork_preview;
 		}
 
 		return f
 	}
 
 	const saveItemLocally = (item: CartItem) => {
-		cart_store.items.unshift(item)
-		cart_store.grand_total += Number(item.cost)
-		cart_store.addNumber()
-
-		// Default check the new item
-		cart_store.addSelected(item.local_identity)
+		cart_store.addItem(item)
 	}
 
 
@@ -191,6 +188,8 @@ export const useCartService = (caller : string) => {
 				return false
 			}
 			artwork_file_name.value = upload_service.artwork_file.value.name
+			console.log(upload_service.artwork_preview.value)
+
 			uploaded_file.value = filename.value
 		}
 
@@ -221,7 +220,7 @@ export const useCartService = (caller : string) => {
 
 		// 🔥 Store new item in local storage before uploading it to our database.
 		console.log('Saving item locally!')
-		cart_store.saveItemLocally(item.value)
+		saveItemLocally(item.value)
 
 		// 🔥 Sending the new item to API
 		if( is_authenticated.value ) {
@@ -255,8 +254,10 @@ export const useCartService = (caller : string) => {
 		const result = await cart_api_service.sendToServer(cart_payload)
 
 		/** If API request successfully process, must update the item save locally to its created unique ID by API */
-		if( result && result.item && result.item.id && item.local_identity )
+		if( result && result.item && result.item.id && item.local_identity ) {
 			cart_store.updateUploadedItem(item.local_identity, result.item.id)
+			upload_service.clearArtwork()
+		}
 	}
 
 	/** Adding/Removing selected item */
@@ -290,7 +291,9 @@ export const useCartService = (caller : string) => {
 		generateLocalIdentity,
 		toggleSelection,
 		selectAllItem,
+		calculateCartItems,
 		setDeletableItems 		: cart_store.setDeletableItems,
 		emptyDeletableItems 	: cart_store.emptyDeletableItems,
+		removeItems 			: cart_store.removeItems,
 	}
 }

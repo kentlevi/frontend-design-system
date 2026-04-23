@@ -14,9 +14,14 @@ export const useCartDeletion = (caller: string) => {
 	const confirmDeletion = async () => {
 		try {
 			deleting.value = true
+			// removing item in local storage
+			await cart_service.removeItems()
+
 			const deletion_request = await cart_api_service.requestDeletion(cart_service.deletable_ids.value)
 
 			if( deletion_request ) {
+				cart_service.calculateCartItems()
+				// removing the deletable items since it was already deleted
 				cart_service.emptyDeletableItems()
 			}
 		} catch(error ) {
