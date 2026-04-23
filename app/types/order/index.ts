@@ -57,6 +57,7 @@ export interface OrderItem {
 	evaluation_notes: string | null;
 	instruction: string | null;
 
+	product_id: number;
 	product_name: string;
 	product_url_slug: string;
 	product_featured_image_url: string;

@@ -2,7 +2,7 @@
 import type { OrderCompleteData } from '~/types/order';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
-// const { t } = useI18n();
+const { t } = useI18n();
 
 
 const props = defineProps<{
@@ -25,33 +25,33 @@ const props = defineProps<{
 		</header>
 
 		<div class="checkout-confirmation-summary-body">
-			<!-- <div
-				v-for="item in props.items"
-				:key="item.id"
+			<div
+				v-for="(item,index) in props.orderConfirmDetails?.order_items"
+				:key="index"
 				class="checkout-confirmation-item"
 			>
 				<div class="checkout-confirmation-item-thumb">
 					<img
-						:src="item.artworkPreviewUrl || item.product.image"
-						:alt="t(`product.items.${item.product.id}.name`)"
+						:src="item.product_featured_image_url"
+						:alt="t(`product.items.${item.product_id}.name`)"
 						class="checkout-confirmation-item-image"
 					>
 				</div>
 				<div class="checkout-confirmation-item-copy">
-					<div class="checkout-confirmation-item-name">{{ t(`product.items.${item.product.id}.name`) }}</div>
-					<div class="checkout-confirmation-item-meta">{{ props.itemMeta(item.sizeLabel, item.qty) }}</div>
+					<div class="checkout-confirmation-item-name">{{ item.product_name }}</div>
+					<div class="checkout-confirmation-item-meta">{{ item.width }}x{{ item.height }}mm / {{ item.quantity }}</div>
 				</div>
-				<div class="checkout-confirmation-item-price">{{ props.formatPrice(item.total) }}</div>
-			</div> -->
+				<div class="checkout-confirmation-item-price">{{ formatPrice(item.cost) }}</div>
+			</div>
 
 			<div class="checkout-confirmation-totals">
 				<div class="checkout-confirmation-total-line">
 					<span class="checkout-confirmation-total-label">{{ props.subtotalLabel }}</span>
-					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary.subtotal_cost) }}</strong>
+					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary?.subtotal_cost) }}</strong>
 				</div>
 				<div class="checkout-confirmation-total-line">
 					<span class="checkout-confirmation-total-label">{{ props.shippingFeeLabel }}</span>
-					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary.shipping_cost) }}</strong>
+					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary?.shipping_cost) }}</strong>
 				</div>
 				<div class="checkout-confirmation-total-line is-discount">
 					<span class="checkout-confirmation-total-label">{{ props.discountLabel }}</span>
@@ -59,7 +59,7 @@ const props = defineProps<{
 				</div>
 				<div class="checkout-confirmation-total-line is-final">
 					<span class="checkout-confirmation-total-label">{{ props.totalLabel }}</span>
-					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary.total_cost) }}</strong>
+					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary?.total_cost) }}</strong>
 				</div>
 			</div>
 		</div>
