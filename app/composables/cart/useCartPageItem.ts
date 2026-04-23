@@ -16,8 +16,6 @@ export const useCartPageItem = (caller : string) => {
 		else
 			deletable.value = cart_service.selected_ids.value
 
-
-		console.warn(`Deleting ${deletable.value.length} item(s)!`)
 		cart_service.setDeletableItems(deletable.value)
 	}
 
