@@ -44,7 +44,7 @@ const {
 						:src="method.icon"
 						:alt="method.name"
 						class="checkout-member-choice-icon"
-					/>
+					>
 
 					<div class="checkout-member-choice-copy">
 						<div class="checkout-member-choice-title-row">

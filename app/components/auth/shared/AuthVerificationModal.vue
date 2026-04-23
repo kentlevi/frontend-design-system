@@ -119,12 +119,12 @@ const formatted_error_parts = computed(() => {
 	if (!props.error) return [];
 
 	return props.error
-		.split(/(<b>.*?<\/b>)/g)
+		.split(/(\[b\].*?\[\/b\]|<b>.*?<\/b>)/g)
 		.filter(Boolean)
 		.map(part => {
-			const match = part.match(/^<b>(.*?)<\/b>$/);
+			const match = part.match(/^<b>(.*?)<\/b>$|^\[b\](.*?)\[\/b\]$/);
 			return {
-				text: match ? match[1] : part,
+				text: match ? (match[1] || match[2] || '') : part,
 				is_bold: Boolean(match),
 			};
 		});
@@ -375,6 +375,10 @@ const formatted_error_parts = computed(() => {
             color: var(--error);
             font-size: var(--type-size-100);
             line-height: var(--type-line-100);
+
+            strong {
+                font-weight: var(--font-weight-bold);
+            }
         }
     }
 

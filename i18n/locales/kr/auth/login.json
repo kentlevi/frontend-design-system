@@ -37,7 +37,7 @@
         "fieldBlank": "필수 입력 항목입니다.",
         "emailInvalid": "이메일 형식이 올바르지 않습니다.",
         "credentialsMismatch": "이메일 주소 & 비밀번호가 일치하지 않습니다.",
-        "orderNotFound": "주문번호가 존재하지 않습니다."
+        "orderNotFound": "존재하지 않는 주문입니다."
       }
     }
   }
