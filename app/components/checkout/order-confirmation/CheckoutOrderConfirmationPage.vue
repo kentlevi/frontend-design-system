@@ -1,29 +1,37 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useCheckoutGuest } from '~/composables/checkout/guest/useCheckoutGuest';
 import { useCountry } from '@/composables/app/country/useCountry';
 import CheckoutOrderConfirmationDelivery from './CheckoutOrderConfirmationDelivery.vue';
 import CheckoutOrderConfirmationHeader from './CheckoutOrderConfirmationHeader.vue';
 import CheckoutOrderConfirmationNote from './CheckoutOrderConfirmationNote.vue';
 import CheckoutOrderConfirmationSummary from './CheckoutOrderConfirmationSummary.vue';
+import { useCheckoutConfirmationPage } from '~/composables/checkout/completion/useCheckoutConfirmationPage';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
-const { selected_checkout_items, order_subtotal, order_shipping_fee, order_discount, order_total, formatPrice, sizeDimOnly } = useCheckoutGuest({
-	labelCountry: 'us',
-});
+const route = useRoute()
 
-const order_number = computed(() => '12405070009');
-const order_details_path = computed(() => withCountry(`/orders/${order_number.value}`));
-const estimated_arrival = computed(() => {
-	const date = new Date();
-	date.setDate(date.getDate() + 9);
-	return date.toLocaleDateString('en-US', {
-		month: 'long',
-		day: 'numeric',
-		year: 'numeric',
-	});
-});
+const order_id = computed(() => {
+	const id = route.query.order_id
+	return Array.isArray(id) ? Number(id[0]) : Number(id)
+})
+
+const {
+	order_confirm_details,
+	getOrderCompletionDetails,
+} = useCheckoutConfirmationPage()
+
+onMounted(() => {
+	if (order_id.value) {
+		getOrderCompletionDetails(order_id.value)
+	}
+})
+
+watch(order_id, (new_id, old_id) => {
+	if (new_id && new_id !== old_id) {
+		getOrderCompletionDetails(new_id)
+	}
+})
 </script>
 
 <template>
@@ -40,23 +48,15 @@ const estimated_arrival = computed(() => {
 			/>
 			<CheckoutOrderConfirmationDelivery
 				:label="t('checkout.confirmation.expectedDelivery')"
-				:value="t('checkout.confirmation.expectedArrival', { date: estimated_arrival })"
+				:value="t('checkout.confirmation.expectedArrival', { date: 'May 2, 2026' })"
 			/>
 			<CheckoutOrderConfirmationSummary
 				:title="t('checkout.confirmation.orderSummary')"
-				:order-number-label="t('checkout.confirmation.orderNumber', { orderNumber: order_number })"
-				:order-details-path="order_details_path"
-				:items="selected_checkout_items"
-				:item-meta="(sizeLabel, qty) => `${sizeDimOnly(sizeLabel)} / ${qty.toLocaleString()}`"
-				:format-price="formatPrice"
 				:subtotal-label="t('checkout.confirmation.summary.subtotal')"
 				:shipping-fee-label="t('checkout.confirmation.summary.shippingFee')"
 				:discount-label="t('checkout.confirmation.summary.discounts')"
 				:total-label="t('checkout.confirmation.summary.total')"
-				:subtotal="order_subtotal"
-				:shipping-fee="order_shipping_fee"
-				:discount="order_discount"
-				:total="order_total"
+				:order-confirm-details="order_confirm_details"
 			/>
 		</div>
 	</section>
