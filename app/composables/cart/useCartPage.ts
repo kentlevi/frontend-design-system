@@ -58,5 +58,6 @@ export const useCartPage = () => {
 		// 🔥 Methods
 		openArtworkPicker,
 		onArtworkActionSelected,
+		refreshItems : cart_service.requestItems,
 	}
 }

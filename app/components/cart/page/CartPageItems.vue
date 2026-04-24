@@ -40,7 +40,6 @@ const emit = defineEmits<{
 
 const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
 
-
 </script>
 
 <template>

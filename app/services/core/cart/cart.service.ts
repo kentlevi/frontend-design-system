@@ -282,6 +282,85 @@ export const useCartService = (caller : string) => {
 		cart_store.all_selected = v
 	}
 
+	const updating_artwork = ref<boolean>(false)
+
+	interface UploadingResponse {
+		success: boolean
+		message: string
+		uploaded_file: string
+	}
+
+	// Submission of artwork changes
+	const updateArtwork = async (
+		file_name: string,
+		file: File,
+		instruction: string |'',
+		local_identity: string,
+	) => {
+
+		const response = ref<UploadingResponse>({
+			success: false,
+			message: '',
+			uploaded_file: ''
+		})
+
+		if( updating_artwork.value ) {
+			response.value.message = 'Update still on process...'
+
+			return response.value
+		}
+
+		try {
+			if( !file_name )
+				throw new Error("❌ File name is required!")
+
+			if( !file )
+				throw new Error("❌ Artwork File is required!")
+
+			if( !local_identity )
+				throw new Error("❌ Item local identity is required!")
+
+			if( !cart_store.item_picking_artwork || !cart_store.item_picking_artwork.id ) {
+				console.warn('❌ Item for artwork is not set.')
+				return
+			}
+
+			// ⚠️ Uploading file
+			const uploading_request = await cart_api_service.sendToS3(file)
+
+			// ❌ File uploading failed
+			if( !uploading_request.ok.value )
+				throw new Error(uploading_request.message.value);
+
+			response.value.uploaded_file = uploading_request.filename.value
+
+			// ✅ Update the item locally
+			cart_store.updateItemInCart(local_identity, {
+				artwork_file : uploading_request.filename.value,
+				artwork_file_name: file_name,
+				instruction: instruction
+			})
+
+			// ✅ Update the item in our server
+			cart_api_service.requestArtworkUpdate(cart_store.item_picking_artwork.id, file_name, uploading_request.filename.value, instruction)
+
+			updating_artwork.value = true
+			response.value.success = true
+		}
+		// ❌ Handles thrown error with proper response
+		catch(error) {
+			console.error(error)
+
+			response.value.message = cart_api_service.extractThrownError(error)
+		}
+		// ✅ Completion of process
+		finally {
+			updating_artwork.value = false
+		}
+
+		return response.value
+	}
+
 	return {
 		// 🔥 Cart States
 		...storeToRefs(cart_store),
@@ -305,5 +384,6 @@ export const useCartService = (caller : string) => {
 		unsetEditableItem	: cart_store.unsetEditableItem,
 		assignArtworkPicker	: cart_store.assignArtworkPicker,
 		unsetArtworkPicker	: cart_store.unsetArtworkPicker,
+		updateArtwork,
 	}
 }

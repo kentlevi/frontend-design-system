@@ -95,6 +95,28 @@ export const useCartApiService = (caller: string) => {
 		return data
 	}
 
+	const requestArtworkUpdate = async (
+		item_id: number,
+		file_name: string,
+		uploaded_file: string,
+		instruction: string
+	) => {
+		const { success, message } = await $api.post(
+			'cart/artwork/update',
+			{
+				item_id: item_id,
+				file_name: file_name,
+				uploaded_file: uploaded_file,
+				instruction: instruction
+			}
+		)
+
+		if( !success )
+			console.warn(message)
+
+		return success
+	}
+
 	return {
 		// 🔥 States
 		caller,
@@ -105,5 +127,7 @@ export const useCartApiService = (caller: string) => {
 		requestDeletion,
 		requestCartItems,
 		requestCartNumbers,
+		extractThrownError,
+		requestArtworkUpdate,
 	}
 }
