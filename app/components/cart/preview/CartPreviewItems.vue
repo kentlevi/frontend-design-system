@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import UiSkeleton from '~/components/ui/Skeleton.vue';
-import { useCartPreviewItem } from '~/composables/cart/preview/useCartPreviewItem';
 import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
 import { formattedPrice } from '~/utils/currency';
 
 
 /** 🔥 This composable were using real data from API and functionality */
-const { loading, items, deleteCartItem, formatImage } = useCartPreview('cart-preview-items');
-
-const {
-	editCartItem,
-} = useCartPreviewItem();
-
+const { loading, items, deleteCartItem, formatImage, editItem } = useCartPreview('cart-preview-items');
 
 defineEmits<{
 	'edit-item': [item: CartItem];
@@ -106,7 +100,7 @@ defineEmits<{
 								:icon-size="24"
 								sr-label="Edit item"
 								data-testid="product-category-cart-item-edit-button"
-								@click="$emit('edit-item', item); editCartItem(item)"
+								@click="editItem(item); $emit('edit-item', item)"
 							/>
 							<UiButton
 								variant="ghost"

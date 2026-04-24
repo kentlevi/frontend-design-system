@@ -15,19 +15,17 @@ export const useCartService = (caller : string) => {
 
 	const user_store = useUsersStore()
 
-	const auth_user = user_store.state
-
 	const upload_service = useUploadService()
 
 	const cart_api_service = useCartApiService('cart-service')
 
 	const uploading_file = ref<boolean>(false)
 
-	const is_authenticated = computed(() => Boolean(auth_user.id && auth_user.email) )
+	const is_authenticated = computed(() => Boolean(user_store.is_authenticated) )
 
 	watch(() => user_store.is_authenticated, (authorized) => {
 		if( authorized )
-			calculateCartItems()
+			requestItems()
 		else
 			cart_store.emptyCart()
 	})
@@ -55,6 +53,9 @@ export const useCartService = (caller : string) => {
 	}
 
 	const requestItems = async () => {
+		if( !is_authenticated.value )
+			return
+
 		cart_store.loading = true;
 		try {
 			// calculate the numbers of cart items everytime request new data from database
@@ -172,7 +173,7 @@ export const useCartService = (caller : string) => {
 
 		const uploaded_file = ref<string>('')
 
-		const artwork_file_name = ref<string>('')
+		const artwork_file_name = ref<string>(upload_service.artwork_file.value?.name ?? '')
 
 		const has_artwork_file = Boolean(upload_service.artwork_file.value)
 
@@ -183,18 +184,21 @@ export const useCartService = (caller : string) => {
 				return
 			}
 
-			uploading_file.value = true
-			// Upload the artwork file to S3 when artwork is provided.
-			const { ok, message, filename } = await cart_api_service.sendToS3(upload_service.artwork_file.value)
+			/** If user is authenticated, will upload its artwork to S3*/
+			if( is_authenticated.value ) {
+				uploading_file.value = true
+				// Upload the artwork file to S3 when artwork is provided.
+				const { ok, message, filename } = await cart_api_service.sendToS3(upload_service.artwork_file.value)
 
-			uploading_file.value = false
-			if( !ok || !ok.value ) {
-				console.warn(message)
-				return false
+				uploading_file.value = false
+
+				if( !ok || !ok.value ) {
+					console.warn(message)
+					return false
+				}
+
+				uploaded_file.value = filename.value
 			}
-			artwork_file_name.value = upload_service.artwork_file.value.name
-
-			uploaded_file.value = filename.value
 		}
 
 		// Build the cart item payload for local state and API sync.
@@ -278,27 +282,12 @@ export const useCartService = (caller : string) => {
 		cart_store.all_selected = v
 	}
 
-	const selected_total_cost = computed(() => {
-		if( !cart_store.selected_ids.length )
-			return 0
-
-		const tot_cost = cart_store.items.reduce((acc: number, item: CartItem) => {
-			if( cart_store.selected_ids.includes(item.local_identity) )
-				return acc + item.cost
-
-			return acc;
-		}, 0)
-
-		return tot_cost;
-	})
-
 	return {
 		// 🔥 Cart States
 		...storeToRefs(cart_store),
 
 		// 🔥 Local States
 		caller,
-		selected_total_cost,
 
 		// 🔥 Methods
 		requestItems,
@@ -312,5 +301,9 @@ export const useCartService = (caller : string) => {
 		setDeletableItems	: cart_store.setDeletableItems,
 		emptyDeletableItems	: cart_store.emptyDeletableItems,
 		removeItems			: cart_store.removeItems,
+		assignEditableItem	: cart_store.assignEditableItem,
+		unsetEditableItem	: cart_store.unsetEditableItem,
+		assignArtworkPicker	: cart_store.assignArtworkPicker,
+		unsetArtworkPicker	: cart_store.unsetArtworkPicker,
 	}
 }

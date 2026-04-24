@@ -1,9 +1,12 @@
 import { useCartService } from "~/services/core/cart/cart.service"
 import { useUploadService } from "~/services/product/upload.service"
+import { useCartStore } from "~/stores/core/cart/cart.store"
 
 export const useCartPreview = (caller: string) => {
 
 	const cart_service = useCartService('cart-preview')
+
+	const cart_store = useCartStore()
 
 	const upload_service = useUploadService()
 
@@ -36,5 +39,6 @@ export const useCartPreview = (caller: string) => {
 		composePreview,
 		formatImage: cart_service.formatImage,
 		deleteCartItem,
+		editItem: cart_store.assignEditableItem,
 	}
 }
