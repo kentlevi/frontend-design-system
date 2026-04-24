@@ -31,8 +31,9 @@ export const useCartPageItem = (caller : string) => {
 		// 🔥 Methods
 		setAllSelected,
 		deleteSelectedItems,
-		formatImage		: cart_service.formatImage,
-		toggleSelection : cart_service.toggleSelection,
-		selectAllItem 	: cart_service.selectAllItem,
+		formatImage			: cart_service.formatImage,
+		toggleSelection 	: cart_service.toggleSelection,
+		selectAllItem 		: cart_service.selectAllItem,
+		assignEditableItem	: cart_service.assignEditableItem,
 	}
 }

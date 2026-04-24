@@ -8,19 +8,25 @@ import CartPageSummary from './CartPageSummary.vue';
 import CartPageSkeleton from './CartPageSkeleton.vue';
 import CartDeleteItemModal from '~/components/cart/modals/CartDeleteItemModal.vue';
 import { useCartPage } from '~/composables/cart/page/useCartPage';
+import { useCartPage as useCartPageHandler } from '~/composables/cart/useCartPage';
 
 const { t } = useI18n();
 const {
 	loading,
 	detail_item_id,
 	detail_item,
-	artwork_action_file_input_ref,
 	openItemDetails,
+	saveItemArtworkDetails,
+} = useCartPage();
+
+const {
+	has_items,
+	artwork_action_file_input_ref,
+	open_artwork_modal,
+	item_picking_artwork,
 	openArtworkPicker,
 	onArtworkActionSelected,
-	saveItemArtworkDetails,
-	has_items,
-} = useCartPage();
+} = useCartPageHandler()
 </script>
 
 <template>
@@ -59,8 +65,8 @@ const {
 
 		<CartDeleteItemModal />
 		<CartItemDetailsModal
-			:model-value="Boolean(detail_item_id)"
-			:item="detail_item"
+			:model-value="open_artwork_modal"
+			:item="item_picking_artwork"
 			@cancel="detail_item_id = null"
 			@save="saveItemArtworkDetails"
 		/>

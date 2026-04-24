@@ -17,18 +17,26 @@ export const useCartDeletion = (caller: string) => {
 			// removing item in local storage
 			await cart_service.removeItems()
 
+			if( !cart_service.is_authenticated.value ) {
+				completingDeletion()
+				return
+			}
+
 			const deletion_request = await cart_api_service.requestDeletion(cart_service.deletable_ids.value)
 
-			if( deletion_request ) {
-				cart_service.calculateCartItems()
-				// removing the deletable items since it was already deleted
-				cart_service.emptyDeletableItems()
-			}
+			if( deletion_request )
+				completingDeletion()
 		} catch(error ) {
 			console.error(error)
 		} finally {
 			deleting.value = false
 		}
+	}
+
+	const completingDeletion = () => {
+		cart_service.calculateCartItems()
+		// removing the deletable items since it was already deleted
+		cart_service.emptyDeletableItems()
 	}
 
 	const cancelDeletion = () => {

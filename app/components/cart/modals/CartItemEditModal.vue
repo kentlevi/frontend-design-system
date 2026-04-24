@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 
 const { t } = useI18n();
+
 const {
 	is_open,
 	active_item,
@@ -12,7 +13,11 @@ const {
 	updateItemSize,
 	updateItemQty,
 	closeModal: close_edit_modal,
-} = useEditItemHandler();
+} = useEditItemHandler('cart-item-edit-modal');
+
+// ⚠️ Static functionality & Data
+
+
 const modal_title = computed(() =>
 	!show_quantity.value
 		? t('cart.cartPreview.editModal.sizeOnlyTitle')

@@ -1,8 +1,72 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useQuoteSection } from '~/composables/quote/useQuoteSection';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
+import { useAttributesStore } from '~/stores/product/attributes.store';
+
+const {
+	size,
+	active_size_code,
+	quantity,
+	quantity_options,
+	is_loading_features,
+	featured_sizes,
+	featured_quantities,
+	featured_colors,
+	color,
+	has_color_selection,
+	has_font_selection,
+	featured_fonts,
+	selected_font,
+	lettering_navigation_flight,
+	pricing_ready,
+	discount_rate,
+	subtotal,
+	unit_price,
+	total,
+	formatPrice,
+	selection_navigation_in_flight,
+	lettering,
+	is_custom_size,
+	custom_size,
+	custom_quantity,
+	is_custom_qty,
+	formatted_custom_qty,
+	is_custom_size_focus,
+	is_custom_qty_focus,
+	is_vinylsize_focused,
+	custom_width_input,
+	custom_qty_input,
+	has_lettering_editor,
+	vinyl_preview_ready,
+	url_slug,
+	selected_id,
+
+	// Actions
+	proceedToNextStep,
+	showCustomSize,
+	showCustomQty,
+	focusWidthInput,
+	onCustomSizeFocus,
+	onCustomSizeBlur,
+	onCustomQtyFocus,
+	onCustomQtyBlur,
+	onVinylSizeFocus,
+	onVinylSizeBlur,
+	onVinylFontFocus,
+	onVinylFontBlur,
+	inputUpdateSize,
+	inputUpdateCustomSize,
+	inputUpdateQuantity,
+	inputUpdateCustomQuantity,
+	inputUpdateColor,
+	letteringWidthUpdate,
+	letteringHeightUpdate,
+} = useProductExperience();
 
 const { t } = useI18n();
+const attribute_store = useAttributesStore();
+const last_known_color_count_by_slug = ref<Record<string, number>>({});
+const last_known_quantity_count_by_slug = ref<Record<string, number>>({});
 const color_skeleton_grid_ref = ref<HTMLElement | null>(null);
 const color_skeleton_columns = ref(8);
 let color_skeleton_resize_observer: ResizeObserver | null = null;
@@ -18,6 +82,29 @@ function updateColorSkeletonColumns() {
 	color_skeleton_columns.value = estimated_columns;
 }
 
+const resolved_color_count = computed(() => {
+	const active_slug = url_slug.value || '';
+	const cached_colors = active_slug
+		? attribute_store.attribute_cache[active_slug]?.colors ?? []
+		: [];
+	const live_colors = attribute_store.colors ?? [];
+
+	return featured_colors.value.length || cached_colors.length || live_colors.length;
+});
+
+watch(
+	resolved_color_count,
+	(count) => {
+		const active_slug = url_slug.value || '';
+		if (count > 0 && active_slug) {
+			last_known_color_count_by_slug.value = {
+				...last_known_color_count_by_slug.value,
+				[active_slug]: count,
+			};
+		}
+	},
+	{ immediate: true }
+);
 
 onMounted(() => {
 	updateColorSkeletonColumns();
@@ -37,100 +124,69 @@ onBeforeUnmount(() => {
 	color_skeleton_resize_observer = null;
 });
 
+const color_skeleton_count = computed(() => {
+	const active_slug = url_slug.value || '';
+	const remembered_count = active_slug
+		? last_known_color_count_by_slug.value[active_slug] ?? 0
+		: 0;
+	const estimated_grid_count = color_skeleton_columns.value * 2;
 
+	return resolved_color_count.value || remembered_count || estimated_grid_count;
+});
 
-const prevent_non_digit_input = (event: InputEvent) => {
-	if (!event.data) return;
-	if (/^\d+$/.test(event.data)) return;
-	event.preventDefault();
-};
+const resolved_quantity_count = computed(() => {
+	const active_slug = url_slug.value || '';
+	const cached_quantities = active_slug
+		? attribute_store.attribute_cache[active_slug]?.quantities ?? []
+		: [];
+	const live_quantities = attribute_store.quantities ?? [];
+	const current_featured_quantities = featured_quantities.value ?? [];
 
+	return current_featured_quantities.length || cached_quantities.length || live_quantities.length;
+});
 
+watch(
+	resolved_quantity_count,
+	(count) => {
+		const active_slug = url_slug.value || '';
+		if (count > 0 && active_slug) {
+			last_known_quantity_count_by_slug.value = {
+				...last_known_quantity_count_by_slug.value,
+				[active_slug]: count,
+			};
+		}
+	},
+	{ immediate: true }
+);
 
-const {
-	colors: featured_colors,
-	sizes: featured_sizes,
-	fonts: featured_fonts,
-	quantities: featured_quantities,
-	has_lettering_editor,
-	custom_size,
-	selected_font,
-	color : selected_color,
-	size : selected_size,
-	quantity: selected_quantity,
-	is_custom_qty,
-	custom_quantity,
-	lettering,
-	lettering_preview_ready,
-	navigation_flight,
-	is_loading_features,
-	has_font_selection,
-	is_pricing_ready,
-	is_vinylsize_focused,
-	is_custom_qty_focus,
-	custom_qty_input,
-	formatted_custom_qty,
-	is_custom_size_focus,
-	custom_width_input,
-	total_price,
-	discount_rate,
-	sub_total,
-	unit_price,
-	is_custom_size,
-	selection_navigation_in_flight,
-	onVinylSizeFocus,
-	onVinylSizeBlur,
-	onVinylFontFocus,
-	onVinylFontBlur,
-	prepareComponent,
-	updateColor,
-	updateCustomSize,
-	toggleCustomQuantityField,
-	formatPrice,
-	updateCustomQuantity,
-	onCustomQtyFocus,
-	onCustomQtyBlur,
-	onCustomSizeFocus,
-	onCustomSizeBlur,
-	updateSelectedQuantity,
-	updateSize,
-	showCustomSize,
-	focusWidthInput,
-	nextStep,
-} = useQuoteSection()
+const quantity_skeleton_count = computed(() => {
+	const active_slug = url_slug.value || '';
+	const remembered_count = active_slug
+		? last_known_quantity_count_by_slug.value[active_slug] ?? 0
+		: 0;
+	const default_quantity_count = quantity_options.length || 8;
 
-const route = useRoute()
-const has_color_selection = ref<boolean>(true)
-const color_skeleton_count = ref<number>(14)
-const quantity_skeleton_count = ref<number>(10)
+	return resolved_quantity_count.value || remembered_count || default_quantity_count;
+});
 
-const prices_ready = computed(() => Boolean(total_price && total_price.value))
-onMounted(async () => {
-	initializeEntryPoint()
-})
+const ships_tomorrow_benefit = computed(() => {
+	const product_specific_key = selected_id.value
+		? `product.price.benefitShipsTomorrowByProduct.${selected_id.value}`
+		: '';
+	const product_specific_copy = product_specific_key ? t(product_specific_key) : '';
 
-const initializeEntryPoint = () => {
-	if( route.params.product ) {
-		const route_url_slug = route.params.product as string
-
-		prepareComponent(route_url_slug)
-	}
-}
-
-
-const lettering_field_not_ready = computed(() => !!(is_loading_features.value
-	|| navigation_flight.value
-	|| !selected_font
-	|| !lettering_preview_ready.value))
-
+	return product_specific_copy && product_specific_copy !== product_specific_key
+		? product_specific_copy
+		: t('product.price.benefitShipsTomorrow');
+});
 
 const has_pending_custom_selection = computed(() => {
-	const size_source = is_custom_size.value ? custom_size.value : selected_size.value;
-	const quantity_source = is_custom_qty.value ? custom_quantity.value : selected_quantity?.value;
+	const size_source = is_custom_size.value ? custom_size.value : size.value;
+	const quantity_source = is_custom_qty.value ? custom_quantity.value : quantity.value;
 
 	const missing_size = !size_source?.width || !size_source?.height;
 	const missing_quantity = !quantity_source?.nr;
-	const missing_lettering_text = has_lettering_editor.value && !lettering.value;
+	const missing_lettering_text = has_lettering_editor.value && !lettering.value.text;
 
 	return (
 		missing_size
@@ -139,13 +195,21 @@ const has_pending_custom_selection = computed(() => {
 	);
 });
 
+const prevent_non_digit_input = (event: InputEvent) => {
+	if (!event.data) return;
+	if (/^\d+$/.test(event.data)) return;
+	event.preventDefault();
+};
 
+const nextStep = async () => {
+	await proceedToNextStep();
+};
 </script>
 
 <template>
 	<aside class="product-options" data-testid="product-category-options">
 		<section v-if="has_color_selection" class="product-section">
-			<h3 class="option-title" data-testid="product-category-color-title">Select your preferred color</h3>
+			<h3 class="option-title" data-testid="product-category-color-title">{{ t('product.options.selectColor') }}</h3>
 			<div
 				v-if="is_loading_features"
 				ref="color_skeleton_grid_ref"
@@ -160,14 +224,14 @@ const has_pending_custom_selection = computed(() => {
 					:key="'color-'+key+'-'+(fcolor.id ?? key)"
 					type="button"
 					class="color-swatch"
-					:class="{ 'is-active': selected_color?.id === fcolor.id }"
+					:class="{ 'is-active': color?.id === fcolor.id }"
 					:aria-label="fcolor.name"
-					@click="updateColor(fcolor)"
+					@click="inputUpdateColor(fcolor)"
 				>
 					<span class="color-swatch-tooltip">{{ fcolor.name }}</span>
 					<span class="color-swatch-core" :style="fcolor.style">
 						<UiIcon
-							v-if="selected_color?.id === fcolor.id"
+							v-if="color?.id === fcolor.id"
 							name="regular-check"
 							:size="24"
 							class="color-swatch-check"
@@ -183,7 +247,7 @@ const has_pending_custom_selection = computed(() => {
 			<section class="product-section">
 				<div class="option-head">
 					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
 				</div>
 
 				<div v-if="is_loading_features" class="option-grid option-grid-size">
@@ -196,8 +260,8 @@ const has_pending_custom_selection = computed(() => {
 						:key="'size-'+key+'-'+(fsize.code ?? key)"
 						type="button"
 						class="option-pill"
-						:class="{ 'is-active': !is_custom_size && selected_size?.code === fsize.code }"
-						@click="updateSize(fsize)"
+						:class="{ 'is-active': !is_custom_size && active_size_code === fsize.code }"
+						@click="inputUpdateSize(fsize)"
 					>
 						<span class="size-pill-name">{{ fsize.label }}</span>
 						<span class="size-pill-dim">({{ fsize.width }}x{{ fsize.height }})</span>
@@ -221,26 +285,24 @@ const has_pending_custom_selection = computed(() => {
 						@click.self="focusWidthInput"
 					>
 						<input
-							v-if="custom_size"
 							ref="custom_width_input"
-							v-model="custom_size.width"
+							:value="custom_size?.width"
 							type="number"
 							class="custom-size-input"
 							placeholder="Width"
 							@beforeinput="prevent_non_digit_input"
-							@input="updateCustomSize('size-width-field')"
+							@input="inputUpdateCustomSize($event, 'width')"
 							@focus="onCustomSizeFocus"
 							@blur="onCustomSizeBlur"
 						>
 						<span class="size-separator">x</span>
 						<input
-							v-if="custom_size"
-							v-model="custom_size.height"
+							:value="custom_size?.height"
 							type="number"
 							class="custom-size-input"
 							placeholder="Height"
 							@beforeinput="prevent_non_digit_input"
-							@input="updateCustomSize('size-height-field')"
+							@input="inputUpdateCustomSize($event, 'height')"
 							@focus="onCustomSizeFocus"
 							@blur="onCustomSizeBlur"
 						>
@@ -250,7 +312,7 @@ const has_pending_custom_selection = computed(() => {
 
 			<section class="product-section">
 				<h3 class="option-title">{{ t('product.options.selectQuantity') }}</h3>
-				<div v-if="!is_pricing_ready" class="option-grid">
+				<div v-if="is_loading_features" class="option-grid">
 					<UiSkeleton v-for="i in quantity_skeleton_count" :key="'qty-skeleton-'+i" height="var(--option-control-height)" border-radius="999px" />
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
@@ -260,8 +322,8 @@ const has_pending_custom_selection = computed(() => {
 						:key="qty.nr ?? `qty-${index}`"
 						type="button"
 						class="option-pill"
-						:class="{ 'is-active': !is_custom_qty && selected_quantity?.nr === qty.nr }"
-						@click="updateSelectedQuantity(qty)"
+						:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
+						@click="inputUpdateQuantity(qty)"
 					>
 						<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
 						<span class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</span>
@@ -270,7 +332,7 @@ const has_pending_custom_selection = computed(() => {
 						v-if="!is_custom_qty"
 						type="button"
 						class="option-pill option-pill-wide"
-						@click="toggleCustomQuantityField"
+						@click="showCustomQty"
 					>
 						{{ t('product.options.customQuantity') }}
 					</button>
@@ -287,7 +349,7 @@ const has_pending_custom_selection = computed(() => {
 							class="custom-qty-input"
 							placeholder="Enter quantity"
 							@beforeinput="prevent_non_digit_input"
-							@input="updateCustomQuantity($event)"
+							@input="inputUpdateCustomQuantity"
 							@focus="onCustomQtyFocus"
 							@blur="onCustomQtyBlur"
 						>
@@ -301,9 +363,9 @@ const has_pending_custom_selection = computed(() => {
 			<section class="product-section">
 				<div class="option-head">
 					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
 				</div>
-				<div v-if="lettering_field_not_ready" class="option-grid">
+				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
 				<div v-else class="option-grid">
@@ -316,37 +378,37 @@ const has_pending_custom_selection = computed(() => {
 						data-testid="product-category-vinyl-size-input"
 					>
 						<input
-							v-model="custom_size.width"
+							:value="lettering.width"
 							type="text"
 							inputmode="numeric"
 							pattern="[0-9]*"
 							class="custom-size-input"
 							placeholder="Width"
 							@beforeinput="prevent_non_digit_input"
+							@input="letteringWidthUpdate"
 							@focus="onVinylSizeFocus"
 							@blur="onVinylSizeBlur"
-							@input="updateCustomSize('lettering-size-field')"
 						>
 						<span class="size-separator">x</span>
 						<input
-							v-model="custom_size.height"
+							:value="lettering.height"
 							type="text"
 							inputmode="numeric"
 							pattern="[0-9]*"
 							class="custom-size-input"
 							placeholder="Height"
 							@beforeinput="prevent_non_digit_input"
+							@input="letteringHeightUpdate"
 							@focus="onVinylSizeFocus"
 							@blur="onVinylSizeBlur"
-							@input="updateCustomSize('lettering-size-field')"
 						>
 					</div>
 				</div>
 			</section>
 
 			<section v-if="has_font_selection" class="product-section">
-				<h3 class="option-title">Select your font</h3>
-				<div v-if="lettering_field_not_ready && selected_font" class="option-grid">
+				<h3 class="option-title">{{ t('product.options.selectFont') }}</h3>
+				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
 				<div v-else class="option-grid">
@@ -366,7 +428,7 @@ const has_pending_custom_selection = computed(() => {
 
 			<section class="product-section">
 				<h3 class="option-title">{{ t('product.options.selectQuantity') }}</h3>
-				<div v-if="!is_pricing_ready" class="option-grid vinyl-quantity-grid">
+				<div v-if="is_loading_features" class="option-grid vinyl-quantity-grid">
 					<UiSkeleton v-for="i in quantity_skeleton_count" :key="'qty-skeleton-'+i" height="var(--option-control-height)" border-radius="999px" />
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
@@ -376,8 +438,8 @@ const has_pending_custom_selection = computed(() => {
 						:key="qty.nr ?? `vinyl-qty-${index}`"
 						type="button"
 						class="option-pill"
-						:class="{ 'is-active': !is_custom_qty && selected_quantity?.nr === qty.nr }"
-						@click="updateSelectedQuantity(qty)"
+						:class="{ 'is-active': !is_custom_qty && quantity?.nr === qty.nr }"
+						@click="inputUpdateQuantity(qty)"
 					>
 						<span class="qty-pill-count">{{ qty.nr?.toLocaleString() }}</span>
 						<strong class="qty-pill-price">{{ formatPrice(qty.price ?? 0) }}</strong>
@@ -386,7 +448,7 @@ const has_pending_custom_selection = computed(() => {
 						v-if="!is_custom_qty"
 						type="button"
 						class="option-pill option-pill-wide"
-						@click="toggleCustomQuantityField"
+						@click="showCustomQty"
 					>
 						{{ t('product.options.customQuantity') }}
 					</button>
@@ -405,7 +467,7 @@ const has_pending_custom_selection = computed(() => {
 							placeholder="Enter Quantity"
 							class="custom-size-input custom-quantity-input"
 							@beforeinput="prevent_non_digit_input"
-							@input="updateCustomQuantity($event)"
+							@input="inputUpdateCustomQuantity($event)"
 							@focus="onCustomQtyFocus"
 							@blur="onCustomQtyBlur"
 						>
@@ -419,7 +481,7 @@ const has_pending_custom_selection = computed(() => {
 			<div class="price-summary-top">
 				<ul class="price-benefits">
 					<li>{{ t('product.price.benefitShipping') }}</li>
-					<li>{{ t('product.price.benefitShipsTomorrow') }}</li>
+					<li>{{ ships_tomorrow_benefit }}</li>
 				</ul>
 
 				<div v-if="is_loading_features" class="price-summary-stack">
@@ -433,16 +495,16 @@ const has_pending_custom_selection = computed(() => {
 						<UiSkeleton width="100px" height="12px" class="price-summary-skeleton-unit" />
 					</div>
 				</div>
-				<div v-else-if="prices_ready" class="price-summary-stack">
-					<p v-if="sub_total != total_price" class="price-summary-row discount">
+				<div v-else class="price-summary-stack">
+					<p v-if="pricing_ready" class="price-summary-row discount">
 						<strong class="price-discount-rate">-{{ Math.round(discount_rate * 100)}}%</strong>
-						<span class="price-summary-strike">{{ formatPrice(sub_total) }}</span>
+						<span class="price-summary-strike">{{ formatPrice(subtotal) }}</span>
 					</p>
 					<p class="price-summary-row total">
-						<strong class="price-summary-value">{{ prices_ready ? formatPrice(total_price) : '--' }}</strong>
+						<strong class="price-summary-value">{{ pricing_ready ? formatPrice(total) : '--' }}</strong>
 					</p>
-					<p v-if="sub_total != total_price" class="price-summary-unit">
-						({{ prices_ready ? formatPrice(unit_price) : '--' }} per piece)
+					<p class="price-summary-unit">
+						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} {{ t('product.price.perPiece') }})
 					</p>
 				</div>
 			</div>

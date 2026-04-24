@@ -1,50 +1,32 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
-import { useQuoteView } from '~/composables/quote/useQuoteView';
 
+const {
+	selected_product,
+	getProductPageName,
+	getProductBlurb,
+	selection_navigation_in_flight,
+	is_loading_features,
+	size_feature_cards,
+	active_size_code,
+
+	// Lettering state from quote handler
+	lettering,
+	selected_font,
+	color,
+	lettering_navigation_flight,
+	has_lettering_editor,
+	setVinylPreviewReady,
+	setVinylDesignerRef,
+	selectSizeByCode,
+} = useProductExperience();
 
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
-
-const displayed_product_title = computed(() => {
-
-	if(!product_url_slug.value)
-		return ''
-
-	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return 'Vinyl Lettering Sticker'; // ⚠️ REQUIRES REVISION!!!
-
-	// Otherwise, use the formal product name from catalog/translation
-	return t(`product.items.${product_url_slug.value}.name`);
-});
-
-
-
-const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4'); // ⚠️ REVISION!!!
-const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png'); // ⚠️ REVISION!!!
-
-const {
-	sizes: size_feature_cards,
-	size: selected_size,
-	url_slug : product_url_slug,
-	has_lettering_editor,
-	is_loading_features,
-	lettering_size,
-	lettering_text,
-	selected_font,
-	selected_color,
-	navigation_flight,
-	vinyl_designer_ref,
-	product_navigation_in_flight,
-	updateLetteringPreviewFlag,
-	updateSizeByCard,
-	setVinylDesignerRef,
-} = useQuoteView()
-
-
 const product_hero_media_ids = new Set([
 	'clear-sticker',
 	'die-cut-sticker',
@@ -54,8 +36,22 @@ const product_hero_media_ids = new Set([
 	'vinyl-lettering',
 ]);
 
+const displayed_product_title = computed(() => {
+	// If it's the specialized lettering editor, show the specific title
+	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle');
+
+	// Otherwise, use the formal product name from catalog/translation
+	return selected_product.value ? getProductPageName(selected_product.value) : '';
+});
+
+const displayed_product_blurb = computed(() =>
+	has_lettering_editor.value ? '' : (selected_product.value ? getProductBlurb(selected_product.value) : '')
+);
+
+const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
+const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 const hero_media_product_id = computed(() => {
-	const selected_id = product_url_slug.value ?? null
+	const selected_id = selected_product.value?.id;
 	return selected_id && product_hero_media_ids.has(selected_id) ? selected_id : null;
 });
 const demo_hero_video_url = computed(() =>
@@ -70,12 +66,10 @@ const demo_hero_poster_url = computed(() =>
 );
 
 const should_play_preview_video = computed(() =>
-	Boolean(product_url_slug.value) && !has_lettering_editor.value && !product_navigation_in_flight.value
+	Boolean(selected_product.value) && !has_lettering_editor.value && !selection_navigation_in_flight.value
 );
 
-const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug.value}.blurb`)
-);
+const vinyl_designer_ref = ref<InstanceType<typeof VinylLetteringDesigner> | null>(null);
 
 watch(
 	vinyl_designer_ref,
@@ -88,16 +82,6 @@ watch(
 onBeforeUnmount(() => {
 	setVinylDesignerRef(null);
 });
-
-
-const hide_lettering_editor = computed(() => (
-	is_loading_features.value
-	|| product_navigation_in_flight.value
-	|| navigation_flight.value
-	|| (has_lettering_editor.value
-		&& !selected_font.value)
-))
-
 </script>
 
 <template>
@@ -114,7 +98,7 @@ const hide_lettering_editor = computed(() => (
 		<div
 			v-if="!has_lettering_editor"
 			class="product-preview-media"
-			:class="{ 'is-loading': product_navigation_in_flight }"
+			:class="{ 'is-loading': selection_navigation_in_flight }"
 			data-testid="product-category-preview-media"
 		>
 			<img
@@ -125,7 +109,7 @@ const hide_lettering_editor = computed(() => (
 			>
 			<video
 				v-else
-				:key="product_url_slug ?? 'preview-video'"
+				:key="selected_product?.id ?? 'preview-video'"
 				:poster="demo_hero_poster_url"
 				class="product-preview-media-image"
 				autoplay
@@ -144,7 +128,7 @@ const hide_lettering_editor = computed(() => (
 			data-testid="product-category-vinyl-preview"
 		>
 			<UiSkeleton
-				v-if="hide_lettering_editor"
+				v-if="is_loading_features || selection_navigation_in_flight || lettering_navigation_flight || (has_lettering_editor && !selected_font)"
 				height="100%"
 				width="100%"
 				border-radius="20px"
@@ -153,18 +137,18 @@ const hide_lettering_editor = computed(() => (
 			<VinylLetteringDesigner
 				v-else
 				ref="vinyl_designer_ref"
-				v-model:text="lettering_text"
-				v-model:width="lettering_size.width"
-				v-model:height="lettering_size.height"
-				:font="selected_font?.value ?? ''"
-				:color-key="selected_color?.keyword || selected_color?.hex_code || 'black'"
-				:redirecting="product_navigation_in_flight"
+				v-model:text="lettering.text"
+				v-model:width="lettering.width"
+				v-model:height="lettering.height"
+				:font="selected_font"
+				:color-key="color?.keyword || color?.hex_code || 'black'"
+				:redirecting="selection_navigation_in_flight"
 				:is-loading-features="is_loading_features"
-				:selection-navigation-in-flight="product_navigation_in_flight"
-				:lettering-navigation-flight="navigation_flight"
+				:selection-navigation-in-flight="selection_navigation_in_flight"
+				:lettering-navigation-flight="lettering_navigation_flight"
 				:has-lettering-editor="has_lettering_editor"
 				data-testid="product-category-vinyl-designer"
-				@preview-ready-change="updateLetteringPreviewFlag"
+				@preview-ready-change="setVinylPreviewReady"
 			/>
 		</div>
 
@@ -175,11 +159,11 @@ const hide_lettering_editor = computed(() => (
 				type="button"
 				class="mini-feature"
 				:class="{
-					'is-active': !has_lettering_editor && selected_size?.width == featured_size_cards.width && selected_size?.height == featured_size_cards.height,
+					'is-active': !has_lettering_editor && active_size_code === featured_size_cards.code,
 					'is-disabled': has_lettering_editor
 				}"
 				:disabled="has_lettering_editor"
-				@click="updateSizeByCard(featured_size_cards)"
+				@click="selectSizeByCode(featured_size_cards.code)"
 			>
 				<img
 					v-if="featured_size_cards.image"
@@ -188,7 +172,9 @@ const hide_lettering_editor = computed(() => (
 					loading="lazy"
 					class="mini-feature-image"
 				>
-				<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
+				<h4 class="mini-feature-title">
+					{{ t(`product.sizes.${featured_size_cards.code}.featureLabel`, t(`product.sizes.${featured_size_cards.code}.label`)) }}
+				</h4>
 				<p class="mini-feature-description">
 					{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 				</p>
@@ -235,12 +221,10 @@ const hide_lettering_editor = computed(() => (
 	}
 
 	.product-preview-features {
-		border-bottom: 1px solid var(--border-default);
 		display: grid;
 		gap: 24px;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		margin-top: 0;
-		max-height: 200px;
 
 		.mini-feature {
 			align-items: center;
