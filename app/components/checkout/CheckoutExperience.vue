@@ -33,7 +33,6 @@
 				:agreement-suffix="t(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
 				:terms-path="withCountry('/terms-of-use')"
 				:privacy-path="withCountry('/privacy-policy')"
-				:format-price="formatPrice"
 			>
 				<template #after-items>
 					<CheckoutMemberPerksFeature />
@@ -88,7 +87,6 @@ const {
 	is_member,
 	t,
 	withCountry,
-	formatPrice,
 	completing_checkout,
 	complete_loader_ref,
 	selected_checkout_items,

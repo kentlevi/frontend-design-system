@@ -9,8 +9,7 @@ import { validateAddress } from "~/services/address/address.service";
 import { useAddressHelper } from "~/utils/address";
 import { useAddressGeneralUICheckoutContext } from "../address/context/addressGeneralUICheckoutContext";
 import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
-import { useCartStore } from "~/stores/cart";
-import { useCartService } from "~/services/cart/cart.service";
+import { useCartStore } from "~/stores/core/cart/cart.store";
 
 export const useCheckoutFlow = () => {
 
@@ -18,14 +17,14 @@ export const useCheckoutFlow = () => {
 
 	const payment = usePaymentStrategy()
 	const { state } = storeToRefs(useUsersStore())
-	const { selected_total } = useCartService();
 	const {
 		guest_contact_state,
 		selected_shipping_method_id,
 		selected_payment_method,
 	} = storeToRefs(useMainCheckOutStore())
 	const {
-		selected_ids,
+		selected_real_ids,
+		selected_total_cost,
 	} = storeToRefs(useCartStore())
 
 	const {
@@ -42,7 +41,7 @@ export const useCheckoutFlow = () => {
 		use_shipping_as_billing,
 	} = useAddressGeneralUICheckoutContext()
 
-	const total_cost = computed(() => selected_total.value)
+	const total_cost = computed(() => selected_total_cost.value)
 
 
 
@@ -94,7 +93,7 @@ export const useCheckoutFlow = () => {
 					: guest_contact_state.value.email),
 			phone_number:
 				shipping_form.value.phone_number,
-			selected_cart_ids: selected_ids.value,
+			selected_cart_ids: selected_real_ids.value,
 		}
 	}
 
@@ -125,7 +124,7 @@ export const useCheckoutFlow = () => {
 	}
 
 	return {
-		selected_total,
+		selected_total_cost,
 		total_cost,
 		submitCheckout
 	}
