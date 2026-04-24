@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { formatProductFileSize, readProductArtworkAsDataUrl } from '~/helpers/products/productCategory.helper';
-import type { CartRow } from '~/types/cart/cart';
+import { useUploadService } from '~/services/product/upload.service';
+import type { CartItem } from '~/types/cart/cart';
 
 const props = withDefaults(defineProps<{
 	modelValue: boolean;
-	item?: CartRow | null;
+	item?: CartItem | null;
 }>(), {
 	item: null,
 });
@@ -16,6 +17,12 @@ const emit = defineEmits<{
 	save: [payload: { artworkName: string; artworkSizeLabel: string; artworkPreviewUrl: string; specialInstructions: string }];
 }>();
 
+const upload_service = useUploadService()
+
+const selected_file = computed(() => upload_service.artwork_file.value)
+
+const selected_file_preview = computed(() => upload_service.artwork_preview.value)
+
 const file_input_ref = ref<HTMLInputElement | null>(null);
 const local_artwork_name = ref('');
 const local_artwork_size_label = ref('');
@@ -24,10 +31,10 @@ const local_special_instructions = ref('');
 const { t } = useI18n();
 const display_item_name = computed(() => {
 	if (local_artwork_name.value) return local_artwork_name.value;
-	const product_id = props.item?.product.id;
+	const product_id = props.item?.url_slug;
 	return product_id ? t(`product.items.${product_id}.name`) : '';
 });
-const display_item_image = computed(() => local_artwork_preview_url.value || props.item?.product.image || '');
+const display_item_image = computed(() => local_artwork_preview_url.value || props.item?.product_thumbnail || '');
 
 const file_extension_label = computed(() => {
 	const name_parts = local_artwork_name.value.split('.');
@@ -49,11 +56,12 @@ const artwork_action_label = computed(() => (
 watch(
 	() => [props.modelValue, props.item] as const,
 	([is_open, item]) => {
-		if (!is_open || !item) return;
-		local_artwork_name.value = item.artworkName || '';
-		local_artwork_size_label.value = item.artworkSizeLabel || '';
-		local_artwork_preview_url.value = item.artworkPreviewUrl || '';
-		local_special_instructions.value = item.specialInstructions || '';
+		if (!is_open || !item || !upload_service.artwork_file.value ) return;
+
+		local_artwork_name.value = selected_file.value?.name ?? '';
+		local_artwork_size_label.value = selected_file.value?.size ? formatProductFileSize(selected_file.value?.size) : '';
+		local_artwork_preview_url.value = selected_file_preview.value;
+		local_special_instructions.value = '';
 	},
 	{ immediate: true }
 );
