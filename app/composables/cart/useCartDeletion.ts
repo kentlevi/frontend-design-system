@@ -31,10 +31,6 @@ export const useCartDeletion = (caller: string) => {
 		}
 	}
 
-	watch(() => open_deletion_modal.value, () => {
-		console.log(open_deletion_modal.value)
-	})
-
 	const cancelDeletion = () => {
 
 		if( deleting.value )

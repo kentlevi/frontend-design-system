@@ -30,6 +30,13 @@ function handlePendingEmailChange(value: string) {
 }
 
 const { t } = useI18n();
+
+function parseBoldText(text: string) {
+	return text.split(/(\[b\].*?\[\/b\])/g).filter(Boolean).map((part) => ({
+		text: part.replace(/\[\/?b\]/g, ''),
+		isBold: /^\[b\].*\[\/b\]$/.test(part),
+	}))
+}
 </script>
 
 <template>
@@ -64,7 +71,13 @@ const { t } = useI18n();
 				<div class="account-profile-email-change-modal-text-wrap">
 					<h3 class="account-profile-email-change-modal-title">{{ t('account.profile.emailChange.title') }}</h3>
 					<p class="account-profile-email-change-modal-text">
-						{{ t('account.profile.emailChange.description') }}
+						<template
+							v-for="(part, index) in parseBoldText(t('account.profile.emailChange.description'))"
+							:key="`${part.text}-${index}`"
+						>
+							<strong v-if="part.isBold" class="change-strong">{{ part.text }}</strong>
+							<template v-else>{{ part.text }}</template>
+						</template>
 					</p>
 				</div>
 			</div>

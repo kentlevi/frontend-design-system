@@ -57,7 +57,6 @@ export const useQuoteSectionHandler = () => {
 	 */
 	const instatiateForm = async (prod_slug: string, { interactive = true }: InitializeFormOptions = {}) => {
 		lettering_navigation_flight.value = true;
-		console.warn('Preparing form...')
 		return
 		try {
 			// Existing attributes that was selected in previous products

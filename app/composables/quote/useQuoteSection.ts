@@ -134,7 +134,7 @@ export const useQuoteSection = () => {
 	 * To fetch new set of quantities and re-calculate
 	*/
 	const updatePrices = debounce( async(update_from : string) => {
-		console.warn(`Updating prices - [${update_from}]!!!`)
+		console.warn('Updating prices — ', update_from)
 		await initializePriceList()
 
 		const first_def = quantity_service.collection
@@ -348,7 +348,6 @@ export const useQuoteSection = () => {
 	}
 
 	const calculateCustomQuantity = () => {
-		console.warn('Recalculation')
 		const n = custom_quantity.value.nr
 		if( !n )
 			return
@@ -462,11 +461,9 @@ export const useQuoteSection = () => {
 			return
 
 		if( quote_service.has_lettering_editor.value ) {
-			console.warn('Adding cart automatically!')
 			prepareLetteringResult()
 			upload_service.openPreview();
 		} else {
-			console.warn('Opening uploading modal!')
 			upload_service.openModal()
 		}
 	}

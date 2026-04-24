@@ -27,14 +27,16 @@ const {
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
-const product_hero_media_ids = new Set([
-	'clear-sticker',
-	'die-cut-sticker',
-	'hologram-sticker',
-	'kiss-cut-sticker',
-	'sticker-sheet',
-	'vinyl-lettering',
-]);
+const product_hero_media_map: Record<string, { folder: string, file: string }> = {
+	'die-cut-sticker': { folder: 'die-cut-sticker', file: 'die-cut-sticker' },
+	'circle-sticker': { folder: 'round-stickers', file: 'round-sticker' },
+	'rectangle-sticker': { folder: 'rectangular-stickers', file: 'rectangular-stickers' },
+	'square-sticker': { folder: 'square-stickers', file: 'square-sticker' },
+	'oval-sticker': { folder: 'oval-stickers', file: 'oval-sticker' },
+	'rounded-sticker': { folder: 'rounded-square-stickers', file: 'rounded-square-sticker' },
+	'circle-roll': { folder: 'round-roll-sticker', file: 'round-roll-sticker' },
+	'rounded-roll': { folder: 'rounded-roll-sticker', file: 'rounded-roll-sticker' },
+};
 
 const displayed_product_title = computed(() => {
 	// If it's the specialized lettering editor, show the specific title
@@ -50,18 +52,18 @@ const displayed_product_blurb = computed(() =>
 
 const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
-const hero_media_product_id = computed(() => {
+const hero_media_asset = computed(() => {
 	const selected_id = selected_product.value?.id;
-	return selected_id && product_hero_media_ids.has(selected_id) ? selected_id : null;
+	return selected_id ? product_hero_media_map[selected_id] ?? null : null;
 });
 const demo_hero_video_url = computed(() =>
-	hero_media_product_id.value
-		? `${PRODUCT_HERO_BASE_URL}/${hero_media_product_id.value}/hero/01-hero-video.mp4`
+	hero_media_asset.value
+		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}.mp4`
 		: fallback_hero_video_url
 );
 const demo_hero_poster_url = computed(() =>
-	hero_media_product_id.value
-		? `${PRODUCT_HERO_BASE_URL}/${hero_media_product_id.value}/hero/01-hero-poster.png`
+	hero_media_asset.value
+		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}-thumbnail.png`
 		: fallback_hero_poster_url
 );
 

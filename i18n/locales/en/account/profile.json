@@ -28,7 +28,7 @@
       "passwordDesc": "Make your account secure by choosing a strong password.",
       "currentPassword": "Current Password",
       "currentPasswordPlaceholder": "Enter Current Password",
-      "passwordHint": "Password must be atleast 6 characters and include an uppercase letter, number, or special character.",
+      "passwordHint": "Password must be atleast 6 characters and include at least one uppercase letter, number, or special character.",
       "newPassword": "New Password",
       "newPasswordPlaceholder": "Enter New Password",
       "confirmNewPassword": "Confirm New Password",
@@ -68,7 +68,7 @@
       "socialLoginLinked": "This account is linked to your {provider} login.",
       "emailChange": {
         "title": "Email Change",
-        "description": "Enter your new email address and press the \"Confirm\" button to proceed.",
+      "description": "Enter your new email address and press the \"[b]Confirm[/b]\" button to proceed.",
         "placeholder": "Please enter your new email address.",
         "confirm": "Confirm",
         "closeModal": "Close email change modal",
@@ -83,7 +83,7 @@
       "emailChangeVerification": {
         "title": "Verification Required",
         "iconAlt": "Verification icon",
-        "messagePrefix": "We’ll send a verification code to your email to ensure your security. The code will expire in 5 minutes.",
+        "messagePrefix": "We’ll send a verification code to your email to ensure your security. The code will expire in 10 minutes.",
         "messageSuffix": "",
         "enterCode": "Please enter the code:",
         "verify": "Verify",

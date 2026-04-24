@@ -39,7 +39,7 @@
         },
         "city": {
           "label": "시/군/구",
-          "placeholder": "시/군/구를 입력해 주세요"
+          "placeholder": "시/군/구를 입력하세요"
         },
         "postalCode": {
           "label": "우편번호",
