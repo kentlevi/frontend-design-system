@@ -16,7 +16,6 @@ const props = defineProps<{
 	agreementSuffix: string;
 	termsPath: string;
 	privacyPath: string;
-	formatPrice: (value: number) => string;
 }>();
 
 const card_classes = computed(() => ['checkout-summary-card', `is-${props.tone}`]);
@@ -27,7 +26,6 @@ const card_classes = computed(() => ['checkout-summary-card', `is-${props.tone}`
 		<CheckoutSummaryHeader />
 		<CheckoutSummaryItems
 			:tone="props.tone"
-			:format-price="props.formatPrice"
 		/>
 
 		<slot name="after-items" />
@@ -44,7 +42,6 @@ const card_classes = computed(() => ['checkout-summary-card', `is-${props.tone}`
 			:agreement-suffix="props.agreementSuffix"
 			:terms-path="props.termsPath"
 			:privacy-path="props.privacyPath"
-			:format-price="props.formatPrice"
 		/>
 	</section>
 </template>

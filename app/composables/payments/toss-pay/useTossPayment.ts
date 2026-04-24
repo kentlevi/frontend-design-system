@@ -2,7 +2,7 @@ import { useCheckoutCompletion } from "~/composables/checkout/completion/useChec
 import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral"
-import { useCartStore } from "~/stores/cart"
+import { useCartStore } from "~/stores/core/cart/cart.store"
 
 export const useTossPayment = () => {
 
@@ -11,7 +11,7 @@ export const useTossPayment = () => {
 	} = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
 	const checkout_store = useMainCheckOutStore()
 	const {
-		selected_ids
+		selected_real_ids
 	} = storeToRefs(useCartStore())
 
 
@@ -76,7 +76,7 @@ export const useTossPayment = () => {
 					closePaymentPopup()
 					const payload = {
 						...buildCompleteCheckoutPayload(order_id),
-						selected_cart_ids : selected_ids.value
+						selected_cart_ids : selected_real_ids.value
 					}
 					await completeCheckoutRequest(payload)
 					checkout_store.cleanCheckoutStatesOnSuccess()

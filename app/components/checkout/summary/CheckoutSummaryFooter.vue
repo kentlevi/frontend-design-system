@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCheckoutFlow } from '~/composables/checkout/main/useCheckoutFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const props = defineProps<{
 	tone: 'guest' | 'member';
@@ -16,7 +17,6 @@ const props = defineProps<{
 	agreementSuffix: string;
 	termsPath: string;
 	privacyPath: string;
-	formatPrice: (value: number) => string;
 }>();
 
 const { t } = useI18n();
@@ -32,7 +32,7 @@ const summary_key_base = computed(() => `checkout.${props.tone}.summary`);
 const is_mounted = ref<boolean>(false)
 
 const {
-	selected_total,
+	selected_total_cost,
 	total_cost,
 	submitCheckout,
 } = useCheckoutFlow();
@@ -82,10 +82,10 @@ onBeforeUnmount(() => {
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.subtotal`) }}</div>
 				<div class="checkout-summary-line-value">
 					<span v-if="is_mounted">
-						{{ props.formatPrice(selected_total) }}
+						{{ formatPrice(selected_total_cost) }}
 					</span>
 					<span v-else>
-						{{ props.formatPrice(0) }}
+						{{ formatPrice(0) }}
 					</span>
 				</div>
 			</div>
@@ -130,20 +130,20 @@ onBeforeUnmount(() => {
 						</div>
 					</UiTooltip>
 				</div>
-				<div class="checkout-summary-line-value">{{ props.formatPrice(0) }}</div>
+				<div class="checkout-summary-line-value">{{ formatPrice(0) }}</div>
 			</div>
 			<div class="checkout-summary-line">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
-				<div class="checkout-summary-line-value is-discount">{{ props.formatPrice(0) }}</div>
+				<div class="checkout-summary-line-value is-discount">{{ formatPrice(0) }}</div>
 			</div>
 			<div class="checkout-summary-line is-total">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.total`) }}</div>
 				<div class="checkout-summary-line-value">
 					<span v-if="is_mounted">
-						{{ props.formatPrice(total_cost) }}
+						{{ formatPrice(total_cost) }}
 					</span>
 					<span v-else>
-						{{ props.formatPrice(0) }}
+						{{ formatPrice(0) }}
 					</span>
 				</div>
 			</div>

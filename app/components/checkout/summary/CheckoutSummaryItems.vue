@@ -1,35 +1,25 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
-import { useCartPreviewItem } from '~/composables/cart/useCartPreviewItem';
-import { formattedPrice } from '~/utils/currency';
+import { useCartPreview } from '~/composables/cart/useCartPreview';
+import { formatPrice } from '~/utils/currency/formatPrice';
+import { useCheckoutSummaryItems } from '~/composables/checkout/items/useCheckoutSummaryItems';
 
 const props = defineProps<{
 	tone: 'guest' | 'member';
-	formatPrice: (value: number) => string;
 }>();
 
-const {
-	loading,
-	items,
-	getCartItems
-} = useCartPreviewHandler('checkout-summary-items');
+const { selected_items } = useCheckoutSummaryItems()
 
 const list_classes = computed(() => ['checkout-summary-list', `is-${props.tone}`]);
 
 const {
 	formatImage,
-} = useCartPreviewItem();
-
-onMounted(async()=>{
-	await getCartItems()
-})
+} = useCartPreview('checkout-summary-items');
 
 </script>
 
 <template>
 	<div :class="list_classes">
-		<div v-if="loading" class="checkout-summary-skeleton" aria-hidden="true">
+		<div v-if="selected_items && selected_items.length == 0" class="checkout-summary-skeleton" aria-hidden="true">
 			<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
 				<div class="checkout-summary-thumb skeleton-block" />
 				<div class="checkout-summary-info">
@@ -39,9 +29,9 @@ onMounted(async()=>{
 				<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--price" />
 			</div>
 		</div>
-		<div v-else>
+		<div>
 			<div
-				v-for="(item,index) in items"
+				v-for="(item,index) in selected_items"
 				:key="index"
 				class="checkout-summary-item"
 			>
@@ -58,7 +48,7 @@ onMounted(async()=>{
 						{{item.width}} x {{ item.height }} {{ item.quantity.toLocaleString() }}
 					</div>
 				</div>
-				<div class="checkout-summary-price">{{ formattedPrice(item.cost) }}</div>
+				<div class="checkout-summary-price">{{ formatPrice(item.cost) }}</div>
 			</div>
 		</div>
 	</div>

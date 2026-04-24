@@ -11,7 +11,7 @@ export const formatPrice = (amount: number | null | undefined): string => {
 	const safe_amount = Number(amount ?? 0)
 
 	if (locale === 'kr') {
-		return `${new Intl.NumberFormat('ko-KR').format(safe_amount)}₩`
+		return `${new Intl.NumberFormat('ko-KR').format(safe_amount)}원`
 	}
 
 	return new Intl.NumberFormat('en-US', {
