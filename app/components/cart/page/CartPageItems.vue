@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCartPageList } from '~/composables/cart/page/useCartPageList';
 import { useCartPageItem } from '~/composables/cart/useCartPageItem';
+import type { CartItem } from '~/types/cart/cart';
 
 const {
 	custom_qty_item_id,
@@ -29,18 +30,15 @@ const {
 	deleteSelectedItems,
 	toggleSelection,
 	selectAllItem,
+	assignEditableItem,
 } = useCartPageItem('cart-page-items')
 
 const emit = defineEmits<{
 	(e: 'openItemDetails', itemId: string): void;
-	(e: 'openArtworkPicker', itemId: string): void;
+	(e: 'openArtworkPicker', item: CartItem): void;
 }>();
 
 const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
-
-const openEditSize = (local_identity : string) => {
-	console.log(local_identity)
-}
 
 
 </script>
@@ -117,13 +115,13 @@ const openEditSize = (local_identity : string) => {
 						<div class="cart-item-copy">
 							<h3 class="cart-item-title">{{ row.product }}</h3>
 							<p class="cart-item-size">{{ $t('cart.cartPage.sizeLabel', { size: `${row.width}x${row.height}` }) }}</p>
-							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row.local_identity)">
+							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row)">
 								{{ getArtworkActionLabel(Boolean(row.artwork_file)) }}
 							</UiButton>
 						</div>
 					</div>
 					<div class="cart-item-links">
-						<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openEditSize(row.local_identity)">
+						<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="assignEditableItem(row)">
 							{{ $t('cart.cartPage.editSize') }}
 						</UiButton>
 					</div>
