@@ -9,22 +9,7 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 
-const displayed_product_title = computed(() => {
 
-	if(!product_url_slug.value)
-		return ''
-
-	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return 'Vinyl Lettering Sticker'; // ⚠️ REQUIRES REVISION!!!
-
-	// Otherwise, use the formal product name from catalog/translation
-	return t(`product.items.${product_url_slug.value}.name`);
-});
-
-
-
-const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4'); // ⚠️ REVISION!!!
-const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png'); // ⚠️ REVISION!!!
 
 const {
 	sizes: size_feature_cards,
@@ -45,14 +30,7 @@ const {
 } = useQuoteView()
 
 
-const product_hero_media_ids = new Set([
-	'clear-sticker',
-	'die-cut-sticker',
-	'hologram-sticker',
-	'kiss-cut-sticker',
-	'sticker-sheet',
-	'vinyl-lettering',
-]);
+
 const product_hero_media_map: Record<string, { folder: string, file: string }> = {
 	'die-cut-sticker': { folder: 'die-cut-sticker', file: 'die-cut-sticker' },
 	'circle-sticker': { folder: 'round-stickers', file: 'round-sticker' },
@@ -65,22 +43,28 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 };
 
 const displayed_product_title = computed(() => {
+
+	if(!product_url_slug.value)
+		return ''
+
 	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle');
+	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle'); // ⚠️ REQUIRES REVISION!!!
 
 	// Otherwise, use the formal product name from catalog/translation
-	return selected_product.value ? getProductPageName(selected_product.value) : '';
+	return t(`product.items.${product_url_slug.value}.name`);
 });
 
+
 const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : (selected_product.value ? getProductBlurb(selected_product.value) : '')
+	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug.value}.blurb`)
 );
 
-const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
-const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
+const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4'); // ⚠️ REVISION!!!
+const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png'); // ⚠️ REVISION!!!
+
+
 const hero_media_asset = computed(() => {
-	const selected_id = selected_product.value?.id;
-	return selected_id ? product_hero_media_map[selected_id] ?? null : null;
+	return product_url_slug.value ? product_hero_media_map[product_url_slug.value] ?? null : null;
 });
 const demo_hero_video_url = computed(() =>
 	hero_media_asset.value
@@ -97,9 +81,6 @@ const should_play_preview_video = computed(() =>
 	Boolean(product_url_slug.value) && !has_lettering_editor.value && !product_navigation_in_flight.value
 );
 
-const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug.value}.blurb`)
-);
 
 watch(
 	vinyl_designer_ref,

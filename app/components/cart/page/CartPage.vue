@@ -14,7 +14,6 @@ const { t } = useI18n();
 const {
 	loading,
 	detail_item_id,
-	detail_item,
 	openItemDetails,
 	saveItemArtworkDetails,
 } = useCartPage();
