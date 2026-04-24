@@ -53,18 +53,28 @@ export const useCartStore = defineStore('cart', () => {
 		return tot_cost;
 	})
 
-	const selected_real_ids = computed(() => {
-		if( !selected_ids.value.length )
-			return 0
+	const selected_real_ids = computed<number[] | null>(() => {
+		if (!selected_ids.value.length) {
+			return null
+		}
 
-		return items.value.filter(e => selected_ids.value.includes(e.local_identity)).map(e => e.id)
+		const ids = items.value.filter(e =>
+			e.local_identity !== null &&
+			selected_ids.value.includes(e.local_identity)
+			&&  e.id !== null
+		).map(e => e.id as number)
+
+		return ids.length ? ids : null
 	})
 
-	const selected_items = computed(() => {
-		if( !selected_ids.value.length )
-			return 0
+	const selected_items = computed<CartItem[]>(() => {
+		if (!selected_ids.value.length)
+			return [];
 
-		return items.value.filter(e => selected_ids.value.includes(e.local_identity))
+		return items.value.filter(e =>
+			e.local_identity !== null &&
+			selected_ids.value.includes(e.local_identity)
+		)
 	})
 
 	const addItem = (item: CartItem) => {
