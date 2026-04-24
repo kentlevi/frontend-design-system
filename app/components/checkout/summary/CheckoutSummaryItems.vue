@@ -19,38 +19,47 @@ const {
 
 <template>
 	<div :class="list_classes">
-		<div v-if="selected_items && selected_items.length == 0" class="checkout-summary-skeleton" aria-hidden="true">
-			<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
-				<div class="checkout-summary-thumb skeleton-block" />
-				<div class="checkout-summary-info">
-					<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--name" />
-					<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--meta" />
-				</div>
-				<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--price" />
-			</div>
-		</div>
-		<div>
-			<div
-				v-for="(item,index) in selected_items"
-				:key="index"
-				class="checkout-summary-item"
-			>
-				<div class="checkout-summary-thumb">
-					<img
-						:src="formatImage(item)"
-						:alt="item.artwork_file_name ?? item.artwork_preview ?? item.product_thumbnail"
-						class="checkout-summary-thumb-image"
+		<ClientOnly>
+			<template #default>
+				<div>
+					<div
+						v-for="(item, index) in selected_items"
+						:key="item.id ?? index"
+						class="checkout-summary-item"
 					>
-				</div>
-				<div class="checkout-summary-info">
-					<div class="checkout-summary-name">{{ item.product }}</div>
-					<div class="checkout-summary-meta">
-						{{item.width}} x {{ item.height }} {{ item.quantity.toLocaleString() }}
+						<div class="checkout-summary-thumb">
+							<img
+								:src="formatImage(item)"
+								:alt="item.artwork_file_name ?? item.artwork_preview ?? item.product_thumbnail"
+								class="checkout-summary-thumb-image"
+							>
+						</div>
+						<div class="checkout-summary-info">
+							<div class="checkout-summary-name">{{ item.product }}</div>
+							<div class="checkout-summary-meta">
+								{{ item.width }} x {{ item.height }} {{ item.quantity.toLocaleString() }}
+							</div>
+						</div>
+						<div class="checkout-summary-price">
+							{{ formatPrice(item.cost) }}
+						</div>
 					</div>
 				</div>
-				<div class="checkout-summary-price">{{ formatPrice(item.cost) }}</div>
-			</div>
-		</div>
+			</template>
+
+			<template #fallback>
+				<div class="checkout-summary-skeleton" aria-hidden="true">
+					<div v-for="n in 1" :key="n" class="checkout-summary-item is-skeleton">
+						<div class="checkout-summary-thumb skeleton-block" />
+						<div class="checkout-summary-info">
+							<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--name" />
+							<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--meta" />
+						</div>
+						<div class="checkout-summary-skeleton-line checkout-summary-skeleton-line--price" />
+					</div>
+				</div>
+			</template>
+		</ClientOnly>
 	</div>
 </template>
 
