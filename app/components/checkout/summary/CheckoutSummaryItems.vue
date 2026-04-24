@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
-import { useCartPreviewItem } from '~/composables/cart/preview/useCartPreviewItem';
+import { useCartPreviewItem } from '~/composables/cart/useCartPreviewItem';
 import { formattedPrice } from '~/utils/currency';
 
 const props = defineProps<{
