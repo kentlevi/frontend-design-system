@@ -338,7 +338,8 @@ export const useCartService = (caller : string) => {
 			cart_store.updateItemInCart(local_identity, {
 				artwork_file : uploading_request.filename.value,
 				artwork_file_name: file_name,
-				instruction: instruction
+				instruction: instruction,
+				file_path: 'artworks/',
 			})
 
 			// ✅ Update the item in our server
@@ -367,6 +368,7 @@ export const useCartService = (caller : string) => {
 
 		// 🔥 Local States
 		caller,
+		active_lettering_editor: attributes_store.active_lettering_editor,
 
 		// 🔥 Methods
 		requestItems,

@@ -37,7 +37,6 @@ export const useCartPage = () => {
 		pending_artwork_draft_preview_url.value = preview_url
 		target.value = ''
 
-		console.log(file.name)
 		upload_service.setArtwork(file, preview_url)
 		open_artwork_modal.value = true
 	}

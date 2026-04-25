@@ -36,8 +36,6 @@ export const useEditItemHandler = (caller : string) => {
 			return
 		}
 
-		uploading.value = true
-
 		const process = await cart_service.updateArtwork(
 			file_name,
 			file,
@@ -47,8 +45,6 @@ export const useEditItemHandler = (caller : string) => {
 
 		if( process && process.success )
 			upload_service.clearArtwork()
-
-		uploading.value = true
 
 		return process && process.success;
 	}
@@ -82,6 +78,7 @@ export const useEditItemHandler = (caller : string) => {
 		active_item : cart_edit_service.active_item,
 		selected_file,
 		selected_file_preview,
+		uploading,
 
 		// 🔥 Service Methods
 		formatImage : cart_service.formatImage,

@@ -22,6 +22,7 @@ const config = useRuntimeConfig()
 const {
 	selected_file,
 	selected_file_preview,
+	uploading,
 	setArtwork,
 	clearArtworkChanges,
 	submitArtworkChanges,
@@ -78,6 +79,9 @@ watch(
 );
 
 function closeModal() {
+	if( uploading.value )
+		return
+
 	clearArtworkChanges()
 	emit('update:modelValue', false);
 	emit('cancel');
@@ -101,7 +105,6 @@ function removeArtwork() {
 async function onFileSelected(event: Event) {
 	const input_target = event.target as HTMLInputElement;
 	const input_file = input_target.files?.[0];
-	console.log(input_file)
 	if (!input_file) return;
 
 	local_artwork_name.value = input_file.name;
@@ -113,15 +116,21 @@ async function onFileSelected(event: Event) {
 	setArtwork(input_file, local_artwork_preview_url.value)
 }
 
-async function submitChanges () {
+const submitChanges = async () => {
 	if( !selected_file || !selected_file.value || !selected_file.value.name) {
 		console.warn('No artwork selected.')
 		return
 	}
 
-	await submitArtworkChanges(selected_file.value.name, selected_file.value, local_special_instructions.value)
+	if( uploading.value )
+		return
 
-	closeModal()
+	uploading.value = true
+	const process = await submitArtworkChanges(selected_file.value.name, selected_file.value, local_special_instructions.value)
+	uploading.value = false
+
+	if( process )
+		closeModal()
 }
 </script>
 
