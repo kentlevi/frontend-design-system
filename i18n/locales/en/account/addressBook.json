@@ -34,7 +34,7 @@
         "postalCodePlaceholder": "Enter Postal Code"
       },
       "phoneNumber": "Contact Number",
-      "phonePlaceholder": "Enter Phone/Landline Number",
+      "phonePlaceholder": "Enter Phone Number/Landline Number",
       "invalidPhone": "Invalid contact number.",
       "addressAddedSuccess": "Address has been added successfully!",
       "saveAsDefault": "Save as my default address",
@@ -71,6 +71,9 @@
       "confirmDefaultChangeTitleBilling": "Confirm Default Billing Address Change",
       "confirmDefaultChangeTitleDrop": "Confirm Default Drop Shipping Address Change",
       "confirmDefaultChangeDescription": "You're about to set this as your default {type}. Confirm to proceed.",
+      "confirmDefaultChangeDescriptionShipping": "You're about to set this as your default shipping address. Confirm to proceed.",
+      "confirmDefaultChangeDescriptionBilling": "You're about to set this as your default billing address. Confirm to proceed.",
+      "confirmDefaultChangeDescriptionDrop": "You're about to set this as your default drop shipping address. Confirm to proceed.",
       "confirmDefaultChangeTypeAddress": "{type} address",
       "confirmDefaultChangeTypeShipping": "shipping address",
       "confirmDefaultChangeTypeBilling": "billing address",
@@ -87,10 +90,13 @@
       "selectNewDefaultDescriptionShipping": "Your default shipping address has been removed. Please select a new one now, or update it later.",
       "selectNewDefaultDescriptionBilling": "Your default billing address has been deleted. Please select a new default address now, or you can choose one later.",
       "selectNewDefaultDescriptionDrop": "Your default drop shipping address has been deleted. Please select a new default address now, or you can choose one later.",
-      "skipAndSelectLater": "Skip & Select Later",
+      "skipAndSelectLater": "Skip & Select",
       "defaultBadgeShipping": "Default Shipping",
       "defaultBadgeBilling": "Default Billing",
-      "defaultBadgeDrop": "Default Drop Shipping"
+      "defaultBadgeDrop": "Default Drop Shipping",
+      "addressUpdatedSuccess": "Your address has been updated.",
+      "defaultBillingUpdatedSuccess": "Your default billing address has been updated!",
+      "defaultDropUpdatedSuccess": "Your default drop shipping address has been updated!"
     }
   }
 }

@@ -6,7 +6,7 @@
                     "title": "Search products",
                     "placeholder": "Find your stickers...",
                     "clear": "Clear search",
-                    "suggestedTerm": "Die Cut Sticker",
+                    "suggestedTerm": "Die Cut Stickers",
                     "suggestedTermLabel": "\"{term}.\"",
                     "noRecent": {
                         "title": "No recent searches",
@@ -52,12 +52,12 @@
                         "remove": "Remove recent search"
                     },
                     "productNames": {
-                        "die-cut-sticker": "Die Cut Sticker",
-                        "circle-sticker": "Round Stickers",
+                        "die-cut-sticker": "Die Cut Stickers",
+                        "circle-sticker": "Circle Stickers",
                         "rectangle-sticker": "Rectangular Stickers",
                         "square-sticker": "Square Stickers",
                         "oval-sticker": "Oval Stickers",
-                        "rounded-sticker": "Rounded Square Stickers",
+                        "rounded-sticker": "Rounded Corner Stickers",
                         "kiss-cut-sticker": "Kiss Cut Stickers",
                         "sticker-sheet": "Sticker Sheets",
                         "clear-sticker": "Clear Stickers",

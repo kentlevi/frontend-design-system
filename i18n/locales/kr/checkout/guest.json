@@ -18,7 +18,7 @@
       "fields": {
         "email": {
           "label": "이메일 주소",
-          "placeholder": "이메일 주소를 입력하세요"
+          "placeholder": "이메일 주소를 입력해 주세요."
         },
         "fullName": {
           "label": "성함",
@@ -46,8 +46,8 @@
           "placeholder": "우편번호를 입력해 주세요"
         },
         "phone": {
-          "label": "전화번호",
-          "placeholder": "전화번호/유선번호를 입력하세요"
+          "label": "연락처",
+          "placeholder": "휴대폰 또는 전화번호 입력"
         },
         "cardNumber": {
           "label": "카드 번호",
@@ -95,11 +95,24 @@
         }
       },
       "provinceOptions": {
-        "placeholder": "주 선택",
-        "california": "캘리포니아",
-        "new-york": "뉴욕",
-        "texas": "텍사스",
-        "florida": "플로리다"
+        "placeholder": "시/도를 선택해 주세요",
+        "seoul": "서울특별시",
+        "busan": "부산광역시",
+        "incheon": "인천광역시",
+        "daegu": "대구광역시",
+        "daejeon": "대전광역시",
+        "gwangju": "광주광역시",
+        "ulsan": "울산광역시",
+        "sejong": "세종특별자치시",
+        "gyeongju": "경주시",
+        "suwon": "수원시",
+        "changwon": "창원시",
+        "jeonju": "전주시",
+        "cheongju": "청주시",
+        "pohang": "포항시",
+        "jeju": "제주시",
+        "andong": "안동시",
+        "gimhae": "김해시"
       },
       "summary": {
         "itemMeta": "{size}mm / {qty}pcs.",

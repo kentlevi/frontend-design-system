@@ -1,7 +1,10 @@
 {
   "underConstruction": {
-    "title": "Almost There!",
-    "description": "Exciting things are on the way. Check back soon to explore this feature!",
+    "title": "We’re Launching Soon",
+    "description": "Our website is currently in the works to serve you better.\nStay tuned, something great is coming your way and be the first to know when we go live.",
+    "emailPrompt": "Drop your email below and we’ll send you a personal invite when we launch.",
+    "emailPlaceholder": "Enter Email Address Here",
+    "notifyMe": "Notify Me!",
     "returnHome": "Return to Homepage"
   }
 }

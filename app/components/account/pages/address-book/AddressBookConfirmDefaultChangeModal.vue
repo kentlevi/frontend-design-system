@@ -34,9 +34,16 @@ const modal_title = computed(() => {
 })
 
 const modal_description = computed(() => {
-	return translate('account.addressBook.confirmDefaultChangeDescription', {
-		type: address_type_copy.value,
-	})
+	if (!pending_default_address.value) {
+		return translate('account.addressBook.confirmDefaultChangeDescription', {
+			type: address_type_copy.value,
+		})
+	}
+
+	const type = pending_default_address.value.type
+	const key = `confirmDefaultChangeDescription${type.charAt(0).toUpperCase()}${type.slice(1)}`
+
+	return translate(`account.addressBook.${key}`)
 })
 const current_default_address_lines = computed(() => {
 	if (!current_default_address.value) return ''

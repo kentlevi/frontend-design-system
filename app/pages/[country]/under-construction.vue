@@ -11,6 +11,23 @@ definePageMeta({
 });
 
 const { withCountry } = useCountry();
+const launch_email = ref('')
+
+const is_launch_email_valid = computed(() => {
+	const trimmed_email = launch_email.value.trim()
+	if (!trimmed_email) return false
+
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed_email)
+})
+
+function submitLaunchInterest() {
+	if (!is_launch_email_valid.value || !import.meta.client) return
+
+	const subject = encodeURIComponent('Musticker Launch Invite')
+	const body = encodeURIComponent(`Please notify me when Musticker launches.\n\nEmail: ${launch_email.value.trim()}`)
+
+	window.location.href = `mailto:info@mustickers.com?subject=${subject}&body=${body}`
+}
 </script>
 
 <template>
@@ -31,9 +48,39 @@ const { withCountry } = useCountry();
 					</p>
 				</div>
 
-				<NuxtLink :to="withCountry('/')" class="under-construction-cta">
-					{{ t('underConstruction.returnHome') }}
-				</NuxtLink>
+				<div class="under-construction-action-group">
+					<div class="under-construction-email-group">
+						<p class="under-construction-email-copy">
+							{{ t('underConstruction.emailPrompt') }}
+						</p>
+
+						<div class="under-construction-email-form">
+							<UiInput
+								v-model="launch_email"
+								type="email"
+								size="md"
+								icon-left="mail"
+								:placeholder="t('underConstruction.emailPlaceholder')"
+								class="under-construction-email-input"
+							/>
+
+							<UiButton
+								variant="filled"
+								tone="default"
+								size="md"
+								class="under-construction-notify-button"
+								:disabled="!is_launch_email_valid"
+								@click="submitLaunchInterest"
+							>
+								{{ t('underConstruction.notifyMe') }}
+							</UiButton>
+						</div>
+					</div>
+
+					<NuxtLink :to="withCountry('/')" class="under-construction-cta">
+						{{ t('underConstruction.returnHome') }}
+					</NuxtLink>
+				</div>
 			</div>
 
 			<img
@@ -65,7 +112,7 @@ const { withCountry } = useCountry();
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 56px;
+    gap: 40px;
 }
 
 .under-construction-heading-group {
@@ -94,6 +141,46 @@ const { withCountry } = useCountry();
     color: var(--text-primary);
 }
 
+.under-construction-action-group {
+    width: min(100%, 720px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.under-construction-email-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.under-construction-email-copy {
+    max-width: 680px;
+    text-align: center;
+    font-size: var(--type-size-200);
+    line-height: var(--type-line-200);
+    color: var(--text-primary);
+}
+
+.under-construction-email-form {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.under-construction-email-input {
+    flex: 1 1 auto;
+}
+
+.under-construction-notify-button {
+    min-width: 176px;
+    border-radius: 18px;
+}
+
 .under-construction-cta {
     min-height: 48px;
     padding: 10px 32px;
@@ -118,9 +205,18 @@ const { withCountry } = useCountry();
         gap: 14px;
     }
 
+    .under-construction-content-group {
+        gap: 28px;
+    }
+
+    .under-construction-email-form {
+        flex-direction: column;
+    }
+
+    .under-construction-notify-button,
     .under-construction-cta {
         min-height: 50px;
-        line-height: 50px;
+        width: 100%;
         padding: 0 24px;
         border-radius: 14px;
     }

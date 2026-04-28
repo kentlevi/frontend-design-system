@@ -127,10 +127,23 @@ export const checkoutProvinceOptions: ReadonlyArray<{
 	enabled?: boolean;
 }> = [
 	{ value: '', i18nKey: 'checkout.guest.provinceOptions.placeholder', enabled: true },
-	{ value: 'california', i18nKey: 'checkout.guest.provinceOptions.california', enabled: true },
-	{ value: 'new-york', i18nKey: 'checkout.guest.provinceOptions.new-york', enabled: true },
-	{ value: 'texas', i18nKey: 'checkout.guest.provinceOptions.texas', enabled: true },
-	{ value: 'florida', i18nKey: 'checkout.guest.provinceOptions.florida', enabled: true },
+	{ value: 'seoul', i18nKey: 'checkout.guest.provinceOptions.seoul', enabled: true },
+	{ value: 'busan', i18nKey: 'checkout.guest.provinceOptions.busan', enabled: true },
+	{ value: 'incheon', i18nKey: 'checkout.guest.provinceOptions.incheon', enabled: true },
+	{ value: 'daegu', i18nKey: 'checkout.guest.provinceOptions.daegu', enabled: true },
+	{ value: 'daejeon', i18nKey: 'checkout.guest.provinceOptions.daejeon', enabled: true },
+	{ value: 'gwangju', i18nKey: 'checkout.guest.provinceOptions.gwangju', enabled: true },
+	{ value: 'ulsan', i18nKey: 'checkout.guest.provinceOptions.ulsan', enabled: true },
+	{ value: 'sejong', i18nKey: 'checkout.guest.provinceOptions.sejong', enabled: true },
+	{ value: 'gyeongju', i18nKey: 'checkout.guest.provinceOptions.gyeongju', enabled: true },
+	{ value: 'suwon', i18nKey: 'checkout.guest.provinceOptions.suwon', enabled: true },
+	{ value: 'changwon', i18nKey: 'checkout.guest.provinceOptions.changwon', enabled: true },
+	{ value: 'jeonju', i18nKey: 'checkout.guest.provinceOptions.jeonju', enabled: true },
+	{ value: 'cheongju', i18nKey: 'checkout.guest.provinceOptions.cheongju', enabled: true },
+	{ value: 'pohang', i18nKey: 'checkout.guest.provinceOptions.pohang', enabled: true },
+	{ value: 'jeju', i18nKey: 'checkout.guest.provinceOptions.jeju', enabled: true },
+	{ value: 'andong', i18nKey: 'checkout.guest.provinceOptions.andong', enabled: true },
+	{ value: 'gimhae', i18nKey: 'checkout.guest.provinceOptions.gimhae', enabled: true },
 ];
 
 export const checkoutFieldValidation: ReadonlyArray<{
