@@ -69,8 +69,10 @@ export const useTossPayment = () => {
 
 			const data = event.data
 
-			if (data?.type === 'TOSS_PAYMENT_SUCCESS') {
-
+			if (
+				data?.type === 'TOSS_PAYMENT_SUCCESS' ||
+  				data?.type === 'TOSS_PAYMENT_CONFIRMED'
+			) {
 				const order_id = data?.data?.id
 				try {
 					closePaymentPopup()
