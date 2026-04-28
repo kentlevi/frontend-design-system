@@ -325,6 +325,8 @@ export const useCartService = (caller : string) => {
 				return
 			}
 
+			updating_artwork.value = true
+
 			// ⚠️ Uploading file
 			const uploading_request = await cart_api_service.sendToS3(file)
 
@@ -345,7 +347,6 @@ export const useCartService = (caller : string) => {
 			// ✅ Update the item in our server
 			cart_api_service.requestArtworkUpdate(cart_store.item_picking_artwork.id, file_name, uploading_request.filename.value, instruction)
 
-			updating_artwork.value = true
 			response.value.success = true
 		}
 		// ❌ Handles thrown error with proper response
@@ -369,6 +370,7 @@ export const useCartService = (caller : string) => {
 		// 🔥 Local States
 		caller,
 		active_lettering_editor: attributes_store.active_lettering_editor,
+		updating_artwork,
 
 		// 🔥 Methods
 		requestItems,

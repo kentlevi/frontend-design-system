@@ -13,7 +13,6 @@ import { useCartPage as useCartPageHandler } from '~/composables/cart/useCartPag
 const { t } = useI18n();
 const {
 	loading,
-	detail_item_id,
 	openItemDetails,
 	saveItemArtworkDetails,
 } = useCartPage();
@@ -68,13 +67,16 @@ onMounted(() => {
 			</template>
 		</section>
 
+		<!-- Confirmation of Item Deletion -->
 		<CartDeleteItemModal />
+		<!-- Artwork Update Modal -->
 		<CartItemDetailsModal
 			:model-value="open_artwork_modal"
 			:item="item_picking_artwork"
-			@cancel="detail_item_id = null; open_artwork_modal = false"
+			@cancel="open_artwork_modal = false"
 			@save="saveItemArtworkDetails"
 		/>
+		<!-- Editing Item Details -->
 		<CartItemEditModal />
 	</main>
 </template>

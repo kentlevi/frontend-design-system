@@ -33,6 +33,7 @@ const {
 	assignEditableItem,
 	allowArtworkUpdate,
 	allowVariantUpdate,
+	getTemporaryOption,
 } = useCartPageItem('cart-page-items')
 
 const emit = defineEmits<{
@@ -98,7 +99,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 							class="cart-item-thumb"
 							:class="{ 'cart-item-thumb--interactive': Boolean(row.artwork_file) }"
 							:disabled="!row.artwork_file"
-							@click="row.artwork_file ? emit('openItemDetails', row.local_identity) : undefined"
+							@click="Boolean(row.artwork_file) ? emit('openItemDetails', row.local_identity) : undefined"
 						>
 							<img
 								:src="formatImage(row)"
@@ -106,7 +107,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 								class="cart-item-thumb-image"
 							>
 							<span
-								v-if="row.artwork_file"
+								v-if="Boolean(row.artwork_file)"
 								class="cart-item-thumb-overlay"
 								aria-hidden="true"
 							>
@@ -130,15 +131,16 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 
 				<div class="cart-qty-wrap">
 					<UiSelect
-						v-if="custom_qty_item_id !== row.id"
+						v-if="custom_qty_item_id !== row.local_identity"
 						class="cart-qty-select-control"
 						size="40"
 						:model-value="row.quantity"
-						:options="[...qty_select_options, { label: 'Custom', value: -1 }]"
+						:options="getTemporaryOption(row.quantity)"
 						trigger-class="cart-qty-select-trigger"
 						menu-class="cart-qty-menu"
 						:pin-last-option="true"
 						@update:model-value="handleQtyOptionSelect(row.local_identity, $event)"
+						@click=""
 					/>
 					<div
 						v-else
