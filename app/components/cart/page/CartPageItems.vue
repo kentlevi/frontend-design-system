@@ -31,6 +31,8 @@ const {
 	toggleSelection,
 	selectAllItem,
 	assignEditableItem,
+	allowArtworkUpdate,
+	allowVariantUpdate,
 } = useCartPageItem('cart-page-items')
 
 const emit = defineEmits<{
@@ -39,7 +41,6 @@ const emit = defineEmits<{
 }>();
 
 const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
-
 
 </script>
 
@@ -115,13 +116,13 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 						<div class="cart-item-copy">
 							<h3 class="cart-item-title">{{ row.product }}</h3>
 							<p class="cart-item-size">{{ $t('cart.cartPage.sizeLabel', { size: `${row.width}x${row.height}` }) }}</p>
-							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row)">
+							<UiButton v-if="allowArtworkUpdate(row.url_slug)" class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row)">
 								{{ getArtworkActionLabel(Boolean(row.artwork_file)) }}
 							</UiButton>
 						</div>
 					</div>
 					<div class="cart-item-links">
-						<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="assignEditableItem(row)">
+						<UiButton v-if="allowVariantUpdate(row.url_slug)" class="cart-link-btn" variant="ghost" tone="default" size="24" @click="assignEditableItem(row)">
 							{{ $t('cart.cartPage.editSize') }}
 						</UiButton>
 					</div>
