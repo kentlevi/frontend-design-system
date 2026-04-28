@@ -25,7 +25,13 @@ const {
 	item_picking_artwork,
 	openArtworkPicker,
 	onArtworkActionSelected,
+	refreshItems,
 } = useCartPageHandler()
+
+onMounted(() => {
+	console.log('Cart page...')
+	refreshItems()
+})
 </script>
 
 <template>
@@ -66,7 +72,7 @@ const {
 		<CartItemDetailsModal
 			:model-value="open_artwork_modal"
 			:item="item_picking_artwork"
-			@cancel="detail_item_id = null"
+			@cancel="detail_item_id = null; open_artwork_modal = false"
 			@save="saveItemArtworkDetails"
 		/>
 		<CartItemEditModal />

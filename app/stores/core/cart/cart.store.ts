@@ -106,11 +106,7 @@ export const useCartStore = defineStore('cart', () => {
 	};
 
 	const updateUploadedItem = (local_identity: string, new_id: number) => {
-		const index = items.value.findIndex((i: CartItem) => i.local_identity === local_identity)
-
-		if( index !== -1 && items.value[index] ) {
-			items.value[index].id = new_id
-		}
+		updateItemInCart(local_identity, { id: new_id })
 	}
 
 	const setDeletableItems = (local_identities : string []) => {
@@ -173,6 +169,36 @@ export const useCartStore = defineStore('cart', () => {
 		item_picking_artwork.value = null
 	}
 
+	const updateItemInCart = (local_identity: string, updates: Partial<CartItem>) => {
+		// Find the index of the item
+		const index = items.value.findIndex(item => item.local_identity === local_identity);
+
+		if (index !== -1) {
+			const current_item = items.value[index];
+
+			if(!current_item) {
+				console.warn('No item found.')
+				return
+			}
+
+			// 1. Loop through the update keys
+			for (const key in updates) {
+				// 2. Validation: Check if the key exists in the current CartItem
+				if (!(key in current_item)) {
+					console.warn(`Property "${key}" does not exist on CartItem. Exit.`);
+					return
+				}
+			}
+
+			// 2. Merge current item with the updates
+			// This maintains reactivity and doesn't overwrite the whole object
+			items.value[index] = {
+				...items.value[index],
+				...updates
+			} as CartItem
+		}
+	};
+
 	return {
 		// 🔥 States
 		items,
@@ -209,6 +235,7 @@ export const useCartStore = defineStore('cart', () => {
 		unsetEditableItem,
 		assignArtworkPicker,
 		unsetArtworkPicker,
+		updateItemInCart,
 	}
 }, {
 	persist: {

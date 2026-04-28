@@ -19,6 +19,23 @@ export const useCartPageItem = (caller : string) => {
 		cart_service.setDeletableItems(deletable.value)
 	}
 
+	const allowArtworkUpdate  = (url_slug : string) => {
+
+		if( cart_service.active_lettering_editor.includes(url_slug) )
+			return false
+
+		return true
+	}
+
+
+	const allowVariantUpdate  = (url_slug : string) => {
+
+		if( cart_service.active_lettering_editor.includes(url_slug) )
+			return false
+
+		return true
+	}
+
 	return {
 		// 🔥 Store states
 		items		: cart_service.items,
@@ -31,6 +48,8 @@ export const useCartPageItem = (caller : string) => {
 		// 🔥 Methods
 		setAllSelected,
 		deleteSelectedItems,
+		allowArtworkUpdate,
+		allowVariantUpdate,
 		formatImage			: cart_service.formatImage,
 		toggleSelection 	: cart_service.toggleSelection,
 		selectAllItem 		: cart_service.selectAllItem,
