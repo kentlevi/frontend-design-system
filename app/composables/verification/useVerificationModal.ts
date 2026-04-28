@@ -10,6 +10,7 @@ import { useCheckoutVerification } from './useCheckoutVerification'
 export function useVerificationModal() {
 	const { t: translate } = useI18n()
 	const verification_store = useVerificationStore()
+	const checkout_verification = useCheckoutVerification()
 	const { modal_state, verification_state } = storeToRefs(verification_store)
 	const verification_cooldown = useVerificationCooldown()
 	const test_id_prefix = 'verification-modal'
@@ -37,8 +38,7 @@ export function useVerificationModal() {
 
 	async function submitVerification() {
 		if (modal_state.value.context === 'checkout_guest_contact') {
-			const { submitCheckoutGuestContactVerification } = useCheckoutVerification()
-			return submitCheckoutGuestContactVerification()
+			return checkout_verification.submitCheckoutGuestContactVerification()
 		}
 
 		return
@@ -46,8 +46,7 @@ export function useVerificationModal() {
 
 	async function resendVerification() {
 		if (modal_state.value.context === 'checkout_guest_contact') {
-			const { resendCheckoutGuestContactVerification } = useCheckoutVerification()
-			return resendCheckoutGuestContactVerification()
+			return checkout_verification.resendCheckoutGuestContactVerification()
 		}
 
 		return

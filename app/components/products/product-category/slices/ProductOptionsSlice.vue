@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useQuoteSection } from '~/composables/quote/useQuoteSection';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const { t } = useI18n();
 const color_skeleton_grid_ref = ref<HTMLElement | null>(null);
@@ -87,7 +88,6 @@ const {
 	updateColor,
 	updateCustomSize,
 	toggleCustomQuantityField,
-	formatPrice,
 	updateCustomQuantity,
 	onCustomQtyFocus,
 	onCustomQtyBlur,
