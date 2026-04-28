@@ -1,15 +1,14 @@
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
-import { useAddressFieldStore } from "~/stores/user-address";
 import { loadAddresses } from "~/services/user-address/user-address.service";
 import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
+import { ensureDynamicFields } from "~/services/dynamic-fields/dynamic-fields.service";
 
 export function useBillingAddress() {
 
 	/** Stores */
-	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
 
 	/** Context */
@@ -64,9 +63,7 @@ export function useBillingAddress() {
 	)
 
 	onMounted(async () => {
-		if (address_field_store.dynamic_address_fields.length === 0) {
-			await address_field_store.getDynamicFields()
-		}
+		await ensureDynamicFields()
 
 		populateDynamicFields('billing')
 	})

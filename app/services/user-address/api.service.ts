@@ -1,4 +1,4 @@
-import type { AddressDynamicFields, AddressMap, AddressType } from "~/types/user-address";
+import type { AddressMap, AddressType } from "~/types/user-address";
 import type { ApiResponse } from "~/types/config/api";
 
 /**
@@ -10,16 +10,6 @@ export async function fetchUserAddresses(
 	const { $api } = useNuxtApp();
 
 	return $api.get(`/user-address`, { params })
-}
-
-/**
- * Fetch dynamic fields
- */
-export async function fetchDynamicFields(
-): Promise<ApiResponse<AddressDynamicFields[]>> {
-	const { $api } = useNuxtApp();
-
-	return $api.get('/user-address/fields');
 }
 
 /**
