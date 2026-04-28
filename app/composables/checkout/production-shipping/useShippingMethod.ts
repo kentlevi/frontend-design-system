@@ -108,6 +108,7 @@ export function useShippingMethod() {
 		}
 
 		setSelectedShippingMethod(default_method.key)
+		checkout_store.setShippingMethodId(default_method.shipping_method_id)
 	}
 
 	/* @desc set the current selected shipping method and its shipping ids
