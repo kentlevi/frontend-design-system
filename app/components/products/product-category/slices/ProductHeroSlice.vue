@@ -240,7 +240,6 @@ const hide_lettering_editor = computed(() => (
 	}
 
 	.product-preview-features {
-		border-bottom: 1px solid var(--border-default);
 		display: grid;
 		gap: 24px;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
