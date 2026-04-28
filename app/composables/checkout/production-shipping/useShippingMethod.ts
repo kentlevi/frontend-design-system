@@ -7,6 +7,7 @@ import { useUsersStore } from '~/stores/users/users.store'
 import type { AvailableShippingMethod } from '~/types/production-shipping/production-shipping'
 import type { ShippingMethodItem } from '~/types/shipping/shipping'
 import { fetchShippingMethodsService } from '~/services/production-shipping/production-shipping.service';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const selected_shipping_key = ref<string>('')
 const shipping_method_id = ref<number | null>(null)
@@ -72,7 +73,7 @@ export function useShippingMethod() {
 				name: item.shipping_method_name,
 				date: formatted_date_range,
 				longer_date_message: `${translate('checkout.shipping.longer_date_message')} ${formatted_date_range}`,
-				price: item.shipping_price === 0 ? 'Free' : `$${item.shipping_price}`,
+				price: item.shipping_price === 0 ? 'Free' : `${formatPrice(item.shipping_price)}`,
 				icon: `/icons/custom/checkout/${item.shipping_method_code}-shipping.svg`,
 				shipping_method_id: item.shipping_method_id,
 				production_shipping_id: item.production_shipping_id,

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import type { ProductItem } from '~/types/products/catalog';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const {
 	featured_items,
 	number_of_items,
-	formatPrice,
 	customizeFeaturedProduct,
 	close,
 	t

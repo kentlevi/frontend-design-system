@@ -17,6 +17,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
+	const checkout_ready = ref<boolean>(false)
+
 	const patchGuestContactState = (
 		payload: Partial<typeof guest_contact_state>
 	) => {
@@ -41,6 +43,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 	const setPaymentMethod = (data: AvailablePaymentMethods | null) => {
 		selected_payment_method.value = data
+	}
+
+	const setCheckoutReady = (value: boolean) => {
+		checkout_ready.value = value
 	}
 
 	/**
@@ -74,6 +80,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_shipping_method_id,
 		selected_payment_method,
 		ship_to_another_address,
+		checkout_ready,
 
 		// expose setters
 		patchGuestContactState,
@@ -82,6 +89,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setDropAddressId,
 		setShippingMethodId,
 		setPaymentMethod,
+		setCheckoutReady,
 		cleanCheckoutStatesOnSuccess,
 
 		clearShippingAddressId,
