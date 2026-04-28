@@ -24,8 +24,8 @@
       "signInGoogleCheckout": "Sign in with Google",
       "forgot": {
         "title": "Forgot your password?",
-        "description": "Enter your user account's verified email address and we will send you a password reset link.",
-        "sendResetEmail": "Send Password Reset Email",
+        "description": "Enter your verified email address and we will send you a password reset link.",
+        "sendResetEmail": "Request Reset Password",
         "sending": "Sending...",
         "returnToLogin": "Return to Login",
         "closeModal": "Close forgot password modal",
