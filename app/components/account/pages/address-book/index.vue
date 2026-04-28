@@ -18,6 +18,7 @@ import { provideAddressBookDeleteContext } from '~/composables/account/addressBo
 import { provideAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
 import { loadAddresses } from '~/services/user-address/user-address.service';
+import { ensureDynamicFields } from '~/services/dynamic-fields/dynamic-fields.service';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -37,7 +38,7 @@ const dynamic_fields = computed(() => address_field_store.dynamic_address_fields
 loadAddresses('shipping')
 loadAddresses('billing')
 loadAddresses('drop')
-address_field_store.getDynamicFields()
+ensureDynamicFields()
 
 const {
 	shipping_address,

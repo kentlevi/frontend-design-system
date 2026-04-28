@@ -1,4 +1,3 @@
-import { fetchDynamicFields } from "~/services/user-address/api.service"
 import type { AddressDynamicFields } from "~/types/user-address"
 
 
@@ -6,27 +5,50 @@ export const useAddressFieldStore = defineStore('dynamic_address_fields', () => 
 
 	/** Store state */
 	const dynamic_address_fields = ref<AddressDynamicFields[]>([])
+	const has_fetched_dynamic_fields = ref(false)
 
-	/** Fetch address dynamic fields */
-	async function getDynamicFields() {
-		try {
-			/** Fetch dynamic fields from backend */
-			const response = await fetchDynamicFields()
+	/** Functions */
+	function setUserAddressDynamicFields(fields: AddressDynamicFields[]) {
+		dynamic_address_fields.value = fields
+	}
 
-			/** Normalize fields */
-			const fields = Array.isArray(response.data) ? response.data : []
 
-			dynamic_address_fields.value = fields
-		} catch {
-			console.log('error');
-		}
+
+
+
+
+	/** Loader */
+	type Action = 'fetch'
+
+	const loader_map = ref<Record<string, boolean>>({})
+
+	function getKey(action: Action) {
+		return action
+	}
+
+	function isLoading(action: Action) {
+		return !!loader_map.value[getKey(action)]
+	}
+
+	function startLoading(action: Action) {
+		loader_map.value[getKey(action)] = true
+	}
+
+	function stopLoading(action: Action) {
+		loader_map.value[getKey(action)] = false
 	}
 
 	return {
 		/** State */
 		dynamic_address_fields,
+		has_fetched_dynamic_fields,
 
 		/** Actions */
-		getDynamicFields
+		setUserAddressDynamicFields,
+
+		/** Loaders */
+		isLoading,
+		startLoading,
+		stopLoading,
 	}
 })
