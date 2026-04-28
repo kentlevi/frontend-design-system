@@ -1,12 +1,12 @@
 {
   "product": {
     "navigationNames": {
-      "die-cut-sticker": "Die Cut Sticker",
-      "circle-sticker": "Round Stickers",
+      "die-cut-sticker": "Die Cut Stickers",
+      "circle-sticker": "Circle Stickers",
       "rectangle-sticker": "Rectangular Stickers",
       "square-sticker": "Square Stickers",
       "oval-sticker": "Oval Stickers",
-      "rounded-sticker": "Rounded Square Stickers",
+      "rounded-sticker": "Rounded Corner Stickers",
       "kiss-cut-sticker": "Kiss Cut Stickers",
       "sticker-sheet": "Sticker Sheets",
       "clear-sticker": "Clear Stickers",
@@ -29,12 +29,12 @@
       "rounded-sheet": "Rounded Corner Sheet Stickers"
     },
     "pageNames": {
-      "die-cut-sticker": "Die Cut Sticker",
-      "circle-sticker": "Round Stickers",
+      "die-cut-sticker": "Die Cut Stickers",
+      "circle-sticker": "Circle Stickers",
       "rectangle-sticker": "Rectangular Stickers",
       "square-sticker": "Square Stickers",
       "oval-sticker": "Oval Stickers",
-      "rounded-sticker": "Rounded Square Stickers",
+      "rounded-sticker": "Rounded Corner Stickers",
       "kiss-cut-sticker": "Kiss Cut Stickers",
       "sticker-sheet": "Sheet Stickers",
       "clear-sticker": "Clear Stickers",
@@ -59,12 +59,12 @@
     },
     "items": {
       "die-cut-sticker": {
-        "name": "Die Cut Sticker",
+        "name": "Die Cut Stickers",
         "blurb": "Features thick, premium-grade material designed for durability and vibrant printing.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "circle-sticker": {
-        "name": "Round Stickers",
+        "name": "Circle Stickers",
         "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
@@ -84,7 +84,7 @@
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "rounded-sticker": {
-        "name": "Rounded Square Stickers",
+        "name": "Rounded Corner Stickers",
         "blurb": "Premium material with soft, rounded corners for a polished appearance.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },

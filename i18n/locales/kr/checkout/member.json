@@ -4,7 +4,7 @@
       "shippingDetails": "배송 정보",
       "viewShippingAddresses": "배송지 보기",
       "myShippingAddress": "내 배송지",
-      "discountsAndPerks" : "할인과 쿠폰",
+      "discountsAndPerks": "할인과 쿠폰",
       "defaultBadge": "기본",
       "shipToAnotherAddress": "다른 주소로 배송",
       "shippingMethod": "배송 방법",
@@ -32,9 +32,9 @@
         "dropTitle": "드롭 배송지 선택",
         "closeModal": "주소 선택 모달 닫기",
         "noCompanyProvided": "회사 정보가 없습니다",
-        "defaultShipping": "기본 배송지",
+        "defaultShipping": "기본 배송",
         "defaultBilling": "기본 청구지",
-        "defaultDropShipping": "기본 드롭 배송지"
+        "defaultDropShipping": "기본 위탁 배송지"
       },
       "billingAddress": {
         "myBillingAddress": "내 청구지",

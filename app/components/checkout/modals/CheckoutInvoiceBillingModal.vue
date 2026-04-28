@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { checkoutProvinceOptions } from '~/data/checkout/options';
 
 type BillingDetails = {
 	fullName: string;
@@ -23,12 +24,14 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-const province_options = [
-	{ value: 'incheon', label: 'Incheon' },
-	{ value: 'seoul', label: 'Seoul' },
-	{ value: 'busan', label: 'Busan' },
-];
+const province_options = computed(() =>
+	checkoutProvinceOptions
+		.filter((option) => option.enabled !== false)
+		.map((option) => ({
+			value: option.value,
+			label: t(option.i18nKey),
+		}))
+)
 
 const form = reactive<BillingDetails>({
 	fullName: '',

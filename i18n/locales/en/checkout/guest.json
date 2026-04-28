@@ -47,7 +47,7 @@
         },
         "phone": {
           "label": "Contact Number",
-          "placeholder": "Enter Phone/Landline Number"
+          "placeholder": "Enter Phone Number/Landline Number"
         },
         "cardNumber": {
           "label": "Card Number",
@@ -95,11 +95,24 @@
         }
       },
       "provinceOptions": {
-        "placeholder": "Select State",
-        "california": "California",
-        "new-york": "New York",
-        "texas": "Texas",
-        "florida": "Florida"
+        "placeholder": "Select Province/Metropolitan City",
+        "seoul": "Seoul",
+        "busan": "Busan",
+        "incheon": "Incheon",
+        "daegu": "Daegu",
+        "daejeon": "Daejeon",
+        "gwangju": "Gwangju",
+        "ulsan": "Ulsan",
+        "sejong": "Sejong",
+        "gyeongju": "Gyeongju",
+        "suwon": "Suwon",
+        "changwon": "Changwon",
+        "jeonju": "Jeonju",
+        "cheongju": "Cheongju",
+        "pohang": "Pohang",
+        "jeju": "Jeju",
+        "andong": "Andong",
+        "gimhae": "Gimhae"
       },
       "summary": {
         "itemMeta": "{size}mm / {qty}pcs.",
