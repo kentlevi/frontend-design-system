@@ -4,17 +4,8 @@ import { useCartPageItem } from '~/composables/cart/useCartPageItem';
 import type { CartItem } from '~/types/cart/cart';
 
 const {
-	custom_qty_item_id,
-	custom_qty_draft,
-	custom_qty_menu_open,
 	qty_select_options,
 	formatPrice,
-	bindCustomQtyDropdownRef,
-	bindCustomQtyInputRef,
-	handleQtyOptionSelect,
-	commitCustomQty,
-	toggleCustomQtyMenu,
-	setCustomQtyDraft,
 	preventNonDigitInput,
 } = useCartPageList();
 
@@ -24,7 +15,10 @@ const {
 	items,
 	selected_ids,
 	all_selected,
-
+	item_quantities,
+	custom_qty_item_id,
+	custom_qty_draft,
+	custom_qty_menu_open,
 	// 🔥 Methods
 	formatImage,
 	deleteSelectedItems,
@@ -33,7 +27,12 @@ const {
 	assignEditableItem,
 	allowArtworkUpdate,
 	allowVariantUpdate,
-	getTemporaryOption,
+	mapQuantities,
+	handleQtyOptionSelect,
+	bindCustomQtyInputRef,
+	setCustomQtyDraft,
+	commitCustomQty,
+	toggleCustomQtyMenu,
 } = useCartPageItem('cart-page-items')
 
 const emit = defineEmits<{
@@ -85,6 +84,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 			data-testid="cart-page-row"
 		>
 			<UiCheckbox
+				v-if="items && items.length && selected_ids && row.local_identity"
 				class="cart-check-row cart-check-row--item"
 				:model-value="selected_ids.includes(row.local_identity)"
 				box-class="cart-check-row-box"
@@ -129,22 +129,24 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 					</div>
 				</div>
 
-				<div class="cart-qty-wrap">
+				<div class="cart-qty-wrap" @click="mapQuantities(row)">
 					<UiSelect
 						v-if="custom_qty_item_id !== row.local_identity"
 						class="cart-qty-select-control"
 						size="40"
 						:model-value="row.quantity"
-						:options="getTemporaryOption(row.quantity)"
+						:options="item_quantities[row.local_identity]"
 						trigger-class="cart-qty-select-trigger"
 						menu-class="cart-qty-menu"
 						:pin-last-option="true"
 						@update:model-value="handleQtyOptionSelect(row.local_identity, $event)"
-						@click=""
 					/>
+					<!--
+					@update:model-value="handleQtyOptionSelect(row.local_identity, $event)"
+					@update:model-value="updateQuantity(row.local_identity, $event as number)"
+					-->
 					<div
 						v-else
-						:ref="bindCustomQtyDropdownRef"
 						class="cart-qty-select-shell ui-select"
 						:data-open="custom_qty_menu_open || null"
 					>

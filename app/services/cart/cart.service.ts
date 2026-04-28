@@ -142,6 +142,7 @@ export const useCartService = (caller: string = 'unknown') => {
 	}
 
 	const getCartItems = async (first_load : boolean = false) => {
+		return
 		cart_store.loading = true;
 		try {
 			// calculate the numbers of cart items everytime request new data from database

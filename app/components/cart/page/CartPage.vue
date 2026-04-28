@@ -12,12 +12,12 @@ import { useCartPage as useCartPageHandler } from '~/composables/cart/useCartPag
 
 const { t } = useI18n();
 const {
-	loading,
 	openItemDetails,
 	saveItemArtworkDetails,
 } = useCartPage();
 
 const {
+	refreshing_item,
 	has_items,
 	artwork_action_file_input_ref,
 	open_artwork_modal,
@@ -44,9 +44,9 @@ onMounted(() => {
 		>
 
 		<section class="cart-page-shell">
-			<CartPageSkeleton v-if="loading" />
+			<CartPageSkeleton v-if="refreshing_item" />
 
-			<template v-else-if="!loading">
+			<template v-else>
 				<template v-if="has_items">
 					<CartPageHeader
 						:title="t('cart.cartPage.title')"

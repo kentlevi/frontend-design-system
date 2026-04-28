@@ -58,26 +58,19 @@ export const useCartPageItem = (caller : string) => {
 
 	const selected_item = ref<CartItem>()
 
+	const custom_qty_item_id = ref<string | null>(null)
+	const custom_qty_draft = ref('')
+	const custom_qty_dropdown_ref = ref<HTMLElement | null>(null)
+	const custom_qty_input_ref = ref<HTMLInputElement | null>(null)
+	const custom_qty_menu_open = ref(false)
+
 	const default_custom_qty = {
 		label: translate('cart.cartPreview.editModal.customQuantity'),
 		value: -1
 	}
 
-	const item_quantities = ref<Record<string, SelectOption[]>>({})
 
-	const getTemporaryOption = (local_identity: string, quantity: number) => {
-		item_quantities.value[local_identity] = [
-			{
-				label: String(quantity),
-				value: quantity
-			},
-			default_custom_qty
-		]
-
-		return item_quantities.value[local_identity]
-	}
-
-	const showQuantities = async (item : CartItem) => {
+	const mapQuantities = async (item : CartItem) => {
 		selected_item.value = item
 		featured_quantities.value = [
 			{
@@ -87,15 +80,20 @@ export const useCartPageItem = (caller : string) => {
 			default_custom_qty
 		]
 
-		await getPricing(item.url_slug, {
+		const prices = await getPricing(item.url_slug, item.local_identity, {
 			width		: Number(item.width),
 			height		: Number(item.height),
 			color_id	: item.color_id ? Number(item.color_id) : undefined,
 			font_id		: item.font_id ? Number(item.font_id) : undefined,
 		})
+
+		if( !prices || !prices.length )
+			return
+
+		makeQuantityOption(item.local_identity, item.quantity, prices)
 	}
 
-	const getPricing = async (url_slug : string, pricing_parameters : PricingParameters) => {
+	const getPricing = async (url_slug : string, local_identity: string, pricing_parameters : PricingParameters) => {
 		featured_pricing.value = await quote_api_service.getFeaturedPricing(url_slug, pricing_parameters)
 		if( !featured_pricing || !featured_pricing.value )
 			return
@@ -103,30 +101,91 @@ export const useCartPageItem = (caller : string) => {
 
 		product_variant_id.value = featured_pricing.value.product_variant_id
 
-		makeQuantityOption(featured_pricing.value.prices)
+		return featured_pricing.value.prices;
 	}
 
 	/**
 	 * Make options for quantities and set a default base on the current selected quantity
 	 */
-	const makeQuantityOption = async (prices : QuantitySpec[]) => {
+	const makeQuantityOption = async (local_identity: string, current_quantity: number, prices : QuantitySpec[]) => {
 		if( !prices.length )
 			return
 
-		featured_quantities.value = prices.map(e => {
+
+		const mapped_new = prices.map(e => {
 			return {
 				label: String(e.nr),
 				value: Number(e.nr)
 			}
 		})
 
-		featured_quantities.value.push(default_custom_qty)
+		// Merge current and new
+		const combined = [{ label: String(current_quantity), value: current_quantity } , ...mapped_new ]
 
-		updateQuantity(Number(selected_item.value?.quantity))
+		// Remove duplicates (by value) and Sort numerically
+		const final_list = combined
+			.filter((item, index, self) =>
+				index === self.findIndex((t) => t.value === item.value)
+			)
+			.sort((a, b) => a.value - b.value);
+
+		cart_service.setItemQuantities(local_identity, final_list)
+
 	}
 
-	const updateQuantity = (value : number) => {
-		console.log(value)
+	const openCustomQtyMode = (local_identity: string) => {
+		custom_qty_item_id.value = local_identity
+		custom_qty_menu_open.value = false
+		custom_qty_draft.value = ''
+		nextTick(() => custom_qty_input_ref.value?.focus())
+	}
+
+	const commitQtySelection = (local_identity: string, next_qty: number) => {
+		updateQuantity(local_identity, next_qty)
+		custom_qty_item_id.value = null
+		custom_qty_menu_open.value = false
+		custom_qty_draft.value = ''
+	}
+
+	const handleQtyOptionSelect = (local_identity: string, value: string | number) => {
+		const normalized_value = Number(value)
+		if (normalized_value === -1) {
+			openCustomQtyMode(local_identity)
+			return
+		}
+
+		commitQtySelection(local_identity, normalized_value)
+	}
+
+	const updateQuantity = (local_identity: string, value : number) => {
+		console.log(local_identity, value)
+		const index = cart_service.items.value.findIndex(e => e.local_identity == local_identity)
+
+		if( index === -1 )
+			return
+
+		cart_service.updateItemInCart(local_identity, { quantity: value })
+		// Call API update here
+	}
+
+
+	const setCustomQtyDraft = (value: string) => {
+		custom_qty_draft.value = value
+	}
+
+	const commitCustomQty = (item_id: string) => {
+		const next_qty = Number(custom_qty_draft.value)
+		if (!Number.isFinite(next_qty) || next_qty <= 0) {
+			custom_qty_item_id.value = null
+			custom_qty_menu_open.value = false
+			custom_qty_draft.value = ''
+			return
+		}
+
+		commitQtySelection(item_id, next_qty)
+	}
+	const toggleCustomQtyMenu = () => {
+		custom_qty_menu_open.value = !custom_qty_menu_open.value
 	}
 
 	return {
@@ -134,18 +193,30 @@ export const useCartPageItem = (caller : string) => {
 		items		: cart_service.items,
 		selected_ids: cart_service.selected_ids,
 		all_selected: cart_service.all_selected,
+		item_quantities: cart_service.item_quantities,
 
 		// 🔥 States
 		caller,
 		featured_quantities,
+		custom_qty_item_id,
+		custom_qty_draft,
+		custom_qty_dropdown_ref,
+		custom_qty_input_ref,
+		custom_qty_menu_open,
 
 		// 🔥 Methods
-		showQuantities,
+		mapQuantities,
 		setAllSelected,
 		deleteSelectedItems,
 		allowArtworkUpdate,
 		allowVariantUpdate,
-		getTemporaryOption,
+		updateQuantity,
+		openCustomQtyMode,
+		commitQtySelection,
+		handleQtyOptionSelect,
+		setCustomQtyDraft,
+		commitCustomQty,
+		toggleCustomQtyMenu,
 		formatImage			: cart_service.formatImage,
 		toggleSelection 	: cart_service.toggleSelection,
 		selectAllItem 		: cart_service.selectAllItem,
