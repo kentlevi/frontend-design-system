@@ -29,9 +29,9 @@ const {
 	allowVariantUpdate,
 	mapQuantities,
 	handleQtyOptionSelect,
-	bindCustomQtyInputRef,
 	setCustomQtyDraft,
 	commitCustomQty,
+	bindCustomQtyInputRef,
 	toggleCustomQtyMenu,
 } = useCartPageItem('cart-page-items')
 

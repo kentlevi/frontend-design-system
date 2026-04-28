@@ -64,21 +64,22 @@ export const useCartPageItem = (caller : string) => {
 	const custom_qty_input_ref = ref<HTMLInputElement | null>(null)
 	const custom_qty_menu_open = ref(false)
 
-	const default_custom_qty = {
-		label: translate('cart.cartPreview.editModal.customQuantity'),
-		value: -1
-	}
+	// const default_custom_qty = {
+	// 	label: translate('cart.cartPreview.editModal.customQuantity'),
+	// 	value: -1
+	// }
 
 
 	const mapQuantities = async (item : CartItem) => {
+		console.log('mapping quantities')
 		selected_item.value = item
-		featured_quantities.value = [
-			{
-				label: String(item.quantity),
-				value: item.quantity
-			},
-			default_custom_qty
-		]
+
+		// This replaces all 4 lines of your current if statement
+		const qty_list = cart_service.item_quantities.value?.[item.local_identity];
+
+		if ((qty_list?.length ?? 0) > 2)
+			return;
+
 
 		const prices = await getPricing(item.url_slug, item.local_identity, {
 			width		: Number(item.width),
@@ -188,6 +189,12 @@ export const useCartPageItem = (caller : string) => {
 		custom_qty_menu_open.value = !custom_qty_menu_open.value
 	}
 
+	const bindCustomQtyInputRef = (element: Element | { $el?: Element } | null) => {
+		custom_qty_input_ref.value = element instanceof HTMLInputElement
+			? element
+			: null
+	}
+
 	return {
 		// 🔥 Store states
 		items		: cart_service.items,
@@ -217,6 +224,7 @@ export const useCartPageItem = (caller : string) => {
 		setCustomQtyDraft,
 		commitCustomQty,
 		toggleCustomQtyMenu,
+		bindCustomQtyInputRef,
 		formatImage			: cart_service.formatImage,
 		toggleSelection 	: cart_service.toggleSelection,
 		selectAllItem 		: cart_service.selectAllItem,
