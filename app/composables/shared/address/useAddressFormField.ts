@@ -172,12 +172,8 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 
 	function getDynamicFieldOptions(field: AddressDynamicFields) {
 		if (field.input_type !== 'select') return field.options ?? []
-		if (!hasProvinceLabel(field)) return field.options ?? []
 
 		const current_options = field.options ?? []
-		const has_existing_default = current_options.some((option) => option.id === ('' as unknown as number))
-
-		if (has_existing_default) return current_options
 
 		return [createDefaultSelectOption(field), ...current_options]
 	}

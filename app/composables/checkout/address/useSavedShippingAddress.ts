@@ -4,11 +4,13 @@ import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutCont
 import { loadAddresses } from "~/services/user-address/user-address.service";
 import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
+import { useAddressFieldStore } from "~/stores/user-address";
 
 export function useSavedShippingAddress() {
 
 	/** Stores */
 	const checkout_store = useMainCheckOutStore()
+	const address_field_store = useAddressFieldStore()
 
 	/** Contexts */
 	const { shipping_address } = useAddressBookListCheckoutContext()
@@ -28,7 +30,11 @@ export function useSavedShippingAddress() {
 		assignAddressToForm('shipping')
 	}
 
-	onMounted(() => {
+	onMounted(async() => {
+		if (address_field_store.dynamic_address_fields.length === 0) {
+			await address_field_store.getDynamicFields()
+		}
+
 		initShippingAddress()
 	})
 
