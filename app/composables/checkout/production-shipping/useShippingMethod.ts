@@ -116,6 +116,7 @@ export function useShippingMethod() {
 	@return void
 	*/
 	const setSelectedShippingMethod = (key: string | null): void => {
+
 		if (!key) {
 			selected_shipping_key.value = ''
 			shipping_method_id.value = null
@@ -142,7 +143,14 @@ export function useShippingMethod() {
 		selected_shipping_key.value = ''
 		shipping_method_id.value = null
 		production_shipping_id.value = null
-		checkout_store.setShippingMethodId(null)
+
+		const default_method = active_shipping_methods.value[0]
+
+		if (!default_method) {
+			return
+		}
+
+		checkout_store.setShippingMethodId(default_method.shipping_method_id)
 	}
 
 	watch(

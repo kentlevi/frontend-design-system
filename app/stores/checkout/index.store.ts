@@ -49,7 +49,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const cleanCheckoutStatesOnSuccess = () => {
 		selected_payment_method.value = null
 		ship_to_another_address.value = false
-		selected_shipping_method_id.value = null
 		clearShippingAddressId()
 		clearBillingAddressId()
 		clearDropAddressId()
