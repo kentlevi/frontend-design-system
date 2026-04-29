@@ -64,14 +64,13 @@ export const useCartPageItem = (caller : string) => {
 	const custom_qty_input_ref = ref<HTMLInputElement | null>(null)
 	const custom_qty_menu_open = ref(false)
 
-	// const default_custom_qty = {
-	// 	label: translate('cart.cartPreview.editModal.customQuantity'),
-	// 	value: -1
-	// }
+	const default_custom_qty = {
+		label: translate('cart.cartPreview.editModal.customQuantity'),
+		value: -1
+	}
 
 
 	const mapQuantities = async (item : CartItem) => {
-		console.log('mapping quantities')
 		selected_item.value = item
 
 		// This replaces all 4 lines of your current if statement
@@ -123,15 +122,24 @@ export const useCartPageItem = (caller : string) => {
 		// Merge current and new
 		const combined = [{ label: String(current_quantity), value: current_quantity } , ...mapped_new ]
 
+		setAndSortQuantities(local_identity, current_quantity, combined as SelectOption[])
+	}
+
+	const setAndSortQuantities = (local_identity : string, new_quantity: number, mapped_new: SelectOption[]) => {
+		// Merge current and new
+		const combined = [{ label: String(new_quantity), value: new_quantity } , ...mapped_new ]
+
 		// Remove duplicates (by value) and Sort numerically
+
 		const final_list = combined
 			.filter((item, index, self) =>
-				index === self.findIndex((t) => t.value === item.value)
+				index === self.findIndex((t) => t.value === item.value) && item.value != -1
 			)
-			.sort((a, b) => a.value - b.value);
+			.sort((a, b) => Number(a.value) - Number(b.value));
+
+		final_list.push(default_custom_qty)
 
 		cart_service.setItemQuantities(local_identity, final_list)
-
 	}
 
 	const openCustomQtyMode = (local_identity: string) => {
@@ -142,6 +150,11 @@ export const useCartPageItem = (caller : string) => {
 	}
 
 	const commitQtySelection = (local_identity: string, next_qty: number) => {
+		const qty_list = cart_service.item_quantities.value?.[local_identity];
+
+		if ((qty_list?.length ?? 0) > 2)
+			setAndSortQuantities(local_identity, next_qty, qty_list as SelectOption[])
+
 		updateQuantity(local_identity, next_qty)
 		custom_qty_item_id.value = null
 		custom_qty_menu_open.value = false
@@ -159,7 +172,6 @@ export const useCartPageItem = (caller : string) => {
 	}
 
 	const updateQuantity = (local_identity: string, value : number) => {
-		console.log(local_identity, value)
 		const index = cart_service.items.value.findIndex(e => e.local_identity == local_identity)
 
 		if( index === -1 )

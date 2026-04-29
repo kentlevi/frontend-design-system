@@ -21,6 +21,7 @@ const {
 	getFeaturedData,
 	updateSize,
 	updateQuantity,
+	sendUpdateToServer,
 	closeModal: close_edit_modal,
 } = useEditItemHandler('cart-item-edit-modal');
 
@@ -154,7 +155,7 @@ function onCustomQtyInput(value: string) {
 	custom_qty.value = value.replace(/[^0-9]/g, '');
 }
 
-function saveChanges() {
+async function saveChanges() {
 	// if (!active_item.value) return;
 	// const final_width = size_key.value === 'custom' ? Number(custom_size_width.value) : Number(parsed_size_from_option.value.width);
 	// const final_height = size_key.value === 'custom' ? Number(custom_size_height.value) : Number(parsed_size_from_option.value.height);
@@ -163,7 +164,8 @@ function saveChanges() {
 	// updateItemSize(active_item.value.id, final_width, final_height);
 	// updateItemQty(active_item.value.id, final_qty);
 
-	closeModal();
+	await sendUpdateToServer()
+	// closeModal();
 }
 
 const closeModal = () => {
@@ -249,7 +251,7 @@ watch(
 							<div class="cart-item-edit-size-combo">
 								<input
 									ref="custom_width_input_ref"
-									v-model="display_width"
+									:value="display_width"
 									type="text"
 									inputmode="numeric"
 									pattern="[0-9]*"
@@ -260,7 +262,7 @@ watch(
 								>
 								<span class="cart-item-edit-multiply">x</span>
 								<input
-									v-model="display_height"
+									:value="display_height"
 									type="text"
 									inputmode="numeric"
 									pattern="[0-9]*"

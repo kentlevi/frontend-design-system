@@ -223,10 +223,6 @@ export const useCartStore = defineStore('cart', () => {
 
 	const setItemQuantities = ( local_identity: string, quantities : SelectOption[] ) => {
 		item_quantities.value[local_identity] = quantities;
-		item_quantities.value[local_identity]?.push({
-			label: 'Custom',
-			value: -1
-		})
 	}
 
 	return {
