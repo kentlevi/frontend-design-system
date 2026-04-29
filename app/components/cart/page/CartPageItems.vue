@@ -2,13 +2,13 @@
 import { useCartPageList } from '~/composables/cart/page/useCartPageList';
 import { useCartPageItem } from '~/composables/cart/useCartPageItem';
 import type { CartItem } from '~/types/cart/cart';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const {
 	custom_qty_item_id,
 	custom_qty_draft,
 	custom_qty_menu_open,
 	qty_select_options,
-	formatPrice,
 	bindCustomQtyDropdownRef,
 	bindCustomQtyInputRef,
 	handleQtyOptionSelect,

@@ -37,7 +37,7 @@ const {
 						<div class="checkout-summary-info">
 							<div class="checkout-summary-name">{{ item.product }}</div>
 							<div class="checkout-summary-meta">
-								{{ item.width }} x {{ item.height }} {{ item.quantity.toLocaleString() }}
+								{{ item.width }}x  {{ item.height }}mm {{ item.quantity.toLocaleString() }}개
 							</div>
 						</div>
 						<div class="checkout-summary-price">

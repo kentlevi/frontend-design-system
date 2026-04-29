@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useCartPageSummary } from '~/composables/cart/page/useCartPageSummary';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const { t } = useI18n();
 const {
 	selected_total,
 	selected_ids,
 	payment_options,
-	formatPrice,
 	goToCheckout,
 } = useCartPageSummary();
 </script>

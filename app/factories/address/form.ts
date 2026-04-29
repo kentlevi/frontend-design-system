@@ -6,6 +6,7 @@ export function addressFormDefaults<T extends AddressType>(
 ): AddressFormMap[T] {
 	/** Base defaults shared by all address forms */
 	const base_defaults: BaseAddressForm = {
+		id: null,
 		country_id: null,
 		label: 'home',
 		contact_name: '',
@@ -56,6 +57,7 @@ export function mapAddressToForm(
 
 	if (address.type === 'drop') {
 		return {
+			id: address.id ?? null,
 			type: 'drop',
 			country_id: address.country_id,
 			label: address.label,
@@ -91,6 +93,7 @@ export function mapAddressToForm(
 
 	if (address.type === 'shipping') {
 		return {
+			id: address.id ?? null,
 			type: 'shipping',
 			country_id: address.country_id,
 			label: address.label,
@@ -108,6 +111,7 @@ export function mapAddressToForm(
 	}
 
 	return {
+		id: address.id ?? null,
 		type: 'billing',
 		country_id: address.country_id,
 		label: address.label,

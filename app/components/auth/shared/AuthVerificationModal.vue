@@ -140,7 +140,7 @@ const formatted_error_parts = computed(() => {
 		:modal-class="modalClass"
 		@update:model-value="handleModalModelValueUpdate"
 	>
-		<div class="auth-verification-modal">
+		<template #overlay>
 			<UiLoadingOverlay
 				:visible="verifying"
 				:label="computed_submit_label"
@@ -148,7 +148,8 @@ const formatted_error_parts = computed(() => {
 				variant="modal"
 				position="absolute"
 			/>
-
+		</template>
+		<div class="auth-verification-modal">
 			<UiButton
 				v-if="showCloseButton"
 				variant="ghost"
@@ -443,7 +444,7 @@ const formatted_error_parts = computed(() => {
     }
 }
 
-:deep(.auth-verification-modal .ui-loading-overlay) {
+:deep(.ui-loading-overlay) {
     border-radius: 14px;
 }
 </style>

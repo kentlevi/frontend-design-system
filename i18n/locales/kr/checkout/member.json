@@ -1,5 +1,32 @@
 {
   "checkout": {
+    "invoice": {
+      "title": "청구서",
+      "close": "닫기",
+      "print": "인쇄",
+      "download": "청구서 다운로드",
+      "invoiceNumber": "청구서 번호: {invoiceNumber}",
+      "dateIssued": "발행일: {issuedDate}",
+      "billingDetails": "청구 정보:",
+      "billingName": "이름:",
+      "billingAddress": "청구지 주소:",
+      "billingCompany": "회사명:",
+      "editBillingInfo": "청구 정보 수정",
+      "totals": {
+        "subtotal": "소계:",
+        "shippingFee": "배송비: ({shippingLabel})",
+        "discounts": "할인:",
+        "total": "합계:"
+      },
+      "footerAddress": "대한민국 서울특별시 성동구 123-45, 04776",
+      "billingModal": {
+        "title": "청구 정보 수정",
+        "closeModal": "청구 정보 모달 닫기",
+        "cancel": "취소",
+        "save": "저장"
+      },
+      "billingToast": "청구 정보가 성공적으로 업데이트되었습니다!"
+    },
     "member": {
       "shippingDetails": "배송 정보",
       "viewShippingAddresses": "배송지 보기",

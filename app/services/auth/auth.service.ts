@@ -1,4 +1,5 @@
 import type {
+	CartTransferItem,
 	LoginPayload,
 	LoginResponse,
 	NonMemberLoginVerificationPayload,
@@ -7,6 +8,7 @@ import type {
 	SocialRedirectResponse,
 	SubmitNonMemberLoginVerificationPayload,
 } from '~/types/auth/auth'
+import type { CartItem } from '~/types/cart/cart'
 import type { ApiResponse } from '~/types/config/api'
 import {
 	checkoutNonMemberSubmitVerification,
@@ -19,6 +21,92 @@ import {
 	socialRedirect,
 } from '~/services/auth/api.service'
 import { useUsersStore } from '~/stores/users/users.store'
+import { useCartStore as useStaticCartStore } from '~/stores/cart/cart.store'
+import { useCartStore as useCoreCartStore } from '~/stores/core/cart/cart.store'
+
+function toNumberOrNull(value: unknown): number | null {
+	if (typeof value === 'number' && Number.isFinite(value)) return value
+	if (typeof value === 'string' && value.trim() !== '' && !Number.isNaN(Number(value))) {
+		return Number(value)
+	}
+	return null
+}
+
+function toNumberOrZero(value: unknown): number {
+	const numeric = toNumberOrNull(value)
+	return numeric ?? 0
+}
+
+function toNullableString(value: unknown): string | null {
+	if (typeof value !== 'string') return null
+	const trimmed = value.trim()
+	return trimmed === '' ? null : trimmed
+}
+
+function buildCartTransferItem(item: CartItem): CartTransferItem | null {
+	const product_config_mapping_id = toNumberOrNull(item.product_config_mapping_id)
+	const width = toNumberOrNull(item.width)
+	const height = toNumberOrNull(item.height)
+	const quantity = toNumberOrNull(item.quantity)
+	const local_identity = toNullableString(item.local_identity)
+
+	if (!product_config_mapping_id || !width || !height || !quantity) {
+		return null
+	}
+
+	return {
+		product_config_mapping_id,
+		color_id: toNumberOrNull(item.color_id),
+		font_id: toNumberOrNull(item.font_id),
+		width: toNumberOrZero(width),
+		height: toNumberOrZero(height),
+		quantity: toNumberOrZero(quantity),
+		lettering_text: toNullableString(item.lettering_text),
+		artwork_file: toNullableString(item.artwork_file),
+		artwork_file_name: toNullableString(item.artwork_file_name),
+		instruction: toNullableString(item.instruction),
+		local_identity,
+	}
+}
+
+function getTransferCartItems(): CartTransferItem[] {
+	const static_cart_store = useStaticCartStore()
+	const core_cart_store = useCoreCartStore()
+	const merged_items = [...static_cart_store.items, ...core_cart_store.items]
+
+	const unique_items = new Map<string, CartItem>()
+
+	merged_items.forEach((item) => {
+		const local_identity = toNullableString(item.local_identity)
+		const id_key = item.id ? `id:${item.id}` : null
+		const key = local_identity ? `local:${local_identity}` : id_key
+
+		if (!key || unique_items.has(key)) return
+		unique_items.set(key, item)
+	})
+
+	return Array.from(unique_items.values())
+		.map((item) => buildCartTransferItem(item))
+		.filter((item): item is CartTransferItem => Boolean(item))
+}
+
+export function withCartTransferPayload<
+	TPayload extends { cart_items?: CartTransferItem[] | null }
+>(payload: TPayload): TPayload {
+	if (payload.cart_items !== undefined) {
+		return payload
+	}
+
+	const cart_items = getTransferCartItems()
+	if (!cart_items.length) {
+		return payload
+	}
+
+	return {
+		...payload,
+		cart_items,
+	}
+}
 
 export const fetchAndStoreUser = async () => {
 	const user_store = useUsersStore()
@@ -77,7 +165,7 @@ export const loginMemberUser = async (
 	payload: LoginPayload
 ): Promise<LoginResponse> => {
 	try {
-		const response = await memberLogin(payload)
+		const response = await memberLogin(withCartTransferPayload(payload))
 
 		if (!response.success) {
 			return response
@@ -101,14 +189,17 @@ export const requestNonMemberLoginVerification = async (
 	options: { is_checkout?: boolean } = {}
 ): Promise<NonMemberLoginVerificationResponse> => {
 	try {
+		const payload_with_cart = withCartTransferPayload(payload)
+
 		if (options.is_checkout) {
 			return await sendCheckoutNonMemberLoginVerification({
-				email: payload.email,
-				is_resend: payload.is_resend ? true : false
+				email: payload_with_cart.email,
+				is_resend: payload_with_cart.is_resend ? true : false,
+				cart_items: payload_with_cart.cart_items,
 			})
 		}
 
-		return await sendNonMemberLoginVerification(payload)
+		return await sendNonMemberLoginVerification(payload_with_cart)
 	} catch (error) {
 		console.error(error)
 		return {
@@ -123,11 +214,13 @@ export const submitNonMemberLoginVerification = async (
 	options: { is_checkout?: boolean } = {}
 ): Promise<ApiResponse> => {
 	try {
+		const payload_with_cart = withCartTransferPayload(payload)
+
 		if (options.is_checkout) {
-			return await checkoutNonMemberSubmitVerification(payload)
+			return await checkoutNonMemberSubmitVerification(payload_with_cart)
 		}
 
-		return await nonMemberSubmitVerification(payload)
+		return await nonMemberSubmitVerification(payload_with_cart)
 	} catch (error) {
 		console.error(error)
 		return {
@@ -141,7 +234,7 @@ export const requestSocialLoginRedirect = async (
 	payload: SocialLoginPayload
 ): Promise<SocialRedirectResponse> => {
 	try {
-		return await socialRedirect(payload)
+		return await socialRedirect(withCartTransferPayload(payload))
 	} catch (error) {
 		console.error(error)
 		return {

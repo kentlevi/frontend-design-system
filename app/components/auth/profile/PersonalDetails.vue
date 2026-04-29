@@ -195,6 +195,10 @@ const {
 
 <style scoped lang="scss">
 .personal-details {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
 	.account-profile-label {
 		display: block;
 		font-size: var(--type-size-100);
