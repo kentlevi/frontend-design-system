@@ -40,7 +40,6 @@ export const useCartService = (caller : string) => {
 	const per_page = ref<number>(10)
 
 	const calculateCartItems = async () => {
-		console.log(caller)
 		if( user_store.is_authenticated ) {
 			const cart_numbers = await cart_api_service.requestCartNumbers()
 			if( !cart_numbers ) {
