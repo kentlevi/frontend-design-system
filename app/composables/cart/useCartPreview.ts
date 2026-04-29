@@ -16,7 +16,6 @@ export const useCartPreview = (caller: string) => {
 	})
 
 	const composePreview = async () => {
-		console.log(caller)
 		cart_service.requestItems()
 	}
 

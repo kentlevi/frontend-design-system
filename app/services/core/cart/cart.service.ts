@@ -56,7 +56,6 @@ export const useCartService = (caller : string) => {
 	}
 
 	const requestItems = async () => {
-		console.log(caller)
 		if( !is_authenticated.value )
 			return
 
