@@ -1,5 +1,32 @@
 {
   "checkout": {
+    "invoice": {
+      "title": "Invoice",
+      "close": "Close",
+      "print": "Print",
+      "download": "Download Invoice",
+      "invoiceNumber": "Invoice #: {invoiceNumber}",
+      "dateIssued": "Date Issued: {issuedDate}",
+      "billingDetails": "Billing Details:",
+      "billingName": "Name:",
+      "billingAddress": "Billing Address:",
+      "billingCompany": "Company:",
+      "editBillingInfo": "Edit Billing Info",
+      "totals": {
+        "subtotal": "Subtotal:",
+        "shippingFee": "Shipping Fee: ({shippingLabel})",
+        "discounts": "Discounts:",
+        "total": "Total:"
+      },
+      "footerAddress": "123-45, Seongdong-gu, Seoul, 04776 South Korea",
+      "billingModal": {
+        "title": "Update Billing Details",
+        "closeModal": "Close billing details modal",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "billingToast": "Billing details updated successfully!"
+    },
     "member": {
       "shippingDetails": "Shipping Details",
       "viewShippingAddresses": "View Shipping Address",
