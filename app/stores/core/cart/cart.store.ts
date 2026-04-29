@@ -1,5 +1,5 @@
 import { useUsersStore } from "~/stores/users/users.store";
-import type { CartItem } from "~/types/cart/cart";
+import type { CartItem, SelectOption } from "~/types/cart/cart";
 import { cartPaymentOptions } from '~/data/cart/page';
 
 export const useCartStore = defineStore('cart', () => {
@@ -197,7 +197,33 @@ export const useCartStore = defineStore('cart', () => {
 				...updates
 			} as CartItem
 		}
+	}
+
+	// This holds the tiers. Initially it only contains the current quantity.
+	const item_quantities = ref<Record<string, SelectOption[]>>({});
+
+	// 1. Initialize the map with only the current quantity
+	const initQuantityMap = () => {
+		items.value.forEach(item => {
+			if (item.local_identity && !item_quantities.value[item.local_identity]) {
+				// We wrap the current quantity in an array so the <select> works
+				item_quantities.value[item.local_identity] = [
+					{
+						label: String(item.quantity),
+						value: item.quantity
+					},
+					{
+						label: 'Custom',
+						value: -1
+					}
+				];
+			}
+		});
 	};
+
+	const setItemQuantities = ( local_identity: string, quantities : SelectOption[] ) => {
+		item_quantities.value[local_identity] = quantities;
+	}
 
 	return {
 		// 🔥 States
@@ -218,6 +244,7 @@ export const useCartStore = defineStore('cart', () => {
 		item_picking_artwork,
 		selected_real_ids,
 		selected_items,
+		item_quantities,
 
 		// 🔥 Methods
 		addNumber,
@@ -236,6 +263,8 @@ export const useCartStore = defineStore('cart', () => {
 		assignArtworkPicker,
 		unsetArtworkPicker,
 		updateItemInCart,
+		setItemQuantities,
+		initQuantityMap,
 	}
 }, {
 	persist: {

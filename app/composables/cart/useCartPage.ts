@@ -1,3 +1,4 @@
+import { useCartApiService } from "~/services/core/cart/api.service"
 import { useCartService } from "~/services/core/cart/cart.service"
 import { useUploadService } from "~/services/product/upload.service"
 import type { CartItem } from "~/types/cart/cart"
@@ -6,9 +7,11 @@ export const useCartPage = () => {
 
 	const cart_service = useCartService('cart-page')
 
+	const cart_api_service = useCartApiService('cart-page')
+
 	const upload_service = useUploadService()
 
-	const has_items = computed(() => cart_service.items.value )
+	const has_items = computed(() => Boolean(cart_service.items.value) )
 
 	const artwork_action_file_input_ref = ref<HTMLInputElement | null>(null)
 
@@ -47,8 +50,34 @@ export const useCartPage = () => {
 		}
 	}
 
+	const refreshing_item = ref<boolean>(false)
+
+	const refreshItems = async() => {
+
+		if( refreshing_item.value )
+			return
+
+		refreshing_item.value = true
+
+		try {
+			const cart_items = await cart_api_service.requestCartItems()
+			if( !cart_items )
+				return
+
+			if( cart_items.length )
+				cart_service.populateItems(cart_items)
+			else
+				cart_service.emptyCart()
+		} catch(error) {
+			console.error(error)
+		} finally {
+			refreshing_item.value = false
+		}
+	}
+
 	return {
 		// 🔥 States
+		refreshing_item,
 		has_items,
 		artwork_action_file_input_ref,
 		open_artwork_modal,
@@ -57,6 +86,6 @@ export const useCartPage = () => {
 		// 🔥 Methods
 		openArtworkPicker,
 		onArtworkActionSelected,
-		refreshItems : cart_service.requestItems,
+		refreshItems,
 	}
 }

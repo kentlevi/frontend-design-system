@@ -37,6 +37,7 @@ export const useCartService = (caller : string) => {
 	const per_page = ref<number>(10)
 
 	const calculateCartItems = async () => {
+		console.log(caller)
 		if( user_store.is_authenticated ) {
 			const cart_numbers = await cart_api_service.requestCartNumbers()
 			if( !cart_numbers ) {
@@ -53,6 +54,7 @@ export const useCartService = (caller : string) => {
 	}
 
 	const requestItems = async () => {
+		console.log(caller)
 		if( !is_authenticated.value )
 			return
 
@@ -95,6 +97,8 @@ export const useCartService = (caller : string) => {
 
 		// Default check select all after population
 		cart_store.selected_ids = cart_store.items.map((item) => item.local_identity);
+
+		cart_store.initQuantityMap()
 	}
 
 	const generateLocalIdentity = (): string => {
@@ -325,6 +329,8 @@ export const useCartService = (caller : string) => {
 				return
 			}
 
+			updating_artwork.value = true
+
 			// ⚠️ Uploading file
 			const uploading_request = await cart_api_service.sendToS3(file)
 
@@ -345,7 +351,6 @@ export const useCartService = (caller : string) => {
 			// ✅ Update the item in our server
 			cart_api_service.requestArtworkUpdate(cart_store.item_picking_artwork.id, file_name, uploading_request.filename.value, instruction)
 
-			updating_artwork.value = true
 			response.value.success = true
 		}
 		// ❌ Handles thrown error with proper response
@@ -369,6 +374,7 @@ export const useCartService = (caller : string) => {
 		// 🔥 Local States
 		caller,
 		active_lettering_editor: attributes_store.active_lettering_editor,
+		updating_artwork,
 
 		// 🔥 Methods
 		requestItems,
@@ -379,6 +385,8 @@ export const useCartService = (caller : string) => {
 		toggleSelection,
 		selectAllItem,
 		calculateCartItems,
+		populateItems,
+		updateArtwork,
 		setDeletableItems	: cart_store.setDeletableItems,
 		emptyDeletableItems	: cart_store.emptyDeletableItems,
 		removeItems			: cart_store.removeItems,
@@ -386,6 +394,8 @@ export const useCartService = (caller : string) => {
 		unsetEditableItem	: cart_store.unsetEditableItem,
 		assignArtworkPicker	: cart_store.assignArtworkPicker,
 		unsetArtworkPicker	: cart_store.unsetArtworkPicker,
-		updateArtwork,
+		emptyCart			: cart_store.emptyCart,
+		setItemQuantities 	: cart_store.setItemQuantities,
+		updateItemInCart 	: cart_store.updateItemInCart,
 	}
 }
