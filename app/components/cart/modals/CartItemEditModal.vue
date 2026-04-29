@@ -248,7 +248,7 @@ watch(
 								<input
 									ref="custom_width_input_ref"
 									:value="display_width"
-									type="text"	
+									type="text"
 									inputmode="numeric"
 									pattern="[0-9]*"
 									placeholder="W"

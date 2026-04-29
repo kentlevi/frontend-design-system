@@ -22,10 +22,9 @@ export const useCartDeletion = (caller: string) => {
 				return
 			}
 
-			const deletion_request = await cart_api_service.requestDeletion(cart_service.deletable_ids.value)
+			await cart_api_service.requestDeletion(cart_service.deletable_ids.value)
 
-			if( deletion_request )
-				completingDeletion()
+			completingDeletion()
 		} catch(error ) {
 			console.error(error)
 		} finally {
