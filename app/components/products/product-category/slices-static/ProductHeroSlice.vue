@@ -27,14 +27,14 @@ const {
 const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
-const product_hero_media_ids = new Set([
-	'clear-sticker',
-	'die-cut-sticker',
-	'hologram-sticker',
-	'kiss-cut-sticker',
-	'sticker-sheet',
-	'vinyl-lettering',
-]);
+const product_hero_media_map: Record<string, { folder: string, file: string }> = {
+	'clear-sticker': { folder: 'clear-sticker', file: 'clear-sticker' },
+	'die-cut-sticker': { folder: 'die-cut-sticker', file: 'die-cut-sticker' },
+	'kiss-cut-sticker': { folder: 'kiss-cut-sticker', file: 'kiss-cut-sticker' },
+	'sticker-sheet': { folder: 'sticker-sheet', file: 'sticker-sheet' },
+	'transfer-sticker': { folder: 'transfer-sticker', file: 'transfer-sticker' },
+	'vinyl-lettering': { folder: 'vinyl-lettering', file: 'vinyl-lettering' },
+};
 
 const displayed_product_title = computed(() => {
 	// If it's the specialized lettering editor, show the specific title
@@ -50,9 +50,9 @@ const displayed_product_blurb = computed(() =>
 
 const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
-const hero_media_product_id = computed(() => {
+const hero_media_asset = computed(() => {
 	const selected_id = selected_product.value?.id;
-	return selected_id && product_hero_media_ids.has(selected_id) ? selected_id : null;
+	return selected_id ? product_hero_media_map[selected_id] ?? null : null;
 });
 const demo_hero_video_url = computed(() =>
 	hero_media_asset.value

@@ -33,7 +33,7 @@ const {
 		:modal-class="modal_class"
 		@update:model-value="setModalOpen"
 	>
-		<div class="auth-verification-modal">
+		<template #overlay>
 			<UiLoadingOverlay
 				:visible="is_verifying"
 				:label="translate('auth.verification.verifying')"
@@ -41,7 +41,8 @@ const {
 				variant="modal"
 				position="absolute"
 			/>
-
+		</template>
+		<div class="auth-verification-modal">
 			<UiButton
 				variant="ghost"
 				tone="neutral"
@@ -352,7 +353,7 @@ const {
     }
 }
 
-:deep(.auth-verification-modal .ui-loading-overlay) {
+:deep(.ui-loading-overlay) {
     border-radius: 14px;
 }
 </style>

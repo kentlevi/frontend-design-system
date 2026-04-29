@@ -38,6 +38,11 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 	'square-sticker': { folder: 'square-stickers', file: 'square-sticker' },
 	'oval-sticker': { folder: 'oval-stickers', file: 'oval-sticker' },
 	'rounded-sticker': { folder: 'rounded-square-stickers', file: 'rounded-square-sticker' },
+	'clear-sticker': { folder: 'clear-sticker', file: 'clear-sticker' },
+	'kiss-cut-sticker': { folder: 'kiss-cut-sticker', file: 'kiss-cut-sticker' },
+	'sticker-sheet': { folder: 'sticker-sheet', file: 'sticker-sheet' },
+	'transfer-sticker': { folder: 'transfer-sticker', file: 'transfer-sticker' },
+	'vinyl-lettering': { folder: 'vinyl-lettering', file: 'vinyl-lettering' },
 	'circle-roll': { folder: 'round-roll-sticker', file: 'round-roll-sticker' },
 	'rounded-roll': { folder: 'rounded-roll-sticker', file: 'rounded-roll-sticker' },
 };

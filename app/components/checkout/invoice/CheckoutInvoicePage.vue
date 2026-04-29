@@ -15,7 +15,6 @@ const { withCountry } = useCountry();
 const {
 	t,
 	selected_checkout_items,
-	selected_shipping_address,
 	selected_shipping_method,
 	order_subtotal,
 	order_shipping_fee,
@@ -24,6 +23,16 @@ const {
 	formatPrice,
 	sizeDimOnly,
 } = useCheckoutMember();
+
+const fallback_billing_details: BillingDetails = {
+	fullName: 'Joy Love',
+	company: 'Summit Inc.',
+	address1: '176-6, Yusan-ri, Gusan-myeon',
+	address2: '',
+	province: 'incheon',
+	city: 'Gaseong-si',
+	postalCode: '01000',
+};
 
 const billing_modal_open = ref(false);
 const billing_toast_visible = ref(false);
@@ -37,13 +46,7 @@ const issued_date = computed(() =>
 );
 
 const billing_details = reactive<BillingDetails>({
-	fullName: selected_shipping_address.value?.recipient || 'Joy Love',
-	company: selected_shipping_address.value?.company || 'Summit Inc.',
-	address1: selected_shipping_address.value?.line1 || '176-6, Yusan-ri, Gusan-myeon',
-	address2: '',
-	province: 'incheon',
-	city: 'Gaseong-si',
-	postalCode: '01000',
+	...fallback_billing_details,
 });
 
 const shipping_method_name = computed(() => {
