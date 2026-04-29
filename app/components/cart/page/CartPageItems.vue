@@ -6,7 +6,6 @@ import { formatPrice } from '~/utils/currency/formatPrice';
 
 const {
 	qty_select_options,
-	formatPrice,
 	preventNonDigitInput,
 } = useCartPageList();
 

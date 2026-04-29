@@ -17,6 +17,7 @@ const {
 	quantity : qty,
 	custom_quantity_ref : custom_qty_input_ref,
 	custom_quantity : custom_qty,
+	updating_item,
 	formatImage,
 	getFeaturedData,
 	updateSize,
@@ -156,16 +157,11 @@ function onCustomQtyInput(value: string) {
 }
 
 async function saveChanges() {
-	// if (!active_item.value) return;
-	// const final_width = size_key.value === 'custom' ? Number(custom_size_width.value) : Number(parsed_size_from_option.value.width);
-	// const final_height = size_key.value === 'custom' ? Number(custom_size_height.value) : Number(parsed_size_from_option.value.height);
-	// const final_qty = qty.value === -1 ? Number(custom_qty.value) : qty.value;
+	if (!active_item.value) return;
 
-	// updateItemSize(active_item.value.id, final_width, final_height);
-	// updateItemQty(active_item.value.id, final_qty);
-
-	await sendUpdateToServer()
-	// closeModal();
+	const sending_update = await sendUpdateToServer()
+	if( sending_update )
+		closeModal();
 }
 
 const closeModal = () => {
@@ -252,7 +248,7 @@ watch(
 								<input
 									ref="custom_width_input_ref"
 									:value="display_width"
-									type="text"
+									type="text"	
 									inputmode="numeric"
 									pattern="[0-9]*"
 									placeholder="W"
@@ -388,7 +384,7 @@ watch(
 					variant="filled"
 					tone="neutral"
 					class="cart-item-edit-update"
-					:disabled="is_update_disabled"
+					:disabled="is_update_disabled || updating_item"
 					@click="saveChanges"
 				>
 					{{ t('cart.cartPreview.editModal.update') }}

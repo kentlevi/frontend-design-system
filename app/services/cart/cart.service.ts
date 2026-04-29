@@ -141,30 +141,29 @@ export const useCartService = (caller: string = 'unknown') => {
 		}
 	}
 
-	const getCartItems = async (first_load : boolean = false) => {
-		return
+	const getCartItems = async () => {
 		cart_store.loading = true;
 		try {
 			// calculate the numbers of cart items everytime request new data from database
-			calculateCartItems()
+			// calculateCartItems()
 
-			if( !cart_store.is_authenticated ) {
-				if (first_load && cart_store.items.length === 0 && !cart_store.has_initialized_demo) {
-					populateItems(createDemoCartItems())
-					updateTotalsFromState()
-				}
-				cart_store.has_initialized_demo = true
-				return
-			}
+			// if( !cart_store.is_authenticated ) {
+			// 	if (first_load && cart_store.items.length === 0 && !cart_store.has_initialized_demo) {
+			// 		populateItems(createDemoCartItems())
+			// 		updateTotalsFromState()
+			// 	}
+			// 	cart_store.has_initialized_demo = true
+			// 	return
+			// }
 
-			const cart_items = await requestCartItems(page.value, per_page.value)
-			if( !cart_items )
-				return
+			// const cart_items = await requestCartItems(page.value, per_page.value)
+			// if( !cart_items )
+			// 	return
 
-			if( cart_items.length )
-				populateItems(cart_items)
-			else if( first_load && !cart_items.length && cart_store.number_of_items == 0 )
-				empty()
+			// if( cart_items.length )
+			// 	populateItems(cart_items)
+			// else if( first_load && !cart_items.length && cart_store.number_of_items == 0 )
+			// 	empty()
 		} finally {
 			cart_store.loading = false;
 		}

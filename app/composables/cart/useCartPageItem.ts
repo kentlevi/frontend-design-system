@@ -172,13 +172,17 @@ export const useCartPageItem = (caller : string) => {
 	}
 
 	const updateQuantity = (local_identity: string, value : number) => {
-		const index = cart_service.items.value.findIndex(e => e.local_identity == local_identity)
+		const item = cart_service.items.value.find(e => e.local_identity == local_identity)
 
-		if( index === -1 )
+		if( !item )
 			return
 
-		cart_service.updateItemInCart(local_identity, { quantity: value })
-		// Call API update here
+		// Updating local state and server data
+		cart_service.updateItem(item.local_identity, {
+			quantity: value,
+			width: item.width,
+			height: item.height,
+		})
 	}
 
 
