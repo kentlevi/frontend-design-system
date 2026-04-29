@@ -22,7 +22,7 @@ const config = useRuntimeConfig()
 const {
 	selected_file,
 	selected_file_preview,
-	uploading,
+	updating_artwork,
 	setArtwork,
 	clearArtworkChanges,
 	submitArtworkChanges,
@@ -79,8 +79,10 @@ watch(
 );
 
 function closeModal() {
-	if( uploading.value )
+	if( updating_artwork.value ) {
+		console.warn('Updating artwork is in-progress...')
 		return
+	}
 
 	clearArtworkChanges()
 	emit('update:modelValue', false);
@@ -122,12 +124,12 @@ const submitChanges = async () => {
 		return
 	}
 
-	if( uploading.value )
+	if( updating_artwork.value ) {
+		console.warn('Updating artwork is in-progress...')
 		return
+	}
 
-	uploading.value = true
 	const process = await submitArtworkChanges(selected_file.value.name, selected_file.value, local_special_instructions.value)
-	uploading.value = false
 
 	if( process )
 		closeModal()

@@ -100,3 +100,10 @@ export interface CartRow {
 		image: string;
 	};
 }
+
+export interface SelectOption {
+	label: string
+	value: string | number
+	description?: string
+	style?: Record<string, string | number>
+};

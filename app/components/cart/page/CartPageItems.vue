@@ -5,16 +5,8 @@ import type { CartItem } from '~/types/cart/cart';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
 const {
-	custom_qty_item_id,
-	custom_qty_draft,
-	custom_qty_menu_open,
 	qty_select_options,
-	bindCustomQtyDropdownRef,
-	bindCustomQtyInputRef,
-	handleQtyOptionSelect,
-	commitCustomQty,
-	toggleCustomQtyMenu,
-	setCustomQtyDraft,
+	formatPrice,
 	preventNonDigitInput,
 } = useCartPageList();
 
@@ -24,7 +16,10 @@ const {
 	items,
 	selected_ids,
 	all_selected,
-
+	item_quantities,
+	custom_qty_item_id,
+	custom_qty_draft,
+	custom_qty_menu_open,
 	// 🔥 Methods
 	formatImage,
 	deleteSelectedItems,
@@ -33,6 +28,12 @@ const {
 	assignEditableItem,
 	allowArtworkUpdate,
 	allowVariantUpdate,
+	mapQuantities,
+	handleQtyOptionSelect,
+	setCustomQtyDraft,
+	commitCustomQty,
+	bindCustomQtyInputRef,
+	toggleCustomQtyMenu,
 } = useCartPageItem('cart-page-items')
 
 const emit = defineEmits<{
@@ -84,6 +85,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 			data-testid="cart-page-row"
 		>
 			<UiCheckbox
+				v-if="items && items.length && selected_ids && row.local_identity"
 				class="cart-check-row cart-check-row--item"
 				:model-value="selected_ids.includes(row.local_identity)"
 				box-class="cart-check-row-box"
@@ -98,7 +100,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 							class="cart-item-thumb"
 							:class="{ 'cart-item-thumb--interactive': Boolean(row.artwork_file) }"
 							:disabled="!row.artwork_file"
-							@click="row.artwork_file ? emit('openItemDetails', row.local_identity) : undefined"
+							@click="Boolean(row.artwork_file) ? emit('openItemDetails', row.local_identity) : undefined"
 						>
 							<img
 								:src="formatImage(row)"
@@ -106,7 +108,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 								class="cart-item-thumb-image"
 							>
 							<span
-								v-if="row.artwork_file"
+								v-if="Boolean(row.artwork_file)"
 								class="cart-item-thumb-overlay"
 								aria-hidden="true"
 							>
@@ -128,21 +130,24 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 					</div>
 				</div>
 
-				<div class="cart-qty-wrap">
+				<div class="cart-qty-wrap" @click="mapQuantities(row)">
 					<UiSelect
-						v-if="custom_qty_item_id !== row.id"
+						v-if="custom_qty_item_id !== row.local_identity"
 						class="cart-qty-select-control"
 						size="40"
 						:model-value="row.quantity"
-						:options="[...qty_select_options, { label: 'Custom', value: -1 }]"
+						:options="item_quantities[row.local_identity]"
 						trigger-class="cart-qty-select-trigger"
 						menu-class="cart-qty-menu"
 						:pin-last-option="true"
 						@update:model-value="handleQtyOptionSelect(row.local_identity, $event)"
 					/>
+					<!--
+					@update:model-value="handleQtyOptionSelect(row.local_identity, $event)"
+					@update:model-value="updateQuantity(row.local_identity, $event as number)"
+					-->
 					<div
 						v-else
-						:ref="bindCustomQtyDropdownRef"
 						class="cart-qty-select-shell ui-select"
 						:data-open="custom_qty_menu_open || null"
 					>

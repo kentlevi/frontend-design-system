@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import { useCartPreview } from '~/composables/cart/useCartPreview';
-import { formatPrice } from '~/utils/currency/formatPrice';
-
+import { formattedPrice } from '~/utils/currency';
 const {
 	redirecting_to_cart,
 	goToCart,
@@ -21,7 +20,7 @@ const {
 		<div class="cart-preview-summary" data-testid="product-category-cart-summary">
 			<p class="cart-preview-total" data-testid="product-category-cart-total-row">
 				<span class="cart-preview-label">{{ t('cart.cartPreview.total') }}</span>
-				<strong class="cart-preview-value">{{ formatPrice(grand_total) }}</strong>
+				<strong class="cart-preview-value">{{ formattedPrice(grand_total) }}</strong>
 			</p>
 			<div class="cart-preview-note-row" data-testid="product-category-cart-note-row">
 				<p class="cart-preview-note-label">{{ t('cart.cartPreview.noteLabel') }}</p>
