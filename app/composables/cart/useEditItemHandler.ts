@@ -1,4 +1,3 @@
-import { useCartApiService } from "~/services/core/cart/api.service";
 import { useCartService } from "~/services/core/cart/cart.service"
 import { useQuoteApiService } from "~/services/core/quote/api.service";
 import { useUploadService } from '~/services/product/upload.service';
@@ -10,8 +9,6 @@ export const useEditItemHandler = (caller : string) => {
 	const { t : translate } = useI18n();
 
 	const cart_service = useCartService('cart-edit-item-handler')
-
-	const cart_api_service = useCartApiService('cart-edit-item-handler')
 
 	const upload_service = useUploadService()
 
@@ -248,6 +245,7 @@ export const useEditItemHandler = (caller : string) => {
 		}
 	}
 
+
 	/**
 	 * Updating local state and sending the update to our server to update the database
 	 */
@@ -274,44 +272,16 @@ export const useEditItemHandler = (caller : string) => {
 		}
 
 		const item = active_editable_item.value
-
 		if( !item )
 			return
 
-		// Check for pricing
-		const pricing = await quote_api_service.getFeaturedPricing(item.url_slug, {
-			width		: Number(w.value),
-			height		: Number(h.value),
-			color_id	: item.color_id ? Number(item.color_id) : undefined,
-			font_id		: item.font_id ? Number(item.font_id) : undefined,
+		const process = await cart_service.updateItem(item.local_identity, {
+			width		: w.value,
+			height		: h.value,
 			quantity 	: q.value
 		})
-		if( !pricing )
-			return
 
-		if( !pricing.prices || !pricing.prices.length ) {
-			console.warn('No pricing available.')
-			return
-		}
-		const cost = pricing.prices[0]?.price
-
-		// Updating local state
-		await cart_service.updateItemInCart(item?.local_identity, {
-			width: w.value,
-			height: h.value,
-			quantity: q.value,
-			cost: Number(cost)
-		})
-
-		// If the owner of the cart is already registered in our database
-		// Need to send the update to our server
-		if( item.id ) {
-			const update_request = await cart_api_service.requestItemUpdate(Number(item.id), w.value, h.value, q.value)
-
-			return update_request
-		}
-
-		return true
+		return process
 	}
 
 
@@ -345,6 +315,7 @@ export const useEditItemHandler = (caller : string) => {
 		quantity,
 		custom_quantity_ref,
 		custom_quantity,
+		updating_item : cart_service.updating_item,
 		open_edit_modal : open_edit_modal,
 		updating_artwork : cart_service.updating_artwork,
 
