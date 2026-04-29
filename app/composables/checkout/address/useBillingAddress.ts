@@ -47,7 +47,9 @@ export function useBillingAddress() {
 	}
 
 	function setBillingAsShipping() {
-		Object.assign(billing_form.value, shipping_form.value, {
+		const { id: _id, ...shippingWithoutId } = shipping_form.value
+
+		Object.assign(billing_form.value, shippingWithoutId, {
 			type: 'billing'
 		})
 	}
