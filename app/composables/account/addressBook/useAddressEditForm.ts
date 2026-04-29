@@ -74,6 +74,7 @@ export function useAddressEditForm(options: UseAddressEditFormOptions) {
 						...options.form_state.drop,
 						country_id: editing_address.country_id,
 						type: 'drop',
+						id: editing_address.id,
 					})
 				}
 
