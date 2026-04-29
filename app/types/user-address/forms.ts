@@ -2,6 +2,7 @@ import type { AddressLabel } from "./address"
 
 /** Shared fields for all address forms */
 export interface BaseAddressForm {
+	id: number | null
 	country_id: number | null
 	label: AddressLabel
 	contact_name: string
