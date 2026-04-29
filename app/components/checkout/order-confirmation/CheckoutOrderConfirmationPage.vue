@@ -44,6 +44,7 @@ watch(order_id, (new_id, old_id) => {
 			/>
 			<CheckoutOrderConfirmationNote
 				:prefix="t('checkout.confirmation.notePrefix')"
+				:middle="t('checkout.confirmation.noteMiddle')"
 				:suffix="t('checkout.confirmation.noteSuffix')"
 			/>
 			<CheckoutOrderConfirmationDelivery

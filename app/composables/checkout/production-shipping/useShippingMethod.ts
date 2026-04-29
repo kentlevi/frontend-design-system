@@ -7,6 +7,7 @@ import { useUsersStore } from '~/stores/users/users.store'
 import type { AvailableShippingMethod } from '~/types/production-shipping/production-shipping'
 import type { ShippingMethodItem } from '~/types/shipping/shipping'
 import { fetchShippingMethodsService } from '~/services/production-shipping/production-shipping.service';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const selected_shipping_key = ref<string>('')
 const shipping_method_id = ref<number | null>(null)
@@ -72,7 +73,7 @@ export function useShippingMethod() {
 				name: item.shipping_method_name,
 				date: formatted_date_range,
 				longer_date_message: `${translate('checkout.shipping.longer_date_message')} ${formatted_date_range}`,
-				price: item.shipping_price === 0 ? 'Free' : `$${item.shipping_price}`,
+				price: item.shipping_price === 0 ? 'Free' : `${formatPrice(item.shipping_price)}`,
 				icon: `/icons/custom/checkout/${item.shipping_method_code}-shipping.svg`,
 				shipping_method_id: item.shipping_method_id,
 				production_shipping_id: item.production_shipping_id,
@@ -108,6 +109,7 @@ export function useShippingMethod() {
 		}
 
 		setSelectedShippingMethod(default_method.key)
+		checkout_store.setShippingMethodId(default_method.shipping_method_id)
 	}
 
 	/* @desc set the current selected shipping method and its shipping ids
@@ -115,6 +117,7 @@ export function useShippingMethod() {
 	@return void
 	*/
 	const setSelectedShippingMethod = (key: string | null): void => {
+
 		if (!key) {
 			selected_shipping_key.value = ''
 			shipping_method_id.value = null
@@ -141,7 +144,14 @@ export function useShippingMethod() {
 		selected_shipping_key.value = ''
 		shipping_method_id.value = null
 		production_shipping_id.value = null
-		checkout_store.setShippingMethodId(null)
+
+		const default_method = active_shipping_methods.value[0]
+
+		if (!default_method) {
+			return
+		}
+
+		checkout_store.setShippingMethodId(default_method.shipping_method_id)
 	}
 
 	watch(

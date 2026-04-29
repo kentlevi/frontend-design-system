@@ -34,6 +34,7 @@ const is_mounted = ref<boolean>(false)
 const {
 	selected_total_cost,
 	total_cost,
+	checkout_ready,
 	submitCheckout,
 } = useCheckoutFlow();
 const { listenPaymentResult } = useTossPayment();
@@ -154,7 +155,7 @@ onBeforeUnmount(() => {
 			tone="neutral"
 			size="lg"
 			class="checkout-summary-submit"
-			:disabled="false"
+			:disabled="checkout_ready"
 			@click="submitCheckout"
 		>
 			{{ props.completeLabel }}

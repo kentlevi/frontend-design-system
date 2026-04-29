@@ -19,6 +19,7 @@ export const useCheckoutFlow = () => {
 	const { state } = storeToRefs(useUsersStore())
 	const {
 		guest_contact_state,
+		checkout_ready,
 		selected_shipping_method_id,
 		selected_payment_method,
 	} = storeToRefs(useMainCheckOutStore())
@@ -126,6 +127,7 @@ export const useCheckoutFlow = () => {
 	return {
 		selected_total_cost,
 		total_cost,
+		checkout_ready,
 		submitCheckout
 	}
 }

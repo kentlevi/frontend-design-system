@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
 import { useCartPreview } from '~/composables/cart/useCartPreview';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 const {
-	formatPrice,
 	redirecting_to_cart,
 	goToCart,
 	goToCheckout,

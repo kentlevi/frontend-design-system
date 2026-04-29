@@ -1,15 +1,16 @@
 <template>
 	<p class="checkout-confirmation-note">
 		{{ props.prefix }}
-		<a href="tel:+6531582800">+65 3158 2800</a> or email at
-		<a href="mailto:info@mustickers.com">info@mustickers.com</a>.
-		{{ props.suffix }}
+		<a href="tel:+6531582800">+65 3158 2800</a>
+		{{ ` ${props.middle} ` }}
+		<a href="mailto:info@mustickers.com">info@mustickers.com</a>{{ props.suffix }}
 	</p>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
 	prefix: string;
+	middle: string;
 	suffix: string;
 }>();
 </script>

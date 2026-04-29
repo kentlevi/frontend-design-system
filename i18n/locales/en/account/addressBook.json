@@ -90,7 +90,7 @@
       "selectNewDefaultDescriptionShipping": "Your default shipping address has been removed. Please select a new one now, or update it later.",
       "selectNewDefaultDescriptionBilling": "Your default billing address has been deleted. Please select a new default address now, or you can choose one later.",
       "selectNewDefaultDescriptionDrop": "Your default drop shipping address has been deleted. Please select a new default address now, or you can choose one later.",
-      "skipAndSelectLater": "Skip & Select",
+      "skipAndSelectLater": "Skip & Select Later",
       "defaultBadgeShipping": "Default Shipping",
       "defaultBadgeBilling": "Default Billing",
       "defaultBadgeDrop": "Default Drop Shipping",
