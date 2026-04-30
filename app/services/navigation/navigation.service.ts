@@ -1,21 +1,26 @@
-import type { CategoriesResponse, ProductsResponse } from '~/types/navigation/navgiation'
+import { useNavigationStore } from "~/stores/navigation/navigation.store"
+import { fetchCategories, fetchProducts } from "./api.service"
 
-/**
- * Fetch authenticated user
- */
-export async function getProductCategories(): Promise<CategoriesResponse> {
-	const { $api } = useNuxtApp()
+export const getAndStoreCategories = async () => {
+    const response = await fetchCategories()
 
-	return await $api.get('/navigation/categories')
+    if (!response.success) {
+        return response
+    }
+
+    useNavigationStore().setCategories(response.data ?? [])
+
+    return response
 }
 
-export async function getProductsByCategory(url_slug: string, clear_cache: boolean = false): Promise<ProductsResponse> {
-	const { $api } = useNuxtApp()
-	const params = clear_cache
-		? { 'clear-cache': 'true' }
-		: undefined
+export const getAndStoreProducts = async (url_slug: string, clear_cache: boolean = false) => {
+    const response = await fetchProducts(url_slug, clear_cache)
 
-	return await $api.get(`/navigation/products/${url_slug}`, {
-		params
-	})
+    if (!response.success) {
+        return response
+    }
+
+    useNavigationStore().setProducts(url_slug, response.data ?? [])
+
+    return response
 }

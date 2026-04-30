@@ -6,7 +6,7 @@ import type { HomeProductType } from '~/types/products/homeTypes';
 // but for now we follow the user's request to keep them synced.
 export const homeProductTypes: HomeProductType[] = featuredProducts.map((item) => ({
 	key: item.key,
-	productId: item.id,
+	productId: Number(item.id),
 	image: item.image,
 	to: `/${item.category}/${item.id}`,
 }));

@@ -1,7 +1,7 @@
 export type ProductCategoryKey = 'stickers' | 'roll-stickers' | 'sheet-stickers' | 'vinyl-lettering';
 
 export type ProductItem = {
-	id: string;
+	id: number;
 	name: string;
 	icon: string;
 	image: string;

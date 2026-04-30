@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 import type { Categories, Category, Product } from '~/types/navigation/navgiation'
-
 /**
  * Initial categories state factory
  */
@@ -13,17 +12,21 @@ function initialCategoriesState(): Categories {
 }
 
 export const useNavigationStore = defineStore('navigation', () => {
-
 	/* --------------------------------------------------------------------------
      * State
      * -------------------------------------------------------------------------- */
 
 	const category_state = ref<Categories>(initialCategoriesState())
 	const product_state = ref<Record<string, Product[]>>({})
+	const selected_product_id = ref<number | null>(null)
 
 	/* --------------------------------------------------------------------------
-     * Actions
+     * Setters
      * -------------------------------------------------------------------------- */
+
+	function setSelectedProductId(id: number) {
+		selected_product_id.value = id
+	}
 
 	function setCategories(categories: Category[]) {
 		category_state.value.categories = categories
@@ -44,7 +47,9 @@ export const useNavigationStore = defineStore('navigation', () => {
 	return {
 		category_state,
 		product_state,
+		selected_product_id,
 
+		setSelectedProductId,
 		setCategories,
 		setProducts,
 

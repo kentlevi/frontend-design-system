@@ -67,7 +67,7 @@ export function generateProductCartItemId(productId: string) {
 }
 
 export function getProductSlugByCategory(
-	productId: string,
+	productId: number,
 	category: ProductCategoryKey
 ) {
 	if (category === 'stickers') {
@@ -96,7 +96,7 @@ export function getProductIdFromSlug(
 	return null;
 }
 
-export function findProductById(productId: string) {
+export function findProductById(productId: number) {
 	for (const category of Object.values(productCatalog)) {
 		const product = category.products.find((item) => item.id === productId);
 		if (product) return product;
@@ -105,7 +105,7 @@ export function findProductById(productId: string) {
 	return null;
 }
 
-export function getFeaturedProducts(featuredIds: string[], activeId: string | null) {
+export function getFeaturedProducts(featuredIds: number[], activeId: number | null) {
 	return featuredIds
 		.map((productId) => findProductById(productId))
 		.filter((item): item is ProductItem => Boolean(item))
