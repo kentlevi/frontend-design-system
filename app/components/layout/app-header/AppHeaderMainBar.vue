@@ -13,7 +13,6 @@ const {
 	simple,
 	nav_links,
 	isNavLinkActive,
-	selected_locale,
 	header_loading,
 	header_account_skeleton_count,
 	is_mock_logged_in,
@@ -24,7 +23,6 @@ const {
 	account_links,
 	cart_badge_count,
 	setAccountMenuRef,
-	openLocaleModal,
 	openSearchModal,
 	openCartPreview,
 	prefetchHeaderOverlayModules,
@@ -92,7 +90,7 @@ onMounted(() => {
 			<template v-if="!simple && header_loading">
 				<div class="home-header-loading-row" data-testid="app-header-loading-tools">
 					<UiSkeleton
-						v-for="index in 3"
+						v-for="index in 2"
 						:key="`header-tool-skeleton-${index}`"
 						width="40px"
 						height="40px"
@@ -118,20 +116,6 @@ onMounted(() => {
 			</template>
 
 			<template v-else-if="!simple">
-				<UiButton
-					type="button"
-					variant="ghost"
-					tone="neutral"
-					size="md"
-					class="home-header-icon home-header-locale"
-					:aria-label="t('layout.header.locale.aria')"
-					data-testid="app-header-locale-button"
-					@click="openLocaleModal"
-					@mouseenter="prefetchHeaderOverlayModules"
-					@focus="prefetchHeaderOverlayModules"
-				>
-					<UiFlag :code="selected_locale" :size="24" />
-				</UiButton>
 				<UiButton
 					variant="ghost"
 					tone="default"
@@ -226,7 +210,7 @@ onMounted(() => {
     margin: 0 auto;
     padding: 12px 0;
     display: grid;
-    grid-template-columns: 200px 1fr 260px;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
 
     .home-header-logo {
@@ -319,11 +303,6 @@ onMounted(() => {
                 background: rgba(255, 255, 255, 0.3);
             }
         }
-
-        .home-header-locale {
-            overflow: hidden;
-        }
-
         .home-header-cart-wrap {
             position: relative;
             width: 40px;

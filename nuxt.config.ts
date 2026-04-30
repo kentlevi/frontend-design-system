@@ -66,7 +66,7 @@ export default defineNuxtConfig({
 	modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n', '@pinia-plugin-persistedstate/nuxt'],
 
 	i18n: {
-		defaultLocale: 'us',
+		defaultLocale: 'kr',
 		strategy: 'no_prefix',
 		detectBrowserLanguage: false,
 

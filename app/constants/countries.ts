@@ -22,7 +22,7 @@ export const COUNTRIES = {
 } as const
 
 export type SupportedCountry = keyof typeof COUNTRIES
-export const DEFAULT_COUNTRY: SupportedCountry = 'us'
+export const DEFAULT_COUNTRY: SupportedCountry = 'kr'
 export const SUPPORTED_COUNTRY_SET = new Set<SupportedCountry>(
 	Object.keys(COUNTRIES) as SupportedCountry[]
 )

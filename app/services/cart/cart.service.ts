@@ -78,7 +78,7 @@ export const useCartService = (caller: string = 'unknown') => {
 		}
 	}
 
-	const createDemoCartItems = (): CartItem[] => {
+	const _createDemoCartItems = (): CartItem[] => {
 		type DemoCartSpec = {
 			product_id: string
 			width: number
@@ -149,7 +149,7 @@ export const useCartService = (caller: string = 'unknown') => {
 
 			// if( !cart_store.is_authenticated ) {
 			// 	if (first_load && cart_store.items.length === 0 && !cart_store.has_initialized_demo) {
-			// 		populateItems(createDemoCartItems())
+			// 		populateItems(_createDemoCartItems())
 			// 		updateTotalsFromState()
 			// 	}
 			// 	cart_store.has_initialized_demo = true
