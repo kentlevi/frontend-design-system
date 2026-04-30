@@ -1,5 +1,6 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
 import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
+import { sendOrderConfirmationEmail } from "~/services/orders/index.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral"
 import { useCartStore } from "~/stores/core/cart/cart.store"
@@ -14,11 +15,45 @@ export const useTossPayment = () => {
 		selected_real_ids
 	} = storeToRefs(useCartStore())
 
-
 	/** Contexts */
 	const { buildCompleteCheckoutPayload } = useAddressGeneral()
 
 	let popup: Window | null = null
+	let popupChecker: number | null = null
+	let is_manual_close = false
+
+	// =========================
+	// POPUP WATCHER
+	// =========================
+	const startPopupWatcher = () => {
+
+		if (popupChecker) return
+
+		popupChecker = window.setInterval(() => {
+
+			if (!popup || popup.closed) {
+
+				stopPopupWatcher()
+
+				// ONLY if user manually closed
+				if (!is_manual_close) {
+					console.log('Popup manually closed')
+					checkout_store.setCheckoutReady(false)
+				}
+
+				popup = null
+				is_manual_close = false
+			}
+
+		}, 500)
+	}
+
+	const stopPopupWatcher = () => {
+		if (popupChecker) {
+			clearInterval(popupChecker)
+			popupChecker = null
+		}
+	}
 
 	// =========================
 	// POPUP HANDLING
@@ -41,7 +76,7 @@ export const useTossPayment = () => {
 		const left = dual_screen_left + (screen_width - width) / 2
 		const top = dual_screen_top + (screen_height - height) / 2
 
-		const popup = window.open(
+		popup = window.open(
 			'',
 			'_blank',
 			`width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
@@ -51,14 +86,24 @@ export const useTossPayment = () => {
 			throw new Error('Popup blocked')
 		}
 
+		checkout_store.setCheckoutReady(true)
+
 		popup.location.href = url
+
+		// start watching popup
+		startPopupWatcher()
 	}
 
 	const closePaymentPopup = () => {
+
+		is_manual_close = true // prevent manual trigger
+
+		stopPopupWatcher()
+
+		checkout_store.setCheckoutReady(false)
 		popup?.close()
 		popup = null
 	}
-
 
 	// =========================
 	// LISTENER HANDLING
@@ -69,8 +114,10 @@ export const useTossPayment = () => {
 
 			const data = event.data
 
-			if (data?.type === 'TOSS_PAYMENT_SUCCESS') {
-
+			if (
+				data?.type === 'TOSS_PAYMENT_SUCCESS' ||
+  				data?.type === 'TOSS_PAYMENT_CONFIRMED'
+			) {
 				const order_id = data?.data?.id
 				try {
 					closePaymentPopup()
@@ -81,6 +128,9 @@ export const useTossPayment = () => {
 					await completeCheckoutRequest(payload)
 					checkout_store.cleanCheckoutStatesOnSuccess()
 					completeCheckout(true, order_id)
+					sendOrderConfirmationEmail(order_id).catch(err => {
+						console.error('Email failed:', err)
+					})
 				} catch (error) {
 					console.error('Checkout completion failed:', error)
 				}
@@ -96,7 +146,6 @@ export const useTossPayment = () => {
 
 		return () => window.removeEventListener('message', handler)
 	}
-
 
 	return {
 		openPaymentPopup,

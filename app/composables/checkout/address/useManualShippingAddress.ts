@@ -1,12 +1,11 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
-import { useAddressFieldStore } from "~/stores/user-address";
+import { ensureDynamicFields } from "~/services/dynamic-fields/dynamic-fields.service";
 
 export function useManualShippingAddress() {
 
 	/** Stores */
-	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
 	const {
 		ship_to_another_address,
@@ -34,9 +33,7 @@ export function useManualShippingAddress() {
 	resetForm('shipping')
 
 	onMounted(async () => {
-		if (address_field_store.dynamic_address_fields.length === 0) {
-			await address_field_store.getDynamicFields()
-		}
+		await ensureDynamicFields()
 
 		populateDynamicFields('shipping')
 	})

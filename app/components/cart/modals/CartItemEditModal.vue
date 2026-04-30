@@ -5,72 +5,52 @@ import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 const { t } = useI18n();
 
 const {
-	is_open,
-	active_item,
+	open_edit_modal: is_open,
+	active_editable_item : active_item,
 	show_quantity,
 	sizes,
+	custom_width_input_ref,
+	custom_width : custom_size_width,
+	custom_height : custom_size_height,
+	size_key,
+	quantities : qty_options,
+	quantity : qty,
+	custom_quantity_ref : custom_qty_input_ref,
+	custom_quantity : custom_qty,
+	updating_item,
 	formatImage,
-	updateItemSize,
-	updateItemQty,
+	getFeaturedData,
+	updateSize,
+	updateQuantity,
+	sendUpdateToServer,
 	closeModal: close_edit_modal,
 } = useEditItemHandler('cart-item-edit-modal');
 
 // ⚠️ Static functionality & Data
-
-
 const modal_title = computed(() =>
 	!show_quantity.value
 		? t('cart.cartPreview.editModal.sizeOnlyTitle')
 		: t('cart.cartPreview.editModal.title')
 );
 const active_item_product_name = computed(() => {
-	const product_id = active_item.value?.product.id;
+	const product_id = active_item.value?.url_slug;
 	return product_id ? t(`product.items.${product_id}.name`) : '';
 });
 
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
 const size_dropdown_ref = ref<HTMLElement | null>(null);
 const qty_dropdown_ref = ref<HTMLElement | null>(null);
-const custom_width_input_ref = ref<HTMLInputElement | null>(null);
-const custom_qty_input_ref = ref<HTMLInputElement | null>(null);
 
 const size_menu_open = ref(false);
 const qty_menu_open = ref(false);
 
-const size_key = ref<string | number>('');
-const custom_size_width = ref<string>('');
-const custom_size_height = ref<string>('');
-const qty = ref<number>(10);
-const custom_qty = ref<string>('');
-
-const qty_options = [
-	{ label: '10', value: 10 },
-	{ label: '25', value: 25 },
-	{ label: '50', value: 50 },
-	{ label: '100', value: 100 },
-	{ label: t('cart.cartPreview.editModal.customQuantity'), value: -1 },
-];
-
 // Initialize draft state from active_item
-watch(active_item, (item) => {
-	if (!item) return;
+watch(active_item, async (item) => {
+	if ( !item ) return;
 
-	const found_preset = sizes.value.find(s => {
-		const label = String(s.label);
-		return label.includes(`${item.width}x${item.height}mm`) || label.includes(`${item.width}x${item.height}"`);
-	});
-
-	size_key.value = found_preset ? found_preset.value : 'custom';
-	custom_size_width.value = String(item.width || '');
-	custom_size_height.value = String(item.height || '');
-
-	const common_qtys = [10, 25, 50, 100];
-	if (common_qtys.includes(item.quantity)) {
-		qty.value = item.quantity;
-	} else {
-		qty.value = -1;
-		custom_qty.value = String(item.quantity);
-	}
+	updateSize(`${item.width}x${item.height}`)
+	updateQuantity(item.quantity)
+	await getFeaturedData(item)
 }, { immediate: true });
 
 // Sizing logic
@@ -150,35 +130,14 @@ function preventNonDigitInput(event: InputEvent) {
 	event.preventDefault();
 }
 
-function onSizeOptionSelect(value: string | number) {
-	const normalized_value = String(value);
-	size_key.value = normalized_value;
-	if (normalized_value === 'custom') {
-		closeMenus();
-		nextTick(() => {
-			custom_width_input_ref.value?.focus();
-		});
-		return;
-	}
+async function onSizeOptionSelect(value: string | number) {
+	await updateSize(value)
 
-	updateSelectedSize(normalized_value)
-
-	const selected_option = sizes.value.find((item) => String(item.value) === normalized_value);
-	const matched = selected_option?.label.match(/(\d+)\D+(\d+)/i);
-	custom_size_width.value = matched?.[1] ?? '';
-	custom_size_height.value = matched?.[2] ?? '';
 	closeMenus();
 }
 
-function onQtyOptionSelect(value: number) {
-	qty.value = value;
-	if (value === -1) {
-		closeMenus();
-		nextTick(() => {
-			custom_qty_input_ref.value?.focus();
-		});
-		return;
-	}
+async function onQtyOptionSelect(value: number) {
+	await updateQuantity(value)
 	closeMenus();
 }
 
@@ -197,16 +156,12 @@ function onCustomQtyInput(value: string) {
 	custom_qty.value = value.replace(/[^0-9]/g, '');
 }
 
-function saveChanges() {
+async function saveChanges() {
 	if (!active_item.value) return;
-	const final_width = size_key.value === 'custom' ? Number(custom_size_width.value) : Number(parsed_size_from_option.value.width);
-	const final_height = size_key.value === 'custom' ? Number(custom_size_height.value) : Number(parsed_size_from_option.value.height);
-	const final_qty = qty.value === -1 ? Number(custom_qty.value) : qty.value;
 
-	updateItemSize(active_item.value.id, final_width, final_height);
-	updateItemQty(active_item.value.id, final_qty);
-
-	closeModal();
+	const sending_update = await sendUpdateToServer()
+	if( sending_update )
+		closeModal();
 }
 
 const closeModal = () => {
@@ -429,7 +384,7 @@ watch(
 					variant="filled"
 					tone="neutral"
 					class="cart-item-edit-update"
-					:disabled="is_update_disabled"
+					:disabled="is_update_disabled || updating_item"
 					@click="saveChanges"
 				>
 					{{ t('cart.cartPreview.editModal.update') }}

@@ -1,10 +1,37 @@
 {
   "checkout": {
+    "invoice": {
+      "title": "청구서",
+      "close": "닫기",
+      "print": "인쇄",
+      "download": "청구서 다운로드",
+      "invoiceNumber": "청구서 번호: {invoiceNumber}",
+      "dateIssued": "발행일: {issuedDate}",
+      "billingDetails": "청구 정보:",
+      "billingName": "이름:",
+      "billingAddress": "청구지 주소:",
+      "billingCompany": "회사명:",
+      "editBillingInfo": "청구 정보 수정",
+      "totals": {
+        "subtotal": "소계:",
+        "shippingFee": "배송비: ({shippingLabel})",
+        "discounts": "할인:",
+        "total": "합계:"
+      },
+      "footerAddress": "대한민국 서울특별시 성동구 123-45, 04776",
+      "billingModal": {
+        "title": "청구 정보 수정",
+        "closeModal": "청구 정보 모달 닫기",
+        "cancel": "취소",
+        "save": "저장"
+      },
+      "billingToast": "청구 정보가 성공적으로 업데이트되었습니다!"
+    },
     "member": {
       "shippingDetails": "배송 정보",
       "viewShippingAddresses": "배송지 보기",
       "myShippingAddress": "내 배송지",
-      "discountsAndPerks" : "할인과 쿠폰",
+      "discountsAndPerks": "할인과 쿠폰",
       "defaultBadge": "기본",
       "shipToAnotherAddress": "다른 주소로 배송",
       "shippingMethod": "배송 방법",
@@ -32,9 +59,9 @@
         "dropTitle": "드롭 배송지 선택",
         "closeModal": "주소 선택 모달 닫기",
         "noCompanyProvided": "회사 정보가 없습니다",
-        "defaultShipping": "기본 배송지",
+        "defaultShipping": "기본 배송",
         "defaultBilling": "기본 청구지",
-        "defaultDropShipping": "기본 드롭 배송지"
+        "defaultDropShipping": "기본 위탁 배송지"
       },
       "billingAddress": {
         "myBillingAddress": "내 청구지",

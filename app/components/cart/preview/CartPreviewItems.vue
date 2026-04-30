@@ -2,7 +2,7 @@
 import UiSkeleton from '~/components/ui/Skeleton.vue';
 import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
-import { formattedPrice } from '~/utils/currency';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 
 /** 🔥 This composable were using real data from API and functionality */
@@ -84,7 +84,7 @@ defineEmits<{
 					</div>
 					<div class="cart-preview-item-side" data-testid="product-category-cart-item-side">
 						<strong class="cart-preview-item-price" data-testid="product-category-cart-item-price">
-							{{ formattedPrice(item.cost) }}
+							{{ formatPrice(item.cost) }}
 						</strong>
 						<div
 							class="cart-preview-item-actions"

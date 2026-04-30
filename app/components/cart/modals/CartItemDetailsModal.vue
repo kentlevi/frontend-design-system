@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 import { formatProductFileSize, readProductArtworkAsDataUrl } from '~/helpers/products/productCategory.helper';
-import { useUploadService } from '~/services/product/upload.service';
+
 import type { CartItem } from '~/types/cart/cart';
 
 const props = withDefaults(defineProps<{
@@ -14,30 +15,41 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
 	'update:modelValue': [value: boolean];
 	cancel: [];
-	save: [payload: { artworkName: string; artworkSizeLabel: string; artworkPreviewUrl: string; specialInstructions: string }];
 }>();
 
-const upload_service = useUploadService()
+const config = useRuntimeConfig()
 
-const selected_file = computed(() => upload_service.artwork_file.value)
+const {
+	selected_file,
+	selected_file_preview,
+	updating_artwork,
+	setArtwork,
+	clearArtworkChanges,
+	submitArtworkChanges,
+} = useEditItemHandler('cart-item-detail-modal')
 
-const selected_file_preview = computed(() => upload_service.artwork_preview.value)
 
 const file_input_ref = ref<HTMLInputElement | null>(null);
-const local_artwork_name = ref('');
+const local_artwork_name = ref<string | null>(null);
 const local_artwork_size_label = ref('');
 const local_artwork_preview_url = ref('');
 const local_special_instructions = ref('');
+
 const { t } = useI18n();
+
 const display_item_name = computed(() => {
 	if (local_artwork_name.value) return local_artwork_name.value;
 	const product_id = props.item?.url_slug;
 	return product_id ? t(`product.items.${product_id}.name`) : '';
 });
-const display_item_image = computed(() => local_artwork_preview_url.value || props.item?.product_thumbnail || '');
+
+const display_item_image = computed(() => local_artwork_preview_url.value || `${config.public.file_url}${props.item?.product_thumbnail}`);
 
 const file_extension_label = computed(() => {
-	const name_parts = local_artwork_name.value.split('.');
+	const name_parts = local_artwork_name.value?.split('.');
+	if (!name_parts)
+		return ''
+
 	const file_extension = name_parts.length > 1 ? name_parts.at(-1)?.toLowerCase() : '';
 	return file_extension ? `.${file_extension}` : '';
 });
@@ -56,17 +68,23 @@ const artwork_action_label = computed(() => (
 watch(
 	() => [props.modelValue, props.item] as const,
 	([is_open, item]) => {
-		if (!is_open || !item || !upload_service.artwork_file.value ) return;
+		if (!is_open || !item || !selected_file.value ) return;
 
 		local_artwork_name.value = selected_file.value?.name ?? '';
 		local_artwork_size_label.value = selected_file.value?.size ? formatProductFileSize(selected_file.value?.size) : '';
 		local_artwork_preview_url.value = selected_file_preview.value;
-		local_special_instructions.value = '';
+		local_special_instructions.value = item.instruction || '';
 	},
 	{ immediate: true }
 );
 
 function closeModal() {
+	if( updating_artwork.value ) {
+		console.warn('Updating artwork is in-progress...')
+		return
+	}
+
+	clearArtworkChanges()
 	emit('update:modelValue', false);
 	emit('cancel');
 }
@@ -82,28 +100,39 @@ function removeArtwork() {
 	if (file_input_ref.value) {
 		file_input_ref.value.value = '';
 	}
+
+	clearArtworkChanges()
 }
 
 async function onFileSelected(event: Event) {
 	const input_target = event.target as HTMLInputElement;
-	const selected_file = input_target.files?.[0];
-	if (!selected_file) return;
+	const input_file = input_target.files?.[0];
+	if (!input_file) return;
 
-	local_artwork_name.value = selected_file.name;
-	local_artwork_size_label.value = formatProductFileSize(selected_file.size);
-	local_artwork_preview_url.value = selected_file.type.startsWith('image/')
-		? await readProductArtworkAsDataUrl(selected_file)
+	local_artwork_name.value = input_file.name;
+	local_artwork_size_label.value = formatProductFileSize(input_file.size);
+	local_artwork_preview_url.value = input_file.type.startsWith('image/')
+		? await readProductArtworkAsDataUrl(input_file)
 		: '';
+
+	setArtwork(input_file, local_artwork_preview_url.value)
 }
 
-function submitChanges() {
-	emit('save', {
-		artworkName: local_artwork_name.value,
-		artworkSizeLabel: local_artwork_size_label.value,
-		artworkPreviewUrl: local_artwork_preview_url.value,
-		specialInstructions: local_special_instructions.value.trim(),
-	});
-	emit('update:modelValue', false);
+const submitChanges = async () => {
+	if( !selected_file || !selected_file.value || !selected_file.value.name) {
+		console.warn('No artwork selected.')
+		return
+	}
+
+	if( updating_artwork.value ) {
+		console.warn('Updating artwork is in-progress...')
+		return
+	}
+
+	const process = await submitArtworkChanges(selected_file.value.name, selected_file.value, local_special_instructions.value)
+
+	if( process )
+		closeModal()
 }
 </script>
 
@@ -115,7 +144,7 @@ function submitChanges() {
 		modal-class="cart-item-details-modal-shell"
 		:title="t('cart.cartPage.itemDetails.title')"
 		@update:model-value="emit('update:modelValue', $event)"
-		@close="emit('cancel')"
+		@close="closeModal()"
 	>
 		<section class="cart-item-details-modal" data-testid="cart-item-details-modal">
 			<input

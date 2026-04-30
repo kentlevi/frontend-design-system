@@ -1,5 +1,5 @@
 import { useUsersStore } from "~/stores/users/users.store";
-import type { CartItem } from "~/types/cart/cart";
+import type { CartItem, SelectOption } from "~/types/cart/cart";
 import { cartPaymentOptions } from '~/data/cart/page';
 
 export const useCartStore = defineStore('cart', () => {
@@ -18,7 +18,18 @@ export const useCartStore = defineStore('cart', () => {
 
 	const deletable_ids  = ref<string[]>([])
 
+	// Holder of the ID of carts owner
+	const proprietor = ref<number>()
+
 	const cart_user_id = computed(() => user_store.state?.id ?? null)
+
+	// 🔥 Will watcg the changes of user_id
+	watch(() => cart_user_id.value, (new_id) => {
+		if( new_id != proprietor.value)
+			removeItems()
+
+		proprietor.value = new_id
+	} )
 
 	const selected_item = ref<CartItem | null>(null)
 
@@ -106,11 +117,7 @@ export const useCartStore = defineStore('cart', () => {
 	};
 
 	const updateUploadedItem = (local_identity: string, new_id: number) => {
-		const index = items.value.findIndex((i: CartItem) => i.local_identity === local_identity)
-
-		if( index !== -1 && items.value[index] ) {
-			items.value[index].id = new_id
-		}
+		updateItemInCart(local_identity, { id: new_id })
 	}
 
 	const setDeletableItems = (local_identities : string []) => {
@@ -173,8 +180,65 @@ export const useCartStore = defineStore('cart', () => {
 		item_picking_artwork.value = null
 	}
 
+	const updateItemInCart = (local_identity: string, updates: Partial<CartItem>) => {
+		// Find the index of the item
+		const index = items.value.findIndex(item => item.local_identity === local_identity);
+
+		if (index !== -1) {
+			const current_item = items.value[index];
+
+			if(!current_item) {
+				console.warn('No item found.')
+				return
+			}
+
+			// 1. Loop through the update keys
+			for (const key in updates) {
+				// 2. Validation: Check if the key exists in the current CartItem
+				if (!(key in current_item)) {
+					console.warn(`Property "${key}" does not exist on CartItem. Exit.`);
+					return
+				}
+			}
+
+			// 2. Merge current item with the updates
+			// This maintains reactivity and doesn't overwrite the whole object
+			items.value[index] = {
+				...items.value[index],
+				...updates
+			} as CartItem
+		}
+	}
+
+	// This holds the tiers. Initially it only contains the current quantity.
+	const item_quantities = ref<Record<string, SelectOption[]>>({});
+
+	// 1. Initialize the map with only the current quantity
+	const initQuantityMap = () => {
+		items.value.forEach(item => {
+			if (item.local_identity && !item_quantities.value[item.local_identity]) {
+				// We wrap the current quantity in an array so the <select> works
+				item_quantities.value[item.local_identity] = [
+					{
+						label: String(item.quantity),
+						value: item.quantity
+					},
+					{
+						label: 'Custom',
+						value: -1
+					}
+				];
+			}
+		});
+	};
+
+	const setItemQuantities = ( local_identity: string, quantities : SelectOption[] ) => {
+		item_quantities.value[local_identity] = quantities;
+	}
+
 	return {
 		// 🔥 States
+		proprietor,
 		items,
 		loading,
 		number_of_items,
@@ -192,6 +256,7 @@ export const useCartStore = defineStore('cart', () => {
 		item_picking_artwork,
 		selected_real_ids,
 		selected_items,
+		item_quantities,
 
 		// 🔥 Methods
 		addNumber,
@@ -209,11 +274,14 @@ export const useCartStore = defineStore('cart', () => {
 		unsetEditableItem,
 		assignArtworkPicker,
 		unsetArtworkPicker,
+		updateItemInCart,
+		setItemQuantities,
+		initQuantityMap,
 	}
 }, {
 	persist: {
 		key: 'mu_cart',
 		storage: persistedState.localStorage,
-		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids'],
+		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids', 'proprietor'],
 	}
 })

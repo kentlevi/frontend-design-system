@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useCartService } from '~/services/cart/cart.service'
 
 export const useCartPage = () => {
@@ -76,9 +76,9 @@ export const useCartPage = () => {
 		detail_item_id.value = null
 	}
 
-	onMounted(() => {
-		cart_service.getCartItems(true)
-	})
+	// onMounted(() => {
+	// 	cart_service.getCartItems(true)
+	// })
 
 	onBeforeUnmount(() => {
 		clearPendingArtworkPreviewUrl()

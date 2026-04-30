@@ -132,7 +132,7 @@ export function useAppHeader() {
 	})
 
 	onMounted(() => {
-		void cart_service.calculateCartItems()
+		cart_core_service.calculateCartItems()
 
 		if (typeof window === 'undefined') return
 

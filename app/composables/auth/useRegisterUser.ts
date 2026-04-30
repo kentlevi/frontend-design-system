@@ -1,4 +1,5 @@
 import { sendRegisterVerification, submitRegisterVerification } from '~/services/auth/api.service'
+import { withCartTransferPayload } from '~/services/auth/auth.service'
 import type { RegisterPayload, RegisterVerificationPayload, RegisterVerificationResponse } from '~/types/auth/auth';
 import type { ApiResponse } from '~/types/config/api';
 
@@ -26,7 +27,9 @@ export function useRegisterUser() {
      */
 	async function submitRegisterVerificationHandler(payload: RegisterPayload): Promise<ApiResponse> {
 		try {
-			const response = await submitRegisterVerification(payload)
+			const response = await submitRegisterVerification(
+				withCartTransferPayload(payload)
+			)
 
 			return response
 		} catch (error) {

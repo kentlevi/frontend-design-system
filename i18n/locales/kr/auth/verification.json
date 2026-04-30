@@ -1,26 +1,26 @@
 {
-    "auth": {
-        "verification": {
-            "title": "인증 요청",
-            "iconAlt": "인증 보호 아이콘",
-            "messagePrefix": "보안을 위해 인증 번호가 ",
-            "messageSuffix": "로 전송되었습니다. 인증 번호는 5분 후에 만료됩니다.",
-            "enterCode": "인증 번호를 입력하세요",
-            "codeRequired": "이메일로 발송된 인증 번호 입력해 주세요",
-            "invalidCode": "인증 번호가 일치하지 않습니다. 다시 입력해 주세요.",
-            "verify": "확인",
-            "verifyEmailAddress": "이메일 인증하기",
-            "verifying": "잠시만 기다려 주세요! 모든 정보가 정확한지 확인하고 있습니다.",
-            "closeModal": "모달 닫기",
-            "resendPrefix": "인증 번호를 받지 못하셨나요? 스팸 폴더를 확인하거나 ",
-            "resendCta": "새 인증 번호를 요청해 주세요",
-            "resendSuffix": ".",
-            "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요.",
-            "expiredCode": "인증 번호가 만료되었습니다. 아래 [b]번호 재전송[/b] 버튼을 눌러 새 인증 번호를 받아 주세요.",
-            "resendLimitReachedPrefix": "보안을 위해 ",
-            "resendLimitReachedMiddle": "시간당 최대 5회",
-            "resendLimitReachedSuffix": "까지 인증 번호를 요청하실 수 있습니다. 잠시 후 다시 시도해주세요.",
-            "emailUpdatePrompt": "새로운 이메일 주소를 입력하고 \"확인\" 버튼을 클릭하여 계속 진행하세요."
-        }
+  "auth": {
+    "verification": {
+      "title": "인증 요청",
+      "iconAlt": "인증 보호 아이콘",
+      "messagePrefix": "보안을 위해 인증 번호가 ",
+      "messageSuffix": "로 전송되었습니다. 인증 번호는 5분 후에 만료됩니다.",
+      "enterCode": "인증 번호를 입력하세요",
+      "codeRequired": "이메일로 발송된 인증 번호 입력해 주세요",
+      "invalidCode": "인증 번호가 일치하지 않습니다. 다시 입력해 주세요.",
+      "verify": "확인",
+      "verifyEmailAddress": "이메일 인증하기",
+      "verifying": "잠시만 기다려 주세요! 모든 정보가 정확한지 확인하고 있습니다.",
+      "closeModal": "모달 닫기",
+      "resendPrefix": "인증번호를 받지 못하셨나요? 스팸 메일함을 확인하시거나 '",
+      "resendCta": "인증번호 재전송",
+      "resendSuffix": "' 버튼을 클릭해 주세요.",
+      "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요.",
+      "expiredCode": "인증 번호가 만료되었습니다. 아래 [b]번호 재전송[/b] 버튼을 눌러 새 인증 번호를 받아 주세요.",
+      "resendLimitReachedPrefix": "보안을 위해 인증번호 요청은 ",
+      "resendLimitReachedMiddle": "시간당 최대 5회",
+      "resendLimitReachedSuffix": "로 제한됩니다. 잠시 후 다시 시도해 주세요.",
+      "emailUpdatePrompt": "새로운 이메일 주소를 입력하고 \"확인\" 버튼을 클릭하여 계속 진행하세요."
     }
+  }
 }

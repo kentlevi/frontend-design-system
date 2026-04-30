@@ -4,6 +4,7 @@ import { useAttributesStore, useSelectionStore } from "~/stores/product"
 import { useUsersStore } from "~/stores/users/users.store"
 import type { CartItem } from "~/types/cart/cart"
 import { useCartApiService } from "./api.service"
+import { useQuoteApiService } from "../quote/api.service"
 
 export const useCartService = (caller : string) => {
 
@@ -18,6 +19,8 @@ export const useCartService = (caller : string) => {
 	const upload_service = useUploadService()
 
 	const cart_api_service = useCartApiService('cart-service')
+
+	const quote_api_service = useQuoteApiService()
 
 	const uploading_file = ref<boolean>(false)
 
@@ -95,6 +98,8 @@ export const useCartService = (caller : string) => {
 
 		// Default check select all after population
 		cart_store.selected_ids = cart_store.items.map((item) => item.local_identity);
+
+		cart_store.initQuantityMap()
 	}
 
 	const generateLocalIdentity = (): string => {
@@ -282,12 +287,167 @@ export const useCartService = (caller : string) => {
 		cart_store.all_selected = v
 	}
 
+	const updating_artwork = ref<boolean>(false)
+
+	interface UploadingResponse {
+		success: boolean
+		message: string
+		uploaded_file: string
+	}
+
+	// Submission of artwork changes
+	const updateArtwork = async (
+		file_name: string,
+		file: File,
+		instruction: string |'',
+		local_identity: string,
+	) => {
+
+		const response = ref<UploadingResponse>({
+			success: false,
+			message: '',
+			uploaded_file: ''
+		})
+
+		if( updating_artwork.value ) {
+			response.value.message = 'Update still on process...'
+
+			return response.value
+		}
+
+		try {
+			if( !file_name )
+				throw new Error("❌ File name is required!")
+
+			if( !file )
+				throw new Error("❌ Artwork File is required!")
+
+			if( !local_identity )
+				throw new Error("❌ Item local identity is required!")
+
+			if( !cart_store.item_picking_artwork || !cart_store.item_picking_artwork.id ) {
+				console.warn('❌ Item for artwork is not set.')
+				return
+			}
+
+			updating_artwork.value = true
+
+			// ⚠️ Uploading file
+			const uploading_request = await cart_api_service.sendToS3(file)
+
+			// ❌ File uploading failed
+			if( !uploading_request.ok.value )
+				throw new Error(uploading_request.message.value);
+
+			response.value.uploaded_file = uploading_request.filename.value
+
+			// ✅ Update the item locally
+			cart_store.updateItemInCart(local_identity, {
+				artwork_file : uploading_request.filename.value,
+				artwork_file_name: file_name,
+				instruction: instruction,
+				file_path: 'artworks/',
+			})
+
+			// ✅ Update the item in our server
+			cart_api_service.requestArtworkUpdate(cart_store.item_picking_artwork.id, file_name, uploading_request.filename.value, instruction)
+
+			response.value.success = true
+		}
+		// ❌ Handles thrown error with proper response
+		catch(error) {
+			console.error(error)
+
+			response.value.message = cart_api_service.extractThrownError(error)
+		}
+		// ✅ Completion of process
+		finally {
+			updating_artwork.value = false
+		}
+
+		return response.value
+	}
+
+	const updating_item = ref<boolean>(false)
+
+	const updateItem = async (local_identity : string, updates: Partial<CartItem>) => {
+		try {
+			if( !local_identity || !updates || Object.keys(updates).length === 0) {
+				console.warn('Invalid parameter provided.')
+				updating_item.value = false
+				return
+			}
+
+			updating_item.value = true
+
+			const current_item = cart_store.items.find(e => e.local_identity == local_identity)
+
+			if(!current_item) {
+				console.warn('Invalid local identity.')
+				updating_item.value = false
+				return
+			}
+
+			// Data to be updated
+			const width 		= updates.width 	?? current_item.width
+			const height 		= updates.height 	?? current_item.height
+			const quantity 		= updates.quantity 	?? current_item.quantity
+			const font_id		= updates.font_id 	?? undefined
+			const color_id 		= updates.color_id 	?? undefined
+			// Check for pricing
+			const pricing = await quote_api_service.getFeaturedPricing(current_item.url_slug, {
+				width		: Number(width),
+				height		: Number(height),
+				color_id	: color_id,
+				font_id		: color_id,
+				quantity 	: quantity
+			})
+			if( !pricing ) {
+				updating_item.value = false
+				return
+			}
+
+			if( !pricing.prices || !pricing.prices.length ) {
+				console.warn('No pricing available.')
+				updating_item.value = false
+				return
+			}
+
+			const update_cost = pricing.prices[0]?.price
+
+			await cart_store.updateItemInCart(local_identity, {
+				width: width,
+				height: height,
+				quantity: quantity,
+				font_id: font_id,
+				color_id: color_id,
+				cost: Number(update_cost),
+			})
+
+			if( current_item.id ) {
+				const update_request = await cart_api_service.requestItemUpdate(Number(current_item.id), width, height, quantity)
+				updating_item.value = false
+				return update_request
+			}
+
+			updating_item.value = false
+			return true
+		} catch(error) {
+			console.error(error)
+		} finally {
+			updating_item.value = false
+		}
+	}
+
 	return {
 		// 🔥 Cart States
 		...storeToRefs(cart_store),
 
 		// 🔥 Local States
 		caller,
+		active_lettering_editor: attributes_store.active_lettering_editor,
+		updating_artwork,
+		updating_item,
 
 		// 🔥 Methods
 		requestItems,
@@ -298,6 +458,9 @@ export const useCartService = (caller : string) => {
 		toggleSelection,
 		selectAllItem,
 		calculateCartItems,
+		populateItems,
+		updateArtwork,
+		updateItem,
 		setDeletableItems	: cart_store.setDeletableItems,
 		emptyDeletableItems	: cart_store.emptyDeletableItems,
 		removeItems			: cart_store.removeItems,
@@ -305,5 +468,8 @@ export const useCartService = (caller : string) => {
 		unsetEditableItem	: cart_store.unsetEditableItem,
 		assignArtworkPicker	: cart_store.assignArtworkPicker,
 		unsetArtworkPicker	: cart_store.unsetArtworkPicker,
+		emptyCart			: cart_store.emptyCart,
+		setItemQuantities 	: cart_store.setItemQuantities,
+		updateItemInCart 	: cart_store.updateItemInCart,
 	}
 }
