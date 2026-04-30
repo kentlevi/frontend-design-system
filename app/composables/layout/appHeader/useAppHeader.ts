@@ -1,4 +1,5 @@
 import { computed, defineAsyncComponent, inject, onBeforeUnmount, onMounted, provide, ref, watch, type InjectionKey } from 'vue'
+import { useCartService } from '~/services/cart/cart.service'
 import { useAppHeaderAccount } from '~/composables/layout/appHeader/useAppHeaderAccount'
 import { useAppHeaderCartPreview } from '~/composables/layout/appHeader/useAppHeaderCartPreview'
 import { useAppHeaderKeyboardShortcuts } from '~/composables/layout/appHeader/useAppHeaderKeyboardShortcuts'
@@ -6,6 +7,8 @@ import { useCartService as useCartCoreService } from '~/services/core/cart/cart.
 
 export function useAppHeader() {
 	const route = useRoute()
+	const cart_service = useCartService('app-header')
+
 	const cart_core_service = useCartCoreService('app-header')
 
 	const {
