@@ -65,7 +65,7 @@
       "inch": "인치(inch)",
       "signOut": "로그아웃",
       "change": "변경",
-      "socialLoginLinked": "이 계정은 {provider} 로그인과 연결되어 있습니다.",
+      "socialLoginLinked": "이 계정은 {provider} 로그인과 연동되어 있습니다.",
       "emailChange": {
         "title": "이메일 변경",
         "description": "새 이메일 주소를 입력하고 \"확인\"버튼을 눌러 진행해 주세요.",

@@ -8,7 +8,7 @@
       "enterCode": "인증 번호를 입력하세요",
       "codeRequired": "이메일로 발송된 인증 번호 입력해 주세요",
       "invalidCode": "인증 번호가 일치하지 않습니다. 다시 입력해 주세요.",
-      "verify": "확인",
+      "verify": "인증",
       "verifyEmailAddress": "이메일 인증하기",
       "verifying": "잠시만 기다려 주세요! 모든 정보가 정확한지 확인하고 있습니다.",
       "closeModal": "모달 닫기",
