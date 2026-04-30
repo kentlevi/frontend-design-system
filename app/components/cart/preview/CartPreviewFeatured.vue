@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { useCartPreviewHandler } from '~/composables/cart/preview/useCartPreviewHandler';
-import type { ProductItem } from '~/types/products/catalog';
+import { useFeaturedItem } from '~/composables/shared/featured-item/useFeaturedItem';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
-const {
-	featured_items,
-	number_of_items,
-	customizeFeaturedProduct,
-	close,
-	t
-} = useCartPreviewHandler('cart-preview-featured');
+const { t } = useI18n()
 
-const getProductName = (product: ProductItem) => t(`product.items.${product.id}.name`);
+const {
+	number_of_items,
+	featured_items,
+	clear,
+	requestFeaturedItems,
+	formatImage,
+	redirectCustomization,
+} = useFeaturedItem('cart/preview/CartPreviewFeatured')
+
+
+onMounted(() => {
+	requestFeaturedItems()
+})
+
+
+
 </script>
 
 <template>
@@ -35,31 +43,31 @@ const getProductName = (product: ProductItem) => t(`product.items.${product.id}.
 				:sr-label="t('cart.cartPreview.closeFeaturedItems')"
 				class="cart-featured-close"
 				data-testid="product-category-cart-featured-close-button"
-				@click="featured_items = []"
+				@click="clear"
 			/>
 		</div>
 		<div class="cart-featured-grid" data-testid="product-category-cart-featured-list">
 			<article
 				v-for="item in featured_items"
-				:key="item.id"
+				:key="item.url_slug"
 				class="cart-featured-card"
-				:data-testid="`product-category-cart-featured-item-${item.id}`"
+				:data-testid="`product-category-cart-featured-item-${item.url_slug}`"
 			>
 				<div class="cart-featured-media">
-					<img :src="item.image" :alt="getProductName(item)" class="cart-preview-image">
+					<img :src="formatImage(item.image)" :alt="item.product" class="cart-preview-image">
 				</div>
 				<div class="cart-featured-content">
-					<h5 class="cart-featured-item-title">{{ getProductName(item) }}</h5>
+					<h5 class="cart-featured-item-title">{{ item.product }}</h5>
 					<p class="cart-featured-price">
 						<span class="cart-preview-label">{{ t('cart.cartPreview.startsAt') }}</span>
-						<strong class="cart-preview-value">{{ formatPrice(5.00) }}</strong>
+						<strong class="cart-preview-value">{{ formatPrice(item.price) }}</strong>
 					</p>
 					<UiButton
 						type="button"
 						variant="subtle"
 						tone="neutral"
 						class="cart-featured-customize-btn"
-						@click="customizeFeaturedProduct(item.id, close)"
+						@click="redirectCustomization(item)"
 					>
 						{{ t('cart.cartPreview.customize') }}
 					</UiButton>

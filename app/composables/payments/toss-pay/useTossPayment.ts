@@ -1,5 +1,6 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
 import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
+import { sendOrderConfirmationEmail } from "~/services/orders/index.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral"
 import { useCartStore } from "~/stores/core/cart/cart.store"
@@ -127,6 +128,9 @@ export const useTossPayment = () => {
 					await completeCheckoutRequest(payload)
 					checkout_store.cleanCheckoutStatesOnSuccess()
 					completeCheckout(true, order_id)
+					sendOrderConfirmationEmail(order_id).catch(err => {
+						console.error('Email failed:', err)
+					})
 				} catch (error) {
 					console.error('Checkout completion failed:', error)
 				}
