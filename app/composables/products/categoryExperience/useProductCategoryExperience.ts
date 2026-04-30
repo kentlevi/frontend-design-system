@@ -12,7 +12,6 @@ import {
 } from '~/data/products/categoryExperience';
 import { defaultStartPriceByProductId } from '~/data/products/pricing';
 import type {
-	ProductCategory,
 	ProductCategoryKey,
 	ProductItem,
 } from '~/types/products/catalog';
@@ -33,8 +32,12 @@ import {
 import { formatCurrencyByCountry } from '~/utils/currency';
 import type { Products } from '~/types/navigation/navgiation';
 import { useQuoteSectionHandler } from '~/composables/product-page/useQuoteSectionHandler';
-
-let pending_picker_route_animation = false;
+import {
+	clearQueuedPickerRouteAnimation,
+	hasQueuedPickerRouteAnimation,
+	queuePickerRouteAnimation,
+	useNavigation,
+} from '~/composables/navigation/useNavigation';
 
 export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, api_products?: Ref<Products | undefined>) {
 	const { t, te } = useI18n();
@@ -55,29 +58,9 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		4: 'extraLarge125',
 	} as const;
 
-	const category_data = computed<ProductCategory>(() => {
-		const catalog_category = productCatalog[category.value];
-		const response_products = api_products?.value?.products ?? [];
+	const { category_data } = useNavigation()
 
-		if (!response_products.length) {
-			return catalog_category;
-		}
-
-		const mapped_products = response_products
-			.map((product) => resolveCatalogProductByApiSlug(product.url_slug, catalog_category.products))
-			.filter((product): product is ProductItem => Boolean(product));
-
-		if (!mapped_products.length) {
-			return catalog_category;
-		}
-
-		return {
-			...catalog_category,
-			products: dedupeProductsById(mapped_products),
-		};
-	});
-
-	const selected_id = ref<string | null>(null);
+	const selected_id = ref<number | null>(null);
 	const selected_size = ref<(typeof size_options)[number]>(size_options[0]);
 	const selected_qty = ref<number>(quantity_options[0]);
 	const has_picked_product = ref(false);
@@ -158,7 +141,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 	const selected_product = computed(() => {
 		if (!selected_id.value) return null;
 		return (
-			category_data.value.products.find((item) => item.id === selected_id.value) ||
+			category_data ||
             null
 		);
 	});
@@ -330,10 +313,10 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			normalizeProductCartState(readStoredCartStateFromStorage())
 		);
 
-		if (pending_picker_route_animation) {
+		if (hasQueuedPickerRouteAnimation()) {
 			picker_slide_transition_enabled.value = true;
 			scheduleAnimatedPickerSlideUp();
-			pending_picker_route_animation = false;
+			clearQueuedPickerRouteAnimation();
 		}
 	});
 
@@ -349,7 +332,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			return;
 		}
 
-		pending_picker_route_animation = true;
+		queuePickerRouteAnimation();
 		picker_slide_transition_enabled.value = true;
 		selection_navigation_in_flight.value = true;
 		selectionStore.updateProductSelectionFlight(false)
@@ -597,23 +580,6 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		};
 	}
 
-	function resolveCatalogProductByApiSlug(slug: string, catalog_products: ProductItem[]) {
-		if (!slug) return null;
-
-		return (
-			catalog_products.find((item) => item.id === slug)
-		);
-	}
-
-	function dedupeProductsById(products: ProductItem[]) {
-		const seen = new Set<string>();
-		return products.filter((product) => {
-			if (seen.has(product.id)) return false;
-			seen.add(product.id);
-			return true;
-		});
-	}
-
 	function productSlugToId(slug: string) {
 		if (!category.value) return null;
 		return getProductIdFromSlug(slug, category.value);
@@ -640,7 +606,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 		has_picked_product.value = true;
 		vinyl_preview_ready.value = false;
 
-		if (pending_picker_route_animation) {
+		if (hasQueuedPickerRouteAnimation()) {
 			picker_slide_transition_enabled.value = true;
 
 			if (!is_mounted.value) {
@@ -648,7 +614,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			}
 			else {
 				scheduleAnimatedPickerSlideUp();
-				pending_picker_route_animation = false;
+				clearQueuedPickerRouteAnimation();
 			}
 		}
 		else {

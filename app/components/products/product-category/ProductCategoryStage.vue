@@ -3,14 +3,16 @@ import { useProductExperience } from '~/composables/products/categoryExperience/
 import ProductPickerSlice from '~/components/products/product-category/slices/ProductPickerSlice.vue';
 import ProductHeroSlice from '~/components/products/product-category/slices/ProductHeroSlice.vue';
 import ProductOptionsSlice from '~/components/products/product-category/slices/ProductOptionsSlice.vue';
+import { useNavigation } from '~/composables/navigation/useNavigation';
 
 const {
 	has_picked_product,
 	picker_slid_up,
 	picker_slide_transition_enabled,
 	selection_navigation_in_flight,
-	selected_product,
 } = useProductExperience();
+
+const { category_data } = useNavigation()
 </script>
 
 <template>
@@ -22,7 +24,7 @@ const {
 		<ProductPickerSlice />
 
 		<section v-show="has_picked_product" class="product-reveal product-reveal-layer" data-testid="product-category-reveal">
-			<section v-if="selected_product">
+			<section v-if="category_data">
 				<section class="product-configurator" data-testid="product-category-configurator">
 					<ProductHeroSlice />
 					<ProductOptionsSlice />

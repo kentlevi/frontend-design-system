@@ -2,7 +2,7 @@ export type HomeProductKey = 'dieCut' | 'dieCutRoll' | 'sheet' | 'hologram' | 'v
 
 export type HomeProductType = {
 	key: HomeProductKey;
-	productId: string;
+	productId: number;
 	image: string;
 	to: string;
 };

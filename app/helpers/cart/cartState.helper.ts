@@ -10,7 +10,7 @@ import type { FontSpec } from '~/types/products/attributes';
 export type StoredCartState = {
 	id: string;
 	category: ProductCategoryKey;
-	productId: string;
+	productId: number;
 	sizeKey: string;
 	customSizeLabel?: string;
 	qty: number;
@@ -123,7 +123,7 @@ export function writeCheckoutSelectionIdsToStorage(ids: string[]) {
 
 export function resolveStoredCartProduct(
 	entry: Pick<StoredCartState, 'category' | 'productId'>,
-	localizeProductName: (productId: string) => string
+	localizeProductName: (productId: number) => string
 ) {
 	const category = productCatalog[entry.category];
 	const product = category?.products.find((item) => item.id === entry.productId);

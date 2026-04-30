@@ -1,49 +1,38 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
-import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper';
+import { useNavigation } from '~/composables/navigation/useNavigation';
 
-const {
-	category_data,
-	selected_id,
-	selectProduct,
-} = useProductExperience();
+const { category_data, selected_category, product_state, selected_product_id, selectProduct } = useNavigation()
 
-type StageProduct = {
-	id: string;
-	name: string;
-	image: string;
-};
+const category_slug = computed(() => category_data.value?.url_slug ?? selected_category.value ?? '')
 
-const category_key = computed(() => category_data.value?.key);
+const products = computed(() => {
+	if (!category_slug.value) return []
+	return product_state.value[category_slug.value] ?? []
+})
 
-const category_products = computed<StageProduct[]>(() =>
-	(category_data.value?.products || []).map((product) => {
-		const product_id = category_key.value ? (getProductIdFromSlug(product.id, category_key.value) || product.id) : product.id;
-		return {
-			...product,
-			id: product_id,
-		};
-	})
-);
+const handleProductSelect = (id: number, slug: string) => {
+	if (!category_slug.value) return
+	selectProduct(id, slug, category_slug.value)
+}
 </script>
 
 <template>
 	<div class="product-picker-layer">
 		<nav class="product-picker" data-testid="product-category-picker">
 			<button
-				v-for="product in category_products"
+				v-for="product in products"
 				:key="product.id"
 				type="button"
 				class="product-picker-item"
-				:class="[{ 'is-active': selected_id === product.id }]"
+				:class="[{ 'is-active': selected_product_id === product.id }]"
 				:data-testid="`product-category-picker-item-${product.id}`"
-				@click="selectProduct(product.id)"
+				@click="handleProductSelect(product.id, product.url_slug)"
 			>
 				<div class="product-picker-icon" :class="`is-${product.id}`">
 					<img
-						v-if="product.image"
-						:src="product.image"
+						v-if="product.default_featured_image_url"
+						:src="`${$config.public.file_url}${product.default_featured_image_url}`"
 						:alt="product.name"
 						class="product-picker-image"
 					>

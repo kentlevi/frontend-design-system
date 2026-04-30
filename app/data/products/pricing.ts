@@ -8,7 +8,7 @@ const category_base_price: Record<ProductCategoryKey, number> = {
 	'sheet-stickers': 1.9,
 };
 
-function findCategoryByProductId(productId: string): ProductCategoryKey | null {
+function findCategoryByProductId(productId: number): ProductCategoryKey | null {
 	for (const [categoryKey, category] of Object.entries(productCatalog) as Array<[ProductCategoryKey, (typeof productCatalog)[ProductCategoryKey]]>) {
 		if (category.products.some((product) => product.id === productId)) {
 			return categoryKey;
@@ -17,7 +17,7 @@ function findCategoryByProductId(productId: string): ProductCategoryKey | null {
 	return null;
 }
 
-export function defaultStartPriceByProductId(productId: string): number {
+export function defaultStartPriceByProductId(productId: number): number {
 	const starting_qty = quantity_options[0];
 	const category_key = findCategoryByProductId(productId);
 	const base = category_key ? category_base_price[category_key] : category_base_price.stickers;
