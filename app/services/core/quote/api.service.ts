@@ -42,10 +42,22 @@ export const useQuoteApiService = () => {
 		}
 	}
 
+	const getFeaturedItems = async () => {
+		const { success, message, data} = await $api.get('shared/featured-item')
+
+		if( !success ) {
+			console.warn(message)
+			return
+		}
+
+		return data
+	}
+
 	return {
 		// 🔥 Method
 		getFeaturedData,
 		getFeaturedPricing,
+		getFeaturedItems,
 	}
 
 }
