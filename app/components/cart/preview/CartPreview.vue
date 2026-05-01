@@ -23,12 +23,12 @@ const {
 	is_open,
 	number_of_items,
 	loading,
-	composePreview,
+	requestItems,
 } = useCartPreview('cart-preview')
 
 watch(is_open, (v) => {
 	if( v ) {
-		composePreview();
+		requestItems();
 	}
 }, { immediate: true });
 </script>

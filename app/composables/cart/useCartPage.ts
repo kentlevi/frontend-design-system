@@ -11,7 +11,7 @@ export const useCartPage = () => {
 
 	const upload_service = useUploadService()
 
-	const has_items = computed(() => Boolean(cart_service.items.value) )
+	const has_items = computed(() => Boolean(cart_service.items.value.length) )
 
 	const artwork_action_file_input_ref = ref<HTMLInputElement | null>(null)
 

@@ -149,12 +149,17 @@ export const useCartService = (caller : string) => {
 		cart_store.addItem(item)
 	}
 
+	const adding_item = ref<boolean>(false)
+
 
 	/**
 	 * Dispatch and save added cart.
 	 * @param has_artwork boolean
 	 */
 	const addItem = async () => {
+		if( adding_item.value )
+			return
+
 		if(!attributes_store.product || !selection_store.product_config_mapping_id ) {
 			console.warn('Product data is missing!')
 			return false
@@ -171,6 +176,8 @@ export const useCartService = (caller : string) => {
 		}
 
 		// End of validation
+
+		adding_item.value = true
 
 		const user_id = ref<number | null>(null)
 
@@ -191,6 +198,7 @@ export const useCartService = (caller : string) => {
 
 			if(!upload_service.artwork_file.value) {
 				console.warn("Artwork file is required!")
+				adding_item.value = false
 				return
 			}
 
@@ -204,6 +212,7 @@ export const useCartService = (caller : string) => {
 
 				if( !ok || !ok.value ) {
 					console.warn(message)
+					adding_item.value = false
 					return false
 				}
 
@@ -241,9 +250,11 @@ export const useCartService = (caller : string) => {
 
 		// 🔥 Sending the new item to API
 		if( is_authenticated.value ) {
-			sendItemToServer(item.value)
+			await sendItemToServer(item.value)
 		}
 
+		calculateCartItems()
+		adding_item.value = false
 		return true
 	}
 
@@ -490,6 +501,7 @@ export const useCartService = (caller : string) => {
 		active_lettering_editor: attributes_store.active_lettering_editor,
 		updating_artwork,
 		updating_item,
+		adding_item,
 
 		// 🔥 Methods
 		requestItems,

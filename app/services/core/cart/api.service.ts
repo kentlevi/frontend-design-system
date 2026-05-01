@@ -153,12 +153,12 @@ export const useCartApiService = (caller: string) => {
 		caller,
 
 		// 🔥 Methods
+		extractThrownError,
 		sendToS3,
 		sendToServer,
 		requestDeletion,
 		requestCartItems,
 		requestCartNumbers,
-		extractThrownError,
 		requestArtworkUpdate,
 		requestItemUpdate,
 	}
