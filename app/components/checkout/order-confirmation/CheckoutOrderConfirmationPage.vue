@@ -6,6 +6,7 @@ import CheckoutOrderConfirmationHeader from './CheckoutOrderConfirmationHeader.v
 import CheckoutOrderConfirmationNote from './CheckoutOrderConfirmationNote.vue';
 import CheckoutOrderConfirmationSummary from './CheckoutOrderConfirmationSummary.vue';
 import { useCheckoutConfirmationPage } from '~/composables/checkout/completion/useCheckoutConfirmationPage';
+import { formatShippingDateRange } from '~/utils/shipping/dateRange';
 
 const { t } = useI18n();
 const { withCountry } = useCountry();
@@ -49,7 +50,12 @@ watch(order_id, (new_id, old_id) => {
 			/>
 			<CheckoutOrderConfirmationDelivery
 				:label="t('checkout.confirmation.expectedDelivery')"
-				:value="t('checkout.confirmation.expectedArrival', { date: 'May 2, 2026' })"
+				:value="t('checkout.confirmation.expectedArrival',
+					{ date: formatShippingDateRange(
+						Number(order_confirm_details?.order_production_detail?.min_delivery_date),
+						Number(order_confirm_details?.order_production_detail?.max_delivery_date),
+					) }
+				)"
 			/>
 			<CheckoutOrderConfirmationSummary
 				:title="t('checkout.confirmation.orderSummary')"

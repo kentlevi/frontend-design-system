@@ -37,7 +37,7 @@ useHeightTransition(
 	payment_meta_swap_wrapper_ref,
 	selected_payment_method,
 	() =>
-		selected_payment_method.value?.code === 'CC'
+		selected_payment_method.value?.code === 'CC_TOSS'
 			? '[data-payment-panel="credit-card"]'
 			: selected_payment_method.value?.code === 'BT_TOSS'
 				? '[data-payment-panel="bank-transfer"]'
@@ -75,7 +75,7 @@ onMounted(async()=>{
 				@leave="leave"
 				@after-leave="afterLeave"
 			>
-				<div v-if="selected_payment_method?.code === 'CC'" data-payment-panel="credit-card" class="checkout-member-payment-meta-panel">
+				<div v-if="selected_payment_method?.code === 'CC_TOSS'" data-payment-panel="credit-card" class="checkout-member-payment-meta-panel">
 					<div class="checkout-member-payment-meta-block">
 						<div class="checkout-member-payment-meta">
 							<button

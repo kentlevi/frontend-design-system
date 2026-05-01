@@ -16,6 +16,7 @@ export interface OrderCompleteData {
 	last_modified_time: string
 
 	payment_summary?: PaymentSummary
+	order_production_detail: OrderProductionDetail
 	order_status?: OrderStatus
 	item_status?: ItemStatus
 
@@ -37,6 +38,12 @@ export interface OrderStatus {
 export interface ItemStatus {
 	id: number
 	name: string
+}
+
+export interface OrderProductionDetail {
+	id: number
+	min_delivery_date: string
+	max_delivery_date: string
 }
 
 export interface OrderItem {
