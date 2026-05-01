@@ -151,23 +151,6 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return normalized_label.includes('province') || normalized_label.includes('metropolitan')
 	}
 
-	function hasCityLabel(field: AddressDynamicFields) {
-		const normalized_label = field.field_label.toLowerCase()
-		return normalized_label.includes('city') || normalized_label.includes('town')
-	}
-
-	function getDynamicFieldLabel(field: AddressDynamicFields) {
-		if (hasProvinceLabel(field)) {
-			return options.translate('account.addressBook.province')
-		}
-
-		if (hasCityLabel(field)) {
-			return options.translate('account.addressBook.city')
-		}
-
-		return field.field_label
-	}
-
 	function createDefaultSelectOption(field: AddressDynamicFields): CountryFieldOption {
 		const default_label = hasProvinceLabel(field)
 			? options.translate(resolvePlaceholderKey('provincePlaceholder'))
@@ -200,7 +183,9 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 			return options.translate(resolvePlaceholderKey('provincePlaceholder'))
 		}
 
-		if (hasCityLabel(field)) {
+		const normalized_label = field.field_label.toLowerCase()
+
+		if (normalized_label.includes('city') || normalized_label.includes('town')) {
 			return options.translate(resolvePlaceholderKey('cityPlaceholder'))
 		}
 
@@ -244,7 +229,6 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		getDynamicFieldOptions,
 		getDynamicFieldHighlightedValueWhenEmpty,
 		getDynamicFieldPlaceholder,
-		getDynamicFieldLabel,
 		resolvePlaceholderKey,
 	}
 }

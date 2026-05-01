@@ -109,7 +109,7 @@ const {
 				<UiFormField
 					v-for="(dynamic_field, index) in dynamic_fields"
 					:key="index"
-					:label="getDynamicFieldLabel(dynamic_field)"
+					:label="dynamic_field.field_label"
 					:required="dynamic_field.is_required"
 					:show-required-mark="dynamic_field.is_required"
 					:error="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`)"
