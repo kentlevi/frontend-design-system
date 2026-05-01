@@ -7,7 +7,7 @@
       "closeModal": "모달 닫기",
       "emptyTitle": "등록된 주소가 없습니다.",
       "emptyDescription": "아직 추가된 주소가 없습니다. 주소록에 주소를 먼저 추가해 주세요.\n{action} 버튼을 눌러 정보를 저장해 주세요. 다음 주문부터 더 빠른 결제가 가능합니다.",
-      "addAddressLabel": "주소 추가",
+      "addAddressLabel": "배송지 추가",
       "saving": "주소 저장 중...",
       "addressType": "주소 유형",
       "fullName": "성함",

@@ -18,6 +18,7 @@
       "photoUploadNetworkIssueMessage": "네트워크 문제로 인해 업로드가 불가능합니다. 다시 시도해 주세요.",
       "photoDeleteFailedTitle": "삭제 실패",
       "photoDeleteFailedMessage": "지금은 프로필 사진을 삭제할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+      "cancel": "취소",
       "delete": "삭제",
       "first_name": "이름",
       "last_name": "성",

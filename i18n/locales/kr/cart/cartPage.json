@@ -3,6 +3,7 @@
     "cartPage": {
       "title": "내 장바구니",
       "continueShopping": "쇼핑 계속하기",
+      "cancel": "취소",
       "selectAll": "전체 선택 : {count}개 상품",
       "remove": "삭제",
       "headers": {

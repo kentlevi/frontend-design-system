@@ -186,6 +186,8 @@ const {
 		:model-value="is_delete_photo_modal_open"
 		:title="translate('account.profile.photoDeleteConfirm')"
 		:description="translate('account.profile.photoDeleteDescription')"
+		:cancel-label="translate('account.profile.cancel')"
+		:confirm-label="translate('account.profile.delete')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"
