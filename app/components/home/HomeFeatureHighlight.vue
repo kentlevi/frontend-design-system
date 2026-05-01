@@ -68,6 +68,7 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-v
         .home-feature-copy {
             display: flex;
             flex-direction: column;
+            justify-content: center;
             gap: 20px;
 
             .home-feature-title {
