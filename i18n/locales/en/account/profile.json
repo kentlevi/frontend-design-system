@@ -18,6 +18,7 @@
       "photoUploadNetworkIssueMessage": "Unable to upload due to a network issue. Please try again.",
       "photoDeleteFailedTitle": "Delete Failed",
       "photoDeleteFailedMessage": "Unable to delete your photo right now. Please try again later.",
+      "cancel": "Cancel",
       "delete": "Delete",
       "first_name": "First Name",
       "last_name": "Last Name",

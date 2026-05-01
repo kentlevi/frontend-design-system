@@ -39,7 +39,7 @@ import {
 	useNavigation,
 } from '~/composables/navigation/useNavigation';
 
-export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, api_products?: Ref<Products | undefined>) {
+export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, _api_products?: Ref<Products | undefined>) {
 	const { t, te } = useI18n();
 	const route = useRoute();
 	const router = useRouter();
@@ -347,6 +347,10 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 			selectionStore.updateProductSelectionFlight(false)
 		}, 1000);
 	};
+
+	function getProductPath(product_id: string) {
+		return withCountry(`/${category.value}/${product_id}`);
+	}
 
 	function setSelectionScrollLock(locked: boolean) {
 		if (typeof document === 'undefined') return;
@@ -699,6 +703,7 @@ export function useProductCategoryExperience(category: Ref<ProductCategoryKey>, 
 
 		// Actions
 		selectProduct,
+		getProductPath,
 		openUploadModal,
 		proceedToNextStep,
 		closeUploadModal,

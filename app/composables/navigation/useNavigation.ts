@@ -95,6 +95,8 @@ export const useNavigation = () => {
 		return fetch_promise
 	}
 
+	const getProductPath = (slug: string, category: string) => withCountry(`/${category}/${slug}`)
+
 	const selectProduct = (id: number, slug: string, category: string) => {
 		const route_product = route.params.product
 		const current_slug = Array.isArray(route_product) ? route_product[0] : route_product
@@ -103,7 +105,7 @@ export const useNavigation = () => {
 			return Promise.resolve()
 		}
 
-		const target_path = withCountry(`/${category}/${slug}`)
+		const target_path = getProductPath(slug, category)
 
 		navigation_store.setSelectedProductId(id)
 		queuePickerRouteAnimation()
@@ -127,6 +129,7 @@ export const useNavigation = () => {
 		selected_product_id,
 		product_state,
 		fetchAndStoreProducts,
+		getProductPath,
 		selectProduct
 	}
 }

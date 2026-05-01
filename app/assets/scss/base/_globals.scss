@@ -1,6 +1,14 @@
 @use '../foundation/colors/semantic' as c;
 @use '../foundation/typography/semantic' as t;
 
+@font-face {
+    font-family: 'Pretendard';
+    src: url('/fonts/PretendardVariable.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
     font-family: t.$font-base;
     font-size: t.$body-base;

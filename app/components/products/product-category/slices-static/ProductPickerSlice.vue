@@ -6,6 +6,7 @@ import { getProductIdFromSlug } from '~/helpers/products/productCategory.helper'
 const {
 	category_data,
 	getProductName,
+	getProductPath,
 	selected_id,
 	selectProduct,
 } = useProductExperience();
@@ -27,19 +28,35 @@ const category_products = computed<StageProduct[]>(() =>
 		};
 	})
 );
+
+function handleProductSelect(event: MouseEvent, product_id: string) {
+	if (
+		event.defaultPrevented ||
+		event.button !== 0 ||
+		event.metaKey ||
+		event.ctrlKey ||
+		event.shiftKey ||
+		event.altKey
+	) {
+		return;
+	}
+
+	event.preventDefault();
+	selectProduct(product_id);
+}
 </script>
 
 <template>
 	<div class="product-picker-layer">
 		<nav class="product-picker" data-testid="product-category-picker">
-			<button
+			<NuxtLink
 				v-for="product in category_products"
 				:key="product.id"
-				type="button"
+				:to="getProductPath(product.id)"
 				class="product-picker-item"
 				:class="[{ 'is-active': selected_id === product.id }]"
 				:data-testid="`product-category-picker-item-${product.id}`"
-				@click="selectProduct(product.id)"
+				@click="handleProductSelect($event, product.id)"
 			>
 				<div class="product-picker-icon" :class="`is-${product.id}`">
 					<img
@@ -52,7 +69,7 @@ const category_products = computed<StageProduct[]>(() =>
 				<div class="product-picker-meta">
 					<h4 class="product-picker-name">{{ getProductName(product) }}</h4>
 				</div>
-			</button>
+			</NuxtLink>
 		</nav>
 	</div>
 </template>
@@ -76,6 +93,7 @@ const category_products = computed<StageProduct[]>(() =>
 	display: flex;
 	flex-direction: column;
 	padding: 0;
+	text-decoration: none;
 	transition: background-color 0.2s ease;
 
 	&.is-active,

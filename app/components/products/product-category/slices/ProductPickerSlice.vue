@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useNavigation } from '~/composables/navigation/useNavigation';
 
-const { category_data, selected_category, product_state, selected_product_id, selectProduct } = useNavigation()
+const { category_data, selected_category, product_state, selected_product_id, getProductPath, selectProduct } = useNavigation()
 
 const category_slug = computed(() => category_data.value?.url_slug ?? selected_category.value ?? '')
 
@@ -11,8 +11,20 @@ const products = computed(() => {
 	return product_state.value[category_slug.value] ?? []
 })
 
-const handleProductSelect = (id: number, slug: string) => {
+const handleProductSelect = (event: MouseEvent, id: number, slug: string) => {
 	if (!category_slug.value) return
+	if (
+		event.defaultPrevented ||
+		event.button !== 0 ||
+		event.metaKey ||
+		event.ctrlKey ||
+		event.shiftKey ||
+		event.altKey
+	) {
+		return
+	}
+
+	event.preventDefault()
 	selectProduct(id, slug, category_slug.value)
 }
 </script>
@@ -20,14 +32,14 @@ const handleProductSelect = (id: number, slug: string) => {
 <template>
 	<div class="product-picker-layer">
 		<nav class="product-picker" data-testid="product-category-picker">
-			<button
+			<NuxtLink
 				v-for="product in products"
 				:key="product.id"
-				type="button"
+				:to="getProductPath(product.url_slug, category_slug)"
 				class="product-picker-item"
 				:class="[{ 'is-active': selected_product_id === product.id }]"
 				:data-testid="`product-category-picker-item-${product.id}`"
-				@click="handleProductSelect(product.id, product.url_slug)"
+				@click="handleProductSelect($event, product.id, product.url_slug)"
 			>
 				<div class="product-picker-icon" :class="`is-${product.id}`">
 					<img
@@ -40,7 +52,7 @@ const handleProductSelect = (id: number, slug: string) => {
 				<div class="product-picker-meta">
 					<h4 class="product-picker-name">{{ product.name }}</h4>
 				</div>
-			</button>
+			</NuxtLink>
 		</nav>
 	</div>
 </template>
@@ -64,6 +76,7 @@ const handleProductSelect = (id: number, slug: string) => {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
+	text-decoration: none;
 	transition: background-color 0.2s ease;
 
 	&.is-active,

@@ -9,8 +9,8 @@ const props = withDefaults(defineProps<{
 	iconAlt?: string;
 	width?: string;
 	modalClass?: string;
-	cancelLabel?: string;
-	confirmLabel?: string;
+	cancelLabel: string;
+	confirmLabel: string;
 	confirmTone?: ButtonTone;
 	testId?: string;
 }>(), {
@@ -18,8 +18,6 @@ const props = withDefaults(defineProps<{
 	iconAlt: '',
 	width: '520px',
 	modalClass: 'delete-confirm-modal-shell',
-	cancelLabel: 'Cancel',
-	confirmLabel: 'Delete',
 	confirmTone: 'danger',
 	testId: 'delete-confirm-modal',
 });

@@ -3,6 +3,7 @@
     "cartPage": {
       "title": "My Cart",
       "continueShopping": "Continue Shopping",
+      "cancel": "Cancel",
       "selectAll": "Select All: {count} item(s)",
       "remove": "Remove",
       "headers": {

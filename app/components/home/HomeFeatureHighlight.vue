@@ -6,6 +6,14 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const feature_highlight_video = resolveFileUrl('/home/feature/musticker-krdub-video-subs.mp4');
 const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-video-subs-thumbnail.png');
+
+const feature_video = ref<HTMLVideoElement | null>(null);
+
+function setFeatureVideoMuted(is_muted: boolean) {
+	if (!feature_video.value) return;
+
+	feature_video.value.muted = is_muted;
+}
 </script>
 
 <template>
@@ -13,6 +21,7 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-v
 		<div class="home-feature-card">
 			<div class="home-feature-media" aria-hidden="true">
 				<video
+					ref="feature_video"
 					:poster="feature_highlight_poster"
 					class="home-feature-media-image"
 					autoplay
@@ -20,6 +29,8 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-v
 					loop
 					playsinline
 					preload="metadata"
+					@pointerenter="setFeatureVideoMuted(false)"
+					@pointerleave="setFeatureVideoMuted(true)"
 				>
 					<source :src="feature_highlight_video" type="video/mp4">
 				</video>
@@ -68,6 +79,7 @@ const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-v
         .home-feature-copy {
             display: flex;
             flex-direction: column;
+            justify-content: center;
             gap: 20px;
 
             .home-feature-title {

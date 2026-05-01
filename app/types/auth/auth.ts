@@ -10,38 +10,21 @@ export interface LoginData {
 	& { profile: UserProfile | null };
 }
 
-export interface CartTransferItem {
-	product_config_mapping_id: number;
-	color_id: number | null;
-	font_id: number | null;
-	width: number;
-	height: number;
-	quantity: number;
-	lettering_text: string | null;
-	artwork_file: string | null;
-	artwork_file_name: string | null;
-	instruction: string | null;
-	local_identity: string | null;
-}
-
 export interface LoginPayload {
 	email: string;
 	password: string;
 	remember_me: boolean | number;
-	cart_items?: CartTransferItem[] | null
 }
 
 export interface NonMemberLoginVerificationPayload {
 	email: string;
 	order_number: string;
 	is_resend?: boolean;
-	cart_items?: CartTransferItem[] | null;
 }
 
 export interface CheckoutNonMemberLoginVerificationPayload {
 	email: string;
 	is_resend?: boolean;
-	cart_items?: CartTransferItem[] | null;
 }
 
 export type NonMemberLoginVerificationResponse = ApiResponse<NonMemberLoginVerification>
@@ -68,7 +51,6 @@ export interface SubmitNonMemberLoginVerificationPayload {
 	order_number?: string | null;
 	login_token?: string | null;
 	otp: string;
-	cart_items?: CartTransferItem[] | null;
 }
 
 export interface RegisterVerificationPayload {
@@ -99,7 +81,6 @@ export interface RegisterPayload {
 	email?: string | null;
 	registration_token?: string | null;
 	otp: string;
-	cart_items?: CartTransferItem[] | null;
 }
 
 export type SocialRedirectResponse = ApiResponse<SocialRedirect>
@@ -110,7 +91,6 @@ export interface SocialRedirect {
 
 export interface SocialLoginPayload {
 	provider: string
-	cart_items?: CartTransferItem[] | null
 }
 
 export interface OnboardingPayload {
