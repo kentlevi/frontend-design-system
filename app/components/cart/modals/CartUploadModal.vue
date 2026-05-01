@@ -4,7 +4,7 @@ import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkS
 import { useCartService } from '~/services/core/cart/cart.service';
 
 const { t } = useI18n();
-const cart_service = useCartService('upload-modal')
+const { adding_item, addItem } = useCartService('upload-modal')
 
 const {
 	is_modal_open,
@@ -25,20 +25,25 @@ const {
 } = useArtworkSectionHandler()
 
 const skipUpload = async () => {
-	if( uploading.value )
+	if( uploading.value || adding_item.value ) {
+		console.log(uploading.value, adding_item.value)
 		return
+	}
 
-	console.warn('Skip-Uploading')
-	await cart_service.addItem()
+	await addItem()
+
 	closeModal()
 	await nextTick()
 	openPreview()
 }
 
 const addToCart = async () => {
-	console.warn('Adding cart...')
+	if( uploading.value || adding_item.value ) {
+		console.log(uploading.value, adding_item.value)
+		return
+	}
 
-	const dispatched = await cart_service.addItem()
+	const dispatched = await addItem()
 
 	if( dispatched ) {
 		closeModal()
@@ -202,7 +207,7 @@ watch(() => is_modal_open.value, (n) => {
 					size="md"
 					height="44px"
 					class="upload-skip-btn"
-					:disabled="uploading"
+					:disabled="uploading || adding_item"
 					data-testid="product-category-upload-skip-button"
 					@click="skipUpload()"
 				>
@@ -215,7 +220,7 @@ watch(() => is_modal_open.value, (n) => {
 					size="md"
 					height="44px"
 					class="upload-primary-btn"
-					:disabled="uploading"
+					:disabled="uploading || adding_item"
 					data-testid="product-category-upload-proceed-button"
 					@click="addToCart()"
 				>

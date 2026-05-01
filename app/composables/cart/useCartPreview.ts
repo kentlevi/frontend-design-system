@@ -15,9 +15,6 @@ export const useCartPreview = (caller: string) => {
 		set: (val) => upload_service.is_preview_open.value = val
 	})
 
-	const composePreview = async () => {
-		cart_service.requestItems()
-	}
 
 	const deleteCartItem = (local_identity : string) => {
 		if ( !local_identity )
@@ -36,7 +33,7 @@ export const useCartPreview = (caller: string) => {
 		grand_total: cart_service.grand_total,
 
 		// 🔥 Methods
-		composePreview,
+		requestItems :cart_service.requestItems,
 		formatImage: cart_service.formatImage,
 		deleteCartItem,
 		editItem: cart_store.assignEditableItem,

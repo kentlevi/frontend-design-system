@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppHeaderAccountMenu from '~/components/layout/app-header/AppHeaderAccountMenu.vue';
 import { useCountry } from '~/composables/app/country/useCountry';
+import { useSystemOperations } from '~/composables/core/system/useSystemOperations';
 import { useAppHeaderContext } from '~/composables/layout/appHeader/useAppHeader';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 
@@ -8,6 +9,10 @@ const { t } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute();
 const cart_badge_ready = ref(false)
+
+const {
+	startup,
+} = useSystemOperations()
 
 const {
 	simple,
@@ -38,6 +43,7 @@ function isExactNavHeading(path: string) {
 }
 
 onMounted(() => {
+	startup()
 	cart_badge_ready.value = true
 })
 </script>

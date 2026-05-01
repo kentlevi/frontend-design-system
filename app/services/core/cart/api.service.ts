@@ -1,4 +1,4 @@
-import type { CartItemAPI, CartItemCreationSpec, ExpectedCartItemData, ResponseNumberSpec } from "~/types/cart/cart"
+import type { CartItemAPI, ExpectedCartItemData, ResponseNumberSpec } from "~/types/cart/cart"
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl"
 
 export const useCartApiService = (caller: string) => {
@@ -42,17 +42,25 @@ export const useCartApiService = (caller: string) => {
 		return { ok, message , filename};
 	}
 
-	const sendToServer = async (params: CartItemAPI) => {
-		const { success, message, data } = await $api.post<CartItemCreationSpec>('cart/create',
-			{ ...params }
+	type ExpectedCartData = {
+		id: number
+		local_identity: string
+	}
+
+	type ExpectedCartResult = {
+		success: ExpectedCartData[],
+	}
+	const sendToServer = async (params: CartItemAPI[]) : Promise<ExpectedCartData[] | null> => {
+		const { success, message, data } = await $api.post<ExpectedCartResult>('cart/create',
+			{ items: params }
 		)
 
-		if( !success ) {
-			console.warn(message)
+		if( !success || !data || !data.success) {
+			console.warn(message || 'Failed to sync cart with server')
 			return null
 		}
 
-		return data;
+		return data.success
 	}
 
 
@@ -145,12 +153,12 @@ export const useCartApiService = (caller: string) => {
 		caller,
 
 		// 🔥 Methods
+		extractThrownError,
 		sendToS3,
 		sendToServer,
 		requestDeletion,
 		requestCartItems,
 		requestCartNumbers,
-		extractThrownError,
 		requestArtworkUpdate,
 		requestItemUpdate,
 	}

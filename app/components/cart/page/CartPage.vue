@@ -28,7 +28,6 @@ const {
 } = useCartPageHandler()
 
 onMounted(() => {
-	console.log('Cart page...')
 	refreshItems()
 })
 </script>
