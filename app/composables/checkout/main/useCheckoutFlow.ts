@@ -25,7 +25,6 @@ export const useCheckoutFlow = () => {
 	} = storeToRefs(useMainCheckOutStore())
 	const {
 		selected_real_ids,
-		selected_total_cost,
 	} = storeToRefs(useCartStore())
 
 	const {
@@ -41,8 +40,6 @@ export const useCheckoutFlow = () => {
 		drop_shipping_enabled,
 		use_shipping_as_billing,
 	} = useAddressGeneralUICheckoutContext()
-
-	const total_cost = computed(() => selected_total_cost.value)
 
 
 
@@ -125,8 +122,6 @@ export const useCheckoutFlow = () => {
 	}
 
 	return {
-		selected_total_cost,
-		total_cost,
 		checkout_ready,
 		submitCheckout
 	}

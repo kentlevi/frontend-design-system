@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useCartPreview } from '~/composables/cart/useCartPreview';
 import { formatPrice } from '~/utils/currency/formatPrice';
-import { useCheckoutSummaryItems } from '~/composables/checkout/items/useCheckoutSummaryItems';
+import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
 
 const props = defineProps<{
 	tone: 'guest' | 'member';
 }>();
 
-const { selected_items } = useCheckoutSummaryItems()
+const { selected_items } = useCheckoutSummaryFlow()
 
 const list_classes = computed(() => ['checkout-summary-list', `is-${props.tone}`]);
 

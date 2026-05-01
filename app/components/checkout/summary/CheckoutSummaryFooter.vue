@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCheckoutFlow } from '~/composables/checkout/main/useCheckoutFlow';
+import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
@@ -32,11 +33,16 @@ const summary_key_base = computed(() => `checkout.${props.tone}.summary`);
 const is_mounted = ref<boolean>(false)
 
 const {
-	selected_total_cost,
-	total_cost,
 	checkout_ready,
 	submitCheckout,
 } = useCheckoutFlow();
+
+const {
+	total_cost,
+	sub_total_cost,
+	shipping_cost,
+} = useCheckoutSummaryFlow();
+
 const { listenPaymentResult } = useTossPayment();
 let cleanup_payment_result_listener: (() => void) | null = null;
 
@@ -83,7 +89,7 @@ onBeforeUnmount(() => {
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.subtotal`) }}</div>
 				<div class="checkout-summary-line-value">
 					<span v-if="is_mounted">
-						{{ formatPrice(selected_total_cost) }}
+						{{ formatPrice(sub_total_cost) }}
 					</span>
 					<span v-else>
 						{{ formatPrice(0) }}
@@ -131,7 +137,7 @@ onBeforeUnmount(() => {
 						</div>
 					</UiTooltip>
 				</div>
-				<div class="checkout-summary-line-value">{{ formatPrice(0) }}</div>
+				<div class="checkout-summary-line-value">{{ formatPrice(shipping_cost) }}</div>
 			</div>
 			<div class="checkout-summary-line">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
