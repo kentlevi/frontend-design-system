@@ -134,6 +134,7 @@ export function useShippingMethod() {
 		shipping_method_id.value = method.shipping_method_id
 		production_shipping_id.value = method.production_shipping_id
 
+		production_shipping_store.setSelectedShippingMethodCode(key)
 		checkout_store.setShippingMethodId(method.shipping_method_id)
 	}
 
@@ -151,6 +152,7 @@ export function useShippingMethod() {
 			return
 		}
 
+		production_shipping_store.setSelectedShippingMethodCode(default_method.key)
 		checkout_store.setShippingMethodId(default_method.shipping_method_id)
 	}
 

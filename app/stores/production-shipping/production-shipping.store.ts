@@ -20,7 +20,7 @@ function createInitialProductionShippingState(): ProductionShippingStoreState {
 /**
  * Production shipping store
  */
-export const useProductionShippingStore = defineStore('production-shipping', () => {
+export const useProductionShippingStore = defineStore('production_shipping', () => {
 	/* --------------------------------------------------------------------------
      * State
      * -------------------------------------------------------------------------- */
@@ -30,9 +30,22 @@ export const useProductionShippingStore = defineStore('production-shipping', () 
 	const available_shipping_methods = ref<AvailableShippingMethod[]>(
 		initial_state.available_shipping_methods
 	)
+	const selected_shipping_method_code = ref<string | null>(null)
 	const is_loading = ref<boolean>(initial_state.is_loading)
 	const is_loaded = ref<boolean>(initial_state.is_loaded)
 	const error_message = ref<string>(initial_state.error_message)
+
+	/* --------------------------------------------------------------------------
+     * Getters
+     * -------------------------------------------------------------------------- */
+
+	const selected_shipping = computed<AvailableShippingMethod | null>(
+		() => {
+			return available_shipping_methods.value.find(
+				method => method.shipping_method_code === selected_shipping_method_code.value
+			) || null
+		}
+	)
 
 	/* --------------------------------------------------------------------------
      * Actions
@@ -40,6 +53,10 @@ export const useProductionShippingStore = defineStore('production-shipping', () 
 
 	function setAvailableShippingMethods(methods: ProductionShippingStoreState['available_shipping_methods']): void {
 		available_shipping_methods.value = methods
+	}
+
+	function setSelectedShippingMethodCode(code: string): void {
+		selected_shipping_method_code.value = code
 	}
 
 	function clearAvailableShippingMethods(): void {
@@ -72,8 +89,11 @@ export const useProductionShippingStore = defineStore('production-shipping', () 
 		is_loading,
 		is_loaded,
 		error_message,
+		selected_shipping_method_code,
+		selected_shipping,
 
 		setAvailableShippingMethods,
+		setSelectedShippingMethodCode,
 		clearAvailableShippingMethods,
 		setIsLoading,
 		setIsLoaded,
