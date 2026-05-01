@@ -19,17 +19,8 @@ export const useCartStore = defineStore('cart', () => {
 	const deletable_ids  = ref<string[]>([])
 
 	// Holder of the ID of carts owner
-	const proprietor = ref<number>()
 
-	const cart_user_id = computed(() => user_store.state?.id ?? null)
-
-	// 🔥 Will watcg the changes of user_id
-	watch(() => cart_user_id.value, (new_id) => {
-		if( new_id != proprietor.value)
-			removeItems()
-
-		proprietor.value = new_id
-	} )
+	const cart_holder = computed(() => user_store.state?.id ?? null)
 
 	const selected_item = ref<CartItem | null>(null)
 
@@ -136,12 +127,19 @@ export const useCartStore = defineStore('cart', () => {
 		grand_total.value = Number(total_cost)
 	}
 
-	const emptyCart = () => {
+	const emptyCart = (preserve_unsave_item : boolean = false) => {
+		selected_ids.value = []
+		emptyDeletableItems()
+
+		// 🔥 Preserve the unsave item
+		if( preserve_unsave_item )
+			items.value = items.value.filter( e => !e.id)
+		else
+			items.value = []
+
 		number_of_items.value = 0
 		grand_total.value = 0
-		items.value = []
-		selected_ids.value = []
-		deletable_ids.value = []
+		item_quantities.value = {}
 	}
 
 	/**
@@ -238,13 +236,12 @@ export const useCartStore = defineStore('cart', () => {
 
 	return {
 		// 🔥 States
-		proprietor,
+		cart_holder,
 		items,
 		loading,
 		number_of_items,
 		grand_total,
 		selected_ids,
-		cart_user_id,
 		selected_item,
 		selected_item_id,
 		all_selected,
@@ -282,6 +279,6 @@ export const useCartStore = defineStore('cart', () => {
 	persist: {
 		key: 'mu_cart',
 		storage: persistedState.localStorage,
-		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids', 'proprietor'],
+		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids', 'cart_holder'],
 	}
 })

@@ -26,13 +26,6 @@ export const useCartService = (caller : string) => {
 
 	const is_authenticated = computed(() => Boolean(user_store.is_authenticated) )
 
-	watch(() => user_store.is_authenticated, (authorized) => {
-		if( authorized )
-			requestItems()
-		else
-			cart_store.emptyCart()
-	})
-
 	const config = useRuntimeConfig()
 
 	const page = ref<number>(1)
@@ -40,6 +33,7 @@ export const useCartService = (caller : string) => {
 	const per_page = ref<number>(10)
 
 	const calculateCartItems = async () => {
+		console.warn('Calculating carts...')
 		if( user_store.is_authenticated ) {
 			const cart_numbers = await cart_api_service.requestCartNumbers()
 			if( !cart_numbers ) {
@@ -53,6 +47,17 @@ export const useCartService = (caller : string) => {
 			}, 0)
 			cart_store.syncNumber(cart_store.items.length, tot_cost)
 		}
+	}
+
+	/** This will evaluate all items in user's cart */
+	const evaluateCart = async () => {
+		console.warn('Evaluating carts...')
+
+		if( !user_store.is_authenticated ) {
+			await cart_store.emptyCart(true) // empty the cart with only the unsave item will remain
+		}
+
+		sendUnsaveToServer()
 	}
 
 	const requestItems = async () => {
@@ -243,7 +248,7 @@ export const useCartService = (caller : string) => {
 	}
 
 	/**
-	 * Preparing the data to be sent to API server
+	 * Preparing the item to be sent to API server
 	 */
 	const sendItemToServer = async (item : CartItem) => {
 		// Send the new item to the API.
@@ -262,14 +267,51 @@ export const useCartService = (caller : string) => {
 		}
 
 		/** Forward the prepared data to actual API request  */
-		const result = await cart_api_service.sendToServer(cart_payload)
+		const result = await cart_api_service.sendToServer([cart_payload])
 
 		/** If API request successfully process, must update the item save locally to its created unique ID by API */
-		if( result && result.item && result.item.id && item.local_identity ) {
-			cart_store.updateUploadedItem(item.local_identity, result.item.id)
+		if( result && result.length && result[0]) {
+			cart_store.updateUploadedItem(item.local_identity, result[0].id)
 			upload_service.clearArtwork()
 		}
 	}
+
+	/** Save multiple unsave items */
+	const sendUnsaveToServer = async () => {
+		const unsave_i = cart_store.items.filter( e => !e.id )
+
+		if( !unsave_i.length )
+			return
+
+		const cart_payload = unsave_i.map(item => {
+			return {
+				product_config_mapping_id: item.product_config_mapping_id,
+				color_id: item.color_id,
+				font_id: item.font_id,
+				width: item.width,
+				height: item.height,
+				quantity: item.quantity,
+				lettering_text: item.lettering_text,
+				artwork_file: item.artwork_file,
+				artwork_file_name: item.artwork_file_name,
+				instruction: item.instruction,
+				local_identity: item.local_identity,
+			}
+		})
+
+		/** Forward the prepared data to actual API request  */
+		const result = await cart_api_service.sendToServer(cart_payload)
+
+		/** If API request successfully process, must update the item save locally to its created unique ID by API */
+		if( result && result.length) {
+			for (let index = 0; index < result.length; index++) {
+				const i = result[index];
+				if( i )
+					cart_store.updateItemInCart(i.local_identity, { id : i.id } )
+			}
+		}
+	}
+
 
 	/** Adding/Removing selected item */
 	const toggleSelection = (local_identity : string) => {
@@ -461,6 +503,8 @@ export const useCartService = (caller : string) => {
 		populateItems,
 		updateArtwork,
 		updateItem,
+		evaluateCart,
+		sendUnsaveToServer,
 		setDeletableItems	: cart_store.setDeletableItems,
 		emptyDeletableItems	: cart_store.emptyDeletableItems,
 		removeItems			: cart_store.removeItems,
