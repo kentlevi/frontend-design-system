@@ -13,6 +13,8 @@ export function useUserAddressUI() {
      * Variables
      */
 	const is_form_modal_open = ref(false)
+	const is_delete_modal_open = ref(false)
+	const is_default_shipping_modal_open = ref(false)
 	const form_modal_mode = ref<AddressFormModalMode | null>(null)
 
 
@@ -58,8 +60,26 @@ export function useUserAddressUI() {
 		form_modal_mode.value = null
 	}
 
+	function openDeleteDialog() {
+		is_delete_modal_open.value = true
+	}
+
+	function closeDeleteDialog() {
+		is_delete_modal_open.value = false
+	}
+
+	function openDefaultShippingModal() {
+		is_default_shipping_modal_open.value = true
+	}
+
+	function closeDefaultShippingModal() {
+		is_default_shipping_modal_open.value = false
+	}
+
 	return {
 		is_form_modal_open,
+		is_delete_modal_open,
+		is_default_shipping_modal_open,
 		form_modal_mode,
 		form_submit_label,
 
@@ -67,5 +87,9 @@ export function useUserAddressUI() {
 		openCreateFormModal,
 		openEditFormModal,
 		closeFormModal,
+		openDeleteDialog,
+		closeDeleteDialog,
+		openDefaultShippingModal,
+		closeDefaultShippingModal,
 	}
 }

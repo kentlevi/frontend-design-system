@@ -1,5 +1,5 @@
 import type { AddressType } from "~/types/user-address";
-import { addUserAddress, fetchUserAddresses, updateUserAddress } from "./api.service";
+import { addUserAddress, deleteUserAddress, fetchUserAddresses, updateUserAddress } from "./api.service";
 import { useUserAddressStore } from "~/stores/user-address";
 
 export async function loadAddresses(type: AddressType) {
@@ -58,5 +58,23 @@ export async function updateAddress(
 		console.log('error', error);
 	} finally {
 		store.stopLoading('update')
+	}
+}
+
+export async function deleteAddress(id: number) {
+	const store = useUserAddressStore()
+
+	if (store.isLoading('delete')) return
+
+	store.startLoading('delete')
+
+	try {
+		const response = await deleteUserAddress(id)
+
+		return response
+	} catch (error) {
+		console.log('error', error);
+	} finally {
+		store.stopLoading('delete')
 	}
 }

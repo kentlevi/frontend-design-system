@@ -15,8 +15,8 @@ export function useAddressBookCardUI(props: CardProps) {
 	/**
      * Contexts
      */
-	const { editing_address_snapshot } = useUserAddressDataContext()
-	const { openEditFormModal } = useUserAddressUIContext()
+	const { editing_address_snapshot, pending_delete_address } = useUserAddressDataContext()
+	const { openEditFormModal, openDeleteDialog } = useUserAddressUIContext()
 
 
 	/**
@@ -112,8 +112,9 @@ export function useAddressBookCardUI(props: CardProps) {
 		}
 
 		if (action === 'delete') {
-			// startDeleteFlow(item)
-			// return
+			pending_delete_address.value = props.item
+			openDeleteDialog()
+			return
 		}
 
 		if (action === 'default') {

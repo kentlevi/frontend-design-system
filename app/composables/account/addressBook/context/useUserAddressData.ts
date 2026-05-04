@@ -61,6 +61,9 @@ export function useUserAddressData() {
 	/** Edit */
 	const editing_address_snapshot = ref<AddressMap[AddressType] | null>(null)
 
+	/** Delete */
+	const pending_delete_address = ref<AddressMap[AddressType] | null>(null)
+
 
 
 	return {
@@ -76,6 +79,7 @@ export function useUserAddressData() {
 
 		sections,
 		editing_address_snapshot,
+		pending_delete_address,
 
 		is_shipping_fetching,
 		is_billing_fetching,
