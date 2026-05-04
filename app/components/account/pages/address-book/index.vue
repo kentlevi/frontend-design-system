@@ -9,7 +9,6 @@ import { useAddressCreateForm } from '~/composables/account/addressBook/useAddre
 import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
 import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
 import { useAddressFieldStore } from '~/stores/user-address';
-import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
 import { useAddressDeleteForm } from '~/composables/account/addressBook/useAddressDeleteForm';
 import { useAddressDefaultFlow } from '~/composables/account/addressBook/useAddressDefaultFlow';
 import { provideAddressBookFormContext } from '~/composables/account/addressBook/context/useAddressBookFormContext';
@@ -19,7 +18,9 @@ import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from
 import { loadAddresses } from '~/services/user-address/user-address.service';
 import { ensureDynamicFields } from '~/services/dynamic-fields/dynamic-fields.service';
 import { provideUserAddressData } from '~/composables/account/addressBook/context/useUserAddressDataContext';
-import { provideUserAddress } from '~/composables/account/addressBook/context/useUserAddressContext';
+import { provideUserAddressUI } from '~/composables/account/addressBook/context/useUserAddressUIContext';
+import { useIndexUI } from '~/composables/account/addressBook/useIndexUI';
+import { provideUserAddressFormState } from '~/composables/account/addressBook/context/useUserAddressFormStateContext';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -49,23 +50,13 @@ const {
 	billing_address,
 	drop_address
 } = provideUserAddressData()
+const ui = provideUserAddressUI()
+const state = provideUserAddressFormState()
 
-provideUserAddress()
-
-const {
-	form_state,
-	form_type,
-	active_form,
-	form_field_errors,
-
-	setFormType,
-	populateDynamicFields,
-	clearFormFieldErrors,
-	setFormErrors,
-	updateFormFieldByType,
-	updateDynamicFieldByType,
-	resetForm,
-} = useAddressFormState()
+const { handleOpenAddModal } = useIndexUI(
+	ui,
+	state,
+)
 
 const {
 	is_form_modal_open,
@@ -100,18 +91,17 @@ const {
 const {
 	is_submitting: is_creating,
 	createAddress,
-	prepareCreateModal,
 } = useAddressCreateForm({
-	form_state,
-	form_type,
-	active_form,
+	form_state: state.form_state,
+	form_type: state.form_type,
+	active_form: state.active_form,
 
-	setFormErrors,
+	setFormErrors: state.setFormErrors,
 	openCreateFormModal,
 	closeFormModal,
-	resetForm,
-	clearFormFieldErrors,
-	populateDynamicFields,
+	resetForm: state.resetForm,
+	clearFormFieldErrors: state.clearFormFieldErrors,
+	populateDynamicFields: state.populateDynamicFields,
 })
 
 const {
@@ -134,19 +124,18 @@ const {
 
 const {
 	is_submitting: is_updating,
-	resetEditState,
 	openEditModal,
 	updateAddress,
 } = useAddressEditForm({
-	form_state,
-	form_type,
-	active_form,
+	form_state: state.form_state,
+	form_type: state.form_type,
+	active_form: state.active_form,
 
-	setFormErrors,
+	setFormErrors: state.setFormErrors,
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,
-	clearFormFieldErrors,
+	clearFormFieldErrors: state.clearFormFieldErrors,
 })
 
 const is_submitting = computed(() => is_creating.value || is_updating.value)
@@ -160,14 +149,14 @@ provideAddressBookFormContext({
 	is_form_modal_open,
 	form_modal_mode,
 	form_submit_label,
-	form_type,
-	active_form,
+	form_type: state.form_type,
+	active_form: state.active_form,
 	dynamic_fields,
-	form_field_errors,
+	form_field_errors: state.form_field_errors,
 	is_submitting,
-	setFormType,
-	updateFormFieldByType,
-	updateDynamicFieldByType,
+	setFormType: state.setFormType,
+	updateFormFieldByType: state.updateFormFieldByType,
+	updateDynamicFieldByType: state.updateDynamicFieldByType,
 	submitAddressForm,
 	closeFormModal,
 })
@@ -211,12 +200,12 @@ function handleCardMenuAction(payload: AddressBookMenuPayload) {
 	}
 }
 
-function handleOpenAddModal() {
-	resetEditState()
-	setCreateMode()
-	prepareCreateModal()
-	openCreateFormModal()
-}
+// function handleOpenAddModal() {
+// 	resetEditState()
+// 	setCreateMode()
+// 	prepareCreateModal()
+// 	openCreateFormModal()
+// }
 
 async function submitAddressForm() {
 	if (form_modal_mode.value === 'edit') {

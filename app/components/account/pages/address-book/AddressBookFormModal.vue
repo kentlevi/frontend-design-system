@@ -4,13 +4,19 @@ import { useDismissibleTooltip } from '~/composables/checkout/features/useDismis
 import { useAddressBookFormContext } from '~/composables/account/addressBook/context/useAddressBookFormContext';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
 import type { AddressType } from '~/types/user-address';
+import { useUserAddressUIContext } from '~/composables/account/addressBook/context/useUserAddressUIContext';
 
 type IconName = keyof typeof icons;
+
+const {
+	is_form_modal_open,
+
+	closeFormModal
+} = useUserAddressUIContext()
 
 const { t: translate } = useI18n();
 const address_book_form_context = useAddressBookFormContext();
 
-const is_form_modal_open = address_book_form_context.is_form_modal_open;
 const form_modal_mode = address_book_form_context.form_modal_mode;
 const form_submit_label = address_book_form_context.form_submit_label;
 const form_type = address_book_form_context.form_type;
@@ -23,7 +29,6 @@ const setFormType = address_book_form_context.setFormType;
 const updateFormFieldByType = address_book_form_context.updateFormFieldByType;
 const updateDynamicFieldByType = address_book_form_context.updateDynamicFieldByType;
 const submitAddressForm = address_book_form_context.submitAddressForm;
-const closeFormModal = address_book_form_context.closeFormModal;
 
 const default_address_tooltip_open = ref(false)
 const default_address_tooltip_ref = ref<HTMLElement | null>(null)
@@ -103,10 +108,6 @@ const default_address_tooltip_content = computed(() => {
 	}
 })
 
-function closeModal() {
-	closeFormModal()
-}
-
 function toggleDefaultAddressTooltip() {
 	default_address_tooltip_open.value = !default_address_tooltip_open.value
 }
@@ -125,7 +126,7 @@ async function handleSubmit() {
 		:title="modal_title"
 		modal-class="account-address-book-add-modal-shell"
 		:close-on-backdrop="false"
-		@update:model-value="!$event ? closeModal() : undefined"
+		@update:model-value="!$event ? closeFormModal() : undefined"
 	>
 		<template #overlay>
 			<UiLoadingOverlay
