@@ -13,7 +13,7 @@ export function useUserAddressUI() {
      * Variables
      */
 	const is_form_modal_open = ref(false)
-	const form_modal_mode = ref<AddressFormModalMode>('create')
+	const form_modal_mode = ref<AddressFormModalMode | null>(null)
 
 
 
@@ -35,17 +35,27 @@ export function useUserAddressUI() {
 		form_modal_mode.value = 'create'
 	}
 
+	function setEditMode() {
+		form_modal_mode.value = 'edit'
+	}
+
+	function openCreateFormModal() {
+		setCreateMode()
+		openFormModal()
+	}
+
+	function openEditFormModal() {
+		setEditMode()
+		openFormModal()
+	}
+
 	function openFormModal() {
 		is_form_modal_open.value = true
 	}
 
 	function closeFormModal() {
 		is_form_modal_open.value = false
-	}
-
-	function openCreateFormModal() {
-		setCreateMode()
-		openFormModal()
+		form_modal_mode.value = null
 	}
 
 	return {
@@ -55,6 +65,7 @@ export function useUserAddressUI() {
 
 		setCreateMode,
 		openCreateFormModal,
+		openEditFormModal,
 		closeFormModal,
 	}
 }

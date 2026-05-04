@@ -1,5 +1,5 @@
 import type { AddressType } from "~/types/user-address";
-import { addUserAddress, fetchUserAddresses } from "./api.service";
+import { addUserAddress, fetchUserAddresses, updateUserAddress } from "./api.service";
 import { useUserAddressStore } from "~/stores/user-address";
 
 export async function loadAddresses(type: AddressType) {
@@ -37,5 +37,26 @@ export async function createUserAddress(payload: Record<string, unknown>) {
 		console.log('error', error);
 	} finally {
 		store.stopLoading('create')
+	}
+}
+
+export async function updateAddress(
+	id: number,
+	payload: Record<string, unknown>
+) {
+	const store = useUserAddressStore()
+
+	if (store.isLoading('update')) return
+
+	store.startLoading('update')
+
+	try {
+		const response = await updateUserAddress(id, payload)
+
+		return response
+	} catch (error) {
+		console.log('error', error);
+	} finally {
+		store.stopLoading('update')
 	}
 }

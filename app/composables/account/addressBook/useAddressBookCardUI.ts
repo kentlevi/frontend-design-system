@@ -1,6 +1,8 @@
 import type { AddressMap, AddressType } from "~/types/user-address";
 import { useAddressHelper } from "~/utils/address";
 import { getTranslatedAddressBookLabel } from "./addressBookPresentation";
+import { useUserAddressUIContext } from "./context/useUserAddressUIContext";
+import { useUserAddressDataContext } from "./context/useUserAddressDataContext";
 
 type CardProps = {
 	item?: AddressMap[AddressType];
@@ -9,6 +11,13 @@ type CardProps = {
 };
 
 export function useAddressBookCardUI(props: CardProps) {
+
+	/**
+     * Contexts
+     */
+	const { editing_address_snapshot } = useUserAddressDataContext()
+	const { openEditFormModal } = useUserAddressUIContext()
+
 
 	/**
      * Types
@@ -97,8 +106,9 @@ export function useAddressBookCardUI(props: CardProps) {
 		closeMenu()
 
 		if (action === 'edit') {
-			// openEditModal(item)
-			// return
+			editing_address_snapshot.value = props.item
+			openEditFormModal()
+			return
 		}
 
 		if (action === 'delete') {

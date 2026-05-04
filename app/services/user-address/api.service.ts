@@ -28,11 +28,11 @@ export async function addUserAddress(
  */
 export async function updateUserAddress(
 	id: number,
-	params: Record<string, unknown>
+	payload: Record<string, unknown>
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
-	return $api.put(`/user-address/${id}`, params);
+	return $api.put(`/user-address/${id}`, payload);
 }
 
 /**
