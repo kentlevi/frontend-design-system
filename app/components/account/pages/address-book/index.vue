@@ -5,7 +5,6 @@ import AddressBookFormModal from './AddressBookFormModal.vue';
 import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';
 import AddressBookConfirmDefaultChangeModal from './AddressBookConfirmDefaultChangeModal.vue';
 import AddressBookDefaultShippingModal from './AddressBookDefaultShippingModal.vue';
-import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
 import { useAddressCreateForm } from '~/composables/account/addressBook/useAddressCreateForm';
 import { useAddressEditForm } from '~/composables/account/addressBook/useAddressEditForm';
 import { useAddressModalState } from '~/composables/account/addressBook/useAddressModalState';
@@ -19,6 +18,8 @@ import { provideAddressBookDefaultContext } from '~/composables/account/addressB
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
 import { loadAddresses } from '~/services/user-address/user-address.service';
 import { ensureDynamicFields } from '~/services/dynamic-fields/dynamic-fields.service';
+import { provideUserAddressData } from '~/composables/account/addressBook/context/useUserAddressDataContext';
+import { provideUserAddress } from '~/composables/account/addressBook/context/useUserAddressContext';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -41,14 +42,15 @@ loadAddresses('drop')
 ensureDynamicFields()
 
 const {
+	sections,
+	is_loading,
+	has_addresses,
 	shipping_address,
 	billing_address,
-	drop_address,
-	sections,
-	has_addresses,
+	drop_address
+} = provideUserAddressData()
 
-	is_loading,
-} = useAddressBookList()
+provideUserAddress()
 
 const {
 	form_state,
@@ -297,11 +299,9 @@ function skipDefaultShippingSelection() {
 				>
 					<div class="account-address-book-primary-group">
 						<AddressBookSection
-							v-for="section in sections"
-							:key="section.section"
+							v-for="(section, index) in sections"
+							:key="index"
 							:section="section.section"
-							:items="section.loading ? [] : section.items"
-							:loading="section.loading"
 						/>
 					</div>
 				</div>

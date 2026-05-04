@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import type { AddressMap, AddressType } from '~/types/user-address';
-import type { ComponentPublicInstance } from 'vue';
-import { useAddressHelper } from '~/utils/address';
-import { useAddressBookCardActionContext } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
-import { address_book_tag_badge_colors, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';
-
-const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
-const address_book_card_action_context = useAddressBookCardActionContext()
-
-type MenuActionKey = 'edit' | 'delete' | 'default';
+import { address_book_tag_badge_colors } from '~/composables/account/addressBook/addressBookPresentation';
+import { useAddressBookCardUI } from '~/composables/account/addressBook/useAddressBookCardUI';
 
 type CardProps = {
 	item?: AddressMap[AddressType];
@@ -18,92 +11,21 @@ type CardProps = {
 
 const props = defineProps<CardProps>()
 
-const { t } = useI18n();
-const menu_wrap_ref = ref<HTMLElement | null>(null)
-const is_menu_open = ref(false)
-const active_menu_action = ref<MenuActionKey | null>(null)
+const {
+	translate,
 
-const menu_actions = computed(() => {
-	return [
-		{
-			key: 'edit',
-			label: t('account.addressBook.editAddress'),
-			tone: 'default',
-		},
-		{
-			key: 'delete',
-			label: t('account.addressBook.deleteAddress'),
-			tone: 'danger',
-		},
-		{
-			key: 'default',
-			label: t('account.addressBook.setAsDefault'),
-			tone: 'default',
-		},
-	] as const
-})
+	shipping_phone_number,
+	address_line_text,
+	is_menu_open,
+	active_menu_action,
+	menu_actions,
 
-const shipping_phone_number = computed(() => props.item ? shippingPhoneNumber(props.item) : '')
+	setMenuWrapRef,
+	toggleMenu,
+	handleMenuAction,
+	getAddressLabel,
+} = useAddressBookCardUI(props)
 
-/** Build all visible address lines for the template */
-const address_line_text = computed(() => props.item ? buildAddressLines(props.item).trim() : '')
-
-function getAddressLabel(label: string) {
-	return getTranslatedAddressBookLabel(label, t)
-}
-
-function setMenuWrapRef(element: Element | ComponentPublicInstance | null) {
-	menu_wrap_ref.value = element instanceof HTMLElement ? element : null
-}
-
-function closeMenu() {
-	is_menu_open.value = false
-	active_menu_action.value = null
-}
-
-function toggleMenu() {
-	if (is_menu_open.value) {
-		closeMenu()
-	} else {
-		is_menu_open.value = true
-	}
-}
-
-function handleDocumentClick(event: MouseEvent) {
-	if (!is_menu_open.value || !menu_wrap_ref.value) return
-
-	const target = event.target
-
-	if (!(target instanceof Node) || menu_wrap_ref.value.contains(target)) return
-
-	closeMenu()
-}
-
-function handleWindowKeydown(event: KeyboardEvent) {
-	if (event.key !== 'Escape') return
-
-	closeMenu()
-}
-
-function handleMenuAction(action: MenuActionKey) {
-	if (!props?.item) return
-
-	closeMenu()
-	address_book_card_action_context.handleCardMenuAction({
-		action,
-		item: props.item,
-	})
-}
-
-onMounted(() => {
-	document.addEventListener('click', handleDocumentClick, true)
-	window.addEventListener('keydown', handleWindowKeydown)
-})
-
-onBeforeUnmount(() => {
-	document.removeEventListener('click', handleDocumentClick, true)
-	window.removeEventListener('keydown', handleWindowKeydown)
-})
 </script>
 
 <template>
@@ -147,7 +69,7 @@ onBeforeUnmount(() => {
 					text-color="var(--gray-80)"
 				>
 					<UiIcon name="strong-ship" :size="18" />
-					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeShipping') }}</span>
+					<span class="account-address-book-card-default-badge-copy">{{ translate('account.addressBook.defaultBadgeShipping') }}</span>
 				</UiBadge>
 				<UiBadge
 					v-else-if="props.item?.is_default && props.item?.type === 'billing'"
@@ -158,7 +80,7 @@ onBeforeUnmount(() => {
 					text-color="var(--gray-80)"
 				>
 					<UiIcon name="strong-file-dollar" :size="18" />
-					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeBilling') }}</span>
+					<span class="account-address-book-card-default-badge-copy">{{ translate('account.addressBook.defaultBadgeBilling') }}</span>
 				</UiBadge>
 				<UiBadge
 					v-else-if="props.item?.is_default && props.item?.type === 'drop'"
@@ -169,7 +91,7 @@ onBeforeUnmount(() => {
 					text-color="var(--gray-80)"
 				>
 					<UiIcon name="strong-box-full" :size="18" />
-					<span class="account-address-book-card-default-badge-copy">{{ t('account.addressBook.defaultBadgeDrop') }}</span>
+					<span class="account-address-book-card-default-badge-copy">{{ translate('account.addressBook.defaultBadgeDrop') }}</span>
 				</UiBadge>
 				<UiBadge
 					v-else-if="props.item?.is_default"
@@ -177,7 +99,7 @@ onBeforeUnmount(() => {
 					tone="default"
 					size="md"
 				>
-					{{ t('account.addressBook.default') }}
+					{{ translate('account.addressBook.default') }}
 				</UiBadge>
 			</div>
 			<div

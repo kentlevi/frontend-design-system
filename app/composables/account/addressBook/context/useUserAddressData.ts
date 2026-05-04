@@ -1,7 +1,7 @@
 import { useUserAddressStore } from "~/stores/user-address";
 import type { AddressType } from "~/types/user-address";
 
-export function useAddressBookList() {
+export function useUserAddressData() {
 
 	/**
      * Store
@@ -21,7 +21,7 @@ export function useAddressBookList() {
 	const is_billing_fetching = computed(() => address_store.isLoading('fetch', 'billing'))
 	const is_drop_fetching = computed(() => address_store.isLoading('fetch', 'drop'))
 	const is_loading = computed(() =>
-		is_shipping_fetching.value || is_billing_fetching.value || is_drop_fetching.value
+		Boolean(is_shipping_fetching.value || is_billing_fetching.value || is_drop_fetching.value)
 	)
 
 	const has_shipping_addresses = computed(() => shipping_address.value.length > 0)
@@ -47,7 +47,7 @@ export function useAddressBookList() {
 			items: drop_address,
 			loading: is_drop_fetching,
 		},
-	} as const
+	}
 
 	const sections = computed(() =>
 		(Object.entries(baseSections) as [AddressType, typeof baseSections[AddressType]][])
