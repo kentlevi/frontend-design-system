@@ -45,10 +45,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 
 
 const openArtworkDetails = (item : CartItem) => {
-	if( item.artwork_file )
-		emit('updateArtwork', item)
-	else
-		emit('openItemDetails', item.local_identity)
+	emit('updateArtwork', item)
 }
 </script>
 
@@ -62,7 +59,7 @@ const openArtworkDetails = (item : CartItem) => {
 				icon-class="cart-check-row-icon"
 				@update:model-value="selectAllItem"
 			>
-				{{ $t('cart.cartPage.selectAll', { count: items.length }) }}
+				{{ $t('cart.cartPage.selectAll', { count: selected_ids.length }) }}
 			</UiCheckbox>
 			<UiButton
 				class="cart-remove-btn"
@@ -104,9 +101,7 @@ const openArtworkDetails = (item : CartItem) => {
 					<div class="cart-item-main">
 						<button
 							type="button"
-							class="cart-item-thumb"
-							:class="{ 'cart-item-thumb--interactive': Boolean(row.artwork_file) }"
-							:disabled="!row.artwork_file"
+							class="cart-item-thumb cart-item-thumb--interactive"
 							@click="openArtworkDetails(row)"
 						>
 							<img
@@ -115,7 +110,7 @@ const openArtworkDetails = (item : CartItem) => {
 								class="cart-item-thumb-image"
 							>
 							<span
-								v-if="Boolean(row.artwork_file) && allowVariantUpdate(row.url_slug)"
+								v-if="allowVariantUpdate(row.url_slug)"
 								class="cart-item-thumb-overlay"
 								aria-hidden="true"
 							>
