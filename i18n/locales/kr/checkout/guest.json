@@ -39,7 +39,7 @@
         },
         "city": {
           "label": "시/군/구",
-          "placeholder": "시/군/구를 입력하세요"
+          "placeholder": "시/군/구를 입력해 주세요"
         },
         "postalCode": {
           "label": "우편번호",
@@ -116,10 +116,10 @@
       },
       "summary": {
         "itemMeta": "{size}mm / {qty}pcs.",
-        "subtotal": "소계:",
+        "subtotal": "소계",
         "shippingFee": "배송비:",
-        "discounts": "할인:",
-        "total": "합계:",
+        "discounts": "할인 금액",
+        "total": "합계",
         "shippingFeeInfoAria": "배송비 정보 보기",
         "shippingFeeTooltipTitle": "배송비",
         "shippingFeeTooltipText": "배송비는 선택한 배송 방법과 지역에 따라 계산됩니다."

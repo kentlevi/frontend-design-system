@@ -13,10 +13,10 @@
       "orderNumberLabel": "주문 번호",
       "orderNumber": "{orderNumber}",
       "summary": {
-        "subtotal": "소계:",
+        "subtotal": "소계",
         "shippingFee": "배송비",
-        "discounts": "할인:",
-        "total": "합계:"
+        "discounts": "할인 금액",
+        "total": "합계"
       }
     }
   }

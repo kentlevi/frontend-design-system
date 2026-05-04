@@ -28,10 +28,21 @@ const { t } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 const product_hero_media_map: Record<string, { folder: string, file: string }> = {
+	'circle-sticker': { folder: 'round-stickers', file: 'round-sticker' },
 	'clear-sticker': { folder: 'clear-sticker', file: 'clear-sticker' },
+	'circle-sheet': { folder: 'circle-sheet', file: 'circle-sheet' },
 	'die-cut-sticker': { folder: 'die-cut-sticker', file: 'die-cut-sticker' },
+	'hologram-sticker': { folder: 'hologram-sticker', file: 'hologram-sticker' },
 	'kiss-cut-sticker': { folder: 'kiss-cut-sticker', file: 'kiss-cut-sticker' },
+	'oval-sticker': { folder: 'oval-stickers', file: 'oval-sticker' },
+	'oval-roll': { folder: 'oval-roll', file: 'oval-roll' },
+	'paper-roll': { folder: 'paper-roll', file: 'paper-roll' },
+	'rectangle-sticker': { folder: 'rectangular-stickers', file: 'rectangular-stickers' },
+	'rectangle-roll': { folder: 'rectangle-roll', file: 'rectangle-roll' },
+	'rounded-sticker': { folder: 'rounded-square-stickers', file: 'rounded-square-sticker' },
 	'sticker-sheet': { folder: 'sticker-sheet', file: 'sticker-sheet' },
+	'square-sticker': { folder: 'square-stickers', file: 'square-sticker' },
+	'square-roll': { folder: 'square-roll', file: 'square-roll' },
 	'transfer-sticker': { folder: 'transfer-sticker', file: 'transfer-sticker' },
 	'vinyl-lettering': { folder: 'vinyl-lettering', file: 'vinyl-lettering' },
 };

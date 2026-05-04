@@ -72,12 +72,12 @@
                         "rounded-roll": "Rounded Roll Stickers",
                         "oval-roll": "Oval Roll Stickers",
                         "paper-roll": "Paper Roll Stickers",
-                        "die-cut-sheet": "Die Cut Sheet Stickers",
-                        "circle-sheet": "Circle Sheet Stickers",
-                        "oval-sheet": "Oval Sheet Stickers",
-                        "square-sheet": "Square Sheet Stickers",
-                        "rectangle-sheet": "Rectangle Sheet Stickers",
-                        "rounded-sheet": "Rounded Corner Sheet Stickers"
+                        "die-cut-sheet": "Die Cut Sticker Sheets",
+                        "circle-sheet": "Circle Sticker Sheets",
+                        "oval-sheet": "Oval Sticker Sheets",
+                        "square-sheet": "Square Sticker Sheets",
+                        "rectangle-sheet": "Rectangle Sticker Sheets",
+                        "rounded-sheet": "Rounded Corner Sticker Sheets"
                     },
                     "footer": {
                         "navigate": "Navigate",

@@ -15,7 +15,7 @@
       "summary": {
         "subtotal": "Subtotal:",
         "shippingFee": "Shipping Fee:",
-        "discounts": "Discounts:",
+        "discounts": "Discounts: ",
         "total": "Total:"
       }
     }

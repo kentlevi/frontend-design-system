@@ -6,7 +6,7 @@
       "lastTierUpgrade": "Last Tier Upgrade",
       "pointsUnit": "points",
       "pointsSystemTitle": "Points System",
-      "pointsSystemDescription": "Make every purchase count! Earn points and unlock rewards with every order and interaction in our loyalty program.",
+      "pointsSystemDescription": "Earn and redeem points in our loyalty program for rewards, exclusive perks, and discounts on future purchases.",
       "loyaltyIntro": "Earn and redeem points in our loyalty program for rewards, exclusive perks, and discounts on future purchases.",
       "pointsSpec": {
         "title": "Points Specification:",
@@ -15,7 +15,7 @@
         "deductionRule": "Points closest to expiration are used first when redeeming."
       },
       "questTitle": "The Great Sticker Quest",
-      "questDescription": "Take on quests, earn points, and unlock awesome rewards!",
+      "questDescription": "Make every purchase count! Earn points and unlock rewards with every order and interaction in our loyalty program.",
       "historyTitle": "Points History",
       "historyDescription": "Track every point you’ve earned or used in the loyalty program.",
       "challengesTitle": "Challenges",
@@ -76,17 +76,17 @@
         "socialSharing": {
           "name": "Social Sharing",
           "description": "Share your ticket design on social media and earn points!",
-          "reward": "10% off your next order and 3 points."
+          "reward": "Earn 5 points."
         },
         "reviewMaster": {
           "name": "Review Master",
           "description": "Leave a review for any product you’ve purchased and earn points!",
-          "reward": "Earn 8 points."
+          "reward": "10% off your next order and 3 points."
         },
         "shareYourCreativity": {
           "name": "Share Your Creativity",
           "description": "Show off your stickers online and don’t forget to tag us!",
-          "reward": "Earn 8 points."
+          "reward": "Earn 10 points."
         },
         "theRoyalReferral": {
           "name": "The Royal Referral",

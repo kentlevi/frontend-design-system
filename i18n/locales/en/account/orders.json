@@ -26,8 +26,8 @@
         "november": "November",
         "december": "December"
       },
-      "selectDate": "Select Dates:",
-      "filters": "Filters:",
+      "selectDate": "Select Date",
+      "filters": "Filters",
       "filterOptions": {
         "thisWeek": "This Week",
         "thisMonth": "This Month",
@@ -108,13 +108,13 @@
         "size": "Size:",
         "quantity": "Quantity:",
         "pcs": "pcs",
-        "dragAndDrop": "Drag and Drop files to upload",
-        "acceptedFiletypes": "Accepted file types: .eps, .ai, .psd, .pdf, .tif, .png and .jpg",
+        "dragAndDrop": "Drag and drop files to upload",
+        "acceptedFiletypes": "Accepted filetypes: .eps, .ai, .psd, .pdf, .tif, .png and .jpg",
         "selectFiles": "Select Files",
-        "replaceImage": "Replace image",
+        "replaceImage": "Replace Image",
         "removeArtwork": "Remove uploaded artwork",
         "specialInstructions": "Special Instructions",
-        "specialInstructionsPlaceholder": "Enter special instructions here....",
+        "specialInstructionsPlaceholder": "Enter special instruction here....",
         "cancel": "Cancel",
         "submit": "Submit"
       },

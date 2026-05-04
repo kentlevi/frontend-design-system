@@ -31,7 +31,7 @@
       "shippingDetails": "배송 정보",
       "viewShippingAddresses": "배송지 보기",
       "myShippingAddress": "내 배송지",
-      "discountsAndPerks": "할인과 쿠폰",
+      "discountsAndPerks": "포인트 및 쿠폰",
       "defaultBadge": "기본",
       "shipToAnotherAddress": "다른 주소로 배송",
       "shippingMethod": "배송 방법",
@@ -115,10 +115,10 @@
         "suffix": "에 동의하는 것으로 간주됩니다."
       },
       "summary": {
-        "subtotal": "소계:",
+        "subtotal": "소계",
         "shippingFee": "배송비({method})",
-        "discounts": "할인:",
-        "total": "총액:",
+        "discounts": "할인 금액",
+        "total": "합계",
         "shippingFeeInfoAria": "배송비 정보 보기",
         "shippingFeeTooltipTitle": "배송비",
         "shippingFeeTooltipText": "배송비는 선택한 배송 방법과 지역에 따라 계산됩니다."

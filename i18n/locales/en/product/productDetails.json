@@ -28,31 +28,34 @@
     },
     "sizes": {
       "small30": {
-        "label": "Small 30x30"
+        "label": "Small 30x30",
+        "featureLabel": "Small 30x30"
       },
       "medium75": {
-        "label": "Medium 75x75 (Most Popular)",
+        "label": "Medium 75x75",
         "featureLabel": "Medium 75x75"
       },
       "large100": {
-        "label": "Large 100x100"
+        "label": "Large 100x100",
+        "featureLabel": "Large 100x100"
       },
       "extraLarge125": {
-        "label": "Extra Large 125x125"
+        "label": "Extra Large 125x125",
+        "featureLabel": "Extra Large 125x125"
       }
     },
     "featureCards": {
       "small": {
-        "description": "Compact size for phone cases, earbuds, water bottles, and other small accessories."
+        "description": "Perfect for helmets, phone cases, and gear"
       },
       "medium": {
-        "description": "Everyday size for laptops, notebooks, journals, and personal gear."
+        "description": "Ideal size for tumblers, laptops, and notebooks"
       },
       "large": {
-        "description": "Statement size for packaging, product boxes, folders, and branded merchandise."
+        "description": "Best for key display surfaces"
       },
       "extraLarge": {
-        "description": "High-visibility size for car windows, coolers, storage bins, and larger surfaces."
+        "description": "Standout size for cars, coolers, or toolboxes."
       },
       "effortlessApplication": {
         "title": "Effortless Application",
@@ -67,8 +70,8 @@
       "subtotal": "Subtotal",
       "discount": "Discount",
       "total": "Total",
-      "benefitShipping": "- Free shipping over 50,000 JYP",
-      "benefitShipsTomorrow": "- Ships tomorrow after design approval.",
+      "benefitShipping": "- Free shipping over 50,000 won",
+      "benefitShipsTomorrow": "- Ships tomorrow after design approval",
       "benefitShipsTomorrowByProduct": {
         "die-cut-sticker": "- Ships tomorrow after design approval",
         "square-sticker": "- Ships fast once you approve your design."

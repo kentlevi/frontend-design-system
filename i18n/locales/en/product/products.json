@@ -2,7 +2,7 @@
   "product": {
     "navigationNames": {
       "die-cut-sticker": "Die Cut Stickers",
-      "circle-sticker": "Circle Stickers",
+      "circle-sticker": "Round Stickers",
       "rectangle-sticker": "Rectangular Stickers",
       "square-sticker": "Square Stickers",
       "oval-sticker": "Oval Stickers",
@@ -21,22 +21,22 @@
       "rounded-roll": "Rounded Roll Stickers",
       "oval-roll": "Oval Roll Stickers",
       "paper-roll": "Paper Roll Stickers",
-      "die-cut-sheet": "Die Cut Sheet Stickers",
-      "circle-sheet": "Circle Sheet Stickers",
-      "oval-sheet": "Oval Sheet Stickers",
-      "square-sheet": "Square Sheet Stickers",
-      "rectangle-sheet": "Rectangle Sheet Stickers",
+      "die-cut-sheet": "Die Cut Sticker Sheets",
+      "circle-sheet": "Circle Sticker Sheets",
+      "oval-sheet": "Oval Sticker Sheets",
+      "square-sheet": "Square Sticker Sheets",
+      "rectangle-sheet": "Rectangle Sticker Sheets",
       "rounded-sheet": "Rounded Corner Sheet Stickers"
     },
     "pageNames": {
       "die-cut-sticker": "Die Cut Stickers",
-      "circle-sticker": "Circle Stickers",
+      "circle-sticker": "Round Stickers",
       "rectangle-sticker": "Rectangular Stickers",
       "square-sticker": "Square Stickers",
       "oval-sticker": "Oval Stickers",
       "rounded-sticker": "Rounded Corner Stickers",
       "kiss-cut-sticker": "Kiss Cut Stickers",
-      "sticker-sheet": "Sheet Stickers",
+      "sticker-sheet": "Sticker Sheets",
       "clear-sticker": "Clear Stickers",
       "hologram-sticker": "Hologram Stickers",
       "transfer-sticker": "Transfer Stickers",
@@ -50,11 +50,11 @@
       "rounded-roll": "Rounded Roll Stickers",
       "oval-roll": "Oval Roll Stickers",
       "paper-roll": "Paper Roll Stickers",
-      "die-cut-sheet": "Die Cut Sheet Stickers",
-      "circle-sheet": "Circle Sheet Stickers",
-      "oval-sheet": "Oval Sheet Stickers",
-      "square-sheet": "Square Sheet Stickers",
-      "rectangle-sheet": "Rectangle Sheet Stickers",
+      "die-cut-sheet": "Die Cut Sticker Sheets",
+      "circle-sheet": "Circle Sticker Sheets",
+      "oval-sheet": "Oval Sticker Sheets",
+      "square-sheet": "Square Sticker Sheets",
+      "rectangle-sheet": "Rectangle Sticker Sheets",
       "rounded-sheet": "Rounded Corner Sheet Stickers"
     },
     "items": {
@@ -64,7 +64,7 @@
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
       "circle-sticker": {
-        "name": "Circle Stickers",
+        "name": "Round Stickers",
         "blurb": "Printed on thick, premium material with smooth circular edges for a clean finish.",
         "featureDescription": "Upload your artwork and Musticker will cut it exactly to the outline you intended. Even intricate shapes come out clean and crisp with our state-of-the-art cutting technology."
       },
@@ -120,7 +120,7 @@
       },
       "custom-lettering": {
         "name": "Vinyl Lettering",
-        "blurb": "Designed for clean and accurate placement. Once applied, the backing is removed to reveal crisp lettering that blends seamlessly with the surface.",
+        "blurb": "The displayed surface color is for demonstration purposes only. Letters are cut individually, self-adhesive, pre-spaced, and come with application tape applied.",
         "tagline": "Your Text"
       },
       "die-cut-roll": {
@@ -145,7 +145,7 @@
       },
       "rounded-roll": {
         "name": "Rounded Roll Stickers",
-        "blurb": "Rounded square stickers are arranged in a roll for convenient application."
+        "blurb": "Rounded square stickers arranged in a roll for convenient application."
       },
       "oval-roll": {
         "name": "Oval Roll Stickers",
@@ -156,27 +156,27 @@
         "blurb": "Paper stickers in roll format designed for everyday labeling needs."
       },
       "die-cut-sheet": {
-        "name": "Die Cut Sheet Stickers",
+        "name": "Die Cut Sticker Sheets",
         "blurb": "Custom-shaped stickers neatly arranged on a single sheet."
       },
       "circle-sheet": {
-        "name": "Circle Sheet Stickers",
+        "name": "Circle Sticker Sheets",
         "blurb": "Round stickers are organized on a sheet for easy access and use."
       },
       "oval-sheet": {
-        "name": "Oval Sheet Stickers",
+        "name": "Oval Sticker Sheets",
         "blurb": "Oval stickers arranged on a sheet for organized application."
       },
       "square-sheet": {
-        "name": "Square Sheet Stickers",
+        "name": "Square Sticker Sheets",
         "blurb": "Square stickers are supplied on a sheet for convenient handling."
       },
       "rectangle-sheet": {
-        "name": "Rectangle Sheet Stickers",
+        "name": "Rectangle Sticker Sheets",
         "blurb": "Rectangular stickers arranged on a sheet for easy labeling."
       },
       "rounded-sheet": {
-        "name": "Rounded Corner Sheet Stickers",
+        "name": "Rounded Corner Sticker Sheets",
         "blurb": "Rounded square stickers are organized on a sheet for quick application."
       }
     }

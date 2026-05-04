@@ -3,12 +3,12 @@
     "selectedBanner": "{name} 선택됨",
     "changeProduct": "상품 변경",
     "options": {
-      "selectSize": "선호하는 사이즈를 선택하세요",
-      "unitMm": "(단위 :mm)",
+      "selectSize": "사이즈를 선택하세요",
+      "unitMm": "(단위:mm)",
       "productPageUnitMm": "(단위:mm)",
-      "customSize": "사이즈 직접 입력",
-      "selectQuantity": "원하시는 수량을 선택하세요",
-      "customQuantity": "수량 직접 입력",
+      "customSize": "직접 입력",
+      "selectQuantity": "수량을 선택하세요",
+      "customQuantity": "직접 입력",
       "selectColor": "선호하는 색상을 선택하세요",
       "selectFont": "원하시는 글꼴을 선택하세요",
       "colors": {
@@ -28,31 +28,34 @@
     },
     "sizes": {
       "small30": {
-        "label": "Small 30x30"
+        "label": "소형  30X30",
+        "featureLabel": "소형 30x30"
       },
       "medium75": {
-        "label": "Medium 75x75 (가장 인기)",
-        "featureLabel": "Medium 75x75"
+        "label": "중형  75X75",
+        "featureLabel": "중형 75x75"
       },
       "large100": {
-        "label": "Large 100x100"
+        "label": "대형  100X100",
+        "featureLabel": "중형 100x100"
       },
       "extraLarge125": {
-        "label": "Extra Large 125x125"
+        "label": "초대형  125X125",
+        "featureLabel": "초대형 125x125"
       }
     },
     "featureCards": {
       "small": {
-        "description": "휴대폰 케이스, 이어폰, 텀블러 등 작은 소품에 딱 맞는 사이즈"
+        "description": "작고 귀여운 크기로\n휴대폰 케이스나 헬멧에 딱!"
       },
       "medium": {
-        "description": "노트북, 노트, 다이어리 어디에나 잘 어울리는 가장 대중적인 사이즈"
+        "description": "텀블러·노트북에 잘 어울려요.\n가장 인기 있는 사이즈예요."
       },
       "large": {
-        "description": "패키징, 제품 박스, 폴더, 브랜드 굿즈 제작 시 존재감을 드러내기 좋은 사이즈"
+        "description": "보드나 캐리어에 붙이면\n눈에 잘 띄는 크기예요."
       },
       "extraLarge": {
-        "description": "차량이나 대형 수납함 등 넓은 곳에 부착해도 눈에 띄는 대형 사이즈."
+        "description": "차·아이스박스·공구함에도\n딱 맞는 넉넉한 크기예요."
       },
       "effortlessApplication": {
         "title": "누구나 쉽게, 간편한 부착",
@@ -67,14 +70,14 @@
       "subtotal": "소계",
       "discount": "할인",
       "total": "총액",
-      "benefitShipping": "50,000원 이상 구매 시 무료배송",
-      "benefitShipsTomorrow": "디자인 승인 후 내일 배송",
+      "benefitShipping": "5만원 이상 무료배송",
+      "benefitShipsTomorrow": "디자인 승인 후 내일 출고",
       "benefitShipsTomorrowByProduct": {
-        "die-cut-sticker": "디자인 승인 후 내일 배송",
-        "square-sticker": "디자인 승인 후 내일 배송"
+        "die-cut-sticker": "디자인 승인 후 내일 출고",
+        "square-sticker": "디자인 승인 후 내일 출고"
       },
       "nextStep": "다음 단계",
-      "perPiece": "개당"
+      "perPiece": "(1매당 20원)"
     }
   }
 }

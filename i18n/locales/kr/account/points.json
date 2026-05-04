@@ -6,7 +6,7 @@
       "lastTierUpgrade": "최근 등급 업그레이드",
       "pointsUnit": "포인트",
       "pointsSystemTitle": "포인트 시스템",
-      "pointsSystemDescription": "모든 구매를 가치 있게 만드세요! 로열티 프로그램의 모든 주문과 활동을 통해 포인트를 적립하고 리워드를 잠금 해제하세요.",
+      "pointsSystemDescription": "로열티 프로그램에서 포인트를 적립하고 리워드, 특별 혜택, 향후 구매 시 할인 혜택으로 누려보세요.",
       "loyaltyIntro": "로열티 프로그램에서 포인트를 적립하고 리워드, 특별 혜택, 향후 구매 시 할인 혜택으로 누려보세요.",
       "pointsSpec": {
         "title": "포인트 유의사항",
@@ -15,7 +15,7 @@
         "deductionRule": "포인트 사용시 소멸 예정일이 가장 가까운 포인트부터 먼저 차감됩니다."
       },
       "questTitle": "위대한 스티커 퀘스트",
-      "questDescription": "퀘스트에 도전하고 포인트를 적립하여 다양한 리워드를 획득하세요!",
+      "questDescription": "모든 구매를 가치 있게 만드세요! 로열티 프로그램의 모든 주문과 활동을 통해 포인트를 적립하고 리워드를 잠금 해제하세요.",
       "historyTitle": "포인트 내역",
       "historyDescription": "로열티 프로그램에서 적립하거나 사용한 모든 포인트를 확인하세요.",
       "challengesTitle": "챌린지",
@@ -44,7 +44,7 @@
       },
       "ranking": {
         "title": "등급 시스템",
-        "perksLabel": "혜택",
+        "perksLabel": "혜택 :",
         "levelUpBonusLabel": "등급 달성 보너스"
       },
       "challenges": {
@@ -76,17 +76,17 @@
         "socialSharing": {
           "name": "소셜 공유",
           "description": "소셜 미디어에 나만의 스티커 디자인을 공유하고 포인트를 적립하세요!",
-          "reward": "다음 주문시 10% 할인 및 3포인트 적립"
+          "reward": "5포인트 적립"
         },
         "reviewMaster": {
           "name": "리뷰 마스터",
           "description": "구매하신 상품에 대한 리뷰를 남기고 포인트를 받으세요!",
-          "reward": "8포인트 적립"
+          "reward": "다음 주문시 10% 할인 및 3포인트 적립"
         },
         "shareYourCreativity": {
           "name": "나만의 창의력을 뽐내세요",
           "description": "온라인에 스티커를 자랑해 보세요. 저희를 태그하는 것도 잊지 마세요!",
-          "reward": "8포인트 적립"
+          "reward": "10포인트 적립"
         },
         "theRoyalReferral": {
           "name": "특별 추천 혜택",
