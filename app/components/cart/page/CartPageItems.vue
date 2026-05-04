@@ -38,10 +38,18 @@ const {
 const emit = defineEmits<{
 	(e: 'openItemDetails', itemId: string): void;
 	(e: 'openArtworkPicker', item: CartItem): void;
+	(e: 'updateArtwork', item: CartItem): void;
 }>();
 
 const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
 
+
+const openArtworkDetails = (item : CartItem) => {
+	if( item.artwork_file )
+		emit('updateArtwork', item)
+	else
+		emit('openItemDetails', item.local_identity)
+}
 </script>
 
 <template>
@@ -99,7 +107,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 							class="cart-item-thumb"
 							:class="{ 'cart-item-thumb--interactive': Boolean(row.artwork_file) }"
 							:disabled="!row.artwork_file"
-							@click="Boolean(row.artwork_file) ? emit('openItemDetails', row.local_identity) : undefined"
+							@click="openArtworkDetails(row)"
 						>
 							<img
 								:src="formatImage(row)"
@@ -107,7 +115,7 @@ const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().
 								class="cart-item-thumb-image"
 							>
 							<span
-								v-if="Boolean(row.artwork_file)"
+								v-if="Boolean(row.artwork_file) && allowVariantUpdate(row.url_slug)"
 								class="cart-item-thumb-overlay"
 								aria-hidden="true"
 							>

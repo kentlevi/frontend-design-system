@@ -32,16 +32,17 @@ export const useUploadStore = defineStore('product-upload', () => {
 		is_preview_open.value = false
 	}
 
-	const setArtwork = (file: File | null, preview: string = '') => {
+	const setArtwork = (file: File | null, preview: string = '', file_name: string | null = null) => {
 		artwork_file.value = file
 		artwork_preview.value = preview
-		artwork_file_name.value = file?.name ?? null
+		artwork_file_name.value = file?.name ?? (file_name ?? null)
 	}
 
 	const clearArtwork = () => {
 		artwork_file.value = null
 		artwork_preview.value = ''
 		instruction.value = ''
+		artwork_file_name.value = null
 	}
 
 	const reset = () => {
@@ -61,6 +62,7 @@ export const useUploadStore = defineStore('product-upload', () => {
 		instruction,
 		is_uploading,
 		is_dragging,
+		artwork_file_name,
 
 		// Actions
 		openModal,

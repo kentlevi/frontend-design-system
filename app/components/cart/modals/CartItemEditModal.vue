@@ -4,10 +4,22 @@ import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 
 const { t } = useI18n();
 
+// 1. Define the structure
+interface Props {
+	showSize?: boolean,
+	showQuantity?: boolean,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+	showSize: true,
+	showQuantity: true
+})
+
+
+
 const {
 	open_edit_modal: is_open,
 	active_editable_item : active_item,
-	show_quantity,
 	sizes,
 	custom_width_input_ref,
 	custom_width : custom_size_width,
@@ -23,8 +35,14 @@ const {
 	updateSize,
 	updateQuantity,
 	sendUpdateToServer,
+	calculateCartItems,
+	allowVariantUpdate,
 	closeModal: close_edit_modal,
 } = useEditItemHandler('cart-item-edit-modal');
+
+const show_quantity = computed(() => props.showQuantity)
+
+const show_size = computed(() => props.showSize && active_item.value && allowVariantUpdate(active_item.value?.url_slug))
 
 // ⚠️ Static functionality & Data
 const modal_title = computed(() =>
@@ -160,6 +178,7 @@ async function saveChanges() {
 	if (!active_item.value) return;
 
 	const sending_update = await sendUpdateToServer()
+	calculateCartItems()
 	if( sending_update )
 		closeModal();
 }
@@ -224,7 +243,7 @@ watch(
 				</div>
 
 				<div class="cart-item-edit-modal-fields">
-					<div class="cart-item-edit-field">
+					<div v-if="show_size" class="cart-item-edit-field">
 						<div class="cart-item-edit-field-head">
 							<label class="cart-item-edit-label">{{ t('cart.cartPreview.size') }}</label>
 							<span class="cart-item-edit-unit">(Unit: mm)</span>

@@ -69,6 +69,7 @@ export const useEditItemHandler = (caller : string) => {
 			return
 
 		const data_request = await quote_api_service.getFeaturedData(item.url_slug)
+
 		if(!data_request)
 			return
 
@@ -77,11 +78,12 @@ export const useEditItemHandler = (caller : string) => {
 		makeSizesOption(featured_data.value.featured_sizes)
 
 		/** If item quantities already requested and prepared in pinia state */
-		if( active_editable_item.value?.local_identity
+		const has_mapped_quantities = active_editable_item.value?.local_identity
 			&& cart_service.item_quantities.value[active_editable_item.value?.local_identity]
 			&& cart_service.item_quantities.value[active_editable_item.value?.local_identity]?.length
 			&& (cart_service.item_quantities.value[active_editable_item.value?.local_identity]?.length ?? 0) > 2
-		) {
+
+		if( has_mapped_quantities ) {
 			makeQuantityOption([], cart_service.item_quantities.value[active_editable_item.value?.local_identity])
 		} else {
 			await getPricing(item.url_slug, {
@@ -113,7 +115,7 @@ export const useEditItemHandler = (caller : string) => {
 
 	const sizes = ref<SelectOption []>([])
 
-	const custom_width_input_ref = ref<HTMLInputElement | null>(null);
+	const custom_width_input_ref = ref<HTMLInputElement | null>(null)
 
 	const custom_width = ref<string>('')
 
@@ -284,25 +286,9 @@ export const useEditItemHandler = (caller : string) => {
 		return process
 	}
 
-
-
-
-
-
-	// ⚠️ Static & temporary
-	const updateItemSize = () => {
-		console.log(1)
-	}
-	const updateItemQty = () => {
-		console.log(1)
-	}
-
-	const show_quantity = ref<boolean>(true)
-	// ⚠️ Static & temporary
 	return {
 		// 🔥 States
 		caller,
-		show_quantity,
 		sizes,
 		selected_file,
 		selected_file_preview,
@@ -319,20 +305,20 @@ export const useEditItemHandler = (caller : string) => {
 		open_edit_modal : open_edit_modal,
 		updating_artwork : cart_service.updating_artwork,
 
-		// 🔥 Service Methods
-		formatImage : cart_service.formatImage,
-
-
 		// 🔥 Methods
 		getFeaturedData,
-		updateItemSize,
-		updateItemQty,
 		closeModal,
 		submitArtworkChanges,
 		updateSize,
 		updateQuantity,
 		sendUpdateToServer,
+
+		// 🔥 Service Methods
+		formatImage : cart_service.formatImage,
+		allowArtworkUpdate: cart_service.allowArtworkUpdate,
+		allowVariantUpdate: cart_service.allowVariantUpdate,
 		setArtwork: upload_service.setArtwork,
 		clearArtworkChanges : upload_service.clearArtwork,
+		calculateCartItems : cart_service.calculateCartItems,
 	}
 }

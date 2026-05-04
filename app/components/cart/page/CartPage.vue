@@ -25,6 +25,7 @@ const {
 	openArtworkPicker,
 	onArtworkActionSelected,
 	refreshItems,
+	updateSelectedArtwork,
 } = useCartPageHandler()
 
 onMounted(() => {
@@ -57,6 +58,7 @@ onMounted(() => {
 						<CartPageItems
 							@open-item-details="openItemDetails"
 							@open-artwork-picker="openArtworkPicker"
+							@update-artwork="updateSelectedArtwork"
 						/>
 						<CartPageSummary />
 					</section>
@@ -76,7 +78,7 @@ onMounted(() => {
 			@save="saveItemArtworkDetails"
 		/>
 		<!-- Editing Item Details -->
-		<CartItemEditModal />
+		<CartItemEditModal :show-quantity="false" />
 	</main>
 </template>
 

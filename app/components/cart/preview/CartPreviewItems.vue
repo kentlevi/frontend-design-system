@@ -8,9 +8,15 @@ import { formatPrice } from '~/utils/currency/formatPrice';
 /** 🔥 This composable were using real data from API and functionality */
 const { loading, items, deleteCartItem, formatImage, editItem } = useCartPreview('cart-preview-items');
 
-defineEmits<{
+const emit = defineEmits<{
 	'edit-item': [item: CartItem];
 }>();
+
+
+const openEditingModal = (item : CartItem) => {
+	editItem(item)
+	emit('edit-item', item)
+}
 </script>
 
 <template>
@@ -100,7 +106,7 @@ defineEmits<{
 								:icon-size="24"
 								sr-label="Edit item"
 								data-testid="product-category-cart-item-edit-button"
-								@click="editItem(item); $emit('edit-item', item)"
+								@click="openEditingModal(item)"
 							/>
 							<UiButton
 								variant="ghost"
