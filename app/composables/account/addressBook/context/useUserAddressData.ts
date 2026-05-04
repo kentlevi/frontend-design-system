@@ -1,4 +1,4 @@
-import { useUserAddressStore } from "~/stores/user-address";
+import { useAddressFieldStore, useUserAddressStore } from "~/stores/user-address";
 import type { AddressType } from "~/types/user-address";
 
 export function useUserAddressData() {
@@ -7,6 +7,7 @@ export function useUserAddressData() {
      * Store
      */
 	const address_store = useUserAddressStore()
+	const address_field_store = useAddressFieldStore()
 
 	/**
      * Variables
@@ -23,6 +24,8 @@ export function useUserAddressData() {
 	const is_loading = computed(() =>
 		Boolean(is_shipping_fetching.value || is_billing_fetching.value || is_drop_fetching.value)
 	)
+
+	const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 
 	const has_shipping_addresses = computed(() => shipping_address.value.length > 0)
 	const has_billing_addresses = computed(() => billing_address.value.length > 0)
@@ -63,6 +66,7 @@ export function useUserAddressData() {
 		shipping_address,
 		billing_address,
 		drop_address,
+		dynamic_fields,
 		has_shipping_addresses,
 		has_billing_addresses,
 		has_drop_addresses,
@@ -73,6 +77,8 @@ export function useUserAddressData() {
 		is_shipping_fetching,
 		is_billing_fetching,
 		is_drop_fetching,
-		is_loading
+		is_loading,
+
+		setAddresses: address_store.setAddresses
 	}
 }

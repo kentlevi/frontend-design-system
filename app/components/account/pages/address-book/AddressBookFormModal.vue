@@ -1,121 +1,39 @@
 <script setup lang="ts">
-import type { icons } from '~/data/ui/icons';
-import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
-import { useAddressBookFormContext } from '~/composables/account/addressBook/context/useAddressBookFormContext';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import type { AddressType } from '~/types/user-address';
-import { useUserAddressUIContext } from '~/composables/account/addressBook/context/useUserAddressUIContext';
-
-type IconName = keyof typeof icons;
+import { useAddressBookFormModalUI } from '~/composables/account/addressBook/useAddressBookFormModalUI';
+import { useAddressBookFormModal } from '~/composables/account/addressBook/useAddressBookFormModal';
 
 const {
+	translate,
+
+	form_type,
 	is_form_modal_open,
+	form_modal_mode,
+	default_address_tooltip_open,
+	default_address_tooltip_ref,
+	address_type_options,
+	default_address_tooltip_props,
+	save_label,
+	default_toggle_copy,
+	default_address_tooltip_content,
+	modal_title,
 
-	closeFormModal
-} = useUserAddressUIContext()
+	closeFormModal,
+	toggleDefaultAddressTooltip,
+} = useAddressBookFormModalUI()
 
-const { t: translate } = useI18n();
-const address_book_form_context = useAddressBookFormContext();
+const {
+	active_form,
+	form_field_errors,
+	dynamic_fields,
+	is_submitting,
+	is_default_model,
 
-const form_modal_mode = address_book_form_context.form_modal_mode;
-const form_submit_label = address_book_form_context.form_submit_label;
-const form_type = address_book_form_context.form_type;
-const active_form = address_book_form_context.active_form;
-const dynamic_fields = address_book_form_context.dynamic_fields;
-const form_field_errors = address_book_form_context.form_field_errors;
-const is_submitting = computed(() => address_book_form_context.is_submitting.value)
-
-const setFormType = address_book_form_context.setFormType;
-const updateFormFieldByType = address_book_form_context.updateFormFieldByType;
-const updateDynamicFieldByType = address_book_form_context.updateDynamicFieldByType;
-const submitAddressForm = address_book_form_context.submitAddressForm;
-
-const default_address_tooltip_open = ref(false)
-const default_address_tooltip_ref = ref<HTMLElement | null>(null)
-
-useDismissibleTooltip(default_address_tooltip_ref, default_address_tooltip_open)
-
-const is_default_model = computed({
-	get: () => active_form.value.is_default ?? false,
-	set: (value: boolean) => {
-		updateFormFieldByType(active_form.value.type, {
-			field: 'is_default',
-			value,
-		})
-	},
-})
-
-const address_type_options: Array<{
-	value: AddressType;
-	label_key: string;
-	icon: IconName;
-}> = [
-	{ value: 'shipping', label_key: 'shippingTitle', icon: 'regular-truck' },
-	{ value: 'billing', label_key: 'billingTitle', icon: 'regular-file-dollar' },
-	{ value: 'drop', label_key: 'dropTitle', icon: 'regular-boxes' },
-]
-
-const modal_title = computed(() => {
-	return form_modal_mode.value === 'edit'
-		? translate('account.addressBook.editTitle')
-		: translate('account.addressBook.addNew')
-})
-
-const save_label = computed(() => {
-	const label_key = form_submit_label.value || (form_modal_mode.value === 'edit' ? 'update' : 'save')
-	return translate(`account.addressBook.${label_key}`)
-})
-
-const edit_address_type_note = computed(() => translate('account.addressBook.editAddressTypeNote'))
-
-const default_toggle_copy = computed(() => {
-	if (form_type.value === 'shipping') return translate('account.addressBook.defaultToggleShipping')
-	if (form_type.value === 'drop') return translate('account.addressBook.defaultToggleDrop')
-	return translate('account.addressBook.defaultToggleBilling')
-})
-
-const default_address_tooltip_props = {
-	side: 'right',
-	align: 'start',
-	mobileSide: 'bottom',
-	tone: 'neutral',
-	offset: 10,
-	slideDistance: 24,
-	contentWidth: '480px',
-	contentMinWidth: '480px',
-	contentMaxWidth: 'min(480px, calc(100vw - 32px))',
-	mobileContentWidth: 'min(320px, calc(100vw - 32px))',
-} as const
-
-const default_address_tooltip_content = computed(() => {
-	if (form_type.value === 'shipping') {
-		return {
-			title: translate('account.addressBook.defaultTooltipShippingTitle'),
-			text: translate('account.addressBook.defaultTooltipShippingText'),
-		}
-	}
-
-	if (form_type.value === 'billing') {
-		return {
-			title: translate('account.addressBook.defaultTooltipBillingTitle'),
-			text: translate('account.addressBook.defaultTooltipBillingText'),
-		}
-	}
-
-	return {
-		title: translate('account.addressBook.defaultTooltipDropTitle'),
-		text: translate('account.addressBook.defaultTooltipDropText'),
-	}
-})
-
-function toggleDefaultAddressTooltip() {
-	default_address_tooltip_open.value = !default_address_tooltip_open.value
-}
-
-async function handleSubmit() {
-	if (is_submitting.value) return
-	await submitAddressForm()
-}
+	updateFormFieldByType,
+	updateDynamicFieldByType,
+	setFormType,
+	submitForm,
+} = useAddressBookFormModal()
 </script>
 
 <template>
@@ -166,7 +84,7 @@ async function handleSubmit() {
 
 							<p v-if="form_modal_mode === 'edit'" class="account-address-book-add-modal-note">
 								<UiIcon name="regular-info-circle" :size="20" color="var(--gray-90)" />
-								<span>{{ edit_address_type_note }}</span>
+								<span>{{ translate('account.addressBook.editAddressTypeNote') }}</span>
 							</p>
 						</div>
 					</div>
@@ -253,7 +171,7 @@ async function handleSubmit() {
 					size="md"
 					class="account-address-book-add-modal-save"
 					:disabled="is_submitting"
-					@click="handleSubmit"
+					@click="submitForm"
 				>
 					{{ save_label }}
 				</UiButton>

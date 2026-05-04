@@ -16,11 +16,11 @@ export async function fetchUserAddresses(
  * Add user address
  */
 export async function addUserAddress(
-	params: Record<string, unknown>
+	payload: Record<string, unknown>
 ): Promise<ApiResponse<AddressMap[AddressType]>> {
 	const { $api } = useNuxtApp()
 
-	return $api.post('/user-address', params);
+	return $api.post('/user-address', payload);
 }
 
 /**
