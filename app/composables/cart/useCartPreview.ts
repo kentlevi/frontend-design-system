@@ -37,5 +37,7 @@ export const useCartPreview = (caller: string) => {
 		formatImage: cart_service.formatImage,
 		deleteCartItem,
 		editItem: cart_store.assignEditableItem,
+		allowArtworkUpdate : cart_service.allowArtworkUpdate,
+		allowVariantUpdate : cart_service.allowVariantUpdate,
 	}
 }

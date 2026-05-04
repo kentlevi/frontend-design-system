@@ -492,6 +492,23 @@ export const useCartService = (caller : string) => {
 		}
 	}
 
+	const allowArtworkUpdate  = (url_slug : string) => {
+
+		if( attributes_store.active_lettering_editor.includes(url_slug) )
+			return false
+
+		return true
+	}
+
+
+	const allowVariantUpdate  = (url_slug : string) => {
+
+		if( attributes_store.active_lettering_editor.includes(url_slug) )
+			return false
+
+		return true
+	}
+
 	return {
 		// 🔥 Cart States
 		...storeToRefs(cart_store),
@@ -517,6 +534,8 @@ export const useCartService = (caller : string) => {
 		updateItem,
 		evaluateCart,
 		sendUnsaveToServer,
+		allowArtworkUpdate,
+		allowVariantUpdate,
 		setDeletableItems	: cart_store.setDeletableItems,
 		emptyDeletableItems	: cart_store.emptyDeletableItems,
 		removeItems			: cart_store.removeItems,

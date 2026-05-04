@@ -32,7 +32,7 @@ const {
 						:disabled="selected_ids.length === 0"
 						@click="goToCheckout"
 					>
-						{{ t('cart.cartPage.proceedToCheckout') }}
+						{{ t('cart.cartPage.proceedToCheckout') }} {{ selected_ids.length ? `(${selected_ids.length})` : '' }}
 					</UiButton>
 					<p class="cart-summary-note">{{ t('cart.cartPage.note') }}</p>
 				</div>

@@ -68,12 +68,20 @@ const artwork_action_label = computed(() => (
 watch(
 	() => [props.modelValue, props.item] as const,
 	([is_open, item]) => {
-		if (!is_open || !item || !selected_file.value ) return;
+		if (!is_open || !item ) return;
 
-		local_artwork_name.value = selected_file.value?.name ?? '';
-		local_artwork_size_label.value = selected_file.value?.size ? formatProductFileSize(selected_file.value?.size) : '';
-		local_artwork_preview_url.value = selected_file_preview.value;
-		local_special_instructions.value = item.instruction || '';
+		console.log(item)
+		if( selected_file.value ) {
+			local_artwork_name.value = selected_file.value?.name ?? '';
+			local_artwork_size_label.value = selected_file.value?.size ? formatProductFileSize(selected_file.value?.size) : '';
+			local_artwork_preview_url.value = selected_file_preview.value;
+			local_special_instructions.value = item.instruction || '';
+		} else {
+			local_artwork_name.value = item.artwork_file_name
+			local_artwork_size_label.value = '';
+			local_artwork_preview_url.value = `${config.public.s3_file_url}artworks/${item?.artwork_file}`;
+			local_special_instructions.value = item.instruction || '';
+		}
 	},
 	{ immediate: true }
 );
@@ -182,6 +190,7 @@ const submitChanges = async () => {
 							size="md"
 							height="40px"
 							class="cart-item-details-replace-btn"
+							:disabled="updating_artwork"
 							@click="openFilePicker"
 						>
 							<UiIcon name="regular-image" :size="20" color="var(--text-primary)" />
@@ -199,6 +208,7 @@ const submitChanges = async () => {
 							height="40px"
 							class="cart-item-details-delete-btn"
 							:sr-label="t('cart.cartPage.itemDetails.removeArtworkSr')"
+							:disabled="updating_artwork"
 							@click="removeArtwork"
 						/>
 					</div>
@@ -210,6 +220,7 @@ const submitChanges = async () => {
 						:model-value="local_special_instructions"
 						:rows="4"
 						resize="none"
+						:disabled="updating_artwork"
 						field-class="cart-item-details-textarea-field"
 						:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
 						@update:model-value="local_special_instructions = $event"
@@ -225,6 +236,7 @@ const submitChanges = async () => {
 					variant="ghost"
 					tone="neutral"
 					size="md"
+					:disabled="updating_artwork"
 					class="cart-item-details-cancel"
 					@click="closeModal"
 				>
@@ -235,6 +247,7 @@ const submitChanges = async () => {
 					variant="filled"
 					tone="neutral"
 					size="md"
+					:disabled="updating_artwork"
 					class="cart-item-details-submit"
 					@click="submitChanges"
 				>

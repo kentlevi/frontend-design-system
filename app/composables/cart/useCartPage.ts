@@ -44,6 +44,15 @@ export const useCartPage = () => {
 		open_artwork_modal.value = true
 	}
 
+	const updateSelectedArtwork = async(item: CartItem) => {
+		if( cart_service.active_lettering_editor.includes(item.url_slug) )
+			return false
+
+		clearPendingArtworkPreviewUrl()
+		cart_service.assignArtworkPicker(item)
+		open_artwork_modal.value = true
+	}
+
 	const clearPendingArtworkPreviewUrl = () => {
 		if (pending_artwork_draft_preview_url.value.startsWith('blob:')) {
 			URL.revokeObjectURL(pending_artwork_draft_preview_url.value)
@@ -87,5 +96,6 @@ export const useCartPage = () => {
 		openArtworkPicker,
 		onArtworkActionSelected,
 		refreshItems,
+		updateSelectedArtwork,
 	}
 }
