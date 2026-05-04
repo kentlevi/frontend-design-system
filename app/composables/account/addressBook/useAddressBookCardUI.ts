@@ -1,8 +1,6 @@
 import type { AddressMap, AddressType } from "~/types/user-address";
 import { useAddressHelper } from "~/utils/address";
 import { getTranslatedAddressBookLabel } from "./addressBookPresentation";
-import type { MenuActionKey } from "./context/useUserAddress";
-import { useUserAddressContext } from "./context/useUserAddressContext";
 
 type CardProps = {
 	item?: AddressMap[AddressType];
@@ -13,9 +11,9 @@ type CardProps = {
 export function useAddressBookCardUI(props: CardProps) {
 
 	/**
-     * Contexts
+     * Types
      */
-	const { handleCardMenuAction } = useUserAddressContext()
+	type MenuActionKey = 'edit' | 'delete' | 'default';
 
 	/**
      * Helpers
@@ -97,10 +95,21 @@ export function useAddressBookCardUI(props: CardProps) {
 		if (!props?.item) return
 
 		closeMenu()
-		handleCardMenuAction({
-			action,
-			item: props.item,
-		})
+
+		if (action === 'edit') {
+			// openEditModal(item)
+			// return
+		}
+
+		if (action === 'delete') {
+			// startDeleteFlow(item)
+			// return
+		}
+
+		if (action === 'default') {
+			// startDefaultFlow(item)
+		}
+		console.log(action);
 	}
 
 	function getAddressLabel(label: string) {
