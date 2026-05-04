@@ -1,7 +1,6 @@
-import type { AddressMap, AddressType } from "~/types/user-address";
+import type { AddressType } from "~/types/user-address";
 import { addUserAddress, fetchUserAddresses } from "./api.service";
 import { useUserAddressStore } from "~/stores/user-address";
-import type { ApiResponse } from "~/types/config/api";
 
 export async function loadAddresses(type: AddressType) {
 	const store = useUserAddressStore()
@@ -23,9 +22,7 @@ export async function loadAddresses(type: AddressType) {
 	}
 }
 
-export async function createUserAddress(
-	payload: Record<string, unknown>
-): Promise<ApiResponse<AddressMap[AddressType]>> {
+export async function createUserAddress(payload: Record<string, unknown>) {
 	const store = useUserAddressStore()
 
 	if (store.isLoading('create')) return
