@@ -19,9 +19,13 @@ export function useAddressBookFormModal () {
 		resetForm,
 		setFormErrors,
 	} = useUserAddressFormStateContext()
-	const { dynamic_fields, setAddresses } = useUserAddressDataContext()
 	const {
+		dynamic_fields,
 		is_submitting,
+
+		setAddresses
+	} = useUserAddressDataContext()
+	const {
 		form_modal_mode,
 
 		closeFormModal
@@ -58,16 +62,12 @@ export function useAddressBookFormModal () {
      * Functions
      */
 	function submitForm() {
-		if (is_submitting.value) return
-
 		if (form_modal_mode.value === 'create') {
 			createAddress()
 		}
 	}
 
 	async function createAddress() {
-		is_submitting.value = true
-
 		const type = form_type.value;
 		const payload = { ...active_form.value };
 		try {
@@ -88,8 +88,6 @@ export function useAddressBookFormModal () {
 			}
 		} catch (_error: unknown) {
 			console.log(_error);
-		} finally {
-			is_submitting.value = false
 		}
 	}
 

@@ -21,6 +21,11 @@ export function useUserAddressData() {
 	const is_shipping_fetching = computed(() => address_store.isLoading('fetch', 'shipping'))
 	const is_billing_fetching = computed(() => address_store.isLoading('fetch', 'billing'))
 	const is_drop_fetching = computed(() => address_store.isLoading('fetch', 'drop'))
+
+	const is_submitting = computed(() => {
+		return address_store.isLoading('create') || address_store.isLoading('update')
+	})
+
 	const is_loading = computed(() =>
 		Boolean(is_shipping_fetching.value || is_billing_fetching.value || is_drop_fetching.value)
 	)
@@ -77,6 +82,7 @@ export function useUserAddressData() {
 		is_shipping_fetching,
 		is_billing_fetching,
 		is_drop_fetching,
+		is_submitting,
 		is_loading,
 
 		setAddresses: address_store.setAddresses

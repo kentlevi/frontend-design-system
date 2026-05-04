@@ -14,7 +14,6 @@ export function useUserAddressUI() {
      */
 	const is_form_modal_open = ref(false)
 	const form_modal_mode = ref<AddressFormModalMode>('create')
-	const is_submitting = ref(false)
 
 
 
@@ -53,7 +52,6 @@ export function useUserAddressUI() {
 		is_form_modal_open,
 		form_modal_mode,
 		form_submit_label,
-		is_submitting,
 
 		setCreateMode,
 		openCreateFormModal,
