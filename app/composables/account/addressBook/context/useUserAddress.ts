@@ -30,6 +30,8 @@ export function useUserAddress() {
      */
 	const editing_address_snapshot = ref<AddressMap[AddressType] | null>(null)
 	const pending_delete_address = ref<AddressMap[AddressType] | null>(null)
+	const pending_default_address = ref<AddressMap[AddressType] | null>(null)
+	const current_default_address = ref<AddressMap[AddressType] | null>(null)
 
 
 	/**
@@ -105,6 +107,7 @@ export function useUserAddress() {
 		}
 	}
 
+
 	async function setAddressDefault(type: AddressType, id: number) {
 		try {
 			const response = await setDefault(id)
@@ -113,14 +116,42 @@ export function useUserAddress() {
 				address_store.setDefault(type, id)
 			}
 
+			pending_default_address.value = null
+			current_default_address.value = null
 			return response
 		} catch (_error: unknown) {
 			console.log(_error);
 		}
 	}
 
+	async function setAddressDefaultWithToast(type: AddressType, id: number) {
+		startUpdateOverlay()
+
+		try {
+			const response = await setAddressDefault(type, id)
+
+			toast_store.handleApiResponse(response)
+		} catch (_error: unknown) {
+			console.log(_error);
+		} finally {
+			loading_overlay_store.stopLoading('set_to_default')
+		}
+	}
+
+
+
+
+
 
 	/** Overlays */
+	function startUpdateOverlay() {
+		loading_overlay_store.startLoading('set_to_default', {
+			showCopy: true,
+			testId: 'account-address-set-default-overlay',
+			position: 'fixed'
+		})
+	}
+
 	function startDeleteOverlay() {
 		loading_overlay_store.startLoading('delete_address', {
 			showCopy: true,
@@ -129,13 +160,17 @@ export function useUserAddress() {
 		})
 	}
 
+
 	return {
 		editing_address_snapshot,
 		pending_delete_address,
+		pending_default_address,
+		current_default_address,
 
 		getReplacementAddresses,
 		cancelDeleteFlow,
 		confirmDeleteAddress,
 		setAddressDefault,
+		setAddressDefaultWithToast,
 	}
 }

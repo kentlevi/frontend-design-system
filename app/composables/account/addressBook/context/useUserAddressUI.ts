@@ -15,6 +15,7 @@ export function useUserAddressUI() {
 	const is_form_modal_open = ref(false)
 	const is_delete_modal_open = ref(false)
 	const is_default_shipping_modal_open = ref(false)
+	const is_confirm_default_change_modal_open = ref(false)
 	const form_modal_mode = ref<AddressFormModalMode | null>(null)
 
 
@@ -76,12 +77,21 @@ export function useUserAddressUI() {
 		is_default_shipping_modal_open.value = false
 	}
 
+	function openConfirmDefaultChangeModal() {
+		is_confirm_default_change_modal_open.value = true
+	}
+
+	function closeConfirmDefaultChangeModal() {
+		is_confirm_default_change_modal_open.value = false
+	}
+
 	return {
 		is_form_modal_open,
 		is_delete_modal_open,
 		is_default_shipping_modal_open,
 		form_modal_mode,
 		form_submit_label,
+		is_confirm_default_change_modal_open,
 
 		setCreateMode,
 		openCreateFormModal,
@@ -91,5 +101,7 @@ export function useUserAddressUI() {
 		closeDeleteDialog,
 		openDefaultShippingModal,
 		closeDefaultShippingModal,
+		openConfirmDefaultChangeModal,
+		closeConfirmDefaultChangeModal
 	}
 }

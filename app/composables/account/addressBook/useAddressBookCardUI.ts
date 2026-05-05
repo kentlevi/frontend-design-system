@@ -15,8 +15,8 @@ export function useAddressBookCardUI(props: CardProps) {
 	/**
      * Contexts
      */
-	const { editing_address_snapshot, pending_delete_address } = useUserAddressContext()
-	const { openEditFormModal, openDeleteDialog } = useUserAddressUIContext()
+	const { editing_address_snapshot, pending_delete_address, pending_default_address, current_default_address, setAddressDefaultWithToast } = useUserAddressContext()
+	const { openEditFormModal, openDeleteDialog, openConfirmDefaultChangeModal } = useUserAddressUIContext()
 
 
 	/**
@@ -28,7 +28,7 @@ export function useAddressBookCardUI(props: CardProps) {
      * Helpers
      */
 	const { t: translate } = useI18n();
-	const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
+	const { buildAddressLines, shippingPhoneNumber, getAddressListByType } = useAddressHelper()
 
 	/**
      * Computed
@@ -100,7 +100,7 @@ export function useAddressBookCardUI(props: CardProps) {
 		closeMenu()
 	}
 
-	function handleMenuAction(action: MenuActionKey) {
+	async function handleMenuAction(action: MenuActionKey) {
 		if (!props?.item) return
 
 		closeMenu()
@@ -118,9 +118,25 @@ export function useAddressBookCardUI(props: CardProps) {
 		}
 
 		if (action === 'default') {
-			// startDefaultFlow(item)
+			await startDefaultFlow(props.item)
+			return
 		}
-		console.log(action);
+	}
+
+	async function startDefaultFlow(selected_address: AddressMap[AddressType]) {
+		if (!selected_address.is_default) {
+			const existing_default = getAddressListByType(selected_address.type)
+				.find((address) => address.is_default && address.id !== selected_address.id)
+
+			if (existing_default) {
+				current_default_address.value = existing_default
+				pending_default_address.value = selected_address
+				openConfirmDefaultChangeModal()
+				return;
+			}
+		}
+
+		await setAddressDefaultWithToast(selected_address.type, selected_address.id)
 	}
 
 	function getAddressLabel(label: string) {

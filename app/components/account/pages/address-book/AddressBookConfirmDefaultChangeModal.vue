@@ -1,83 +1,23 @@
 <script setup lang="ts">
-import type { AddressItem, ShippingAddress } from '~/types/user-address';
-import { useAddressHelper } from '~/utils/address';
-import { useAddressBookDefaultContext } from '~/composables/account/addressBook/context/useAddressBookDefaultContext';
-import { address_book_tag_badge_colors, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';
+import { address_book_tag_badge_colors } from '~/composables/account/addressBook/addressBookPresentation';
+import { useAddressBookConfirmDefaultChangeModal } from '~/composables/account/addressBook/useAddressBookConfirmDefaultChangeModal';
 
-const { t: translate } = useI18n()
-const { buildAddressLines } = useAddressHelper()
-const address_book_default_context = useAddressBookDefaultContext()
+const {
+	translate,
 
-const is_confirm_default_change_modal_open = address_book_default_context.is_confirm_default_change_modal_open
-const current_default_address = address_book_default_context.current_default_address
-const pending_default_address = address_book_default_context.pending_default_address
+	is_confirm_default_change_modal_open,
+	current_default_address,
+	pending_default_address,
+	modal_title,
+	modal_description,
+	current_default_address_lines,
+	pending_default_address_lines,
 
-const closeConfirmDefaultChangeModal = address_book_default_context.closeConfirmDefaultChangeModal
-const confirmDefaultAddressChange = address_book_default_context.confirmDefaultAddressChange
-
-const address_type_copy = computed(() => {
-	if (!pending_default_address.value) return translate('account.addressBook.confirmDefaultChangeTypeAddress', { type: '' }).trim()
-
-	const type = pending_default_address.value.type
-	if (type === 'drop') return translate('account.addressBook.confirmDefaultChangeTypeDrop')
-	if (type === 'shipping') return translate('account.addressBook.confirmDefaultChangeTypeShipping')
-	return translate('account.addressBook.confirmDefaultChangeTypeBilling')
-})
-
-const modal_title = computed(() => {
-	if (!pending_default_address.value) return translate('account.addressBook.confirmDefaultChangeTitle')
-
-	const type = pending_default_address.value.type
-	const key = `confirmDefaultChangeTitle${type.charAt(0).toUpperCase()}${type.slice(1)}`
-
-	return translate(`account.addressBook.${key}`)
-})
-
-const modal_description = computed(() => {
-	if (!pending_default_address.value) {
-		return translate('account.addressBook.confirmDefaultChangeDescription', {
-			type: address_type_copy.value,
-		})
-	}
-
-	const type = pending_default_address.value.type
-	const key = `confirmDefaultChangeDescription${type.charAt(0).toUpperCase()}${type.slice(1)}`
-
-	return translate(`account.addressBook.${key}`)
-})
-const current_default_address_lines = computed(() => {
-	if (!current_default_address.value) return ''
-	return buildAddressLines(current_default_address.value).trim()
-})
-const pending_default_address_lines = computed(() => {
-	if (!pending_default_address.value) return ''
-	return buildAddressLines(pending_default_address.value).trim()
-})
-
-function getLabelCopy(label: AddressItem['label']) {
-	return getTranslatedAddressBookLabel(label, translate)
-}
-
-function isShippingAddress(address: AddressItem): address is ShippingAddress {
-	return address.type === 'shipping'
-}
-
-function closeModal() {
-	closeConfirmDefaultChangeModal()
-}
-
-function cancelModal() {
-	closeConfirmDefaultChangeModal()
-}
-
-function confirmModal() {
-	const next_address = pending_default_address.value
-
-	if (!next_address) return
-
-	closeConfirmDefaultChangeModal()
-	confirmDefaultAddressChange(next_address.type, next_address.id)
-}
+	getLabelCopy,
+	isShippingAddress,
+	confirmModal,
+	closeModal,
+} = useAddressBookConfirmDefaultChangeModal()
 </script>
 
 <template>
@@ -199,7 +139,7 @@ function confirmModal() {
 					tone="neutral"
 					size="md"
 					class="account-address-book-confirm-default-modal-cancel"
-					@click="cancelModal"
+					@click="closeModal"
 				>
 					{{ translate('account.addressBook.cancel') }}
 				</UiButton>
