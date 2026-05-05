@@ -16,11 +16,11 @@ export async function fetchUserAddresses(
  * Add user address
  */
 export async function addUserAddress(
-	params: Record<string, unknown>
+	payload: Record<string, unknown>
 ): Promise<ApiResponse<AddressMap[AddressType]>> {
 	const { $api } = useNuxtApp()
 
-	return $api.post('/user-address', params);
+	return $api.post('/user-address', payload);
 }
 
 /**
@@ -28,11 +28,11 @@ export async function addUserAddress(
  */
 export async function updateUserAddress(
 	id: number,
-	params: Record<string, unknown>
+	payload: Record<string, unknown>
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()
 
-	return $api.put(`/user-address/${id}`, params);
+	return $api.put(`/user-address/${id}`, payload);
 }
 
 /**
@@ -49,7 +49,7 @@ export async function deleteUserAddress(
 /**
  * Set user address to default
  */
-export async function setDefault(
+export async function setAddressDefault(
 	id: number,
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()

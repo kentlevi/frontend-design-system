@@ -2,7 +2,7 @@ import { addressFormDefaults } from "~/factories/address"
 import { useAddressFieldStore } from "~/stores/user-address"
 import type { AddressFormState, AddressType, DynamicFieldDefinition, UpdateDynamicFieldPayload, UpdateFieldPayload } from "~/types/user-address"
 
-export function useAddressFormState() {
+export function useUserAddressFormState() {
 
 
 	/**
@@ -71,6 +71,8 @@ export function useAddressFormState() {
 	}
 
 	function clearFormFieldErrors() {
+		console.log('clearFormFieldErrors');
+		console.log(form_field_errors.value);
 		form_field_errors.value = ({
 			shipping: {},
 			billing: {},

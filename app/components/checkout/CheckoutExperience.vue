@@ -64,18 +64,18 @@ import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue'
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import { provideAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
-import { useAddressFormState } from '~/composables/account/addressBook/useAddressFormState';
-import { useAddressBookList } from '~/composables/account/addressBook/useAddressBookList';
+import { useUserAddressFormState } from '~/composables/account/addressBook/context/useUserAddressFormState';
+import { useUserAddressData } from '~/composables/account/addressBook/context/useUserAddressData';
 import { provideAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
 import { provideAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import { useAddressGeneralUI } from '~/composables/checkout/address/useAddressGeneralUI';
 import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
 
 /** Standalone address context (isolated from checkout_experience) */
-const address_checkout_form_state = useAddressFormState();
+const address_checkout_form_state = useUserAddressFormState();
 provideAddressFormCheckoutContext(address_checkout_form_state);
 
-const address_checkout_book_list_state = useAddressBookList()
+const address_checkout_book_list_state = useUserAddressData()
 provideAddressBookListCheckoutContext(address_checkout_book_list_state)
 
 const address_general_ui = useAddressGeneralUI()

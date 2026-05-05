@@ -1,32 +1,42 @@
-type AddressFormModalMode = 'create' | 'edit'
 
-export function useAddressModalState() {
+/** GENERAL ADDRESS CONTEXT */
+export function useUserAddressUI() {
+
+	/**
+     * Types
+     */
+	type AddressFormModalMode = 'create' | 'edit'
+
+
+	/**
+     * Variables
+     */
 	const is_form_modal_open = ref(false)
 	const is_delete_modal_open = ref(false)
 	const is_default_shipping_modal_open = ref(false)
 	const is_confirm_default_change_modal_open = ref(false)
-	const form_modal_mode = ref<AddressFormModalMode>('create')
+	const form_modal_mode = ref<AddressFormModalMode | null>(null)
 
+
+	/**
+     * Computed
+     */
 	const form_submit_label = computed(() => {
 		return form_modal_mode.value === 'edit'
 			? 'update'
 			: 'save'
 	})
 
+
+	/**
+     * Functions
+     */
 	function setCreateMode() {
 		form_modal_mode.value = 'create'
 	}
 
 	function setEditMode() {
 		form_modal_mode.value = 'edit'
-	}
-
-	function openFormModal() {
-		is_form_modal_open.value = true
-	}
-
-	function closeFormModal() {
-		is_form_modal_open.value = false
 	}
 
 	function openCreateFormModal() {
@@ -37,6 +47,15 @@ export function useAddressModalState() {
 	function openEditFormModal() {
 		setEditMode()
 		openFormModal()
+	}
+
+	function openFormModal() {
+		is_form_modal_open.value = true
+	}
+
+	function closeFormModal() {
+		is_form_modal_open.value = false
+		form_modal_mode.value = null
 	}
 
 	function openDeleteDialog() {
@@ -63,25 +82,24 @@ export function useAddressModalState() {
 		is_confirm_default_change_modal_open.value = false
 	}
 
+
 	return {
 		is_form_modal_open,
 		is_delete_modal_open,
 		is_default_shipping_modal_open,
-		is_confirm_default_change_modal_open,
 		form_modal_mode,
 		form_submit_label,
+		is_confirm_default_change_modal_open,
 
 		setCreateMode,
-		setEditMode,
-		openFormModal,
-		closeFormModal,
 		openCreateFormModal,
 		openEditFormModal,
+		closeFormModal,
 		openDeleteDialog,
 		closeDeleteDialog,
 		openDefaultShippingModal,
 		closeDefaultShippingModal,
 		openConfirmDefaultChangeModal,
-		closeConfirmDefaultChangeModal,
+		closeConfirmDefaultChangeModal
 	}
 }

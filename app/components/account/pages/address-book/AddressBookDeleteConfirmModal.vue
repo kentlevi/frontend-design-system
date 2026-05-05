@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
-import { useAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
-const address_book_delete_context = useAddressBookDeleteContext()
-const { t } = useI18n()
+import { useAddressBookDeleteConfirmModal } from '~/composables/account/addressBook/useAddressBookDeleteConfirmModal';
+const {
+	translate,
 
-const is_delete_modal_open = address_book_delete_context.is_delete_modal_open
-const cancelDeleteFlow = address_book_delete_context.cancelDeleteFlow
-const confirmDeleteAddress = address_book_delete_context.confirmDeleteAddress
+	is_delete_modal_open,
+
+	cancelDeleteFlow,
+	confirmDeleteAddress,
+} = useAddressBookDeleteConfirmModal()
 </script>
 
 <template>
 	<DeleteConfirmModal
 		:model-value="is_delete_modal_open"
-		:title="t('account.addressBook.deleteConfirmTitle')"
-		:description="t('account.addressBook.deleteConfirmDescription')"
-		:cancel-label="t('account.addressBook.cancel')"
-		:confirm-label="t('account.addressBook.delete')"
+		:title="translate('account.addressBook.deleteConfirmTitle')"
+		:description="translate('account.addressBook.deleteConfirmDescription')"
+		:cancel-label="translate('account.addressBook.cancel')"
+		:confirm-label="translate('account.addressBook.delete')"
 		modal-class="account-address-book-delete-modal-shell"
 		width="504px"
 		test-id="account-address-book-delete-modal"

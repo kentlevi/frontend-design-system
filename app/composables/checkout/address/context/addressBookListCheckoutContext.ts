@@ -1,7 +1,7 @@
 import type { InjectionKey } from "vue";
-import type { useAddressBookList } from "~/composables/account/addressBook/useAddressBookList";
+import type { useUserAddressData } from "~/composables/account/addressBook/context/useUserAddressData";
 
-export type AddressBookListCheckoutContext = ReturnType<typeof useAddressBookList>
+export type AddressBookListCheckoutContext = ReturnType<typeof useUserAddressData>
 
 const address_checkout_context_key: InjectionKey<AddressBookListCheckoutContext> = Symbol('book-list-address-checkout-context')
 
