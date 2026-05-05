@@ -1,7 +1,15 @@
-import { useUserAddressFormState } from "./context/useUserAddressFormState";
+import { loadAddresses } from "~/services/user-address/user-address.service";
+import { useUserAddressFormStateContext } from "./context/useUserAddressFormStateContext";
 import { useUserAddressUIContext } from "./context/useUserAddressUIContext";
+import { ensureDynamicFields } from "~/services/dynamic-fields/dynamic-fields.service";
+import { useUserAddressDataContext } from "./context/useUserAddressDataContext";
 
 export function useIndexUI() {
+	loadAddresses('shipping')
+	loadAddresses('billing')
+	loadAddresses('drop')
+	ensureDynamicFields()
+
 
 	/**
      * Contexts
@@ -12,11 +20,22 @@ export function useIndexUI() {
 		resetForm,
 		clearFormFieldErrors,
 		populateDynamicFields
-	} = useUserAddressFormState()
+	} = useUserAddressFormStateContext()
 	const {
 		setCreateMode,
 		openCreateFormModal
 	} = useUserAddressUIContext()
+	const {
+		sections,
+		is_loading,
+		has_addresses,
+	} = useUserAddressDataContext()
+
+
+	/**
+     * Helpers
+     */
+	const { t: translate } = useI18n();
 
 
 	/**
@@ -29,14 +48,18 @@ export function useIndexUI() {
 	}
 
 	function handleOpenAddModal() {
-		console.log('this is being used wtf heehehe');
-		// resetEditState()
 		setCreateMode()
 		prepareCreateModal()
 		openCreateFormModal()
 	}
 
 	return {
+		translate,
+
+		sections,
+		is_loading,
+		has_addresses,
+
 		handleOpenAddModal
 	}
 }

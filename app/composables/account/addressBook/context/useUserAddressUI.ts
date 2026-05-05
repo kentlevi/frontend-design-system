@@ -1,12 +1,11 @@
 
+/** GENERAL ADDRESS CONTEXT */
 export function useUserAddressUI() {
-	/** GENERAL ADDRESS CONTEXT */
 
 	/**
      * Types
      */
 	type AddressFormModalMode = 'create' | 'edit'
-
 
 
 	/**
@@ -19,7 +18,6 @@ export function useUserAddressUI() {
 	const form_modal_mode = ref<AddressFormModalMode | null>(null)
 
 
-
 	/**
      * Computed
      */
@@ -28,7 +26,6 @@ export function useUserAddressUI() {
 			? 'update'
 			: 'save'
 	})
-
 
 
 	/**
@@ -84,6 +81,7 @@ export function useUserAddressUI() {
 	function closeConfirmDefaultChangeModal() {
 		is_confirm_default_change_modal_open.value = false
 	}
+
 
 	return {
 		is_form_modal_open,
