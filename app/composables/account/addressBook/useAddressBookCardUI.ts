@@ -2,7 +2,7 @@ import type { AddressMap, AddressType } from "~/types/user-address";
 import { useAddressHelper } from "~/utils/address";
 import { getTranslatedAddressBookLabel } from "./addressBookPresentation";
 import { useUserAddressUIContext } from "./context/useUserAddressUIContext";
-import { useUserAddressDataContext } from "./context/useUserAddressDataContext";
+import { useUserAddressContext } from "./context/useUserAddressContext";
 
 type CardProps = {
 	item?: AddressMap[AddressType];
@@ -15,7 +15,7 @@ export function useAddressBookCardUI(props: CardProps) {
 	/**
      * Contexts
      */
-	const { editing_address_snapshot, pending_delete_address } = useUserAddressDataContext()
+	const { editing_address_snapshot, pending_delete_address } = useUserAddressContext()
 	const { openEditFormModal, openDeleteDialog } = useUserAddressUIContext()
 
 

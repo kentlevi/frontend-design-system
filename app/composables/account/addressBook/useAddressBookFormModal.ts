@@ -5,6 +5,7 @@ import { useUserAddressUIContext } from "./context/useUserAddressUIContext"
 import { useAddressHelper } from "~/utils/address"
 import { mapAddressToForm } from "~/factories/address"
 import type { CountryField } from "~/types/country_field"
+import { useUserAddressContext } from "./context/useUserAddressContext"
 
 export function useAddressBookFormModal () {
 	/**
@@ -26,12 +27,12 @@ export function useAddressBookFormModal () {
 	const {
 		dynamic_fields,
 		is_submitting,
-		editing_address_snapshot,
 
 		address_store,
 		address_field_store,
 
 	} = useUserAddressDataContext()
+	const { editing_address_snapshot } = useUserAddressContext()
 	const {
 		form_modal_mode,
 

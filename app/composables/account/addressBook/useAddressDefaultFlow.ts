@@ -1,4 +1,4 @@
-import { setDefault } from "~/services/user-address/api.service";
+import { setDefault } from "~/services/user-address/user-address.service";
 import { useUserAddressStore } from "~/stores/user-address";
 import type { AddressMap, AddressType } from "~/types/user-address";
 import { useAddressHelper } from "~/utils/address/index"
@@ -28,7 +28,7 @@ export function useAddressDefaultFlow(options: UseAddressDefaultFlowOptions) {
 		try {
 			const response = await setDefault(id)
 
-			if (response.success) {
+			if (response?.success) {
 				address_store.setDefault(type, id)
 			}
 

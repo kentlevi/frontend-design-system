@@ -17,10 +17,10 @@ import { provideAddressBookDefaultContext } from '~/composables/account/addressB
 import { provideAddressBookCardActionContext, type AddressBookMenuPayload } from '~/composables/account/addressBook/context/useAddressBookCardActionContext';
 import { loadAddresses } from '~/services/user-address/user-address.service';
 import { ensureDynamicFields } from '~/services/dynamic-fields/dynamic-fields.service';
-import { provideUserAddressData } from '~/composables/account/addressBook/context/useUserAddressDataContext';
-import { provideUserAddressUI } from '~/composables/account/addressBook/context/useUserAddressUIContext';
+import { useUserAddressDataContext } from '~/composables/account/addressBook/context/useUserAddressDataContext';
 import { useIndexUI } from '~/composables/account/addressBook/useIndexUI';
-import { provideUserAddressFormState } from '~/composables/account/addressBook/context/useUserAddressFormStateContext';
+import { provideUserAddress } from '~/composables/account/addressBook/context/useUserAddressContext';
+import { useUserAddressFormStateContext } from '~/composables/account/addressBook/context/useUserAddressFormStateContext';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -49,14 +49,25 @@ const {
 	shipping_address,
 	billing_address,
 	drop_address
-} = provideUserAddressData()
-const ui = provideUserAddressUI()
-const state = provideUserAddressFormState()
+} = useUserAddressDataContext()
+const {
+	form_state,
+	form_type,
+	active_form,
+	form_field_errors,
 
-const { handleOpenAddModal } = useIndexUI(
-	ui,
-	state,
-)
+	setFormErrors,
+	clearFormFieldErrors,
+	resetForm,
+	populateDynamicFields,
+	updateDynamicFieldByType,
+	updateFormFieldByType,
+	setFormType,
+} = useUserAddressFormStateContext()
+
+const { handleOpenAddModal } = useIndexUI()
+
+provideUserAddress()
 
 const {
 	is_form_modal_open,
@@ -92,16 +103,16 @@ const {
 	is_submitting: is_creating,
 	createAddress,
 } = useAddressCreateForm({
-	form_state: state.form_state,
-	form_type: state.form_type,
-	active_form: state.active_form,
+	form_state,
+	form_type,
+	active_form,
 
-	setFormErrors: state.setFormErrors,
+	setFormErrors,
 	openCreateFormModal,
 	closeFormModal,
-	resetForm: state.resetForm,
-	clearFormFieldErrors: state.clearFormFieldErrors,
-	populateDynamicFields: state.populateDynamicFields,
+	resetForm,
+	clearFormFieldErrors,
+	populateDynamicFields,
 })
 
 const {
@@ -127,15 +138,15 @@ const {
 	openEditModal,
 	updateAddress,
 } = useAddressEditForm({
-	form_state: state.form_state,
-	form_type: state.form_type,
-	active_form: state.active_form,
+	form_state,
+	form_type,
+	active_form,
 
-	setFormErrors: state.setFormErrors,
+	setFormErrors,
 	openEditFormModal,
 	closeFormModal,
 	setCreateMode,
-	clearFormFieldErrors: state.clearFormFieldErrors,
+	clearFormFieldErrors,
 })
 
 const is_submitting = computed(() => is_creating.value || is_updating.value)
@@ -149,14 +160,14 @@ provideAddressBookFormContext({
 	is_form_modal_open,
 	form_modal_mode,
 	form_submit_label,
-	form_type: state.form_type,
-	active_form: state.active_form,
+	form_type,
+	active_form,
 	dynamic_fields,
-	form_field_errors: state.form_field_errors,
+	form_field_errors,
 	is_submitting,
-	setFormType: state.setFormType,
-	updateFormFieldByType: state.updateFormFieldByType,
-	updateDynamicFieldByType: state.updateDynamicFieldByType,
+	setFormType,
+	updateFormFieldByType,
+	updateDynamicFieldByType,
 	submitAddressForm,
 	closeFormModal,
 })

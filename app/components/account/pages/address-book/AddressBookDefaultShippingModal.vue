@@ -1,60 +1,23 @@
 <script setup lang="ts">
-import { useAddressHelper } from '~/utils/address';
-import { useAddressBookDeleteContext } from '~/composables/account/addressBook/context/useAddressBookDeleteContext';
-import { address_book_tag_badge_colors, capitalizeAddressBookLabel, getTranslatedAddressBookLabel } from '~/composables/account/addressBook/addressBookPresentation';
-const { t } = useI18n()
+import { address_book_tag_badge_colors } from '~/composables/account/addressBook/addressBookPresentation';
+import { useAddressBookDefaultShippingModal } from '~/composables/account/addressBook/useAddressBookDefaultShippingModal';
 
-const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
-const address_book_delete_context = useAddressBookDeleteContext()
+const {
+	translate,
 
-const is_default_shipping_modal_open = address_book_delete_context.is_default_shipping_modal_open
-const replacement_addresses = address_book_delete_context.replacement_addresses
+	selected_address_id,
+	is_default_shipping_modal_open,
+	replacement_addresses,
+	default_selection_title,
+	default_selection_description,
 
-const cancelDefaultShippingFlow = address_book_delete_context.cancelDefaultShippingFlow
-const skipDefaultShippingSelection = address_book_delete_context.skipDefaultShippingSelection
-const saveDefaultShippingSelection = address_book_delete_context.saveDefaultShippingSelection
-
-const selected_address_id = ref<number | null>(null)
-
-const default_selection_type = computed(() => replacement_addresses.value[0]?.type ?? 'shipping')
-const default_selection_title = computed(() => {
-	return t(`account.addressBook.selectNewDefaultTitle${capitalizeAddressBookLabel(default_selection_type.value)}`)
-})
-const default_selection_description = computed(() => {
-	return t(`account.addressBook.selectNewDefaultDescription${capitalizeAddressBookLabel(default_selection_type.value)}`)
-})
-
-watch(() => is_default_shipping_modal_open.value, (is_open) => {
-	if (is_open) {
-		selected_address_id.value = null
-	}
-})
-
-function closeModal() {
-	cancelModal()
-}
-
-function cancelModal() {
-	cancelDefaultShippingFlow()
-}
-
-function skipSelection() {
-	skipDefaultShippingSelection()
-}
-
-async function saveSelection() {
-	if (selected_address_id.value === null) return
-
-	const selected_address = replacement_addresses.value.find((address) => address.id === selected_address_id.value)
-
-	if (!selected_address) return
-
-	await saveDefaultShippingSelection(selected_address.type, selected_address_id.value)
-}
-
-function getAddressLabel(label: string) {
-	return getTranslatedAddressBookLabel(label, t)
-}
+	buildAddressLines,
+	shippingPhoneNumber,
+	closeModal,
+	skipSelection,
+	saveSelection,
+	getAddressLabel,
+} = useAddressBookDefaultShippingModal()
 </script>
 
 <template>
@@ -133,9 +96,9 @@ function getAddressLabel(label: string) {
 					tone="neutral"
 					size="md"
 					class="account-address-book-default-modal-cancel"
-					@click="cancelModal"
+					@click="closeModal"
 				>
-					{{ t('account.addressBook.cancel') }}
+					{{ translate('account.addressBook.cancel') }}
 				</UiButton>
 			</div>
 
@@ -148,7 +111,7 @@ function getAddressLabel(label: string) {
 					class="account-address-book-default-modal-skip"
 					@click="skipSelection"
 				>
-					{{ t('account.addressBook.skipAndSelectLater') }}
+					{{ translate('account.addressBook.skipAndSelectLater') }}
 				</UiButton>
 
 				<UiButton
@@ -160,7 +123,7 @@ function getAddressLabel(label: string) {
 					:disabled="selected_address_id === null"
 					@click="saveSelection"
 				>
-					{{ t('account.addressBook.save') }}
+					{{ translate('account.addressBook.save') }}
 				</UiButton>
 			</div>
 		</template>

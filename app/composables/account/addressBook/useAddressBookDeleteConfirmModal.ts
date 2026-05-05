@@ -1,122 +1,19 @@
-import type { AddressMap, AddressType } from "~/types/user-address";
-import { useUserAddressDataContext } from "./context/useUserAddressDataContext";
 import { useUserAddressUIContext } from "./context/useUserAddressUIContext";
-import { deleteAddress } from "~/services/user-address/user-address.service";
+import { useUserAddressContext } from "./context/useUserAddressContext";
 
 export function useAddressBookDeleteConfirmModal() {
 
 	/**
      * Contexts
      */
-	const {
-		is_delete_modal_open,
-		closeDeleteDialog,
-		openDefaultShippingModal,
-		closeDefaultShippingModal,
-	} = useUserAddressUIContext()
-
-	const {
-		shipping_address,
-		billing_address,
-		drop_address,
-		pending_delete_address,
-		address_store,
-	} = useUserAddressDataContext()
-
-	/**
-     * Store
-     */
-	const toast_store = useToastStore()
-	const loading_overlay_store = useLoadingOverlayStore()
+	const { is_delete_modal_open } = useUserAddressUIContext()
+	const { cancelDeleteFlow, confirmDeleteAddress } = useUserAddressContext()
 
 
 	/**
      * Helpers
      */
 	const { t: translate } = useI18n();
-
-
-	/**
-     * Functions
-     */
-	function cancelDeleteFlow({reset = true} = {}) {
-		closeDeleteDialog()
-
-		if (reset) {
-			pending_delete_address.value = null
-		}
-	}
-
-	async function confirmDeleteAddress({continue_after_selection = false, overlay = true} = {}) {
-		const deleting_address = pending_delete_address.value
-		if (!deleting_address) return
-
-		/** First pass: when deleting a default address with replacements, pause delete and show selector modal. */
-		if (!continue_after_selection) {
-			const should_show_default_shipping_modal = deleting_address.is_default
-                    && getReplacementAddresses(deleting_address.type).length > 0
-
-			if (should_show_default_shipping_modal) {
-				/** Keep pending delete state so Skip/Save can continue the same delete request. */
-				cancelDeleteFlow({reset: false})
-				openDefaultShippingModal()
-				return
-			}
-		} else {
-			/** Second pass (Skip or Save): close selector modal and continue delete immediately. */
-			closeDefaultShippingModal()
-		}
-
-		/** Close dialog state before API call so UI is clean while request is in-flight. */
-		if (overlay) {
-			startUpdateOverlay()
-		}
-		cancelDeleteFlow()
-
-		try {
-			const response = await deleteAddress(deleting_address.id)
-
-			if (response?.success) {
-				toast_store.handleApiResponse(response)
-
-				/** Keep local store in sync with backend delete result. */
-				address_store.deleteAddress(deleting_address.type, deleting_address.id)
-			}
-
-		} catch (_errror: unknown) {
-			console.log(_errror);
-		} finally {
-			loading_overlay_store.stopLoading('delete_address')
-		}
-	}
-
-	function getReplacementAddresses<T extends AddressType>(type: T): AddressMap[T][] {
-		const lists: { [K in AddressType]: AddressMap[K][] } = {
-			shipping: shipping_address.value,
-			billing: billing_address.value,
-			drop: drop_address.value
-		}
-
-		/** Keep only the requested address type (defensive if upstream data is mixed) */
-		const list = lists[type].filter(address => address.type === type) as AddressMap[T][]
-		const pending = pending_delete_address.value
-
-		if (!pending || pending.type !== type) {
-			return list
-		}
-
-		return list.filter(address => address.id !== pending.id)
-	}
-
-
-	/** Overlays */
-	function startUpdateOverlay() {
-		loading_overlay_store.startLoading('delete_address', {
-			showCopy: true,
-			testId: 'account-profile-delete-address-overlay',
-			position: 'fixed'
-		})
-	}
 
 	return {
 		translate,

@@ -1,31 +1,39 @@
-import type { useUserAddressFormState } from "./context/useUserAddressFormState";
-import type { useUserAddressUI } from "./context/useUserAddressUI";
+import { useUserAddressFormState } from "./context/useUserAddressFormState";
+import { useUserAddressUIContext } from "./context/useUserAddressUIContext";
 
-type UserAddressUIContext = ReturnType<typeof useUserAddressUI>
-type UserAddressFormStateContext = ReturnType<typeof useUserAddressFormState>
+export function useIndexUI() {
 
-export function useIndexUI(
-	ui: UserAddressUIContext,
-	state: UserAddressFormStateContext
-) {
+	/**
+     * Contexts
+     */
+	const {
+		form_type,
 
+		resetForm,
+		clearFormFieldErrors,
+		populateDynamicFields
+	} = useUserAddressFormState()
+	const {
+		setCreateMode,
+		openCreateFormModal
+	} = useUserAddressUIContext()
 
 
 	/**
      * Functions
      */
 	function prepareCreateModal() {
-		state.resetForm(state.form_type.value)
-		state.clearFormFieldErrors()
-		state.populateDynamicFields(state.form_type.value)
+		resetForm(form_type.value)
+		clearFormFieldErrors()
+		populateDynamicFields(form_type.value)
 	}
 
 	function handleOpenAddModal() {
 		console.log('this is being used wtf heehehe');
 		// resetEditState()
-		ui.setCreateMode()
+		setCreateMode()
 		prepareCreateModal()
-		ui.openCreateFormModal()
+		openCreateFormModal()
 	}
 
 	return {

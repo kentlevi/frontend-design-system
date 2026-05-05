@@ -49,7 +49,7 @@ export async function deleteUserAddress(
 /**
  * Set user address to default
  */
-export async function setDefault(
+export async function setAddressDefault(
 	id: number,
 ): Promise<ApiResponse> {
 	const { $api } = useNuxtApp()

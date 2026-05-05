@@ -1,5 +1,5 @@
 import { useAddressFieldStore, useUserAddressStore } from "~/stores/user-address";
-import type { AddressMap, AddressType } from "~/types/user-address";
+import type { AddressType } from "~/types/user-address";
 
 
 export function useUserAddressData() {
@@ -58,12 +58,6 @@ export function useUserAddressData() {
 			.filter(section => section.loading || section.items.length > 0)
 	)
 
-	/** Edit */
-	const editing_address_snapshot = ref<AddressMap[AddressType] | null>(null)
-
-	/** Delete */
-	const pending_delete_address = ref<AddressMap[AddressType] | null>(null)
-
 
 
 	return {
@@ -78,8 +72,6 @@ export function useUserAddressData() {
 		has_addresses,
 
 		sections,
-		editing_address_snapshot,
-		pending_delete_address,
 
 		is_shipping_fetching,
 		is_billing_fetching,
