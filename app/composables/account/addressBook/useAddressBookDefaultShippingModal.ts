@@ -26,7 +26,6 @@ export function useAddressBookDefaultShippingModal() {
 	/**
      * Store
      */
-	// const toast_store = useToastStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 
 
