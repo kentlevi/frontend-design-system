@@ -20,7 +20,13 @@
         "yellowOrange": "연주황",
         "silver": "은색",
         "bronze": "동색",
-        "fullColor": "풀 컬러"
+        "fullColor": "풀 컬러",
+        "black": "검정",
+        "white": "흰색",
+        "red": "빨강",
+        "green": "초록",
+        "blue": "파랑",
+        "hologram": "홀로그램"
       }
     },
     "hero": {
@@ -28,19 +34,19 @@
     },
     "sizes": {
       "small30": {
-        "label": "소형  30X30",
+        "label": "소형 30x30",
         "featureLabel": "소형 30x30"
       },
       "medium75": {
-        "label": "중형  75X75",
+        "label": "중형 75x75",
         "featureLabel": "중형 75x75"
       },
       "large100": {
-        "label": "대형  100X100",
+        "label": "중형 100x100",
         "featureLabel": "중형 100x100"
       },
       "extraLarge125": {
-        "label": "초대형  125X125",
+        "label": "초대형 125x125",
         "featureLabel": "초대형 125x125"
       }
     },
@@ -58,11 +64,11 @@
         "description": "차·아이스박스·공구함에도\n딱 맞는 넉넉한 크기예요."
       },
       "effortlessApplication": {
-        "title": "누구나 쉽게, 간편한 부착",
+        "title": "직접 인쇄한 듯한 자연스러운 마감",
         "description": "디자인을 원하는 곳에 손쉽게 부착해 보세요. 어떤 표면에서도 이질감 없이 자연스럽게 어우러지며, 깔끔하고 전문적인 마감을 완성합니다."
       },
       "designedForPrecision": {
-        "title": "자신있게 부착하세요!",
+        "title": "깔끔한 풀컬러 레터링 스티커",
         "description": "도안 그대로 정밀하게 재단되어 원하는 위치에 정확히 부착됩니다. 쉬운 전사 방식 덕분에 깔끔하고 높은 완성도의 결과물을 보장합니다."
       }
     },

@@ -2,8 +2,8 @@
   "product": {
     "reviews": {
       "badge": "Love it! 😊",
-      "headline": "499 Happy Clients. Quality You Can Trust.",
-      "description": "Genuine reviews, real images, and total satisfaction. See what our customers are saying about us .",
+      "headline": "_____ Happy Clients. Quality You Can Trust.",
+      "description": "Genuine reviews, real images, and total satisfaction. See what our customers are saying about us.",
       "controls": {
         "previous": "Previous reviews",
         "next": "Next reviews"
@@ -27,7 +27,7 @@
         }
       },
       "navigationHeadline": "_____ Happy Clients. Quality You Can Trust.",
-      "navigationDescription": "Genuine reviews, real images, and total satisfaction. See what our customers are saying about us ."
+      "navigationDescription": "Genuine reviews, real images, and total satisfaction. See what our customers are saying about us."
     }
   }
 }

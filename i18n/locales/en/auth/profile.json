@@ -6,7 +6,7 @@
         "title": "Account Onboarding",
         "profile": {
           "title": "Profile Details",
-          "text": "Update and manage your personal info, contact details, and preferences in your profile."
+          "text": "Manage your personal information, contact details, and preferences in your profile."
         },
         "settings": {
           "title": "Account Settings",
@@ -33,11 +33,11 @@
       },
       "settings": {
         "title": "Account Settings",
-        "subtitle": "Manage your account settings, including promo alerts, discount notifications, and review preferences.",
+        "subtitle": "Manage your account preferences, including promo alerts, discount notifications, and review settings.",
         "promotions": "Promotions & Discounts",
         "promotionsDesc": "Stay updated with savings, new arrivals, promotions, and more via email.",
         "reviews": "Reviews",
-        "reviewsDesc": "Get email updates when your orders are completed and when your reviews are published.",
+        "reviewsDesc": "Get email updates everytime your order gets completed as well as published reviews.",
         "confirmations": "Confirmations",
         "confirmationsDesc": "Get email updates about your final proof, design changes, and payment confirmation.",
         "unit": "Unit of Measurement",

@@ -20,7 +20,13 @@
         "yellowOrange": "Yellow Orange",
         "silver": "Silver",
         "bronze": "Bronze",
-        "fullColor": "Full Color"
+        "fullColor": "Full Color",
+        "black": "Black",
+        "white": "White",
+        "red": "Red",
+        "green": "Green",
+        "blue": "Blue",
+        "hologram": "Hologram"
       }
     },
     "hero": {
@@ -58,11 +64,11 @@
         "description": "Standout size for cars, coolers, or toolboxes."
       },
       "effortlessApplication": {
-        "title": "Effortless Application",
-        "description": "Apply your design with ease. Resulting in a crisp, professional finish that sits seamlessly on any surface."
+        "title": "Painted Look Effect",
+        "description": "Apply your design with ease. Resulting in a crisp, professional finish that that looks like it’s painted directly onto the surface."
       },
       "designedForPrecision": {
-        "title": "Apply with Confidence",
+        "title": "Clean Transfer Stickers",
         "description": "Each design is carefully cut from your uploaded artwork, transferring flawlessly for a crisp and polished final result."
       }
     },

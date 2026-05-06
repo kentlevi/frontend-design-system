@@ -1,26 +1,26 @@
 {
-    "auth": {
-        "verification": {
-            "title": "Verification Required",
-            "iconAlt": "Verification icon",
-            "messagePrefix": "For your security, a verification code has been sent to ",
-            "messageSuffix": ". It will expire in 5 minutes.",
-            "enterCode": "Please enter the code:",
-            "codeRequired": "Enter the verification code we sent to your email.",
-            "invalidCode": "Oops! That verification code doesn't match. Try entering it again.",
-            "expiredCode": "This verification code has expired. Click the [b]Resend Code[/b] button below to get a new one.",
-            "verify": "Verify",
-            "verifyEmailAddress": "Verify Email Address",
-            "verifying": "Just a moment! We're making sure everything looks perfect.",
-            "closeModal": "Close modal",
-            "resendPrefix": "Didn't get the code? Check your spam folder or ",
-            "resendCta": "Resend Code",
-            "resendSuffix": ".",
-            "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",
-            "resendLimitReachedPrefix": "For security reasons, you can request up to",
-            "resendLimitReachedMiddle": "5 codes per hour",
-            "resendLimitReachedSuffix": ". Please try again later.",
-            "emailUpdatePrompt": "Enter your new email address and click “Confirm” to continue."
-        }
+  "auth": {
+    "verification": {
+      "title": "Verification Required",
+      "iconAlt": "Verification icon",
+      "messagePrefix": "For your security, a verification code has been sent to ",
+      "messageSuffix": ". It will expire in 5 minutes.",
+      "enterCode": "Please enter the code:",
+      "codeRequired": "Enter the verification code we sent to your email.",
+      "invalidCode": "The code you entered is incorrect. Please try again.",
+      "expiredCode": "This verification code has expired. Click the Resend Code button below .",
+      "verify": "Verify",
+      "verifyEmailAddress": "Verify Email Address",
+      "verifying": "Just a moment! We're making sure everything looks perfect.",
+      "closeModal": "Close modal",
+      "resendPrefix": "Didn't get the code? Check your spam folder or ",
+      "resendCta": "Resend Code",
+      "resendSuffix": ".",
+      "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",
+      "resendLimitReachedPrefix": "For security reasons, you can request up to",
+      "resendLimitReachedMiddle": "5 codes per hour",
+      "resendLimitReachedSuffix": ". Please try again later.",
+      "emailUpdatePrompt": "Enter your new email address and click “Confirm” to continue."
     }
+  }
 }

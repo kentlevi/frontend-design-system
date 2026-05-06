@@ -183,9 +183,18 @@ function getSelectedProductBlurb() {
 function getProductStoryValue(row: 'row1' | 'row2' | 'row3', field: 'title' | 'text', fallback: string) {
 	if (!selected_id.value) return fallback;
 
-	const override_key = `product.story.productModeByProduct.${selected_id.value}.${row}.${field}`;
+	const product_id = String(selected_id.value);
+	const override_key = `product.story.productModeByProduct.${product_id}.${row}.${field}`;
 	const override_value = t(override_key);
-	return override_value === override_key ? fallback : override_value;
+	if (override_value !== override_key) return override_value;
+
+	if (product_id === 'custom-lettering') {
+		const vinyl_override_key = `product.story.productModeByProduct.vinyl-lettering.${row}.${field}`;
+		const vinyl_override_value = t(vinyl_override_key);
+		if (vinyl_override_value !== vinyl_override_key) return vinyl_override_value;
+	}
+
+	return fallback;
 }
 
 const story_rows = computed<StoryRow[]>(() => {
