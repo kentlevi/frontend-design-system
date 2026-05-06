@@ -66,7 +66,8 @@ const {
 			<UiFormField :label="translate('account.addressBook.companyOptional')">
 				<template #label>
 					<span class="address-form-fields-company-label">
-						<span class="address-form-fields-company-label-text">{{ translate('account.addressBook.companyOptional') }}</span>
+						<span class="address-form-fields-company-label-text">{{ translate('account.addressBook.company') }}</span>
+						<span class="address-form-fields-company-label-optional">{{ translate('account.addressBook.optional') }}</span>
 					</span>
 				</template>
 
