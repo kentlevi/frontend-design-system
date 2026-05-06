@@ -1,8 +1,6 @@
 import { useCartStore } from "~/stores/cart";
 import { storeToRefs } from "pinia";
-import { productCatalog } from "~/data/products/catalog";
 import type { CartItem, CartItemAPI, CartItemCreationSpec, ExpectedCartItemData, ResponseNumberSpec, SavedDraftResponse } from "~/types/cart/cart";
-import type { ProductCategory, ProductItem } from "~/types/products/catalog";
 import type { FeaturedDataResponse } from "~/types/products/attributes";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
@@ -78,52 +76,6 @@ export const useCartService = (caller: string = 'unknown') => {
 		}
 	}
 
-	const createDemoCartItems = (): CartItem[] => {
-		type DemoCartSpec = {
-			product_id: string
-			width: number
-			height: number
-			quantity: number
-			cost: number
-		}
-
-		const demo_specs = [
-			{ product_id: 'die-cut-sticker', width: 76, height: 76, quantity: 100, cost: 24.99 },
-			{ product_id: 'circle-sticker', width: 51, height: 51, quantity: 50, cost: 12.49 },
-		] satisfies DemoCartSpec[];
-
-		return demo_specs.map((spec: DemoCartSpec, index: number) => {
-			const category = Object.values(productCatalog).find((entry: ProductCategory) =>
-				entry.products.some((product: ProductItem) => product.id === spec.product_id)
-			);
-			const product = category?.products.find((entry: ProductItem) => entry.id === spec.product_id);
-
-			return {
-				id: null,
-				user_id: null,
-				product_config_mapping_id: index + 1,
-				url_slug: spec.product_id,
-				product: product?.name || spec.product_id,
-				product_thumbnail: product?.image || '',
-				color: null,
-				color_id: null,
-				font: null,
-				font_id: null,
-				width: spec.width,
-				height: spec.height,
-				quantity: spec.quantity,
-				cost: spec.cost,
-				lettering_text: null,
-				artwork_file: null,
-				artwork_file_name: null,
-				instruction: '',
-				local_identity: `demo-cart-${index + 1}`,
-				artwork_preview: null,
-				file_path: null,
-			};
-		});
-	}
-
 	const calculateCartItems = async () => {
 		if( cart_store.is_authenticated ) {
 			const { success, message, data} = await $api.get<ResponseNumberSpec>('cart/calculate')
@@ -146,15 +98,6 @@ export const useCartService = (caller: string = 'unknown') => {
 		try {
 			// calculate the numbers of cart items everytime request new data from database
 			// calculateCartItems()
-
-			// if( !cart_store.is_authenticated ) {
-			// 	if (first_load && cart_store.items.length === 0 && !cart_store.has_initialized_demo) {
-			// 		populateItems(createDemoCartItems())
-			// 		updateTotalsFromState()
-			// 	}
-			// 	cart_store.has_initialized_demo = true
-			// 	return
-			// }
 
 			// const cart_items = await requestCartItems(page.value, per_page.value)
 			// if( !cart_items )

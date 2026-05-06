@@ -36,6 +36,7 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 	'kiss-cut-sticker': { folder: 'kiss-cut-sticker', file: 'kiss-cut-sticker' },
 	'oval-sticker': { folder: 'oval-stickers', file: 'oval-sticker' },
 	'oval-roll': { folder: 'oval-roll', file: 'oval-roll' },
+	'oval-sheet': { folder: 'oval-sheet', file: 'oval-sheet' },
 	'paper-roll': { folder: 'paper-roll', file: 'paper-roll' },
 	'rectangle-sticker': { folder: 'rectangular-stickers', file: 'rectangular-stickers' },
 	'rectangle-roll': { folder: 'rectangle-roll', file: 'rectangle-roll' },
@@ -43,6 +44,7 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 	'sticker-sheet': { folder: 'sticker-sheet', file: 'sticker-sheet' },
 	'square-sticker': { folder: 'square-stickers', file: 'square-sticker' },
 	'square-roll': { folder: 'square-roll', file: 'square-roll' },
+	'square-sheet': { folder: 'square-sheet', file: 'square-sheet' },
 	'transfer-sticker': { folder: 'transfer-sticker', file: 'transfer-sticker' },
 	'vinyl-lettering': { folder: 'vinyl-lettering', file: 'vinyl-lettering' },
 };

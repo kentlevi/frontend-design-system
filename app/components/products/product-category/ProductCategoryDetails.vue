@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ProductCategoryKey } from '~/types/products/catalog';
-import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
 import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 
@@ -37,7 +36,7 @@ const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
 
 const route = useRoute();
 const { t } = useI18n();
-const { resolveFileUrl } = useFileBaseUrl();
+const PRODUCT_MEDIA_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 
 const {
 	selected_id,
@@ -48,9 +47,15 @@ const category = computed(() => route.params.category as ProductCategoryKey);
 function resolveStoryMedia(media: StoryMedia): StoryMedia {
 	return {
 		...media,
-		src: resolveFileUrl(media.src),
-		poster: media.poster ? resolveFileUrl(media.poster) : undefined,
+		src: resolveProductMediaUrl(media.src),
+		poster: media.poster ? resolveProductMediaUrl(media.poster) : undefined,
 	};
+}
+
+function resolveProductMediaUrl(path: string) {
+	if (/^https?:\/\//.test(path)) return path;
+
+	return `${PRODUCT_MEDIA_BASE_URL}/${path.replace(/^\/?products\//, '').replace(/^\/+/, '')}`;
 }
 
 const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> = {
