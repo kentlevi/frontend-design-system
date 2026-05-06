@@ -71,8 +71,6 @@ export function useUserAddressFormState() {
 	}
 
 	function clearFormFieldErrors() {
-		console.log('clearFormFieldErrors');
-		console.log(form_field_errors.value);
 		form_field_errors.value = ({
 			shipping: {},
 			billing: {},
