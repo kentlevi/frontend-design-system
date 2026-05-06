@@ -106,13 +106,16 @@ export function useAddressBookFormModal () {
 					address_store.setAddresses(type, response.data, 'prepend');
 				}
 
-
 				toast_store.handleApiResponse(response)
 				closeFormModal()
 				resetForm(type);
 			} else {
-				const next_errors = mapApiFieldErrors(response?.data)
-				setFormErrors(type, next_errors)
+				if (response?.data) {
+					const next_errors = mapApiFieldErrors(response.data)
+					setFormErrors(type, next_errors)
+				} else {
+					toast_store.handleApiResponse(response)
+				}
 			}
 		} catch (_error: unknown) {
 			console.log(_error);
@@ -156,8 +159,12 @@ export function useAddressBookFormModal () {
 				closeFormModal()
 				resetEditState()
 			} else {
-				const next_errors = mapApiFieldErrors(response?.data)
-				setFormErrors(type, next_errors)
+				if (response?.data) {
+					const next_errors = mapApiFieldErrors(response.data)
+					setFormErrors(type, next_errors)
+				} else {
+					toast_store.handleApiResponse(response)
+				}
 			}
 		} catch (_error: unknown) {
 			console.log(_error);
