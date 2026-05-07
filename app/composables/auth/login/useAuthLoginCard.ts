@@ -25,11 +25,14 @@ import {
 	requestNonMemberLoginVerification,
 	submitNonMemberLoginVerification,
 } from '~/services/auth/auth.service'
+import { loadAddresses } from '~/services/user-address/user-address.service'
 import { useAuthLoginStore } from '~/stores/auth/login.store'
 import { useLoadingOverlayStore } from '~/stores/loading_overlay'
+import { useRedirectStore } from '~/stores/navigation/redirect.store'
 import { resolvePostLoginRedirect } from '~/utils/auth/redirect'
 
 export function useAuthLoginCard() {
+	const { auth_redirect_url } = storeToRefs(useRedirectStore())
 	const route = useRoute()
 	const { t: translate } = useI18n()
 	const { withCountry } = useCountry()
@@ -332,7 +335,10 @@ export function useAuthLoginCard() {
 				return response
 			}
 
-			return await navigateTo(post_login_redirect.value)
+			loadAddresses('shipping')
+			loadAddresses('billing')
+			loadAddresses('drop')
+			return await navigateTo(auth_redirect_url.value)
 		} finally {
 			auth_login_store.patchCardUi({
 				is_signing_in_member: false,
@@ -422,7 +428,11 @@ export function useAuthLoginCard() {
 					return response
 				}
 
-				return await navigateTo(post_login_redirect.value)
+				loadAddresses('shipping')
+				loadAddresses('billing')
+				loadAddresses('drop')
+
+				return await navigateTo(auth_redirect_url.value)
 			}
 
 			if (!response.success) {
@@ -528,7 +538,10 @@ export function useAuthLoginCard() {
 				return response
 			}
 
-			return await navigateTo(post_login_redirect.value)
+			loadAddresses('shipping')
+			loadAddresses('billing')
+			loadAddresses('drop')
+			return await navigateTo(auth_redirect_url.value)
 		} catch (error) {
 			console.error(error)
 			return

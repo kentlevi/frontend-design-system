@@ -9,11 +9,19 @@ import {
 	fetchAndStoreUser,
 	requestSocialLoginRedirect,
 } from '~/services/auth/auth.service';
+import { useRedirectStore } from '~/stores/navigation/redirect.store';
+import { useAuthLoginStore } from '~/stores/auth/login.store';
+import { loadAddresses } from '~/services/user-address/user-address.service';
 
 export const useSocialLogin = () => {
 	const router = useRouter();
 	const route = useRoute();
-	const { withCountry } = useCountry();
+	const auth_login_store = useAuthLoginStore()
+	const { auth_redirect_url } = storeToRefs(useRedirectStore());
+
+	const {
+		is_checkout_mode,
+	} = storeToRefs(auth_login_store)
 
 	async function handleSocial(provider: string) {
 		try {
@@ -46,7 +54,11 @@ export const useSocialLogin = () => {
 
 				const did_login = await syncSocialLoginUserState();
 				if (did_login) {
-					router.push(resolvePostLoginRedirect(getRedirectCandidate(), withCountry));
+					router.push(auth_redirect_url.value);
+					closeCheckoutModal();
+					loadAddresses('shipping')
+					loadAddresses('billing')
+					loadAddresses('drop')
 				}
 			}, 500);
 		} catch (error: unknown) {
@@ -54,13 +66,16 @@ export const useSocialLogin = () => {
 		}
 	}
 
-	function getRedirectCandidate() {
-		const query_redirect = Array.isArray(route.query.redirect)
-			? route.query.redirect[0]
-			: route.query.redirect;
-		if (query_redirect) return query_redirect;
-		if (!import.meta.client) return null;
-		return window.history.state?.back ?? null;
+	function closeCheckoutModal() {
+		if (!is_checkout_mode.value) return
+
+		auth_login_store.patchCheckoutState({
+			is_modal_open: false,
+			modal_mode: 'login',
+			is_forgot_password_modal_open: false,
+			forgot_password_email: '',
+			should_restore_login_modal: false,
+		})
 	}
 
 	async function syncSocialLoginUserState() {

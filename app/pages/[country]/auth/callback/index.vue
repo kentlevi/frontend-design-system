@@ -7,17 +7,22 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-const { t } = useI18n()
+import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useRedirectStore } from '~/stores/navigation/redirect.store';
+const { t } = useI18n();
+const { auth_redirect_url } = storeToRefs(useRedirectStore());
 
-const route = useRoute()
+const route = useRoute();
 
 onMounted(() => {
 	if (window.opener) {
-		window.opener.postMessage({ type: 'oauth_complete' }, window.location.origin)
-		window.close()
-		return
+		window.opener.postMessage(
+			{ type: 'oauth_complete' },
+			window.location.origin
+		);
+		window.close();
+		return;
 	}
 
 	const country =
@@ -25,8 +30,8 @@ onMounted(() => {
 			? route.params.country
 			: Array.isArray(route.params.country)
 				? String(route.params.country[0] || '')
-				: ''
+				: '';
 
-	navigateTo(country ? `/${country}` : '/')
-})
+	navigateTo(auth_redirect_url.value);
+});
 </script>
