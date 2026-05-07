@@ -13,9 +13,9 @@ const props = withDefaults(defineProps<AddressFormFieldsProps>(), {
 
 const emit = defineEmits<AddressFormFieldsEmit>()
 
-const { t: translate } = useI18n()
-
 const {
+	translate,
+
 	hasAddressLines,
 	hasPhoneNumber,
 	onPhoneBeforeInput,
@@ -33,13 +33,11 @@ const {
 	onDynamicSelectChange,
 	getFieldError,
 	getDynamicFieldOptions,
-	getDynamicFieldHighlightedValueWhenEmpty,
 	getDynamicFieldPlaceholder,
 	resolvePlaceholderKey,
 } = useAddressFormField({
 	props,
-	emit,
-	translate
+	emit
 })
 </script>
 
@@ -63,7 +61,7 @@ const {
 				</template>
 			</UiFormField>
 
-			<UiFormField :label="translate('account.addressBook.companyOptional')">
+			<UiFormField :label="translate('account.addressBook.company')">
 				<template #label>
 					<span class="address-form-fields-company-label">
 						<span class="address-form-fields-company-label-text">{{ translate('account.addressBook.company') }}</span>
@@ -121,7 +119,7 @@ const {
 							:options="getDynamicFieldOptions(dynamic_field)"
 							:placeholder="getDynamicFieldPlaceholder(dynamic_field)"
 							:model-value="getDynamicFieldValue(dynamic_field.field_key)"
-							:highlighted-value-when-empty="getDynamicFieldHighlightedValueWhenEmpty(dynamic_field)"
+							:highlighted-value-when-empty="dynamic_field.field_label"
 							:trigger-class="getFieldError(props.form.type, `fields.${dynamic_field.field_key}`) ? 'address-form-fields-select-trigger--error' : ''"
 							@update:model-value="onDynamicSelectChange(dynamic_field.field_key, $event)"
 						/>

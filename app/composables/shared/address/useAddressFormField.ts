@@ -1,3 +1,4 @@
+import { useCountry } from '~/composables/app/country/useCountry'
 import type { icons } from '~/data/ui/icons'
 import { useAddressFieldStore } from '~/stores/user-address'
 import type { CountryFieldOption } from '~/types/country_field_option'
@@ -29,10 +30,12 @@ export type AddressFormFieldsEmit = {
 type UseAddressFormFieldOptions = {
 	props: AddressFormFieldsProps
 	emit: AddressFormFieldsEmit
-	translate: (key: string) => string
 }
 
 export function useAddressFormField(options: UseAddressFormFieldOptions) {
+	const { t: translate } = useI18n()
+	const { country } = useCountry();
+
 	const address_field_store = useAddressFieldStore()
 	const dynamic_fields = computed(() => address_field_store.dynamic_address_fields ?? [])
 	const copy_context = computed(() => options.props.copyContext ?? 'checkout')
@@ -125,12 +128,7 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 	function onDynamicSelectChange(field_key: string, selected_value: string | number) {
 		const field = dynamic_fields.value?.find(f => f.field_key === field_key)
 
-		if (
-			field
-			&& field.input_type === 'select'
-			&& hasProvinceLabel(field)
-			&& selected_value === getDefaultSelectOptionValue(field)
-		) {
+		if (field && selected_value === field.field_label) {
 			updateDynamicField(field_key, '')
 			return
 		}
@@ -146,54 +144,39 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return options.props.errors?.[type]?.[field_key] ?? ''
 	}
 
-	function hasProvinceLabel(field: AddressDynamicFields) {
-		const normalized_label = field.field_label.toLowerCase()
-		return normalized_label.includes('province') || normalized_label.includes('metropolitan')
-	}
-
 	function createDefaultSelectOption(field: AddressDynamicFields): CountryFieldOption {
-		const default_label = hasProvinceLabel(field)
-			? options.translate(resolvePlaceholderKey('provincePlaceholder'))
-			: field.field_label
+		const default_label = getDynamicFieldPlaceholder(field)
 
 		return {
 			id: '' as unknown as number,
 			country_field_id: field.id,
 			label: default_label,
-			value: getDefaultSelectOptionValue(field),
+			value: field.field_label,
 			sort_order: -1,
 			is_active: true,
 		}
 	}
 
-	function getDefaultSelectOptionValue(field: AddressDynamicFields) {
-		return `__placeholder__${field.field_key}`
-	}
-
 	function getDynamicFieldOptions(field: AddressDynamicFields) {
-		if (field.input_type !== 'select') return field.options ?? []
-
 		const current_options = field.options ?? []
 
 		return [createDefaultSelectOption(field), ...current_options]
 	}
 
 	function getDynamicFieldPlaceholder(field: AddressDynamicFields) {
-		if (hasProvinceLabel(field)) {
-			return options.translate(resolvePlaceholderKey('provincePlaceholder'))
+		if (field.input_type === 'select') {
+			return country.value === 'kr'
+				? `${field.field_label}${translate(`account.addressBook.select`)}`
+				: `${translate(`account.addressBook.select`)} ${field.field_label}`
+		} else {
+			return country.value === 'kr'
+				? `${field.field_label}${translate(`account.addressBook.enter`)}`
+				: `${translate(`account.addressBook.enter`)} ${field.field_label}`
 		}
-
-		const normalized_label = field.field_label.toLowerCase()
-
-		if (normalized_label.includes('city') || normalized_label.includes('town')) {
-			return options.translate(resolvePlaceholderKey('cityPlaceholder'))
-		}
-
-		return field.field_label
 	}
 
 	function resolvePlaceholderKey(
-		key: 'fullNamePlaceholder' | 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'provincePlaceholder' | 'cityPlaceholder' | 'postalCodePlaceholder'
+		key: 'fullNamePlaceholder' | 'companyPlaceholder' | 'addressLine1Placeholder' | 'addressLine2Placeholder' | 'postalCodePlaceholder'
 	) {
 		if (copy_context.value === 'addressBook') {
 			return `account.addressBook.accountForm.${key}`
@@ -202,14 +185,9 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		return `account.addressBook.${key}`
 	}
 
-	function getDynamicFieldHighlightedValueWhenEmpty(field: AddressDynamicFields) {
-		if (field.input_type !== 'select') return null
-		if (!hasProvinceLabel(field)) return null
-
-		return getDefaultSelectOptionValue(field)
-	}
-
 	return {
+		translate,
+
 		hasAddressLines,
 		hasPhoneNumber,
 		onPhoneBeforeInput,
@@ -227,7 +205,6 @@ export function useAddressFormField(options: UseAddressFormFieldOptions) {
 		onDynamicSelectChange,
 		getFieldError,
 		getDynamicFieldOptions,
-		getDynamicFieldHighlightedValueWhenEmpty,
 		getDynamicFieldPlaceholder,
 		resolvePlaceholderKey,
 	}

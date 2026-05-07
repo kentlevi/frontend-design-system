@@ -19,10 +19,8 @@
       "streetAddress": "도로명 주소",
       "addressLine1Placeholder": "주소1을 입력해 주세요",
       "addressLine2Placeholder": "주소2를  입력해 주세요",
-      "province": "시/도",
-      "provincePlaceholder": "시/도를 선택하세요",
-      "city": "시/군/구",
-      "cityPlaceholder": "시/군/구를 입력하세요",
+      "select": "를 선택하세요",
+      "enter": "를 입력하세요",
       "postalCode": "우편번호",
       "postalCodePlaceholder": "우편번호를 입력하세요",
       "accountForm": {
@@ -30,8 +28,6 @@
         "companyPlaceholder": "회사명을 입력하세요",
         "addressLine1Placeholder": "주소 라인 1을 입력하세요",
         "addressLine2Placeholder": "주소 라인 2를 입력하세요",
-        "provincePlaceholder": "시/도를 선택하세요",
-        "cityPlaceholder": "시/군/구를 입력하세요",
         "postalCodePlaceholder": "우편번호를 입력하세요"
       },
       "phoneNumber": "연락처",

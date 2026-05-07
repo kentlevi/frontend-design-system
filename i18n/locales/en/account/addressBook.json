@@ -19,10 +19,8 @@
       "streetAddress": "Street Address",
       "addressLine1Placeholder": "Enter Address Line 1",
       "addressLine2Placeholder": "Enter Address Line 2",
-      "province": "Province/Metropolitan City",
-      "provincePlaceholder": "Select Province/Metropolitan City",
-      "city": "City/Town",
-      "cityPlaceholder": "Enter City/Town",
+      "select": "Select",
+      "enter": "Enter",
       "postalCode": "Postal Code",
       "postalCodePlaceholder": "Enter Postal Code",
       "accountForm": {
@@ -30,8 +28,6 @@
         "companyPlaceholder": "Enter Company Name",
         "addressLine1Placeholder": "Enter Address Line 1",
         "addressLine2Placeholder": "Enter Address Line 2",
-        "provincePlaceholder": "Select Province/Metropolitan City",
-        "cityPlaceholder": "Enter City/Town",
         "postalCodePlaceholder": "Enter Postal Code"
       },
       "phoneNumber": "Contact Number",
