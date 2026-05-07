@@ -14,13 +14,14 @@ const route = useRoute()
 const route_category = route.params.category
 
 if (typeof route_category !== 'string' || !isProductCategoryKey(route_category)) {
-	throw createError({
-		statusCode: 404,
-		statusMessage: 'Page Not Found',
-	})
+	await navigateTo('/', { replace: true, redirectCode: 302 })
 }
 
-const category = computed(() => route_category)
+const category = computed<ProductCategoryKey>(() =>
+	typeof route_category === 'string' && isProductCategoryKey(route_category)
+		? route_category
+		: 'stickers'
+)
 
 function isProductCategoryKey(value: string): value is ProductCategoryKey {
 	return Object.prototype.hasOwnProperty.call(productCatalog, value)

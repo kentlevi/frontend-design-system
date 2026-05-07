@@ -2,9 +2,15 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app';
 
-defineProps<{
+const props = defineProps<{
 	error: NuxtError;
 }>();
+
+if (props.error?.statusCode === 404) {
+	onMounted(() => {
+		void clearError({ redirect: '/' });
+	});
+}
 </script>
 
 <template>

@@ -8,20 +8,19 @@ import type { ProductCategoryKey } from '~/types/products/catalog';
 const route = useRoute()
 const route_category = route.params.category
 const route_product = route.params.product
+const resolved_category = typeof route_category === 'string' && isProductCategoryKey(route_category)
+	? route_category
+	: null
 
 if (
-	typeof route_category !== 'string' ||
-	!isProductCategoryKey(route_category) ||
+	!resolved_category ||
 	typeof route_product !== 'string' ||
-	!getProductIdFromSlug(route_product, route_category)
+	!getProductIdFromSlug(route_product, resolved_category)
 ) {
-	throw createError({
-		statusCode: 404,
-		statusMessage: 'Page Not Found',
-	})
+	await navigateTo('/', { replace: true, redirectCode: 302 })
 }
 
-const category = computed(() => route_category)
+const category = computed<ProductCategoryKey>(() => resolved_category || 'stickers')
 
 function isProductCategoryKey(value: string): value is ProductCategoryKey {
 	return Object.prototype.hasOwnProperty.call(productCatalog, value)

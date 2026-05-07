@@ -33,10 +33,7 @@ const item = computed<AccountOrderLineItem | null>(() =>
 );
 
 if (!order.value || !item.value) {
-	throw createError({
-		statusCode: 404,
-		statusMessage: 'Order item not found',
-	});
+	await navigateTo('/', { replace: true, redirectCode: 302 });
 }
 
 const artwork_file_name = computed(() => item.value?.artworkFileName || 'yellow-bear.png');
