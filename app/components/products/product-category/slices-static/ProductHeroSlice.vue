@@ -29,8 +29,10 @@ const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 const product_hero_media_map: Record<string, { folder: string, file: string }> = {
 	'circle-sticker': { folder: 'round-stickers', file: 'round-sticker' },
+	'clear-roll': { folder: 'clear-roll', file: 'clear-roll' },
 	'clear-sticker': { folder: 'clear-sticker', file: 'clear-sticker' },
 	'circle-sheet': { folder: 'circle-sheet', file: 'circle-sheet' },
+	'die-cut-roll': { folder: 'die-cut-roll', file: 'die-cut-roll' },
 	'die-cut-sticker': { folder: 'die-cut-sticker', file: 'die-cut-sticker' },
 	'hologram-sticker': { folder: 'hologram-sticker', file: 'hologram-sticker' },
 	'kiss-cut-sticker': { folder: 'kiss-cut-sticker', file: 'kiss-cut-sticker' },
@@ -40,6 +42,7 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 	'paper-roll': { folder: 'paper-roll', file: 'paper-roll' },
 	'rectangle-sticker': { folder: 'rectangular-stickers', file: 'rectangular-stickers' },
 	'rectangle-roll': { folder: 'rectangle-roll', file: 'rectangle-roll' },
+	'rectangle-sheet': { folder: 'rectangle-sheet', file: 'rectangle-sheet' },
 	'rounded-sticker': { folder: 'rounded-square-stickers', file: 'rounded-square-sticker' },
 	'sticker-sheet': { folder: 'sticker-sheet', file: 'sticker-sheet' },
 	'square-sticker': { folder: 'square-stickers', file: 'square-sticker' },

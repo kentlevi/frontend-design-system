@@ -6,11 +6,25 @@
 import { useRoute } from 'vue-router';
 import ProductCategoryExperience from '~/components/products/product-category/ProductCategoryExperience.vue';
 import { useNavigation } from '~/composables/navigation/useNavigation';
+import { productCatalog } from '~/data/products/catalog';
 import { useNavigationStore } from '~/stores/navigation/navigation.store';
 import type { ProductCategoryKey } from '~/types/products/catalog';
 
 const route = useRoute()
-const category = computed(() => route.params.category as ProductCategoryKey)
+const route_category = route.params.category
+
+if (typeof route_category !== 'string' || !isProductCategoryKey(route_category)) {
+	throw createError({
+		statusCode: 404,
+		statusMessage: 'Page Not Found',
+	})
+}
+
+const category = computed(() => route_category)
+
+function isProductCategoryKey(value: string): value is ProductCategoryKey {
+	return Object.prototype.hasOwnProperty.call(productCatalog, value)
+}
 
 const clear_cache = computed(() => {
 	const clear_cache_query = route.query['clear-cache']
@@ -40,11 +54,11 @@ definePageMeta({
 });
 
 // Conditionally preload main category images for performance
-const categoryPrefills = {
+const categoryPrefills: Partial<Record<ProductCategoryKey, string>> = {
 	stickers: '/illustrations/products/stickers/die-cut.svg',
 	'roll-stickers': '/illustrations/products/roll-stickers/die-cut-labels.svg',
 	'sheet-stickers': '/illustrations/products/sheet-stickers/die-cut-sheet.svg',
-} as const
+}
 
 useHead({
 	link: computed(() => {

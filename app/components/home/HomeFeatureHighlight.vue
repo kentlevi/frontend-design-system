@@ -8,11 +8,39 @@ const feature_highlight_video = resolveFileUrl('/home/feature/musticker-krdub-vi
 const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-video-subs-thumbnail.png');
 
 const feature_video = ref<HTMLVideoElement | null>(null);
+const is_feature_video_hovered = ref(false);
 
-function setFeatureVideoMuted(is_muted: boolean) {
-	if (!feature_video.value) return;
+async function playFeatureVideoWithSound() {
+	const video = feature_video.value;
+	if (!video) return;
 
-	feature_video.value.muted = is_muted;
+	is_feature_video_hovered.value = true;
+	video.muted = false;
+
+	try {
+		await video.play();
+	} catch {
+		playFeatureVideoMuted();
+	}
+
+	window.setTimeout(() => {
+		if (!is_feature_video_hovered.value || !video.paused) return;
+
+		playFeatureVideoMuted();
+	}, 100);
+}
+
+function muteFeatureVideo() {
+	is_feature_video_hovered.value = false;
+	playFeatureVideoMuted();
+}
+
+function playFeatureVideoMuted() {
+	const video = feature_video.value;
+	if (!video) return;
+
+	video.muted = true;
+	void video.play().catch(() => {});
 }
 </script>
 
@@ -29,8 +57,9 @@ function setFeatureVideoMuted(is_muted: boolean) {
 					loop
 					playsinline
 					preload="metadata"
-					@pointerenter="setFeatureVideoMuted(false)"
-					@pointerleave="setFeatureVideoMuted(true)"
+					@pointerenter="playFeatureVideoWithSound"
+					@pointerleave="muteFeatureVideo"
+					@pause="playFeatureVideoMuted"
 				>
 					<source :src="feature_highlight_video" type="video/mp4">
 				</video>
@@ -62,6 +91,7 @@ function setFeatureVideoMuted(is_muted: boolean) {
         gap: 56px;
 
         .home-feature-media {
+			min-width: 512px;
             height: 288px;
             border-radius: 14px;
             position: relative;
