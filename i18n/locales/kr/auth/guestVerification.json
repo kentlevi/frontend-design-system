@@ -18,7 +18,9 @@
       "resendCooldown": "새 코드를 다시 요청하려면 {seconds}초 후에 시도해 주세요.",
       "resendLimitReachedPrefix": "보안을 위해 인증번호 요청은 ",
       "resendLimitReachedMiddle": "시간당 최대 5회",
-      "resendLimitReachedSuffix": "로 제한됩니다. 잠시 후 다시 시도해 주세요."
+      "resendLimitReachedSuffix": "로 제한됩니다. 잠시 후 다시 시도해 주세요.",
+      "sessionExpired": "로그인 세션이 만료되었습니다. 다시 로그인해 주세요.",
+      "error": "문제가 발생했습니다. 나중에 다시 시도해 주세요."
     }
   }
 }

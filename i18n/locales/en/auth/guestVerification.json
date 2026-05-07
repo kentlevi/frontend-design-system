@@ -18,7 +18,9 @@
       "resendCooldown": "Please wait {seconds} seconds before requesting a new code.",
       "resendLimitReachedPrefix": "For security reasons, you can request up to",
       "resendLimitReachedMiddle": "5 codes per hour",
-      "resendLimitReachedSuffix": ". Please try again later."
+      "resendLimitReachedSuffix": ". Please try again later.",
+      "sessionExpired": "Your login session has expired. Please try again.",
+      "error": "Something went wrong. Please try again."
     }
   }
 }

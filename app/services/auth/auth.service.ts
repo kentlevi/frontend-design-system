@@ -88,10 +88,11 @@ export const loginMemberUser = async (
 
 		return response
 	} catch (error) {
+		const { t: translate } = useI18n()
 		console.error(error)
 		return {
 			success: false,
-			message: 'login_error',
+			message: translate('auth.guestVerification.error'),
 		} as LoginResponse
 	}
 }
@@ -110,10 +111,11 @@ export const requestNonMemberLoginVerification = async (
 
 		return await sendNonMemberLoginVerification(payload)
 	} catch (error) {
+		const { t: translate } = useI18n()
 		console.error(error)
 		return {
 			success: false,
-			message: 'non_member_login_error',
+			message: translate('auth.guestVerification.error'),
 		} as NonMemberLoginVerificationResponse
 	}
 }
@@ -129,10 +131,11 @@ export const submitNonMemberLoginVerification = async (
 
 		return await nonMemberSubmitVerification(payload)
 	} catch (error) {
+		const { t: translate } = useI18n()
 		console.error(error)
 		return {
 			success: false,
-			message: 'non_member_login_verification_error',
+			message: translate('auth.guestVerification.error'),
 		} as ApiResponse
 	}
 }
@@ -143,10 +146,11 @@ export const requestSocialLoginRedirect = async (
 	try {
 		return await socialRedirect(payload)
 	} catch (error) {
+		const { t: translate } = useI18n()
 		console.error(error)
 		return {
 			success: false,
-			message: 'social_login_error',
+			message: translate('auth.guestVerification.error'),
 		} as SocialRedirectResponse
 	}
 }
