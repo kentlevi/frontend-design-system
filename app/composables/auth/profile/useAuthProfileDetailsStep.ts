@@ -13,8 +13,8 @@ import { mapProfileToPersonalFormState } from '~/mappers/account/profile/persona
 import { useAuthOnboardingService } from '~/services/auth/onboarding.service';
 import { useAuthOnboardingStore } from '~/stores/auth/onboarding.store';
 import { useUsersStore } from '~/stores/users/users.store';
-import { useProfileFieldsStore } from '~/stores/users/profile_field';
 import { getProfileFieldValue } from '~/utils/account/accountProfile';
+import { useProfileFieldsStore } from '~/stores/users/profile_field.store';
 
 function normalizeEmail(value: string | null | undefined) {
 	return (value || '').trim().toLowerCase();

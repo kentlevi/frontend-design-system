@@ -1,10 +1,10 @@
 import { fetchDynamicFields } from "./api.service";
-import { useProfileFieldStore } from "~/stores/users/profile_field.store";
+import { useProfileFieldsStore } from "~/stores/users/profile_field.store";
 
 let dynamic_fields_request: Promise<void> | null = null
 
 export async function ensureDynamicFields() {
-	const store = useProfileFieldStore()
+	const store = useProfileFieldsStore()
 
 	if (store.has_fetched_dynamic_fields) return
 

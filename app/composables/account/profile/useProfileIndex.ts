@@ -1,11 +1,11 @@
 import { ensureDynamicFields } from "~/services/profile-dynamic-fields/dynamic-fields.service";
-import { useProfileFieldStore } from "~/stores/users/profile_field.store";
+import { useProfileFieldsStore } from "~/stores/users/profile_field.store";
 
 export function useProfileIndex() {
 	/**
      * Stores
      */
-	const profile_field_store = useProfileFieldStore()
+	const profile_field_store = useProfileFieldsStore()
 
 
 	/**

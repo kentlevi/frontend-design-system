@@ -1,6 +1,6 @@
 import type { ProfileFieldDefinition } from "~/types/account/profile"
 
-export const useProfileFieldStore = defineStore('dynamic_profile_fields', () => {
+export const useProfileFieldsStore = defineStore('dynamic_profile_fields', () => {
 
 	/** Store state */
 	const dynamic_profile_fields = ref<ProfileFieldDefinition[]>([])

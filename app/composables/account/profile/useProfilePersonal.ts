@@ -3,7 +3,7 @@ import { mapPersonalFormToUserFieldValues } from "~/helpers/account/profile/pers
 import { mapPersonalFormToPayload, mapProfileToPersonalFormState } from "~/mappers/account/profile/personalForm.mapper";
 import { ensureDynamicFields } from "~/services/profile-dynamic-fields/dynamic-fields.service";
 import { editPersonalDetails } from "~/services/profile/profile.service";
-import { useProfileFieldStore } from "~/stores/users/profile_field.store";
+import { useProfileFieldsStore } from "~/stores/users/profile_field.store";
 import { useUsersStore } from "~/stores/users/users.store";
 
 export function useProfilePersonal() {
@@ -12,7 +12,7 @@ export function useProfilePersonal() {
      * Stores
      */
 	const user_store = useUsersStore()
-	const profile_fields_store = useProfileFieldStore()
+	const profile_fields_store = useProfileFieldsStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 	const toast_store = useToastStore()
 
