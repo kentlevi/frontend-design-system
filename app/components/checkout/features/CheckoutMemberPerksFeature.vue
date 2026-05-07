@@ -10,7 +10,6 @@ import {
 const {
 	t,
 	is_member,
-	points_available,
 	points_to_use,
 	points_tooltip_open,
 	coupon_code,
@@ -46,7 +45,7 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 							</div>
 						</UiTooltip>
 					</div>
-					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: points_available }) }}</span>
+					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: 0 }) }}</span>
 				</div>
 				<div class="checkout-member-perk-control">
 					<UiInput v-model="points_to_use" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
