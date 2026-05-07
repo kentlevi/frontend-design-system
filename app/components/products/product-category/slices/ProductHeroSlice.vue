@@ -199,6 +199,7 @@ const hide_lettering_editor = computed(() => (
 				:disabled="has_lettering_editor"
 				@click="updateSizeByCard(featured_size_cards)"
 			>
+				<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
 				<img
 					v-if="featured_size_cards.image"
 					:src="featured_size_cards.image"
@@ -206,7 +207,6 @@ const hide_lettering_editor = computed(() => (
 					loading="lazy"
 					class="mini-feature-image"
 				>
-				<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
 				<p class="mini-feature-description">
 					{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 				</p>

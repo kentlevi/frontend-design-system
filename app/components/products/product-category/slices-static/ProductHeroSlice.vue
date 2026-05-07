@@ -178,6 +178,9 @@ onBeforeUnmount(() => {
 				:disabled="has_lettering_editor"
 				@click="selectSizeByCode(featured_size_cards.code)"
 			>
+				<h4 class="mini-feature-title">
+					{{ t(`product.sizes.${featured_size_cards.code}.featureLabel`, t(`product.sizes.${featured_size_cards.code}.label`)) }}
+				</h4>
 				<img
 					v-if="featured_size_cards.image"
 					:src="featured_size_cards.image"
@@ -185,9 +188,6 @@ onBeforeUnmount(() => {
 					loading="lazy"
 					class="mini-feature-image"
 				>
-				<h4 class="mini-feature-title">
-					{{ t(`product.sizes.${featured_size_cards.code}.featureLabel`, t(`product.sizes.${featured_size_cards.code}.label`)) }}
-				</h4>
 				<p class="mini-feature-description">
 					{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 				</p>
