@@ -1,0 +1,73 @@
+.ui-segmented {
+	display: inline-flex;
+	align-items: center;
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	background: var(--contrast-light);
+	transition: box-shadow 160ms ease, background 160ms ease, opacity 160ms ease;
+
+	&[data-full='true'] {
+		width: 100%;
+		min-width: 0;
+	}
+
+	&[data-disabled='true'] {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}
+
+.ui-segmented-btn {
+	position: relative;
+	min-width: 0;
+	height: 100%;
+	border: 0;
+	background: transparent;
+	color: var(--text-primary);
+	font-family: var(--font-base);
+	font-weight: var(--font-weight-bold);
+	font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
+	cursor: pointer;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+
+	transition: background 160ms ease, color 160ms ease;
+
+	flex: 1 1 0%;
+
+	&:not(:first-child) {
+		box-shadow: -1px 0 0 0 var(--border-default);
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		color: var(--text-muted);
+	}
+
+	&[data-active='true'] {
+		background: var(--text-primary);
+		color: var(--contrast-light);
+		box-shadow: none;
+	}
+
+	&[data-active='true'] + & {
+		box-shadow: none;
+	}
+}
+
+.ui-segmented[data-size='sm'] .ui-segmented-btn {
+	padding: 6px 12px;
+}
+
+.ui-segmented[data-size='md'] .ui-segmented-btn {
+	padding: 8px 16px;
+}
+
+.ui-segmented[data-size='lg'] .ui-segmented-btn {
+	padding: 10px 20px;
+}

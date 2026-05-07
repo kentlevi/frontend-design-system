@@ -30,7 +30,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 		)
 	}
 
-	if (firstSegment === 'guide') {
+	if (firstSegment === 'guide' || firstSegment === 'static') {
 		return
 	}
 

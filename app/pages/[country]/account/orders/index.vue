@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AccountOrdersPage from '~/components/account/pages/orders/index.vue';
+// import AccountOrdersPage from '~/components/account/pages/orders/index.vue';
 
 definePageMeta({
 	layout: 'home',
@@ -8,5 +8,5 @@ definePageMeta({
 </script>
 
 <template>
-	<AccountOrdersPage embedded />
+	<FeaturesAccountOrders embedded />
 </template>

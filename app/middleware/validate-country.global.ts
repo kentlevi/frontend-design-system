@@ -2,7 +2,7 @@ import { resolveSupportedCountry } from '~/constants/countries'
 
 export default defineNuxtRouteMiddleware((to) => {
 	// public routes that should NOT be treated as country codes
-	const publicRoutes = new Set(['login', 'register', 'forgot-password'])
+	const publicRoutes = new Set(['login', 'register', 'forgot-password', 'static'])
 
 	const first = to.path.split('/').filter(Boolean)[0]?.toLowerCase()
 
