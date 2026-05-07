@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+// import { onMounted, ref, computed } from 'vue';
+import { useProfileIndex } from '~/composables/account/profile/useProfileIndex';
 import ProfilePersonalSection from './ProfilePersonalSection.vue';
-import ProfilePasswordSection from './ProfilePasswordSection.vue';
-import ProfileSettingsSection from './ProfileSettingsSection.vue';
-import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
-import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
+// import ProfilePasswordSection from './ProfilePasswordSection.vue';
+// import ProfileSettingsSection from './ProfileSettingsSection.vue';
+// import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
+// import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -12,35 +13,42 @@ withDefaults(defineProps<{
 	embedded: false,
 });
 
-const { t } = useI18n();
-const { loadPersonalForm, is_loading: is_personal_loading } = usePersonalForm();
-const { loadPreferences, is_loading: is_preferences_loading } = usePreferenceForm();
-const is_bootstrapping = ref(true);
-const is_profile_loading = computed(() =>
-	is_bootstrapping.value || is_personal_loading.value || is_preferences_loading.value
-);
+const {
+	translate,
 
-onMounted(async () => {
-	is_bootstrapping.value = true;
-	await Promise.allSettled([
-		loadPersonalForm(),
-		loadPreferences(),
-	]);
-	is_bootstrapping.value = false;
-});
+	is_fetching_fields
+} = useProfileIndex()
+
+// const { t } = useI18n();
+// const { loadPersonalForm, is_loading: is_personal_loading } = usePersonalForm();
+// const { loadPreferences, is_loading: is_preferences_loading } = usePreferenceForm();
+// const is_bootstrapping = ref(true);
+// const is_profile_loading = computed(() =>
+// 	is_bootstrapping.value || is_personal_loading.value || is_preferences_loading.value
+// );
+
+// onMounted(async () => {
+// 	is_bootstrapping.value = true;
+// 	await Promise.allSettled([
+// 		loadPersonalForm(),
+// 		loadPreferences(),
+// 	]);
+// 	is_bootstrapping.value = false;
+// });
+
 
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
 		<AccountShellSection :embedded="embedded" active-tab="profile">
-			<h1 class="account-profile-title" data-testid="account-profile-title">{{ t('account.profile.title') }}</h1>
+			<h1 class="account-profile-title" data-testid="account-profile-title">{{ translate('account.profile.title') }}</h1>
 			<div class="account-content account-profile" data-testid="account-profile-content">
-				<ProfilePersonalSection :loading="is_profile_loading" />
+				<ProfilePersonalSection :loading="is_fetching_fields" />
 
-				<ProfilePasswordSection :loading="is_profile_loading" />
+				<!-- <ProfilePasswordSection :loading="is_profile_loading" />
 
-				<ProfileSettingsSection :loading="is_profile_loading" />
+				<ProfileSettingsSection :loading="is_profile_loading" /> -->
 			</div>
 		</AccountShellSection>
 	</section>

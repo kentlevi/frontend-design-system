@@ -153,6 +153,28 @@ export const useUsersStore = defineStore('users', () => {
 		state.value.profile[field_name] = field_value
 	}
 
+
+	/** Loader */
+	type Action = 'update'
+
+	const loader_map = ref<Record<string, boolean>>({})
+
+	function getKey(action: Action, scope?: string) {
+		return scope ? `${action}_${scope}` : action
+	}
+
+	function isLoading(action: Action, scope?: string) {
+		return !!loader_map.value[getKey(action, scope)]
+	}
+
+	function startLoading(action: Action, scope?: string) {
+		loader_map.value[getKey(action, scope)] = true
+	}
+
+	function stopLoading(action: Action, scope?: string) {
+		loader_map.value[getKey(action, scope)] = false
+	}
+
 	/* --------------------------------------------------------------------------
      * Expose
      * -------------------------------------------------------------------------- */
@@ -176,6 +198,10 @@ export const useUsersStore = defineStore('users', () => {
 		setPreferenceField,
 		setPreferenceFields,
 
-		setProfileField
+		setProfileField,
+
+		isLoading,
+		startLoading,
+		stopLoading,
 	}
 })
