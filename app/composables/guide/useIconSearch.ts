@@ -1,8 +1,10 @@
 import { ref, watch } from 'vue';
 import { icons } from '~/data/ui/icons';
 
+type IconName = keyof typeof icons;
+
 export function useIconSearch() {
-    const iconList = Object.keys(icons);
+    const iconList = Object.keys(icons) as IconName[];
 
     const searchLeft = ref('');
     const searchRight = ref('');
@@ -10,8 +12,8 @@ export function useIconSearch() {
     const showLeft = ref(false);
     const showRight = ref(false);
 
-    const selectedLeft = ref<string | undefined>();
-    const selectedRight = ref<string | undefined>();
+    const selectedLeft = ref<IconName | undefined>();
+    const selectedRight = ref<IconName | undefined>();
 
     /* ================= INTERNAL FLAGS ================= */
     const selectingLeft = ref(false);
@@ -46,7 +48,7 @@ export function useIconSearch() {
 
     /* ================= CHOOSE ================= */
 
-    const chooseLeft = (icon: string) => {
+    const chooseLeft = (icon: IconName) => {
         selectingLeft.value = true;
 
         selectedLeft.value = icon;
@@ -65,7 +67,7 @@ export function useIconSearch() {
         });
     };
 
-    const chooseRight = (icon: string) => {
+    const chooseRight = (icon: IconName) => {
         selectingRight.value = true;
 
         selectedRight.value = icon;

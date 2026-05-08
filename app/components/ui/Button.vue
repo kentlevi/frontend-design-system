@@ -57,7 +57,7 @@ const emit = defineEmits<{
 	click: [event: MouseEvent];
 }>();
 
-const mergedStyle = computed<Record<string, string> | undefined>(() => {
+const merged_style = computed<Record<string, string> | undefined>(() => {
 	let numericSize: number | null = null;
 	if (typeof props.size === 'number') {
 		numericSize = props.size;
@@ -77,7 +77,7 @@ const mergedStyle = computed<Record<string, string> | undefined>(() => {
 	return Object.keys(style).length ? style : undefined;
 });
 
-const normalizedIconSize = computed<ButtonSize | number>(() => {
+const normalized_icon_size = computed<ButtonSize | number>(() => {
 	if (typeof props.iconSize === 'number') return props.iconSize;
 	if (typeof props.iconSize === 'string') {
 		if (buttonSizes.has(props.iconSize as ButtonSize)) {
@@ -102,7 +102,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		:data-no-hover="noHover ? 'true' : 'false'"
 		:disabled="disabled || loading"
 		:aria-busy="loading || undefined"
-		:style="mergedStyle"
+		:style="merged_style"
 		@click="emit('click', $event)"
 	>
 		<span v-if="selected && !loading" class="ui-button-indicator" />
@@ -112,7 +112,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		<UiIcon
 			v-if="!loading && icon && iconPosition === 'left' && !iconOnly"
 			:name="icon"
-			:size="normalizedIconSize"
+			:size="normalized_icon_size"
 			decorative
 			class="ui-button-icon"
 		/>
@@ -120,7 +120,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		<UiIcon
 			v-if="!loading && iconOnly && icon"
 			:name="icon"
-			:size="normalizedIconSize"
+			:size="normalized_icon_size"
 			decorative
 			class="ui-button-icon"
 		/>
@@ -139,7 +139,7 @@ const normalizedIconSize = computed<ButtonSize | number>(() => {
 		<UiIcon
 			v-if="!loading && icon && iconPosition === 'right' && !iconOnly"
 			:name="icon"
-			:size="normalizedIconSize"
+			:size="normalized_icon_size"
 			decorative
 			class="ui-button-icon"
 		/>

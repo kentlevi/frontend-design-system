@@ -38,12 +38,12 @@ const mobileSide = ref<(typeof tooltipSides)[number] | null>('left');
 const offset = ref(10);
 const slideDistance = ref(24);
 
-const mobileSideSnippet = computed(() =>
+const mobile_side_snippet = computed(() =>
     mobileSide.value === null ? 'null' : `'${mobileSide.value}'`
 );
-const playgroundSnippet = computed(
+const playground_snippet = computed(
     () =>
-        `<UiTooltip :open="${isOpen.value}" side="${side.value}" tone="${tone.value}" :mobile-side="${mobileSideSnippet.value}" :offset="${offset.value}" :slide-distance="${slideDistance.value}">Tooltip copy</UiTooltip>`
+        `<UiTooltip :open="${isOpen.value}" side="${side.value}" tone="${tone.value}" :mobile-side="${mobile_side_snippet.value}" :offset="${offset.value}" :slide-distance="${slideDistance.value}">Tooltip copy</UiTooltip>`
 );
 const activeVariantId = ref('default-right');
 const previewHoverOpen = ref(false);
@@ -124,6 +124,7 @@ const variantItems: Array<{
         note: 'Blocking validation guidance',
     },
 ];
+const default_variant = variantItems[0]!;
 
 const presets: Array<{
     id: string;
@@ -262,10 +263,10 @@ function toggleOpen() {
     isOpen.value = !isOpen.value;
 }
 
-const activeVariant = computed(
-    () => variantItems.find((item) => item.id === activeVariantId.value) ?? variantItems[0]
+const active_variant = computed<(typeof variantItems)[number]>(
+    () => variantItems.find((item) => item.id === activeVariantId.value) ?? default_variant
 );
-const isPreviewOpen = computed(() => previewHoverOpen.value || previewPinnedOpen.value);
+const is_preview_open = computed(() => previewHoverOpen.value || previewPinnedOpen.value);
 
 function selectVariant(id: string) {
     activeVariantId.value = id;
@@ -277,7 +278,7 @@ function togglePreviewPinned() {
     previewPinnedOpen.value = !previewPinnedOpen.value;
 }
 
-const isPlaygroundOpen = computed(
+const is_playground_open = computed(
     () => isOpen.value || playgroundHoverOpen.value || playgroundPinnedOpen.value
 );
 
@@ -307,14 +308,14 @@ function isPresetActive(preset: (typeof presets)[number]) {
     );
 }
 
-const mobileSideModel = computed<string>({
+const mobile_side_model = computed<string>({
     get: () => mobileSide.value ?? 'none',
     set: (value) => {
         mobileSide.value = value === 'none' ? null : (value as (typeof tooltipSides)[number]);
     },
 });
 
-const offsetModel = computed<string>({
+const offset_model = computed<string>({
     get: () => String(offset.value),
     set: (value) => {
         const parsed = Number.parseInt(value, 10);
@@ -322,7 +323,7 @@ const offsetModel = computed<string>({
     },
 });
 
-const slideDistanceModel = computed<string>({
+const slide_distance_model = computed<string>({
     get: () => String(slideDistance.value),
     set: (value) => {
         const parsed = Number.parseInt(value, 10);
@@ -350,7 +351,7 @@ const slideDistanceModel = computed<string>({
                     :key="item.id"
                     type="button"
                     class="guide-tooltip-variant-pill"
-                    :class="{ 'is-active': item.id === activeVariant.id }"
+                    :class="{ 'is-active': item.id === active_variant.id }"
                     :data-tone="item.tone"
                     @click="selectVariant(item.id)"
                 >
@@ -366,44 +367,44 @@ const slideDistanceModel = computed<string>({
 
             <article class="guide-tooltip-variant-preview">
                 <div class="guide-tooltip-variant-meta">
-                    <h3 class="guide-tooltip-variant-title">{{ activeVariant.label }}</h3>
-                    <p class="guide-tooltip-variant-note">{{ activeVariant.note }}</p>
+                    <h3 class="guide-tooltip-variant-title">{{ active_variant.label }}</h3>
+                    <p class="guide-tooltip-variant-note">{{ active_variant.note }}</p>
                     <p class="guide-tooltip-variant-side">
-                        Side: <strong>{{ activeVariant.side }}</strong>
+                        Side: <strong>{{ active_variant.side }}</strong>
                     </p>
                 </div>
 
                 <GuideCopy
                     component="UiTooltip"
                     :props="{
-                        open: isPreviewOpen,
-                        side: activeVariant.side,
-                        tone: activeVariant.tone,
+                        open: is_preview_open,
+                        side: active_variant.side,
+                        tone: active_variant.tone,
                     }"
                 >
                     <div class="guide-tooltip-stage">
                         <div
                             class="guide-tooltip-anchor"
-                            :data-side="activeVariant.side"
+                            :data-side="active_variant.side"
                             @mouseenter="previewHoverOpen = true"
                             @mouseleave="previewHoverOpen = false"
                         >
                             <UiTooltip
-                                :open="isPreviewOpen"
-                                :side="activeVariant.side"
-                                :tone="activeVariant.tone"
+                                :open="is_preview_open"
+                                :side="active_variant.side"
+                                :tone="active_variant.tone"
                             >
-                                {{ activeVariant.message }}
+                                {{ active_variant.message }}
                                 <template #trigger>
                                     <button
                                         type="button"
                                         class="guide-tooltip-trigger"
-                                        :aria-expanded="isPreviewOpen"
+                                        :aria-expanded="is_preview_open"
                                         @focus="previewHoverOpen = true"
                                         @blur="previewHoverOpen = false"
                                         @click="togglePreviewPinned"
                                     >
-                                        {{ activeVariant.label }}
+                                        {{ active_variant.label }}
                                     </button>
                                 </template>
                             </UiTooltip>
@@ -463,24 +464,24 @@ const slideDistanceModel = computed<string>({
 
                     <label class="guide-tooltip-control">
                         <span>Mobile Side</span>
-                        <UiSelect v-model="mobileSideModel" :options="mobileSideOptions" />
+                        <UiSelect v-model="mobile_side_model" :options="mobileSideOptions" />
                     </label>
 
                     <label class="guide-tooltip-control">
                         <span>Offset</span>
-                        <UiInput v-model="offsetModel" type="text" />
+                        <UiInput v-model="offset_model" type="text" />
                     </label>
 
                     <label class="guide-tooltip-control">
                         <span>Slide Distance</span>
-                        <UiInput v-model="slideDistanceModel" type="text" />
+                        <UiInput v-model="slide_distance_model" type="text" />
                     </label>
                 </div>
 
                 <GuideCopy
                     component="UiTooltip"
-                    :props="{ open: isPlaygroundOpen, side, mobileSide, tone, offset, slideDistance }"
-                    :text="playgroundSnippet"
+                    :props="{ open: is_playground_open, side, mobileSide, tone, offset, slideDistance }"
+                    :text="playground_snippet"
                 >
                     <div class="guide-tooltip-stage is-playground">
                         <div
@@ -490,7 +491,7 @@ const slideDistanceModel = computed<string>({
                             @mouseleave="playgroundHoverOpen = false"
                         >
                             <UiTooltip
-                                :open="isPlaygroundOpen"
+                                :open="is_playground_open"
                                 :side="side"
                                 :mobile-side="mobileSide"
                                 :tone="tone"
@@ -502,7 +503,7 @@ const slideDistanceModel = computed<string>({
                                     <button
                                         type="button"
                                         class="guide-tooltip-trigger"
-                                        :aria-expanded="isPlaygroundOpen"
+                                        :aria-expanded="is_playground_open"
                                         @focus="playgroundHoverOpen = true"
                                         @blur="playgroundHoverOpen = false"
                                         @click="togglePlaygroundPinned"

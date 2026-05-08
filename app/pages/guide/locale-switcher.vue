@@ -2,8 +2,7 @@
 const { t, locale, locales, setLocale } = useI18n();
 const switchLocalePath = useSwitchLocalePath();
 
-async function changeLocale(code: string) {
-    if (code !== 'en' && code !== 'kr') return;
+async function changeLocale(code: 'us' | 'kr') {
     const target = switchLocalePath(code);
     await setLocale(code);
     if (target) {

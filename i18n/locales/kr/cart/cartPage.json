@@ -11,14 +11,36 @@
                 "price": "가격"
             },
             "sizeLabel": "사이즈: {size}mm",
-            "replaceArtwork": "아트워크 교체",
+            "replaceArtwork": "이미지 교체",
             "editSize": "사이즈 수정",
             "removeItemSr": "상품 삭제",
+            "itemUpdated": "상품이 성공적으로 업데이트되었습니다.",
+            "artworkUploadSuccess": "아트워크가 성공적으로 업로드되었습니다.",
+            "artworkRemovedSuccess": "아트워크가 성공적으로 제거되었습니다.",
+            "savingChanges": "변경 사항 저장 중...",
+            "deleteItemTitle": "이 상품을 장바구니에서 삭제할까요?",
+            "deleteItemDescription": "이 작업을 수행하면 선택한 상품이 장바구니에서 삭제됩니다. 필요하면 언제든지 다시 추가할 수 있습니다.",
+            "removeAllTitle": "장바구니의 모든 상품을 삭제할까요?",
+            "removeAllDescription": "이 작업을 수행하면 장바구니가 완전히 비워집니다. 나중에 언제든지 다시 상품을 추가할 수 있습니다.",
+            "removeConfirm": "삭제",
+            "removeAllConfirm": "전체 삭제",
+            "itemDetails": {
+                "title": "상품 상세 정보",
+                "uploadImage": "이미지 업로드",
+                "noArtworkFile": "업로드된 아트워크 파일이 없습니다.",
+                "removeArtworkSr": "아트워크 삭제",
+                "submit": "저장하기"
+            },
             "orderSummary": "주문 요약",
             "total": "합계:",
             "proceedCheckout": "결제 진행 ({count})",
             "note": "배송비 및 할인 금액은 결제 단계에서 계산됩니다.",
-            "availablePaymentOptions": "사용 가능한 결제 수단:"
+            "availablePaymentOptions": "사용 가능한 결제 수단:",
+            "emptyTitle": "장바구니가 비어 있습니다.",
+            "emptyDescription": "장바구니가 비어 있는 것 같습니다. 상품을 둘러보고 주문을 시작하려면 장바구니에 상품을 추가하세요. 아래의 추천 상품을 탐색하여 마음에 드는 상품을 빠르게 찾을 수도 있습니다.",
+            "discoverMore": "마음에 드실 만한 더 많은 상품을 찾아보세요.",
+            "prevProductsSr": "이전 상품",
+            "nextProductsSr": "다음 상품"
         }
     }
 }

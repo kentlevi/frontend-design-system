@@ -2,8 +2,8 @@
 const drawerState = ref<'empty' | 'item'>('empty');
 const featuredOpen = ref(true);
 
-const hasItem = computed(() => drawerState.value === 'item');
-const itemCount = computed(() => (hasItem.value ? 1 : 0));
+const has_item = computed(() => drawerState.value === 'item');
+const item_count = computed(() => (has_item.value ? 1 : 0));
 
 function showEmpty() {
     drawerState.value = 'empty';
@@ -101,7 +101,7 @@ function toggleFeatured() {
                     <UiButton
                         tone="neutral"
                         variant="outline"
-                        :disabled="!hasItem"
+                        :disabled="!has_item"
                         @click="toggleFeatured"
                     >
                         {{ featuredOpen ? 'Hide Featured' : 'Show Featured' }}
@@ -111,7 +111,7 @@ function toggleFeatured() {
                 <div class="cart-demo-drawer">
                     <header class="cart-demo-header">
                         <h3 class="cart-demo-title">
-                            Cart Preview ({{ itemCount }})
+                            Cart Preview ({{ item_count }})
                         </h3>
                         <UiButton tone="neutral" variant="ghost" size="sm">
                             Continue Shopping
@@ -119,7 +119,7 @@ function toggleFeatured() {
                     </header>
 
                     <div class="cart-demo-body">
-                        <section v-if="!hasItem" class="cart-demo-empty">
+                        <section v-if="!has_item" class="cart-demo-empty">
                             <img
                                 src="/illustrations/cart/empty-cart-basket.svg"
                                 alt="Empty shopping basket"
@@ -141,7 +141,7 @@ function toggleFeatured() {
                         </article>
 
                         <section
-                            v-if="hasItem && featuredOpen"
+                            v-if="has_item && featuredOpen"
                             class="cart-demo-featured"
                         >
                             <p class="cart-demo-featured-title">
@@ -172,7 +172,7 @@ function toggleFeatured() {
                         </section>
                     </div>
 
-                    <footer v-if="hasItem" class="cart-demo-footer">
+                    <footer v-if="has_item" class="cart-demo-footer">
                         <p class="cart-demo-total">
                             <span>Total</span>
                             <strong>$29.74</strong>

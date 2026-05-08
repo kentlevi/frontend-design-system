@@ -3,7 +3,7 @@ const sizeOptions = ['lg', 'md', 'sm', 'custom'] as const;
 
 type SizeOption = (typeof sizeOptions)[number];
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         modelValue?: SizeOption;
         customValue?: number;

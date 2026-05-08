@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import UiIcon from '~/components/ui/Icon.vue';
+import type { StyleValue } from 'vue';
 
 type Size = 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
@@ -30,20 +31,20 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
+const test_id = computed(() => String(attrs['data-testid'] || '').trim());
+const root_attrs = computed(() => {
     const { class: className, style, 'data-testid': _testId } = attrs;
     return {
         class: className,
-        style,
-        ...(testId.value ? { 'data-testid': testId.value } : {}),
+        style: style as StyleValue,
+        ...(test_id.value ? { 'data-testid': test_id.value } : {}),
     };
 });
-const inputAttrs = computed(() => {
+const input_attrs = computed(() => {
     const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
     return {
         ...rest,
-        ...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
+        ...(test_id.value ? { 'data-testid': `${test_id.value}-control` } : {}),
     };
 });
 
@@ -54,14 +55,14 @@ function onChange(event: Event) {
 
 <template>
     <label
-        v-bind="rootAttrs"
+        v-bind="root_attrs"
         class="ui-checkbox"
         :data-size="props.size"
         :data-state="props.state !== 'default' ? props.state : null"
         :data-disabled="props.disabled || null"
     >
         <input
-            v-bind="inputAttrs"
+            v-bind="input_attrs"
             class="ui-checkbox-input"
             type="checkbox"
             :checked="props.modelValue"

@@ -156,7 +156,7 @@ const currencyByCode: Partial<Record<FlagCode, string>> = {
     mn: 'MNT',
 };
 
-const localeOptions = computed(() =>
+const locale_options = computed(() =>
     flags
         .map((code) => ({
             code,
@@ -167,11 +167,11 @@ const localeOptions = computed(() =>
         .sort((a, b) => a.country.localeCompare(b.country))
 );
 
-const selectedLocaleMeta = computed(
+const selected_locale_meta = computed(
     () =>
-        localeOptions.value.find(
+        locale_options.value.find(
             (item) => item.code === selectedLocale.value
-        ) ?? localeOptions.value[0]
+        ) ?? locale_options.value[0]
 );
 
 function selectLocale(code: FlagCode) {
@@ -277,7 +277,7 @@ function submitSupportRequest() {
                     <UiFlag :code="selectedLocale" :size="24" />
                     <span class="guide-modal-current-text">
                         Current: {{ selectedLocale.toUpperCase() }} -
-                        {{ selectedLocaleMeta?.currency }}
+                        {{ selected_locale_meta?.currency }}
                     </span>
                 </div>
 
@@ -364,7 +364,7 @@ function submitSupportRequest() {
         >
             <div class="guide-locale-list">
                 <button
-                    v-for="option in localeOptions"
+                    v-for="option in locale_options"
                     :key="option.code"
                     type="button"
                     class="guide-locale-item"

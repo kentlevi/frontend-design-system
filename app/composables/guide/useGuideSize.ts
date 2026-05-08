@@ -9,14 +9,15 @@ export function useGuideTokenSize(
     const selectedSize = ref<GuideSizeOption>(initial);
     const customSize = ref(initialCustom);
 
-    const resolvedSize = computed(() =>
+    const resolved_size = computed(() =>
         selectedSize.value === 'custom' ? customSize.value : selectedSize.value
     );
 
     return {
         selectedSize,
         customSize,
-        resolvedSize,
+        resolved_size,
+        resolvedSize: resolved_size,
     };
 }
 
@@ -26,7 +27,7 @@ export function useGuideMappedSize<
     const selectedSize = ref<GuideSizeOption>(initial);
     const customSize = ref(initialCustom);
 
-    const resolvedSize = computed(() =>
+    const resolved_size = computed(() =>
         selectedSize.value === 'custom'
             ? customSize.value
             : map[selectedSize.value]
@@ -35,6 +36,7 @@ export function useGuideMappedSize<
     return {
         selectedSize,
         customSize,
-        resolvedSize,
+        resolved_size,
+        resolvedSize: resolved_size,
     };
 }

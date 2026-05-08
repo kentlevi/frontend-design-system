@@ -10,5 +10,6 @@ export function useGuideSocialIcons() {
         selectedSize,
         customSize,
         resolvedSize,
+        resolved_size: resolvedSize,
     };
 }

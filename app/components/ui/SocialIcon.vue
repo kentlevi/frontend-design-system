@@ -19,7 +19,7 @@ const sizes = {
     lg: 48,
 };
 
-const resolvedSize = computed(() => {
+const resolved_size = computed(() => {
     if (typeof props.size === 'number') return props.size;
     return sizes[props.size];
 });
@@ -38,8 +38,8 @@ const src = computed(() => `/social/${props.variant}/${props.name}.svg`);
     >
         <img
             :src="src"
-            :width="resolvedSize"
-            :height="resolvedSize"
+            :width="resolved_size"
+            :height="resolved_size"
             :alt="`${name} icon`"
             loading="lazy"
             decoding="async" class="c-om-po-ne-nt-s-u-i-s-oc-ia-li-co-n-img" >

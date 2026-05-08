@@ -39,15 +39,15 @@ const slots = useSlots();
 const defaultLoaderRef = ref<HTMLElement | null>(null);
 let loaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
-const hasCustomLoader = computed(() => Boolean(slots.default));
+const has_custom_loader = computed(() => Boolean(slots.default));
 
-const overlayStyle = computed<CSSProperties>(() => ({
+const overlay_style = computed<CSSProperties>(() => ({
 	position: props.position,
 	background: props.background,
 	zIndex: props.zIndex,
 }));
 
-const loaderStyle = computed<CSSProperties>(() => ({
+const loader_style = computed<CSSProperties>(() => ({
 	width: props.loaderWidth,
 	height: props.loaderHeight,
 }));
@@ -95,7 +95,7 @@ function normalizeLoaderSvg() {
 }
 
 async function mountLoaderAnimation() {
-	if (typeof window === 'undefined' || !defaultLoaderRef.value || hasCustomLoader.value) return;
+	if (typeof window === 'undefined' || !defaultLoaderRef.value || has_custom_loader.value) return;
 	destroyLoaderAnimation();
 	const response = await fetch(props.animationPath);
 	if (!response.ok) return;
@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
 				v-if="props.visible"
 				class="ui-loading-overlay"
 				:data-testid="props.testId"
-				:style="overlayStyle"
+				:style="overlay_style"
 			>
 				<div class="ui-loading-overlay-stack">
 					<div
@@ -160,10 +160,10 @@ onBeforeUnmount(() => {
 						role="status"
 						aria-live="polite"
 						:aria-label="props.label"
-						:style="loaderStyle"
+						:style="loader_style"
 					>
 						<div class="ui-loading-overlay-content" aria-hidden="true">
-							<slot v-if="hasCustomLoader" />
+							<slot v-if="has_custom_loader" />
 							<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
 						</div>
 					</div>
@@ -181,7 +181,7 @@ onBeforeUnmount(() => {
 			v-if="props.visible"
 			class="ui-loading-overlay"
 			:data-testid="props.testId"
-			:style="overlayStyle"
+			:style="overlay_style"
 		>
 			<div class="ui-loading-overlay-stack">
 				<div
@@ -189,10 +189,10 @@ onBeforeUnmount(() => {
 					role="status"
 					aria-live="polite"
 					:aria-label="props.label"
-					:style="loaderStyle"
+					:style="loader_style"
 				>
 					<div class="ui-loading-overlay-content" aria-hidden="true">
-						<slot v-if="hasCustomLoader" />
+						<slot v-if="has_custom_loader" />
 						<div v-else ref="defaultLoaderRef" class="ui-loading-overlay-lottie" />
 					</div>
 				</div>
@@ -210,6 +210,7 @@ onBeforeUnmount(() => {
 	inset: 0;
 	display: grid;
 	place-items: center;
+	border-radius: inherit;
 
 	.ui-loading-overlay-loader {
 		display: grid;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { guideDocs } from '@/data/guide/docs';
+import type { GuideDoc } from '@/data/guide/docs';
 import { guides } from '@/data/guide/guides';
 
 const localePath = useLocalePath();
@@ -13,24 +14,31 @@ const standardsCookie = useCookie<string | null>(GUIDE_STANDARDS_COOKIE, {
 	maxAge: 60 * 60 * 24 * 365,
 });
 
-const standardsDoc = guideDocs['/guide/standards'];
+const empty_guide_doc: GuideDoc = {
+	summary: '',
+	sections: [],
+};
+const standards_doc = computed<GuideDoc>(
+	() => guideDocs['/guide/standards'] ?? empty_guide_doc
+);
 const standardsGuide = guides.find((item) => item.path === '/guide/standards') ?? null;
+const standards_do_dont = computed(() => standards_doc.value.doDont ?? null);
 
-const continueTarget = computed(() => {
+const continue_target = computed(() => {
 	const redirect = route.query.redirect;
 	const value = Array.isArray(redirect) ? redirect[0] : redirect;
 	if (typeof value === 'string' && value.includes('/guide')) return value;
 	return localePath('/guide');
 });
 
-const relatedGuides = computed(() => {
+const related_guides = computed(() => {
 	const relatedPaths = standardsGuide?.related ?? [];
 	return relatedPaths
 		.map((path) => guides.find((item) => item.path === path))
 		.filter((item): item is (typeof guides)[number] => Boolean(item));
 });
 
-const standardsMetadataSnippet = computed(() =>
+const standards_metadata_snippet = computed(() =>
 `{
 	path: '/guide/standards',
 	status: '${standardsGuide?.status ?? 'stable'}',
@@ -40,7 +48,7 @@ const standardsMetadataSnippet = computed(() =>
 
 function confirmStandardsRead() {
 	standardsCookie.value = '1';
-	navigateTo(continueTarget.value);
+	navigateTo(continue_target.value);
 }
 
 function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
@@ -55,20 +63,20 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 	<section class="guide-standards-doc">
 		<header class="guide-docs-header">
 			<h1 class="guide-docs-title">Documentation</h1>
-			<p class="guide-docs-summary">{{ standardsDoc.summary }}</p>
+			<p class="guide-docs-summary">{{ standards_doc.summary }}</p>
 			<p class="guide-docs-meta">
 				Status:
 				<span class="guide-docs-status-chip">
 					{{ guideStatusLabel(standardsGuide?.status) }}
 				</span>
 			</p>
-			<p v-if="standardsDoc.lastUpdatedAt" class="guide-docs-meta">
-				Updated: {{ standardsDoc.lastUpdatedAt }}
+			<p v-if="standards_doc.lastUpdatedAt" class="guide-docs-meta">
+				Updated: {{ standards_doc.lastUpdatedAt }}
 			</p>
 		</header>
 
 		<section
-			v-for="section in standardsDoc.sections"
+			v-for="section in standards_doc.sections"
 			:key="section.title"
 			class="guide-docs-section"
 		>
@@ -80,11 +88,11 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 			</ul>
 		</section>
 
-		<section v-if="standardsDoc.doDont" class="guide-docs-section guide-docs-section-dual">
+		<section v-if="standards_do_dont" class="guide-docs-section guide-docs-section-dual">
 			<article class="guide-docs-card guide-docs-card-do">
 				<h2 class="guide-docs-section-title">Do</h2>
 				<ul class="guide-docs-list">
-					<li v-for="item in standardsDoc.doDont.do" :key="`do-${item}`" class="guide-docs-list-item">
+					<li v-for="item in standards_do_dont.do" :key="`do-${item}`" class="guide-docs-list-item">
 						{{ item }}
 					</li>
 				</ul>
@@ -92,18 +100,18 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 			<article class="guide-docs-card guide-docs-card-dont">
 				<h2 class="guide-docs-section-title">Don't</h2>
 				<ul class="guide-docs-list">
-					<li v-for="item in standardsDoc.doDont.dont" :key="`dont-${item}`" class="guide-docs-list-item">
+					<li v-for="item in standards_do_dont.dont" :key="`dont-${item}`" class="guide-docs-list-item">
 						{{ item }}
 					</li>
 				</ul>
 			</article>
 		</section>
 
-		<section v-if="standardsDoc.accessibilityChecklist?.length" class="guide-docs-section">
+		<section v-if="standards_doc.accessibilityChecklist?.length" class="guide-docs-section">
 			<h2 class="guide-docs-section-title">Accessibility Checklist</h2>
 			<ul class="guide-docs-list guide-docs-checklist">
 				<li
-					v-for="item in standardsDoc.accessibilityChecklist"
+					v-for="item in standards_doc.accessibilityChecklist"
 					:key="`a11y-${item}`"
 					class="guide-docs-list-item"
 				>
@@ -112,11 +120,11 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 			</ul>
 		</section>
 
-		<section v-if="standardsDoc.qaChecklist?.length" class="guide-docs-section">
+		<section v-if="standards_doc.qaChecklist?.length" class="guide-docs-section">
 			<h2 class="guide-docs-section-title">QA Checklist</h2>
 			<ul class="guide-docs-list guide-docs-checklist">
 				<li
-					v-for="item in standardsDoc.qaChecklist"
+					v-for="item in standards_doc.qaChecklist"
 					:key="`qa-${item}`"
 					class="guide-docs-list-item"
 				>
@@ -125,11 +133,11 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 			</ul>
 		</section>
 
-		<section v-if="standardsDoc.contentGuidelines?.length" class="guide-docs-section">
+		<section v-if="standards_doc.contentGuidelines?.length" class="guide-docs-section">
 			<h2 class="guide-docs-section-title">Content Guidelines</h2>
 			<ul class="guide-docs-list">
 				<li
-					v-for="item in standardsDoc.contentGuidelines"
+					v-for="item in standards_doc.contentGuidelines"
 					:key="`content-${item}`"
 					class="guide-docs-list-item"
 				>
@@ -141,13 +149,13 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 		<section class="guide-docs-section">
 			<h2 class="guide-docs-section-title">Copyable Snippets</h2>
 			<h3 class="guide-docs-example-title">Standards Metadata</h3>
-			<pre class="guide-docs-code-block"><code>{{ standardsMetadataSnippet }}</code></pre>
+			<pre class="guide-docs-code-block"><code>{{ standards_metadata_snippet }}</code></pre>
 		</section>
 
-		<section v-if="standardsDoc.changelog?.length" class="guide-docs-section">
+		<section v-if="standards_doc.changelog?.length" class="guide-docs-section">
 			<h2 class="guide-docs-section-title">Changelog</h2>
 			<article
-				v-for="entry in standardsDoc.changelog"
+				v-for="entry in standards_doc.changelog"
 				:key="`${entry.date}-${entry.version ?? 'entry'}`"
 				class="guide-docs-changelog-item"
 			>
@@ -177,7 +185,7 @@ function guideStatusLabel(status?: 'draft' | 'stable' | 'deprecated') {
 			<h2 class="guide-docs-section-title">Related Guides</h2>
 			<div class="guide-docs-related-links">
 				<NuxtLink
-					v-for="item in relatedGuides"
+					v-for="item in related_guides"
 					:key="item.path"
 					:to="localePath(item.path)"
 					class="guide-docs-related-link"

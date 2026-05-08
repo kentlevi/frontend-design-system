@@ -6,16 +6,16 @@ import {
 } from '~/constants/countries';
 
 const { locale } = useI18n();
-const resolvedLocaleCountry = computed(
+const resolved_locale_country = computed(
     () => resolveSupportedCountry(String(locale.value)) || DEFAULT_COUNTRY
 );
-const htmlLang = computed(
-    () => COUNTRY_TO_HTML_LANG[resolvedLocaleCountry.value]
+const html_lang = computed(
+    () => COUNTRY_TO_HTML_LANG[resolved_locale_country.value]
 );
 
 useHead(() => ({
     htmlAttrs: {
-        lang: htmlLang.value,
+        lang: html_lang.value,
     },
     title: 'MuSticker Frontend Documentation',
     meta: [

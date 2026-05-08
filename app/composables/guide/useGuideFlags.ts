@@ -16,5 +16,6 @@ export function useGuideFlags() {
         selectedSize,
         customSize,
         resolvedSize,
+        resolved_size: resolvedSize,
     };
 }

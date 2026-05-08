@@ -33,12 +33,12 @@ const sizeMap = {
     lg: 48,
 } as const;
 
-const logoHeight = computed(() => {
+const logo_height = computed(() => {
     if (typeof props.size === 'number') return props.size;
     return sizeMap[props.size];
 });
 
-const logoWidth = computed<number | undefined>(() => props.width);
+const logo_width = computed<number | undefined>(() => props.width);
 
 const src = computed(
     () => `/logos/${props.variant}/${props.color}/${props.name}.svg`
@@ -49,11 +49,11 @@ const src = computed(
     <img
         :src="src"
         :style="{
-            height: `${logoHeight}px`,
-            width: logoWidth ? `${logoWidth}px` : 'auto',
+            height: `${logo_height}px`,
+            width: logo_width ? `${logo_width}px` : 'auto',
         }"
-        :width="logoWidth"
-        :height="logoHeight"
+        :width="logo_width"
+        :height="logo_height"
         :alt="`${props.name} logo`"
         class="ui-logo"
         :loading="loading"

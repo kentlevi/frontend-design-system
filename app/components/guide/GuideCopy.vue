@@ -96,7 +96,9 @@ async function handleClick(e: MouseEvent) {
         copied.value = true;
 
         setTimeout(() => (copied.value = false), 900);
-    } catch {}
+    } catch {
+        return;
+    }
 }
 
 function handleKey(e: KeyboardEvent) {

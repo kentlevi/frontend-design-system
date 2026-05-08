@@ -35,30 +35,34 @@ export function useColorPicker() {
     const dataColorQuery = ref('');
 
     /* ---------- DERIVED VALUES ---------- */
-    const selectedColor = computed(() =>
+    const selected_color = computed(() =>
         selectedToken.value ? `var(--${selectedToken.value})` : hexInput.value
     );
 
-    const isLight = computed(() => isLightColor(hexInput.value));
+    const is_light = computed(() => isLightColor(hexInput.value));
 
     /* ---------- TOKENS ---------- */
-    const allSemanticTokens = computed(() =>
+    const all_semantic_tokens = computed(() =>
         Object.values(semanticColors).flat()
     );
 
-    const allPaletteTokens = computed(() =>
+    const all_palette_tokens = computed(() =>
         Object.values(paletteColors).flat()
     );
-    const allColorTokens = computed(() => [
-        ...allSemanticTokens.value,
-        ...allPaletteTokens.value,
+    const all_color_tokens = computed(() => [
+        ...all_semantic_tokens.value,
+        ...all_palette_tokens.value,
     ]);
+    const is_color_token = (
+        token: string
+    ): token is SemanticColorToken | PaletteColorToken =>
+        all_color_tokens.value.some((value) => value === token);
 
-    const tokenHexSuggestions = computed(() => {
+    const token_hex_suggestions = computed(() => {
         const q = tokenHexQuery.value.trim().toLowerCase();
-        if (!q) return allColorTokens.value;
+        if (!q) return all_color_tokens.value;
 
-        return allColorTokens.value.filter((token) => {
+        return all_color_tokens.value.filter((token) => {
             const tokenHex = getHexFromToken(token).toLowerCase();
             return (
                 token.toLowerCase().includes(q) ||
@@ -68,11 +72,11 @@ export function useColorPicker() {
         });
     });
 
-    const dataColorSuggestions = computed(() => {
+    const data_color_suggestions = computed(() => {
         const q = dataColorQuery.value.trim().toLowerCase();
-        if (!q) return allColorTokens.value;
+        if (!q) return all_color_tokens.value;
 
-        return allColorTokens.value.filter((token) =>
+        return all_color_tokens.value.filter((token) =>
             token.toLowerCase().includes(q)
         );
     });
@@ -114,16 +118,16 @@ export function useColorPicker() {
         const directVar = q.match(/^var\(--([a-z0-9-]+)\)$/);
         if (directVar) {
             const token = directVar[1];
-            if (allColorTokens.value.includes(token)) selectToken(token);
+            if (token && is_color_token(token)) selectToken(token);
             return;
         }
 
-        if (allColorTokens.value.includes(q)) {
+        if (is_color_token(q)) {
             selectToken(q);
             return;
         }
 
-        const byHexToken = allColorTokens.value.find(
+        const byHexToken = all_color_tokens.value.find(
             (token) => getHexFromToken(token).toLowerCase() === q
         );
         if (byHexToken) {
@@ -142,7 +146,7 @@ export function useColorPicker() {
         const q = dataColorQuery.value.trim().toLowerCase();
         if (!q) return;
 
-        if (allColorTokens.value.includes(q)) {
+        if (is_color_token(q)) {
             selectToken(q);
             return;
         }
@@ -166,7 +170,8 @@ export function useColorPicker() {
     return {
         /* state */
         hexInput,
-        selectedColor,
+        selected_color,
+        selectedColor: selected_color,
         selectedToken,
         tokenHexQuery,
         dataColorQuery,
@@ -174,13 +179,18 @@ export function useColorPicker() {
         /* ui */
         hoverToken,
         hoverHex,
-        isLight,
-        tokenHexSuggestions,
-        dataColorSuggestions,
+        is_light,
+        isLight: is_light,
+        token_hex_suggestions,
+        tokenHexSuggestions: token_hex_suggestions,
+        data_color_suggestions,
+        dataColorSuggestions: data_color_suggestions,
 
         /* data */
-        allSemanticTokens,
-        allPaletteTokens,
+        all_semantic_tokens,
+        allSemanticTokens: all_semantic_tokens,
+        all_palette_tokens,
+        allPaletteTokens: all_palette_tokens,
 
         /* actions */
         selectToken,

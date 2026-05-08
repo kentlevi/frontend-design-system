@@ -31,7 +31,7 @@ const emit = defineEmits<{
 	(e: 'close'): void;
 }>();
 
-const modalStyle = computed(() => ({
+const modal_style = computed(() => ({
 	'--ui-modal-width': props.width,
 	'--ui-modal-padding': props.padding,
 	'--ui-modal-gap': props.gap,
@@ -92,7 +92,7 @@ onBeforeUnmount(() => {
 					role="dialog"
 					aria-modal="true"
 					:aria-label="title || 'Modal'"
-					:style="modalStyle"
+					:style="modal_style"
 				>
 					<header
 						v-if="title || $slots.header || $slots.actions"

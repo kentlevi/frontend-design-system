@@ -217,7 +217,7 @@ export default defineNuxtPlugin(() => {
             }
         }
     });
-    inpObserver.observe({ type: 'event', durationThreshold: 40, buffered: true });
+    inpObserver.observe({ type: 'event', buffered: true } as PerformanceObserverInit);
     observers.push(inpObserver);
 
     const longTaskObserver = new PerformanceObserver((list) => {

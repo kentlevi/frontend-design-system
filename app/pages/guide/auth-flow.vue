@@ -4,13 +4,13 @@ const password = ref('');
 const showVerification = ref(false);
 const submitted = ref(false);
 
-const emailValid = computed(() => /\S+@\S+\.\S+/.test(email.value));
-const passwordValid = computed(() => password.value.length >= 8);
-const canSubmit = computed(() => emailValid.value && passwordValid.value);
+const email_valid = computed(() => /\S+@\S+\.\S+/.test(email.value));
+const password_valid = computed(() => password.value.length >= 8);
+const can_submit = computed(() => email_valid.value && password_valid.value);
 
 function submitDemo() {
     submitted.value = true;
-    if (canSubmit.value) {
+    if (can_submit.value) {
         showVerification.value = true;
     }
 }
@@ -67,10 +67,10 @@ function submitDemo() {
                         <UiInput
                             v-model="email"
                             placeholder="Work email"
-                            :state="submitted && !emailValid ? 'error' : 'default'"
+                            :state="submitted && !email_valid ? 'error' : 'default'"
                         />
                         <p
-                            v-if="submitted && !emailValid"
+                            v-if="submitted && !email_valid"
                             class="auth-flow-helper is-error"
                         >
                             Enter a valid email address.
@@ -83,11 +83,11 @@ function submitDemo() {
                             type="password"
                             placeholder="Password"
                             :state="
-                                submitted && !passwordValid ? 'error' : 'default'
+                                submitted && !password_valid ? 'error' : 'default'
                             "
                         />
                         <p
-                            v-if="submitted && !passwordValid"
+                            v-if="submitted && !password_valid"
                             class="auth-flow-helper is-error"
                         >
                             Use at least 8 characters.
@@ -102,7 +102,7 @@ function submitDemo() {
                     <UiButton
                         tone="neutral"
                         variant="filled"
-                        :disabled="submitted && !canSubmit"
+                        :disabled="submitted && !can_submit"
                         @click="submitDemo"
                     >
                         Continue

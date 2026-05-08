@@ -11,5 +11,6 @@ export function useGuideLogos() {
         selectedSize,
         customSize,
         resolvedSize,
+        resolved_size: resolvedSize,
     };
 }

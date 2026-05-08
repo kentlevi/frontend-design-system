@@ -4,8 +4,7 @@ const switchLocalePath = useSwitchLocalePath();
 
 const sampleCount = 3;
 
-async function changeLocale(code: string) {
-    if (code !== 'en' && code !== 'kr') return;
+async function changeLocale(code: 'us' | 'kr') {
     const target = switchLocalePath(code);
     await setLocale(code);
     if (target) {

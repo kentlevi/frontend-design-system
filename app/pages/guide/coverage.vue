@@ -10,7 +10,7 @@ const uiComponentFiles = Object.keys(
 
 type CoverageStatus = 'missing' | 'partial' | 'complete';
 
-const coverageRows = computed(() => {
+const coverage_rows = computed(() => {
     const guideByFile = new Map<string, { title: string; path: string; hasHooks: boolean }>();
 
     for (const guide of guides) {
@@ -42,12 +42,12 @@ const coverageRows = computed(() => {
 });
 
 const summary = computed(() => ({
-    complete: coverageRows.value.filter((row) => row.status === 'complete').length,
-    partial: coverageRows.value.filter((row) => row.status === 'partial').length,
-    missing: coverageRows.value.filter((row) => row.status === 'missing').length,
+    complete: coverage_rows.value.filter((row) => row.status === 'complete').length,
+    partial: coverage_rows.value.filter((row) => row.status === 'partial').length,
+    missing: coverage_rows.value.filter((row) => row.status === 'missing').length,
 }));
 
-const guideQualityRows = computed(() =>
+const guide_quality_rows = computed(() =>
     guides
         .filter((guide) => guide.path.startsWith('/guide') && guide.path !== '/guide')
         .map((guide) => {
@@ -106,7 +106,7 @@ const guideQualityRows = computed(() =>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="row in coverageRows" :key="row.path">
+                        <tr v-for="row in coverage_rows" :key="row.path">
                             <td>{{ row.component }}</td>
                             <td>
                                 <UiBadge
@@ -153,7 +153,7 @@ const guideQualityRows = computed(() =>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="row in guideQualityRows" :key="row.path">
+                        <tr v-for="row in guide_quality_rows" :key="row.path">
                             <td>
                                 <NuxtLink :to="localePath(row.path)" class="guide-coverage-link">
                                     {{ row.title }}

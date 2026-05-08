@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const sizeMap = { sm: 16, md: 20, lg: 24 } as const;
 
-const iconSize = computed<string>(() => {
+const icon_size = computed<string>(() => {
     if (!props.size) return `${sizeMap.lg}px`;
 
     if (typeof props.size === 'string' && props.size in sizeMap) {
@@ -27,34 +27,36 @@ const iconSize = computed<string>(() => {
     return props.size;
 });
 
-const iconMeta = computed(() => icons[props.name] ?? null);
+const icon_meta = computed(() => icons[props.name] ?? null);
 
-const spriteHref = computed(() =>
-    iconMeta.value ? `/icons/sprite.svg?v=${iconSpriteVersion}#${iconMeta.value.id}` : null
+const sprite_href = computed(() =>
+    icon_meta.value
+        ? `/icons/sprite.svg?v=${iconSpriteVersion}#${icon_meta.value.id}`
+        : undefined
 );
 </script>
 
 <template>
     <svg
-        v-if="iconMeta"
+        v-if="icon_meta"
         class="ui-icon"
         :style="{
-            width: iconSize,
-            height: iconSize,
+            width: icon_size,
+            height: icon_size,
             color: color ?? 'currentColor',
         }"
-        :viewBox="iconMeta.viewBox"
+        :viewBox="icon_meta.viewBox"
         :role="title ? 'img' : undefined"
         :aria-hidden="title ? undefined : true"
     >
         <title v-if="title">{{ title }}</title>
-        <use :href="spriteHref" />
+        <use :href="sprite_href" />
     </svg>
 
     <span
         v-else
         class="ui-icon ui-icon--missing"
-        :style="{ width: iconSize, height: iconSize }"
+        :style="{ width: icon_size, height: icon_size }"
         aria-hidden="true"
     />
 </template>

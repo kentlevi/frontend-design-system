@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
     try {
         let userIp = getRequestIP(event, { xForwardedFor: true })
 
-        if (userIp?.includes(',')) userIp = userIp.split(',')[0].trim()
+        if (userIp?.includes(',')) userIp = userIp.split(',')[0]?.trim()
 
         if (!userIp || userIp === '127.0.0.1' || userIp === '::1') {
             const ipify: any = await $fetch('https://api.ipify.org?format=json', { timeout: 2000 })

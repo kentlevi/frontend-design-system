@@ -14,11 +14,33 @@
             "replaceArtwork": "Replace Artwork",
             "editSize": "Edit Size",
             "removeItemSr": "Remove item",
+            "itemUpdated": "Item updated successfully.",
+            "artworkUploadSuccess": "Artwork upload successfully.",
+            "artworkRemovedSuccess": "Artwork removed successfully.",
+            "savingChanges": "Saving changes...",
+            "deleteItemTitle": "Delete this item from your cart?",
+            "deleteItemDescription": "This action will remove the selected item from your cart. You can add it again anytime if needed.",
+            "removeAllTitle": "Remove all items from your cart?",
+            "removeAllDescription": "This action will clear your cart completely. You can add items again anytime.",
+            "removeConfirm": "Remove",
+            "removeAllConfirm": "Remove all",
+            "itemDetails": {
+                "title": "Item Details",
+                "uploadImage": "Upload Image",
+                "noArtworkFile": "No artwork file uploaded yet.",
+                "removeArtworkSr": "Remove artwork",
+                "submit": "Submit"
+            },
             "orderSummary": "Order Summary",
             "total": "Total:",
             "proceedCheckout": "Proceed Checkout ({count})",
             "note": "Shipping fees and discounts are calculated at checkout.",
-            "availablePaymentOptions": "Available Payment Options:"
+            "availablePaymentOptions": "Available Payment Options:",
+            "emptyTitle": "Your cart is empty.",
+            "emptyDescription": "Looks like your cart is empty. Start browsing our products and add items to your cart to begin your order. You can also explore the recommended products below to quickly find items you might like.",
+            "discoverMore": "Discover more products you might like.",
+            "prevProductsSr": "Previous products",
+            "nextProductsSr": "Next products"
         }
     }
 }

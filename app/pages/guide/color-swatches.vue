@@ -3,8 +3,8 @@ import { computed } from 'vue';
 import UiColorSwatch from '@/components/ui/ColorSwatch.vue';
 import { semanticColors, paletteColors, paletteOrder } from '@/data/ui/colors';
 
-const semanticTokens = computed(() => Object.values(semanticColors).flat());
-const paletteTokens = computed(() =>
+const semantic_tokens = computed(() => Object.values(semanticColors).flat());
+const palette_tokens = computed(() =>
     paletteOrder.flatMap((group) => paletteColors[group])
 );
 </script>
@@ -24,7 +24,7 @@ const paletteTokens = computed(() =>
             <h2 class="guide-section-title">Semantic Tokens</h2>
             <div class="guide-grid guide-grid-auto">
                 <UiColorSwatch
-                    v-for="token in semanticTokens"
+                    v-for="token in semantic_tokens"
                     :key="`semantic-${token}`"
                     :token="token"
                 />
@@ -35,7 +35,7 @@ const paletteTokens = computed(() =>
             <h2 class="guide-section-title">Palette Tokens</h2>
             <div class="guide-grid guide-grid-auto">
                 <UiColorSwatch
-                    v-for="token in paletteTokens"
+                    v-for="token in palette_tokens"
                     :key="`palette-${token}`"
                     :token="token"
                 />

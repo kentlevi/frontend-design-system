@@ -3,6 +3,9 @@ import {
     buttonSizes as sizes,
     buttonVariants as variants,
     buttonTones as tones,
+    type ButtonSize,
+    type ButtonTone,
+    type ButtonVariant,
 } from '~/data/ui/buttons';
 
 type ColorMode = 'tone' | 'custom';
@@ -10,11 +13,11 @@ type ColorMode = 'tone' | 'custom';
 export function useButtonBuilder(customIconLeft: any, customIconRight: any) {
     const colorMode = ref<ColorMode>('tone');
 
-    const customVariant = ref(variants[0]);
-    const customSize = ref(sizes[1] ?? sizes[0]);
+    const customVariant = ref<ButtonVariant>(variants[0]);
+    const customSize = ref<ButtonSize>(sizes[1] ?? sizes[0]);
     const defaultNeutralTone =
         tones.find((tone) => tone.value === 'neutral')?.value ?? tones[0].value;
-    const customTone = ref(defaultNeutralTone);
+    const customTone = ref<ButtonTone>(defaultNeutralTone);
 
     /* ================= CUSTOM COLORS ================= */
     const customColor = ref('var(--brand-secondary)');
@@ -50,23 +53,23 @@ export function useButtonBuilder(customIconLeft: any, customIconRight: any) {
         }
     });
 
-    const setTone = (tone: string) => {
+    const setTone = (tone: ButtonTone) => {
         customTone.value = tone;
         colorMode.value = 'tone';
     };
 
     /* ================= INLINE CSS VARIABLES ================= */
-    const customStyle = computed<Record<string, string>>(() =>
+    const custom_style = computed<Record<string, string>>(() =>
         colorMode.value === 'custom'
             ? {
                   '--btn-bg': customColor.value,
                   '--btn-fg': customTextColor.value,
               }
-            : {}
+            : ({} as Record<string, string>)
     );
 
     /* ================= REMOVE TONE IN CUSTOM MODE ================= */
-    const previewTone = computed(() =>
+    const preview_tone = computed(() =>
         colorMode.value === 'custom' ? undefined : customTone.value
     );
 
@@ -85,8 +88,10 @@ export function useButtonBuilder(customIconLeft: any, customIconRight: any) {
         customLabel,
         iconOnly,
 
-        customStyle,
-        previewTone,
+        custom_style,
+        customStyle: custom_style,
+        preview_tone,
+        previewTone: preview_tone,
 
         setTone,
         setCustomMode,

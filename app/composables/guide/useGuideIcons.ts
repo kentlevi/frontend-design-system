@@ -38,20 +38,20 @@ export function useGuideIcons() {
     const copyMode = ref<'code' | 'name'>('code');
     const searchQuery = ref('');
 
-    const getCopyProps = (name: string) => ({
+    const getCopyProps = (name: (typeof grouped.value)[string][number]) => ({
         name,
         color: selectedColor.value,
         size: selectedSize.value,
     });
 
-    const filteredGrouped = computed(() => {
+    const filtered_grouped = computed(() => {
         if (!searchQuery.value.trim()) return grouped.value;
 
         const q = searchQuery.value.toLowerCase();
-        const result: Record<string, string[]> = {};
+        const result: Record<string, Array<(typeof grouped.value)[string][number]>> = {};
 
         for (const style in grouped.value) {
-            const filtered = grouped.value[style].filter((name: string) =>
+            const filtered = (grouped.value[style] ?? []).filter((name) =>
                 name.toLowerCase().includes(q)
             );
             if (filtered.length) result[style] = filtered;
@@ -88,6 +88,7 @@ export function useGuideIcons() {
         copyMode,
         searchQuery,
         getCopyProps,
-        filteredGrouped,
+        filtered_grouped,
+        filteredGrouped: filtered_grouped,
     };
 }

@@ -7,7 +7,7 @@ export function loadAppEnv() {
     const envName = process.env.ENV;
 
     const allowed = ["development", "homestead", "production"];
-    if (!allowed.includes(envName)) {
+    if (!envName || !allowed.includes(envName)) {
         throw new Error(`[env] Invalid ENV "${envName}"`);
     }
 

@@ -28,7 +28,7 @@ const snippet = computed(
         `<UiToast :visible="true" tone="${tone.value}" :dismissible="${dismissible.value}" message="${message.value}" />`
 );
 
-const durationModel = computed<string>({
+const duration_model = computed<string>({
     get: () => String(durationMs.value),
     set: (value) => {
         const parsed = Number.parseInt(value, 10);
@@ -75,7 +75,9 @@ async function copySnippet() {
             copied.value = false;
             copiedText.value = '';
         }, 1000);
-    } catch {}
+    } catch {
+        return;
+    }
 }
 
 function previewTone(nextTone: ToastTone, nextMessage: string) {
@@ -139,7 +141,7 @@ onBeforeUnmount(() => {
 
                 <label class="guide-toast-control">
                     <span>Auto-hide (ms)</span>
-                    <UiInput v-model="durationModel" type="text" />
+                    <UiInput v-model="duration_model" type="text" />
                 </label>
 
                 <label class="guide-toast-control guide-toast-control--checkbox">

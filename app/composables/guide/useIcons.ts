@@ -4,10 +4,11 @@ import { icons } from '~/data/ui/icons';
 export function useIcons() {
     /* ---------- GROUP ICONS BY PREFIX ---------- */
     const grouped = computed(() => {
-        const groups: Record<string, string[]> = {};
+        const groups: Record<string, Array<keyof typeof icons>> = {};
 
-        Object.keys(icons).forEach((name) => {
+        (Object.keys(icons) as Array<keyof typeof icons>).forEach((name) => {
             const style = name.split('-')[0];
+            if (!style) return;
 
             if (!groups[style]) groups[style] = [];
             groups[style].push(name);

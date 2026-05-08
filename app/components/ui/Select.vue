@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { StyleValue } from 'vue';
 
 type SelectValue = string | number;
 
@@ -48,11 +49,11 @@ const query = ref('');
 const SUPPRESS_TOGGLE_MS = 200;
 let suppressToggleUntil = 0;
 
-const selectedOption = computed(() =>
+const selected_option = computed(() =>
     props.options.find((item) => item.value === props.modelValue) ?? null
 );
 
-const filteredOptions = computed(() => {
+const filtered_options = computed(() => {
     if (!props.searchable) return props.options;
 
     const keyword = query.value.trim().toLowerCase();
@@ -68,16 +69,16 @@ const filteredOptions = computed(() => {
     });
 });
 
-const triggerIconName = computed(() =>
+const trigger_icon_name = computed(() =>
     props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
+const test_id = computed(() => String(attrs['data-testid'] || '').trim());
+const root_attrs = computed(() => {
     const { class: className, style, 'data-testid': _testId } = attrs;
     return {
         class: className,
-        style,
-        ...(testId.value ? { 'data-testid': testId.value } : {}),
+        style: style as StyleValue,
+        ...(test_id.value ? { 'data-testid': test_id.value } : {}),
     };
 });
 
@@ -140,7 +141,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div
-        v-bind="rootAttrs"
+        v-bind="root_attrs"
         ref="rootRef"
         class="ui-select"
         :data-open="isOpen || null"
@@ -150,19 +151,19 @@ onBeforeUnmount(() => {
             type="button"
             class="ui-select-trigger"
             :disabled="props.disabled"
-            :data-testid="testId ? `${testId}-trigger` : undefined"
+            :data-testid="test_id ? `${test_id}-trigger` : undefined"
             @click="toggleMenu"
         >
             <span
-                v-if="selectedOption"
+                v-if="selected_option"
                 class="ui-select-value"
             >
-                {{ selectedOption.label }}
+                {{ selected_option.label }}
             </span>
             <span v-else class="ui-select-placeholder">{{ props.placeholder }}</span>
 
             <UiIcon
-                :name="triggerIconName"
+                :name="trigger_icon_name"
                 :size="props.iconSize"
                 color="var(--text-secondary)"
                 class="ui-select-trigger-icon"
@@ -184,13 +185,13 @@ onBeforeUnmount(() => {
                         type="text"
                         class="ui-select-search-input"
                         placeholder="Search..."
-                        :data-testid="testId ? `${testId}-search` : undefined"
+                        :data-testid="test_id ? `${test_id}-search` : undefined"
                     >
                 </div>
 
                 <div class="ui-select-options">
                 <button
-                    v-for="option in filteredOptions"
+                    v-for="option in filtered_options"
                     :key="option.value"
                     type="button"
                     class="ui-select-option"
@@ -207,7 +208,7 @@ onBeforeUnmount(() => {
                         </div>
                     </button>
 
-                    <p v-if="filteredOptions.length === 0" class="ui-select-empty">
+                    <p v-if="filtered_options.length === 0" class="ui-select-empty">
                         {{ props.emptyText }}
                     </p>
                 </div>

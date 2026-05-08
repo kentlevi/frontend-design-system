@@ -22,39 +22,37 @@ const customBackground = ref('var(--brand-primary)');
 const customText = ref('var(--text-inverse)');
 const customBorder = ref('var(--brand-primary)');
 
-const badgeStyle = computed<Record<string, string> | undefined>(() => {
+const badge_style = computed(() => {
     if (!customStyleEnabled.value) return undefined;
 
+    const style: Record<string, string> = {
+        color: customText.value,
+    };
+
     if (builderVariant.value === 'outline') {
-        return {
-            background: 'transparent',
-            color: customText.value,
-            borderColor: customBorder.value,
-        };
+        style.background = 'transparent';
+        style.borderColor = customBorder.value;
+        return style;
     }
 
     if (builderVariant.value === 'subtle') {
-        return {
-            color: customText.value,
-        };
+        return style;
     }
 
-    return {
-        background: customBackground.value,
-        color: customText.value,
-        borderColor: customBorder.value,
-    };
+    style.background = customBackground.value;
+    style.borderColor = customBorder.value;
+    return style;
 });
 
-const previewCopyText = computed(() => {
+const preview_copy_text = computed(() => {
     const baseProps = [
         `variant="${builderVariant.value}"`,
         `tone="${builderTone.value}"`,
         `size="${builderSize.value}"`,
     ];
 
-    if (customStyleEnabled.value && badgeStyle.value) {
-        baseProps.push(`:style='${JSON.stringify(badgeStyle.value)}'`);
+    if (customStyleEnabled.value && badge_style.value) {
+        baseProps.push(`:style='${JSON.stringify(badge_style.value)}'`);
     }
 
     return `<UiBadge ${baseProps.join(' ')}>${builderLabel.value}</UiBadge>`;
@@ -165,12 +163,12 @@ const previewCopyText = computed(() => {
             </div>
 
             <div class="guide-badge-builder-preview">
-                <GuideCopy :text="previewCopyText">
+                <GuideCopy :text="preview_copy_text">
                     <UiBadge
                         :variant="builderVariant"
                         :tone="builderTone"
                         :size="builderSize"
-                        :style="badgeStyle"
+                        :style="badge_style"
                         class="guide-item-hoverable no-border"
                     >
                         {{ builderLabel }}

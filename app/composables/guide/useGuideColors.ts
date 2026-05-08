@@ -24,7 +24,7 @@ export function useGuideColors() {
         );
     };
 
-    const semanticEntries = computed(() =>
+    const semantic_entries = computed(() =>
         (
             Object.entries(semanticColors) as [
                 SemanticColorGroup,
@@ -38,7 +38,7 @@ export function useGuideColors() {
             .filter(([, tokens]) => tokens.length)
     );
 
-    const paletteEntries = computed(() =>
+    const palette_entries = computed(() =>
         paletteOrder
             .map(
                 (group) =>
@@ -53,8 +53,10 @@ export function useGuideColors() {
     return {
         view,
         search,
-        semanticEntries,
-        paletteEntries,
+        semantic_entries,
+        semanticEntries: semantic_entries,
+        palette_entries,
+        paletteEntries: palette_entries,
         format: toGuideLabel,
     };
 }

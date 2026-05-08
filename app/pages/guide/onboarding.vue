@@ -194,36 +194,36 @@ const checklistState = reactive<Record<string, boolean>>({});
 const quizAnswers = reactive<Record<string, number | null>>({});
 let quizToastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-const activeConfig = computed(() => roleTrackConfig[selectedRole.value]);
-const activeSlides = computed(() => activeConfig.value.slides);
-const activeChecklist = computed(() => activeConfig.value.checklist);
-const activeQuiz = computed(() => activeConfig.value.quiz);
-const activeSlide = computed<OnboardingSlide>(() =>
-    activeSlides.value[currentSlide.value] ??
-    activeSlides.value[0] ??
-    activeConfig.value.slides[0]!
+const active_config = computed(() => roleTrackConfig[selectedRole.value]);
+const active_slides = computed(() => active_config.value.slides);
+const active_checklist = computed(() => active_config.value.checklist);
+const active_quiz = computed(() => active_config.value.quiz);
+const active_slide = computed<OnboardingSlide>(() =>
+    active_slides.value[currentSlide.value] ??
+    active_slides.value[0] ??
+    active_config.value.slides[0]!
 );
-const isLastSlide = computed(() => currentSlide.value === activeSlides.value.length - 1);
-const quickStartItems = computed(() => [
+const is_last_slide = computed(() => currentSlide.value === active_slides.value.length - 1);
+const quick_start_items = computed(() => [
     `Select your role track (${roleLabels[selectedRole.value]}).`,
-    `Review ${activeSlides.value.length} implementation reference slide${activeSlides.value.length > 1 ? 's' : ''}.`,
-    `Complete ${activeChecklist.value.length} checklist item${activeChecklist.value.length > 1 ? 's' : ''}.`,
-    `Pass ${activeQuiz.value.length} quiz question${activeQuiz.value.length > 1 ? 's' : ''}, then proceed to guide standards.`,
+    `Review ${active_slides.value.length} implementation reference slide${active_slides.value.length > 1 ? 's' : ''}.`,
+    `Complete ${active_checklist.value.length} checklist item${active_checklist.value.length > 1 ? 's' : ''}.`,
+    `Pass ${active_quiz.value.length} quiz question${active_quiz.value.length > 1 ? 's' : ''}, then proceed to guide standards.`,
 ]);
-const slideProgress = computed(() =>
-    activeSlides.value.length
-        ? Math.round(((currentSlide.value + 1) / activeSlides.value.length) * 100)
+const slide_progress = computed(() =>
+    active_slides.value.length
+        ? Math.round(((currentSlide.value + 1) / active_slides.value.length) * 100)
         : 0
 );
-const allChecklistChecked = computed(() => activeChecklist.value.every((item) => checklistState[item.id]));
-const allQuizAnswered = computed(() => activeQuiz.value.every((q) => quizAnswers[q.id] !== null));
-const quizAllCorrect = computed(() => activeQuiz.value.every((q) => quizAnswers[q.id] === q.correctIndex));
-const canProceed = computed(() => allChecklistChecked.value && quizAllCorrect.value);
+const all_checklist_checked = computed(() => active_checklist.value.every((item) => checklistState[item.id]));
+const all_quiz_answered = computed(() => active_quiz.value.every((q) => quizAnswers[q.id] !== null));
+const quiz_all_correct = computed(() => active_quiz.value.every((q) => quizAnswers[q.id] === q.correctIndex));
+const can_proceed = computed(() => all_checklist_checked.value && quiz_all_correct.value);
 
 const onboardingDoneCookie = useCookie<string | null>(GUIDE_ONBOARDING_DONE_COOKIE, { path: '/', sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
 const onboardingAckCookie = useCookie<string | null>(GUIDE_ONBOARDING_ACK_COOKIE, { path: '/', sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
 
-const redirectTarget = computed(() => localePath('/guide/standards'));
+const redirect_target = computed(() => localePath('/guide/standards'));
 
 function clearQuizToast() {
     quizToastVisible.value = false;
@@ -237,13 +237,13 @@ function resetTrackState() {
     for (const key of Object.keys(checklistState)) {
         checklistState[key] = false;
     }
-    for (const item of activeChecklist.value) {
+    for (const item of active_checklist.value) {
         checklistState[item.id] = false;
     }
     for (const key of Object.keys(quizAnswers)) {
         quizAnswers[key] = null;
     }
-    for (const item of activeQuiz.value) {
+    for (const item of active_quiz.value) {
         quizAnswers[item.id] = null;
     }
     quizSubmitted.value = false;
@@ -262,10 +262,10 @@ async function copyPath(sourceId: string, path: string) {
 }
 
 function submitQuiz() {
-    if (!allQuizAnswered.value) return;
+    if (!all_quiz_answered.value) return;
     quizSubmitted.value = true;
-    quizToastTone.value = quizAllCorrect.value ? 'success' : 'error';
-    quizToastMessage.value = quizAllCorrect.value
+    quizToastTone.value = quiz_all_correct.value ? 'success' : 'error';
+    quizToastMessage.value = quiz_all_correct.value
         ? 'Quiz completed successfully.'
         : 'Quiz not passed. Review your answers and try again.';
     quizToastVisible.value = true;
@@ -294,7 +294,7 @@ function resetOnboarding() {
 }
 
 async function proceedToGuide() {
-    if (!canProceed.value || isSubmitting.value) return;
+    if (!can_proceed.value || isSubmitting.value) return;
     isSubmitting.value = true;
     clearQuizToast();
     onboardingDoneCookie.value = '1';
@@ -309,11 +309,11 @@ async function proceedToGuide() {
         await nextTick();
 
         // Force a real navigation so middleware reads fresh cookies on next request.
-        window.location.assign(redirectTarget.value);
+        window.location.assign(redirect_target.value);
         return;
     }
 
-    const navigationResult = navigateTo(redirectTarget.value);
+    const navigationResult = navigateTo(redirect_target.value);
     if (navigationResult && typeof navigationResult === 'object' && 'catch' in navigationResult) {
         navigationResult.catch(() => {
             isSubmitting.value = false;
@@ -393,7 +393,7 @@ resetTrackState();
                     Complete these actions in order.
                 </p>
                 <ol class="guide-onboarding-quickstart-list">
-                    <li v-for="(item, index) in quickStartItems" :key="item" class="guide-onboarding-quickstart-item">
+                    <li v-for="(item, index) in quick_start_items" :key="item" class="guide-onboarding-quickstart-item">
                         <span class="guide-onboarding-quickstart-index">{{ index + 1 }}</span>
                         <span>{{ item }}</span>
                     </li>
@@ -415,43 +415,43 @@ resetTrackState();
 
             <section ref="detailStartRef" class="guide-onboarding-hero">
                 <div class="guide-onboarding-progress-row">
-                    <p class="guide-onboarding-step">Slide {{ currentSlide + 1 }} / {{ activeSlides.length }}</p>
-                    <p class="guide-onboarding-step">{{ slideProgress }}% complete</p>
+                    <p class="guide-onboarding-step">Slide {{ currentSlide + 1 }} / {{ active_slides.length }}</p>
+                    <p class="guide-onboarding-step">{{ slide_progress }}% complete</p>
                 </div>
                 <div class="guide-onboarding-progress-track" aria-hidden="true">
-                    <span class="guide-onboarding-progress-fill" :style="{ width: `${slideProgress}%` }" />
+                    <span class="guide-onboarding-progress-fill" :style="{ width: `${slide_progress}%` }" />
                 </div>
-                <h1 class="guide-onboarding-title">{{ activeSlide.title }}</h1>
-                <p class="guide-onboarding-summary">{{ activeSlide.summary }}</p>
+                <h1 class="guide-onboarding-title">{{ active_slide.title }}</h1>
+                <p class="guide-onboarding-summary">{{ active_slide.summary }}</p>
             </section>
 
             <ul class="guide-onboarding-claims">
                 <li
-                    v-for="(claim, claimIndex) in activeSlide.claims"
-                    :key="`${activeSlide.id}-${claimIndex}`"
+                    v-for="(claim, claimIndex) in active_slide.claims"
+                    :key="`${active_slide.id}-${claimIndex}`"
                     class="guide-onboarding-claim"
                 >
                     <p class="guide-onboarding-claim-text">{{ claim.text }}</p>
                     <button
                         v-for="(source, sourceIndex) in claim.sources"
-                        :key="`${activeSlide.id}-${claimIndex}-${sourceIndex}-${source.path}`"
+                        :key="`${active_slide.id}-${claimIndex}-${sourceIndex}-${source.path}`"
                         type="button"
                         class="guide-onboarding-source-btn"
                         :data-testid="`guide-onboarding-source-${claimIndex}-${sourceIndex}`"
-                        @click="copyPath(`${activeSlide.id}-${claimIndex}-${sourceIndex}`, source.path)"
+                        @click="copyPath(`${active_slide.id}-${claimIndex}-${sourceIndex}`, source.path)"
                     >
                         <span class="guide-onboarding-source-label">{{ source.label }}</span>
                         <code class="guide-onboarding-source-path">{{ source.path }}</code>
                         <span
-                            v-if="copiedSourceId === `${activeSlide.id}-${claimIndex}-${sourceIndex}`"
+                            v-if="copiedSourceId === `${active_slide.id}-${claimIndex}-${sourceIndex}`"
                             class="guide-onboarding-source-copied"
                         >Copied</span>
                     </button>
                 </li>
             </ul>
 
-            <pre v-if="activeSlide.commands?.length" class="guide-onboarding-code"><code>{{ activeSlide.commands.join('\n') }}</code></pre>
-            <pre v-else-if="activeSlide.code" class="guide-onboarding-code"><code>{{ activeSlide.code }}</code></pre>
+            <pre v-if="active_slide.commands?.length" class="guide-onboarding-code"><code>{{ active_slide.commands.join('\n') }}</code></pre>
+            <pre v-else-if="active_slide.code" class="guide-onboarding-code"><code>{{ active_slide.code }}</code></pre>
 
             <div class="guide-onboarding-nav">
                 <button
@@ -466,7 +466,7 @@ resetTrackState();
                 <button
                     type="button"
                     class="guide-onboarding-btn"
-                    :disabled="isLastSlide"
+                    :disabled="is_last_slide"
                     data-testid="guide-onboarding-next"
                     @click="currentSlide += 1"
                 >
@@ -476,7 +476,7 @@ resetTrackState();
 
             <div class="guide-onboarding-gate">
                 <h2 class="guide-onboarding-section-title">Definition of Done Checklist</h2>
-                <label v-for="item in activeChecklist" :key="item.id" class="guide-onboarding-check">
+                <label v-for="item in active_checklist" :key="item.id" class="guide-onboarding-check">
                     <input
                         v-model="checklistState[item.id]"
                         type="checkbox"
@@ -487,7 +487,7 @@ resetTrackState();
 
                 <h2 class="guide-onboarding-section-title">Quiz Gate</h2>
                 <div
-                    v-for="question in activeQuiz"
+                    v-for="question in active_quiz"
                     :key="question.id"
                     class="guide-onboarding-quiz-item"
                     :data-testid="`guide-onboarding-quiz-${question.id}`"
@@ -512,7 +512,7 @@ resetTrackState();
                     <button
                         type="button"
                         class="guide-onboarding-btn guide-onboarding-btn-secondary"
-                        :disabled="!allQuizAnswered"
+                        :disabled="!all_quiz_answered"
                         data-testid="guide-onboarding-quiz-submit"
                         @click="submitQuiz"
                     >
@@ -541,7 +541,7 @@ resetTrackState();
                 <button
                     type="button"
                     class="guide-onboarding-btn"
-                    :disabled="!canProceed || isSubmitting"
+                    :disabled="!can_proceed || isSubmitting"
                     data-testid="guide-onboarding-proceed"
                     @click="proceedToGuide"
                 >
@@ -694,7 +694,8 @@ resetTrackState();
     align-items: flex-start;
     gap: 10px;
     color: var(--text-primary);
-    line-height: 1.45;
+    font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 }
 
 .guide-onboarding-quickstart-index {
@@ -949,7 +950,8 @@ resetTrackState();
     align-items: center;
     gap: 8px;
     color: var(--text-primary);
-    line-height: 1.45;
+    font-size: var(--type-size-100);
+	line-height: var(--type-line-100);
 
     input {
         margin: 0;

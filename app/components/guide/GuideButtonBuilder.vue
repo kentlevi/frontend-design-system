@@ -4,6 +4,8 @@ import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import UiIcon from '@/components/ui/Icon.vue';
 import UiButton from '@/components/ui/Button.vue';
 import GuideCopy from '@/components/guide/GuideCopy.vue';
+import type { ButtonSize, ButtonVariant } from '@/data/ui/buttons';
+import type { icons } from '@/data/ui/icons';
 
 import { useIconSearch } from '@/composables/guide/useIconSearch';
 import { useButtonBuilder } from '@/composables/guide/useButtonBuilder';
@@ -22,12 +24,14 @@ const { semantic } = useColorSuggestions();
 
 const showToneDropdown = ref(false);
 const showTextDropdown = ref(false);
+type UiButtonProps = InstanceType<typeof UiButton>['$props'];
+type IconName = keyof typeof icons;
 
-const previewProps = computed(() => {
+const preview_props = computed<UiButtonProps>(() => {
     const icon =
         iconSearch.selectedRight.value ||
         iconSearch.selectedLeft.value ||
-        undefined;
+        undefined as IconName | undefined;
 
     const style =
         builder.customStyle.value &&
@@ -36,21 +40,21 @@ const previewProps = computed(() => {
             : undefined;
 
     return {
-        variant: builder.customVariant.value,
-        size: builder.customSize.value,
+        variant: builder.customVariant.value as ButtonVariant,
+        size: builder.customSize.value as ButtonSize,
         tone: builder.previewTone.value,
         style,
         icon,
         iconPosition: iconSearch.selectedRight.value ? 'right' : 'left',
         iconOnly: builder.iconOnly.value || undefined,
-        ariaLabel: builder.iconOnly.value
+        srLabel: builder.iconOnly.value
             ? builder.customLabel.value
             : undefined,
     };
 });
 
-const previewCopyText = computed(() => {
-    const propsEntries = Object.entries(previewProps.value)
+const preview_copy_text = computed(() => {
+    const propsEntries = Object.entries(preview_props.value)
         .filter(([k, v]) => {
             if (k === 'style' && (!v || Object.keys(v as any).length === 0))
                 return false;
@@ -311,8 +315,8 @@ onBeforeUnmount(() =>
                 </div>
             </div>
 
-            <GuideCopy :text="previewCopyText">
-                <UiButton v-bind="previewProps">
+            <GuideCopy :text="preview_copy_text">
+                <UiButton v-bind="preview_props">
                     <template v-if="!builder.iconOnly.value">
                         {{ builder.customLabel.value }}
                     </template>

@@ -633,7 +633,7 @@ export const guideDocs: Record<string, GuideDoc> = {
             {
                 title: 'Accessibility',
                 points: [
-                    'Use `role=\"region\"` with `aria-roledescription=\"carousel\"` and a clear label.',
+                    'Use `role="region"` with `aria-roledescription="carousel"` and a clear label.',
                     'Provide explicit accessible labels for previous and next controls.',
                     'Expose slide position context (for example: Review 2 of 4).',
                 ],

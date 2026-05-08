@@ -20,9 +20,9 @@ const selectedToken = ref<string | number>('text-primary');
 const copyMode = ref<'off' | 'on'>('off');
 const checkboxA = ref(false);
 const checkboxB = ref(true);
-const textareaCount = computed(() => textareaCountValue.value.length);
-const textareaCountTone = computed(() =>
-    textareaCount.value >= textareaCountLimit - 20
+const textarea_count = computed(() => textareaCountValue.value.length);
+const textarea_count_tone = computed(() =>
+    textarea_count.value >= textareaCountLimit - 20
         ? 'guide-form-controls-helper-warning'
         : ''
 );
@@ -291,9 +291,9 @@ const tokenOptions = [
                         />
                         <p
                             class="guide-form-controls-helper"
-                            :class="textareaCountTone"
+                            :class="textarea_count_tone"
                         >
-                            {{ textareaCount }} / {{ textareaCountLimit }} characters
+                            {{ textarea_count }} / {{ textareaCountLimit }} characters
                         </p>
                     </div>
                 </GuideCopy>

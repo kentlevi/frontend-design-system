@@ -10,7 +10,7 @@ export const useCountry = () => {
 		resolveSupportedCountry(String(route.params.country || DEFAULT_COUNTRY)) ||
 		DEFAULT_COUNTRY
 	)
-	const apiCountry = computed(() =>
+	const api_country = computed(() =>
 		COUNTRY_TO_API_COUNTRY[country.value as keyof typeof COUNTRY_TO_API_COUNTRY] ||
 		COUNTRY_TO_API_COUNTRY[DEFAULT_COUNTRY]
 	)
@@ -21,5 +21,5 @@ export const useCountry = () => {
 		return `/${country.value}${normalizedPath}`
 	}
 
-	return { country, apiCountry, withCountry }
+	return { country, api_country, withCountry }
 }

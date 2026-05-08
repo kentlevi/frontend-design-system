@@ -5,7 +5,7 @@ const componentName = ref('UiButton');
 const stateName = ref('default');
 const actionName = ref('click');
 
-const generatedTestId = computed(
+const generated_test_id = computed(
     () =>
         `${componentName.value}-${stateName.value}-${actionName.value}`
             .trim()
@@ -37,7 +37,7 @@ const generatedTestId = computed(
                     <UiInput v-model="actionName" placeholder="Action (e.g. click)" />
                 </div>
                 <p class="testing-output">
-                    Suggested `data-testid`: <strong>{{ generatedTestId }}</strong>
+                    Suggested `data-testid`: <strong>{{ generated_test_id }}</strong>
                 </p>
             </article>
         </section>
@@ -76,9 +76,9 @@ const generatedTestId = computed(
             <h2 class="guide-section-title">Performance Budget Targets</h2>
             <article class="testing-card">
                 <ul class="testing-list">
-                    <li>LCP <= 2.5s, CLS <= 0.10, performance score >= 0.90.</li>
-                    <li>Total byte weight <= 350KB per route budget target.</li>
-                    <li>Script budget <= 170KB, stylesheet budget <= 70KB, image budget <= 250KB.</li>
+                    <li>LCP &lt;= 2.5s, CLS &lt;= 0.10, performance score &gt;= 0.90.</li>
+                    <li>Total byte weight &lt;= 350KB per route budget target.</li>
+                    <li>Script budget &lt;= 170KB, stylesheet budget &lt;= 70KB, image budget &lt;= 250KB.</li>
                     <li>Apply LCP image guidance: eager, fetchpriority=high, fixed dimensions.</li>
                 </ul>
             </article>

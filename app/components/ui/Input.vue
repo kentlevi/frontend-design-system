@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import UiIcon from '@/components/ui/Icon.vue';
 import type { icons } from '~/data/ui/icons';
+import type { StyleValue } from 'vue';
 
 type Size = 'lg' | 'md' | 'sm';
 type State = 'default' | 'error' | 'success';
@@ -50,27 +51,27 @@ const iconMap: Record<Exclude<Icon, null>, IconName> = {
     user: 'strong-user',
 };
 
-const leftIcon = computed<IconName | null>(() =>
+const left_icon = computed<IconName | null>(() =>
     props.iconLeft ? iconMap[props.iconLeft] : null
 );
 
-const rightIcon = computed<IconName | null>(() =>
+const right_icon = computed<IconName | null>(() =>
     props.iconRight ? iconMap[props.iconRight] : null
 );
-const testId = computed(() => String(attrs['data-testid'] || '').trim());
-const rootAttrs = computed(() => {
+const test_id = computed(() => String(attrs['data-testid'] || '').trim());
+const root_attrs = computed(() => {
     const { class: className, style, 'data-testid': _testId } = attrs;
     return {
         class: className,
-        style,
-        ...(testId.value ? { 'data-testid': testId.value } : {}),
+        style: style as StyleValue,
+        ...(test_id.value ? { 'data-testid': test_id.value } : {}),
     };
 });
-const inputAttrs = computed(() => {
+const input_attrs = computed(() => {
     const { class: _className, style: _style, 'data-testid': _testId, ...rest } = attrs;
     return {
         ...rest,
-        ...(testId.value ? { 'data-testid': `${testId.value}-control` } : {}),
+        ...(test_id.value ? { 'data-testid': `${test_id.value}-control` } : {}),
     };
 });
 
@@ -86,7 +87,7 @@ function focusInput() {
 
 <template>
     <div
-        v-bind="rootAttrs"
+        v-bind="root_attrs"
         class="ui-input"
         :data-size="size"
         :data-state="state !== 'default' ? state : null"
@@ -94,14 +95,14 @@ function focusInput() {
         :data-disabled="disabled || null"
         @click="focusInput"
     >
-        <span v-if="$slots['icon-left'] || leftIcon" class="ui-input-icon">
+        <span v-if="$slots['icon-left'] || left_icon" class="ui-input-icon">
             <slot name="icon-left">
-                <UiIcon :name="leftIcon" :size="24" decorative />
+                <UiIcon v-if="left_icon" :name="left_icon" :size="24" decorative />
             </slot>
         </span>
 
         <input
-            v-bind="inputAttrs"
+            v-bind="input_attrs"
             ref="inputRef"
             class="ui-input-field"
             :type="type"
@@ -112,9 +113,9 @@ function focusInput() {
             @input="onInput"
         >
 
-        <span v-if="$slots['icon-right'] || rightIcon" class="ui-input-icon">
+        <span v-if="$slots['icon-right'] || right_icon" class="ui-input-icon">
             <slot name="icon-right">
-                <UiIcon :name="rightIcon" :size="16" decorative />
+                <UiIcon v-if="right_icon" :name="right_icon" :size="16" decorative />
             </slot>
         </span>
     </div>

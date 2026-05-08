@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { guides } from '@/data/guide/guides';
-import { guideDocs } from '@/data/guide/docs';
+import { guideDocs, type GuideDoc } from '@/data/guide/docs';
 import GuideCopy from '@/components/guide/GuideCopy.vue';
 import GuideCommandList from '@/components/guide/GuideCommandList.vue';
 import GuidePlaygroundControls from '@/components/guide/GuidePlaygroundControls.vue';
@@ -38,17 +38,17 @@ const viewMode = useState<'preview' | 'documentation'>(
     () => 'preview'
 );
 
-const normalizedRoutePath = computed(() =>
+const normalized_route_path = computed(() =>
     route.path !== '/' && route.path.endsWith('/')
         ? route.path.slice(0, -1)
         : route.path
 );
-const localeCodes = computed(() =>
+const locale_codes = computed(() =>
     locales.value.map((item) => (typeof item === 'string' ? item : item.code))
 );
-const guidePath = computed(() => {
-    const path = normalizedRoutePath.value;
-    for (const code of localeCodes.value) {
+const guide_path = computed(() => {
+    const path = normalized_route_path.value;
+    for (const code of locale_codes.value) {
         const prefix = `/${code}`;
         if (path === prefix) {
             return '/';
@@ -59,40 +59,46 @@ const guidePath = computed(() => {
     }
     return path;
 });
-const isOverviewPath = computed(
-    () => guidePath.value === '/guide' || guidePath.value === '/'
+const is_overview_path = computed(
+    () => guide_path.value === '/guide' || guide_path.value === '/'
 );
 const standardsRequiredToastVisible = ref(false);
 const standardsRequiredToastMessage = 'Please read and acknowledge the standards before continuing.';
 let standardsRequiredToastTimeoutId: ReturnType<typeof setTimeout> | null = null;
-const currentDoc = computed(
-    () => guideDocs[guidePath.value] ?? (isOverviewPath.value ? guideDocs['/guide'] : null)
+const current_doc = computed(
+    () => guideDocs[guide_path.value] ?? (is_overview_path.value ? guideDocs['/guide'] : null)
 );
-const canShowDocs = computed(() => Boolean(currentDoc.value));
-const isDocumentationOnlyGuide = computed(() => guidePath.value === '/guide/standards');
-const shouldShowStandardsRequiredToast = computed(() => {
-    if (!isDocumentationOnlyGuide.value) return false;
+const empty_guide_doc: GuideDoc = {
+    summary: '',
+    sections: [],
+};
+const safe_current_doc = computed<GuideDoc>(() => current_doc.value ?? empty_guide_doc);
+const current_doc_do_dont = computed(() => current_doc.value?.doDont ?? null);
+const can_show_docs = computed(() => Boolean(current_doc.value));
+const is_documentation_only_guide = computed(() => guide_path.value === '/guide/standards');
+const should_show_standards_required_toast = computed(() => {
+    if (!is_documentation_only_guide.value) return false;
     const value = route.query.standardsRequired;
     const normalized = Array.isArray(value) ? value[0] : value;
     return normalized === '1';
 });
-const standardsRequiredToastTrigger = computed(() =>
-    shouldShowStandardsRequiredToast.value ? route.fullPath : ''
+const standards_required_toast_trigger = computed(() =>
+    should_show_standards_required_toast.value ? route.fullPath : ''
 );
-const currentGuideItem = computed(() =>
+const current_guide_item = computed(() =>
     guides.find((item) =>
-        isOverviewPath.value ? item.path === '/guide' : item.path === guidePath.value
+        is_overview_path.value ? item.path === '/guide' : item.path === guide_path.value
     ) ?? null
 );
-const normalizedGuideQuery = computed(() => guideQuery.value.trim().toLowerCase());
+const normalized_guide_query = computed(() => guideQuery.value.trim().toLowerCase());
 const a11yQuickChecks = ref<
     Array<{ id: string; label: string; passed: boolean; detail: string }>
 >([]);
-const currentDocLastUpdated = computed(
-    () => currentDoc.value?.lastUpdatedAt ?? currentDoc.value?.changelog?.[0]?.date ?? null
+const current_doc_last_updated = computed(
+    () => current_doc.value?.lastUpdatedAt ?? current_doc.value?.changelog?.[0]?.date ?? null
 );
 
-const searchIndexByPath = computed<Record<string, string>>(() => {
+const search_index_by_path = computed<Record<string, string>>(() => {
     return guides.reduce<Record<string, string>>((acc, item) => {
         const doc = guideDocs[item.path];
         const docTokens = [
@@ -119,28 +125,28 @@ const searchIndexByPath = computed<Record<string, string>>(() => {
 });
 
 const matchesGuideQuery = (item: (typeof guides)[number]) => {
-    if (!normalizedGuideQuery.value) return true;
-    return searchIndexByPath.value[item.path]?.includes(normalizedGuideQuery.value);
+    if (!normalized_guide_query.value) return true;
+    return search_index_by_path.value[item.path]?.includes(normalized_guide_query.value);
 };
 
-const filteredBaseGuides = computed(() =>
+const filtered_base_guides = computed(() =>
     baseGuides.filter((item) => matchesGuideQuery(item))
 );
 
-const filteredCoreGuides = computed(() =>
+const filtered_core_guides = computed(() =>
     coreGuides.filter((item) => matchesGuideQuery(item))
 );
 
 const overviewGuide = guides.find((item) => item.path === '/guide');
-const hasSidebarMatches = computed(
+const has_sidebar_matches = computed(
     () =>
-        filteredBaseGuides.value.length > 0 ||
-        filteredCoreGuides.value.length > 0 ||
+        filtered_base_guides.value.length > 0 ||
+        filtered_core_guides.value.length > 0 ||
         (overviewGuide ? matchesGuideQuery(overviewGuide) : false)
 );
 
-const relatedGuides = computed(() => {
-    const relatedPaths = currentGuideItem.value?.related ?? [];
+const related_guides = computed(() => {
+    const relatedPaths = current_guide_item.value?.related ?? [];
     if (!relatedPaths.length) return [];
     return relatedPaths
         .map((path) => guides.find((item) => item.path === path))
@@ -163,7 +169,7 @@ const clearStandardsRequiredToast = () => {
 };
 
 watch(
-    standardsRequiredToastTrigger,
+    standards_required_toast_trigger,
     (nextValue) => {
         clearStandardsRequiredToast();
         if (!nextValue) return;
@@ -175,9 +181,9 @@ watch(
     { immediate: true }
 );
 
-const checklistItems = computed(() => currentDoc.value?.guideChecklist ?? []);
-const filteredChecklistItems = computed(() =>
-    checklistItems.value.filter((item) => {
+const checklist_items = computed(() => current_doc.value?.guideChecklist ?? []);
+const filtered_checklist_items = computed(() =>
+    checklist_items.value.filter((item) => {
         if (
             checklistStatusFilter.value !== 'all' &&
             item.status !== checklistStatusFilter.value
@@ -193,32 +199,32 @@ const filteredChecklistItems = computed(() =>
         return true;
     })
 );
-const snippetsForDoc = computed(() => {
-    const snippets = currentDoc.value?.snippets ?? [];
+const snippets_for_doc = computed(() => {
+    const snippets = current_doc.value?.snippets ?? [];
     if (snippets.length) return snippets;
-    const derivedFromExamples = (currentDoc.value?.examples ?? []).map((example) => ({
+    const derivedFromExamples = (current_doc.value?.examples ?? []).map((example) => ({
         title: example.title,
         language: 'vue',
         code: example.code,
     }));
     if (derivedFromExamples.length) return derivedFromExamples;
 
-    if (!currentGuideItem.value) return [];
+    if (!current_guide_item.value) return [];
     return [
         {
-            title: `${currentGuideItem.value.title} Metadata`,
+            title: `${current_guide_item.value.title} Metadata`,
             language: 'ts',
             code: `{
-  path: '${currentGuideItem.value.path}',
-  status: '${currentGuideItem.value.status ?? 'stable'}',
-  tags: ${JSON.stringify(currentGuideItem.value.tags ?? [])}
+  path: '${current_guide_item.value.path}',
+  status: '${current_guide_item.value.status ?? 'stable'}',
+  tags: ${JSON.stringify(current_guide_item.value.tags ?? [])}
 }`,
         },
     ];
 });
-const usedInReferences = computed(() => currentGuideItem.value?.usedIn ?? []);
-const orderedDocSections = computed(() => {
-    const sections = currentDoc.value?.sections ?? [];
+const used_in_references = computed(() => current_guide_item.value?.usedIn ?? []);
+const ordered_doc_sections = computed(() => {
+    const sections = current_doc.value?.sections ?? [];
     const sectionOrder = [
         'what it covers',
         'what this covers',
@@ -250,8 +256,8 @@ const orderedDocSections = computed(() => {
         return a.title.localeCompare(b.title);
     });
 });
-const defaultSectionSources = computed(() =>
-    usedInReferences.value.slice(0, 3).map((ref) => ({
+const default_section_sources = computed(() =>
+    used_in_references.value.slice(0, 3).map((ref) => ({
         label: ref.label,
         path: toFileLink(ref.path, ref.line),
     }))
@@ -262,15 +268,15 @@ const sectionSources = (section: { sources?: Array<{ label: string; path: string
               label: source.label,
               path: toFileLink(source.path, source.line),
           }))
-        : defaultSectionSources.value;
-const changelogEntries = computed(() =>
-    (currentDoc.value?.changelog ?? []).map((entry, index) => ({
+        : default_section_sources.value;
+const changelog_entries = computed(() =>
+    (current_doc.value?.changelog ?? []).map((entry, index) => ({
         ...entry,
-        version: entry.version ?? `v1.${Math.max(0, (currentDoc.value?.changelog?.length ?? 1) - index - 1)}.0`,
+        version: entry.version ?? `v1.${Math.max(0, (current_doc.value?.changelog?.length ?? 1) - index - 1)}.0`,
         diffLinks:
             entry.diffLinks && entry.diffLinks.length
                 ? entry.diffLinks
-                : usedInReferences.value.slice(0, 2).map((ref) => ({
+                : used_in_references.value.slice(0, 2).map((ref) => ({
                       label: ref.label,
                       path: toFileLink(ref.path, ref.line),
                   })),
@@ -284,17 +290,17 @@ const defaultPlaygroundConfig = {
     defaultTone: 'neutral',
     defaultState: 'default',
 };
-const currentPlaygroundConfig = computed(() => currentDoc.value?.playground ?? null);
-const resolvedPlaygroundConfig = computed(() => currentPlaygroundConfig.value ?? defaultPlaygroundConfig);
-const reviewDueState = computed(() => {
-    const reviewDueAt = currentGuideItem.value?.reviewDueAt;
+const current_playground_config = computed(() => current_doc.value?.playground ?? null);
+const resolved_playground_config = computed(() => current_playground_config.value ?? defaultPlaygroundConfig);
+const review_due_state = computed(() => {
+    const reviewDueAt = current_guide_item.value?.reviewDueAt;
     if (!reviewDueAt) return 'missing';
     const dueDate = new Date(reviewDueAt);
     if (Number.isNaN(dueDate.getTime())) return 'missing';
     return dueDate < new Date() ? 'overdue' : 'current';
 });
-const hasGuideOwner = computed(() => Boolean(currentGuideItem.value?.owner?.name));
-const previewFrameStyle = computed(() => {
+const has_guide_owner = computed(() => Boolean(current_guide_item.value?.owner?.name));
+const preview_frame_style = computed(() => {
     const sizeScale =
         playgroundState.value.size === 'sm'
             ? 0.92
@@ -309,7 +315,7 @@ const previewFrameStyle = computed(() => {
 });
 
 const normalizedChecklistState = (status: 'planned' | 'in-progress' | 'done') =>
-    status === 'in-progress' ? 'In Progress' : status[0].toUpperCase() + status.slice(1);
+    status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1);
 const phaseLabel = (phase: 'phase-1' | 'phase-2' | 'phase-3' | 'phase-4') =>
     phase.replace('phase-', 'Phase ');
 const checklistTagClass = (value: string) =>
@@ -318,13 +324,13 @@ const checklistTagClass = (value: string) =>
         .trim()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
-const checklistSummary = computed(() => {
-    const total = checklistItems.value.length;
-    const done = checklistItems.value.filter((item) => item.status === 'done').length;
-    const inProgress = checklistItems.value.filter(
+const checklist_summary = computed(() => {
+    const total = checklist_items.value.length;
+    const done = checklist_items.value.filter((item) => item.status === 'done').length;
+    const inProgress = checklist_items.value.filter(
         (item) => item.status === 'in-progress'
     ).length;
-    const planned = checklistItems.value.filter((item) => item.status === 'planned').length;
+    const planned = checklist_items.value.filter((item) => item.status === 'planned').length;
 
     return {
         total,
@@ -334,9 +340,9 @@ const checklistSummary = computed(() => {
         completion: total ? Math.round((done / total) * 100) : 0,
     };
 });
-const checklistPhaseProgress = computed(() =>
+const checklist_phase_progress = computed(() =>
     (['phase-1', 'phase-2', 'phase-3', 'phase-4'] as const).map((phase) => {
-        const items = checklistItems.value.filter((item) => item.phase === phase);
+        const items = checklist_items.value.filter((item) => item.phase === phase);
         const done = items.filter((item) => item.status === 'done').length;
         const percent = items.length ? Math.round((done / items.length) * 100) : 0;
         return {
@@ -459,9 +465,9 @@ const doDontVisualCopyByPath: Record<string, { do: string; dont: string }> = {
         dont: 'Assume component maturity without documented guide coverage.',
     },
 };
-const doDontVisualCopy = computed(
+const do_dont_visual_copy = computed(
     () =>
-        doDontVisualCopyByPath[guidePath.value] ?? {
+        doDontVisualCopyByPath[guide_path.value] ?? {
             do: 'Clear hierarchy + aligned controls.',
             dont: 'Mixed hierarchy + inconsistent controls.',
         }
@@ -489,7 +495,7 @@ const runA11yQuickChecks = () => {
             return false;
         }
     });
-    const hasTokenGuidance = Boolean(currentDoc.value?.tokenGuardrails?.length);
+    const hasTokenGuidance = Boolean(current_doc.value?.tokenGuardrails?.length);
 
     a11yQuickChecks.value = [
         {
@@ -557,7 +563,7 @@ const toAnchorId = (value: string) =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-const standardsContinueTarget = computed(() => {
+const standards_continue_target = computed(() => {
     const redirect = route.query.redirect;
     const value = Array.isArray(redirect) ? redirect[0] : redirect;
     if (typeof value === 'string' && value.includes('/guide')) return value;
@@ -566,13 +572,13 @@ const standardsContinueTarget = computed(() => {
 
 function confirmStandardsRead() {
     standardsCookie.value = '1';
-    navigateTo(standardsContinueTarget.value);
+    navigateTo(standards_continue_target.value);
 }
 
 watch(
-    guidePath,
+    guide_path,
     (nextPath, previousPath) => {
-        if (isDocumentationOnlyGuide.value) {
+        if (is_documentation_only_guide.value) {
             viewMode.value = 'documentation';
             return;
         }
@@ -582,7 +588,7 @@ watch(
             return;
         }
 
-        if (!canShowDocs.value) {
+        if (!can_show_docs.value) {
             viewMode.value = 'preview';
         }
     },
@@ -591,9 +597,9 @@ watch(
 
 onMounted(() => {
     playgroundState.value = {
-        size: resolvedPlaygroundConfig.value.defaultSize ?? 'md',
-        tone: resolvedPlaygroundConfig.value.defaultTone ?? 'neutral',
-        state: resolvedPlaygroundConfig.value.defaultState ?? 'default',
+        size: resolved_playground_config.value.defaultSize ?? 'md',
+        tone: resolved_playground_config.value.defaultTone ?? 'neutral',
+        state: resolved_playground_config.value.defaultState ?? 'default',
     };
 
     document.addEventListener('keydown', onGuideShortcut);
@@ -606,13 +612,13 @@ onBeforeUnmount(() => {
     window.removeEventListener('keydown', onGuideShortcut);
 });
 
-watch([guidePath, viewMode, previewFrame], async () => {
+watch([guide_path, viewMode, previewFrame], async () => {
     await nextTick();
-    const config = currentPlaygroundConfig.value;
+    const config = current_playground_config.value;
     playgroundState.value = {
-        size: (config?.defaultSize ?? resolvedPlaygroundConfig.value.defaultSize) ?? 'md',
-        tone: (config?.defaultTone ?? resolvedPlaygroundConfig.value.defaultTone) ?? 'neutral',
-        state: (config?.defaultState ?? resolvedPlaygroundConfig.value.defaultState) ?? 'default',
+        size: (config?.defaultSize ?? resolved_playground_config.value.defaultSize) ?? 'md',
+        tone: (config?.defaultTone ?? resolved_playground_config.value.defaultTone) ?? 'neutral',
+        state: (config?.defaultState ?? resolved_playground_config.value.defaultState) ?? 'default',
     };
     runA11yQuickChecks();
 });
@@ -631,7 +637,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     v-if="standardsGuideItem"
                     :to="localePath('/guide/standards')"
                     class="guide-link guide-link-overview"
-                    :class="{ 'is-active': guidePath.startsWith('/guide/standards') }"
+                    :class="{ 'is-active': guide_path.startsWith('/guide/standards') }"
                 >
                     {{ standardsGuideItem.title }}
                     <span class="guide-link-status" :class="`is-${standardsGuideItem.status ?? 'stable'}`">
@@ -642,7 +648,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 <NuxtLink
                     :to="localePath('/guide')"
                     class="guide-link guide-link-overview"
-                    :class="{ 'is-active': isOverviewPath }"
+                    :class="{ 'is-active': is_overview_path }"
                 >
                     Overview
                     <span class="guide-link-status is-stable">Stable</span>
@@ -664,17 +670,17 @@ watch([guidePath, viewMode, previewFrame], async () => {
             <div class="guide-sidebar-nav-wrap">
                 <nav class="guide-nav">
                     <section
-                        v-if="filteredBaseGuides.length"
+                        v-if="filtered_base_guides.length"
                         class="guide-nav-group"
                     >
                         <p class="guide-nav-label">Base</p>
                         <NuxtLink
-                            v-for="item in filteredBaseGuides"
+                            v-for="item in filtered_base_guides"
                             :key="item.path"
                             :to="localePath(item.path)"
                             class="guide-link"
                             :class="{
-                                'is-active': guidePath.startsWith(item.path),
+                                'is-active': guide_path.startsWith(item.path),
                             }"
                         >
                             {{ item.title }}
@@ -688,17 +694,17 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     </section>
 
                     <section
-                        v-if="filteredCoreGuides.length"
+                        v-if="filtered_core_guides.length"
                         class="guide-nav-group"
                     >
                         <p class="guide-nav-label">Core</p>
                         <NuxtLink
-                            v-for="item in filteredCoreGuides"
+                            v-for="item in filtered_core_guides"
                             :key="item.path"
                             :to="localePath(item.path)"
                             class="guide-link"
                             :class="{
-                                'is-active': guidePath.startsWith(item.path),
+                                'is-active': guide_path.startsWith(item.path),
                             }"
                         >
                             {{ item.title }}
@@ -711,7 +717,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         </NuxtLink>
                     </section>
 
-                    <p v-if="!hasSidebarMatches" class="guide-nav-empty">
+                    <p v-if="!has_sidebar_matches" class="guide-nav-empty">
                         No matching guides.
                     </p>
                 </nav>
@@ -719,7 +725,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
             <footer class="guide-sidebar-footer">
                 <div
-                    v-if="isDocumentationOnlyGuide"
+                    v-if="is_documentation_only_guide"
                     class="guide-view-toggle"
                     role="tablist"
                     aria-label="Guide content view"
@@ -764,7 +770,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         :class="{ 'is-active': viewMode === 'documentation' }"
                         aria-controls="guide-panel-documentation"
                         :aria-selected="viewMode === 'documentation'"
-                        :disabled="!canShowDocs"
+                        :disabled="!can_show_docs"
                         :tabindex="viewMode === 'documentation' ? 0 : -1"
                         @click="viewMode = 'documentation'"
                     >
@@ -776,7 +782,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
         <main class="guide-content">
             <section
-                v-if="!isDocumentationOnlyGuide && (viewMode === 'preview' || !currentDoc)"
+                v-if="!is_documentation_only_guide && (viewMode === 'preview' || !current_doc)"
                 id="guide-panel-preview"
                 class="guide-preview-panel"
                 role="tabpanel"
@@ -810,7 +816,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     </div>
                     <GuidePlaygroundControls
                         v-model="playgroundState"
-                        :config="resolvedPlaygroundConfig"
+                        :config="resolved_playground_config"
                     />
                     <div class="guide-preview-checks">
                         <UiBadge
@@ -829,8 +835,8 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     :class="`is-${previewFrame}`"
                     :data-tone="playgroundState.tone"
                     :data-state="playgroundState.state"
-                    :data-testid="`guide-preview-frame-wrap-${guidePath.replace(/[^a-z0-9]+/gi, '-')}`"
-                    :style="previewFrameStyle"
+                    :data-testid="`guide-preview-frame-wrap-${guide_path.replace(/[^a-z0-9]+/gi, '-')}`"
+                    :style="preview_frame_style"
                 >
                     <NuxtPage />
                 </div>
@@ -847,49 +853,49 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 <header class="guide-docs-header">
                     <h1 class="guide-docs-title">Documentation</h1>
                     <p class="guide-docs-summary">
-                        {{ currentDoc.summary }}
+                        {{ safe_current_doc.summary }}
                     </p>
-                    <p v-if="currentGuideItem?.status" class="guide-docs-meta">
+                    <p v-if="current_guide_item?.status" class="guide-docs-meta">
                         Status:
                         <span
                             class="guide-docs-status-chip"
-                            :class="`is-${currentGuideItem.status}`"
+                            :class="`is-${current_guide_item.status}`"
                         >
-                            {{ guideStatusLabel(currentGuideItem.status) }}
+                            {{ guideStatusLabel(current_guide_item.status) }}
                         </span>
                     </p>
                     <p
                         v-if="
-                            currentDoc.owner?.name ||
-                            currentDoc.lastUpdatedBy ||
-                            currentDocLastUpdated
+                            safe_current_doc.owner?.name ||
+                            safe_current_doc.lastUpdatedBy ||
+                            current_doc_last_updated
                         "
                         class="guide-docs-meta"
                     >
-                        <span v-if="currentDoc.owner?.name">
-                            Owner: {{ currentDoc.owner.name }}
-                            <span v-if="currentDoc.owner.team">({{ currentDoc.owner.team }})</span>
+                        <span v-if="safe_current_doc.owner?.name">
+                            Owner: {{ safe_current_doc.owner.name }}
+                            <span v-if="safe_current_doc.owner.team">({{ safe_current_doc.owner.team }})</span>
                         </span>
-                        <span v-if="currentDoc.lastUpdatedBy || currentDocLastUpdated">
+                        <span v-if="safe_current_doc.lastUpdatedBy || current_doc_last_updated">
                             • Last updated
-                            <template v-if="currentDoc.lastUpdatedBy">
-                                by {{ currentDoc.lastUpdatedBy }}
+                            <template v-if="safe_current_doc.lastUpdatedBy">
+                                by {{ safe_current_doc.lastUpdatedBy }}
                             </template>
-                            <template v-if="currentDocLastUpdated">
-                                on {{ currentDocLastUpdated }}
+                            <template v-if="current_doc_last_updated">
+                                on {{ current_doc_last_updated }}
                             </template>
                         </span>
                     </p>
                     <p class="guide-docs-meta guide-docs-governance-meta">
-                        <span class="guide-docs-governance-chip" :class="`is-${hasGuideOwner ? 'pass' : 'fail'}`">
-                            {{ hasGuideOwner ? 'Owner assigned' : 'Owner missing' }}
+                        <span class="guide-docs-governance-chip" :class="`is-${has_guide_owner ? 'pass' : 'fail'}`">
+                            {{ has_guide_owner ? 'Owner assigned' : 'Owner missing' }}
                         </span>
-                        <span class="guide-docs-governance-chip" :class="`is-${reviewDueState}`">
-                            <template v-if="reviewDueState === 'current'">
-                                Review due {{ currentGuideItem?.reviewDueAt }}
+                        <span class="guide-docs-governance-chip" :class="`is-${review_due_state}`">
+                            <template v-if="review_due_state === 'current'">
+                                Review due {{ current_guide_item?.reviewDueAt }}
                             </template>
-                            <template v-else-if="reviewDueState === 'overdue'">
-                                Review overdue {{ currentGuideItem?.reviewDueAt }}
+                            <template v-else-if="review_due_state === 'overdue'">
+                                Review overdue {{ current_guide_item?.reviewDueAt }}
                             </template>
                             <template v-else>
                                 Review due date missing
@@ -899,7 +905,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </header>
 
                 <section
-                    v-if="isOverviewPath && checklistItems.length"
+                    v-if="is_overview_path && checklist_items.length"
                     id="doc-overview-snapshot"
                     class="guide-docs-section guide-overview-snapshot"
                 >
@@ -908,16 +914,16 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         <article class="guide-overview-metric-card">
                             <p class="guide-overview-metric-label">Overall Completion</p>
                             <p class="guide-overview-metric-value">
-                                {{ checklistSummary.completion }}%
+                                {{ checklist_summary.completion }}%
                             </p>
                             <p class="guide-overview-metric-meta">
-                                {{ checklistSummary.done }} of {{ checklistSummary.total }} done
+                                {{ checklist_summary.done }} of {{ checklist_summary.total }} done
                             </p>
                         </article>
                         <article class="guide-overview-metric-card">
                             <p class="guide-overview-metric-label">In Progress</p>
                             <p class="guide-overview-metric-value">
-                                {{ checklistSummary.inProgress }}
+                                {{ checklist_summary.inProgress }}
                             </p>
                             <p class="guide-overview-metric-meta">
                                 Active checklist items
@@ -926,7 +932,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                         <article class="guide-overview-metric-card">
                             <p class="guide-overview-metric-label">Planned</p>
                             <p class="guide-overview-metric-value">
-                                {{ checklistSummary.planned }}
+                                {{ checklist_summary.planned }}
                             </p>
                             <p class="guide-overview-metric-meta">
                                 Pending implementation
@@ -936,7 +942,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
 
                     <div class="guide-overview-phase-grid">
                         <article
-                            v-for="phase in checklistPhaseProgress"
+                            v-for="phase in checklist_phase_progress"
                             :key="phase.phase"
                             class="guide-overview-phase-card"
                         >
@@ -964,7 +970,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="checklistItems.length"
+                    v-if="checklist_items.length"
                     id="doc-guide-maturity-checklist"
                     class="guide-docs-section"
                 >
@@ -996,7 +1002,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     </div>
                     <div class="guide-checklist-grid">
                         <article
-                            v-for="item in filteredChecklistItems"
+                            v-for="item in filtered_checklist_items"
                             :key="item.id"
                             class="guide-checklist-card"
                         >
@@ -1027,7 +1033,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-for="section in orderedDocSections"
+                    v-for="section in ordered_doc_sections"
                     :id="`doc-${toAnchorId(section.title)}`"
                     :key="section.title"
                     class="guide-docs-section"
@@ -1060,18 +1066,18 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.doDont"
+                    v-if="current_doc_do_dont"
                     id="doc-do-dont"
                     class="guide-docs-section guide-docs-section-dual"
                 >
                     <article class="guide-docs-card guide-docs-card-do">
                         <h2 class="guide-docs-section-title">Do</h2>
                         <div class="guide-docs-visual-example is-do">
-                            {{ doDontVisualCopy.do }}
+                            {{ do_dont_visual_copy.do }}
                         </div>
                         <ul class="guide-docs-list">
                             <li
-                                v-for="item in currentDoc.doDont.do"
+                                v-for="item in current_doc_do_dont.do"
                                 :key="item"
                                 class="guide-docs-list-item"
                             >
@@ -1083,11 +1089,11 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     <article class="guide-docs-card guide-docs-card-dont">
                         <h2 class="guide-docs-section-title">Don't</h2>
                         <div class="guide-docs-visual-example is-dont">
-                            {{ doDontVisualCopy.dont }}
+                            {{ do_dont_visual_copy.dont }}
                         </div>
                         <ul class="guide-docs-list">
                             <li
-                                v-for="item in currentDoc.doDont.dont"
+                                v-for="item in current_doc_do_dont.dont"
                                 :key="item"
                                 class="guide-docs-list-item"
                             >
@@ -1098,14 +1104,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.accessibilityChecklist?.length"
+                    v-if="safe_current_doc.accessibilityChecklist?.length"
                     id="doc-accessibility-checklist"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Accessibility Checklist</h2>
                     <ul class="guide-docs-list guide-docs-checklist">
                         <li
-                            v-for="item in currentDoc.accessibilityChecklist"
+                            v-for="item in safe_current_doc.accessibilityChecklist"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1115,14 +1121,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.qaChecklist?.length"
+                    v-if="safe_current_doc.qaChecklist?.length"
                     id="doc-qa-checklist"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">QA Checklist</h2>
                     <ul class="guide-docs-list guide-docs-checklist">
                         <li
-                            v-for="item in currentDoc.qaChecklist"
+                            v-for="item in safe_current_doc.qaChecklist"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1132,14 +1138,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.motionGuidelines?.length"
+                    v-if="safe_current_doc.motionGuidelines?.length"
                     id="doc-motion"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Motion</h2>
                     <ul class="guide-docs-list">
                         <li
-                            v-for="item in currentDoc.motionGuidelines"
+                            v-for="item in safe_current_doc.motionGuidelines"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1149,14 +1155,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.responsiveNotes?.length"
+                    v-if="safe_current_doc.responsiveNotes?.length"
                     id="doc-responsive-notes"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Responsive Notes</h2>
                     <ul class="guide-docs-list">
                         <li
-                            v-for="item in currentDoc.responsiveNotes"
+                            v-for="item in safe_current_doc.responsiveNotes"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1166,14 +1172,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.contentGuidelines?.length"
+                    v-if="safe_current_doc.contentGuidelines?.length"
                     id="doc-content-guidelines"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Content Guidelines</h2>
                     <ul class="guide-docs-list">
                         <li
-                            v-for="item in currentDoc.contentGuidelines"
+                            v-for="item in safe_current_doc.contentGuidelines"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1183,14 +1189,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.tokenGuardrails?.length"
+                    v-if="safe_current_doc.tokenGuardrails?.length"
                     id="doc-token-guardrails"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Token Guardrails</h2>
                     <ul class="guide-docs-list">
                         <li
-                            v-for="item in currentDoc.tokenGuardrails"
+                            v-for="item in safe_current_doc.tokenGuardrails"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1200,14 +1206,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.tokenInspector"
+                    v-if="safe_current_doc.tokenInspector"
                     id="doc-token-inspector"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Design Token Inspector</h2>
                     <ul class="guide-docs-list">
                         <li
-                            v-for="token in currentDoc.tokenInspector.tokens"
+                            v-for="token in safe_current_doc.tokenInspector?.tokens ?? []"
                             :key="token"
                             class="guide-docs-list-item"
                         >
@@ -1216,7 +1222,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     </ul>
                     <div class="guide-token-mapping-grid">
                         <div
-                            v-for="mapping in currentDoc.tokenInspector.mappings"
+                            v-for="mapping in safe_current_doc.tokenInspector?.mappings ?? []"
                             :key="`${mapping.semantic}-${mapping.raw}`"
                             class="guide-token-mapping-item"
                         >
@@ -1228,25 +1234,25 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.runCommands?.length"
+                    v-if="safe_current_doc.runCommands?.length"
                     id="doc-run-commands"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Run Commands</h2>
                     <GuideCommandList
-                        :commands="currentDoc.runCommands"
+                        :commands="safe_current_doc.runCommands ?? []"
                         testid-prefix="guide-doc-command"
                     />
                 </section>
 
                 <section
-                    v-if="snippetsForDoc.length"
+                    v-if="snippets_for_doc.length"
                     id="doc-snippets"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Copyable Snippets</h2>
                     <article
-                        v-for="snippet in snippetsForDoc"
+                        v-for="snippet in snippets_for_doc"
                         :key="snippet.title"
                         class="guide-docs-example"
                     >
@@ -1260,34 +1266,34 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="usedInReferences.length"
+                    v-if="used_in_references.length"
                     id="doc-used-in-production"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Used In Production</h2>
                     <div class="guide-docs-related-links">
                         <div
-                            v-for="ref in usedInReferences"
-                            :key="`${ref.path}-${ref.line ?? 0}`"
+                            v-for="reference in used_in_references"
+                            :key="`${reference.path}-${reference.line ?? 0}`"
                             class="guide-docs-related-link"
                         >
-                            <span>{{ ref.label }}</span>
-                            <GuideCopy :text="toFileLink(ref.path, ref.line)">
-                                <code>{{ toFileLink(ref.path, ref.line) }}</code>
+                            <span>{{ reference.label }}</span>
+                            <GuideCopy :text="toFileLink(reference.path, reference.line)">
+                                <code>{{ toFileLink(reference.path, reference.line) }}</code>
                             </GuideCopy>
                         </div>
                     </div>
                 </section>
 
                 <section
-                    v-if="currentDoc.testHooks?.length"
+                    v-if="safe_current_doc.testHooks?.length"
                     id="doc-test-hooks"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Test Hooks</h2>
                     <div class="guide-token-mapping-grid">
                         <div
-                            v-for="hook in currentDoc.testHooks"
+                            v-for="hook in safe_current_doc.testHooks"
                             :key="hook.hook"
                             class="guide-token-mapping-item"
                         >
@@ -1301,14 +1307,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.performanceNotes?.length"
+                    v-if="safe_current_doc.performanceNotes?.length"
                     id="doc-performance-notes"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Performance Notes</h2>
                     <ul class="guide-docs-list">
                         <li
-                            v-for="item in currentDoc.performanceNotes"
+                            v-for="item in safe_current_doc.performanceNotes"
                             :key="item"
                             class="guide-docs-list-item"
                         >
@@ -1318,13 +1324,13 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="currentDoc.examples?.length"
+                    v-if="safe_current_doc.examples?.length"
                     id="doc-code-examples"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Code Examples</h2>
                     <article
-                        v-for="example in currentDoc.examples"
+                        v-for="example in safe_current_doc.examples"
                         :key="example.title"
                         class="guide-docs-example"
                     >
@@ -1336,13 +1342,13 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="changelogEntries.length"
+                    v-if="changelog_entries.length"
                     id="doc-changelog"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Changelog</h2>
                     <article
-                        v-for="entry in changelogEntries"
+                        v-for="entry in changelog_entries"
                         :key="`${entry.version}-${entry.date}`"
                         class="guide-docs-changelog-item"
                     >
@@ -1378,14 +1384,14 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="relatedGuides.length"
+                    v-if="related_guides.length"
                     id="doc-related-guides"
                     class="guide-docs-section"
                 >
                     <h2 class="guide-docs-section-title">Related Guides</h2>
                     <div class="guide-docs-related-links">
                         <NuxtLink
-                            v-for="item in relatedGuides"
+                            v-for="item in related_guides"
                             :key="item.path"
                             :to="localePath(item.path)"
                             class="guide-docs-related-link"
@@ -1402,7 +1408,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                 </section>
 
                 <section
-                    v-if="isDocumentationOnlyGuide"
+                    v-if="is_documentation_only_guide"
                     id="doc-standards-acknowledgement"
                     class="guide-docs-section"
                 >
@@ -1413,7 +1419,7 @@ watch([guidePath, viewMode, previewFrame], async () => {
                     </div>
                 </section>
                 <UiToast
-                    v-if="isDocumentationOnlyGuide"
+                    v-if="is_documentation_only_guide"
                     :visible="standardsRequiredToastVisible"
                     tone="warning"
                     :dismissible="true"

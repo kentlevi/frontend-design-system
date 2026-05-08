@@ -7,14 +7,14 @@ const props = defineProps<{
     label?: string;
 }>();
 
-const cssVar = computed(() => `--${props.token}`);
-const varText = computed(() => `var(${cssVar.value})`);
+const css_var = computed(() => `--${props.token}`);
+const var_text = computed(() => `var(${css_var.value})`);
 
 const hex = ref('#000000');
 
 function resolveHex() {
     const el = document.createElement('div');
-    el.style.color = varText.value;
+    el.style.color = var_text.value;
     document.body.appendChild(el);
 
     const rgb = getComputedStyle(el).color;
@@ -23,7 +23,10 @@ function resolveHex() {
     const match = rgb.match(/\d+/g);
     if (!match) return;
 
-    const [r, g, b] = match.map(Number);
+    const rgb_values = match.map(Number);
+    if (rgb_values.length < 3) return;
+
+    const [r = 0, g = 0, b = 0] = rgb_values;
 
     hex.value =
         '#' +
@@ -39,16 +42,16 @@ watch(() => props.token, resolveHex);
 
 <template>
     <div class="ui-color">
-        <GuideCopy :text="varText">
+        <GuideCopy :text="var_text">
             <div
                 class="ui-color-swatch guide-item-hoverable"
-                :style="{ background: varText }"
+                :style="{ background: var_text }"
             />
         </GuideCopy>
 
-        <GuideCopy :text="varText">
+        <GuideCopy :text="var_text">
             <code class="ui-color-var">
-                {{ varText }}
+                {{ var_text }}
             </code>
         </GuideCopy>
 

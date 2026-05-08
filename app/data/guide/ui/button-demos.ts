@@ -1,4 +1,5 @@
 import type { ButtonSize, ButtonTone, ButtonVariant } from '~/data/ui/buttons';
+import type { icons } from '~/data/ui/icons';
 
 export type ButtonDemoItem = {
 	label?: string;
@@ -6,7 +7,7 @@ export type ButtonDemoItem = {
 		variant?: ButtonVariant;
 		size?: ButtonSize;
 		tone?: ButtonTone;
-		icon?: string;
+		icon?: keyof typeof icons;
 		'aria-label'?: string;
 		iconPosition?: 'left' | 'right';
 		iconOnly?: boolean;

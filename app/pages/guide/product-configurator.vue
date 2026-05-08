@@ -22,8 +22,8 @@ const subtotal = computed(() => {
     return base * multi;
 });
 
-const discountRate = computed(() => (selectedQty.value >= 300 ? 0.14 : 0.08));
-const total = computed(() => subtotal.value * (1 - discountRate.value));
+const discount_rate = computed(() => (selectedQty.value >= 300 ? 0.14 : 0.08));
+const total = computed(() => subtotal.value * (1 - discount_rate.value));
 
 function formatPrice(value: number) {
     return new Intl.NumberFormat('en-US', {
@@ -171,7 +171,7 @@ function formatPrice(value: number) {
                     <strong>{{ formatPrice(subtotal) }}</strong>
                 </div>
                 <div class="config-summary-row">
-                    <span>Discount ({{ Math.round(discountRate * 100) }}%)</span>
+                    <span>Discount ({{ Math.round(discount_rate * 100) }}%)</span>
                     <strong>-{{ formatPrice(subtotal - total) }}</strong>
                 </div>
                 <div class="config-summary-row is-total">

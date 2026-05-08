@@ -68,11 +68,11 @@ const viewportRef = ref<HTMLElement | null>(null);
 const firstCardRef = ref<HTMLElement | null>(null);
 const autoTimer = ref<ReturnType<typeof setInterval> | null>(null);
 
-const trackStyle = computed(() => ({
+const track_style = computed(() => ({
     transform: `translateX(-${currentSlide.value * (cardWidth.value + carouselGap)}px)`,
 }));
 
-const visibleCards = computed(() => {
+const visible_cards = computed(() => {
     const viewportWidth = viewportRef.value?.getBoundingClientRect().width ?? 0;
     const slideWidth = cardWidth.value + carouselGap;
 
@@ -80,11 +80,11 @@ const visibleCards = computed(() => {
     return Math.max(1, Math.floor((viewportWidth + carouselGap) / slideWidth));
 });
 
-const maxSlide = computed(() =>
-    Math.max(0, reviewItems.length - visibleCards.value)
+const max_slide = computed(() =>
+    Math.max(0, reviewItems.length - visible_cards.value)
 );
-const canGoPrev = computed(() => currentSlide.value > 0);
-const canGoNext = computed(() => currentSlide.value < maxSlide.value);
+const can_go_prev = computed(() => currentSlide.value > 0);
+const can_go_next = computed(() => currentSlide.value < max_slide.value);
 
 function syncCardWidth() {
     if (!firstCardRef.value) return;
@@ -92,7 +92,7 @@ function syncCardWidth() {
 }
 
 function nextSlide() {
-    if (currentSlide.value >= maxSlide.value) {
+    if (currentSlide.value >= max_slide.value) {
         currentSlide.value = 0;
         return;
     }
@@ -116,7 +116,7 @@ function stopAuto() {
     autoTimer.value = null;
 }
 
-watch(maxSlide, (nextMax) => {
+watch(max_slide, (nextMax) => {
     if (currentSlide.value > nextMax) currentSlide.value = nextMax;
 });
 
@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
                             icon="strong-long-arrow-left"
                             aria-label="Go to previous review"
                             sr-label="Go to previous review"
-                            :disabled="!canGoPrev"
+                            :disabled="!can_go_prev"
                             @click="prevSlide"
                         />
                         <UiButton
@@ -175,7 +175,7 @@ onBeforeUnmount(() => {
                             icon="strong-long-arrow-right"
                             aria-label="Go to next review"
                             sr-label="Go to next review"
-                            :disabled="!canGoNext"
+                            :disabled="!can_go_next"
                             @click="nextSlide"
                         />
                     </div>
@@ -189,7 +189,7 @@ onBeforeUnmount(() => {
                         @mouseenter="stopAuto"
                         @mouseleave="startAuto"
                     >
-                        <div class="guide-carousel-track" :style="trackStyle">
+                        <div class="guide-carousel-track" :style="track_style">
                             <article
                                 v-for="(item, idx) in reviewItems"
                                 :key="`${item.title}-${idx}`"

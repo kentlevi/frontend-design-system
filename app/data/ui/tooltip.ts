@@ -1,5 +1,13 @@
 export const tooltipSides = ['right', 'left', 'top', 'bottom'] as const;
-export const tooltipTones = ['default', 'danger'] as const;
+export const tooltipTones = [
+    'default',
+    'danger',
+    'primary',
+    'accent',
+    'success',
+    'warning',
+    'neutral',
+] as const;
 
 export type TooltipSide = (typeof tooltipSides)[number];
 export type TooltipTone = (typeof tooltipTones)[number];

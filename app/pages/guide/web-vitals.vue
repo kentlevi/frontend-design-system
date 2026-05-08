@@ -97,14 +97,14 @@ const { data: labData, refresh: refreshLab } = await useFetch<LabSummaryResponse
 );
 
 const rows = computed(() => data.value?.routes ?? []);
-const filteredRows = computed(() => {
+const filtered_rows = computed(() => {
     if (pageTypeFilter.value === 'all') return rows.value;
     return rows.value.filter((row) => row.pageType === pageTypeFilter.value);
 });
-const generatedAtLabel = computed(() =>
+const generated_at_label = computed(() =>
     data.value?.generatedAt ? new Date(data.value.generatedAt).toLocaleString() : '-'
 );
-const labGeneratedAtLabel = computed(() =>
+const lab_generated_at_label = computed(() =>
     labData.value?.generatedAt ? new Date(labData.value.generatedAt).toLocaleString() : '-'
 );
 
@@ -177,8 +177,8 @@ function routeBudgetLabel(row: RouteVitals): string {
             <div class="web-vitals-split">
                 <article class="web-vitals-panel">
                     <h2>Field (RUM)</h2>
-                    <p>Generated: <strong>{{ generatedAtLabel }}</strong></p>
-                    <p>Routes: <strong>{{ filteredRows.length }}</strong></p>
+                    <p>Generated: <strong>{{ generated_at_label }}</strong></p>
+                    <p>Routes: <strong>{{ filtered_rows.length }}</strong></p>
                     <p class="budget-inline">
                         Core+Secondary Status:
                         <UiBadge variant="tonal" tone="success">Pass {{ data?.budgetTotals.pass ?? 0 }}</UiBadge>
@@ -189,7 +189,7 @@ function routeBudgetLabel(row: RouteVitals): string {
                 <article class="web-vitals-panel">
                     <h2>Lab (LHCI)</h2>
                     <template v-if="labData?.hasData">
-                        <p>Generated: <strong>{{ labGeneratedAtLabel }}</strong></p>
+                        <p>Generated: <strong>{{ lab_generated_at_label }}</strong></p>
                         <p>Routes: <strong>{{ labData.routeCount }}</strong></p>
                         <p class="budget-inline">
                             <UiBadge variant="tonal" tone="danger">Core Fail {{ labData.totals.coreFail }}</UiBadge>
@@ -211,7 +211,7 @@ function routeBudgetLabel(row: RouteVitals): string {
             <p v-else-if="error" class="web-vitals-hint web-vitals-hint-danger">
                 Unable to load summary. Check `/api/web-vitals/summary`.
             </p>
-            <p v-else-if="filteredRows.length === 0" class="web-vitals-hint">
+            <p v-else-if="filtered_rows.length === 0" class="web-vitals-hint">
                 No samples yet for selected filter.
             </p>
 
@@ -233,7 +233,7 @@ function routeBudgetLabel(row: RouteVitals): string {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="row in filteredRows" :key="row.route">
+                        <tr v-for="row in filtered_rows" :key="row.route">
                             <td class="route">{{ row.route }}</td>
                             <td>{{ row.pageType }}</td>
                             <td>

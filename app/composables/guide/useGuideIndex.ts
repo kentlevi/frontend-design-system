@@ -2,19 +2,22 @@ import { computed } from 'vue';
 import { guides } from '@/data/guide/guides';
 
 export function useGuideIndex() {
-    const visibleGuides = computed(() =>
+    const visible_guides = computed(() =>
         guides.filter((g) => g.path !== '/guide')
     );
-    const baseGuides = computed(() =>
-        visibleGuides.value.filter((g) => g.category === 'base')
+    const base_guides = computed(() =>
+        visible_guides.value.filter((g) => g.category === 'base')
     );
-    const coreGuides = computed(() =>
-        visibleGuides.value.filter((g) => g.category === 'core')
+    const core_guides = computed(() =>
+        visible_guides.value.filter((g) => g.category === 'core')
     );
 
     return {
-        visibleGuides,
-        baseGuides,
-        coreGuides,
+        visible_guides,
+        visibleGuides: visible_guides,
+        base_guides,
+        baseGuides: base_guides,
+        core_guides,
+        coreGuides: core_guides,
     };
 }

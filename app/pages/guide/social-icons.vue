@@ -30,7 +30,7 @@ const { socialIcons, socialVariants, selectedSize, customSize, resolvedSize } =
             <h2 class="guide-section-title">{{ variant.label }}</h2>
             <p class="guide-section-description">{{ variant.desc }}</p>
 
-            <div class="guide-row" :data-dark="variant.dark || null">
+            <div class="guide-row" :data-dark="('dark' in variant && variant.dark) || null">
                 <GuideCopy
                     v-for="name in socialIcons"
                     :key="name + variant.color"
