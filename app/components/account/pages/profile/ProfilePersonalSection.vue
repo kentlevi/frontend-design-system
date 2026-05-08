@@ -3,10 +3,10 @@ import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModa
 import ProfileEmailChangeModal from './ProfileEmailChangeModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
-import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
 import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
+import { useProfilePersonal } from '~/composables/account/profile/useProfilePersonal';
 
 withDefaults(defineProps<{
 	loading?: boolean;
@@ -34,15 +34,16 @@ const {
 } = useProfilePhoto()
 
 const {
-	form_state: personal_form_state,
-	has_changes,
+	form_state,
 	field_errors,
-	is_updating: name_is_submitting,
 	dynamic_profile_fields,
+	has_changes,
 
-	loadPersonalForm,
-	submitPersonalForm
-} = usePersonalForm();
+	submitPersonalForm,
+
+	/** Loaders */
+	is_updating,
+} = useProfilePersonal()
 
 const {
 	email,
@@ -66,10 +67,6 @@ const {
 	resendOtp,
 	closeOtpModal,
 } = useChangeEmailForm()
-
-onMounted(() => {
-	loadPersonalForm()
-})
 </script>
 
 <template>
@@ -175,7 +172,7 @@ onMounted(() => {
 			<div class="account-profile-grid" data-testid="account-profile-form">
 				<div v-for="field in dynamic_profile_fields" :key="field.id">
 					<UiFormField
-						:error="field_errors[field.field_key]"
+						:error="field_errors[`fields.${field.field_key}`]"
 						:label="field.is_required
 							? field.field_label
 							: `${field.field_label} (${t('account.profile.optional')})`"
@@ -192,8 +189,8 @@ onMounted(() => {
 						<template #default="{ inputId, describedBy }">
 							<UiInput
 								:id="inputId"
-								v-model="personal_form_state.fields[field.field_key]"
-								:state="field_errors[field.field_key] ? 'error' : 'default'"
+								v-model="form_state.fields[field.field_key]"
+								:state="field_errors[`fields.${field.field_key}`] ? 'error' : 'default'"
 								type="text"
 								:aria-describedby="describedBy || undefined"
 								:data-testid="`account-profile-${field.field_key}`"
@@ -243,7 +240,7 @@ onMounted(() => {
 					variant="filled"
 					tone="neutral"
 					size="md"
-					:disabled="!has_changes || name_is_submitting"
+					:disabled="!has_changes || is_updating"
 					data-testid="account-profile-save-button"
 					@click="submitPersonalForm"
 				>

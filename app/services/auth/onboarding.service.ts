@@ -1,21 +1,19 @@
 import { useAuthOnboardingStore } from '~/stores/auth/onboarding.store';
 import { useUsersStore } from '~/stores/users/users.store';
-import { useProfileFieldsStore } from '~/stores/users/profile_field';
 import {
 	sendEmailChangeOTP,
 	verifyEmailChangeOtp,
 } from '../profile/changeEmail.service';
 import { fetchPersonalFieldDefinitions } from '../profile/personalForm.service';
+import { ensureDynamicFields } from '../profile-dynamic-fields/dynamic-fields.service';
 
 export function useAuthOnboardingService() {
 	const onboarding_store = useAuthOnboardingStore();
 	const users_store = useUsersStore();
-	const profile_fields_store = useProfileFieldsStore();
 
 	async function getDynamicProfileFields() {
 		const response = await fetchPersonalFieldDefinitions();
-		const fields = Array.isArray(response.data) ? response.data : [];
-		profile_fields_store.setDynamicProfileFields(fields);
+		await ensureDynamicFields()
 		return response;
 	}
 

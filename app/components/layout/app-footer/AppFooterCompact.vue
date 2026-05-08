@@ -15,6 +15,7 @@ const { year } = toRefs(component_props);
 	<div class="home-footer-compact" data-testid="app-footer-compact-container">
 		<div class="home-footer-compact-left" data-testid="app-footer-compact-left">
 			<span class="home-footer-compact-copy">{{ t('layout.footer.copyright') }} {{ year }}</span>
+			<span>{{ t('layout.footer.sales') }}</span>
 			<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
 			<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
 		</div>

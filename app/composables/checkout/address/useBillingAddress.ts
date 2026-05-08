@@ -4,7 +4,7 @@ import { useAddressBookListCheckoutContext } from "./context/addressBookListChec
 import { loadAddresses } from "~/services/user-address/user-address.service";
 import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
-import { ensureDynamicFields } from "~/services/dynamic-fields/dynamic-fields.service";
+import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 
 export function useBillingAddress() {
 

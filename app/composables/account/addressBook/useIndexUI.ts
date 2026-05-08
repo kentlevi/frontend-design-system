@@ -1,7 +1,7 @@
 import { loadAddresses } from "~/services/user-address/user-address.service";
 import { useUserAddressFormStateContext } from "./context/useUserAddressFormStateContext";
 import { useUserAddressUIContext } from "./context/useUserAddressUIContext";
-import { ensureDynamicFields } from "~/services/dynamic-fields/dynamic-fields.service";
+import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 import { useUserAddressDataContext } from "./context/useUserAddressDataContext";
 
 export function useIndexUI() {

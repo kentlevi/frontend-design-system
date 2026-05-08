@@ -7,10 +7,11 @@ withDefaults(defineProps<{
 	loading: false,
 });
 
-const { t } = useI18n();
-
 const {
-	form_state: preference_form_state,
+	translate,
+
+	preference_form_state,
+
 	updatePreferenceField
 } = usePreferenceForm();
 </script>
@@ -23,8 +24,8 @@ const {
 			<UiSkeleton width="84%" height="20px" border-radius="8px" />
 		</div>
 		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ t('account.profile.settings') }}</h2>
-			<p class="account-profile-section-description">{{ t('account.profile.settingsDesc') }}</p>
+			<h2 class="account-profile-section-title">{{ translate('account.profile.settings') }}</h2>
+			<p class="account-profile-section-description">{{ translate('account.profile.settingsDesc') }}</p>
 		</div>
 		<div v-if="loading" class="account-profile-settings" data-testid="account-profile-settings-skeleton">
 			<div class="account-profile-setting-row">
@@ -45,8 +46,8 @@ const {
 		<div v-else class="account-profile-settings" data-testid="account-profile-settings">
 			<div class="account-profile-setting-row" data-testid="account-profile-setting-promotions">
 				<div class="account-profile-setting-copy">
-					<h3 class="account-profile-setting-title">{{ t('account.profile.promotions') }}</h3>
-					<p class="account-profile-muted">{{ t('account.profile.promotionsDesc') }}</p>
+					<h3 class="account-profile-setting-title">{{ translate('account.profile.promotions') }}</h3>
+					<p class="account-profile-muted">{{ translate('account.profile.promotionsDesc') }}</p>
 				</div>
 				<label class="account-profile-switch">
 					<input
@@ -62,8 +63,8 @@ const {
 
 			<div class="account-profile-setting-row" data-testid="account-profile-setting-reviews">
 				<div class="account-profile-setting-copy">
-					<h3 class="account-profile-setting-title">{{ t('account.profile.reviews') }}</h3>
-					<p class="account-profile-muted">{{ t('account.profile.reviewsDesc') }}</p>
+					<h3 class="account-profile-setting-title">{{ translate('account.profile.reviews') }}</h3>
+					<p class="account-profile-muted">{{ translate('account.profile.reviewsDesc') }}</p>
 				</div>
 				<label class="account-profile-switch">
 					<input

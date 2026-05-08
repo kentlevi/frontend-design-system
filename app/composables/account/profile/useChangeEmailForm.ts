@@ -12,8 +12,7 @@ import {
 } from '~/utils/response/response'
 
 export function useChangeEmailForm() {
-	const { t } = useI18n()
-	const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+	const { t: translate } = useI18n()
 
 	/** OTP Cooldown handler */
 	const {
@@ -104,15 +103,6 @@ export function useChangeEmailForm() {
 		clearResponseState()
 		resetRequestState()
 
-		if (!next_email) {
-			email_change_error.value = t('account.profile.emailChange.enterNewEmail')
-			return
-		}
-		if (!isValidEmail(next_email)) {
-			email_change_error.value = t('account.profile.emailChange.invalidEmail')
-			return
-		}
-
 		closeEmailChangeModal(false)
 
 		startRequestOverlay()
@@ -151,7 +141,7 @@ export function useChangeEmailForm() {
 			 */
 			openEmailChangeModal()
 		} catch (_error: unknown) {
-			error_message.value = t('account.profile.emailChange.requestFailed')
+			error_message.value = translate('account.profile.emailChange.requestFailed')
 			email_change_error.value = error_message.value
 		} finally {
 			loading_overlay_store.stopLoading('request_email_change')
@@ -205,7 +195,7 @@ export function useChangeEmailForm() {
 			 */
 			openOtpModal()
 		} catch (_error: unknown) {
-			error_message.value = t('account.profile.emailChange.verifyFailed')
+			error_message.value = translate('account.profile.emailChange.verifyFailed')
 			email_change_otp_error.value = error_message.value
 		} finally {
 			loading_overlay_store.stopLoading('verify_email_change')
@@ -242,7 +232,7 @@ export function useChangeEmailForm() {
 
 			applyResponseError(response, 'otp', email_change_otp_error)
 		} catch (_error: unknown) {
-			error_message.value = t('account.profile.emailChange.resendFailed')
+			error_message.value = translate('account.profile.emailChange.resendFailed')
 			email_change_otp_error.value = error_message.value
 		}
 	}
@@ -365,8 +355,8 @@ export function useChangeEmailForm() {
 	 */
 	function startRequestOverlay() {
 		loading_overlay_store.startLoading('request_email_change', {
-			label: t('account.profile.emailChange.verifyingTitle'),
-			description: t('account.profile.emailChange.verifyingDescription'),
+			label: translate('account.profile.emailChange.verifyingTitle'),
+			description: translate('account.profile.emailChange.verifyingDescription'),
 			showCopy: true,
 			testId: 'account-profile-email-change-page-overlay',
 			position: 'fixed'
@@ -378,8 +368,8 @@ export function useChangeEmailForm() {
 	 */
 	function startVerifyOverlay() {
 		loading_overlay_store.startLoading('verify_email_change', {
-			label: t('account.profile.emailChange.verifyingTitle'),
-			description: t('account.profile.emailChange.verifyingDescription'),
+			label: translate('account.profile.emailChange.verifyingTitle'),
+			description: translate('account.profile.emailChange.verifyingDescription'),
 			showCopy: true,
 			testId: 'account-profile-email-change-page-overlay',
 			position: 'fixed'

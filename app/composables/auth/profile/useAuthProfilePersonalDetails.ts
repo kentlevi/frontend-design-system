@@ -4,7 +4,6 @@ import { deleteAvatar, saveAvatar } from '~/services/profile/avatar.service';
 import { accountProfileDefaults } from '~/data/account/profile';
 import { useAuthOnboardingStore } from '~/stores/auth/onboarding.store';
 import { useUsersStore } from '~/stores/users/users.store';
-import { useProfileFieldsStore } from '~/stores/users/profile_field';
 import { processAvatarFile } from '~/utils/avatar/processAvatar';
 import {
 	getAccountInitials,
@@ -12,6 +11,7 @@ import {
 } from '~/utils/account/accountProfile';
 import { isValidImage } from '~/utils/file/file';
 import { uploadFileToPresignedUrl } from '~/utils/file/presignedUrl';
+import { useProfileFieldsStore } from '~/stores/users/profile_field.store';
 
 function getNameFieldKey(
 	dynamic_profile_fields: Array<{ field_key: string }>,

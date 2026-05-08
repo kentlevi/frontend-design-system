@@ -12,6 +12,8 @@ const error_message = ref('')
 export function usePreferenceForm() {
 	const user_store = useUsersStore()
 
+	const { t: translate } = useI18n();
+
 	async function loadPreferences() {
 		if (pending_request.value) {
 			return pending_request.value
@@ -75,14 +77,13 @@ export function usePreferenceForm() {
 		}
 	}
 
+	loadPreferences()
+
 	return {
-		form_state,
-		is_loading,
-		is_loaded,
-		is_submitting,
-		error_message,
-		preference: computed(() => user_store.state.preference),
-		loadPreferences,
+		translate,
+
+		preference_form_state: form_state,
+
 		updatePreferenceField
 	}
 }
