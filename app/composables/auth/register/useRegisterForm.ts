@@ -459,6 +459,10 @@ export function useRegisterForm() {
 		verification_error.value = '';
 
 		try {
+			if(!verification_code.value){
+				return verification_error.value = t('auth.guestVerification.codeRequired')
+			}
+
 			const { submitRegisterVerificationHandler } = useRegisterUser();
 			const response = await submitRegisterVerificationHandler({
 				email: verification_email.value.trim() || null,

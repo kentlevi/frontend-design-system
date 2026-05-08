@@ -194,11 +194,8 @@ export function useAppHeaderAccount() {
 		closeAccountMenu();
 		await nextTick();
 
+		window.localStorage.removeItem(HOME_WELCOME_POPOVER_PENDING_KEY);
 		await logoutUser();
-
-		if (import.meta.client) {
-			window.localStorage.removeItem(HOME_WELCOME_POPOVER_PENDING_KEY);
-		}
 	}
 
 	function handleAvatarUpdated(event: Event) {
