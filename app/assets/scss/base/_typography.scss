@@ -1,64 +1,117 @@
 @use '../foundation/typography/semantic' as type;
 
 h1 {
-    font-size: type.$heading-1;
-    line-height: type.$heading-1-line;
+	font-size: 40px;
+	line-height: 56px;
 }
 
 h2 {
-    font-size: type.$heading-2;
-    line-height: type.$heading-2-line;
+	font-size: 36px;
+	line-height: 52px;
 }
 
 h3 {
-    font-size: type.$heading-3;
-    line-height: type.$heading-3-line;
+	font-size: 32px;
+	line-height: 48px;
 }
 
 h4 {
-    font-size: type.$heading-4;
-    line-height: type.$heading-4-line;
+	font-size: 28px;
+	line-height: 40px;
 }
 
 h5 {
-    font-size: type.$heading-5;
-    line-height: type.$heading-5-line;
+	font-size: 24px;
+	line-height: 36px;
 }
 
 h6 {
-    font-size: type.$heading-6;
-    line-height: type.$heading-6-line;
+	font-size: 20px;
+	line-height: 28px;
 }
 
 p {
-    font-size: type.$body-base;
-    line-height: type.$body-base-line;
+	font-size: 14px;
+	line-height: 24px;
 }
 
 .ui-text {
-    color: inherit;
+	color: inherit;
 }
 
 .ui-heading {
-    color: inherit;
+	color: inherit;
 }
 
-.font-thin { font-weight: 100; }
-.font-extra-light { font-weight: 200; }
-.font-light { font-weight: 300; }
-.font-regular { font-weight: var(--font-weight-regular); }
-.font-medium { font-weight: var(--font-weight-medium); }
-.font-semi-bold { font-weight: var(--font-weight-semibold); }
-.font-bold { font-weight: var(--font-weight-bold); }
-.font-extra-bold { font-weight: 800; }
-.font-black { font-weight: 900; }
+.font-thin {
+	font-weight: 100;
+}
 
-.text-xlarge { font-size: var(--type-size-300); line-height: var(--type-line-300); }
-.text-large { font-size: var(--type-size-200); line-height: var(--type-line-200); }
-.text-medium { font-size: var(--type-size-100); line-height: var(--type-line-100); }
-.text-small { font-size: 12px; line-height: 20px; }
-.text-xsmall { font-size: 10px; line-height: 16px; }
+.font-extra-light {
+	font-weight: 200;
+}
 
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-.text-center { text-align: center; }
+.font-light {
+	font-weight: 300;
+}
+
+.font-regular {
+	font-weight: 400;
+}
+
+.font-medium {
+	font-weight: 500;
+}
+
+.font-semi-bold {
+	font-weight: 600;
+}
+
+.font-bold {
+	font-weight: 700;
+}
+
+.font-extra-bold {
+	font-weight: 800;
+}
+
+.font-black {
+	font-weight: 900;
+}
+
+.text-xlarge {
+	font-size: 18px;
+	line-height: 32px;
+}
+
+.text-large {
+	font-size: 16px;
+	line-height: 28px;
+}
+
+.text-medium {
+	font-size: 14px;
+	line-height: 24px;
+}
+
+.text-small {
+	font-size: 12px;
+	line-height: 20px;
+}
+
+.text-xsmall {
+	font-size: 10px;
+	line-height: 16px;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.text-center {
+	text-align: center;
+}

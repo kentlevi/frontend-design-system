@@ -1,7 +1,7 @@
 <template>
-	<UiLinearWrapper :gap="24">
-		<FeaturesAccountOrdersContentSide />
-		<FeaturesAccountOrdersContentMain />
+	<UiLinearWrapper class="orders-content" :gap="24" align="flex-start">
+		<FeaturesAccountOrdersContentSide class="orders-side" />
+		<FeaturesAccountOrdersContentMain class="orders-main" />
 	</UiLinearWrapper>
 </template>
 
@@ -9,5 +9,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+.orders-side {
+	width: 342px;
+}
 </style>

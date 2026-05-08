@@ -12,7 +12,7 @@ withDefaults(defineProps<{
 <template>
 	<section class="account-page" data-testid="account-orders-page">
 		<AccountShellSection :embedded="embedded" active-tab="orders">
-			<UiLinearWrapper class="account-page-content" data-testid="account-page-content" direction="column">
+			<UiLinearWrapper class="account-page-content" data-testid="account-page-content" direction="column" :gap="24">
 				<FeaturesAccountOrdersHeader />
 				<FeaturesAccountOrdersContent />
 			</UiLinearWrapper>
