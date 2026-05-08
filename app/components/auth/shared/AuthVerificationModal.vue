@@ -260,7 +260,7 @@ const formatted_error_parts = computed(() => {
 <style scoped lang="scss">
 .auth-verification-modal {
     position: relative;
-    margin: calc(var(--ui-modal-padding, 40px) * -1);
+    margin: calc(var(--ui-modal-padding, 24px) * -1);
     padding: var(--ui-modal-padding, 40px);
     border-radius: 14px;
     overflow: hidden;
