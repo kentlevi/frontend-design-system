@@ -11,6 +11,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { useUsersStore } from '~/stores/users/users.store';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 import { logoutUser } from '~/services/auth/auth.service';
+import { HOME_WELCOME_POPOVER_PENDING_KEY } from '~/data/home/onboarding';
 
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
 const ACCOUNT_AVATAR_UPDATED_EVENT = 'account-avatar-updated';
@@ -194,6 +195,10 @@ export function useAppHeaderAccount() {
 		await nextTick();
 
 		await logoutUser();
+
+		if (import.meta.client) {
+			window.localStorage.removeItem(HOME_WELCOME_POPOVER_PENDING_KEY);
+		}
 	}
 
 	function handleAvatarUpdated(event: Event) {
