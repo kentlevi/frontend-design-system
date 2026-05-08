@@ -23,7 +23,8 @@ const { year, isProduct: is_product } = toRefs(component_props);
 				{{ t('layout.footer.meta2') }}
 			</p>
 			<p class="home-footer-copy">
-				{{ t('layout.footer.copyright') }} {{ year }}
+				<span>{{ t('layout.footer.copyright') }} {{ year }}</span>
+				<span>{{ t('layout.footer.sales') }}</span>
 				<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
 				<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
 			</p>

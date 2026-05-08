@@ -2,13 +2,14 @@
     "layout": {
         "footer": {
             "brand": "MUSTICKER",
-            "copyright": "© GLOPHICS Corp.",
+            "copyright": "ⓒ GLOPHICS Corp.",
             "terms": "Terms of Use",
             "privacy": "Privacy Policy",
             "inquiry": "1:1 Inquiry",
             "faq": "Frequently Asked Questions",
-            "meta1": "Business Registration Number-. 877-88-03313 Mail-order Business Registration Number: NO. 2025-Busan Haeundae-000",
+            "meta1": "Business Registration Number: 877-88-03313  Plans to register as a mail-order business",
             "meta2": "CEO: Yeo II-Seok Address: Unit 1014, Ocean Tower, 203 Haeundae Beach Road, Haeundae-gu, Busan Metropolitan City",
+            "sales": "Sales: sales{'@'}musticker.com",
             "hours": "9:00 AM to 6:00 PM",
             "closed": "(Closed on Saturdays and Holidays)"
         }
