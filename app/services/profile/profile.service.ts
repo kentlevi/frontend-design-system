@@ -15,8 +15,6 @@ export async function editPersonalDetails(
 		const response = await updatePersonalForm(payload)
 
 		return response
-	} catch (_error: unknown) {
-		console.log(_error)
 	} finally {
 		store.stopLoading('update', 'dynamic_fields')
 	}

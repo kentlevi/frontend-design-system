@@ -18,6 +18,12 @@ export function useProfilePersonal() {
 
 
 	/**
+     * Helpers
+     */
+	const { t: translate } = useI18n()
+
+
+	/**
      * Computed
      */
 	const user_profile = computed(() => user_store.state.profile)
@@ -83,6 +89,14 @@ export function useProfilePersonal() {
 
 			/** Handle validation errors from backend */
 			setFieldErrorsFromResponse(response?.data)
+		} catch {
+			toast_store.showToastWithTimer({
+				title: translate('account.profile.profileUpateFailedTitle'),
+				message: translate('account.profile.updateTimeoutMessage'),
+				tone: 'error',
+				dismissible: true,
+				variant: 'default',
+			})
 		} finally {
 			loading_overlay_store.stopLoading('update_personal')
 		}

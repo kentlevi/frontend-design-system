@@ -5,56 +5,37 @@ import { isValidImage } from "~/utils/file/file";
 import { uploadFileToPresignedUrl } from "~/utils/file/presignedUrl";
 
 export function useProfilePhoto() {
-	const { t } = useI18n()
-	const MAX_PROFILE_PHOTO_BYTES = 3 * 1024 * 1024;
 
-	/** State */
+	/**
+     * Stores
+     */
 	const user_store = useUsersStore()
 	const loading_overlay_store = useLoadingOverlayStore()
 	const toast_store = useToastStore()
 
-	const is_delete_photo_modal_open = ref(false)
 
+	/**
+     * Helpers
+     */
+	const { t: translate } = useI18n()
+
+
+	/**
+     * Variables
+     */
+	const is_delete_photo_modal_open = ref(false)
 	const file_input = ref<HTMLInputElement | null>(null);
 	const error = ref('')
+
+
+	/**
+     * Functions
+     */
 
 	/** Opens the native file picker */
 	function openFilePicker() {
 		resetPhotoInput()
 		file_input.value?.click();
-	}
-
-	function getPhotoUploadErrorMessageKey(error: unknown) {
-		const error_name =
-			error instanceof Error
-				? error.name.toLowerCase()
-				: String((error as { name?: string } | null)?.name ?? '').toLowerCase()
-		const error_message =
-			error instanceof Error
-				? error.message.toLowerCase()
-				: String((error as { message?: string } | null)?.message ?? error ?? '').toLowerCase()
-
-		if (
-			error_name.includes('abort')
-			|| error_message.includes('timed out')
-			|| error_message.includes('timeout')
-			|| error_message.includes('408')
-		) {
-			return 'account.profile.photoUploadTimedOutMessage'
-		}
-
-		if (
-			error_name.includes('network')
-			|| error_message.includes('network')
-			|| error_message.includes('failed to fetch')
-			|| error_message.includes('fetcherror')
-			|| error_message.includes('load failed')
-			|| error_message.includes('offline')
-		) {
-			return 'account.profile.photoUploadNetworkIssueMessage'
-		}
-
-		return 'account.profile.photoUploadFailedMessage'
 	}
 
 	/**
@@ -65,6 +46,8 @@ export function useProfilePhoto() {
      * Upload to S3
      */
 	async function onFilePicked(event: Event) {
+		const MAX_PROFILE_PHOTO_BYTES = 3 * 1024 * 1024;
+
 		/** Get the input element from the emitted event */
 		const input = event.target as HTMLInputElement;
 
@@ -77,11 +60,12 @@ export function useProfilePhoto() {
 		if (!file) return;
 
 		if (!isValidImage(file)) {
-			error.value = t('account.profile.invalidFileType')
+			error.value = translate('account.profile.invalidFileType')
 			return;
 		}
+
 		if (file.size > MAX_PROFILE_PHOTO_BYTES) {
-			error.value = t('account.profile.photoTooLarge')
+			error.value = translate('account.profile.photoTooLarge')
 			return;
 		}
 
@@ -109,10 +93,10 @@ export function useProfilePhoto() {
 			user_store.setProfileField('file_name', file_name)
 
 			toast_store.handleApiResponse(response)
-		} catch (error) {
+		} catch {
 			toast_store.showToastWithTimer({
-				title: t('account.profile.photoUploadFailedTitle'),
-				message: t(getPhotoUploadErrorMessageKey(error)),
+				title: translate('account.profile.photoUploadFailedTitle'),
+				message: translate('account.profile.updateTimeoutMessage'),
 				tone: 'error',
 				dismissible: true,
 				variant: 'default',
@@ -133,8 +117,8 @@ export function useProfilePhoto() {
 			toast_store.handleApiResponse(response)
 		} catch {
 			toast_store.showToastWithTimer({
-				title: t('account.profile.photoDeleteFailedTitle'),
-				message: t('account.profile.photoDeleteFailedMessage'),
+				title: translate('account.profile.photoUploadFailedTitle'),
+				message: translate('account.profile.updateTimeoutMessage'),
 				tone: 'error',
 				dismissible: true,
 				variant: 'default',
@@ -151,8 +135,6 @@ export function useProfilePhoto() {
 			file_input.value.value = ''
 		}
 	}
-
-
 
 	/** Delete Photo Modal */
 	function openDeletePhotoModal() {
