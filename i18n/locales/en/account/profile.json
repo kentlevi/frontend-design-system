@@ -73,7 +73,7 @@
         "enterNewEmail": "Please enter your new email address.",
         "invalidEmail": "Email Format is Invalid.",
         "verifyingTitle": "Verifying Your Information...",
-        "verifyingDescription": "Almost there! We're making sure everything is just right.",
+        "verifyingDescription": "Almost there! We’re making sure everything is just right.",
         "requestFailed": "Failed to send OTP.",
         "verifyFailed": "Failed to verify.",
         "resendFailed": "Failed to resend."
