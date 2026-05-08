@@ -1,20 +1,17 @@
-export const tooltipSides = ['right', 'left', 'top', 'bottom'] as const;
-export const tooltipTones = [
-    'default',
-    'danger',
-    'primary',
-    'accent',
-    'success',
-    'warning',
-    'neutral',
-] as const;
+export const tooltip_sides = ['right', 'left', 'top', 'bottom'] as const;
+export const tooltipSides = tooltip_sides;
+export const tooltip_alignments = ['start', 'center', 'end'] as const;
+export const tooltip_tones = ['default', 'neutral', 'danger'] as const;
+export const tooltipTones = tooltip_tones;
 
-export type TooltipSide = (typeof tooltipSides)[number];
-export type TooltipTone = (typeof tooltipTones)[number];
+export type TooltipSide = (typeof tooltip_sides)[number];
+export type TooltipAlignment = (typeof tooltip_alignments)[number];
+export type TooltipTone = (typeof tooltip_tones)[number];
 
 export interface UiTooltipProps {
 	open?: boolean;
 	side?: TooltipSide;
+	align?: TooltipAlignment;
 	mobileSide?: TooltipSide | null;
 	tone?: TooltipTone;
 	offset?: number | string;
@@ -23,11 +20,12 @@ export interface UiTooltipProps {
 	contentTestid?: string;
 }
 
-export const uiTooltipDefaults: Required<
-	Pick<UiTooltipProps, 'open' | 'side' | 'mobileSide' | 'tone' | 'offset' | 'slideDistance' | 'role' | 'contentTestid'>
+export const ui_tooltip_defaults: Required<
+	Pick<UiTooltipProps, 'open' | 'side' | 'align' | 'mobileSide' | 'tone' | 'offset' | 'slideDistance' | 'role' | 'contentTestid'>
 > = {
 	open: false,
 	side: 'right',
+	align: 'center',
 	mobileSide: null,
 	tone: 'default',
 	offset: 10,
@@ -35,3 +33,4 @@ export const uiTooltipDefaults: Required<
 	role: 'status',
 	contentTestid: '',
 };
+export const uiTooltipDefaults = ui_tooltip_defaults;

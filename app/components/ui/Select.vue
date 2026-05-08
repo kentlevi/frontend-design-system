@@ -1,220 +1,314 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import type { StyleValue } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { ButtonSize } from '~/data/ui/buttons';
+import {
+	useControlTestId,
+	useRootAttrs,
+} from '~/helpers/ui/uiControlAttrs.helper';
 
 type SelectValue = string | number;
 
 type SelectOption = {
-    label: string;
-    value: SelectValue;
-    description?: string;
+	label: string;
+	value: SelectValue;
+	description?: string;
+	style?: Record<string, string | number>;
 };
 
+type SelectSizeValue = ButtonSize | number | `${number}`;
+const select_sizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
+
 defineOptions({
-    inheritAttrs: false,
+	inheritAttrs: false,
 });
 
 const props = withDefaults(
-    defineProps<{
-        modelValue?: SelectValue | null;
-        options?: SelectOption[];
-        placeholder?: string;
-        searchable?: boolean;
-        disabled?: boolean;
-        emptyText?: string;
-        iconSize?: number;
-        iconFamily?: 'strong' | 'regular';
-    }>(),
-    {
-        modelValue: null,
-        options: () => [],
-        placeholder: 'Select option',
-        searchable: false,
-        disabled: false,
-        emptyText: 'No results found.',
-        iconSize: 24,
-        iconFamily: 'regular',
-    }
+	defineProps<{
+		modelValue?: SelectValue | null;
+		highlightedValueWhenEmpty?: SelectValue | null;
+		options?: SelectOption[];
+		size?: SelectSizeValue;
+		placeholder?: string;
+		searchable?: boolean;
+		disabled?: boolean;
+		emptyText?: string;
+		iconSize?: number;
+		iconFamily?: 'strong' | 'regular';
+		triggerClass?: string;
+		menuClass?: string;
+		optionClass?: string;
+		searchInputClass?: string;
+		pinLastOption?: boolean;
+	}>(),
+	{
+		modelValue: null,
+		highlightedValueWhenEmpty: null,
+		options: () => [],
+		size: 'md',
+		placeholder: 'Select option',
+		searchable: false,
+		disabled: false,
+		emptyText: 'No results found.',
+		iconSize: 24,
+		iconFamily: 'regular',
+		triggerClass: '',
+		menuClass: '',
+		optionClass: '',
+		searchInputClass: '',
+		pinLastOption: false,
+	}
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: SelectValue): void;
+	(e: 'update:modelValue', value: SelectValue): void;
 }>();
 const attrs = useAttrs();
 
-const rootRef = ref<HTMLElement | null>(null);
-const searchRef = ref<HTMLInputElement | null>(null);
-const isOpen = ref(false);
+const root_ref = ref<HTMLElement | null>(null);
+const search_ref = ref<HTMLInputElement | null>(null);
+const options_ref = ref<HTMLElement | null>(null);
+const is_open = ref(false);
 const query = ref('');
 const SUPPRESS_TOGGLE_MS = 200;
-let suppressToggleUntil = 0;
+let suppress_toggle_until = 0;
 
 const selected_option = computed(() =>
-    props.options.find((item) => item.value === props.modelValue) ?? null
+	props.options.find((item) => item.value === props.modelValue) ?? null
 );
+const highlighted_option_value = computed<SelectValue | null>(() => {
+	if (props.modelValue !== null && props.modelValue !== '') {
+		return props.modelValue
+	}
+
+	return props.highlightedValueWhenEmpty
+})
 
 const filtered_options = computed(() => {
-    if (!props.searchable) return props.options;
+	if (!props.searchable) return props.options;
 
-    const keyword = query.value.trim().toLowerCase();
-    if (!keyword) return props.options;
+	const keyword = query.value.trim().toLowerCase();
+	if (!keyword) return props.options;
 
-    return props.options.filter((item) => {
-        const labelMatched = item.label.toLowerCase().includes(keyword);
-        const descMatched = item.description
-            ? item.description.toLowerCase().includes(keyword)
-            : false;
+	return props.options.filter((item) => {
+		const labelMatched = item.label.toLowerCase().includes(keyword);
+		const descMatched = item.description
+			? item.description.toLowerCase().includes(keyword)
+			: false;
 
-        return labelMatched || descMatched;
-    });
+		return labelMatched || descMatched;
+	});
+});
+
+const scrollable_options = computed(() => {
+	if (!props.pinLastOption || filtered_options.value.length === 0) {
+		return filtered_options.value;
+	}
+
+	return filtered_options.value.slice(0, -1);
+});
+
+const pinned_option = computed(() => {
+	if (!props.pinLastOption || filtered_options.value.length === 0) {
+		return null;
+	}
+
+	return filtered_options.value[filtered_options.value.length - 1] ?? null;
 });
 
 const trigger_icon_name = computed(() =>
-    props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
+	props.iconFamily === 'regular' ? 'regular-angle-down' : 'strong-angle-down'
 );
-const test_id = computed(() => String(attrs['data-testid'] || '').trim());
-const root_attrs = computed(() => {
-    const { class: className, style, 'data-testid': _testId } = attrs;
-    return {
-        class: className,
-        style: style as StyleValue,
-        ...(test_id.value ? { 'data-testid': test_id.value } : {}),
-    };
+const trigger_style = computed<Record<string, string> | undefined>(() => {
+	let numeric_size: number | null = null;
+	if (typeof props.size === 'number') {
+		numeric_size = props.size;
+	} else if (typeof props.size === 'string' && !select_sizes.has(props.size as ButtonSize)) {
+		const parsed = Number(props.size);
+		if (Number.isFinite(parsed)) numeric_size = parsed;
+	}
+
+	if (!numeric_size) return undefined;
+	return {
+		height: `${numeric_size}px`,
+	};
 });
+const test_id = useControlTestId(attrs);
+const root_attrs = useRootAttrs(attrs, test_id);
 
 function closeMenu() {
-    isOpen.value = false;
-    query.value = '';
+	is_open.value = false;
+	query.value = '';
 }
 
-function openMenu() {
-    if (props.disabled) return;
-    isOpen.value = true;
-    if (props.searchable) {
-        requestAnimationFrame(() => searchRef.value?.focus());
-    }
+function focusSelectedOption(scroll_only = false) {
+	const options_element = options_ref.value;
+	const selected_option_element = root_ref.value?.querySelector<HTMLElement>('.ui-select-option.is-selected');
+	const fallback_option_element = root_ref.value?.querySelector<HTMLElement>('.ui-select-option');
+	const target_option_element = selected_option_element || fallback_option_element;
+	if (!target_option_element) return;
+
+	if (options_element?.contains(target_option_element)) {
+		options_element.scrollTop = target_option_element.offsetTop - options_element.offsetTop;
+	}
+
+	if (!scroll_only) {
+		target_option_element.focus();
+	}
+}
+
+async function openMenu() {
+	if (props.disabled) return;
+	is_open.value = true;
+	await nextTick();
+	if (props.searchable) {
+		requestAnimationFrame(() => {
+			search_ref.value?.focus();
+			focusSelectedOption(true);
+		});
+		return;
+	}
+
+	requestAnimationFrame(() => focusSelectedOption(props.pinLastOption));
 }
 
 function toggleMenu() {
-    if (Date.now() < suppressToggleUntil) {
-        return;
-    }
-    if (isOpen.value) {
-        closeMenu();
-        return;
-    }
+	if (Date.now() < suppress_toggle_until) {
+		return;
+	}
+	if (is_open.value) {
+		closeMenu();
+		return;
+	}
 
-    openMenu();
+	openMenu();
 }
 
 function selectOption(option: SelectOption) {
-    emit('update:modelValue', option.value);
-    closeMenu();
+	emit('update:modelValue', option.value);
+	closeMenu();
 }
 
 function handleOutsidePointerDown(event: PointerEvent) {
-    const target = event.target as Node | null;
-    if (!target) return;
-    if (rootRef.value?.contains(target)) return;
-    if (!isOpen.value) return;
+	const target = event.target as Node | null;
+	if (!target) return;
+	if (root_ref.value?.contains(target)) return;
+	if (!is_open.value) return;
 
-    closeMenu();
-    suppressToggleUntil = Date.now() + SUPPRESS_TOGGLE_MS;
+	closeMenu();
+	suppress_toggle_until = Date.now() + SUPPRESS_TOGGLE_MS;
 }
 
 function handleWindowKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-        closeMenu();
-    }
+	if (event.key === 'Escape') {
+		closeMenu();
+	}
 }
 
 onMounted(() => {
-    window.addEventListener('pointerdown', handleOutsidePointerDown, true);
-    window.addEventListener('keydown', handleWindowKeydown);
+	window.addEventListener('pointerdown', handleOutsidePointerDown, true);
+	window.addEventListener('keydown', handleWindowKeydown);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('pointerdown', handleOutsidePointerDown, true);
-    window.removeEventListener('keydown', handleWindowKeydown);
+	window.removeEventListener('pointerdown', handleOutsidePointerDown, true);
+	window.removeEventListener('keydown', handleWindowKeydown);
 });
 </script>
 
 <template>
-    <div
-        v-bind="root_attrs"
-        ref="rootRef"
-        class="ui-select"
-        :data-open="isOpen || null"
-        :data-disabled="props.disabled || null"
-    >
-        <button
-            type="button"
-            class="ui-select-trigger"
-            :disabled="props.disabled"
-            :data-testid="test_id ? `${test_id}-trigger` : undefined"
-            @click="toggleMenu"
-        >
-            <span
-                v-if="selected_option"
-                class="ui-select-value"
-            >
-                {{ selected_option.label }}
-            </span>
-            <span v-else class="ui-select-placeholder">{{ props.placeholder }}</span>
+	<div
+		v-bind="root_attrs"
+		ref="root_ref"
+		class="ui-select"
+		:data-open="is_open || null"
+		:data-disabled="props.disabled || null"
+		:data-size="props.size"
+	>
+		<button
+			type="button"
+			:class="['ui-select-trigger', props.triggerClass]"
+			:disabled="props.disabled"
+			:data-testid="test_id ? `${test_id}-trigger` : undefined"
+			:style="trigger_style"
+			@click="toggleMenu"
+		>
+			<span
+				v-if="selected_option"
+				class="ui-select-value"
+				:style="selected_option.style"
+			>
+				{{ selected_option.label }}
+			</span>
+			<span v-else class="ui-select-placeholder">{{ props.placeholder }}</span>
 
-            <UiIcon
-                :name="trigger_icon_name"
-                :size="props.iconSize"
-                color="var(--text-secondary)"
-                class="ui-select-trigger-icon"
-                :class="{ 'is-open': isOpen }"
-            />
-        </button>
+			<UiIcon
+				:name="trigger_icon_name"
+				:size="props.iconSize"
+				color="var(--gray-90)"
+				class="ui-select-trigger-icon"
+				:class="{ 'is-open': is_open }"
+			/>
+		</button>
 
-        <Transition name="ui-select-menu">
-            <div v-if="isOpen" class="ui-select-menu" role="listbox">
-                <div v-if="props.searchable" class="ui-select-search">
-                    <UiIcon
-                        name="strong-search"
-                        :size="14"
-                        color="var(--text-muted)"
-                    />
-                    <input
-                        ref="searchRef"
-                        v-model="query"
-                        type="text"
-                        class="ui-select-search-input"
-                        placeholder="Search..."
-                        :data-testid="test_id ? `${test_id}-search` : undefined"
-                    >
-                </div>
+		<Transition name="ui-select-menu">
+			<div v-if="is_open" :class="['ui-select-menu', props.menuClass]" role="listbox">
+				<div v-if="props.searchable" class="ui-select-search">
+					<UiIcon
+						name="strong-search"
+						:size="14"
+						color="var(--text-muted)"
+					/>
+					<input
+						ref="search_ref"
+						v-model="query"
+						type="text"
+						:class="['ui-select-search-input', props.searchInputClass]"
+						placeholder="Search..."
+						:data-testid="test_id ? `${test_id}-search` : undefined"
+					>
+				</div>
 
-                <div class="ui-select-options">
-                <button
-                    v-for="option in filtered_options"
-                    :key="option.value"
-                    type="button"
-                    class="ui-select-option"
-                        :class="{
-                            'is-selected': option.value === props.modelValue,
-                        }"
-                        @mousedown.prevent="selectOption(option)"
-                    >
-                        <div class="ui-select-option-copy">
-                            <p class="ui-select-option-label">{{ option.label }}</p>
-                            <p v-if="option.description" class="ui-select-option-description">
-                                {{ option.description }}
-                            </p>
-                        </div>
-                    </button>
+				<div ref="options_ref" class="ui-select-options">
+					<button
+						v-for="option in scrollable_options"
+						:key="option.value"
+						type="button"
+						:class="['ui-select-option', props.optionClass, {
+							'is-selected': option.value === highlighted_option_value,
+						}]"
+						:tabindex="option.value === highlighted_option_value ? 0 : -1"
+						@mousedown.prevent="selectOption(option)"
+					>
+						<div class="ui-select-option-copy">
+							<p class="ui-select-option-label" :style="option.style">{{ option.label }}</p>
+							<p v-if="option.description" class="ui-select-option-description">
+								{{ option.description }}
+							</p>
+						</div>
+					</button>
 
-                    <p v-if="filtered_options.length === 0" class="ui-select-empty">
-                        {{ props.emptyText }}
-                    </p>
-                </div>
-            </div>
-        </Transition>
-    </div>
+					<p v-if="scrollable_options.length === 0 && !pinned_option" class="ui-select-empty">
+						{{ props.emptyText }}
+					</p>
+				</div>
+
+				<button
+					v-if="pinned_option"
+					type="button"
+					:class="['ui-select-option', 'ui-select-option--pinned', props.optionClass, {
+						'is-selected': pinned_option.value === highlighted_option_value,
+					}]"
+					:tabindex="pinned_option.value === highlighted_option_value ? 0 : -1"
+					@mousedown.prevent="selectOption(pinned_option)"
+				>
+					<div class="ui-select-option-copy">
+						<p class="ui-select-option-label" :style="pinned_option.style">{{ pinned_option.label }}</p>
+						<p v-if="pinned_option.description" class="ui-select-option-description">
+							{{ pinned_option.description }}
+						</p>
+					</div>
+				</button>
+			</div>
+		</Transition>
+	</div>
 </template>
-
-

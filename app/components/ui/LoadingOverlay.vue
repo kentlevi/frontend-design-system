@@ -16,11 +16,14 @@ const props = withDefaults(defineProps<{
 	testId?: string;
 	transitionName?: string;
 	position?: 'fixed' | 'absolute';
+	overlayClass?: string;
+	loaderClass?: string;
 	background?: string;
 	zIndex?: number;
 	loaderWidth?: string;
 	loaderHeight?: string;
 	animationPath?: string;
+	variant?: 'default' | 'modal';
 }>(), {
 	label: '',
 	description: '',
@@ -28,11 +31,14 @@ const props = withDefaults(defineProps<{
 	testId: '',
 	transitionName: 'ui-loading-overlay-fade',
 	position: 'fixed',
+	overlayClass: '',
+	loaderClass: '',
 	background: 'rgba(255, 255, 255, 0.64)',
-	zIndex: 320,
+	zIndex: 120,
 	loaderWidth: '104px',
 	loaderHeight: '102px',
 	animationPath: '/animations/musticker-loader.json',
+	variant: 'default',
 });
 
 const slots = useSlots();
@@ -40,17 +46,26 @@ const defaultLoaderRef = ref<HTMLElement | null>(null);
 let loaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
 
 const has_custom_loader = computed(() => Boolean(slots.default));
+const is_page_overlay = computed(() => props.position === 'fixed' && props.variant !== 'modal');
 
-const overlay_style = computed<CSSProperties>(() => ({
-	position: props.position,
-	background: props.background,
-	zIndex: props.zIndex,
-}));
+const overlay_style = computed<CSSProperties>(() => {
+	const is_modal = props.variant === 'modal';
 
-const loader_style = computed<CSSProperties>(() => ({
-	width: props.loaderWidth,
-	height: props.loaderHeight,
-}));
+	return {
+		position: is_modal ? 'absolute' : props.position,
+		background: is_modal ? 'rgba(246, 246, 248, 0.72)' : props.background,
+		zIndex: is_modal ? 5 : props.zIndex,
+	};
+});
+
+const loader_style = computed<CSSProperties>(() => {
+	const is_modal = props.variant === 'modal';
+
+	return {
+		width: is_modal ? '74px' : props.loaderWidth,
+		height: is_modal ? '74px' : props.loaderHeight,
+	};
+});
 
 function destroyLoaderAnimation() {
 	if (!loaderAnimation) return;
@@ -59,7 +74,7 @@ function destroyLoaderAnimation() {
 }
 
 function setBodyScrollLock(locked: boolean) {
-	if (typeof document === 'undefined' || props.position !== 'fixed') return;
+	if (typeof document === 'undefined' || !is_page_overlay.value) return;
 
 	const body = document.body;
 	const current_lock_count = Number(body.dataset[BODY_LOCK_COUNT_KEY] || '0');
@@ -146,17 +161,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<Teleport v-if="props.position === 'fixed'" to="body">
+	<Teleport v-if="is_page_overlay" to="body">
 		<Transition :name="props.transitionName">
 			<div
 				v-if="props.visible"
-				class="ui-loading-overlay"
+				:class="['ui-loading-overlay', props.overlayClass]"
 				:data-testid="props.testId"
 				:style="overlay_style"
 			>
 				<div class="ui-loading-overlay-stack">
 					<div
-						class="ui-loading-overlay-loader"
+						:class="['ui-loading-overlay-loader', props.loaderClass]"
 						role="status"
 						aria-live="polite"
 						:aria-label="props.label"
@@ -179,13 +194,13 @@ onBeforeUnmount(() => {
 	<Transition v-else :name="props.transitionName">
 		<div
 			v-if="props.visible"
-			class="ui-loading-overlay"
+			:class="['ui-loading-overlay', props.overlayClass]"
 			:data-testid="props.testId"
 			:style="overlay_style"
 		>
 			<div class="ui-loading-overlay-stack">
 				<div
-					class="ui-loading-overlay-loader"
+					:class="['ui-loading-overlay-loader', props.loaderClass]"
 					role="status"
 					aria-live="polite"
 					:aria-label="props.label"

@@ -36,8 +36,8 @@ const props = withDefaults(
 	}
 );
 
-const fallbackId = useId();
-const resolved_input_id = computed(() => props.inputId || props.forId || `field-${fallbackId}`);
+const fallback_id = useId();
+const resolved_input_id = computed(() => props.inputId || props.forId || `field-${fallback_id}`);
 const resolved_error_id = computed(() => props.errorId || `${resolved_input_id.value}-error`);
 const resolved_hint_id = computed(() => props.hintId || `${resolved_input_id.value}-hint`);
 const resolved_error_test_id = computed(() => props.errorTestId || 'ui-form-field-error-message');

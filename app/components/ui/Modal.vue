@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
+defineOptions({
+	inheritAttrs: false,
+});
+
 const props = withDefaults(
 	defineProps<{
 		modelValue?: boolean;
@@ -12,17 +16,25 @@ const props = withDefaults(
 		gap?: string;
 		align?: 'top' | 'center' | 'bottom';
 		modalClass?: string;
+		footerClass?: string;
+		hideHeader?: boolean;
+		maxHeight?: string;
+		scrollable?: boolean;
 	}>(),
 	{
 		modelValue: false,
 		title: '',
 		closeOnBackdrop: true,
 		closeOnEsc: true,
-		width: '560px',
-		padding: '40px',
-		gap: '18px',
+		width: '504px',
+		padding: '',
+		gap: '',
 		align: 'top',
 		modalClass: '',
+		footerClass: '',
+		hideHeader: false,
+		maxHeight: '',
+		scrollable: false,
 	}
 );
 
@@ -30,11 +42,13 @@ const emit = defineEmits<{
 	(e: 'update:modelValue', value: boolean): void;
 	(e: 'close'): void;
 }>();
+const attrs = useAttrs();
 
 const modal_style = computed(() => ({
 	'--ui-modal-width': props.width,
-	'--ui-modal-padding': props.padding,
-	'--ui-modal-gap': props.gap,
+	'--ui-modal-padding': props.padding || null,
+	'--ui-modal-gap': props.gap || null,
+	'--ui-modal-max-height': props.maxHeight || null,
 }));
 
 function closeModal() {
@@ -81,6 +95,7 @@ onBeforeUnmount(() => {
 				v-if="modelValue"
 				class="ui-modal-overlay"
 				:class="{
+					'ui-modal-overlay--top': align === 'top',
 					'ui-modal-overlay--center': align === 'center',
 					'ui-modal-overlay--bottom': align === 'bottom',
 				}"
@@ -88,12 +103,20 @@ onBeforeUnmount(() => {
 				@click="onBackdropClick"
 			>
 				<div
-					:class="['ui-modal', 'auth-shell-enter', modalClass]"
+					:class="[
+						'ui-modal',
+						'auth-shell-enter',
+						{ 'ui-modal--scrollable': scrollable },
+						modalClass,
+					]"
 					role="dialog"
 					aria-modal="true"
 					:aria-label="title || 'Modal'"
 					:style="modal_style"
+					v-bind="attrs"
 				>
+					<slot name="overlay" />
+
 					<header
 						v-if="title || $slots.header || $slots.actions"
 						class="ui-modal-header"
@@ -120,7 +143,7 @@ onBeforeUnmount(() => {
 								<UiIcon
 									name="regular-times"
 									:size="24"
-									color="#000000"
+									color="currentColor"
 								/>
 							</UiButton>
 						</div>
@@ -130,7 +153,11 @@ onBeforeUnmount(() => {
 						<slot />
 					</div>
 
-					<footer v-if="$slots.footer" class="ui-modal-footer">
+					<footer
+						v-if="$slots.footer"
+						class="ui-modal-footer"
+						:class="footerClass"
+					>
 						<slot name="footer" />
 					</footer>
 				</div>

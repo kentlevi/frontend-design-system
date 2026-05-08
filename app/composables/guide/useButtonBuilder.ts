@@ -1,8 +1,8 @@
 import { ref, computed, watch } from 'vue';
 import {
-    buttonSizes as sizes,
-    buttonVariants as variants,
-    buttonTones as tones,
+    button_sizes as sizes,
+    button_variants as variants,
+    button_tones as tones,
     type ButtonSize,
     type ButtonTone,
     type ButtonVariant,

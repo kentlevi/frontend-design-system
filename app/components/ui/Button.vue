@@ -7,7 +7,7 @@ import type { ButtonVariant, ButtonSize, ButtonTone } from '~/data/ui/buttons';
 type IconPosition = 'left' | 'right';
 type IconName = keyof typeof icons;
 type IconSizeValue = ButtonSize | number | `${number}`;
-const buttonSizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
+const button_sizes = new Set<ButtonSize>(['sm', 'md', 'lg']);
 
 const props = withDefaults(
 	defineProps<{
@@ -58,18 +58,18 @@ const emit = defineEmits<{
 }>();
 
 const merged_style = computed<Record<string, string> | undefined>(() => {
-	let numericSize: number | null = null;
+	let numeric_size: number | null = null;
 	if (typeof props.size === 'number') {
-		numericSize = props.size;
-	} else if (typeof props.size === 'string' && !buttonSizes.has(props.size as ButtonSize)) {
+		numeric_size = props.size;
+	} else if (typeof props.size === 'string' && !button_sizes.has(props.size as ButtonSize)) {
 		const parsed = Number(props.size);
-		if (Number.isFinite(parsed)) numericSize = parsed;
+		if (Number.isFinite(parsed)) numeric_size = parsed;
 	}
 
 	const style = {
 		...(props.style ?? {}),
-		...(numericSize && !props.height ? { height: `${numericSize}px` } : {}),
-		...(numericSize && props.iconOnly && !props.width ? { width: `${numericSize}px` } : {}),
+		...(numeric_size && !props.height ? { height: `${numeric_size}px` } : {}),
+		...(numeric_size && props.iconOnly && !props.width ? { width: `${numeric_size}px` } : {}),
 		...(props.width ? { width: props.width } : {}),
 		...(props.height ? { height: props.height } : {}),
 	};
@@ -80,7 +80,7 @@ const merged_style = computed<Record<string, string> | undefined>(() => {
 const normalized_icon_size = computed<ButtonSize | number>(() => {
 	if (typeof props.iconSize === 'number') return props.iconSize;
 	if (typeof props.iconSize === 'string') {
-		if (buttonSizes.has(props.iconSize as ButtonSize)) {
+		if (button_sizes.has(props.iconSize as ButtonSize)) {
 			return props.iconSize as ButtonSize;
 		}
 		const parsed = Number(props.iconSize);
