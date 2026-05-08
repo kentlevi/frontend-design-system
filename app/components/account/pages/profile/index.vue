@@ -1,11 +1,8 @@
 <script setup lang="ts">
-// import { onMounted, ref, computed } from 'vue';
 import { useProfileIndex } from '~/composables/account/profile/useProfileIndex';
 import ProfilePersonalSection from './ProfilePersonalSection.vue';
-// import ProfilePasswordSection from './ProfilePasswordSection.vue';
-// import ProfileSettingsSection from './ProfileSettingsSection.vue';
-// import { usePersonalForm } from '~/composables/account/profile/usePersonalForm';
-// import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
+import ProfilePasswordSection from './ProfilePasswordSection.vue';
+import ProfileSettingsSection from './ProfileSettingsSection.vue';
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -19,23 +16,6 @@ const {
 	is_fetching_fields
 } = useProfileIndex()
 
-// const { t } = useI18n();
-// const { loadPersonalForm, is_loading: is_personal_loading } = usePersonalForm();
-// const { loadPreferences, is_loading: is_preferences_loading } = usePreferenceForm();
-// const is_bootstrapping = ref(true);
-// const is_profile_loading = computed(() =>
-// 	is_bootstrapping.value || is_personal_loading.value || is_preferences_loading.value
-// );
-
-// onMounted(async () => {
-// 	is_bootstrapping.value = true;
-// 	await Promise.allSettled([
-// 		loadPersonalForm(),
-// 		loadPreferences(),
-// 	]);
-// 	is_bootstrapping.value = false;
-// });
-
 
 </script>
 
@@ -46,9 +26,9 @@ const {
 			<div class="account-content account-profile" data-testid="account-profile-content">
 				<ProfilePersonalSection :loading="is_fetching_fields" />
 
-				<!-- <ProfilePasswordSection :loading="is_profile_loading" />
+				<ProfilePasswordSection :loading="is_fetching_fields" />
 
-				<ProfileSettingsSection :loading="is_profile_loading" /> -->
+				<ProfileSettingsSection :loading="is_fetching_fields" />
 			</div>
 		</AccountShellSection>
 	</section>
