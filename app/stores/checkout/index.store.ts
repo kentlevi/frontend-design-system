@@ -1,4 +1,6 @@
+import { addressFormDefaults } from "~/factories/address"
 import type { AvailablePaymentMethods } from "~/types/payments/payment"
+import type { AddressFormState, AddressType } from "~/types/user-address"
 
 /**
  * This store is only for dedicated data needed for checkout process
@@ -9,11 +11,32 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		email: '',
 		verified_email: '',
 	})
+
+
+	/** Address */
 	const selected_shipping_address_id = ref<number | null>(null)
 	const selected_billing_address_id = ref<number | null>(null)
 	const selected_drop_address_id = ref<number | null>(null)
-
 	const ship_to_another_address = ref<boolean>(false)
+
+	const form_state = reactive<AddressFormState>({
+		shipping: addressFormDefaults('shipping'),
+		billing: addressFormDefaults('billing'),
+		drop: addressFormDefaults('drop'),
+	})
+	const form_type = ref<AddressType>('shipping')
+	const form_field_errors = ref<Record<AddressType, Record<string, string>>>({
+		shipping: {},
+		billing: {},
+		drop: {},
+	})
+
+	const active_form = computed(() => form_state[form_type.value])
+	const shipping_form = computed(() => form_state.shipping)
+	const billing_form = computed(() => form_state.billing)
+	const drop_form = computed(() => form_state.drop)
+	/** End of Address */
+
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
@@ -81,6 +104,13 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_payment_method,
 		ship_to_another_address,
 		checkout_ready,
+		form_state,
+		form_type,
+		form_field_errors,
+		active_form,
+		shipping_form,
+		billing_form,
+		drop_form,
 
 		// expose setters
 		patchGuestContactState,
