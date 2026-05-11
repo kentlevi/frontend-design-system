@@ -1,178 +1,57 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { checkoutProvinceOptions } from '~/data/checkout/options';
+import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
+import { useCheckoutInvoiceBillingModal } from '~/composables/checkout/invoice/billing-address/useCheckoutInvoiceBillingModal';
 
-type BillingDetails = {
-	fullName: string;
-	company: string;
-	address1: string;
-	address2: string;
-	province: string;
-	city: string;
-	postalCode: string;
-};
+const {
+	translate,
 
-const props = defineProps<{
-	modelValue: boolean;
-	value: BillingDetails;
-}>();
+	billing_modal_open,
+	billing_form,
+	form_field_errors,
 
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void;
-	(e: 'save', value: BillingDetails): void;
-}>();
-
-const { t } = useI18n();
-const province_options = computed(() =>
-	checkoutProvinceOptions
-		.filter((option) => option.enabled !== false)
-		.map((option) => ({
-			value: option.value,
-			label: t(option.i18nKey),
-		}))
-)
-
-const form = reactive<BillingDetails>({
-	fullName: '',
-	company: '',
-	address1: '',
-	address2: '',
-	province: '',
-	city: '',
-	postalCode: '',
-});
-
-watch(
-	() => props.modelValue,
-	(is_open) => {
-		if (!is_open) return;
-		Object.assign(form, props.value);
-	},
-	{ immediate: true }
-);
-
-function closeModal() {
-	emit('update:modelValue', false);
-}
-
-function saveBillingDetails() {
-	emit('save', { ...form });
-	closeModal();
-}
+	updateFormFieldByType,
+	updateDynamicFieldByType,
+	closeModal,
+	saveBillingDetails,
+} = useCheckoutInvoiceBillingModal()
 </script>
 
 <template>
 	<UiModal
-		:model-value="props.modelValue"
+		:model-value="billing_modal_open"
 		align="top"
 		width="720px"
 		padding="0"
 		gap="0"
 		modal-class="checkout-invoice-billing-modal-shell"
-		@update:model-value="emit('update:modelValue', $event)"
+		@update:model-value="closeModal"
 	>
 		<section class="checkout-invoice-billing-modal">
 			<header class="checkout-invoice-billing-modal-header">
-				<h3 class="checkout-invoice-billing-modal-title">{{ t('checkout.invoice.billingModal.title') }}</h3>
+				<h3 class="checkout-invoice-billing-modal-title">{{ translate('checkout.invoice.billingModal.title') }}</h3>
 				<button
 					type="button"
 					class="checkout-invoice-billing-modal-close"
-					:aria-label="t('checkout.invoice.billingModal.closeModal')"
+					:aria-label="translate('checkout.invoice.billingModal.closeModal')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
 				</button>
 			</header>
 
-			<div class="checkout-invoice-billing-modal-body">
-				<div class="checkout-invoice-billing-modal-grid">
-					<UiFormField
-						:label="t('checkout.guest.fields.fullName.label')"
-						:required="true"
-						:show-required-mark="true"
-						head-class="checkout-form-field-head"
-						label-class="checkout-form-field-label"
-						label-text-class="checkout-form-field-label-text"
-					>
-						<UiInput v-model="form.fullName" size="md" />
-					</UiFormField>
-
-					<UiFormField
-						:label="t('checkout.guest.fields.company.label')"
-						head-class="checkout-form-field-head"
-						label-class="checkout-form-field-label"
-						label-text-class="checkout-form-field-label-text"
-					>
-						<UiInput v-model="form.company" size="md" />
-					</UiFormField>
-				</div>
-
-				<div class="checkout-invoice-billing-modal-stack">
-					<UiFormField
-						:label="t('checkout.guest.fields.streetAddress.label')"
-						:required="true"
-						:show-required-mark="true"
-						head-class="checkout-form-field-head"
-						label-class="checkout-form-field-label"
-						label-text-class="checkout-form-field-label-text"
-					>
-						<UiInput v-model="form.address1" size="md" />
-					</UiFormField>
-
-					<UiInput v-model="form.address2" size="md" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
-				</div>
-
-				<div class="checkout-invoice-billing-modal-grid">
-					<UiFormField
-						:label="t('checkout.guest.fields.province.label')"
-						:required="true"
-						:show-required-mark="true"
-						head-class="checkout-form-field-head"
-						label-class="checkout-form-field-label"
-						label-text-class="checkout-form-field-label-text"
-					>
-						<UiSelect
-							:model-value="form.province"
-							:options="province_options"
-							class="checkout-invoice-billing-modal-select"
-							trigger-class="checkout-invoice-billing-modal-select-trigger"
-							@update:model-value="form.province = String($event)"
-						/>
-					</UiFormField>
-
-					<UiFormField
-						:label="t('checkout.guest.fields.city.label')"
-						:required="true"
-						:show-required-mark="true"
-						head-class="checkout-form-field-head"
-						label-class="checkout-form-field-label"
-						label-text-class="checkout-form-field-label-text"
-					>
-						<UiInput v-model="form.city" size="md" />
-					</UiFormField>
-				</div>
-
-				<div class="checkout-invoice-billing-modal-grid checkout-invoice-billing-modal-grid--postal">
-					<UiFormField
-						:label="t('checkout.guest.fields.postalCode.label')"
-						:required="true"
-						:show-required-mark="true"
-						head-class="checkout-form-field-head"
-						label-class="checkout-form-field-label"
-						label-text-class="checkout-form-field-label-text"
-					>
-						<UiInput v-model="form.postalCode" size="md" />
-					</UiFormField>
-				</div>
-			</div>
+			<AddressFormFields
+				:form="billing_form"
+				:errors="form_field_errors"
+				@update:field="updateFormFieldByType"
+				@update:dynamic-field="updateDynamicFieldByType"
+			/>
 
 			<footer class="checkout-invoice-billing-modal-footer">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
-					{{ t('checkout.invoice.billingModal.cancel') }}
+					{{ translate('checkout.invoice.billingModal.cancel') }}
 				</UiButton>
 				<UiButton type="button" variant="filled" tone="neutral" size="md" @click="saveBillingDetails">
-					{{ t('checkout.invoice.billingModal.save') }}
+					{{ translate('checkout.invoice.billingModal.save') }}
 				</UiButton>
 			</footer>
 		</section>

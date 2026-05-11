@@ -1,5 +1,5 @@
 import { useUserAddressStore } from "~/stores/user-address"
-import type { AddressFormMap, AddressItem, AddressLineForm, AddressType } from "~/types/user-address"
+import type { AddressFormMap, AddressItem, AddressLineForm, AddressType, AddressWithLines } from "~/types/user-address"
 
 export function useAddressHelper() {
 	/** Check whether the form supports address lines */
@@ -39,7 +39,7 @@ export function useAddressHelper() {
 		return address_store.drop_address
 	}
 
-	function getAddressLineParts(address: AddressItem) {
+	function getAddressLineParts(address: Partial<AddressWithLines> & { type: AddressType }) {
 		const lines: string[] = []
 
 		if ('dynamic_fields' in address && Array.isArray(address.dynamic_fields)) {
@@ -56,7 +56,7 @@ export function useAddressHelper() {
 		return lines
 	}
 
-	function buildAddressLines(address: AddressItem) {
+	function buildAddressLines(address: Partial<AddressWithLines> & { type: AddressType }) {
 		return getAddressLineParts(address).join(', ')
 	}
 

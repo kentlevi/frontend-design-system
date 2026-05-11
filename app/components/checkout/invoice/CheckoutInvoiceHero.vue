@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
+import { useCheckoutInvoiceHero } from '~/composables/checkout/invoice/billing-address/useCheckoutInvoiceHero';
 
 defineProps<{
 	invoiceNumber: string | null;
 	issuedDate: string;
 	billingName: string;
-	billingAddress: string;
 	billingCompany: string;
 }>();
 
-defineEmits<{
-	(e: 'edit-billing'): void;
-}>();
+const {
+	translate,
+
+	billing_address,
+
+	buildAddressLines,
+	openModal,
+} = useCheckoutInvoiceHero()
 </script>
 
 <template>
@@ -32,20 +34,20 @@ defineEmits<{
 		</div>
 
 		<div class="checkout-invoice-meta">
-			<div class="checkout-invoice-number">{{ t('checkout.invoice.invoiceNumber', { invoiceNumber }) }}</div>
-			<div class="checkout-invoice-date">{{ t('checkout.invoice.dateIssued', { issuedDate }) }}</div>
+			<div class="checkout-invoice-number">{{ translate('checkout.invoice.invoiceNumber', { invoiceNumber }) }}</div>
+			<div class="checkout-invoice-date">{{ translate('checkout.invoice.dateIssued', { issuedDate }) }}</div>
 		</div>
 
 		<div class="checkout-invoice-billing">
 			<div class="checkout-invoice-billing-copy">
-				<div class="checkout-invoice-billing-title">{{ t('checkout.invoice.billingDetails') }}</div>
-				<div class="checkout-invoice-billing-line">{{ t('checkout.invoice.billingName') }} <strong>{{ billingName }}</strong></div>
-				<div class="checkout-invoice-billing-line">{{ t('checkout.invoice.billingAddress') }} <strong>{{ billingAddress }}</strong></div>
-				<div class="checkout-invoice-billing-line">{{ t('checkout.invoice.billingCompany') }} <strong>{{ billingCompany }}</strong></div>
+				<div class="checkout-invoice-billing-title">{{ translate('checkout.invoice.billingDetails') }}</div>
+				<div class="checkout-invoice-billing-line">{{ translate('checkout.invoice.billingName') }} <strong>{{ billing_address.contact_name }}</strong></div>
+				<div class="checkout-invoice-billing-line">{{ translate('checkout.invoice.billingAddress') }} <strong>{{ buildAddressLines(billing_address) }}</strong></div>
+				<div class="checkout-invoice-billing-line">{{ translate('checkout.invoice.billingCompany') }} <strong>{{ billing_address.company }}</strong></div>
 			</div>
 
-			<button type="button" class="checkout-invoice-billing-button" @click="$emit('edit-billing')">
-				{{ t('checkout.invoice.editBillingInfo') }}
+			<button type="button" class="checkout-invoice-billing-button" @click="openModal">
+				{{ translate('checkout.invoice.editBillingInfo') }}
 			</button>
 		</div>
 	</section>

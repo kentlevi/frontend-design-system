@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref } from 'vue';
 import CheckoutInvoiceBillingModal from '~/components/checkout/modals/CheckoutInvoiceBillingModal.vue';
 import { useCountry } from '~/composables/app/country/useCountry';
-import { useCheckoutMember } from '~/composables/checkout/member/useCheckoutMember';
 import CheckoutInvoiceFooter from './CheckoutInvoiceFooter.vue';
 import CheckoutInvoiceHero from './CheckoutInvoiceHero.vue';
 import CheckoutInvoiceItemsTable from './CheckoutInvoiceItemsTable.vue';
@@ -12,9 +10,11 @@ import type { BillingDetails } from './types';
 import { formatPrice } from '~/utils/currency/formatPrice';
 import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
 import { useQuotationFlow } from '~/composables/checkout/qoutation/useQuotationFlow';
+import { provideCheckoutInvoiceBilling } from '~/composables/checkout/invoice/billing-address/context/useCheckoutInvoiceBillingContext';
+
+provideCheckoutInvoiceBilling()
 
 const { withCountry } = useCountry();
-const { t} = useCheckoutMember();
 
 const {
 	selected_items,
@@ -34,36 +34,14 @@ const fallback_billing_details: BillingDetails = {
 	postalCode: '01000',
 };
 
-const billing_modal_open = ref(false);
-const billing_toast_visible = ref(false);
 
 const billing_details = reactive<BillingDetails>({
 	...fallback_billing_details,
 });
 
 
-const province_label = computed(() => {
-	const map: Record<string, string> = {
-		incheon: 'Incheon',
-		seoul: 'Seoul',
-		busan: 'Busan',
-	};
-	return map[billing_details.province] || billing_details.province;
-});
-
 const billing_name = computed(() => billing_details.fullName || 'Joy Love');
-const billing_address = computed(() =>
-	[
-		billing_details.address1,
-		billing_details.address2,
-		billing_details.city,
-		province_label.value,
-		billing_details.postalCode,
-		'Republic of Korea',
-	].filter(Boolean).join(', ')
-);
 const billing_company = computed(() => billing_details.company || 'Summit Inc.');
-let billing_toast_timeout: ReturnType<typeof setTimeout> | null = null;
 
 function closeInvoice() {
 	void navigateTo(withCountry('/checkout'));
@@ -76,32 +54,6 @@ function printInvoice() {
 function downloadInvoice() {
 	window.print();
 }
-
-function hideBillingToast() {
-	billing_toast_visible.value = false;
-	if (billing_toast_timeout) {
-		clearTimeout(billing_toast_timeout);
-		billing_toast_timeout = null;
-	}
-}
-
-function saveBillingDetails(next_value: BillingDetails) {
-	Object.assign(billing_details, next_value);
-	billing_toast_visible.value = true;
-	if (billing_toast_timeout) {
-		clearTimeout(billing_toast_timeout);
-	}
-	billing_toast_timeout = setTimeout(() => {
-		billing_toast_visible.value = false;
-		billing_toast_timeout = null;
-	}, 3200);
-}
-
-onBeforeUnmount(() => {
-	if (billing_toast_timeout) {
-		clearTimeout(billing_toast_timeout);
-	}
-});
 </script>
 
 <template>
@@ -118,9 +70,7 @@ onBeforeUnmount(() => {
 					:invoice-number="order_quotation ? order_quotation.quote_number : '...'"
 					:issued-date="issued_date"
 					:billing-name="billing_name"
-					:billing-address="billing_address"
 					:billing-company="billing_company"
-					@edit-billing="billing_modal_open = true"
 				/>
 
 				<CheckoutInvoiceItemsTable :items="selected_items" />
@@ -136,21 +86,7 @@ onBeforeUnmount(() => {
 			</article>
 		</div>
 
-		<CheckoutInvoiceBillingModal
-			v-model="billing_modal_open"
-			:value="billing_details"
-			@save="saveBillingDetails"
-		/>
-
-		<UiToast
-			:visible="billing_toast_visible"
-			:message="t('checkout.invoice.billingToast')"
-			tone="primary"
-			variant="outlined"
-			dismissible
-			class="checkout-invoice-success-toast"
-			@close="hideBillingToast"
-		/>
+		<CheckoutInvoiceBillingModal />
 	</section>
 </template>
 
