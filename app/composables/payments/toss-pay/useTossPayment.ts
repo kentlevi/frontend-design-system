@@ -1,6 +1,6 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
 import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
-import { sendOrderConfirmationEmail, sendArtworkReminder } from "~/services/orders/index.service"
+import { sendOrderConfirmationEmail, sendArtworkReminder } from "~/services/orders/api.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral"
 import { useCartStore } from "~/stores/core/cart/cart.store"

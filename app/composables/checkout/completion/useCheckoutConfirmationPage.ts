@@ -1,4 +1,4 @@
-import { fetchOrderCompletionDetails } from "~/services/orders/index.service"
+import { fetchOrderCompletionDetails } from "~/services/orders/api.service"
 import type { OrderCompleteData } from "~/types/order"
 
 

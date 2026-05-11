@@ -3,26 +3,26 @@ import { computed, onBeforeUnmount, reactive, ref } from 'vue';
 import CheckoutInvoiceBillingModal from '~/components/checkout/modals/CheckoutInvoiceBillingModal.vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useCheckoutMember } from '~/composables/checkout/member/useCheckoutMember';
-import { checkoutShippingMethods } from '~/data/checkout/options';
 import CheckoutInvoiceFooter from './CheckoutInvoiceFooter.vue';
 import CheckoutInvoiceHero from './CheckoutInvoiceHero.vue';
 import CheckoutInvoiceItemsTable from './CheckoutInvoiceItemsTable.vue';
 import CheckoutInvoiceTopbar from './CheckoutInvoiceTopbar.vue';
 import CheckoutInvoiceTotals from './CheckoutInvoiceTotals.vue';
 import type { BillingDetails } from './types';
+import { formatPrice } from '~/utils/currency/formatPrice';
+import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
+import { useQuotationFlow } from '~/composables/checkout/qoutation/useQuotationFlow';
 
 const { withCountry } = useCountry();
+const { t} = useCheckoutMember();
+
 const {
-	t,
-	selected_checkout_items,
-	selected_shipping_method,
-	order_subtotal,
-	order_shipping_fee,
-	order_discount,
-	order_total,
-	formatPrice,
-	sizeDimOnly,
-} = useCheckoutMember();
+	selected_items,
+	total_cost,
+	sub_total_cost,
+	shipping_cost,
+} = useCheckoutSummaryFlow()
+const { order_quotation, issued_date } = useQuotationFlow()
 
 const fallback_billing_details: BillingDetails = {
 	fullName: 'Joy Love',
@@ -36,23 +36,11 @@ const fallback_billing_details: BillingDetails = {
 
 const billing_modal_open = ref(false);
 const billing_toast_visible = ref(false);
-const invoice_number = computed(() => '62411190001');
-const issued_date = computed(() =>
-	new Intl.DateTimeFormat('en-US', {
-		month: 'long',
-		day: 'numeric',
-		year: 'numeric',
-	}).format(new Date('2026-03-25'))
-);
 
 const billing_details = reactive<BillingDetails>({
 	...fallback_billing_details,
 });
 
-const shipping_method_name = computed(() => {
-	const method = checkoutShippingMethods.find((entry) => entry.key === selected_shipping_method.value);
-	return method ? t(`${method.i18nKey}.name`) : 'Express Shipping';
-});
 
 const province_label = computed(() => {
 	const map: Record<string, string> = {
@@ -75,14 +63,6 @@ const billing_address = computed(() =>
 	].filter(Boolean).join(', ')
 );
 const billing_company = computed(() => billing_details.company || 'Summit Inc.');
-const invoice_items = computed(() =>
-	selected_checkout_items.value.map((item) => ({
-		id: item.id,
-		label: `${t(`product.items.${item.product.id}.name`)} / ${sizeDimOnly(item.sizeLabel)}`,
-		qty: item.qty.toLocaleString(),
-		amount: formatPrice(item.total),
-	}))
-);
 let billing_toast_timeout: ReturnType<typeof setTimeout> | null = null;
 
 function closeInvoice() {
@@ -135,7 +115,7 @@ onBeforeUnmount(() => {
 		<div class="checkout-invoice-shell">
 			<article class="checkout-invoice-card">
 				<CheckoutInvoiceHero
-					:invoice-number="invoice_number"
+					:invoice-number="order_quotation ? order_quotation.quote_number : '...'"
 					:issued-date="issued_date"
 					:billing-name="billing_name"
 					:billing-address="billing_address"
@@ -143,16 +123,15 @@ onBeforeUnmount(() => {
 					@edit-billing="billing_modal_open = true"
 				/>
 
-				<CheckoutInvoiceItemsTable :items="invoice_items" />
+				<CheckoutInvoiceItemsTable :items="selected_items" />
 
 				<CheckoutInvoiceTotals
-					:subtotal="formatPrice(order_subtotal)"
-					:shipping-label="shipping_method_name"
-					:shipping-fee="formatPrice(order_shipping_fee)"
-					:discount="formatPrice(order_discount)"
-					:total="formatPrice(order_total)"
+					:subtotal="formatPrice(sub_total_cost)"
+					shipping-label="Standard Shipping"
+					:shipping-fee="formatPrice(shipping_cost)"
+					:discount="formatPrice(0)"
+					:total="formatPrice(total_cost)"
 				/>
-
 				<CheckoutInvoiceFooter />
 			</article>
 		</div>

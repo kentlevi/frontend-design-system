@@ -17,7 +17,7 @@
 					<Address />
 				</UiLinearWrapper>
 			</UiLinearWrapper>
-
+			<Actions/>
 			<List/>
 			<Summary/>
 		</UiCard>
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import Actions from './Actions.vue';
 import Address from './Address.vue';
 import List from './List.vue';
 import Summary from './Summary.vue';

@@ -15,6 +15,7 @@ withDefaults(defineProps<{
 			<UiLinearWrapper class="account-page-content" data-testid="account-page-content" direction="column" :gap="24">
 				<FeaturesAccountOrdersHeader />
 				<FeaturesAccountOrdersContent />
+				<FeaturesAccountOrdersModalsUploadArworkModal />
 			</UiLinearWrapper>
 		</AccountShellSection>
 	</section>

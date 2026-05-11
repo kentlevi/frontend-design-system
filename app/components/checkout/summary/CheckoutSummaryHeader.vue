@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { useCountry } from '~/composables/app/country/useCountry';
+import { useQuotationFlow } from '~/composables/checkout/qoutation/useQuotationFlow';
+
+const { withCountry } = useCountry();
+
+const {createOrderQuotation} = useQuotationFlow();
+
+function goToCart() {
+	void navigateTo(withCountry('/cart'));
+}
+
+async function goToInvoice() {
+	await createOrderQuotation()
+	void navigateTo(withCountry('/checkout/order-quotation'));
+}
+</script>
+
 <template>
 	<div class="checkout-summary-title">
 		<span>Order Summary</span>
@@ -29,20 +47,6 @@
 		</div>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { useCountry } from '~/composables/app/country/useCountry';
-
-const { withCountry } = useCountry();
-
-function goToCart() {
-	void navigateTo(withCountry('/cart'));
-}
-
-function goToInvoice() {
-	void navigateTo(withCountry('/checkout/invoice'));
-}
-</script>
 
 <style scoped lang="scss">
 .checkout-summary-title {

@@ -1,13 +1,9 @@
 <script setup lang="ts">
-type InvoiceItemRow = {
-	id: number | string;
-	label: string;
-	qty: string;
-	amount: string;
-};
+import type { CartItem } from '~/types/cart/cart';
+import { formatPrice } from '~/utils/currency/formatPrice';
 
 defineProps<{
-	items: InvoiceItemRow[];
+	items: CartItem[];
 }>();
 </script>
 
@@ -21,13 +17,13 @@ defineProps<{
 			</div>
 
 			<div
-				v-for="item in items"
-				:key="item.id"
+				v-for="(item, index) in items"
+				:key="index"
 				class="checkout-invoice-items-row"
 			>
-				<span>{{ item.label }}</span>
-				<span>{{ item.qty }}</span>
-				<strong>{{ item.amount }}</strong>
+				<span>{{ item.product }}</span>
+				<span>{{ item.quantity }}</span>
+				<strong>{{ formatPrice(item.cost) }}</strong>
 			</div>
 		</div>
 	</section>
