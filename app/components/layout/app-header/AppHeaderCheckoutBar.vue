@@ -4,6 +4,8 @@ import { header_checkout_config } from '~/data/layout/header';
 
 const { withCountry } = useCountry();
 const { t } = useI18n();
+
+
 </script>
 
 <template>
