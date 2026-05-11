@@ -20,7 +20,7 @@ export function useShippingMethod() {
 	const checkout_store = useMainCheckOutStore()
 	const production_shipping_store = useProductionShippingStore()
 
-	const { is_authenticated } = useUsersStore()
+	const { is_authenticated } = storeToRefs(useUsersStore())
 	const { shipping_form } = useUserAddressFormStateCheckoutContext()
 	const { selected_ids } = storeToRefs(cart_store)
 	const { available_shipping_methods, is_loading } = storeToRefs(production_shipping_store)
@@ -45,7 +45,7 @@ export function useShippingMethod() {
 	const fetchShippingMethods = async (): Promise<void> => {
 		await fetchShippingMethodsService(
 			{
-				is_authenticated,
+				is_authenticated: is_authenticated.value,
 				selected_cart_items: selected_cart_items.value,
 				postcode: shipping_form.value.postcode,
 				fields: shipping_form.value.fields
@@ -163,6 +163,12 @@ export function useShippingMethod() {
 		},
 		{ immediate: true }
 	)
+
+	watch(is_authenticated, () => {
+		if (is_authenticated.value) {
+			void fetchShippingMethods()
+		}
+	})
 
 	// const isFormComplete = computed(() => {
 	// 	const { postcode, fields } = shipping_form.value
