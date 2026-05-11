@@ -104,7 +104,7 @@ function getDefaultBadgeIcon() {
 						</div>
 
 						<div class="checkout-address-select-modal-card-body" :data-variant="active_address_type">
-							<template v-if="active_address_type === 'shipping'">
+							<template v-if="active_address_type == 'shipping'">
 								<div v-if="shippingPhoneNumber(address)" class="checkout-address-select-modal-row">
 									<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" decorative />
 									<p class="checkout-address-select-modal-line checkout-address-select-modal-line--strong">
@@ -137,8 +137,7 @@ function getDefaultBadgeIcon() {
 							<template v-else-if="active_address_type === 'billing'">
 								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split">
 									<div class="checkout-address-select-modal-lines checkout-address-select-modal-lines--stacked">
-										<p class="checkout-address-select-modal-line">{{ 'line1' in address ? address.line1 : '' }}</p>
-										<p v-if="'line2' in address && address.line2" class="checkout-address-select-modal-line">{{ address.line2 }}</p>
+										<p class="checkout-address-select-modal-line">{{ buildAddressLines(address) }}</p>
 										<p v-if="'company' in address && address.company" class="checkout-address-select-modal-line">{{ address.company }}</p>
 									</div>
 									<span

@@ -4,15 +4,14 @@ import { useSavedShippingAddress } from '~/composables/checkout/address/useSaved
 import { useAddressHelper } from '~/utils/address';
 
 const {
-	shipping_form,
+	shipping_address,
 
 	openSelectAddressModal,
 } = useSavedShippingAddress()
 
 const {
 	shippingPhoneNumber,
-	getAddressLine1,
-	getAddressLine2
+	buildAddressLines,
 } = useAddressHelper()
 
 const { t } = useI18n();
@@ -26,7 +25,7 @@ const {
 <template>
 	<div key="saved-address" data-shipping-panel="saved-address" class="checkout-member-address-grid">
 		<button
-			v-if="shipping_form"
+			v-if="shipping_address"
 			type="button"
 			class="checkout-member-address-card is-active"
 			@click="openSelectAddressModal('shipping')"
@@ -34,11 +33,11 @@ const {
 			<div class="checkout-member-address-top">
 				<div class="checkout-member-address-title-group">
 					<strong class="checkout-member-address-name">
-						{{ shipping_form.contact_name }}
+						{{ shipping_address.contact_name }}
 					</strong>
 
 					<UiBadge
-						v-if="shipping_form.is_default"
+						v-if="shipping_address.is_default"
 						variant="outline"
 						tone="default"
 						size="md"
@@ -53,12 +52,12 @@ const {
 
 			<div class="checkout-member-address-content">
 				<div
-					v-if="shippingPhoneNumber(shipping_form)"
+					v-if="shippingPhoneNumber(shipping_address)"
 					class="checkout-member-address-row"
 				>
 					<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line checkout-member-address-line--strong">
-						{{ shippingPhoneNumber(shipping_form) }}
+						{{ shippingPhoneNumber(shipping_address) }}
 					</p>
 				</div>
 
@@ -67,30 +66,27 @@ const {
 						<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 						<div class="checkout-member-address-lines">
 							<p class="checkout-member-address-line">
-								{{ getAddressLine1(shipping_form) }}
-								<span v-if="getAddressLine2(shipping_form)">
-									, {{ getAddressLine2(shipping_form) }}
-								</span>
+								{{ buildAddressLines(shipping_address) }}
 							</p>
 						</div>
 					</div>
 
 					<span
-						v-if="shipping_form.label"
+						v-if="shipping_address.label"
 						class="checkout-member-address-tag"
-						:class="getAddressTagClass(shipping_form.label)"
+						:class="getAddressTagClass(shipping_address.label)"
 					>
-						{{ shipping_form.label }}
+						{{ shipping_address.label }}
 					</span>
 				</div>
 
 				<div
-					v-if="shipping_form.company"
+					v-if="shipping_address.company"
 					class="checkout-member-address-row"
 				>
 					<UiIcon name="regular-building" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line">
-						{{ shipping_form.company }}
+						{{ shipping_address.company }}
 					</p>
 				</div>
 			</div>

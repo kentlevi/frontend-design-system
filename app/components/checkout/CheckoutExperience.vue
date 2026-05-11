@@ -1,3 +1,56 @@
+<script setup lang="ts">
+import type { ComponentPublicInstance } from 'vue';
+import { useCheckoutExperience } from '~/composables/checkout/useCheckoutExperience';
+import CheckoutGuestContactFeature from '~/components/checkout/features/CheckoutGuestContactFeature.vue';
+import CheckoutMemberPerksFeature from '~/components/checkout/features/CheckoutMemberPerksFeature.vue';
+import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPaymentFeature.vue';
+import CheckoutAddressFeature from '~/components/checkout/features/CheckoutAddressFeature.vue';
+import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.vue';
+import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
+import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
+import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
+import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { provideUserAddressFormStateCheckout } from '~/composables/checkout/address/context/addressFormCheckoutContext';
+import { provideUserAddressDataCheckout } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { provideAddressGeneralUI } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
+import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
+import { loadAddresses } from '~/services/user-address/user-address.service';
+
+/** Standalone address context (isolated from checkout_experience) */
+provideUserAddressFormStateCheckout()
+provideUserAddressDataCheckout()
+provideAddressGeneralUI()
+
+loadAddresses('shipping')
+loadAddresses('drop')
+loadAddresses('billing')
+
+const checkout_experience = useCheckoutExperience();
+
+const {
+	is_member,
+	t,
+	withCountry,
+	completing_checkout,
+	complete_loader_ref,
+	selected_checkout_items,
+
+	// Identifiers & UI State
+	is_login_modal_open,
+	is_accredited_banks_modal_open,
+
+} = checkout_experience;
+
+provideCheckoutExperienceFeatureContext(checkout_experience);
+
+function setCompleteLoaderRef(
+	element: Element | ComponentPublicInstance | null,
+	_refs?: Record<string, unknown>,
+) {
+	complete_loader_ref.value = element instanceof HTMLElement ? element : null;
+}
+</script>
+
 <template>
 	<CheckoutPageBase
 		page-class="checkout-member-page"
@@ -50,54 +103,6 @@
 	/>
 	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
 </template>
-
-<script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
-import { useCheckoutExperience } from '~/composables/checkout/useCheckoutExperience';
-import CheckoutGuestContactFeature from '~/components/checkout/features/CheckoutGuestContactFeature.vue';
-import CheckoutMemberPerksFeature from '~/components/checkout/features/CheckoutMemberPerksFeature.vue';
-import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPaymentFeature.vue';
-import CheckoutAddressFeature from '~/components/checkout/features/CheckoutAddressFeature.vue';
-import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.vue';
-import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
-import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
-import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
-import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { provideUserAddressFormStateCheckout } from '~/composables/checkout/address/context/addressFormCheckoutContext';
-import { provideUserAddressDataCheckout } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
-import { provideAddressGeneralUI } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
-import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
-
-/** Standalone address context (isolated from checkout_experience) */
-provideUserAddressFormStateCheckout()
-provideUserAddressDataCheckout()
-provideAddressGeneralUI()
-
-const checkout_experience = useCheckoutExperience();
-
-const {
-	is_member,
-	t,
-	withCountry,
-	completing_checkout,
-	complete_loader_ref,
-	selected_checkout_items,
-
-	// Identifiers & UI State
-	is_login_modal_open,
-	is_accredited_banks_modal_open,
-
-} = checkout_experience;
-
-provideCheckoutExperienceFeatureContext(checkout_experience);
-
-function setCompleteLoaderRef(
-	element: Element | ComponentPublicInstance | null,
-	_refs?: Record<string, unknown>,
-) {
-	complete_loader_ref.value = element instanceof HTMLElement ? element : null;
-}
-</script>
 
 <style lang="scss">
 .checkout-member-page {

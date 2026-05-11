@@ -1,22 +1,25 @@
 import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
-import { loadAddresses } from "~/services/user-address/user-address.service";
 import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
+import { useAddressFieldStore } from "~/stores/user-address";
+import { mapFormToAddress } from "~/factories/address";
+import { useAddressHelper } from "~/utils/address";
 
 export function useBillingAddress() {
 
-	/** Stores */
+	/**
+     * Stores
+     */
+	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
 
-	/** Context */
-	const { billing_address } = useUserAddressDataCheckoutContext()
+
+	/**
+     * Context
+     */
 	const { use_shipping_as_billing, billing_use_different_address, openSelectAddressModal } = useAddressGeneralUIContext()
-
-	const { assignAddressToForm } = useAddressGeneral()
-
 	const {
 		form_field_errors,
 		shipping_form,
@@ -28,6 +31,25 @@ export function useBillingAddress() {
 		updateDynamicFieldByType,
 	} = useUserAddressFormStateCheckoutContext();
 
+
+	/**
+     * Helpers
+     */
+	const { assignAddressToForm } = useAddressGeneral()
+	const { buildAddressLines } = useAddressHelper()
+
+
+	/**
+     * Computed
+     */
+	const billing_address = computed(() => {
+		return mapFormToAddress(billing_form.value, address_field_store.dynamic_address_fields)
+	})
+
+
+	/**
+     * Functions
+     */
 	async function setBillingAddress() {
 		billing_use_different_address.value = false
 
@@ -35,8 +57,6 @@ export function useBillingAddress() {
 			setBillingAsShipping()
 			return;
 		}
-
-		if (billing_address.value.length === 0) await loadAddresses('billing')
 
 		if (checkout_store.selected_billing_address_id) {
 			assignAddressToForm('billing', checkout_store.selected_billing_address_id)
@@ -73,9 +93,11 @@ export function useBillingAddress() {
 	return {
 		billing_form,
 		form_field_errors,
+		billing_address,
 
 		updateFormFieldByType,
 		updateDynamicFieldByType,
+		buildAddressLines,
 
 		resetForm,
 		setBillingAddress,

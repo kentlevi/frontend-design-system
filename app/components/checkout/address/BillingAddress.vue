@@ -26,9 +26,11 @@ const {
 const {
 	billing_form,
 	form_field_errors,
+	billing_address,
 
 	updateFormFieldByType,
 	updateDynamicFieldByType,
+	buildAddressLines,
 
 	resetForm,
 	setBillingAddress,
@@ -78,12 +80,12 @@ const {
 						<Transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 							<div v-if="!billing_use_different_address && is_member && has_billing_addresses" key="billing-saved" data-billing-mode-panel="saved-address" class="checkout-member-drop-shipping-mode-panel">
 								<div class="checkout-member-address-grid">
-									<button v-if="billing_form" type="button" class="checkout-member-address-card is-active" @click="openSelectAddressModal('billing')">
+									<button v-if="billing_address" type="button" class="checkout-member-address-card is-active" @click="openSelectAddressModal('billing')">
 										<div class="checkout-member-address-top">
 											<div class="checkout-member-address-title-group">
-												<strong class="checkout-member-address-name">{{ billing_form.contact_name }}</strong>
+												<strong class="checkout-member-address-name">{{ billing_address.contact_name }}</strong>
 												<UiBadge
-													v-if="billing_form.is_default"
+													v-if="billing_address.is_default"
 													variant="outline"
 													tone="default"
 													size="md"
@@ -98,19 +100,14 @@ const {
 										<div class="checkout-member-address-content">
 											<div class="checkout-member-address-row checkout-member-address-row--split">
 												<div class="checkout-member-address-row-main">
-													<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 													<div class="checkout-member-address-lines">
-														<p class="checkout-member-address-line">{{ billing_form.address_line_1 }}</p>
-														<p v-if="billing_form.address_line_2" class="checkout-member-address-line">{{ billing_form.address_line_2 }}</p>
+														<p class="checkout-member-address-line">{{ buildAddressLines(billing_address) }}</p>
+														<p class="checkout-member-address-line">{{ billing_address.company }}</p>
 													</div>
 												</div>
-												<span v-if="billing_form.label" class="checkout-member-address-tag" :class="getAddressTagClass(billing_form.label)">
-													{{ billing_form.label }}
+												<span v-if="billing_address.label" class="checkout-member-address-tag" :class="getAddressTagClass(billing_address.label)">
+													{{ billing_address.label }}
 												</span>
-											</div>
-											<div v-if="billing_form.company" class="checkout-member-address-row">
-												<UiIcon name="regular-building" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
-												<p class="checkout-member-address-line">{{ billing_form.company }}</p>
 											</div>
 										</div>
 									</button>

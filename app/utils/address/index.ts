@@ -66,7 +66,7 @@ export function useAddressHelper() {
 	}
 
 	/** Safely expose shipping phone number only for shipping items */
-	function shippingPhoneNumber(address: AddressItem | AddressFormMap[AddressType]) {
+	function shippingPhoneNumber(address: Partial<AddressWithLines> & { type: AddressType } | AddressFormMap[AddressType]) {
 		if (!isShipping(address.type)) return
 
 		if ('phone_number' in address && address.phone_number) return address.phone_number
