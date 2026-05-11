@@ -9,7 +9,7 @@ const { resolveFileUrl } = useFileBaseUrl();
 const cta_background_image = resolveFileUrl('/home/cta/home-cta-bg.png');
 
 async function onOrderNowClick() {
-	await navigateTo(withCountry('/stickers/die-cut'));
+	await navigateTo(withCountry('/stickers/die-cut-sticker'));
 }
 
 async function onProductionInquiryClick() {

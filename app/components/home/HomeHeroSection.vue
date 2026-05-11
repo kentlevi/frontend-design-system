@@ -6,7 +6,7 @@ const { t } = useI18n();
 const { withCountry } = useCountry();
 
 async function onOrderNowClick() {
-	await navigateTo(withCountry('/stickers/die-cut'));
+	await navigateTo(withCountry('/stickers/die-cut-sticker'));
 }
 </script>
 
