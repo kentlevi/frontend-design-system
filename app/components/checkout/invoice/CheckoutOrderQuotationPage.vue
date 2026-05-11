@@ -6,7 +6,6 @@ import CheckoutInvoiceHero from './CheckoutInvoiceHero.vue';
 import CheckoutInvoiceItemsTable from './CheckoutInvoiceItemsTable.vue';
 import CheckoutInvoiceTopbar from './CheckoutInvoiceTopbar.vue';
 import CheckoutInvoiceTotals from './CheckoutInvoiceTotals.vue';
-import type { BillingDetails } from './types';
 import { formatPrice } from '~/utils/currency/formatPrice';
 import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
 import { useQuotationFlow } from '~/composables/checkout/qoutation/useQuotationFlow';
@@ -23,25 +22,6 @@ const {
 	shipping_cost,
 } = useCheckoutSummaryFlow()
 const { order_quotation, issued_date } = useQuotationFlow()
-
-const fallback_billing_details: BillingDetails = {
-	fullName: 'Joy Love',
-	company: 'Summit Inc.',
-	address1: '176-6, Yusan-ri, Gusan-myeon',
-	address2: '',
-	province: 'incheon',
-	city: 'Gaseong-si',
-	postalCode: '01000',
-};
-
-
-const billing_details = reactive<BillingDetails>({
-	...fallback_billing_details,
-});
-
-
-const billing_name = computed(() => billing_details.fullName || 'Joy Love');
-const billing_company = computed(() => billing_details.company || 'Summit Inc.');
 
 function closeInvoice() {
 	void navigateTo(withCountry('/checkout'));
@@ -69,8 +49,6 @@ function downloadInvoice() {
 				<CheckoutInvoiceHero
 					:invoice-number="order_quotation ? order_quotation.quote_number : '...'"
 					:issued-date="issued_date"
-					:billing-name="billing_name"
-					:billing-company="billing_company"
 				/>
 
 				<CheckoutInvoiceItemsTable :items="selected_items" />

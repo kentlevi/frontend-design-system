@@ -4,8 +4,6 @@ import { useCheckoutInvoiceHero } from '~/composables/checkout/invoice/billing-a
 defineProps<{
 	invoiceNumber: string | null;
 	issuedDate: string;
-	billingName: string;
-	billingCompany: string;
 }>();
 
 const {
