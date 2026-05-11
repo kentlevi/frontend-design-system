@@ -6,6 +6,7 @@ import {
 	checkoutGuestEmailTooltipContent,
 	checkoutGuestEmailTooltipProps,
 } from '~/data/checkout/tooltips';
+import { useUsersStore } from '~/stores/users/users.store';
 
 const {
 	translate,
@@ -30,11 +31,15 @@ const {
 	setGuestEmail,
 	handleGuestEmailBlur,
 } = useCheckoutGuestContactFeature();
+
+const users_store = useUsersStore()
+
+const { is_authenticated, role_code } = storeToRefs(users_store)
 </script>
 
 <template>
 	<VerificationModal />
-	<section v-if="!is_member" class="checkout-member-section">
+	<section v-if="!is_authenticated || role_code === 'NON_MEMBER'" class="checkout-member-section">
 		<h2 class="checkout-member-section-title">
 			{{ translate('checkout.guest.contactInformation') }}
 		</h2>

@@ -1,4 +1,5 @@
 import {
+	fetchAndStoreUser,
 	requestNonMemberLoginVerification,
 	submitNonMemberLoginVerification,
 } from '~/services/auth/auth.service'
@@ -75,6 +76,8 @@ export const useCheckoutVerification = () => {
 				})
 				return response
 			}
+
+			fetchAndStoreUser()
 
 			verification_store.patchVerificationState({
 				code: '',

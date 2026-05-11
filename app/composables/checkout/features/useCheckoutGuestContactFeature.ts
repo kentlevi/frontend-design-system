@@ -14,6 +14,7 @@ import {
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext'
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip'
 import {
+	fetchAndStoreUser,
 	loginMemberUser,
 	requestNonMemberLoginVerification,
 } from '~/services/auth/auth.service'
@@ -29,6 +30,9 @@ import {
 	useVerificationStore,
 } from '~/stores/verification.store'
 import { useToastStore } from '~/stores/toast'
+import { useUsersStore } from '~/stores/users/users.store'
+
+const user_store = useUsersStore()
 
 function resolveCooldownUntil(response: unknown): number | null {
 	const cooldown_seconds = getCooldownSecondsFromResponse(response)
@@ -41,7 +45,7 @@ export function useCheckoutGuestContactFeature() {
 	const { t: translate } = useI18n()
 	const {
 		is_member,
-		email,
+		email: checkout_email,
 		email_tooltip_open,
 		toggleEmailTooltip,
 		openLoginModal,
@@ -50,6 +54,7 @@ export function useCheckoutGuestContactFeature() {
 	const toast_store = useToastStore()
 	const verification_store = useVerificationStore()
 	const { verification_state } = storeToRefs(verification_store)
+	const email = ref(checkout_email.value)
 	const email_tooltip_ref = ref<HTMLElement | null>(null)
 	const is_email_already_registered_modal_open = ref(false)
 	const is_registered_email_forgot_password_modal_open = ref(false)
@@ -185,16 +190,32 @@ export function useCheckoutGuestContactFeature() {
 		return response
 	}
 
+	const { state } = storeToRefs(user_store)
+
+	function normalizeEmail(value: string) {
+		return value.trim().toLowerCase()
+	}
+
+	function isUserStateEmail(value: string) {
+		const normalized_user_email = normalizeEmail(state.value.email)
+
+		return (
+			normalized_user_email !== '' &&
+			normalizeEmail(value) === normalized_user_email
+		)
+	}
+
 	function setGuestEmail(value: string) {
 		email.value = value
+		checkout_email.value = value
 
-		if (is_member.value) return
+		if (isUserStateEmail(value)) return
 
-		const normalized_value = value.trim().toLowerCase()
+		const normalized_value = normalizeEmail(value)
 		const verified_email =
-			verification_state.value.verified_email.trim().toLowerCase()
+			normalizeEmail(verification_state.value.verified_email)
 		const session_email =
-			(verification_state.value.session?.email || '').trim().toLowerCase()
+			normalizeEmail(verification_state.value.session?.email || '')
 
 		if (verified_email && verified_email !== normalized_value) {
 			verification_store.patchVerificationState({
@@ -217,19 +238,20 @@ export function useCheckoutGuestContactFeature() {
 	}
 
 	async function handleGuestEmailBlur() {
-		if (is_member.value) return
-
 		const email_value = email.value.trim()
+
+		if (isUserStateEmail(email_value)) return
+
 		if (!email_value || !isValidAuthEmail(email_value)) return
 
-		const normalized_email = email_value.toLowerCase()
+		const normalized_email = normalizeEmail(email_value)
 		const verified_email =
-			verification_state.value.verified_email.trim().toLowerCase()
+			normalizeEmail(verification_state.value.verified_email)
 
 		if (verified_email === normalized_email) return
 
 		const session_email =
-			(verification_state.value.session?.email || '').trim().toLowerCase()
+			normalizeEmail(verification_state.value.session?.email || '')
 		const session_token =
 			(verification_state.value.session?.token || '').trim()
 		const can_reuse_session =
@@ -320,6 +342,12 @@ export function useCheckoutGuestContactFeature() {
 					expires_in: response.data?.expires_in || null,
 				},
 			})
+
+			if (response.message === "User logged in successfully.") {
+				fetchAndStoreUser()
+				return response
+			}
+
 			openVerificationModal()
 			return response
 		} catch (error) {
@@ -344,9 +372,14 @@ export function useCheckoutGuestContactFeature() {
 	watch(is_member, (value) => {
 		if (!value) return
 
+		email.value = checkout_email.value
 		is_registered_email_forgot_password_modal_open.value = false
 		closeEmailAlreadyRegisteredModal()
 		resetVerificationState()
+	})
+
+	watch(checkout_email, (value) => {
+		email.value = value
 	})
 
 	onBeforeUnmount(() => {
