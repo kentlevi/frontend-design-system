@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 defineProps<{
-	invoiceNumber: string;
+	invoiceNumber: string | null;
 	issuedDate: string;
 	billingName: string;
 	billingAddress: string;

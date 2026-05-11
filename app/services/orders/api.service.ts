@@ -1,3 +1,4 @@
+import type { CreateQuotationPayload, OrderQuotationDetailsResponse } from "~/types/checkout/quotation"
 import type { OrderCompleteDataResponse } from "~/types/order"
 
 export const fetchOrderCompletionDetails = async (order_id : number) : Promise<OrderCompleteDataResponse> => {
@@ -13,4 +14,9 @@ export const sendOrderConfirmationEmail = async (order_id : number) : Promise<vo
 export const sendArtworkReminder = async (order_id : number) : Promise<void> => {
 	const { $api } = useNuxtApp()
 	await $api.post(`orders/checkout/complete/send/artwork/${order_id}`)
+}
+
+export const createOrderQuotation = async (params : CreateQuotationPayload) : Promise<OrderQuotationDetailsResponse> => {
+	const { $api } = useNuxtApp()
+	return await $api.post(`orders/quotation/create`, params)
 }
