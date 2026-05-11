@@ -10,9 +10,7 @@ const { withCountry } = useCountry();
 const route = useRoute();
 const cart_badge_ready = ref(false)
 
-const {
-	startup,
-} = useSystemOperations()
+useSystemOperations()
 
 const {
 	simple,
@@ -43,7 +41,6 @@ function isExactNavHeading(path: string) {
 }
 
 onMounted(() => {
-	startup()
 	cart_badge_ready.value = true
 })
 </script>

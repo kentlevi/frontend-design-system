@@ -30,7 +30,7 @@ export const useCartStore = defineStore('cart', () => {
 
 	const item_picking_artwork = ref<CartItem | null>(null)
 
-	const is_authenticated = computed(() => user_store.state?.id ?? null)
+	const is_authenticated = computed(() => Boolean(user_store.state?.id))
 
 	const payment_options = computed(() => cartPaymentOptions);
 
