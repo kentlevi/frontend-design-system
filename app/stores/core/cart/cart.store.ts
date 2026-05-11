@@ -128,7 +128,6 @@ export const useCartStore = defineStore('cart', () => {
 	}
 
 	const emptyCart = (preserve_unsave_item : boolean = false) => {
-		selected_ids.value = []
 		emptyDeletableItems()
 
 		// 🔥 Preserve the unsave item
