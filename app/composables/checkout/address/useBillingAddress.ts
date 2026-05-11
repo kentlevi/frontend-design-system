@@ -1,8 +1,8 @@
-import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { loadAddresses } from "~/services/user-address/user-address.service";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 
@@ -12,8 +12,8 @@ export function useBillingAddress() {
 	const checkout_store = useMainCheckOutStore()
 
 	/** Context */
-	const { billing_address } = useAddressBookListCheckoutContext()
-	const { use_shipping_as_billing, billing_use_different_address, openSelectAddressModal } = useAddressGeneralUICheckoutContext()
+	const { billing_address } = useUserAddressDataCheckoutContext()
+	const { use_shipping_as_billing, billing_use_different_address, openSelectAddressModal } = useAddressGeneralUIContext()
 
 	const { assignAddressToForm } = useAddressGeneral()
 
@@ -26,7 +26,7 @@ export function useBillingAddress() {
 		resetForm,
 		updateFormFieldByType,
 		updateDynamicFieldByType,
-	} = useAddressFormCheckoutContext();
+	} = useUserAddressFormStateCheckoutContext();
 
 	async function setBillingAddress() {
 		billing_use_different_address.value = false

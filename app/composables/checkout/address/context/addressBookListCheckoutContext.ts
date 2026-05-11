@@ -1,19 +1,26 @@
-import type { InjectionKey } from "vue";
-import type { useUserAddressData } from "~/composables/account/addressBook/context/useUserAddressData";
+import { useUserAddressDataCheckout } from "./useUserAddressDataCheckout"
 
-export type AddressBookListCheckoutContext = ReturnType<typeof useUserAddressData>
+type composable_context = ReturnType<typeof useUserAddressDataCheckout>
 
-const address_checkout_context_key: InjectionKey<AddressBookListCheckoutContext> = Symbol('book-list-address-checkout-context')
+const key = Symbol('user-address-data-checkout')
 
-export function provideAddressBookListCheckoutContext(context: AddressBookListCheckoutContext) {
-	provide(address_checkout_context_key, context)
+export const provideUserAddressDataCheckout = () => {
+	const flow = useUserAddressDataCheckout()
+
+	const context = {
+		...flow,
+	}
+
+	provide(key, context)
+
+	return context
 }
 
-export function useAddressBookListCheckoutContext() {
-	const context = inject(address_checkout_context_key)
+export const useUserAddressDataCheckoutContext = () => {
+	const context = inject<composable_context>(key)
 
 	if (!context) {
-		throw new Error('Address book list checkout context is not available')
+		throw new Error('useUserAddressDataCheckoutContext')
 	}
 
 	return context

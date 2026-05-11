@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
+import { useAddressGeneralUIContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
 import { useAddressHelper } from '~/utils/address';
 
@@ -19,7 +19,7 @@ const { t } = useI18n();
 
 const {
 	getAddressTagClass
-} = useAddressGeneralUICheckoutContext()
+} = useAddressGeneralUIContext()
 
 </script>
 

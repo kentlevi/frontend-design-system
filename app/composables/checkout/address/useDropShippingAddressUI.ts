@@ -2,8 +2,8 @@ import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatur
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useDismissibleTooltip } from "../features/useDismissibleTooltip";
 import { useHeightTransition } from "../shared/useHeightTransition";
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useDropShippingAddressUI() {
 
@@ -19,10 +19,10 @@ export function useDropShippingAddressUI() {
 
 		toggleDropShippingTooltip,
 		getAddressTagClass
-	} = useAddressGeneralUICheckoutContext()
+	} = useAddressGeneralUIContext()
 
 
-	const {	has_drop_addresses } = useAddressBookListCheckoutContext()
+	const {	has_drop_addresses } = useUserAddressDataCheckoutContext()
 
 
 	const { t: translate } = useI18n();

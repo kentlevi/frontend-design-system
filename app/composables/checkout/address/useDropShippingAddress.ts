@@ -1,18 +1,18 @@
-import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { loadAddresses } from "~/services/user-address/user-address.service";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
 
 export function useDropShippingAddress() {
 
 	/** Stores */
 	const checkout_store = useMainCheckOutStore()
-	const { drop_shipping_ship_to_another_address, openSelectAddressModal } = useAddressGeneralUICheckoutContext()
+	const { drop_shipping_ship_to_another_address, openSelectAddressModal } = useAddressGeneralUIContext()
 
 	/** Context */
-	const { drop_address } = useAddressBookListCheckoutContext()
+	const { drop_address } = useUserAddressDataCheckoutContext()
 
 	const { assignAddressToForm } = useAddressGeneral()
 
@@ -22,7 +22,7 @@ export function useDropShippingAddress() {
 
 		resetForm,
 		updateFormFieldByType,
-	} = useAddressFormCheckoutContext();
+	} = useUserAddressFormStateCheckoutContext();
 
 	async function setDropAddress() {
 		drop_shipping_ship_to_another_address.value = false

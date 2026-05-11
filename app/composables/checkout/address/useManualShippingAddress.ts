@@ -1,5 +1,5 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 
@@ -28,7 +28,7 @@ export function useManualShippingAddress() {
 		resetForm,
 		updateFormFieldByType,
 		updateDynamicFieldByType,
-	} = useAddressFormCheckoutContext();
+	} = useUserAddressFormStateCheckoutContext();
 
 	resetForm('shipping')
 

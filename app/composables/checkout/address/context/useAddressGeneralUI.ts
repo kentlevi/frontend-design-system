@@ -1,5 +1,5 @@
 import type { AddressType } from "~/types/user-address";
-import { useCheckoutTooltipState } from "../features/useCheckoutTooltipState";
+import { useCheckoutTooltipState } from "../../features/useCheckoutTooltipState";
 
 export function useAddressGeneralUI() {
 

@@ -1,19 +1,26 @@
-import type { InjectionKey } from "vue";
-import type { useAddressGeneralUI } from "../useAddressGeneralUI";
+import { useAddressGeneralUI } from "./useAddressGeneralUI"
 
-export type AddressGeneralUICheckoutContext = ReturnType<typeof useAddressGeneralUI>
+type composable_context = ReturnType<typeof useAddressGeneralUI>
 
-const address_checkout_context_key: InjectionKey<AddressGeneralUICheckoutContext> = Symbol('address-general-ui-checkout-context')
+const key = Symbol('user-address-general-ui')
 
-export function provideAddressGeneralUICheckoutContext(context: AddressGeneralUICheckoutContext) {
-	provide(address_checkout_context_key, context)
+export const provideAddressGeneralUI = () => {
+	const flow = useAddressGeneralUI()
+
+	const context = {
+		...flow,
+	}
+
+	provide(key, context)
+
+	return context
 }
 
-export function useAddressGeneralUICheckoutContext() {
-	const context = inject(address_checkout_context_key)
+export const useAddressGeneralUIContext = () => {
+	const context = inject<composable_context>(key)
 
 	if (!context) {
-		throw new Error('Address general ui checkout context is not available')
+		throw new Error('useAddressGeneralUIContext')
 	}
 
 	return context

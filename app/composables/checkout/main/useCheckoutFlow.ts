@@ -4,10 +4,10 @@ import type { InitialCheckoutPayload } from "~/types/checkout"
 import { useUsersStore } from '~/stores/users/users.store';
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import type { PaymentCode } from "~/types/payments/payment";
-import { useAddressFormCheckoutContext } from "../address/context/addressFormCheckoutContext";
+import { useUserAddressFormStateCheckoutContext } from "../address/context/addressFormCheckoutContext";
 import { validateAddress } from "~/services/address/address.service";
 import { useAddressHelper } from "~/utils/address";
-import { useAddressGeneralUICheckoutContext } from "../address/context/addressGeneralUICheckoutContext";
+import { useAddressGeneralUIContext } from "../address/context/addressGeneralUICheckoutContext";
 import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
 import { useCartStore } from "~/stores/core/cart/cart.store";
 
@@ -34,12 +34,12 @@ export const useCheckoutFlow = () => {
 
 		setFormErrors,
 		clearFormFieldErrors
-	} = useAddressFormCheckoutContext()
+	} = useUserAddressFormStateCheckoutContext()
 
 	const {
 		drop_shipping_enabled,
 		use_shipping_as_billing,
-	} = useAddressGeneralUICheckoutContext()
+	} = useAddressGeneralUIContext()
 
 
 

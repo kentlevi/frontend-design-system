@@ -5,7 +5,7 @@ import SavedAddress from '../address/SavedShippingAddress.vue';
 import DropShippingAddress from '../address/DropShippingAddress.vue';
 import { useCheckoutAddressFeature } from '../../../composables/checkout/address/useCheckoutAddressFeature';
 import { useSavedShippingAddress } from '~/composables/checkout/address/useSavedShippingAddress';
-import { useAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { useUserAddressDataCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
 import CheckoutTransition from '../shared/CheckoutTransition.vue';
 
 const {
@@ -19,7 +19,7 @@ const {
 
 const {	openSelectAddressModal } = useSavedShippingAddress()
 
-const {	has_shipping_addresses } = useAddressBookListCheckoutContext()
+const {	has_shipping_addresses } = useUserAddressDataCheckoutContext()
 </script>
 
 <template>

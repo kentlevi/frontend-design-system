@@ -1,10 +1,10 @@
 import type { AddressType } from "~/types/user-address";
-import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { mapAddressToForm } from "~/factories/address";
 import { useAddressFieldStore } from "~/stores/user-address";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useAddressGeneral() {
 
@@ -17,17 +17,17 @@ export function useAddressGeneral() {
 		shipping_form,
 		billing_form,
 		drop_form,
-	} = useAddressFormCheckoutContext()
+	} = useUserAddressFormStateCheckoutContext()
 
 	const {
 		shipping_address,
 		billing_address,
 		drop_address
-	} = useAddressBookListCheckoutContext()
+	} = useUserAddressDataCheckoutContext()
 
 	const {
 		drop_shipping_enabled,
-	} = useAddressGeneralUICheckoutContext()
+	} = useAddressGeneralUIContext()
 
 
 	/**

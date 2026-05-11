@@ -2,7 +2,7 @@ import { useCartStore } from '~/stores/core/cart/cart.store'
 import { useProductionShippingStore } from '~/stores/production-shipping/production-shipping.store'
 import { formatShippingDateRange } from '~/utils/shipping/dateRange'
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressFormCheckoutContext } from '../address/context/addressFormCheckoutContext'
+import { useUserAddressFormStateCheckoutContext } from '../address/context/addressFormCheckoutContext'
 import { useUsersStore } from '~/stores/users/users.store'
 import type { AvailableShippingMethod } from '~/types/production-shipping/production-shipping'
 import type { ShippingMethodItem } from '~/types/shipping/shipping'
@@ -21,7 +21,7 @@ export function useShippingMethod() {
 	const production_shipping_store = useProductionShippingStore()
 
 	const { is_authenticated } = useUsersStore()
-	const { shipping_form } = useAddressFormCheckoutContext()
+	const { shipping_form } = useUserAddressFormStateCheckoutContext()
 	const { selected_ids } = storeToRefs(cart_store)
 	const { available_shipping_methods, is_loading } = storeToRefs(production_shipping_store)
 

@@ -1,6 +1,6 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext"
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext"
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext"
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext"
 import { useAddressHelper } from "~/utils/address"
 import { useAddressGeneral } from "./useAddressGeneral"
 
@@ -8,7 +8,7 @@ export function useCheckoutAddressSelectModal() {
 
 	/** Stores */
 	const main_checkout_store = useMainCheckOutStore()
-	const { shipping_address, billing_address, drop_address } = useAddressBookListCheckoutContext()
+	const { shipping_address, billing_address, drop_address } = useUserAddressDataCheckoutContext()
 
 	/** Contexts */
 	const {
@@ -16,7 +16,7 @@ export function useCheckoutAddressSelectModal() {
 		is_select_address_modal_open,
 
 		getAddressTagClass
-	} = useAddressGeneralUICheckoutContext()
+	} = useAddressGeneralUIContext()
 
 	/** Helpers */
 	const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()

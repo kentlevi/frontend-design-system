@@ -1,8 +1,8 @@
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
-import { useAddressFormCheckoutContext } from "./context/addressFormCheckoutContext";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 import { loadAddresses } from "~/services/user-address/user-address.service";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 import { useAddressGeneral } from "./useAddressGeneral";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 
@@ -12,9 +12,9 @@ export function useSavedShippingAddress() {
 	const checkout_store = useMainCheckOutStore()
 
 	/** Contexts */
-	const { shipping_address } = useAddressBookListCheckoutContext()
-	const { shipping_form } = useAddressFormCheckoutContext()
-	const { openSelectAddressModal } = useAddressGeneralUICheckoutContext()
+	const { shipping_address } = useUserAddressDataCheckoutContext()
+	const { shipping_form } = useUserAddressFormStateCheckoutContext()
+	const { openSelectAddressModal } = useAddressGeneralUIContext()
 
 	const { assignAddressToForm } = useAddressGeneral()
 

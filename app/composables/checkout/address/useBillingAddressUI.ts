@@ -1,8 +1,8 @@
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
-import { useAddressBookListCheckoutContext } from "./context/addressBookListCheckoutContext";
-import { useAddressGeneralUICheckoutContext } from "./context/addressGeneralUICheckoutContext";
+import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
+import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
 
 export function useBillingAddressUI() {
 
@@ -19,9 +19,9 @@ export function useBillingAddressUI() {
 		is_billing_address_modal_open,
 		toggleBillingTooltip,
 		getAddressTagClass
-	} = useAddressGeneralUICheckoutContext()
+	} = useAddressGeneralUIContext()
 
-	const {	has_billing_addresses } = useAddressBookListCheckoutContext()
+	const {	has_billing_addresses } = useUserAddressDataCheckoutContext()
 
 	const {
 		enter_duration_ms,

@@ -63,23 +63,15 @@ import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/Che
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { provideAddressFormCheckoutContext } from '~/composables/checkout/address/context/addressFormCheckoutContext';
-import { useUserAddressFormState } from '~/composables/account/addressBook/context/useUserAddressFormState';
-import { useUserAddressData } from '~/composables/account/addressBook/context/useUserAddressData';
-import { provideAddressBookListCheckoutContext } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
-import { provideAddressGeneralUICheckoutContext } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
-import { useAddressGeneralUI } from '~/composables/checkout/address/useAddressGeneralUI';
+import { provideUserAddressFormStateCheckout } from '~/composables/checkout/address/context/addressFormCheckoutContext';
+import { provideUserAddressDataCheckout } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { provideAddressGeneralUI } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
 
 /** Standalone address context (isolated from checkout_experience) */
-const address_checkout_form_state = useUserAddressFormState();
-provideAddressFormCheckoutContext(address_checkout_form_state);
-
-const address_checkout_book_list_state = useUserAddressData()
-provideAddressBookListCheckoutContext(address_checkout_book_list_state)
-
-const address_general_ui = useAddressGeneralUI()
-provideAddressGeneralUICheckoutContext(address_general_ui)
+provideUserAddressFormStateCheckout()
+provideUserAddressDataCheckout()
+provideAddressGeneralUI()
 
 const checkout_experience = useCheckoutExperience();
 
