@@ -20,7 +20,7 @@
 				</UiLinearWrapper>
 			</UiLinearWrapper>
 			<UiLinearWrapper direction="column" justify="space-between" align="flex-end">
-				<UiButton tone="neutral">Upload Artwork</UiButton>
+				<UiButton tone="neutral" @click="open_upload_artwork">Upload Artwork</UiButton>
 				<UiText size="large" weight="bold">234,318.40원</UiText>
 			</UiLinearWrapper>
 		</UiLinearWrapper>
@@ -28,8 +28,13 @@
 </template>
 
 <script setup lang="ts">
+import { useUploadArtworkModal } from '~/composables/features/account/orders/useUploadArtworkModal';
 
+const { open_modal } = useUploadArtworkModal();
 
+const open_upload_artwork = () => {
+	open_modal();
+};
 </script>
 
 <style lang="scss" scoped>

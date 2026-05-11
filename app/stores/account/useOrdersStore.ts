@@ -7,8 +7,8 @@ export const useOrdersStore = defineStore('account-orders', () => {
 	const is_upload_modal_open = ref(false);
 	const active_upload_item = ref<AccountOrderLineItem | null>(null);
 
-	const openUploadModal = (item: AccountOrderLineItem) => {
-		active_upload_item.value = item;
+	const openUploadModal = (item?: AccountOrderLineItem) => {
+		active_upload_item.value = item || null;
 		is_upload_modal_open.value = true;
 	};
 

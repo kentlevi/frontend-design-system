@@ -131,6 +131,7 @@ const section_lookup: Record<string, GuideSection> = {
 	Modal: 'actions',
 	DeleteConfirmModal: 'actions',
 	Input: 'form',
+	FileInput: 'form',
 	Textarea: 'form',
 	Select: 'form',
 	Checkbox: 'form',
@@ -215,6 +216,13 @@ const guide_usage_snippets: Record<string, string> = {
   v-model="keyword"
   type="search"
   placeholder="Search..."
+/>`,
+	FileInput: `<UiFileInput
+  :multiple="true"
+  :accepted-formats="['png', 'jpg', 'pdf']"
+  @change="(files) => {
+    console.log(files)
+  }"
 />`,
 	LinearWrapper: `<UiLinearWrapper :gap="12" align="center">
   <UiBadge>Item A</UiBadge>
