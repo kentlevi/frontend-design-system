@@ -55,7 +55,7 @@ const {
 					v-if="shippingPhoneNumber(shipping_address)"
 					class="checkout-member-address-row"
 				>
-					<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
+					<UiIcon name="regular-phone" :size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line checkout-member-address-line--strong">
 						{{ shippingPhoneNumber(shipping_address) }}
 					</p>
@@ -63,7 +63,7 @@ const {
 
 				<div class="checkout-member-address-row checkout-member-address-row--split">
 					<div class="checkout-member-address-row-main">
-						<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
+						<UiIcon name="regular-map-marker" :size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 						<div class="checkout-member-address-lines">
 							<p class="checkout-member-address-line">
 								{{ buildAddressLines(shipping_address) }}
@@ -84,7 +84,7 @@ const {
 					v-if="shipping_address.company"
 					class="checkout-member-address-row"
 				>
-					<UiIcon name="regular-building" size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
+					<UiIcon name="regular-building" :size="18" color="var(--text-secondary)" class="checkout-member-address-icon" decorative />
 					<p class="checkout-member-address-line">
 						{{ shipping_address.company }}
 					</p>
