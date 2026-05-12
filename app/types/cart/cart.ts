@@ -1,6 +1,7 @@
 export interface CartItem {
 	id: number | null
 	user_id: number | null
+	product_id?: number
 	product_config_mapping_id: number
 	url_slug: string
 	product: string
