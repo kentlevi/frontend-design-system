@@ -10,21 +10,40 @@ defineProps<{
 <template>
 	<section class="checkout-invoice-items">
 		<div class="checkout-invoice-items-table">
+
 			<div class="checkout-invoice-items-head">
 				<span>Item</span>
 				<span>Qty.</span>
 				<span>Amount</span>
 			</div>
 
-			<div
-				v-for="(item, index) in items"
-				:key="index"
-				class="checkout-invoice-items-row"
-			>
-				<span>{{ item.product }}</span>
-				<span>{{ item.quantity }}</span>
-				<strong>{{ formatPrice(item.cost) }}</strong>
-			</div>
+			<ClientOnly>
+				<template #default>
+					<div
+						v-for="(item, index) in items"
+						:key="item.id ?? index"
+						class="checkout-invoice-items-row"
+					>
+						<span>{{ item.product }}</span>
+						<span>{{ item.quantity }}</span>
+						<strong>{{ formatPrice(item.cost) }}</strong>
+					</div>
+				</template>
+
+				<!-- FALLBACK SKELETON -->
+				<template #fallback>
+					<div
+						v-for="n in 2"
+						:key="n"
+						class="checkout-invoice-items-row is-skeleton"
+					>
+						<span>...</span>
+						<span>...</span>
+						<strong>...</strong>
+					</div>
+				</template>
+			</ClientOnly>
+
 		</div>
 	</section>
 </template>

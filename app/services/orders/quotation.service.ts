@@ -1,5 +1,5 @@
 import type { CreateQuotationPayload } from "~/types/checkout/quotation"
-import { createOrderQuotation } from "./api.service"
+import { createOrderQuotation, fetchOrderQuotaionDetails } from "./api.service"
 import { useQuotationStore } from "~/stores/checkout/qoutation.store"
 
 export const useQuotationService = () => {
@@ -19,7 +19,23 @@ export const useQuotationService = () => {
 		}
 	}
 
+	const getOrderQuotaionDetails = async (id : number) => {
+		try{
+			const request = await fetchOrderQuotaionDetails(id)
+
+			if(!request.data) throw new Error('No Order Quotation found')
+
+			quotation_store.setOrderQuotation(request.data)
+
+		}catch(error){
+			console.error(error)
+		}
+	}
+
+
+
 	return {
-		createQuotation
+		createQuotation,
+		getOrderQuotaionDetails,
 	}
 }

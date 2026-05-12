@@ -7,21 +7,21 @@ import CheckoutInvoiceItemsTable from './CheckoutInvoiceItemsTable.vue';
 import CheckoutInvoiceTopbar from './CheckoutInvoiceTopbar.vue';
 import CheckoutInvoiceTotals from './CheckoutInvoiceTotals.vue';
 import { formatPrice } from '~/utils/currency/formatPrice';
-import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
-import { useQuotationFlow } from '~/composables/checkout/qoutation/useQuotationFlow';
+import { useQuotationContext } from '~/composables/checkout/qoutation/useQuotationContext';
 import { provideCheckoutInvoiceBilling } from '~/composables/checkout/invoice/billing-address/context/useCheckoutInvoiceBillingContext';
 
 provideCheckoutInvoiceBilling()
+
+const route = useRoute()
 
 const { withCountry } = useCountry();
 
 const {
 	selected_items,
-	total_cost,
-	sub_total_cost,
-	shipping_cost,
-} = useCheckoutSummaryFlow()
-const { order_quotation, issued_date } = useQuotationFlow()
+	order_quotation,
+	issued_date,
+	getOrderQuotaionDetails
+} = useQuotationContext()
 
 function closeInvoice() {
 	void navigateTo(withCountry('/checkout'));
@@ -34,6 +34,14 @@ function printInvoice() {
 function downloadInvoice() {
 	window.print();
 }
+
+onMounted(async () => {
+	const order_quotation_id = Number(route.query.quotation_id)
+
+	if (!order_quotation_id) return
+
+	await getOrderQuotaionDetails(order_quotation_id)
+})
 </script>
 
 <template>
@@ -54,11 +62,11 @@ function downloadInvoice() {
 				<CheckoutInvoiceItemsTable :items="selected_items" />
 
 				<CheckoutInvoiceTotals
-					:subtotal="formatPrice(sub_total_cost)"
+					:subtotal="formatPrice(order_quotation?.subtotal_cost ?? 0)"
 					shipping-label="Standard Shipping"
-					:shipping-fee="formatPrice(shipping_cost)"
-					:discount="formatPrice(0)"
-					:total="formatPrice(total_cost)"
+					:shipping-fee="formatPrice(order_quotation?.shipping_cost ?? 0)"
+					:discount="formatPrice(order_quotation?.discount ?? 0)"
+					:total="formatPrice(order_quotation?.total_cost ?? 0)"
 				/>
 				<CheckoutInvoiceFooter />
 			</article>
