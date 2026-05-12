@@ -42,6 +42,10 @@ export function useShippingMethod() {
 		})
 	)
 
+	const selected_cart_item_server_ids = computed(() =>
+		selected_cart_items.value.map(item => item.id)
+	)
+
 	const fetchShippingMethods = async (): Promise<void> => {
 		await fetchShippingMethodsService(
 			{
@@ -157,18 +161,16 @@ export function useShippingMethod() {
 	}
 
 	watch(
-		() => [...selected_ids.value],
+		() => [
+			is_authenticated.value,
+			...selected_ids.value,
+			...selected_cart_item_server_ids.value,
+		],
 		() => {
 			void fetchShippingMethods()
 		},
 		{ immediate: true }
 	)
-
-	watch(is_authenticated, () => {
-		if (is_authenticated.value) {
-			void fetchShippingMethods()
-		}
-	})
 
 	// const isFormComplete = computed(() => {
 	// 	const { postcode, fields } = shipping_form.value

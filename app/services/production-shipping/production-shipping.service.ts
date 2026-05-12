@@ -22,10 +22,17 @@ export async function fetchShippingMethodsService(
 		let response: ShippingMethodResponse
 
 		if (payload.is_authenticated) {
+			const cart_item_ids = payload.selected_cart_items
+				.map(item => item.id)
+				.filter((id): id is number => id !== null)
+
+			if (cart_item_ids.length !== payload.selected_cart_items.length) {
+				production_shipping_store.setIsLoaded(false)
+				return
+			}
+
 			response = await getShippingMethodByCartItems({
-				cart_item_ids: payload.selected_cart_items
-					.map(item => item.id)
-					.filter((id): id is number => id !== null),
+				cart_item_ids,
 				zip_code: payload.postcode,
 				fields: payload.fields
 			})
