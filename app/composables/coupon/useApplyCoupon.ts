@@ -5,6 +5,8 @@ import type { ApplyCoupon, ApplyCouponErrorData, ApplyCouponPayload } from "~/ty
 import { applyCoupon } from "~/services/coupon/api.service"
 
 export function useApplyCoupon() {
+	const loading_overlay_store = useLoadingOverlayStore()
+
 	const cart_store = useCartStore()
 	const { selected_real_ids } = storeToRefs(cart_store)
 
@@ -26,6 +28,7 @@ export function useApplyCoupon() {
 
 		setLoading(true)
 		setError(null)
+		startOverlay()
 
 		try {
 			const response = await applyCoupon(form.value)
@@ -41,7 +44,16 @@ export function useApplyCoupon() {
 			setError(err as Error)
 		} finally {
 			setLoading(false)
+			loading_overlay_store.stopLoading('apply_coupon')
 		}
+	}
+
+	function startOverlay() {
+		loading_overlay_store.startLoading('apply_coupon', {
+			showCopy: true,
+			testId: 'apply-coupon-overlay',
+			position: 'fixed'
+		})
 	}
 
 	return {
