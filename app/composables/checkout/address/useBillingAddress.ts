@@ -14,13 +14,13 @@ export function useBillingAddress() {
      */
 	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
-	const { billing_use_different_address } = storeToRefs(checkout_store)
+	const { use_shipping_as_billing, billing_use_different_address } = storeToRefs(checkout_store)
 
 
 	/**
      * Context
      */
-	const { use_shipping_as_billing, openSelectAddressModal } = useAddressGeneralUIContext()
+	const { openSelectAddressModal } = useAddressGeneralUIContext()
 	const {
 		form_field_errors,
 		shipping_form,

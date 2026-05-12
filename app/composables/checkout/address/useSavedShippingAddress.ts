@@ -13,6 +13,7 @@ export function useSavedShippingAddress() {
      */
 	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
+	const { shipping_ship_to_another_address,  } = storeToRefs(checkout_store)
 
 
 	/**
@@ -37,6 +38,18 @@ export function useSavedShippingAddress() {
 
 
 	/**
+     * Watchers
+     */
+	watch(shipping_ship_to_another_address, (val) => {
+		if (val) {
+			checkout_store.setShippingAddressId(null)
+		} else {
+			initShippingAddress()
+		}
+	})
+
+
+	/**
      * Functions
      */
 	async function initShippingAddress() {
@@ -50,8 +63,6 @@ export function useSavedShippingAddress() {
 
 	onMounted(async() => {
 		await ensureDynamicFields()
-
-		initShippingAddress()
 	})
 
 	return {

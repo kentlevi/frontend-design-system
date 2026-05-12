@@ -11,7 +11,7 @@ export function useBillingAddressUI() {
      * Stores
      */
 	const main_checkout_store = useMainCheckOutStore()
-	const { billing_use_different_address } = storeToRefs(main_checkout_store)
+	const { use_shipping_as_billing, billing_use_different_address } = storeToRefs(main_checkout_store)
 
 
 	/** Contexts */
@@ -19,7 +19,6 @@ export function useBillingAddressUI() {
 
 	const {
 		billing_tooltip_open,
-		use_shipping_as_billing,
 		is_billing_address_modal_open,
 
 		toggleBillingTooltip,

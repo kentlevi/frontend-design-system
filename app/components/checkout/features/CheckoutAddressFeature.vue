@@ -15,6 +15,8 @@ const {
 
 	shipping_swap_wrapper_ref,
 	shipping_ship_to_another_address,
+
+	resetForm,
 } = useCheckoutAddressFeature()
 
 const {	openSelectAddressModal } = useSavedShippingAddress()
@@ -51,7 +53,14 @@ const {	has_shipping_addresses } = useUserAddressDataCheckoutContext()
 				</div>
 			</div>
 
-			<UiRadio v-if="is_member && !shipping_ship_to_another_address && has_shipping_addresses" v-model="shipping_ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
+			<UiRadio
+				v-if="is_member && !shipping_ship_to_another_address && has_shipping_addresses"
+				v-model="shipping_ship_to_another_address"
+				:value="true"
+				name="shipping-mode"
+				class="checkout-member-radio-line"
+				@click="resetForm('shipping')"
+			>
 				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 

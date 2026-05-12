@@ -2,6 +2,7 @@ import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 
 export function useCheckoutAddressFeature() {
 
@@ -16,6 +17,7 @@ export function useCheckoutAddressFeature() {
      * Contexts
      */
 	const { is_member } = useCheckoutExperienceFeatureContext();
+	const { resetForm } = useUserAddressFormStateCheckoutContext()
 
 
 	/**
@@ -76,5 +78,7 @@ export function useCheckoutAddressFeature() {
 
 		shipping_swap_wrapper_ref,
 		shipping_ship_to_another_address,
+
+		resetForm,
 	}
 }

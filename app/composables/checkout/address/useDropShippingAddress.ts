@@ -9,8 +9,8 @@ export function useDropShippingAddress() {
      * Stores
      */
 	const checkout_store = useMainCheckOutStore()
-	const { drop_shipping_ship_to_another_address } = storeToRefs(checkout_store)
-	const { drop_shipping_enabled, openSelectAddressModal } = useAddressGeneralUIContext()
+	const { drop_shipping_enabled, drop_shipping_ship_to_another_address } = storeToRefs(checkout_store)
+	const { openSelectAddressModal } = useAddressGeneralUIContext()
 
 
 	/**
@@ -54,8 +54,6 @@ export function useDropShippingAddress() {
      * Functions
      */
 	async function setDropAddress() {
-		drop_shipping_ship_to_another_address.value = false
-
 		if (checkout_store.selected_drop_address_id) {
 			assignAddressToForm('drop', checkout_store.selected_drop_address_id)
 			return

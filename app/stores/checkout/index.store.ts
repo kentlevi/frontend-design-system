@@ -6,6 +6,7 @@ import type { AddressFormState, AddressType } from "~/types/user-address"
  * This store is only for dedicated data needed for checkout process
  */
 export const useMainCheckOutStore = defineStore('main_checkout', () => {
+	const _hydrated = ref(false)
 
 	const guest_contact_state = reactive({
 		email: '',
@@ -17,6 +18,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const selected_shipping_address_id = ref<number | null>(null)
 	const selected_billing_address_id = ref<number | null>(null)
 	const selected_drop_address_id = ref<number | null>(null)
+
+
+	const drop_shipping_enabled = ref(false);
+	const use_shipping_as_billing = ref(true);
 
 	const shipping_ship_to_another_address = ref(false)
 	const drop_shipping_ship_to_another_address = ref(false);
@@ -85,6 +90,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setShippingAddressId(null)
 		setBillingAddressId(null)
 		setDropAddressId(null)
+		drop_shipping_enabled.value = false
+		use_shipping_as_billing.value = false
 		shipping_ship_to_another_address.value = false
 		drop_shipping_ship_to_another_address.value = false
 		billing_use_different_address.value = false
@@ -107,6 +114,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	}
 
 	return {
+		_hydrated,
+
 		guest_contact_state,
 		selected_shipping_address_id,
 		selected_billing_address_id,
@@ -121,6 +130,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		shipping_form,
 		billing_form,
 		drop_form,
+		drop_shipping_enabled,
+		use_shipping_as_billing,
 		shipping_ship_to_another_address,
 		drop_shipping_ship_to_another_address,
 		billing_use_different_address,
@@ -150,9 +161,45 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 			'selected_billing_address_id',
 			'selected_drop_address_id',
 			'on_page',
+			'drop_shipping_enabled',
+			'use_shipping_as_billing',
 			'shipping_ship_to_another_address',
 			'drop_shipping_ship_to_another_address',
 			'billing_use_different_address'
-		]
+		],
+		afterHydrate: (ctx) => {
+			const raw = localStorage.getItem('mu_checkout')
+			const parsed = raw ? JSON.parse(raw) : {}
+
+			// Reset booleans to match SSR defaults
+			ctx.store.drop_shipping_enabled = false
+			ctx.store.use_shipping_as_billing = true
+			ctx.store.shipping_ship_to_another_address = false
+			ctx.store.drop_shipping_ship_to_another_address = false
+			ctx.store.billing_use_different_address = false
+
+			// Reset form_state to defaults so SSR and client match
+			Object.assign(ctx.store.form_state.shipping, addressFormDefaults('shipping'))
+			Object.assign(ctx.store.form_state.billing, addressFormDefaults('billing'))
+			Object.assign(ctx.store.form_state.drop, addressFormDefaults('drop'))
+
+			nextTick(() => {
+				// Restore booleans
+				ctx.store.drop_shipping_enabled = parsed.drop_shipping_enabled ?? false
+				ctx.store.use_shipping_as_billing = parsed.use_shipping_as_billing ?? true
+				ctx.store.shipping_ship_to_another_address = parsed.shipping_ship_to_another_address ?? false
+				ctx.store.drop_shipping_ship_to_another_address = parsed.drop_shipping_ship_to_another_address ?? false
+				ctx.store.billing_use_different_address = parsed.billing_use_different_address ?? false
+
+				// Restore form_state from persisted values
+				if (parsed.form_state) {
+					Object.assign(ctx.store.form_state.shipping, parsed.form_state.shipping)
+					Object.assign(ctx.store.form_state.billing, parsed.form_state.billing)
+					Object.assign(ctx.store.form_state.drop, parsed.form_state.drop)
+				}
+
+				ctx.store._hydrated = true
+			})
+		}
 	}
 })

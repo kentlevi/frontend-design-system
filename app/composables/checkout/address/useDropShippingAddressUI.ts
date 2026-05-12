@@ -12,7 +12,7 @@ export function useDropShippingAddressUI() {
      * Stores
      */
 	const main_checkout_store = useMainCheckOutStore()
-	const { drop_shipping_ship_to_another_address } = storeToRefs(main_checkout_store)
+	const { drop_shipping_enabled, drop_shipping_ship_to_another_address } = storeToRefs(main_checkout_store)
 
 
 	/** Contexts */
@@ -22,7 +22,6 @@ export function useDropShippingAddressUI() {
 
 	const {
 		drop_shipping_tooltip_open,
-		drop_shipping_enabled,
 
 		toggleDropShippingTooltip,
 		getAddressTagClass

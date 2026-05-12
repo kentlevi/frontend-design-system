@@ -22,13 +22,9 @@ export function useManualShippingAddress() {
 
 		populateDynamicFields,
 		clearFormFieldError,
-		resetForm,
 		updateFormFieldByType,
 		updateDynamicFieldByType,
 	} = useUserAddressFormStateCheckoutContext();
-
-
-	resetForm('shipping')
 
 
 	onMounted(async () => {
