@@ -1,15 +1,15 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiSocialIcon</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiSocialIcon</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Social media icon component with color variants.
-		</UiText>
+		</MuText>
 
 		<div
 			v-for="variant in variants"
 			:key="variant"
 		>
-			<UiHeading variant="6" weight="bold">{{ variant }}</UiHeading>
+			<MuHeading variant="6" weight="bold">{{ variant }}</MuHeading>
 			<div class="guide-demo" :class="{ 'guide-demo-dark': variant === 'white' }">
 				<div class="guide-demo-row">
 					<UiSocialIcon

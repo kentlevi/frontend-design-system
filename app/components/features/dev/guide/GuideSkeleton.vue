@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiSkeleton</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiSkeleton</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Placeholder loader used while content is fetching.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Examples</UiHeading>
+		<MuHeading variant="6" weight="bold">Examples</MuHeading>
 		<div class="guide-demo">
 			<UiSkeleton height="16px" width="40%" />
 			<UiSkeleton height="12px" width="85%" />

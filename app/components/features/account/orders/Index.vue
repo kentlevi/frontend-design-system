@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+
 
 withDefaults(defineProps<{
 	embedded?: boolean;
@@ -12,11 +14,11 @@ withDefaults(defineProps<{
 <template>
 	<section class="account-page" data-testid="account-orders-page">
 		<AccountShellSection :embedded="embedded" active-tab="orders">
-			<UiLinearWrapper class="account-page-content" data-testid="account-page-content" direction="column" :gap="24">
+			<MuLinearWrapper class="account-page-content" data-testid="account-page-content" direction="column" :gap="24">
 				<FeaturesAccountOrdersHeader />
 				<FeaturesAccountOrdersContent />
 				<FeaturesAccountOrdersModalsUploadArworkModal />
-			</UiLinearWrapper>
+			</MuLinearWrapper>
 		</AccountShellSection>
 	</section>
 </template>

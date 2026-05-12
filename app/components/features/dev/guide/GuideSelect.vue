@@ -1,19 +1,19 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiSelect</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiSelect</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Custom select menu with optional search and pinned option behavior.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Basic</UiHeading>
+		<MuHeading variant="6" weight="bold">Basic</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-select-wrap">
 				<UiSelect v-model="value" :options="options" placeholder="Choose a country" />
 			</div>
-			<UiText size="small">Selected: <code>{{ value }}</code></UiText>
+			<MuText size="small">Selected: <code>{{ value }}</code></MuText>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Searchable</UiHeading>
+		<MuHeading variant="6" weight="bold">Searchable</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-select-wrap">
 				<UiSelect

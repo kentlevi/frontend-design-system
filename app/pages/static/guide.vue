@@ -127,10 +127,12 @@ const section_lookup: Record<string, GuideSection> = {
 	Heading: 'typography',
 	Text: 'typography',
 	Button: 'actions',
+	Card: 'layout',
 	Segmented: 'actions',
 	Modal: 'actions',
 	DeleteConfirmModal: 'actions',
 	Input: 'form',
+	MuInput: 'form',
 	FileInput: 'form',
 	Textarea: 'form',
 	Select: 'form',
@@ -188,6 +190,9 @@ const guide_usage_snippets: Record<string, string> = {
 	Checkbox: `<UiCheckbox v-model="accepted">
   Accept terms
 </UiCheckbox>`,
+	Card: `<UiCard variant="default" padding="md" radius="md" bordered="default">
+  <UiText size="small">Card content</UiText>
+</UiCard>`,
 	DeleteConfirmModal: `<UiDeleteConfirmModal
   :model-value="open"
   title="Delete item"
@@ -217,7 +222,7 @@ const guide_usage_snippets: Record<string, string> = {
   type="search"
   placeholder="Search..."
 />`,
-	FileInput: `<UiFileInput
+	FileInput: `<MuFileInput
   :multiple="true"
   :accepted-formats="['png', 'jpg', 'pdf']"
   @change="(files) => {
@@ -242,13 +247,22 @@ const guide_usage_snippets: Record<string, string> = {
 	Modal: `<UiModal v-model="open" title="Edit Profile">
   <UiText>Modal content here.</UiText>
 </UiModal>`,
+	MuInput: `<MuInput
+  id="email"
+  name="email"
+  v-model="email"
+  type="email"
+  placeholder="example@mail.com"
+>
+  <template #label>Email Address</template>
+</MuInput>`,
 	Radio: `<UiRadio
   v-model="plan"
   name="plan"
   value="pro"
   label="Pro Plan"
 />`,
-	Segmented: `<UiSegmented
+	Segmented: `<MuSegmented
   v-model="unit"
   :options="[
     { label: 'mm', value: 'mm' },

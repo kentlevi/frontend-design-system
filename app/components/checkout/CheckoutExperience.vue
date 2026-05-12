@@ -7,6 +7,7 @@ import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPayme
 import CheckoutAddressFeature from '~/components/checkout/features/CheckoutAddressFeature.vue';
 import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.vue';
 import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
+import CouponsModal from '~/components/features/checkout/modals/coupons-modal/Index.vue';
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
@@ -38,6 +39,7 @@ const {
 	// Identifiers & UI State
 	is_login_modal_open,
 	is_accredited_banks_modal_open,
+	is_coupons_modal_open,
 
 } = checkout_experience;
 
@@ -102,6 +104,7 @@ function setCompleteLoaderRef(
 		:confirm-label="t('checkout.member.addressSelection.selectAddress')"
 	/>
 	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
+	<CouponsModal v-model="is_coupons_modal_open" />
 </template>
 
 <style lang="scss">

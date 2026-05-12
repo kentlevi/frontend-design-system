@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiCheckbox</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiCheckbox</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Checkbox input with label, size, and state support.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Examples</UiHeading>
+		<MuHeading variant="6" weight="bold">Examples</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-column">
 				<UiCheckbox v-model="checked">Accept terms</UiCheckbox>
@@ -15,7 +15,7 @@
 				</UiCheckbox>
 				<UiCheckbox :model-value="false" state="error">Error state</UiCheckbox>
 			</div>
-			<UiText size="small">Checked value: <code>{{ checked }}</code></UiText>
+			<MuText size="small">Checked value: <code>{{ checked }}</code></MuText>
 		</div>
 	</div>
 </template>

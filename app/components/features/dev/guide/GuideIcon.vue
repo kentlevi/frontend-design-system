@@ -1,9 +1,9 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiIcon</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiIcon</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Full icon catalog from the current sprite map. Use search to check if an icon name exists.
-		</UiText>
+		</MuText>
 
 		<div class="guide-demo">
 			<div class="guide-icon-toolbar">
@@ -13,9 +13,9 @@
 					placeholder="Search icon name (ex: regular-search, strong-user)"
 					input-class="guide-icon-search-input"
 				/>
-				<UiText size="small" color="var(--text-secondary)">
+				<MuText size="small" color="var(--text-secondary)">
 					{{ filtered_icon_names.length }} / {{ icon_names.length }} icons
-				</UiText>
+				</MuText>
 			</div>
 
 			<div v-if="filtered_icon_names.length" class="guide-icon-grid">
@@ -29,9 +29,9 @@
 				</div>
 			</div>
 
-			<UiText v-else size="small" color="var(--text-secondary)">
+			<MuText v-else size="small" color="var(--text-secondary)">
 				No icons found for "{{ search_query }}".
-			</UiText>
+			</MuText>
 		</div>
 	</div>
 </template>

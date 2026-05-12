@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiButton</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiButton</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Primary action button component. Supports variants, tones, sizes, icons, loading, and disabled states.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Variants</UiHeading>
+		<MuHeading variant="6" weight="bold">Variants</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton variant="filled">Filled</UiButton>
@@ -16,7 +16,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Tones</UiHeading>
+		<MuHeading variant="6" weight="bold">Tones</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton variant="filled" tone="default">Default</UiButton>
@@ -27,7 +27,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Sizes</UiHeading>
+		<MuHeading variant="6" weight="bold">Sizes</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton size="sm">Small</UiButton>
@@ -36,7 +36,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">With Icon</UiHeading>
+		<MuHeading variant="6" weight="bold">With Icon</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton icon="regular-plus" icon-position="left">Add Item</UiButton>
@@ -44,7 +44,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">States</UiHeading>
+		<MuHeading variant="6" weight="bold">States</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton disabled>Disabled</UiButton>
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Outline Tones</UiHeading>
+		<MuHeading variant="6" weight="bold">Outline Tones</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton variant="outline" tone="default">Default</UiButton>
@@ -63,7 +63,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Properties</UiHeading>
+		<MuHeading variant="6" weight="bold">Properties</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>

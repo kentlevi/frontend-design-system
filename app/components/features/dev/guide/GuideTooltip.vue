@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiTooltip</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiTooltip</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Floating helper content anchored to a trigger element.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Example</MuHeading>
 		<div class="guide-demo">
 			<UiTooltip :open="open" side="top" align="center" tone="neutral">
 				<template #trigger>
@@ -13,9 +13,9 @@
 						{{ open ? 'Hide' : 'Show' }} tooltip
 					</UiButton>
 				</template>
-				<UiText size="small" color="var(--text-inverse)">
+				<MuText size="small" color="var(--text-inverse)">
 					Tooltip content can explain a control.
-				</UiText>
+				</MuText>
 			</UiTooltip>
 		</div>
 	</div>

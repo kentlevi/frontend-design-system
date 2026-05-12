@@ -1,11 +1,12 @@
 <template>
-	<UiLinearWrapper class="orders-content" :gap="24" align="flex-start">
+	<MuLinearWrapper class="orders-content" :gap="24" align="flex-start">
 		<FeaturesAccountOrdersContentSide class="orders-side" />
 		<FeaturesAccountOrdersContentMain class="orders-main" />
-	</UiLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 </script>
 
 <style lang="scss" scoped>

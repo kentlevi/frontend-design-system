@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiFormField</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiFormField</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Wrapper that provides label, hint, and error states for form controls.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Example</MuHeading>
 		<div class="guide-demo">
 			<UiFormField
 				label="Email"

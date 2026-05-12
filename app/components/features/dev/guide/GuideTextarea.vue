@@ -1,19 +1,19 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiTextarea</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">MuTextarea</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Multiline text input with state and resize control.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Example</MuHeading>
 		<div class="guide-demo">
-			<UiTextarea
+			<MuTextarea
 				v-model="message"
 				placeholder="Write your notes here"
 				:rows="5"
 				resize="vertical"
 			/>
-			<UiText size="small">{{ message.length }} characters</UiText>
+			<MuText size="small">{{ message.length }} characters</MuText>
 		</div>
 	</div>
 </template>

@@ -1,19 +1,19 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">Getting Started</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">Getting Started</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Use this page as the quickest way to add frontend UI components correctly.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Quick Steps</UiHeading>
+		<MuHeading variant="6" weight="bold">Quick Steps</MuHeading>
 		<div class="guide-demo">
-			<UiText>1. Build page layout first, then drop in UI components.</UiText>
-			<UiText>2. Keep business logic in composables, keep component files UI-focused.</UiText>
-			<UiText>3. Compose form fields with <code>UiFormField</code> + input components.</UiText>
-			<UiText>4. Reuse shared variants instead of custom one-off styles.</UiText>
+			<MuText>1. Build page layout first, then drop in UI components.</MuText>
+			<MuText>2. Keep business logic in composables, keep component files UI-focused.</MuText>
+			<MuText>3. Compose form fields with <code>UiFormField</code> + input components.</MuText>
+			<MuText>4. Reuse shared variants instead of custom one-off styles.</MuText>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Basic Usage Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Basic Usage Example</MuHeading>
 		<div class="guide-demo">
 			<pre class="guide-code"><code>{{ sample_code }}</code></pre>
 		</div>

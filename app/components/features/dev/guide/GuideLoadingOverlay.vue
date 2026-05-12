@@ -1,15 +1,15 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiLoadingOverlay</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiLoadingOverlay</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Overlay loader for page or container loading states.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Container Overlay</UiHeading>
+		<MuHeading variant="6" weight="bold">Container Overlay</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-overlay-demo">
 				<div class="guide-overlay-content">
-					<UiText>Simulated card content beneath loading state.</UiText>
+					<MuText>Simulated card content beneath loading state.</MuText>
 				</div>
 				<UiLoadingOverlay
 					:visible="visible"

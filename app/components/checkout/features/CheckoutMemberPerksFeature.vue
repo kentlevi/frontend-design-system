@@ -6,6 +6,9 @@ import {
 	checkoutMemberPointsTooltipContent,
 	checkoutMemberPointsTooltipProps,
 } from '~/data/checkout/tooltips';
+import MuInput from '~/components/base/MuInput.vue';
+import MuText from '~/components/base/MuText.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 
 const {
 	t,
@@ -16,6 +19,7 @@ const {
 	useAllPoints,
 	clearPoints,
 	togglePointsTooltip,
+	is_coupons_modal_open,
 } = useCheckoutExperienceFeatureContext();
 
 const points_tooltip_ref = ref<HTMLElement | null>(null);
@@ -59,11 +63,24 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 					<span class="checkout-member-perk-label-primary">{{ t('checkout.member.coupon') }}</span>
 				</div>
 				<div class="checkout-member-perk-control">
-					<UiInput v-model="coupon_code" size="md" :placeholder="t('checkout.member.couponPlaceholder')" />
+					<MuInput id="coupon" name="coupon" :placeholder="t('checkout.member.couponPlaceholder')">
+						<template #inner-right>
+							<MuText class="select_coupon" weight="medium" color="abyss-base" @click="is_coupons_modal_open = true">Select</MuText>
+						</template>
+					</MuInput>
 					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button">
 						{{ t('checkout.member.applyCoupon') }}
 					</UiButton>
 				</div>
+				<UiCard class="coupon" variant="subtle" padding="xsm">
+					<MuLinearWrapper align="center">
+						<MuLinearWrapper align="center" :gap="4">
+							<UiIcon name="light-tags" :size="24" color="#D42941" />
+							<MuText><MuText variant="span" weight="bold">STICK20</MuText> (Get 20% OFF on all sti...</MuText>
+						</MuLinearWrapper>
+						<UiButton variant="ghost" tone="neutral" size="sm">Change</UiButton>
+					</MuLinearWrapper>
+				</UiCard>
 			</div>
 		</div>
 	</div>
@@ -136,6 +153,10 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 			}
 		}
 	}
+}
+
+.select_coupon{
+	cursor: pointer;
 }
 
 @media (max-width: 760px) {

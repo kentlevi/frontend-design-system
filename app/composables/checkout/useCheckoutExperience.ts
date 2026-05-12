@@ -53,6 +53,7 @@ export function useCheckoutExperience() {
 
 	// Modal States expected by the template
 	const is_accredited_banks_modal_open = ref(false);
+	const is_coupons_modal_open = ref(false);
 
 	const field_validation_by_key = checkoutFieldValidation;
 
@@ -87,6 +88,7 @@ export function useCheckoutExperience() {
 		email_tooltip_open,
 		points_tooltip_open,
 		is_accredited_banks_modal_open,
+		is_coupons_modal_open,
 
 		// UI Methods
 		openLoginModal,

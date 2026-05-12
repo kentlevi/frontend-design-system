@@ -1,19 +1,19 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiInput</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiInput</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Text input component with icon slot support.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Basic</UiHeading>
+		<MuHeading variant="6" weight="bold">Basic</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-inputs">
 				<UiInput v-model="basic" type="text" placeholder="Type something..." />
-				<UiText size="small">Value: <code>{{ basic || '(empty)' }}</code></UiText>
+				<MuText size="small">Value: <code>{{ basic || '(empty)' }}</code></MuText>
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">With Icon Slots</UiHeading>
+		<MuHeading variant="6" weight="bold">With Icon Slots</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-inputs">
 				<UiInput v-model="search" type="search" placeholder="Search...">
@@ -24,7 +24,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Properties</UiHeading>
+		<MuHeading variant="6" weight="bold">Properties</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>
@@ -56,7 +56,7 @@
 			</tbody>
 		</table>
 
-		<UiHeading variant="6" weight="bold">Slots</UiHeading>
+		<MuHeading variant="6" weight="bold">Slots</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>

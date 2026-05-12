@@ -1,26 +1,38 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-type HeadingVariant = '1' | '2' | '3' | '4' | '5' | '6';
-type HeadingWeight = 'thin' | 'extra-light' | 'light' | 'regular' | 'medium' | 'semi-bold' | 'bold';
-type HeadingAlign = 'left' | 'right' | 'center' | 'inherit';
+type TextVariant = 'p' | 'span';
+type TextSize = 'xlarge' | 'large' | 'medium' | 'small' | 'xsmall';
+type TextWeight = 'thin' | 'extra-light' | 'light' | 'regular' | 'medium' | 'semi-bold' | 'bold';
+type TextAlign = 'left' | 'right' | 'center' | 'inherit';
 
 const props = withDefaults(
 	defineProps<{
-		variant?: HeadingVariant;
-		weight?: HeadingWeight;
+		variant?: TextVariant;
+		size?: TextSize;
+		weight?: TextWeight;
 		color?: string;
-		align?: HeadingAlign;
+		align?: TextAlign;
 	}>(),
 	{
-		variant: '2',
+		variant: 'p',
+		size: 'medium',
 		weight: 'regular',
 		color: '',
 		align: 'inherit',
 	}
 );
 
-const tag = computed(() => `h${props.variant}`);
+const size_class = computed(() => {
+	switch (props.size) {
+		case 'xlarge': return 'text-xlarge';
+		case 'large': return 'text-large';
+		case 'small': return 'text-small';
+		case 'xsmall': return 'text-xsmall';
+		case 'medium':
+		default: return 'text-medium';
+	}
+});
 
 const weight_class = computed(() => {
 	switch (props.weight) {
@@ -66,7 +78,7 @@ const resolved_color = computed(() => {
 	return `var(--${value})`;
 });
 
-const heading_style = computed<Record<string, string> | undefined>(() => {
+const text_style = computed<Record<string, string> | undefined>(() => {
 	const style = {
 		...(resolved_color.value ? { color: resolved_color.value } : {}),
 	};
@@ -76,7 +88,11 @@ const heading_style = computed<Record<string, string> | undefined>(() => {
 </script>
 
 <template>
-	<component :is="tag" :class="['ui-heading', weight_class, align_class]" :style="heading_style">
+	<component
+		:is="props.variant"
+		:class="['mu-text', size_class, weight_class, align_class]"
+		:style="text_style"
+	>
 		<slot />
 	</component>
 </template>

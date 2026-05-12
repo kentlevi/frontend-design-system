@@ -1,36 +1,36 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiHeading</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">MuHeading</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Semantic heading component. Renders h1–h6 based on the variant prop.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Variants (h1 – h6)</UiHeading>
+		<MuHeading variant="6" weight="bold">Variants (h1 – h6)</MuHeading>
 		<div class="guide-demo">
-			<UiHeading variant="1">Heading 1</UiHeading>
-			<UiHeading variant="2">Heading 2</UiHeading>
-			<UiHeading variant="3">Heading 3</UiHeading>
-			<UiHeading variant="4">Heading 4</UiHeading>
-			<UiHeading variant="5">Heading 5</UiHeading>
-			<UiHeading variant="6">Heading 6</UiHeading>
+			<MuHeading variant="1">Heading 1</MuHeading>
+			<MuHeading variant="2">Heading 2</MuHeading>
+			<MuHeading variant="3">Heading 3</MuHeading>
+			<MuHeading variant="4">Heading 4</MuHeading>
+			<MuHeading variant="5">Heading 5</MuHeading>
+			<MuHeading variant="6">Heading 6</MuHeading>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Weights</UiHeading>
+		<MuHeading variant="6" weight="bold">Weights</MuHeading>
 		<div class="guide-demo">
-			<UiHeading variant="4" weight="light">Light</UiHeading>
-			<UiHeading variant="4" weight="regular">Regular</UiHeading>
-			<UiHeading variant="4" weight="medium">Medium</UiHeading>
-			<UiHeading variant="4" weight="semi-bold">Semi Bold</UiHeading>
-			<UiHeading variant="4" weight="bold">Bold</UiHeading>
+			<MuHeading variant="4" weight="light">Light</MuHeading>
+			<MuHeading variant="4" weight="regular">Regular</MuHeading>
+			<MuHeading variant="4" weight="medium">Medium</MuHeading>
+			<MuHeading variant="4" weight="semi-bold">Semi Bold</MuHeading>
+			<MuHeading variant="4" weight="bold">Bold</MuHeading>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Custom Color</UiHeading>
+		<MuHeading variant="6" weight="bold">Custom Color</MuHeading>
 		<div class="guide-demo">
-			<UiHeading variant="5" color="var(--brand-primary)">Brand Primary Heading</UiHeading>
-			<UiHeading variant="5" color="var(--error)">Error Heading</UiHeading>
+			<MuHeading variant="5" color="var(--brand-primary)">Brand Primary Heading</MuHeading>
+			<MuHeading variant="5" color="var(--error)">Error Heading</MuHeading>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Properties</UiHeading>
+		<MuHeading variant="6" weight="bold">Properties</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>

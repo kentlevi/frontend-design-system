@@ -2,8 +2,8 @@
 import { computed, onBeforeUnmount, ref } from 'vue';
 import UiButton from '@/components/ui/Button.vue';
 import UiIcon from '@/components/ui/Icon.vue';
-import UiLinearWrapper from '@/components/ui/LinearWrapper.vue';
-import UiText from '@/components/ui/Text.vue';
+import MuLinearWrapper from '@/components/base/MuLinearWrapper.vue';
+import MuText from '@/components/base/MuText.vue';
 
 type ExistingFile = {
 	name: string;
@@ -205,13 +205,13 @@ onBeforeUnmount(revokePreview);
 		@dragleave="onDragLeave"
 	>
 		<template v-if="!has_display_file">
-			<UiLinearWrapper class="ui-file-input-copy" direction="column" :gap="10">
-				<UiLinearWrapper align="center" :gap="12">
+			<MuLinearWrapper class="ui-file-input-copy" direction="column" :gap="10">
+				<MuLinearWrapper align="center" :gap="12">
 					<UiIcon name="regular-upload" :size="24" color="var(--text-primary)" />
-					<UiText size="large" weight="semi-bold">{{ dragDropText }}</UiText>
-				</UiLinearWrapper>
-				<UiText size="small" color="text-secondary">{{ accepted_filetypes_text }}</UiText>
-			</UiLinearWrapper>
+					<MuText size="large" weight="semi-bold">{{ dragDropText }}</MuText>
+				</MuLinearWrapper>
+				<MuText size="small" color="text-secondary">{{ accepted_filetypes_text }}</MuText>
+			</MuLinearWrapper>
 
 			<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="openFilePicker">
 				{{ selectText }}
@@ -219,7 +219,7 @@ onBeforeUnmount(revokePreview);
 		</template>
 
 		<template v-else>
-			<UiLinearWrapper class="ui-file-input-copy ui-file-input-copy--file" align="center" :gap="18">
+			<MuLinearWrapper class="ui-file-input-copy ui-file-input-copy--file" align="center" :gap="18">
 				<div class="ui-file-input-thumb">
 					<img
 						v-if="display_file?.previewUrl"
@@ -229,13 +229,13 @@ onBeforeUnmount(revokePreview);
 					>
 					<UiIcon v-else name="regular-file-image" :size="24" color="var(--text-primary)" />
 				</div>
-				<UiLinearWrapper direction="column" :gap="6">
-					<UiText size="large" weight="semi-bold">{{ display_file?.name }}</UiText>
-					<UiText size="small" color="text-secondary">{{ display_meta }}</UiText>
-				</UiLinearWrapper>
-			</UiLinearWrapper>
+				<MuLinearWrapper direction="column" :gap="6">
+					<MuText size="large" weight="semi-bold">{{ display_file?.name }}</MuText>
+					<MuText size="small" color="text-secondary">{{ display_meta }}</MuText>
+				</MuLinearWrapper>
+			</MuLinearWrapper>
 
-			<UiLinearWrapper class="ui-file-input-actions" align="center" :gap="10">
+			<MuLinearWrapper class="ui-file-input-actions" align="center" :gap="10">
 				<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="openFilePicker">
 					{{ replaceText }}
 				</UiButton>
@@ -252,7 +252,7 @@ onBeforeUnmount(revokePreview);
 					height="48px"
 					@click="removeSelectedFile"
 				/>
-			</UiLinearWrapper>
+			</MuLinearWrapper>
 		</template>
 
 		<input
@@ -275,6 +275,7 @@ onBeforeUnmount(revokePreview);
 	padding: 22px 24px;
 	border: 1px dashed var(--gray-40);
 	border-radius: 12px;
+	width: 100%;
 }
 
 .ui-file-input[data-drag-over='true'] {

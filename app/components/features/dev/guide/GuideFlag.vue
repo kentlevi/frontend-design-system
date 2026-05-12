@@ -1,16 +1,16 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiFlag</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiFlag</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Country flag image by ISO code.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Examples</UiHeading>
+		<MuHeading variant="6" weight="bold">Examples</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<div v-for="code in codes" :key="code" class="guide-flag-item">
 					<UiFlag :code="code" :size="24" />
-					<UiText size="xsmall">{{ code.toUpperCase() }}</UiText>
+					<MuText size="xsmall">{{ code.toUpperCase() }}</MuText>
 				</div>
 			</div>
 		</div>

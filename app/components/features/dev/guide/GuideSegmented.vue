@@ -1,67 +1,67 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiSegmented</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">MuSegmented</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Segmented control for switching between small sets of options.
 			Supports default option rendering and custom slot rendering.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example: Default</UiHeading>
+		<MuHeading variant="6" weight="bold">Example: Default</MuHeading>
 		<div class="guide-demo">
-			<UiSegmented
+			<MuSegmented
 				v-model="unit"
 				:options="unit_options"
 			/>
-			<UiText size="small">Selected: <code>{{ unit }}</code></UiText>
+			<MuText size="small">Selected: <code>{{ unit }}</code></MuText>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Sizes</UiHeading>
+		<MuHeading variant="6" weight="bold">Sizes</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<div>
-					<UiText size="xsmall" weight="semi-bold">SM</UiText>
-					<UiSegmented v-model="size_sm" :options="size_options" size="sm" />
+					<MuText size="xsmall" weight="semi-bold">SM</MuText>
+					<MuSegmented v-model="size_sm" :options="size_options" size="sm" />
 				</div>
 				<div>
-					<UiText size="xsmall" weight="semi-bold">MD (default)</UiText>
-					<UiSegmented v-model="size_md" :options="size_options" size="md" />
+					<MuText size="xsmall" weight="semi-bold">MD (default)</MuText>
+					<MuSegmented v-model="size_md" :options="size_options" size="md" />
 				</div>
 				<div>
-					<UiText size="xsmall" weight="semi-bold">LG</UiText>
-					<UiSegmented v-model="size_lg" :options="size_options" size="lg" />
+					<MuText size="xsmall" weight="semi-bold">LG</MuText>
+					<MuSegmented v-model="size_lg" :options="size_options" size="lg" />
 				</div>
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Full Width</UiHeading>
+		<MuHeading variant="6" weight="bold">Full Width</MuHeading>
 		<div class="guide-demo">
-			<UiSegmented v-model="full_value" :options="full_options" full />
+			<MuSegmented v-model="full_value" :options="full_options" full />
 		</div>
 
-		<UiHeading variant="6" weight="bold">Fit (content-based width)</UiHeading>
+		<MuHeading variant="6" weight="bold">Fit (content-based width)</MuHeading>
 		<div class="guide-demo">
-			<UiSegmented v-model="fit_value" :options="fit_options" fit />
+			<MuSegmented v-model="fit_value" :options="fit_options" fit />
 		</div>
 
-		<UiHeading variant="6" weight="bold">Disabled</UiHeading>
+		<MuHeading variant="6" weight="bold">Disabled</MuHeading>
 		<div class="guide-demo">
-			<UiSegmented v-model="disabled_value" :options="unit_options" disabled />
+			<MuSegmented v-model="disabled_value" :options="unit_options" disabled />
 		</div>
 
-		<UiHeading variant="6" weight="bold">Custom Slot</UiHeading>
+		<MuHeading variant="6" weight="bold">Custom Slot</MuHeading>
 		<div class="guide-demo">
-			<UiSegmented v-model="slot_value" :options="slot_options">
+			<MuSegmented v-model="slot_value" :options="slot_options">
 				<template #option="{ option, is_active }">
 					<span class="guide-dot" :class="{ 'is-active': is_active }" />
-					<UiText variant="span" :weight="is_active ? 'bold' : 'regular'" size="small">
+					<MuText variant="span" :weight="is_active ? 'bold' : 'regular'" size="small">
 						{{ option.label }}
-					</UiText>
+					</MuText>
 				</template>
-			</UiSegmented>
-			<UiText size="small">Selected: <code>{{ slot_value }}</code></UiText>
+			</MuSegmented>
+			<MuText size="small">Selected: <code>{{ slot_value }}</code></MuText>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Properties</UiHeading>
+		<MuHeading variant="6" weight="bold">Properties</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>
@@ -111,7 +111,7 @@
 			</tbody>
 		</table>
 
-		<UiHeading variant="6" weight="bold">Events</UiHeading>
+		<MuHeading variant="6" weight="bold">Events</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>
@@ -134,7 +134,7 @@
 			</tbody>
 		</table>
 
-		<UiHeading variant="6" weight="bold">Slots</UiHeading>
+		<MuHeading variant="6" weight="bold">Slots</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>

@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiToast</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiToast</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Transient notification component for status feedback.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Example</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiButton size="sm" @click="show('success')">Success</UiButton>

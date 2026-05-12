@@ -1,47 +1,50 @@
 <template>
-	<UiLinearWrapper class="order-actions" direction="column">
-		<UiLinearWrapper class="order-actions-items">
-			<UiLinearWrapper :gap="16" align="center">
+	<MuLinearWrapper class="order-actions" direction="column">
+		<MuLinearWrapper class="order-actions-items">
+			<MuLinearWrapper :gap="16" align="center">
 				<div class="order-actions-icon">
 					<UiIcon name="regular-file-dollar" color="var(--gold-70)"/>
 				</div>
-				<UiLinearWrapper direction="column">
-					<UiText weight="bold" size="large">View Invoice</UiText>
-					<UiText color="abyss-40">Access and review detailed invoice information.</UiText>
-				</UiLinearWrapper>
-			</UiLinearWrapper>
-		</UiLinearWrapper>
-		<UiLinearWrapper class="order-actions-items" justify="space-between">
-			<UiLinearWrapper :gap="16" align="center">
+				<MuLinearWrapper direction="column">
+					<MuText weight="bold" size="large">View Invoice</MuText>
+					<MuText color="abyss-40">Access and review detailed invoice information.</MuText>
+				</MuLinearWrapper>
+			</MuLinearWrapper>
+		</MuLinearWrapper>
+		<MuLinearWrapper class="order-actions-items" justify="space-between">
+			<MuLinearWrapper :gap="16" align="center">
 				<div class="order-actions-icon">
 					<UiIcon name="regular-dollar-sign" color="var(--gold-70)"/>
 				</div>
-				<UiLinearWrapper direction="column">
-					<UiText weight="bold" size="large">Payment Proof</UiText>
-					<UiText color="abyss-40">Production will commence after payment completion.</UiText>
-				</UiLinearWrapper>
-			</UiLinearWrapper>
-			<UiLinearWrapper direction="column" :gap="4" align="flex-end" >
+				<MuLinearWrapper direction="column">
+					<MuText weight="bold" size="large">Payment Proof</MuText>
+					<MuText color="abyss-40">Production will commence after payment completion.</MuText>
+				</MuLinearWrapper>
+			</MuLinearWrapper>
+			<MuLinearWrapper direction="column" :gap="4" align="flex-end" >
 				<UiBadge>Unpaid</UiBadge>
-				<UiText color="abyss-40">Method: Bank Transfer</UiText>
-			</UiLinearWrapper>
-		</UiLinearWrapper>
-		<UiLinearWrapper class="order-actions-items">
+				<MuText color="abyss-40">Method: Bank Transfer</MuText>
+			</MuLinearWrapper>
+		</MuLinearWrapper>
+		<MuLinearWrapper class="order-actions-items">
 
-			<UiLinearWrapper :gap="16" align="center">
+			<MuLinearWrapper :gap="16" align="center">
 				<div class="order-actions-icon">
 					<UiIcon name="regular-message" color="var(--gold-70)"/>
 				</div>
-				<UiLinearWrapper direction="column">
-					<UiText weight="bold" size="large">Send a Message</UiText>
-					<UiText color="abyss-40">Need an update or want to make changes?</UiText>
-				</UiLinearWrapper>
-			</UiLinearWrapper>
-		</UiLinearWrapper>
-	</UiLinearWrapper>
+				<MuLinearWrapper direction="column">
+					<MuText weight="bold" size="large">Send a Message</MuText>
+					<MuText color="abyss-40">Need an update or want to make changes?</MuText>
+				</MuLinearWrapper>
+			</MuLinearWrapper>
+		</MuLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+
 
 </script>
 

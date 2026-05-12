@@ -1,11 +1,11 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiDeleteConfirmModal</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiDeleteConfirmModal</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Prebuilt confirmation modal for destructive actions.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Example</MuHeading>
 		<div class="guide-demo">
 			<UiButton tone="danger" @click="is_open = true">Open Delete Modal</UiButton>
 			<UiDeleteConfirmModal
@@ -17,7 +17,7 @@
 				@cancel="is_open = false"
 				@confirm="handleConfirm"
 			/>
-			<UiText size="small">Last action: <code>{{ last_action }}</code></UiText>
+			<MuText size="small">Last action: <code>{{ last_action }}</code></MuText>
 		</div>
 	</div>
 </template>

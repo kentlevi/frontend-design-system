@@ -1,15 +1,15 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiBadge</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiBadge</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Inline status indicator. Supports variants, tones, and sizes.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Variants × Tones</UiHeading>
+		<MuHeading variant="6" weight="bold">Variants × Tones</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-grid">
 				<div v-for="variant in variants" :key="variant" class="guide-demo-col">
-					<UiText size="xsmall" weight="semi-bold">{{ variant }}</UiText>
+					<MuText size="xsmall" weight="semi-bold">{{ variant }}</MuText>
 					<UiBadge :variant="variant" tone="default">Default</UiBadge>
 					<UiBadge :variant="variant" tone="success">Success</UiBadge>
 					<UiBadge :variant="variant" tone="danger">Danger</UiBadge>
@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Sizes</UiHeading>
+		<MuHeading variant="6" weight="bold">Sizes</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-demo-row">
 				<UiBadge size="sm" tone="success">Small</UiBadge>
@@ -26,7 +26,7 @@
 			</div>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Properties</UiHeading>
+		<MuHeading variant="6" weight="bold">Properties</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>

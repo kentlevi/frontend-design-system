@@ -88,13 +88,13 @@ const custom_styles = computed(() => {
 </script>
 
 <template>
-	<div class="ui-linear-wrapper" :style="custom_styles">
+	<div class="mu-linear-wrapper" :style="custom_styles">
 		<slot />
 	</div>
 </template>
 
 <style scoped>
-.ui-linear-wrapper {
+.mu-linear-wrapper {
 	box-sizing: border-box;
 }
 </style>

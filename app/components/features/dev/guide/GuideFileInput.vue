@@ -1,53 +1,53 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiFileInput</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">MuFileInput</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Drag-and-drop or select files, with preview for image files.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Basic</UiHeading>
+		<MuHeading variant="6" weight="bold">Basic</MuHeading>
 		<div class="guide-demo">
-			<UiFileInput @change="onChange" />
-			<UiText size="small">
+			<MuFileInput @change="onChange" />
+			<MuText size="small">
 				Selected file count: <code>{{ files.length }}</code>
-			</UiText>
+			</MuText>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Custom Labels</UiHeading>
+		<MuHeading variant="6" weight="bold">Custom Labels</MuHeading>
 		<div class="guide-demo">
-			<UiFileInput
+			<MuFileInput
 				drag-drop-text="Drop your design file"
 				select-text="Browse Files"
 				replace-text="Replace File"
 				:accepted-formats="['png', 'jpg', 'pdf']"
 				@change="onCustomChange"
 			/>
-			<UiText size="small">
+			<MuText size="small">
 				Last update: <code>{{ custom_files.length }} file(s)</code>
-			</UiText>
+			</MuText>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Multiple Files</UiHeading>
+		<MuHeading variant="6" weight="bold">Multiple Files</MuHeading>
 		<div class="guide-demo">
-			<UiFileInput
+			<MuFileInput
 				:multiple="true"
 				:accepted-formats="['eps', 'ai', 'psd', 'pdf', 'tif', 'png', 'jpg']"
 				@change="onMultipleChange"
 			/>
-			<UiText size="small">
+			<MuText size="small">
 				When <code>multiple=true</code>, event emits all selected files.
-			</UiText>
-			<UiText size="small">
+			</MuText>
+			<MuText size="small">
 				Emitted count: <code>{{ multiple_files.length }}</code>
-			</UiText>
-			<UiLinearWrapper v-if="multiple_files.length" direction="column" :gap="4">
-				<UiText v-for="file in multiple_files" :key="file.name + file.size" size="small" color="text-secondary">
+			</MuText>
+			<MuLinearWrapper v-if="multiple_files.length" direction="column" :gap="4">
+				<MuText v-for="file in multiple_files" :key="file.name + file.size" size="small" color="text-secondary">
 					- {{ file.name }}
-				</UiText>
-			</UiLinearWrapper>
+				</MuText>
+			</MuLinearWrapper>
 		</div>
 
-		<UiHeading variant="6" weight="bold">Properties</UiHeading>
+		<MuHeading variant="6" weight="bold">Properties</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>
@@ -97,7 +97,7 @@
 			</tbody>
 		</table>
 
-		<UiHeading variant="6" weight="bold">Events</UiHeading>
+		<MuHeading variant="6" weight="bold">Events</MuHeading>
 		<table class="guide-table">
 			<thead>
 				<tr>
@@ -118,6 +118,8 @@
 </template>
 
 <script setup lang="ts">
+import MuFileInput from '~/components/base/MuFileInput.vue';
+
 const files = ref<File[]>([]);
 const custom_files = ref<File[]>([]);
 const multiple_files = ref<File[]>([]);

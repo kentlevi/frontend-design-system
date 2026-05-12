@@ -1,18 +1,18 @@
 <template>
 	<div class="guide-section">
-		<UiHeading variant="5" weight="bold">UiModal</UiHeading>
-		<UiText size="small" color="var(--text-secondary)">
+		<MuHeading variant="5" weight="bold">UiModal</MuHeading>
+		<MuText size="small" color="var(--text-secondary)">
 			Generic modal shell with header, body, and footer slots.
-		</UiText>
+		</MuText>
 
-		<UiHeading variant="6" weight="bold">Example</UiHeading>
+		<MuHeading variant="6" weight="bold">Example</MuHeading>
 		<div class="guide-demo">
 			<UiButton @click="open = true">Open Modal</UiButton>
 
 			<UiModal v-model="open" title="Example modal" align="center" width="520px">
-				<UiText>
+				<MuText>
 					Use this shell for forms, confirmation dialogs, and focused actions.
-				</UiText>
+				</MuText>
 
 				<template #footer>
 					<div class="guide-modal-footer">

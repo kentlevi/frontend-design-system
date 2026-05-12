@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 type SegmentedValue = string | number;
 type SegmentedSize = 'sm' | 'md' | 'lg';
 

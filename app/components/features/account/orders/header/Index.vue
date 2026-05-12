@@ -1,15 +1,15 @@
 <template>
-	<UiLinearWrapper justify="space-between" align="center">
-		<UiHeading weight="bold">My Orders</UiHeading>
+	<MuLinearWrapper justify="space-between" align="center">
+		<MuHeading weight="bold">My Orders</MuHeading>
 
-		<UiLinearWrapper justify="space-between" width="69.2%">
-			<UiSegmented v-model="active" :options="active_options" size="sm">
-				<template #option="{ option }">
-					<UiText weight="bold">{{ option.label }}</UiText>
-				</template>
-			</UiSegmented>
+		<MuLinearWrapper justify="space-between" width="69.2%">
+<MuSegmented v-model="active" :options="active_options" size="sm">
+					<template #option="{ option }">
+						<MuText weight="bold">{{ option.label }}</MuText>
+					</template>
+				</MuSegmented>
 
-			<UiLinearWrapper :gap="12">
+			<MuLinearWrapper :gap="12">
 				<UiButton variant="outline" tone="neutral" size="md" height="40px" icon="regular-calendar"
 					icon-position="right" icon-size="24"
 					class="account-orders-tool-button account-orders-select-date-button"
@@ -31,13 +31,18 @@
 					</template>
 
 				</UiInput>
-			</UiLinearWrapper>
-		</UiLinearWrapper>
+			</MuLinearWrapper>
+		</MuLinearWrapper>
 
-	</UiLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <script setup lang="ts">
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuSegmented from '~/components/base/MuSegmented.vue';
+import MuText from '~/components/base/MuText.vue';
+
 const { t } = useI18n();
 
 const active = ref('active');
