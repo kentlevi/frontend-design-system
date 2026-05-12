@@ -29,6 +29,10 @@ export interface ApplicableCoupon extends Coupon {
 	can_use: boolean
 }
 
+export interface ApplicableCouponData {
+	coupons: ApplicableCoupon[]
+}
+
 export interface ApplyCouponPayload {
 	code: string
 	cart_item_ids: number[]
@@ -40,4 +44,4 @@ export interface ApplicableCouponPayload {
 
 export type ApplyCouponApiResponse = ApiResponse<ApplyCouponData>
 
-export type ApplicableCouponApiResponse = ApiResponse<ApplicableCoupon[]>
+export type ApplicableCouponApiResponse = ApiResponse<ApplicableCouponData>
