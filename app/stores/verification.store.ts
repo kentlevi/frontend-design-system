@@ -1,4 +1,3 @@
-import { defineStore } from 'pinia'
 import type { VerificationModalState, VerificationState } from '~/types/verification/verification-state'
 
 export const createVerificationModalState = (): VerificationModalState => {
