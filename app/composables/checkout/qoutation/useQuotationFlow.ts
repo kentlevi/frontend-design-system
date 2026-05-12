@@ -59,7 +59,7 @@ export const useQuotationFlow = () => {
 			month: 'long',
 			day: 'numeric',
 			year: 'numeric',
-		}).format(new Date('2026-03-25'))
+		}).format(new Date())
 	);
 
 
