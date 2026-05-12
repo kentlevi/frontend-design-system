@@ -19,7 +19,7 @@ export interface CouponDiscount {
 	product_ids?: number[]
 }
 
-export interface ApplyCouponData {
+export interface ApplyCoupon {
 	coupon: Coupon
 	coupon_discount: CouponDiscount
 }
@@ -41,6 +41,9 @@ export interface ApplyCouponPayload {
 export interface ApplicableCouponPayload {
 	cart_item_ids: number[]
 }
+export type ApplyCouponErrorData = Record<string, string[]>
+
+export type ApplyCouponData = ApplyCoupon | ApplyCouponErrorData
 
 export type ApplyCouponApiResponse = ApiResponse<ApplyCouponData>
 
