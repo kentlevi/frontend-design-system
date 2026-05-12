@@ -24,7 +24,7 @@ export const useBankTransfer = () => {
 				selected_cart_ids : selected_ids.value
 			}
 			await completeCheckoutRequest(payload)
-			checkout_store.cleanCheckoutStatesOnSuccess()
+			checkout_store.cleanCheckoutStates()
 			completeCheckout(true, order_id)
 		} catch (error) {
 			console.error('Checkout completion failed:', error)

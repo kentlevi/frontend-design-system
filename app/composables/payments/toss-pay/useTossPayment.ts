@@ -126,7 +126,7 @@ export const useTossPayment = () => {
 						selected_cart_ids : selected_real_ids.value
 					}
 					await completeCheckoutRequest(payload)
-					checkout_store.cleanCheckoutStatesOnSuccess()
+					checkout_store.cleanCheckoutStates()
 					completeCheckout(true, order_id)
 					sendOrderConfirmationEmail(order_id).catch(err => {
 						console.error('Order confirmation email failed:', err)

@@ -13,14 +13,20 @@ export function useUserAddressFormStateCheckout() {
 	/**
      * Functions
      */
-	const { populateDynamicFields, setFormType, resetForm, clearFormFieldErrors, clearFormFieldError, setFormErrors, updateFormFieldByType, updateDynamicFieldByType } = useAddressFormActions({
+	const {
+		populateDynamicFields,
+		setFormType,
+		resetForm,
+		clearFormFieldErrors,
+		clearFormFieldError,
+		setFormErrors,
+		updateFormFieldByType,
+		updateDynamicFieldByType
+	} = useAddressFormActions({
 		form_state: checkout_store.form_state,
-		form_type: toRef(checkout_store.form_type),
-		form_field_errors: toRef(checkout_store.form_field_errors)
+		form_type: toRef(checkout_store, 'form_type'),
+		form_field_errors: toRef(checkout_store, 'form_field_errors')
 	})
-
-
-	checkout_store.on_page = 'checkout'
 
 
 	return {

@@ -45,8 +45,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const drop_form = computed(() => form_state.drop)
 	/** End of Address */
 
-	const on_page = ref<string | null>(null)
-
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
@@ -85,17 +83,16 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	/**
 	 * Clean up states that are set during checkout process after a successful complete checkout request
 	 */
-	const cleanCheckoutStatesOnSuccess = () => {
+	const cleanCheckoutStates = () => {
 		selected_payment_method.value = null
 		setShippingAddressId(null)
 		setBillingAddressId(null)
 		setDropAddressId(null)
 		drop_shipping_enabled.value = false
-		use_shipping_as_billing.value = false
+		use_shipping_as_billing.value = true
 		shipping_ship_to_another_address.value = false
 		drop_shipping_ship_to_another_address.value = false
 		billing_use_different_address.value = false
-		on_page.value = null
 
 		/** Remove persisted state */
 		localStorage.removeItem('mu_checkout')
@@ -135,7 +132,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		shipping_ship_to_another_address,
 		drop_shipping_ship_to_another_address,
 		billing_use_different_address,
-		on_page,
 
 		// expose setters
 		patchGuestContactState,
@@ -145,7 +141,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setShippingMethodId,
 		setPaymentMethod,
 		setCheckoutReady,
-		cleanCheckoutStatesOnSuccess,
+		cleanCheckoutStates,
 
 		clearShippingAddressId,
 		clearBillingAddressId,
@@ -160,7 +156,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 			'selected_shipping_address_id',
 			'selected_billing_address_id',
 			'selected_drop_address_id',
-			'on_page',
 			'drop_shipping_enabled',
 			'use_shipping_as_billing',
 			'shipping_ship_to_another_address',
