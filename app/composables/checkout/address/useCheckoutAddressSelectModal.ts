@@ -6,11 +6,16 @@ import { useAddressGeneral } from "./useAddressGeneral"
 
 export function useCheckoutAddressSelectModal() {
 
-	/** Stores */
+	/**
+     * Stores
+     */
 	const main_checkout_store = useMainCheckOutStore()
 	const { shipping_address, billing_address, drop_address } = useUserAddressDataCheckoutContext()
 
-	/** Contexts */
+
+	/**
+     * Contexts
+     */
 	const {
 		active_address_type,
 		is_select_address_modal_open,
@@ -18,14 +23,18 @@ export function useCheckoutAddressSelectModal() {
 		getAddressTagClass
 	} = useAddressGeneralUIContext()
 
-	/** Helpers */
+
+	/**
+     * Helpers
+     */
 	const { buildAddressLines, shippingPhoneNumber } = useAddressHelper()
-
 	const { assignAddressToForm } = useAddressGeneral()
-
 	const { t: translate } = useI18n()
 
-	/** Local draft state */
+
+	/**
+     * Local draft state
+     */
 	const pending_selected_address_id = ref<number | null>(null)
 	const address_map = {
 		shipping: shipping_address,
@@ -43,6 +52,7 @@ export function useCheckoutAddressSelectModal() {
 		drop: () => main_checkout_store.selected_drop_address_id,
 	}
 
+
 	/**
 	 * Initialize ONLY when modal opens
 	 * (prevents overwriting user selection while modal is open)
@@ -59,6 +69,10 @@ export function useCheckoutAddressSelectModal() {
 		}
 	)
 
+
+	/**
+     * Functions
+     */
 	function confirmSelection() {
 		if (!active_address_type.value || pending_selected_address_id.value === null) return
 
@@ -71,6 +85,7 @@ export function useCheckoutAddressSelectModal() {
 		active_address_type.value = null
 		is_select_address_modal_open.value = false
 	}
+
 
 	return {
 		translate,

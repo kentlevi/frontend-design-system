@@ -17,7 +17,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const selected_shipping_address_id = ref<number | null>(null)
 	const selected_billing_address_id = ref<number | null>(null)
 	const selected_drop_address_id = ref<number | null>(null)
-	const ship_to_another_address = ref<boolean>(false)
+
+	const shipping_ship_to_another_address = ref(false)
+	const drop_shipping_ship_to_another_address = ref(false);
+	const billing_use_different_address = ref(false);
 
 	const form_state = reactive<AddressFormState>({
 		shipping: addressFormDefaults('shipping'),
@@ -37,6 +40,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const drop_form = computed(() => form_state.drop)
 	/** End of Address */
 
+	const on_page = ref<string | null>(null)
+
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
@@ -48,15 +53,15 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		Object.assign(guest_contact_state, payload)
 	}
 
-	const setShippingAddressId = (id: number) => {
+	const setShippingAddressId = (id: number | null) => {
 		selected_shipping_address_id.value = id
 	}
 
-	const setBillingAddressId = (id: number) => {
+	const setBillingAddressId = (id: number | null) => {
 		selected_billing_address_id.value = id
 	}
 
-	const setDropAddressId = (id: number) => {
+	const setDropAddressId = (id: number | null) => {
 		selected_drop_address_id.value = id
 	}
 
@@ -77,10 +82,16 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	 */
 	const cleanCheckoutStatesOnSuccess = () => {
 		selected_payment_method.value = null
-		ship_to_another_address.value = false
-		clearShippingAddressId()
-		clearBillingAddressId()
-		clearDropAddressId()
+		setShippingAddressId(null)
+		setBillingAddressId(null)
+		setDropAddressId(null)
+		shipping_ship_to_another_address.value = false
+		drop_shipping_ship_to_another_address.value = false
+		billing_use_different_address.value = false
+		on_page.value = null
+
+		/** Remove persisted state */
+		localStorage.removeItem('mu_checkout')
 	}
 
 	const clearShippingAddressId = () => {
@@ -102,7 +113,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_drop_address_id,
 		selected_shipping_method_id,
 		selected_payment_method,
-		ship_to_another_address,
 		checkout_ready,
 		form_state,
 		form_type,
@@ -111,6 +121,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		shipping_form,
 		billing_form,
 		drop_form,
+		shipping_ship_to_another_address,
+		drop_shipping_ship_to_another_address,
+		billing_use_different_address,
+		on_page,
 
 		// expose setters
 		patchGuestContactState,
@@ -125,5 +139,20 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		clearShippingAddressId,
 		clearBillingAddressId,
 		clearDropAddressId,
+	}
+}, {
+	persist: {
+		key: 'mu_checkout',
+		storage: persistedState.localStorage,
+		pick: [
+			'form_state',
+			'selected_shipping_address_id',
+			'selected_billing_address_id',
+			'selected_drop_address_id',
+			'on_page',
+			'shipping_ship_to_another_address',
+			'drop_shipping_ship_to_another_address',
+			'billing_use_different_address'
+		]
 	}
 })

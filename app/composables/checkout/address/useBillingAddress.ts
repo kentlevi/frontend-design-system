@@ -14,12 +14,13 @@ export function useBillingAddress() {
      */
 	const address_field_store = useAddressFieldStore()
 	const checkout_store = useMainCheckOutStore()
+	const { billing_use_different_address } = storeToRefs(checkout_store)
 
 
 	/**
      * Context
      */
-	const { use_shipping_as_billing, billing_use_different_address, openSelectAddressModal } = useAddressGeneralUIContext()
+	const { use_shipping_as_billing, openSelectAddressModal } = useAddressGeneralUIContext()
 	const {
 		form_field_errors,
 		shipping_form,
@@ -48,6 +49,32 @@ export function useBillingAddress() {
 
 
 	/**
+     * Watchers
+     */
+	watch(use_shipping_as_billing, (val) => {
+		if (val) {
+			checkout_store.setBillingAddressId(null)
+		}
+	})
+
+	watch(billing_use_different_address, (val) => {
+		if (val) {
+			checkout_store.setBillingAddressId(null)
+		}
+	})
+
+	watch(
+		shipping_form,
+		() => {
+			if (use_shipping_as_billing.value) {
+				setBillingAsShipping()
+			}
+		},
+		{ deep: true }
+	)
+
+
+	/**
      * Functions
      */
 	async function setBillingAddress() {
@@ -67,22 +94,12 @@ export function useBillingAddress() {
 	}
 
 	function setBillingAsShipping() {
-		const { id: _id, phone_number: _phone_number, ...shippingWithoutId } = shipping_form.value
+		const { phone_number: _phone_number, ...shippingWithoutId } = shipping_form.value
 
 		Object.assign(billing_form.value, shippingWithoutId, {
 			type: 'billing'
 		})
 	}
-
-	watch(
-		shipping_form,
-		() => {
-			if (use_shipping_as_billing.value) {
-				setBillingAsShipping()
-			}
-		},
-		{ deep: true }
-	)
 
 	onMounted(async () => {
 		await ensureDynamicFields()

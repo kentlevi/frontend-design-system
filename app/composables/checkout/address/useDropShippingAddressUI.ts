@@ -1,3 +1,4 @@
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useDismissibleTooltip } from "../features/useDismissibleTooltip";
@@ -7,6 +8,13 @@ import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutCo
 
 export function useDropShippingAddressUI() {
 
+	/**
+     * Stores
+     */
+	const main_checkout_store = useMainCheckOutStore()
+	const { drop_shipping_ship_to_another_address } = storeToRefs(main_checkout_store)
+
+
 	/** Contexts */
 	const {
 		is_member,
@@ -15,7 +23,6 @@ export function useDropShippingAddressUI() {
 	const {
 		drop_shipping_tooltip_open,
 		drop_shipping_enabled,
-		drop_shipping_ship_to_another_address,
 
 		toggleDropShippingTooltip,
 		getAddressTagClass

@@ -5,20 +5,17 @@ import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-f
 
 export function useManualShippingAddress() {
 
-	/** Stores */
+	/**
+     * Stores
+     */
 	const checkout_store = useMainCheckOutStore()
-	const {
-		ship_to_another_address,
-		selected_shipping_address_id,
-	} = storeToRefs(checkout_store)
+	const { shipping_ship_to_another_address, selected_shipping_address_id } = storeToRefs(checkout_store)
 
 
-
-	const {
-		t,
-		is_member,
-	} = useCheckoutExperienceFeatureContext();
-
+	/**
+     * Contexts
+     */
+	const { t, is_member } = useCheckoutExperienceFeatureContext();
 	const {
 		form_field_errors,
 		shipping_form,
@@ -30,7 +27,9 @@ export function useManualShippingAddress() {
 		updateDynamicFieldByType,
 	} = useUserAddressFormStateCheckoutContext();
 
+
 	resetForm('shipping')
+
 
 	onMounted(async () => {
 		await ensureDynamicFields()
@@ -38,12 +37,13 @@ export function useManualShippingAddress() {
 		populateDynamicFields('shipping')
 	})
 
+
 	return {
 		t,
 		is_member,
 		form_field_errors,
 		shipping_form,
-		ship_to_another_address,
+		shipping_ship_to_another_address,
 		selected_shipping_address_id,
 
 		clearFormFieldError,

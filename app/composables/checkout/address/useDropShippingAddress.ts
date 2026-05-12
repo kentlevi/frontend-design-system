@@ -5,12 +5,17 @@ import { useAddressGeneral } from "./useAddressGeneral";
 
 export function useDropShippingAddress() {
 
-	/** Stores */
+	/**
+     * Stores
+     */
 	const checkout_store = useMainCheckOutStore()
-	const { drop_shipping_ship_to_another_address, openSelectAddressModal } = useAddressGeneralUIContext()
+	const { drop_shipping_ship_to_another_address } = storeToRefs(checkout_store)
+	const { drop_shipping_enabled, openSelectAddressModal } = useAddressGeneralUIContext()
 
-	const { assignAddressToForm } = useAddressGeneral()
 
+	/**
+     * Contexts
+     */
 	const {
 		form_field_errors,
 		drop_form,
@@ -19,6 +24,35 @@ export function useDropShippingAddress() {
 		updateFormFieldByType,
 	} = useUserAddressFormStateCheckoutContext();
 
+
+	/**
+     * Helpers
+     */
+	const { assignAddressToForm } = useAddressGeneral()
+
+
+	/**
+     * Watchers
+     */
+	watch(drop_shipping_enabled, (val) => {
+		if (val) {
+			setDropAddress()
+		} else {
+			resetForm('drop')
+			checkout_store.setDropAddressId(null)
+		}
+	})
+
+	watch(drop_shipping_ship_to_another_address, (val) => {
+		if (val) {
+			checkout_store.setDropAddressId(null)
+		}
+	})
+
+
+	/**
+     * Functions
+     */
 	async function setDropAddress() {
 		drop_shipping_ship_to_another_address.value = false
 
@@ -29,6 +63,7 @@ export function useDropShippingAddress() {
 
 		assignAddressToForm('drop')
 	}
+
 
 	return {
 		drop_form,

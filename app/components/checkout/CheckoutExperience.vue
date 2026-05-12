@@ -10,20 +10,11 @@ import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/Che
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import { provideUserAddressFormStateCheckout } from '~/composables/checkout/address/context/addressFormCheckoutContext';
-import { provideUserAddressDataCheckout } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
-import { provideAddressGeneralUI } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
-import { loadAddresses } from '~/services/user-address/user-address.service';
+import { useInitCheckoutAddress } from '~/composables/checkout/address/useInitCheckoutAddress';
 
 /** Standalone address context (isolated from checkout_experience) */
-provideUserAddressFormStateCheckout()
-provideUserAddressDataCheckout()
-provideAddressGeneralUI()
-
-loadAddresses('shipping')
-loadAddresses('drop')
-loadAddresses('billing')
+useInitCheckoutAddress()
 
 const checkout_experience = useCheckoutExperience();
 

@@ -10,7 +10,6 @@ import { useAddressHelper } from "~/utils/address";
 import { useAddressGeneralUIContext } from "../address/context/addressGeneralUICheckoutContext";
 import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
 import { useCartStore } from "~/stores/core/cart/cart.store";
-import { loadAddresses } from "~/services/user-address/user-address.service";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 
 export const useCheckoutFlow = () => {
