@@ -36,7 +36,7 @@ const {
 <template>
 	<div class="checkout-member-inline-row">
 		<div ref="drop_shipping_tooltip_ref" class="checkout-member-checkbox-with-tooltip">
-			<UiCheckbox v-model="drop_shipping_enabled" @click="setDropAddress()">{{ translate('checkout.member.enableDropShipping') }}</UiCheckbox>
+			<UiCheckbox v-model="drop_shipping_enabled">{{ translate('checkout.member.enableDropShipping') }}</UiCheckbox>
 			<UiTooltip :open="drop_shipping_tooltip_open" v-bind="checkoutDropShippingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleDropShippingTooltip">

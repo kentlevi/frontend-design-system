@@ -2,20 +2,28 @@ import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
+import { useUserAddressFormStateCheckoutContext } from "./context/addressFormCheckoutContext";
 
 export function useCheckoutAddressFeature() {
 
-	/** Store */
-	const {
-		ship_to_another_address,
-	} = storeToRefs(useMainCheckOutStore())
+	/**
+     * Stores
+     */
+	const main_checkout_store = useMainCheckOutStore()
+	const { shipping_ship_to_another_address } = storeToRefs(main_checkout_store)
 
-	/** Contexts */
+
+	/**
+     * Contexts
+     */
 	const { is_member } = useCheckoutExperienceFeatureContext();
+	const { resetForm } = useUserAddressFormStateCheckoutContext()
 
 
+	/**
+     * Helpers
+     */
 	const { t: translate } = useI18n()
-
 	const {
 		enter_duration_ms,
 		leave_duration_ms,
@@ -27,22 +35,35 @@ export function useCheckoutAddressFeature() {
 		afterLeave,
 	} = useCheckoutFeatureTransition();
 
-	const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
 
+	/**
+     * Variables
+     */
+	const shipping_swap_wrapper_ref = ref<HTMLElement | null>(null);
 	const getSelector = () =>
-		ship_to_another_address.value
+		shipping_ship_to_another_address.value
 			? '[data-shipping-panel="manual-address"]'
 			: '[data-shipping-panel="saved-address"]';
-
 	useHeightTransition(
 		shipping_swap_wrapper_ref,
-		ship_to_another_address,
+		shipping_ship_to_another_address,
 		getSelector,
 		{
 			enterDurationMs: enter_duration_ms,
 			leaveDurationMs: leave_duration_ms
 		}
 	);
+
+
+	/**
+     * Watchers
+     */
+	watch(shipping_ship_to_another_address, (val) => {
+		if (val) {
+			main_checkout_store.setShippingAddressId(null)
+		}
+	})
+
 
 	return {
 		translate,
@@ -56,6 +77,8 @@ export function useCheckoutAddressFeature() {
 		is_member,
 
 		shipping_swap_wrapper_ref,
-		ship_to_another_address,
+		shipping_ship_to_another_address,
+
+		resetForm,
 	}
 }

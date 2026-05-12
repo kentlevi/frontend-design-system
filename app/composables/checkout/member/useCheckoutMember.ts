@@ -15,8 +15,6 @@ export function useCheckoutMember() {
 	// Member specific email
 	const member_email = computed(() => user_store.state.email || mock_user.value?.email || 'joy.love@musticker.com');
 
-	const ship_to_another_address = ref(false);
-
 	const selected_shipping_method = ref<CheckoutShippingMethodKey>(
 		checkoutShippingMethods.find((method) => method.defaultSelected)?.key || 'express'
 	);
@@ -50,7 +48,6 @@ export function useCheckoutMember() {
 	return {
 		...base,
 		member_email,
-		ship_to_another_address,
 		selected_shipping_method,
 		selected_payment_method,
 		active_shipping_methods,

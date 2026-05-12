@@ -14,7 +14,9 @@ const {
 	is_member,
 
 	shipping_swap_wrapper_ref,
-	ship_to_another_address,
+	shipping_ship_to_another_address,
+
+	resetForm,
 } = useCheckoutAddressFeature()
 
 const {	openSelectAddressModal } = useSavedShippingAddress()
@@ -27,7 +29,7 @@ const {	has_shipping_addresses } = useUserAddressDataCheckoutContext()
 		<div class="checkout-member-shipping-group">
 			<div class="checkout-member-address-group">
 				<div v-if="is_member && has_shipping_addresses" class="checkout-member-radio-row">
-					<UiRadio v-model="ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
+					<UiRadio v-model="shipping_ship_to_another_address" :value="false" name="shipping-mode" class="checkout-member-radio-line">
 						{{ translate('checkout.member.myShippingAddress') }}
 					</UiRadio>
 					<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="openSelectAddressModal('shipping')">
@@ -38,7 +40,7 @@ const {	has_shipping_addresses } = useUserAddressDataCheckoutContext()
 				<div ref="shipping_swap_wrapper_ref" class="checkout-member-shipping-swap-wrap">
 					<CheckoutTransition>
 						<SavedAddress
-							v-if="is_member && !ship_to_another_address && has_shipping_addresses"
+							v-if="is_member && !shipping_ship_to_another_address && has_shipping_addresses"
 							key="saved-address"
 							class="checkout-member-shipping-panel"
 						/>
@@ -51,7 +53,14 @@ const {	has_shipping_addresses } = useUserAddressDataCheckoutContext()
 				</div>
 			</div>
 
-			<UiRadio v-if="is_member && !ship_to_another_address && has_shipping_addresses" v-model="ship_to_another_address" :value="true" name="shipping-mode" class="checkout-member-radio-line">
+			<UiRadio
+				v-if="is_member && !shipping_ship_to_another_address && has_shipping_addresses"
+				v-model="shipping_ship_to_another_address"
+				:value="true"
+				name="shipping-mode"
+				class="checkout-member-radio-line"
+				@click="resetForm('shipping')"
+			>
 				{{ translate('checkout.member.shipToAnotherAddress') }}
 			</UiRadio>
 

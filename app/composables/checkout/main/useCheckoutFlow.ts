@@ -7,10 +7,8 @@ import type { PaymentCode } from "~/types/payments/payment";
 import { useUserAddressFormStateCheckoutContext } from "../address/context/addressFormCheckoutContext";
 import { validateAddress } from "~/services/address/address.service";
 import { useAddressHelper } from "~/utils/address";
-import { useAddressGeneralUIContext } from "../address/context/addressGeneralUICheckoutContext";
 import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~/types/user-address";
 import { useCartStore } from "~/stores/core/cart/cart.store";
-import { loadAddresses } from "~/services/user-address/user-address.service";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 
 export const useCheckoutFlow = () => {
@@ -24,6 +22,8 @@ export const useCheckoutFlow = () => {
 		checkout_ready,
 		selected_shipping_method_id,
 		selected_payment_method,
+		drop_shipping_enabled,
+		use_shipping_as_billing,
 	} = storeToRefs(useMainCheckOutStore())
 	const {
 		selected_real_ids,
@@ -37,11 +37,6 @@ export const useCheckoutFlow = () => {
 		setFormErrors,
 		clearFormFieldErrors
 	} = useUserAddressFormStateCheckoutContext()
-
-	const {
-		drop_shipping_enabled,
-		use_shipping_as_billing,
-	} = useAddressGeneralUIContext()
 
 
 

@@ -13,12 +13,8 @@ export function useAddressGeneralUI() {
 	/** Shipping */
 
 	/** Drop Shipping  */
-	const drop_shipping_enabled = ref(false);
-	const drop_shipping_ship_to_another_address = ref(false);
 
 	/** Billing */
-	const use_shipping_as_billing = ref(true);
-	const billing_use_different_address = ref(false);
 	const is_billing_address_modal_open = ref(false);
 
 	/** General */
@@ -54,8 +50,6 @@ export function useAddressGeneralUI() {
 
 		/** Variables */
 		drop_shipping_tooltip_open,
-		drop_shipping_enabled,
-		drop_shipping_ship_to_another_address,
 
 		/** Functions */
 		toggleDropShippingTooltip,
@@ -68,8 +62,6 @@ export function useAddressGeneralUI() {
 
 		/** Variables */
 		billing_tooltip_open,
-		use_shipping_as_billing,
-		billing_use_different_address,
 		is_billing_address_modal_open,
 
 		/** Functions */

@@ -1,3 +1,4 @@
+import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
 import { useHeightTransition } from "../shared/useHeightTransition";
@@ -6,17 +7,20 @@ import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutCo
 
 export function useBillingAddressUI() {
 
+	/**
+     * Stores
+     */
+	const main_checkout_store = useMainCheckOutStore()
+	const { use_shipping_as_billing, billing_use_different_address } = storeToRefs(main_checkout_store)
+
 
 	/** Contexts */
-	const {
-		is_member,
-	} = useCheckoutExperienceFeatureContext();
+	const { is_member } = useCheckoutExperienceFeatureContext();
 
 	const {
 		billing_tooltip_open,
-		use_shipping_as_billing,
-		billing_use_different_address,
 		is_billing_address_modal_open,
+
 		toggleBillingTooltip,
 		getAddressTagClass
 	} = useAddressGeneralUIContext()

@@ -10,7 +10,6 @@ import { useUsersStore } from '~/stores/users/users.store';
 
 const {
 	translate,
-	is_member,
 	email,
 	email_tooltip_open,
 	email_tooltip_ref,
