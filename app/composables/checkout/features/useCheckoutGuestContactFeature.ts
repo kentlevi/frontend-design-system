@@ -30,8 +30,6 @@ import {
 import { useToastStore } from '~/stores/toast'
 import { useUsersStore } from '~/stores/users/users.store'
 
-const user_store = useUsersStore()
-
 function resolveCooldownUntil(response: unknown): number | null {
 	const cooldown_seconds = getCooldownSecondsFromResponse(response)
 	return cooldown_seconds > 0
@@ -51,7 +49,9 @@ export function useCheckoutGuestContactFeature() {
 	const loading_overlay_store = useLoadingOverlayStore()
 	const toast_store = useToastStore()
 	const verification_store = useVerificationStore()
+	const user_store = useUsersStore()
 	const { verification_state } = storeToRefs(verification_store)
+	const { state } = storeToRefs(user_store)
 	const email = ref(checkout_email.value)
 	const email_tooltip_ref = ref<HTMLElement | null>(null)
 	const is_email_already_registered_modal_open = ref(false)
@@ -187,8 +187,6 @@ export function useCheckoutGuestContactFeature() {
 		resetVerificationState()
 		return response
 	}
-
-	const { state } = storeToRefs(user_store)
 
 	function normalizeEmail(value: string) {
 		return value.trim().toLowerCase()
