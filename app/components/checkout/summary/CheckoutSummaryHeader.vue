@@ -9,11 +9,6 @@ const {createOrderQuotation} = useQuotationFlow();
 function goToCart() {
 	void navigateTo(withCountry('/cart'));
 }
-
-async function goToInvoice() {
-	await createOrderQuotation()
-	void navigateTo(withCountry('/checkout/order-quotation'));
-}
 </script>
 
 <template>
@@ -40,7 +35,7 @@ async function goToInvoice() {
 				:no-hover="true"
 				class="checkout-summary-title-action"
 				aria-label="Print order summary"
-				@click="goToInvoice"
+				@click="createOrderQuotation"
 			>
 				<UiIcon name="regular-print" size="24px" color="var(--text-primary)" decorative />
 			</UiButton>

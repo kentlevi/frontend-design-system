@@ -59,7 +59,7 @@ function getDefaultBadgeIcon() {
 					:aria-label="translate('checkout.member.addressSelection.closeModal')"
 					@click="closeModal"
 				>
-					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
+					<UiIcon name="regular-times" :size="24" color="var(--text-primary)" decorative />
 				</button>
 			</header>
 
@@ -106,7 +106,7 @@ function getDefaultBadgeIcon() {
 						<div class="checkout-address-select-modal-card-body" :data-variant="active_address_type">
 							<template v-if="active_address_type == 'shipping'">
 								<div v-if="shippingPhoneNumber(address)" class="checkout-address-select-modal-row">
-									<UiIcon name="regular-phone" size="18" color="var(--text-secondary)" decorative />
+									<UiIcon name="regular-phone" :size="18" color="var(--text-secondary)" decorative />
 									<p class="checkout-address-select-modal-line checkout-address-select-modal-line--strong">
 										{{ shippingPhoneNumber(address) }}
 									</p>
@@ -114,7 +114,7 @@ function getDefaultBadgeIcon() {
 
 								<div class="checkout-address-select-modal-row checkout-address-select-modal-row--split">
 									<div class="checkout-address-select-modal-row-main">
-										<UiIcon name="regular-map-marker" size="18" color="var(--text-secondary)" decorative />
+										<UiIcon name="regular-map-marker" :size="18" color="var(--text-secondary)" decorative />
 										<div class="checkout-address-select-modal-lines">
 											<p class="checkout-address-select-modal-line">{{ buildAddressLines(address) }}</p>
 										</div>
@@ -129,7 +129,7 @@ function getDefaultBadgeIcon() {
 								</div>
 
 								<div v-if="'company' in address && address.company" class="checkout-address-select-modal-row">
-									<UiIcon name="regular-building" size="18" color="var(--text-secondary)" decorative />
+									<UiIcon name="regular-building" :size="18" color="var(--text-secondary)" decorative />
 									<p class="checkout-address-select-modal-line">{{ address.company }}</p>
 								</div>
 							</template>

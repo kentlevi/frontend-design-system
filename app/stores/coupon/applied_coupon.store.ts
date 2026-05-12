@@ -32,6 +32,8 @@ export const useAppliedCouponStore = defineStore('applied_coupon', () => {
 	return {
 		coupon,
 		coupon_discount,
+		is_loading,
+		error,
 
 		setCoupon,
 		setCouponDiscount,

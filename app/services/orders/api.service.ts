@@ -20,3 +20,8 @@ export const createOrderQuotation = async (params : CreateQuotationPayload) : Pr
 	const { $api } = useNuxtApp()
 	return await $api.post(`orders/quotation/create`, params)
 }
+
+export const fetchOrderQuotaionDetails = async (order_quotaiton_detail_id : number) : Promise<OrderQuotationDetailsResponse> => {
+	const { $api } = useNuxtApp()
+	return await $api.get(`orders/quotation/${order_quotaiton_detail_id}`)
+}
