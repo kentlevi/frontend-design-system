@@ -60,7 +60,12 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 			</div>
 			<div class="checkout-member-perk-field">
 				<div class="checkout-member-perk-label-row">
-					<span class="checkout-member-perk-label-primary">{{ t('checkout.member.coupon') }}</span>
+					<MuText>
+						{{ t('checkout.member.coupon') }}
+					</MuText>
+					<MuText color="error-base">
+						Invalid coupon code.
+					</MuText>
 				</div>
 				<div class="checkout-member-perk-control">
 					<MuInput id="coupon" name="coupon" :placeholder="t('checkout.member.couponPlaceholder')">

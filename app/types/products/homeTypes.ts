@@ -5,4 +5,5 @@ export type HomeProductType = {
 	productId: number;
 	image: string;
 	to: string;
+	name: string;
 };

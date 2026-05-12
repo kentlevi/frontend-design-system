@@ -1,27 +1,94 @@
 <template>
-	<MuLinearWrapper justify="space-between" align="center">
+	<MuLinearWrapper class="header" justify="space-between" align="center">
 		<MuHeading weight="bold">My Orders</MuHeading>
 
 		<MuLinearWrapper justify="space-between" width="69.2%">
-<MuSegmented v-model="active" :options="active_options" size="sm">
-					<template #option="{ option }">
-						<MuText weight="bold">{{ option.label }}</MuText>
-					</template>
-				</MuSegmented>
+			<MuSegmented v-model="active" :options="active_options" size="sm">
+				<template #option="{ option }">
+					<MuText weight="bold">{{ option.label }}</MuText>
+				</template>
+			</MuSegmented>
 
 			<MuLinearWrapper :gap="12">
-				<UiButton variant="outline" tone="neutral" size="md" height="40px" icon="regular-calendar"
-					icon-position="right" icon-size="24"
-					class="account-orders-tool-button account-orders-select-date-button"
-					data-testid="account-orders-select-date-button">
-					{{ t('account.orders.selectDate') }}
-				</UiButton>
+				<MuLinearWrapper class="date_handler">
+					<UiButton
+						variant="outline"
+						tone="neutral" size="md"
+						height="40px"
+						icon="regular-calendar"
+						icon-position="right" icon-size="24"
+						class="account-orders-tool-button account-orders-select-date-button"
+						data-testid="account-orders-select-date-button"
+						@click="date_picker_open = !date_picker_open"
+					>
+						<!-- {{ t('account.orders.selectDate') }} -->
+						{{selected_range.start.toLocaleDateString()}} - {{selected_range.end.toLocaleDateString()}}
+						<UiIcon name="regular-times-circle"/>
+					</UiButton>
+					<UiCard v-if="date_picker_open" class="date_calendar" width="100%">
+						<MuLinearWrapper direction="column">
+							<MuCalendar v-model="selected_range" mode="range" columns="2"/>
+							<MuLinearWrapper justify="flex-end" :gap="16">
+								<UiButton variant="ghost" tone="neutral" @click="date_picker_open = false">
+									Cancel
+								</UiButton>
+								<UiButton tone="neutral" @click="date_picker_open = false">
+									Apply
+								</UiButton>
+							</MuLinearWrapper>
+						</MuLinearWrapper>
+					</UiCard>
+				</MuLinearWrapper>
 
-				<UiButton variant="outline" tone="neutral" size="md" height="40px" icon="regular-slider-horizontal"
-					icon-position="left" icon-size="24" class="account-orders-tool-button"
-					data-testid="account-orders-filters-button">
-					{{ t('account.orders.filters') }}
-				</UiButton>
+				<MuLinearWrapper class="order-filters">
+					<UiButton
+						variant="outline"
+						tone="neutral"
+						size="md"
+						height="40px"
+						icon="regular-slider-horizontal"
+						icon-position="left"
+						icon-size="24"
+						class="account-orders-tool-button"
+						data-testid="account-orders-filters-button" @click="filter_status = !filter_status"
+					>
+						{{ t('account.orders.filters') }}
+					</UiButton>
+					<UiCard v-if="filter_status" class="filter-status" padding="none">
+						<div class="filter-status__header">
+							<MuText size="large" weight="semi-bold">Order Status</MuText>
+						</div>
+						<div class="filter-status__body">
+							<ul>
+								<li>
+									<UiCheckbox><MuText>On-going (2)</MuText></UiCheckbox>
+								</li>
+								<li>
+									<UiCheckbox><MuText>Action Required (2)</MuText></UiCheckbox>
+								</li>
+								<li>
+									<UiCheckbox><MuText>To Receive (0)</MuText></UiCheckbox>
+								</li>
+								<li>
+									<UiCheckbox><MuText>Completed (1)</MuText></UiCheckbox>
+								</li>
+								<li>
+									<UiCheckbox><MuText>Cancelled (0)</MuText></UiCheckbox>
+								</li>
+							</ul>
+						</div>
+						<div class="filter-status__footer">
+							<MuLinearWrapper justify="flex-end" :gap="12" padding="16px">
+								<UiButton variant="ghost" tone="neutral" @click="filter_status = false">
+									Cancel
+								</UiButton>
+								<UiButton tone="neutral" @click="filter_status = false">
+									Apply
+								</UiButton>
+							</MuLinearWrapper>
+						</div>
+					</UiCard>
+				</MuLinearWrapper>
 
 				<UiInput type="search" size="md" class="account-orders-search"
 					:placeholder="t('account.orders.searchPlaceholder')" data-testid="account-orders-search-input">
@@ -38,6 +105,7 @@
 </template>
 
 <script setup lang="ts">
+import MuCalendar from '~/components/base/MuCalendar.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuSegmented from '~/components/base/MuSegmented.vue';
@@ -52,6 +120,53 @@ const active_options = [
 	{ label: 'Inactive', value: 'inactive' },
 ];
 
+const date_picker_open = ref(false);
+
+const selected_range = ref({
+	start: new Date(),
+	end: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 4),
+});
+
+const filter_status = ref(false);
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.date_handler{
+	position: relative;
+	.date_calendar{
+		position: absolute;
+		top: 100%;
+		width: 616px;
+		z-index: 1;
+		margin-top: 5px;
+	}
+}
+.order-filters{
+	position: relative;
+	.filter-status{
+		position: absolute;
+		top: 100%;
+		width: 232px;
+		margin-top: 4px;
+		&__header{
+			border-bottom: 1px solid var(--gray-50);
+			padding: 16px;
+		}
+		&__body{
+			padding: 8px 0;
+			ul{
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				li{
+					padding: 10px 16px;
+				}
+			}
+		}
+		&__footer{
+			border-top: 1px solid var(--gray-50);
+		}
+	}
+}
+
+</style>

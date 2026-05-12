@@ -346,6 +346,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+import MuInput from '~/components/base/MuInput.vue';
+
 const basic = ref('');
 const email = ref('');
 const text_lg = ref('');

@@ -1,9 +1,9 @@
 <template>
 	<div class="guide-page">
 		<nav class="guide-nav">
-			<UiHeading variant="6" weight="bold" class="guide-nav-title">
+			<MuHeading variant="6" weight="bold" class="guide-nav-title">
 				MUSTICKER UI
-			</UiHeading>
+			</MuHeading>
 
 			<input
 				v-model.trim="search_query"
@@ -42,18 +42,18 @@
 		<section class="guide-content">
 			<header class="guide-content-header">
 				<div>
-					<UiText size="xsmall" color="var(--text-secondary)">Frontend UI Guide</UiText>
-					<UiHeading variant="5" weight="bold">
+					<MuText size="xsmall" color="var(--text-secondary)">Frontend UI Guide</MuText>
+					<MuHeading variant="5" weight="bold">
 						{{ active_guide_name || 'Select a component' }}
-					</UiHeading>
+					</MuHeading>
 				</div>
-				<UiText size="small" color="var(--text-secondary)">
+				<MuText size="small" color="var(--text-secondary)">
 					{{ filtered_guides.length }} / {{ guides.length }} guide entries
-				</UiText>
+				</MuText>
 			</header>
 
 			<div v-if="active_usage_snippet" class="guide-usage">
-				<UiHeading variant="6" weight="bold">How to use</UiHeading>
+				<MuHeading variant="6" weight="bold">How to use</MuHeading>
 				<pre class="guide-code"><code>{{ active_usage_snippet }}</code></pre>
 			</div>
 
@@ -63,24 +63,24 @@
 			/>
 
 			<div v-else class="guide-landing">
-				<UiHeading variant="4" weight="bold">Musticker Frontend UI</UiHeading>
-				<UiText color="var(--text-secondary)">
+				<MuHeading variant="4" weight="bold">Musticker Frontend UI</MuHeading>
+				<MuText color="var(--text-secondary)">
 					Internal reference for reusable UI components.
 					Select a component from the sidebar to view its documentation.
-				</UiText>
+				</MuText>
 
 				<div class="guide-landing-stats">
 					<div class="guide-landing-stat">
-						<UiText weight="semi-bold">Total</UiText>
-						<UiText size="large" weight="bold">{{ guides.length }}</UiText>
+						<MuText weight="semi-bold">Total</MuText>
+						<MuText size="large" weight="bold">{{ guides.length }}</MuText>
 					</div>
 					<div
 						v-for="group in grouped_guides"
 						:key="group.label"
 						class="guide-landing-stat"
 					>
-						<UiText weight="semi-bold">{{ group.label }}</UiText>
-						<UiText size="large" weight="bold">{{ group.items.length }}</UiText>
+						<MuText weight="semi-bold">{{ group.label }}</MuText>
+						<MuText size="large" weight="bold">{{ group.items.length }}</MuText>
 					</div>
 				</div>
 			</div>
@@ -91,6 +91,8 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue';
 import type { Component } from 'vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 
 definePageMeta({
 	layout: 'no-layout',
@@ -138,6 +140,7 @@ const section_lookup: Record<string, GuideSection> = {
 	Select: 'form',
 	Checkbox: 'form',
 	Radio: 'form',
+	Calendar: 'form',
 	FormField: 'form',
 	Badge: 'feedback',
 	Toast: 'feedback',
@@ -193,6 +196,12 @@ const guide_usage_snippets: Record<string, string> = {
 	Card: `<UiCard variant="default" padding="md" radius="md" bordered="default">
   <UiText size="small">Card content</UiText>
 </UiCard>`,
+	Calendar: `<MuCalendar
+  v-model="selectedDate"
+  :marker-dates="[new Date()]"
+  :disabled-weekdays="[7]"
+  :columns="2"
+/>`,
 	DeleteConfirmModal: `<UiDeleteConfirmModal
   :model-value="open"
   title="Delete item"

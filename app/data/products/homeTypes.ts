@@ -9,6 +9,7 @@ export const homeProductTypes: HomeProductType[] = featuredProducts.map((item) =
 	productId: Number(item.id),
 	image: item.image,
 	to: `/${item.category}/${item.id}`,
+	name: item.name,
 }));
 
 export const homeProductTypePathById = homeProductTypes.reduce<Record<string, string>>(

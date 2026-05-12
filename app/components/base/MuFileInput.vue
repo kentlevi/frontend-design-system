@@ -41,147 +41,150 @@ const emit = defineEmits<{
 
 const file_input_ref = ref<HTMLInputElement | null>(null);
 const selected_files = ref<File[]>([]);
-const preview_url = ref('');
+const preview_urls = ref<string[]>([]);
 const is_drag_over = ref(false);
-const removed_existing_file = ref(false);
+const removed_existing = ref(false);
+const replace_index = ref<number | null>(null);
 
-function sanitizeExtension(value: string): string {
-	return value.trim().toLowerCase().replace(/^\./, '');
+// --- helpers ---
+
+function fileExt(name: string): string {
+	const i = name.lastIndexOf('.');
+	return i < 0 ? '' : name.slice(i + 1).toLowerCase();
 }
 
-function toDottedExtension(value: string): string {
-	const extension = sanitizeExtension(value);
-	return extension ? `.${extension}` : '';
+function toExt(raw: string): string {
+	const ext = raw.trim().toLowerCase().replace(/^\./, '');
+	return ext ? `.${ext}` : '';
 }
 
-function getFileExtension(file_name: string): string {
-	const parts = file_name.split('.');
-	if (parts.length < 2) return '';
-	return sanitizeExtension(parts[parts.length - 1] || '');
-}
-
-function formatFileSize(bytes: number): string {
+function formatSize(bytes: number): string {
 	return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
 }
 
-function joinWithAnd(values: string[]): string {
-	if (!values.length) return '';
-	if (values.length === 1) return values[0];
-	if (values.length === 2) return `${values[0]} and ${values[1]}`;
-	return `${values.slice(0, -1).join(', ')} and ${values[values.length - 1]}`;
-}
+// --- computed ---
 
 const accepted_extensions = computed(() => {
 	const unique = new Set<string>();
-	for (const format of props.acceptedFormats) {
-		const normalized = sanitizeExtension(format);
-		if (normalized) unique.add(normalized);
+	for (const f of props.acceptedFormats) {
+		const ext = f.trim().toLowerCase().replace(/^\./, '');
+		if (ext) unique.add(ext);
 	}
 	return Array.from(unique);
 });
 
-const accepted_extension_set = computed(() => new Set(accepted_extensions.value));
-const accept_attr = computed(() => accepted_extensions.value.map(ext => `.${ext}`).join(','));
+const accept_attr = computed(() =>
+	accepted_extensions.value.map(e => `.${e}`).join(',')
+);
 
 const accepted_filetypes_text = computed(() => {
-	const custom = props.acceptedText.trim();
-	if (custom) return custom;
-
-	const dotted = accepted_extensions.value.map(ext => `.${ext}`);
-	const list = joinWithAnd(dotted);
-	return list ? `Accepted filetypes: ${list}` : '';
+	if (props.acceptedText.trim()) return props.acceptedText.trim();
+	if (!accepted_extensions.value.length) return '';
+	return `Accepted filetypes: ${accepted_extensions.value.map(e => `.${e}`).join(', ')}`;
 });
 
-const first_selected_file = computed(() => selected_files.value[0] || null);
-const visible_existing_file = computed(() => (removed_existing_file.value ? null : props.existingFile));
+// --- file state ---
 
-const display_file = computed(() => {
-	const selected = first_selected_file.value;
-	if (selected) {
-		return {
-			name: selected.name,
-			extension: toDottedExtension(getFileExtension(selected.name)),
-			sizeLabel: formatFileSize(selected.size),
-			previewUrl: preview_url.value,
-		};
+function makePreview(file: File): string {
+	return file.type.startsWith('image/') ? URL.createObjectURL(file) : '';
+}
+
+function revokeAll() {
+	for (const url of preview_urls.value) {
+		if (url) URL.revokeObjectURL(url);
+	}
+	preview_urls.value = [];
+}
+
+function commit(files: File[]) {
+	revokeAll();
+	selected_files.value = files;
+	preview_urls.value = files.map(makePreview);
+	emit('change', files);
+}
+
+function filterAccepted(files: File[]): File[] {
+	if (!accepted_extensions.value.length) return files.slice();
+	const allowed = new Set(accepted_extensions.value);
+	return files.filter(f => allowed.has(fileExt(f.name)));
+}
+
+function applyFiles(incoming: File[]) {
+	const filtered = filterAccepted(incoming);
+	if (!filtered.length) {
+		replace_index.value = null;
+		return;
 	}
 
-	const existing = visible_existing_file.value;
-	if (!existing) return null;
+	if (!props.multiple) {
+		removed_existing.value = false;
+		commit([filtered[0]]);
+		replace_index.value = null;
+		return;
+	}
 
-	return {
-		name: existing.name,
-		extension: toDottedExtension(existing.extension || getFileExtension(existing.name)),
-		sizeLabel: existing.sizeLabel || '',
-		previewUrl: existing.url || '',
-	};
-});
+	if (replace_index.value !== null) {
+		const idx = replace_index.value;
+		replace_index.value = null;
+		const files = [...selected_files.value];
+		const urls = [...preview_urls.value];
+		if (urls[idx]) URL.revokeObjectURL(urls[idx]);
+		files[idx] = filtered[0];
+		urls[idx] = makePreview(filtered[0]);
+		selected_files.value = files;
+		preview_urls.value = urls;
+		emit('change', files);
+		return;
+	}
 
-const has_display_file = computed(() => Boolean(display_file.value));
-
-const display_meta = computed(() => {
-	const file = display_file.value;
-	if (!file) return '';
-	if (file.extension && file.sizeLabel) return `${file.extension} | ${file.sizeLabel}`;
-	return file.extension || file.sizeLabel;
-});
-
-function revokePreview() {
-	if (!preview_url.value) return;
-	URL.revokeObjectURL(preview_url.value);
-	preview_url.value = '';
+	const files = [...selected_files.value, ...filtered];
+	const urls = [...preview_urls.value, ...filtered.map(makePreview)];
+	selected_files.value = files;
+	preview_urls.value = urls;
+	emit('change', files);
 }
 
-function setPreview(file: File | null) {
-	revokePreview();
-	if (!file || !file.type.startsWith('image/')) return;
-	preview_url.value = URL.createObjectURL(file);
-}
-
-function resetNativeInput() {
-	if (file_input_ref.value) file_input_ref.value.value = '';
-}
-
-function prepareFiles(files: File[]): File[] {
-	const filtered = files.filter((file) => {
-		if (!accepted_extension_set.value.size) return true;
-		return accepted_extension_set.value.has(getFileExtension(file.name));
-	});
-
-	return props.multiple ? filtered : filtered.slice(0, 1);
-}
-
-function applyFiles(files: File[]) {
-	const next = prepareFiles(files);
-	selected_files.value = next;
-	removed_existing_file.value = false;
-	setPreview(next[0] || null);
-	emit('change', next);
-}
+// --- actions ---
 
 function openFilePicker() {
+	replace_index.value = null;
+	file_input_ref.value?.click();
+}
+
+function openReplacePicker(index: number) {
+	replace_index.value = index;
 	file_input_ref.value?.click();
 }
 
 function onFileChange(event: Event) {
 	const input = event.target as HTMLInputElement | null;
 	applyFiles(Array.from(input?.files || []));
+	if (file_input_ref.value) file_input_ref.value.value = '';
 }
 
-function removeSelectedFile() {
+function removeAt(index: number) {
+	const files = [...selected_files.value];
+	const urls = [...preview_urls.value];
+	if (urls[index]) URL.revokeObjectURL(urls[index]);
+	files.splice(index, 1);
+	urls.splice(index, 1);
+	selected_files.value = files;
+	preview_urls.value = urls;
+	emit('change', files);
+}
+
+function clearAll() {
+	revokeAll();
 	selected_files.value = [];
-	removed_existing_file.value = true;
-	resetNativeInput();
-	setPreview(null);
+	removed_existing.value = true;
+	if (file_input_ref.value) file_input_ref.value.value = '';
 	emit('change', []);
 }
 
 function onDrop(event: DragEvent) {
 	event.preventDefault();
 	is_drag_over.value = false;
-	const dropped = Array.from(event.dataTransfer?.files || []);
-	if (!dropped.length) return;
-	applyFiles(dropped);
+	applyFiles(Array.from(event.dataTransfer?.files || []));
 }
 
 function onDragOver(event: DragEvent) {
@@ -193,67 +196,173 @@ function onDragLeave() {
 	is_drag_over.value = false;
 }
 
-onBeforeUnmount(revokePreview);
+onBeforeUnmount(revokeAll);
+
+// --- display ---
+
+const file_rows = computed(() =>
+	selected_files.value.map((file, index) => {
+		const ext = toExt(fileExt(file.name));
+		const size = formatSize(file.size);
+		return {
+			key: `${file.name}-${file.size}-${file.lastModified}-${index}`,
+			index,
+			name: file.name,
+			meta: [ext, size].filter(Boolean).join(' | '),
+			previewUrl: preview_urls.value[index] || '',
+		};
+	})
+);
+
+const single_file = computed(() => {
+	const sel = selected_files.value[0];
+	if (sel) {
+		const ext = toExt(fileExt(sel.name));
+		const size = formatSize(sel.size);
+		return {
+			name: sel.name,
+			meta: [ext, size].filter(Boolean).join(' | '),
+			previewUrl: preview_urls.value[0] || '',
+		};
+	}
+	const ex = removed_existing.value ? null : props.existingFile;
+	if (!ex) return null;
+	return {
+		name: ex.name,
+		meta: [toExt(ex.extension || fileExt(ex.name)), ex.sizeLabel || ''].filter(Boolean).join(' | '),
+		previewUrl: ex.url || '',
+	};
+});
 </script>
 
 <template>
-	<section
-		class="ui-file-input"
-		:data-drag-over="is_drag_over ? 'true' : 'false'"
-		@drop="onDrop"
-		@dragover="onDragOver"
-		@dragleave="onDragLeave"
-	>
-		<template v-if="!has_display_file">
-			<MuLinearWrapper class="ui-file-input-copy" direction="column" :gap="10">
-				<MuLinearWrapper align="center" :gap="12">
-					<UiIcon name="regular-upload" :size="24" color="var(--text-primary)" />
-					<MuText size="large" weight="semi-bold">{{ dragDropText }}</MuText>
+	<div class="ui-file-input-wrap">
+		<!-- Multi-mode: stacked file list + always-visible dropzone -->
+		<template v-if="multiple">
+			<div v-if="file_rows.length" class="ui-file-input-list">
+				<article
+					v-for="row in file_rows"
+					:key="row.key"
+					class="ui-file-input-row"
+				>
+					<MuLinearWrapper class="ui-file-input-copy ui-file-input-copy--file" align="center" :gap="18">
+						<div class="ui-file-input-thumb">
+							<img
+								v-if="row.previewUrl"
+								:src="row.previewUrl"
+								:alt="row.name"
+								class="ui-file-input-image"
+							>
+							<UiIcon v-else name="regular-file-image" :size="24" color="var(--text-primary)" />
+						</div>
+						<MuLinearWrapper direction="column" :gap="6">
+							<MuText size="large" weight="semi-bold">{{ row.name }}</MuText>
+							<MuText size="small" color="text-secondary">{{ row.meta }}</MuText>
+						</MuLinearWrapper>
+					</MuLinearWrapper>
+
+					<MuLinearWrapper class="ui-file-input-actions" align="center" :gap="10">
+						<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="openReplacePicker(row.index)">
+							{{ replaceText }}
+						</UiButton>
+						<UiButton
+							type="button"
+							variant="outline"
+							tone="neutral"
+							size="md"
+							icon-only
+							icon="regular-trash"
+							icon-size="24"
+							:sr-label="removeSrLabel"
+							width="48px"
+							height="48px"
+							@click="removeAt(row.index)"
+						/>
+					</MuLinearWrapper>
+				</article>
+			</div>
+
+			<section
+				class="ui-file-input"
+				:data-drag-over="is_drag_over ? 'true' : 'false'"
+				@drop="onDrop"
+				@dragover="onDragOver"
+				@dragleave="onDragLeave"
+			>
+				<MuLinearWrapper class="ui-file-input-copy" direction="column" :gap="10">
+					<MuLinearWrapper align="center" :gap="12">
+						<UiIcon name="regular-upload" :size="24" color="var(--text-primary)" />
+						<MuText size="large" weight="semi-bold">{{ dragDropText }}</MuText>
+					</MuLinearWrapper>
+					<MuText size="small" color="text-secondary">{{ accepted_filetypes_text }}</MuText>
 				</MuLinearWrapper>
-				<MuText size="small" color="text-secondary">{{ accepted_filetypes_text }}</MuText>
-			</MuLinearWrapper>
 
-			<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="openFilePicker">
-				{{ selectText }}
-			</UiButton>
-		</template>
-
-		<template v-else>
-			<MuLinearWrapper class="ui-file-input-copy ui-file-input-copy--file" align="center" :gap="18">
-				<div class="ui-file-input-thumb">
-					<img
-						v-if="display_file?.previewUrl"
-						:src="display_file.previewUrl"
-						:alt="display_file.name"
-						class="ui-file-input-image"
-					>
-					<UiIcon v-else name="regular-file-image" :size="24" color="var(--text-primary)" />
-				</div>
-				<MuLinearWrapper direction="column" :gap="6">
-					<MuText size="large" weight="semi-bold">{{ display_file?.name }}</MuText>
-					<MuText size="small" color="text-secondary">{{ display_meta }}</MuText>
-				</MuLinearWrapper>
-			</MuLinearWrapper>
-
-			<MuLinearWrapper class="ui-file-input-actions" align="center" :gap="10">
-				<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="openFilePicker">
-					{{ replaceText }}
+				<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="openFilePicker">
+					{{ selectText }}
 				</UiButton>
-				<UiButton
-					type="button"
-					variant="outline"
-					tone="neutral"
-					size="md"
-					icon-only
-					icon="regular-trash"
-					icon-size="24"
-					:sr-label="removeSrLabel"
-					width="48px"
-					height="48px"
-					@click="removeSelectedFile"
-				/>
-			</MuLinearWrapper>
+			</section>
 		</template>
+
+		<!-- Single-mode: dropzone or one file row -->
+		<section
+			v-else
+			class="ui-file-input"
+			:data-drag-over="is_drag_over ? 'true' : 'false'"
+			@drop="onDrop"
+			@dragover="onDragOver"
+			@dragleave="onDragLeave"
+		>
+			<template v-if="!single_file">
+				<MuLinearWrapper class="ui-file-input-copy" direction="column" :gap="10">
+					<MuLinearWrapper align="center" :gap="12">
+						<UiIcon name="regular-upload" :size="24" color="var(--text-primary)" />
+						<MuText size="large" weight="semi-bold">{{ dragDropText }}</MuText>
+					</MuLinearWrapper>
+					<MuText size="small" color="text-secondary">{{ accepted_filetypes_text }}</MuText>
+				</MuLinearWrapper>
+
+				<UiButton type="button" variant="outline" tone="neutral" size="md" height="40px" @click="openFilePicker">
+					{{ selectText }}
+				</UiButton>
+			</template>
+
+			<template v-else>
+				<MuLinearWrapper class="ui-file-input-copy ui-file-input-copy--file" align="center" :gap="18">
+					<div class="ui-file-input-thumb">
+						<img
+							v-if="single_file.previewUrl"
+							:src="single_file.previewUrl"
+							:alt="single_file.name"
+							class="ui-file-input-image"
+						>
+						<UiIcon v-else name="regular-file-image" :size="24" color="var(--text-primary)" />
+					</div>
+					<MuLinearWrapper direction="column" :gap="6">
+						<MuText size="large" weight="semi-bold">{{ single_file.name }}</MuText>
+						<MuText size="small" color="text-secondary">{{ single_file.meta }}</MuText>
+					</MuLinearWrapper>
+				</MuLinearWrapper>
+
+				<MuLinearWrapper class="ui-file-input-actions" align="center" :gap="10">
+					<UiButton type="button" variant="outline" tone="neutral" size="md" height="48px" @click="openFilePicker">
+						{{ replaceText }}
+					</UiButton>
+					<UiButton
+						type="button"
+						variant="outline"
+						tone="neutral"
+						size="md"
+						icon-only
+						icon="regular-trash"
+						icon-size="24"
+						:sr-label="removeSrLabel"
+						width="48px"
+						height="48px"
+						@click="clearAll"
+					/>
+				</MuLinearWrapper>
+			</template>
+		</section>
 
 		<input
 			ref="file_input_ref"
@@ -263,11 +372,26 @@ onBeforeUnmount(revokePreview);
 			class="ui-file-input-hidden"
 			@change="onFileChange"
 		>
-	</section>
+	</div>
 </template>
 
 <style scoped lang="scss">
-.ui-file-input {
+.ui-file-input-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+}
+
+.ui-file-input-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+}
+
+.ui-file-input,
+.ui-file-input-row {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -304,7 +428,8 @@ onBeforeUnmount(revokePreview);
 }
 
 @media (max-width: 760px) {
-	.ui-file-input {
+	.ui-file-input,
+	.ui-file-input-row {
 		flex-direction: column;
 		align-items: stretch;
 	}

@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
 import List from './List.vue';
 
 const props = defineProps<{

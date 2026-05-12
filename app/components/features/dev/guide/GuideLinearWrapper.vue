@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+</script>
+
 <template>
 	<div class="guide-section">
 		<MuHeading variant="5" weight="bold">MuLinearWrapper</MuHeading>

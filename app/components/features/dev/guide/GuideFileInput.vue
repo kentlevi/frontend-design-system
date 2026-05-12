@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuFileInput from '~/components/base/MuFileInput.vue';
+
+const files = ref<File[]>([]);
+const custom_files = ref<File[]>([]);
+const multiple_files = ref<File[]>([]);
+
+function onChange(fileList: File[]) { files.value = fileList; }
+function onCustomChange(fileList: File[]) { custom_files.value = fileList; }
+function onMultipleChange(fileList: File[]) { multiple_files.value = fileList; }
+</script>
+
 <template>
 	<div class="guide-section">
 		<MuHeading variant="5" weight="bold">MuFileInput</MuHeading>
@@ -36,6 +51,8 @@
 			/>
 			<MuText size="small">
 				When <code>multiple=true</code>, event emits all selected files.
+				Files accumulate across selections and the drop zone stays visible so you can keep adding more.
+				Each row has its own <em>replace</em> and <em>remove</em> controls.
 			</MuText>
 			<MuText size="small">
 				Emitted count: <code>{{ multiple_files.length }}</code>
@@ -116,23 +133,3 @@
 		</table>
 	</div>
 </template>
-
-<script setup lang="ts">
-import MuFileInput from '~/components/base/MuFileInput.vue';
-
-const files = ref<File[]>([]);
-const custom_files = ref<File[]>([]);
-const multiple_files = ref<File[]>([]);
-
-const onChange = (value: File[]) => {
-	files.value = value;
-};
-
-const onCustomChange = (value: File[]) => {
-	custom_files.value = value;
-};
-
-const onMultipleChange = (value: File[]) => {
-	multiple_files.value = value;
-};
-</script>
