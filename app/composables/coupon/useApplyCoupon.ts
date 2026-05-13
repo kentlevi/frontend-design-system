@@ -69,6 +69,10 @@ export function useApplyCoupon() {
 		})
 	}
 
+	onBeforeMount(() => {
+		removeAppliedCoupon()
+	})
+
 	onMounted( () => {
 		getApplicableCoupons()
 	})
