@@ -1,5 +1,5 @@
 <template>
-	<UiCard class="order-item" variant="default" padding="md" radius="md" bordered="default">
+	<MuCard class="order-item" variant="default" padding="md" radius="md" bordered="default">
 		<MuLinearWrapper direction="column" gap="4">
 			<MuLinearWrapper class="order-item-header" align="center" :gap="8">
 				<div class="dot" />
@@ -9,10 +9,11 @@
 				<MuText color="abyss-40">1 item(s) | Order Date: 11/13/2024</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
-	</UiCard>
+	</MuCard>
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';
 

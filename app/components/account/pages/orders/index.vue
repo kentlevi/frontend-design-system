@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAccountOrders } from '~/composables/account/orders/useAccountOrders';
+import MuSearch from '~/components/core/search/MuSearch.vue';
 import OrdersSidebar from './OrdersSidebar.vue';
 import OrderDetailSection from './OrderDetailSection.vue';
 
@@ -87,15 +88,14 @@ const accent_class_map = {
 								{{ t('account.orders.filters') }}
 							</UiButton>
 
-							<UiInput
+							<MuSearch
 								v-model="search_query"
-								type="search"
 								size="md"
 								class="account-orders-search"
 								:placeholder="t('account.orders.searchPlaceholder')"
 								data-testid="account-orders-search-input"
 							>
-								<template #icon-left>
+								<template #left>
 									<UiIcon
 										name="regular-search"
 										:size="24"
@@ -103,22 +103,14 @@ const accent_class_map = {
 										class="account-orders-search-icon"
 									/>
 								</template>
-								<template #icon-right>
-									<button
-										v-show="search_query.length > 0"
-										type="button"
-										class="account-orders-search-clear"
-										data-testid="account-orders-search-clear-button"
-										@click="search_query = ''"
-									>
-										<UiIcon
-											name="light-times-circle"
-											:size="24"
-											color="var(--text-primary)"
-										/>
-									</button>
+								<template #right>
+									<UiIcon
+										name="regular-search"
+										:size="24"
+										color="var(--text-primary)"
+									/>
 								</template>
-							</UiInput>
+							</MuSearch>
 						</div>
 					</div>
 				</div>
@@ -219,7 +211,11 @@ const accent_class_map = {
 					width: 200px;
 					border-radius: 14px;
 
-					:deep(.ui-input-field) {
+					:deep(.mu-input) {
+						border-radius: 14px;
+					}
+
+					:deep(.mu-input-field) {
 						&::-webkit-search-cancel-button {
 							-webkit-appearance: none;
 							display: none;

@@ -18,8 +18,13 @@ withDefaults(
 </script>
 
 <template>
-	<div class="ui-card" :data-variant="variant" :data-padding="padding" :data-radius="radius"
-		:data-bordered="bordered">
+	<div
+		class="ui-card"
+		:data-variant="variant"
+		:data-padding="padding"
+		:data-radius="radius"
+		:data-bordered="bordered"
+	>
 		<slot />
 	</div>
 </template>

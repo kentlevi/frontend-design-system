@@ -135,11 +135,15 @@ const section_lookup: Record<string, GuideSection> = {
 	DeleteConfirmModal: 'actions',
 	Input: 'form',
 	MuInput: 'form',
+	MuSearch: 'form',
+	MuCheckbox: 'form',
 	FileInput: 'form',
 	Textarea: 'form',
 	Select: 'form',
 	Checkbox: 'form',
 	Radio: 'form',
+	MuRadio: 'form',
+	MuRadioGroup: 'form',
 	Calendar: 'form',
 	FormField: 'form',
 	Badge: 'feedback',
@@ -193,9 +197,9 @@ const guide_usage_snippets: Record<string, string> = {
 	Checkbox: `<UiCheckbox v-model="accepted">
   Accept terms
 </UiCheckbox>`,
-	Card: `<UiCard variant="default" padding="md" radius="md" bordered="default">
+	Card: `<MuCard variant="default" padding="md" radius="md" bordered="default">
   <UiText size="small">Card content</UiText>
-</UiCard>`,
+</MuCard>`,
 	Calendar: `<MuCalendar
   v-model="selectedDate"
   :marker-dates="[new Date()]"
@@ -265,6 +269,35 @@ const guide_usage_snippets: Record<string, string> = {
 >
   <template #label>Email Address</template>
 </MuInput>`,
+	MuSearch: `<MuSearch
+  v-model="keyword"
+  placeholder="Search orders..."
+  clearable
+  class="account-orders-search"
+>
+  <template #left>
+    <UiIcon name="regular-search" :size="24" color="var(--text-primary)" />
+  </template>
+</MuSearch>`,
+	MuCheckbox: `<MuCheckbox v-model="accepted" variant="check">
+  Accept terms
+</MuCheckbox>
+
+<MuCheckbox v-model="partiallySelected" variant="minus">
+  Some items selected
+</MuCheckbox>`,
+	MuRadio: `<MuRadio
+  v-model="contactMethod"
+  name="contact-method"
+  value="email"
+>
+  Email
+</MuRadio>`,
+	MuRadioGroup: `<MuRadioGroup v-model="plan" name="plan">
+  <MuRadio value="starter">Starter</MuRadio>
+  <MuRadio value="pro">Pro</MuRadio>
+  <MuRadio value="enterprise">Enterprise</MuRadio>
+</MuRadioGroup>`,
 	Radio: `<UiRadio
   v-model="plan"
   name="plan"

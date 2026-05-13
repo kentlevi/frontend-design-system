@@ -1,5 +1,5 @@
 <template>
-	<UiCard class="coupon-item" :variant="selected ? 'subtle' : 'default'">
+	<MuCard class="coupon-item" :variant="selected ? 'subtle' : 'default'">
 		<MuLinearWrapper justify="space-between">
 			<MuLinearWrapper direction="column" :gap="8">
 				<MuLinearWrapper direction="column">
@@ -20,10 +20,11 @@
 				<UiBadge color="success" size="md">Single Use</UiBadge>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
-	</UiCard>
+	</MuCard>
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';

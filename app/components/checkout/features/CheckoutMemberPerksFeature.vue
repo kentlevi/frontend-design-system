@@ -6,6 +6,7 @@ import {
 	checkoutMemberPointsTooltipContent,
 	checkoutMemberPointsTooltipProps,
 } from '~/data/checkout/tooltips';
+import MuCard from '~/components/base/MuCard.vue';
 import MuInput from '~/components/base/MuInput.vue';
 import MuText from '~/components/base/MuText.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
@@ -68,7 +69,12 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 					</MuText>
 				</div>
 				<div class="checkout-member-perk-control">
-					<MuInput id="coupon" name="coupon" :placeholder="t('checkout.member.couponPlaceholder')">
+					<MuInput
+						id="coupon"
+						v-model="coupon_code"
+						name="coupon"
+						:placeholder="t('checkout.member.couponPlaceholder')"
+					>
 						<template #inner-right>
 							<MuText class="select_coupon" weight="medium" color="abyss-base" @click="is_coupons_modal_open = true">Select</MuText>
 						</template>
@@ -77,7 +83,7 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 						{{ t('checkout.member.applyCoupon') }}
 					</UiButton>
 				</div>
-				<UiCard class="coupon" variant="subtle" padding="xsm">
+				<MuCard class="coupon" variant="subtle" padding="xsm">
 					<MuLinearWrapper align="center">
 						<MuLinearWrapper align="center" :gap="4">
 							<UiIcon name="light-tags" :size="24" color="#D42941" />
@@ -85,7 +91,7 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 						</MuLinearWrapper>
 						<UiButton variant="ghost" tone="neutral" size="sm">Change</UiButton>
 					</MuLinearWrapper>
-				</UiCard>
+				</MuCard>
 			</div>
 		</div>
 	</div>

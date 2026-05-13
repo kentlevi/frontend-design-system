@@ -1,6 +1,6 @@
 <template>
 	<div class="guide-section">
-		<MuHeading variant="5" weight="bold">UiCard</MuHeading>
+		<MuHeading variant="5" weight="bold">MuCard</MuHeading>
 		<MuText size="small" color="var(--text-secondary)">
 			Container component with variant, padding, radius, and border options.
 		</MuText>
@@ -8,7 +8,7 @@
 		<MuHeading variant="6" weight="bold">Variants</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-card-grid">
-				<UiCard
+				<MuCard
 					v-for="variant in variants"
 					:key="variant"
 					:variant="variant"
@@ -21,14 +21,14 @@
 					<MuText size="small" color="var(--text-secondary)">
 						Card content preview.
 					</MuText>
-				</UiCard>
+				</MuCard>
 			</div>
 		</div>
 
 		<MuHeading variant="6" weight="bold">Padding</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-card-grid">
-				<UiCard
+				<MuCard
 					v-for="padding in paddings"
 					:key="padding"
 					variant="default"
@@ -41,14 +41,14 @@
 					<MuText size="small" color="var(--text-secondary)">
 						Spacing inside the card.
 					</MuText>
-				</UiCard>
+				</MuCard>
 			</div>
 		</div>
 
 		<MuHeading variant="6" weight="bold">Radius</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-card-grid">
-				<UiCard
+				<MuCard
 					v-for="radius in radii"
 					:key="radius"
 					variant="default"
@@ -58,14 +58,14 @@
 					class="guide-card-item"
 				>
 					<MuText size="xsmall" weight="semi-bold">radius: {{ radius }}</MuText>
-				</UiCard>
+				</MuCard>
 			</div>
 		</div>
 
 		<MuHeading variant="6" weight="bold">Bordered</MuHeading>
 		<div class="guide-demo">
 			<div class="guide-card-grid">
-				<UiCard
+				<MuCard
 					v-for="bordered in bordered_options"
 					:key="bordered"
 					variant="default"
@@ -75,7 +75,7 @@
 					class="guide-card-item"
 				>
 					<MuText size="xsmall" weight="semi-bold">bordered: {{ bordered }}</MuText>
-				</UiCard>
+				</MuCard>
 			</div>
 		</div>
 
@@ -120,6 +120,8 @@
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
+
 const variants = ['default', 'subtle', 'transparent'] as const;
 const paddings = ['none', 'xsm', 'sm', 'md', 'lg'] as const;
 const radii = ['none', 'sm', 'md', 'lg'] as const;

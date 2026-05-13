@@ -1,15 +1,16 @@
 <template>
-	<UiCard padding="none" bordered="none" class="products">
+	<MuCard padding="none" bordered="none" class="products">
 		<NuxtLink :to="to" class="products-link" :data-testid="dataTestId">
 			<figure class="products-img-con">
-				<img :src="item.image" :alt="`No Content - ${item.name}`" />
+				<img :src="item.image" :alt="`No Content - ${item.name}`">
 			</figure>
 			<MuText size="large" weight="medium" align="center">{{ item.name }}</MuText>
 		</NuxtLink>
-	</UiCard>
+	</MuCard>
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuText from '~/components/base/MuText.vue';
 import type { HomeProductType } from '~/types/products/homeTypes';
 
