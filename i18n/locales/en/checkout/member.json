@@ -27,6 +27,9 @@
       },
       "billingToast": "Billing details updated successfully!"
     },
+    "paymentWindow": {
+      "continueTransaction": "Please continue the transaction on the payment window."
+    },
     "member": {
       "shippingDetails": "Shipping Details",
       "viewShippingAddresses": "View Shipping Address",

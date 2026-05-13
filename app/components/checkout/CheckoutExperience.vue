@@ -13,6 +13,8 @@ import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCa
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
 import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
 import { useInitCheckoutAddress } from '~/composables/checkout/address/useInitCheckoutAddress';
+import { useMainCheckOutStore } from '~/stores/checkout/index.store';
+import CheckoutPaymentWindowOverlay from '~/components/checkout/shared/CheckoutPaymentWindowOverlay.vue';
 
 /** Standalone address context (isolated from checkout_experience) */
 useInitCheckoutAddress()
@@ -33,6 +35,8 @@ const {
 	is_coupons_modal_open,
 
 } = checkout_experience;
+
+const { payment_window_open } = storeToRefs(useMainCheckOutStore());
 
 provideCheckoutExperienceFeatureContext(checkout_experience);
 
@@ -96,6 +100,9 @@ function setCompleteLoaderRef(
 	/>
 	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
 	<CouponsModal v-model="is_coupons_modal_open" />
+
+	<!-- Payment window overlay -->
+	<CheckoutPaymentWindowOverlay :visible="payment_window_open" />
 </template>
 
 <style lang="scss">

@@ -47,6 +47,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
 	const checkout_ready = ref<boolean>(false)
+	const payment_window_open = ref<boolean>(false)
 
 	const patchGuestContactState = (
 		payload: Partial<typeof guest_contact_state>
@@ -76,6 +77,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 	const setCheckoutReady = (value: boolean) => {
 		checkout_ready.value = value
+	}
+
+	const setPaymentWindowOpen = (value: boolean) => {
+		payment_window_open.value = value
 	}
 
 	/**
@@ -116,6 +121,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_shipping_method_id,
 		selected_payment_method,
 		checkout_ready,
+		payment_window_open,
 		form_state,
 		form_type,
 		form_field_errors,
@@ -137,6 +143,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setShippingMethodId,
 		setPaymentMethod,
 		setCheckoutReady,
+		setPaymentWindowOpen,
 		cleanCheckoutStates,
 
 		clearShippingAddressId,
