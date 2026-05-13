@@ -9,6 +9,7 @@ const props = defineProps<{
 	size?: Size;
 	title?: string;
 	color?: string;
+	clickable?: boolean;
 }>();
 
 const size_map = { sm: 16, md: 20, lg: 24 } as const;
@@ -42,6 +43,7 @@ const sprite_href = computed<string | undefined>(() =>
 			width: icon_size,
 			height: icon_size,
 			color: color ?? 'currentColor',
+			cursor: clickable ? 'pointer' : undefined,
 		}"
 		:viewBox="icon_meta.viewBox"
 		:role="title ? 'img' : undefined"
@@ -54,7 +56,7 @@ const sprite_href = computed<string | undefined>(() =>
 	<span
 		v-else
 		class="ui-icon ui-icon--missing"
-		:style="{ width: icon_size, height: icon_size }"
+		:style="{ width: icon_size, height: icon_size, cursor: clickable ? 'pointer' : undefined }"
 		aria-hidden="true"
 	/>
 </template>

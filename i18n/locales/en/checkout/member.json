@@ -27,6 +27,9 @@
       },
       "billingToast": "Billing details updated successfully!"
     },
+    "paymentWindow": {
+      "continueTransaction": "Please continue the transaction on the payment window."
+    },
     "member": {
       "shippingDetails": "Shipping Details",
       "viewShippingAddresses": "View Shipping Address",
@@ -84,7 +87,7 @@
       "pointsPlaceholder": "0 pts",
       "useAll": "Use All",
       "coupon": "Coupon",
-      "couponPlaceholder": "0 pts",
+      "couponPlaceholder": "Enter Code",
       "applyCoupon": "Apply",
       "completeCheckout": "Complete Checkout",
       "loginSuccess": "You have successfully logged in. Continue completing your order.",

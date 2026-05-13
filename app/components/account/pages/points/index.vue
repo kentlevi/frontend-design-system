@@ -3,12 +3,6 @@ import AccountPointsRankingModal from './AccountPointsRankingModal.vue';
 import { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 import type { AccountPointLogFilter } from '~/types/account/points';
 
-withDefaults(defineProps<{
-	embedded?: boolean;
-}>(), {
-	embedded: false,
-});
-
 const { t } = useI18n();
 const {
 	summary,
@@ -33,179 +27,177 @@ function openRankingModal() {
 
 <template>
 	<section class="account-page" data-testid="account-points-page">
-		<AccountShellSection :embedded="embedded" active-tab="points">
-			<div class="account-content" data-testid="account-points-content">
-				<div class="account-points-grid">
-					<div class="account-points-copy-column">
-						<h1 class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</h1>
+		<div class="account-content" data-testid="account-points-content">
+			<div class="account-points-grid">
+				<div class="account-points-copy-column">
+					<h1 class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</h1>
 
-						<div class="account-points-copy-cards">
-							<section class="account-points-copy-card">
-								<div class="account-points-copy-group">
-									<h2 class="account-points-section-title">
-										{{ t('account.points.pointsSystemTitle') }}
-										<UiIcon name="regular-info-circle" :size="20" />
-									</h2>
-									<p class="account-points-description">
-										{{ t('account.points.pointsSystemDescription') }}
-									</p>
-								</div>
-								<div class="account-points-conversion-pill">
-									{{ summary.conversion_rate_label }}
-								</div>
-							</section>
-
-							<section class="account-points-copy-card">
-								<div class="account-points-copy-group">
-									<h2 class="account-points-section-title">
-										{{ t('account.points.questTitle') }}
-									</h2>
-									<p class="account-points-description">
-										{{ t('account.points.questDescription') }}
-									</p>
-								</div>
-							</section>
-
-							<section class="account-points-copy-card">
-								<div class="account-points-copy-group">
-									<h2 class="account-points-section-title">
-										{{ t('account.points.historyTitle') }}
-									</h2>
-									<p class="account-points-description">
-										{{ t('account.points.historyDescription') }}
-									</p>
-								</div>
-							</section>
-						</div>
-					</div>
-
-					<div class="account-points-main-column">
-						<button
-							type="button"
-							class="account-points-tier-card"
-							data-testid="account-points-hero"
-							@click="openRankingModal"
-						>
-							<div class="account-points-tier-copy">
-								<img
-									:src="summary.badge_src"
-									:alt="t('account.points.tierName')"
-									class="account-points-tier-icon"
-								>
-								<div>
-									<h2 class="account-points-tier">{{ t(`account.points.${summary.tier_name_key}`) }}</h2>
-									<p class="account-points-meta">
-										{{ t('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
-									</p>
-								</div>
-							</div>
-
-							<div class="account-points-balance-wrap">
-								<p class="account-points-balance" data-testid="account-points-balance">
-									{{ summary.balance }}<span>{{ t('account.points.pointsUnit') }}</span>
-								</p>
-								<UiBadge
-									variant="outline"
-									size="md"
-									badge-class="account-points-expiry-pill"
-								>
-									{{ t('account.points.expiry') }}: {{ summary.expiry_date }}
-								</UiBadge>
-							</div>
-
-							<div class="account-points-progress">
-								<div class="account-points-progress-track">
-									<div
-										class="account-points-progress-fill"
-										:style="{ width: `${summary.progress_percent}%` }"
-									/>
-								</div>
-								<p class="account-points-progress-copy">
-									{{ t('account.points.nextTierRequirementPrefix') }}
-									<strong>{{ summary.remaining_spend }} KRW</strong>
-									{{ t('account.points.nextTierRequirementSuffix') }}
+					<div class="account-points-copy-cards">
+						<section class="account-points-copy-card">
+							<div class="account-points-copy-group">
+								<h2 class="account-points-section-title">
+									{{ t('account.points.pointsSystemTitle') }}
+									<UiIcon name="regular-info-circle" :size="20" />
+								</h2>
+								<p class="account-points-description">
+									{{ t('account.points.pointsSystemDescription') }}
 								</p>
 							</div>
-						</button>
-
-						<section class="account-points-challenges">
-							<div class="account-points-challenges-head">
-								<div class="account-points-challenges-title-wrap">
-									<h2 class="account-points-section-title">{{ t('account.points.challengesTitle') }}</h2>
-									<div class="account-points-challenge-count">
-										{{ completed_challenge_count }}/{{ visible_challenges.length + (12 - visible_challenges.length) }}
-									</div>
-								</div>
-								<UiButton
-									variant="outline"
-									tone="neutral"
-									size="sm"
-									class="account-points-view-all"
-								>
-									{{ t('account.points.viewAll') }}
-								</UiButton>
-							</div>
-
-							<div class="account-points-challenge-list">
-								<article
-									v-for="challenge in visible_challenges"
-									:key="challenge.id"
-									class="account-points-challenge-card"
-									:data-state="challenge.state"
-								>
-									<div class="account-points-challenge-frame">
-										<img
-											:src="challenge.icon_src"
-											:alt="challenge.name"
-											class="account-points-challenge-image"
-										>
-									</div>
-								</article>
+							<div class="account-points-conversion-pill">
+								{{ summary.conversion_rate_label }}
 							</div>
 						</section>
 
-						<section class="account-points-history-panel">
-							<div class="account-points-filters">
-								<span class="account-points-filter-label">{{ t('account.points.filter') }}</span>
-								<div class="account-points-filter-group">
-									<button
-										v-for="filter in filters"
-										:key="filter.id"
-										type="button"
-										class="account-points-filter-button"
-										:data-active="active_filter === filter.id"
-										@click="handleFilterClick(filter.id)"
-									>
-										{{ filter.label }}
-									</button>
-								</div>
+						<section class="account-points-copy-card">
+							<div class="account-points-copy-group">
+								<h2 class="account-points-section-title">
+									{{ t('account.points.questTitle') }}
+								</h2>
+								<p class="account-points-description">
+									{{ t('account.points.questDescription') }}
+								</p>
 							</div>
+						</section>
 
-							<div class="account-points-logs" data-testid="account-points-logs">
-								<div class="account-points-logs-head">
-									{{ t('account.points.logsTitle') }}
-								</div>
-
-								<div class="account-points-log-list">
-									<article
-										v-for="log in logs"
-										:key="log.id"
-										class="account-points-log-row"
-										:data-testid="`account-points-log-${log.id}`"
-									>
-										<div>
-											<h3 class="account-points-log-title">{{ log.title }}</h3>
-											<p class="account-points-log-date">{{ log.date }}</p>
-										</div>
-										<strong :class="{ plus: log.positive, minus: !log.positive }">{{ log.value }}</strong>
-									</article>
-								</div>
+						<section class="account-points-copy-card">
+							<div class="account-points-copy-group">
+								<h2 class="account-points-section-title">
+									{{ t('account.points.historyTitle') }}
+								</h2>
+								<p class="account-points-description">
+									{{ t('account.points.historyDescription') }}
+								</p>
 							</div>
 						</section>
 					</div>
 				</div>
+
+				<div class="account-points-main-column">
+					<button
+						type="button"
+						class="account-points-tier-card"
+						data-testid="account-points-hero"
+						@click="openRankingModal"
+					>
+						<div class="account-points-tier-copy">
+							<img
+								:src="summary.badge_src"
+								:alt="t('account.points.tierName')"
+								class="account-points-tier-icon"
+							>
+							<div>
+								<h2 class="account-points-tier">{{ t(`account.points.${summary.tier_name_key}`) }}</h2>
+								<p class="account-points-meta">
+									{{ t('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
+								</p>
+							</div>
+						</div>
+
+						<div class="account-points-balance-wrap">
+							<p class="account-points-balance" data-testid="account-points-balance">
+								{{ summary.balance }}<span>{{ t('account.points.pointsUnit') }}</span>
+							</p>
+							<UiBadge
+								variant="outline"
+								size="md"
+								badge-class="account-points-expiry-pill"
+							>
+								{{ t('account.points.expiry') }}: {{ summary.expiry_date }}
+							</UiBadge>
+						</div>
+
+						<div class="account-points-progress">
+							<div class="account-points-progress-track">
+								<div
+									class="account-points-progress-fill"
+									:style="{ width: `${summary.progress_percent}%` }"
+								/>
+							</div>
+							<p class="account-points-progress-copy">
+								{{ t('account.points.nextTierRequirementPrefix') }}
+								<strong>{{ summary.remaining_spend }} KRW</strong>
+								{{ t('account.points.nextTierRequirementSuffix') }}
+							</p>
+						</div>
+					</button>
+
+					<section class="account-points-challenges">
+						<div class="account-points-challenges-head">
+							<div class="account-points-challenges-title-wrap">
+								<h2 class="account-points-section-title">{{ t('account.points.challengesTitle') }}</h2>
+								<div class="account-points-challenge-count">
+									{{ completed_challenge_count }}/{{ visible_challenges.length + (12 - visible_challenges.length) }}
+								</div>
+							</div>
+							<UiButton
+								variant="outline"
+								tone="neutral"
+								size="sm"
+								class="account-points-view-all"
+							>
+								{{ t('account.points.viewAll') }}
+							</UiButton>
+						</div>
+
+						<div class="account-points-challenge-list">
+							<article
+								v-for="challenge in visible_challenges"
+								:key="challenge.id"
+								class="account-points-challenge-card"
+								:data-state="challenge.state"
+							>
+								<div class="account-points-challenge-frame">
+									<img
+										:src="challenge.icon_src"
+										:alt="challenge.name"
+										class="account-points-challenge-image"
+									>
+								</div>
+							</article>
+						</div>
+					</section>
+
+					<section class="account-points-history-panel">
+						<div class="account-points-filters">
+							<span class="account-points-filter-label">{{ t('account.points.filter') }}</span>
+							<div class="account-points-filter-group">
+								<button
+									v-for="filter in filters"
+									:key="filter.id"
+									type="button"
+									class="account-points-filter-button"
+									:data-active="active_filter === filter.id"
+									@click="handleFilterClick(filter.id)"
+								>
+									{{ filter.label }}
+								</button>
+							</div>
+						</div>
+
+						<div class="account-points-logs" data-testid="account-points-logs">
+							<div class="account-points-logs-head">
+								{{ t('account.points.logsTitle') }}
+							</div>
+
+							<div class="account-points-log-list">
+								<article
+									v-for="log in logs"
+									:key="log.id"
+									class="account-points-log-row"
+									:data-testid="`account-points-log-${log.id}`"
+								>
+									<div>
+										<h3 class="account-points-log-title">{{ log.title }}</h3>
+										<p class="account-points-log-date">{{ log.date }}</p>
+									</div>
+									<strong :class="{ plus: log.positive, minus: !log.positive }">{{ log.value }}</strong>
+								</article>
+							</div>
+						</div>
+					</section>
+				</div>
 			</div>
-		</AccountShellSection>
+		</div>
 
 		<AccountPointsRankingModal
 			v-model="is_ranking_modal_open"

@@ -1,6 +1,12 @@
 <template>
 	<MuLinearWrapper class="no-orders" direction="column" align="center" justify="center" width="464px" :gap="24">
-		<UiIcon />
+		<figure class="no-orders-img">
+			<img
+				src="/icons/custom/search/no-recent-searches.svg" alt="No recent searches" 
+				width="80"
+				height="80"
+			/>
+		</figure>
 		<MuLinearWrapper direction="column" :gap="16">
 			<MuText size="large" weight="semi-bold" align="center">
 				No orders found.

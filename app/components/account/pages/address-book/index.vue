@@ -7,12 +7,6 @@ import AddressBookDefaultShippingModal from './AddressBookDefaultShippingModal.v
 import { useIndexUI } from '~/composables/account/addressBook/useIndexUI';
 import { provideUserAddress } from '~/composables/account/addressBook/context/useUserAddressContext';
 
-withDefaults(defineProps<{
-	embedded?: boolean;
-}>(), {
-	embedded: false,
-});
-
 const {
 	translate,
 
@@ -29,96 +23,94 @@ provideUserAddress()
 
 <template>
 	<section class="account-page" data-testid="account-address-book-page">
-		<AccountShellSection :embedded="embedded" active-tab="address-book">
-			<div class="account-content" data-testid="account-address-book-content">
-				<header class="account-address-book-header" data-testid="account-address-book-header">
-					<h1 class="account-address-book-title" data-testid="account-address-book-title">
-						{{ translate('account.addressBook.title') }}
-					</h1>
-					<UiSkeleton
-						v-if="is_loading"
-						width="164px"
-						height="var(--space-2xl)"
-						border-radius="var(--radius-xl)"
+		<div class="account-content" data-testid="account-address-book-content">
+			<header class="account-address-book-header" data-testid="account-address-book-header">
+				<h1 class="account-address-book-title" data-testid="account-address-book-title">
+					{{ translate('account.addressBook.title') }}
+				</h1>
+				<UiSkeleton
+					v-if="is_loading"
+					width="164px"
+					height="var(--space-2xl)"
+					border-radius="var(--radius-xl)"
+				/>
+				<UiButton
+					v-else-if="has_addresses"
+					variant="filled"
+					tone="neutral"
+					size="md"
+					icon="regular-plus"
+					icon-size="24"
+					icon-position="left"
+					data-testid="account-address-book-add-button"
+					@click="handleOpenAddModal"
+				>
+					{{ translate('account.addressBook.addNew') }}
+				</UiButton>
+			</header>
+
+			<div
+				v-if="has_addresses || is_loading"
+				class="account-address-book-sections"
+				data-testid="account-address-book-sections"
+			>
+				<div class="account-address-book-primary-group">
+					<AddressBookSection
+						v-for="(section, index) in sections"
+						:key="index"
+						:section="section.section"
 					/>
+				</div>
+			</div>
+
+			<section
+				v-else
+				class="account-address-book-empty-state"
+				data-testid="account-address-book-empty-state"
+			>
+				<div class="account-address-book-empty-state-icon">
+					<img
+						src="/icons/custom/account/address-empty-state.svg"
+						alt=""
+						class="account-address-book-empty-state-icon-image"
+					>
+				</div>
+				<div class="account-address-book-empty-state-content">
+					<div class="account-address-book-empty-state-copy">
+						<h2 class="account-address-book-empty-state-title">
+							{{ translate('account.addressBook.emptyTitle') }}
+						</h2>
+						<i18n-t
+							keypath="account.addressBook.emptyDescription"
+							tag="p"
+							class="account-address-book-empty-state-description"
+						>
+							<template #action>
+								<strong>"{{ translate('account.addressBook.addAddressLabel') }}"</strong>
+							</template>
+						</i18n-t>
+					</div>
 					<UiButton
-						v-else-if="has_addresses"
 						variant="filled"
 						tone="neutral"
 						size="md"
-						icon="regular-plus"
 						icon-size="24"
+						icon="regular-plus"
 						icon-position="left"
-						data-testid="account-address-book-add-button"
+						class="account-address-book-empty-state-button"
+						data-testid="account-address-book-empty-add-button"
 						@click="handleOpenAddModal"
 					>
 						{{ translate('account.addressBook.addNew') }}
 					</UiButton>
-				</header>
-
-				<div
-					v-if="has_addresses || is_loading"
-					class="account-address-book-sections"
-					data-testid="account-address-book-sections"
-				>
-					<div class="account-address-book-primary-group">
-						<AddressBookSection
-							v-for="(section, index) in sections"
-							:key="index"
-							:section="section.section"
-						/>
-					</div>
 				</div>
+			</section>
+		</div>
 
-				<section
-					v-else
-					class="account-address-book-empty-state"
-					data-testid="account-address-book-empty-state"
-				>
-					<div class="account-address-book-empty-state-icon">
-						<img
-							src="/icons/custom/account/address-empty-state.svg"
-							alt=""
-							class="account-address-book-empty-state-icon-image"
-						>
-					</div>
-					<div class="account-address-book-empty-state-content">
-						<div class="account-address-book-empty-state-copy">
-							<h2 class="account-address-book-empty-state-title">
-								{{ translate('account.addressBook.emptyTitle') }}
-							</h2>
-							<i18n-t
-								keypath="account.addressBook.emptyDescription"
-								tag="p"
-								class="account-address-book-empty-state-description"
-							>
-								<template #action>
-									<strong>"{{ translate('account.addressBook.addAddressLabel') }}"</strong>
-								</template>
-							</i18n-t>
-						</div>
-						<UiButton
-							variant="filled"
-							tone="neutral"
-							size="md"
-							icon-size="24"
-							icon="regular-plus"
-							icon-position="left"
-							class="account-address-book-empty-state-button"
-							data-testid="account-address-book-empty-add-button"
-							@click="handleOpenAddModal"
-						>
-							{{ translate('account.addressBook.addNew') }}
-						</UiButton>
-					</div>
-				</section>
-			</div>
-
-			<AddressBookFormModal />
-			<AddressBookDeleteConfirmModal />
-			<AddressBookDefaultShippingModal />
-			<AddressBookConfirmDefaultChangeModal />
-		</AccountShellSection>
+		<AddressBookFormModal />
+		<AddressBookDeleteConfirmModal />
+		<AddressBookDefaultShippingModal />
+		<AddressBookConfirmDefaultChangeModal />
 	</section>
 </template>
 

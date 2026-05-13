@@ -1,36 +1,53 @@
+<script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+import type { ApplicableCoupon } from '~/types/coupon/coupon';
+import { getCouponUsageLabel } from '~/utils/coupon/format';
+
+defineProps<{
+	coupon: ApplicableCoupon;
+	modelValue: string;
+	selected: boolean;
+}>();
+
+defineEmits(['update:modelValue']);
+</script>
+
 <template>
-	<UiCard class="coupon-item" :variant="selected ? 'subtle' : 'default'">
+	<MuCard
+		class="coupon-item"
+		:variant="selected ? 'subtle' : 'default'"
+		:disabled="!coupon.can_use"
+		@click="$emit('update:modelValue', coupon.code)"
+	>
 		<MuLinearWrapper justify="space-between">
 			<MuLinearWrapper direction="column" :gap="8">
 				<MuLinearWrapper direction="column">
 					<UiRadio
-						v-model="coupon"
+						:model-value="modelValue"
 						name="coupon"
-						value="stick20"
+						:value="coupon.code"
 						class="coupon_radio"
 					>
-						<MuText color="abyss-40" weight="semi-bold">Get 15% OFF all stickers.</MuText>
+						<MuText color="abyss-40" weight="semi-bold">{{ coupon.name }}</MuText>
 					</UiRadio>
-					<MuHeading variant="6" weight="bold">STICK20</MuHeading>
+					<MuHeading variant="6" weight="bold">{{ coupon.code }}</MuHeading>
 				</MuLinearWrapper>
-				<MuText color="abyss-40">Get 20% OFF all stickers. No minimum spend. One use per customer.</MuText>
+				<MuText color="abyss-40">{{ coupon.description }}</MuText>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" justify="space-between" align="center">
-				<MuText color="abyss-40" weight="semi-bold">Expiration: 05/30/2026</MuText>
-				<UiBadge color="success" size="md">Single Use</UiBadge>
+				<MuText v-if="coupon.valid_until" color="abyss-40" weight="semi-bold">
+					Expiration: {{ coupon.valid_until }}
+				</MuText>
+				<UiBadge v-if="coupon.usage_limit" color="success" size="md">
+					{{ getCouponUsageLabel(coupon.usage_limit) }}
+				</UiBadge>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
-	</UiCard>
+	</MuCard>
 </template>
-
-<script setup lang="ts">
-import MuHeading from '~/components/base/MuHeading.vue';
-import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
-import MuText from '~/components/base/MuText.vue';
-
-const selected = ref(true);
-const coupon = ref('stick20');
-</script>
 
 <style lang="scss" scoped>
 .coupon-card { position: relative; }

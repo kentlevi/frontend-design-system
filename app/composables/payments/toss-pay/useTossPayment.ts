@@ -39,6 +39,7 @@ export const useTossPayment = () => {
 				if (!is_manual_close) {
 					console.log('Popup manually closed')
 					checkout_store.setCheckoutReady(false)
+					checkout_store.setPaymentWindowOpen(false)
 				}
 
 				popup = null
@@ -59,6 +60,8 @@ export const useTossPayment = () => {
 	// POPUP HANDLING
 	// =========================
 	const openPaymentPopup = (url: string | null) => {
+
+		checkout_store.setPaymentWindowOpen(true)
 
 		if (url === null) {
 			throw new Error('No URL provided')
@@ -101,6 +104,7 @@ export const useTossPayment = () => {
 		stopPopupWatcher()
 
 		checkout_store.setCheckoutReady(false)
+		checkout_store.setPaymentWindowOpen(false)
 		popup?.close()
 		popup = null
 	}

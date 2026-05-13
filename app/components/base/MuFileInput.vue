@@ -26,7 +26,7 @@ const props = withDefaults(
 	{
 		existingFile: null,
 		acceptedFormats: () => ['eps', 'ai', 'psd', 'pdf', 'tif', 'png', 'jpg'],
-		multiple: true,
+		multiple: false,
 		dragDropText: 'Drag and drop files to upload',
 		acceptedText: '',
 		selectText: 'Select Files',

@@ -27,6 +27,9 @@
       },
       "billingToast": "청구 정보가 성공적으로 업데이트되었습니다!"
     },
+    "paymentWindow": {
+      "continueTransaction": "결제 창에서 거래를 계속 진행해 주세요."
+    },
     "member": {
       "shippingDetails": "배송 정보",
       "viewShippingAddresses": "배송지 보기",

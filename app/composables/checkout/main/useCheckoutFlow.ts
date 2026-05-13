@@ -17,6 +17,7 @@ export const useCheckoutFlow = () => {
 
 	const payment = usePaymentStrategy()
 	const { state } = storeToRefs(useUsersStore())
+	const checkout_store = useMainCheckOutStore()
 	const {
 		guest_contact_state,
 		checkout_ready,
@@ -24,7 +25,7 @@ export const useCheckoutFlow = () => {
 		selected_payment_method,
 		drop_shipping_enabled,
 		use_shipping_as_billing,
-	} = storeToRefs(useMainCheckOutStore())
+	} = storeToRefs(checkout_store)
 	const {
 		selected_real_ids,
 	} = storeToRefs(useCartStore())

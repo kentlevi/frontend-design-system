@@ -8,5 +8,5 @@ definePageMeta({
 </script>
 
 <template>
-	<FeaturesAccountOrders embedded />
+	<FeaturesAccountOrders />
 </template>

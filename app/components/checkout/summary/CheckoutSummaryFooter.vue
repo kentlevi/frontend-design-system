@@ -39,6 +39,7 @@ const {
 
 const {
 	total_cost,
+	total_discount,
 	sub_total_cost,
 	shipping_cost,
 } = useCheckoutSummaryFlow();
@@ -141,7 +142,7 @@ onBeforeUnmount(() => {
 			</div>
 			<div class="checkout-summary-line">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
-				<div class="checkout-summary-line-value is-discount">{{ formatPrice(0) }}</div>
+				<div class="checkout-summary-line-value is-discount">-{{ formatPrice(total_discount) }}</div>
 			</div>
 			<div class="checkout-summary-line is-total">
 				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.total`) }}</div>

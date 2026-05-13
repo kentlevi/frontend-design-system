@@ -14,5 +14,5 @@ provideUserAddressFormState()
 </script>
 
 <template>
-	<AccountAddressBookPage embedded />
+	<AccountAddressBookPage />
 </template>

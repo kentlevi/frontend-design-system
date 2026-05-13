@@ -37,9 +37,9 @@ defineProps<{
 						:key="n"
 						class="checkout-invoice-items-row is-skeleton"
 					>
-						<span>...</span>
-						<span>...</span>
-						<strong>...</strong>
+						<span><span class="skeleton-bar" style="width: 65%;" /></span>
+						<span><span class="skeleton-bar" style="width: 28px;" /></span>
+						<strong><span class="skeleton-bar" style="width: 56px;" /></strong>
 					</div>
 				</template>
 			</ClientOnly>
@@ -80,6 +80,20 @@ defineProps<{
 		span:nth-child(2) {
 			text-align: right;
 		}
+	}
+
+	.skeleton-bar {
+		display: inline-block;
+		height: 12px;
+		border-radius: 4px;
+		background: linear-gradient(90deg, #e8eaf0 25%, #f4f5f8 50%, #e8eaf0 75%);
+		background-size: 200% 100%;
+		animation: skeleton-shimmer 1.4s ease-in-out infinite;
+	}
+
+	@keyframes skeleton-shimmer {
+		0% { background-position: 200% 0; }
+		100% { background-position: -200% 0; }
 	}
 
 	.checkout-invoice-items-row {

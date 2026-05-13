@@ -14,6 +14,16 @@
         flex-direction: column;
         align-items: center;
         gap: 10px;
+
+        &:has(.ui-loading-overlay-copy) {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 36px 48px;
+            gap: 20px;
+            box-shadow:
+                0 24px 64px rgba(0, 0, 0, 0.16),
+                0 8px 20px rgba(0, 0, 0, 0.06);
+        }
     }
 
     .ui-loading-overlay-content,
@@ -36,12 +46,17 @@
         font-size: var(--type-size-350);
         line-height: var(--type-line-350);
         font-weight: var(--font-weight-semibold);
+        text-align: center;
+        width: 100%;
     }
 
     .ui-loading-overlay-description {
-        color: var(--text-primary);
+        color: var(--text-secondary);
         font-size: var(--type-size-100);
         line-height: var(--type-line-100);
+        text-align: center;
+        width: 100%;
+        max-width: 280px;
     }
 }
 

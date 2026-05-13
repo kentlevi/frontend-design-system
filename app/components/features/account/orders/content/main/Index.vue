@@ -1,6 +1,6 @@
 <template>
 	<MuLinearWrapper class="orders-main" direction="column" :gap="16" width="100%">
-		<UiCard class="orders-card">
+		<MuCard class="orders-card">
 			<MuLinearWrapper class="orders-card-wrapper" direction="column">
 				<MuLinearWrapper class="orders-card-header" justify="space-between">
 					<MuLinearWrapper align="center" :gap="16">
@@ -20,7 +20,7 @@
 			<Actions/>
 			<List/>
 			<Summary/>
-		</UiCard>
+		</MuCard>
 		<MuLinearWrapper :gap="12" justify="flex-end">
 			<UiButton variant="outline" tone="neutral">On-Hold Order</UiButton>
 			<UiButton variant="outline" tone="neutral">Cancel Order</UiButton>
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';

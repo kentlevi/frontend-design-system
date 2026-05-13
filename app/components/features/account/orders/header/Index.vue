@@ -25,7 +25,7 @@
 						{{selected_range.start.toLocaleDateString()}} - {{selected_range.end.toLocaleDateString()}}
 						<UiIcon name="regular-times-circle"/>
 					</UiButton>
-					<UiCard v-if="date_picker_open" class="date_calendar" width="100%">
+					<MuCard v-if="date_picker_open" class="date_calendar" width="100%">
 						<MuLinearWrapper direction="column">
 							<MuCalendar v-model="selected_range" mode="range" columns="2"/>
 							<MuLinearWrapper justify="flex-end" :gap="16">
@@ -37,7 +37,7 @@
 								</UiButton>
 							</MuLinearWrapper>
 						</MuLinearWrapper>
-					</UiCard>
+					</MuCard>
 				</MuLinearWrapper>
 
 				<MuLinearWrapper class="order-filters">
@@ -54,26 +54,36 @@
 					>
 						{{ t('account.orders.filters') }}
 					</UiButton>
-					<UiCard v-if="filter_status" class="filter-status" padding="none">
+					<MuCard v-if="filter_status" class="filter-status" padding="none">
 						<div class="filter-status__header">
 							<MuText size="large" weight="semi-bold">Order Status</MuText>
 						</div>
 						<div class="filter-status__body">
 							<ul>
 								<li>
-									<UiCheckbox><MuText>On-going (2)</MuText></UiCheckbox>
+									<MuCheckbox>
+										<MuText>On-going (2)</MuText>
+									</MuCheckbox>
 								</li>
 								<li>
-									<UiCheckbox><MuText>Action Required (2)</MuText></UiCheckbox>
+									<MuCheckbox>
+										<MuText>Action Required (2)</MuText>
+									</MuCheckbox>
 								</li>
 								<li>
-									<UiCheckbox><MuText>To Receive (0)</MuText></UiCheckbox>
+									<MuCheckbox>
+										<MuText>To Receive (0)</MuText>
+									</MuCheckbox>
 								</li>
 								<li>
-									<UiCheckbox><MuText>Completed (1)</MuText></UiCheckbox>
+									<MuCheckbox>
+										<MuText>Completed (1)</MuText>
+									</MuCheckbox>
 								</li>
 								<li>
-									<UiCheckbox><MuText>Cancelled (0)</MuText></UiCheckbox>
+									<MuCheckbox>
+										<MuText>Cancelled (0)</MuText>
+									</MuCheckbox>
 								</li>
 							</ul>
 						</div>
@@ -87,17 +97,34 @@
 								</UiButton>
 							</MuLinearWrapper>
 						</div>
-					</UiCard>
+					</MuCard>
 				</MuLinearWrapper>
 
-				<UiInput type="search" size="md" class="account-orders-search"
-					:placeholder="t('account.orders.searchPlaceholder')" data-testid="account-orders-search-input">
-					<template #icon-left>
-						<UiIcon name="regular-search" :size="24" color="var(--text-primary)"
-							class="account-orders-search-icon" />
+				<MuSearch
+					v-model="search_query"
+					size="md"
+					class="account-orders-search"
+					:placeholder="t('account.orders.searchPlaceholder')"
+					data-testid="account-orders-search-input"
+				>
+					<template #left>
+						<UiIcon
+							name="regular-search"
+							:size="24"
+							color="var(--text-primary)"
+							class="account-orders-search-icon"
+						/>
+					</template>
+					<template #right>
+						<UiIcon
+							name="regular-times"
+							:size="24"
+							color="var(--text-primary)"
+							clickable
+						/>
 					</template>
 
-				</UiInput>
+				</MuSearch>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
 
@@ -105,9 +132,12 @@
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuCalendar from '~/components/base/MuCalendar.vue';
+import MuCheckbox from '~/components/base/MuCheckbox.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuSearch from '~/components/core/search/MuSearch.vue';
 import MuSegmented from '~/components/base/MuSegmented.vue';
 import MuText from '~/components/base/MuText.vue';
 
@@ -128,6 +158,7 @@ const selected_range = ref({
 });
 
 const filter_status = ref(false);
+const search_query = ref('');
 </script>
 
 <style lang="scss" scoped>

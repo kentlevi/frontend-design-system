@@ -1,9 +1,9 @@
 <template>
-	<UiCard class="item" variant="transparent" padding="none" bordered="none">
+	<MuCard class="item" variant="transparent" padding="none" bordered="none">
 		<MuLinearWrapper justify="space-between">
 			<MuLinearWrapper :gap="24">
 				<div class="item-img-wrapper">
-					<img src="https://static.musticker.com/dev/store-front/illustrations/products/stickers/rectangle.svg"/>
+					<img src="https://static.musticker.com/dev/store-front/illustrations/products/stickers/rectangle.svg">
 				</div>
 				<MuLinearWrapper direction="column" :gap="8">
 					<MuLinearWrapper align="center" :gap="16">
@@ -21,13 +21,14 @@
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" justify="space-between" align="flex-end">
 				<UiButton tone="neutral" @click="open_upload_artwork">Upload Artwork</UiButton>
-				<MuText size="large" weight="bold">234,318.40원</MuText>
+				<MuText size="large" weight="bold">234,318.40 KRW</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
-	</UiCard>
+	</MuCard>
 </template>
 
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';
 import { useUploadArtworkModal } from '~/composables/features/account/orders/useUploadArtworkModal';
