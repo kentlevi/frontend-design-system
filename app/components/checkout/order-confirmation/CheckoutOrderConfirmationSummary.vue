@@ -63,7 +63,7 @@ const formatSizeQty = (item : CartItem) : string => {
 				</div>
 				<div class="checkout-confirmation-total-line is-discount">
 					<span class="checkout-confirmation-total-label">{{ props.discountLabel }}</span>
-					<strong class="checkout-confirmation-total-value">{{ formatPrice(0) }}</strong>
+					<strong class="checkout-confirmation-total-value">{{ formatPrice(props.orderConfirmDetails?.payment_summary?.total_discount) }}</strong>
 				</div>
 				<div class="checkout-confirmation-total-line is-final">
 					<span class="checkout-confirmation-total-label">{{ props.totalLabel }}</span>

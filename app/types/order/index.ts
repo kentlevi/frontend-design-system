@@ -26,6 +26,7 @@ export interface OrderCompleteData {
 export interface PaymentSummary {
 	subtotal_cost: number
 	shipping_cost: number
+	total_discount: number
 	total_cost: number
 	payment_method_name: string
 }

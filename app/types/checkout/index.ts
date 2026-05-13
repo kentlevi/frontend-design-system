@@ -29,6 +29,7 @@ export type InitialCheckoutPayload = {
 	contact_name?:string
 	phone_number?:string
 	selected_cart_ids?:number[] | null
+	coupon_id?: number | null
 }
 
 export type completeCheckoutPayload = {
