@@ -130,6 +130,18 @@
         "and": "and",
         "privacy": "Privacy Policy",
         "suffix": "."
+      },
+      "emailChange": {
+        "title": "Email Change",
+        "description": {
+          "prefix": "Enter your new email address and click the ",
+          "suffix": " button to proceed."
+        },
+        "confirmAction": "\"Confirm\"",
+        "label": "Email Address",
+        "placeholder": "Please enter your new email address.",
+        "change": "Change",
+        "confirm": "Confirm"
       }
     }
   }

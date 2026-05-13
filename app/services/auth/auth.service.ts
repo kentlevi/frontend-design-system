@@ -102,14 +102,19 @@ export const requestNonMemberLoginVerification = async (
 	options: { is_checkout?: boolean } = {}
 ): Promise<NonMemberLoginVerificationResponse> => {
 	try {
-		if (options.is_checkout) {
-			return await sendCheckoutNonMemberLoginVerification({
+		const response = options.is_checkout
+			? await sendCheckoutNonMemberLoginVerification({
 				email: payload.email,
 				is_resend: payload.is_resend ? true : false
 			})
+			: await sendNonMemberLoginVerification(payload)
+
+		if (response.success && response.data?.code === 'login_success') {
+			storeAuthCookie(true, false)
+			await fetchAndStoreUser()
 		}
 
-		return await sendNonMemberLoginVerification(payload)
+		return response
 	} catch (error) {
 		const { t: translate } = useI18n()
 		console.error(error)

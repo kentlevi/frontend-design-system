@@ -1,7 +1,12 @@
-export type VerificationContext = 'idle' | 'checkout_guest_contact'
+export type VerificationContext =
+	'idle' |
+	'checkout_guest_contact' |
+	'register' |
+	'non_member_login'
 
 export type VerificationSession = {
 	email?: string | null
+	order_number?: string | null
 	token?: string | null
 	expires_in?: string | number | Date | null
 }

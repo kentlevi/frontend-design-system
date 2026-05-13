@@ -76,6 +76,10 @@ function focusInput() {
 	if (props.disabled || props.readonly) return;
 	input_ref.value?.focus();
 }
+
+defineExpose({
+	focusInput,
+});
 </script>
 
 <template>

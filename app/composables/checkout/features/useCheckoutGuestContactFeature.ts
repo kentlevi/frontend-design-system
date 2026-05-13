@@ -21,7 +21,9 @@ import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding'
+import { useEmailChangeStore } from '~/stores/checkout/email-change.store'
 import { useLoadingOverlayStore } from '~/stores/loading_overlay'
+import { useMainCheckOutStore } from '~/stores/checkout/index.store'
 import {
 	createVerificationModalState,
 	createVerificationState,
@@ -48,12 +50,19 @@ export function useCheckoutGuestContactFeature() {
 	} = useCheckoutExperienceFeatureContext()
 	const loading_overlay_store = useLoadingOverlayStore()
 	const toast_store = useToastStore()
+	const checkout_store = useMainCheckOutStore()
 	const verification_store = useVerificationStore()
 	const user_store = useUsersStore()
+	const email_change_store = useEmailChangeStore()
 	const { verification_state } = storeToRefs(verification_store)
-	const { state } = storeToRefs(user_store)
+	const { state, is_authenticated, role_code } = storeToRefs(user_store)
 	const email = ref(checkout_email.value)
 	const email_tooltip_ref = ref<HTMLElement | null>(null)
+	const email_field_ref = ref<HTMLElement | null>(null)
+	const email_input_ref = ref<{ focusInput: () => void } | null>(null)
+	const is_guest_email_editing = ref(false)
+	const email_before_edit = ref('')
+	const is_finalizing_guest_email_edit = ref(false)
 	const is_email_already_registered_modal_open = ref(false)
 	const is_registered_email_forgot_password_modal_open = ref(false)
 	const should_restore_registered_email_modal = ref(false)
@@ -70,6 +79,13 @@ export function useCheckoutGuestContactFeature() {
 	)
 
 	useDismissibleTooltip(email_tooltip_ref, email_tooltip_open)
+
+	const is_authenticated_non_member = computed(
+		() => is_authenticated.value && role_code.value === 'NON_MEMBER'
+	)
+	const is_guest_email_locked = computed(
+		() => is_authenticated_non_member.value && !is_guest_email_editing.value
+	)
 
 	function openVerificationModal() {
 		verification_store.patchModalState({
@@ -192,6 +208,21 @@ export function useCheckoutGuestContactFeature() {
 		return value.trim().toLowerCase()
 	}
 
+	function getCurrentAccountEmail() {
+		return state.value.email || checkout_email.value
+	}
+
+	function syncCheckoutEmail(value: string) {
+		email.value = value
+		checkout_email.value = value
+
+		if (is_authenticated_non_member.value) {
+			checkout_store.patchGuestContactState({
+				email: value,
+			})
+		}
+	}
+
 	function isUserStateEmail(value: string) {
 		const normalized_user_email = normalizeEmail(state.value.email)
 
@@ -202,8 +233,7 @@ export function useCheckoutGuestContactFeature() {
 	}
 
 	function setGuestEmail(value: string) {
-		email.value = value
-		checkout_email.value = value
+		syncCheckoutEmail(value)
 
 		if (isUserStateEmail(value)) return
 
@@ -233,7 +263,72 @@ export function useCheckoutGuestContactFeature() {
 		}
 	}
 
+	function openEmailChangeModal() {
+		if (!is_authenticated_non_member.value) return
+
+		email_before_edit.value = email.value.trim()
+		email_change_store.openModal('')
+	}
+
+	async function confirmEmailChange(new_email: string) {
+		syncCheckoutEmail(new_email)
+		await requestGuestEmailVerification()
+	}
+
+	async function finishGuestEmailEdit() {
+		if (
+			!is_authenticated_non_member.value ||
+			!is_guest_email_editing.value ||
+			is_finalizing_guest_email_edit.value
+		) {
+			return
+		}
+
+		is_finalizing_guest_email_edit.value = true
+
+		try {
+			const previous_email = email_before_edit.value.trim()
+			const email_value = email.value.trim()
+			const email_has_changed =
+				normalizeEmail(email_value) !== normalizeEmail(previous_email)
+
+			if (!email_has_changed) {
+				syncCheckoutEmail(previous_email)
+				is_guest_email_editing.value = false
+				return
+			}
+
+			if (!email_value || !isValidAuthEmail(email_value)) {
+				return
+			}
+
+			is_guest_email_editing.value = false
+			await requestGuestEmailVerification()
+		} finally {
+			is_finalizing_guest_email_edit.value = false
+		}
+	}
+
+	function handleDocumentPointerDown(event: PointerEvent) {
+		if (!is_guest_email_editing.value) return
+
+		const target = event.target
+		if (!(target instanceof Node)) return
+		if (email_field_ref.value?.contains(target)) return
+
+		void finishGuestEmailEdit()
+	}
+
 	async function handleGuestEmailBlur() {
+		if (is_authenticated_non_member.value) {
+			await finishGuestEmailEdit()
+			return
+		}
+
+		await requestGuestEmailVerification()
+	}
+
+	async function requestGuestEmailVerification() {
 		const email_value = email.value.trim()
 
 		if (isUserStateEmail(email_value)) return
@@ -368,17 +463,42 @@ export function useCheckoutGuestContactFeature() {
 	watch(is_member, (value) => {
 		if (!value) return
 
-		email.value = checkout_email.value
+		syncCheckoutEmail(getCurrentAccountEmail())
 		is_registered_email_forgot_password_modal_open.value = false
 		closeEmailAlreadyRegisteredModal()
 		resetVerificationState()
 	})
 
-	watch(checkout_email, (value) => {
-		email.value = value
+	watch(
+		[is_authenticated_non_member, () => state.value.email, checkout_email],
+		([is_non_member]) => {
+			if (is_guest_email_editing.value) return
+
+			if (is_non_member) {
+				syncCheckoutEmail(getCurrentAccountEmail())
+				return
+			}
+
+			email.value = checkout_email.value
+		},
+		{ immediate: true }
+	)
+
+	onMounted(() => {
+		email_change_store.setOnConfirm(confirmEmailChange)
+
+		if (!import.meta.client) return
+		document.addEventListener('pointerdown', handleDocumentPointerDown)
 	})
 
 	onBeforeUnmount(() => {
+		if (import.meta.client) {
+			document.removeEventListener('pointerdown', handleDocumentPointerDown)
+		}
+
+		email_change_store.setOnConfirm(null)
+		email_change_store.closeModal()
+
 		loading_overlay_store.stopLoading(
 			CHECKOUT_GUEST_VERIFICATION_LOADING_KEY
 		)
@@ -393,6 +513,10 @@ export function useCheckoutGuestContactFeature() {
 		email,
 		email_tooltip_open,
 		email_tooltip_ref,
+		email_field_ref,
+		email_input_ref,
+		is_authenticated_non_member,
+		is_guest_email_locked,
 		toggleEmailTooltip,
 		openLoginModal,
 		is_email_already_registered_modal_open,
@@ -408,6 +532,7 @@ export function useCheckoutGuestContactFeature() {
 		onRegisteredEmailForgotPasswordModalChange,
 		restoreRegisteredEmailModal,
 		setGuestEmail,
+		openEmailChangeModal,
 		handleGuestEmailBlur,
 	}
 }

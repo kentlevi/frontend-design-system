@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import AuthRegisterCard from '@/components/auth/register/AuthRegisterCard.vue';
+import RegisterCard from '~/components/features/auth/register/RegisterCard.vue';
 
 const { t } = useI18n();
 </script>
@@ -21,6 +22,7 @@ const { t } = useI18n();
 
 			<div class="auth-register-shell auth-shell-enter" data-testid="auth-register-shell">
 				<AuthRegisterCard />
+                <!-- <RegisterCard /> -->
 			</div>
 
 			<div

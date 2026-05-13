@@ -130,6 +130,18 @@
         "and": "및",
         "privacy": "개인정보 처리방침",
         "suffix": "에 동의하는 것으로 간주됩니다."
+      },
+      "emailChange": {
+        "title": "이메일 변경",
+        "description": {
+          "prefix": "새 이메일 주소를 입력한 후 ",
+          "suffix": " 버튼을 클릭해 진행해 주세요."
+        },
+        "confirmAction": "\"확인\"",
+        "label": "이메일 주소",
+        "placeholder": "새 이메일 주소를 입력해 주세요.",
+        "change": "변경",
+        "confirm": "확인"
       }
     }
   }

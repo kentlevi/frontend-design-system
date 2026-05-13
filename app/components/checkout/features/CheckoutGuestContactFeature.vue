@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AuthEmailAlreadyRegisteredModal from '~/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
 import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
+import EmailChangeModal from '~/components/features/checkout/EmailChangeModal.vue';
 import { useCheckoutGuestContactFeature } from '~/composables/checkout/features/useCheckoutGuestContactFeature';
 import {
 	checkoutGuestEmailTooltipContent,
@@ -13,6 +14,10 @@ const {
 	email,
 	email_tooltip_open,
 	email_tooltip_ref,
+	email_field_ref,
+	email_input_ref,
+	is_authenticated_non_member,
+	is_guest_email_locked,
 	toggleEmailTooltip,
 	openLoginModal,
 	is_email_already_registered_modal_open,
@@ -28,6 +33,7 @@ const {
 	onRegisteredEmailForgotPasswordModalChange,
 	restoreRegisteredEmailModal,
 	setGuestEmail,
+	openEmailChangeModal,
 	handleGuestEmailBlur,
 } = useCheckoutGuestContactFeature();
 
@@ -43,7 +49,7 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 			{{ translate('checkout.guest.contactInformation') }}
 		</h2>
 		<div class="checkout-section-body checkout-section-body--compact">
-			<div class="checkout-contact-group">
+			<div ref="email_field_ref" class="checkout-contact-group">
 				<div class="checkout-contact-head">
 					<div
 						ref="email_tooltip_ref"
@@ -106,15 +112,32 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 					</div>
 				</div>
 				<UiInput
+					ref="email_input_ref"
 					:model-value="email"
 					type="email"
 					class="checkout-input"
+					:disabled="is_guest_email_locked"
 					:placeholder="
 						translate('checkout.guest.fields.email.placeholder')
 					"
 					@update:model-value="setGuestEmail"
 					@blur="handleGuestEmailBlur"
-				/>
+				>
+					<template v-if="is_authenticated_non_member && is_guest_email_locked" #icon-right>
+						<UiButton
+							variant="ghost"
+							tone="neutral"
+							size="sm"
+							class="checkout-email-change-button"
+							label-class="checkout-email-change-button-label"
+							:no-hover="true"
+							@mousedown.prevent
+							@click.stop="openEmailChangeModal"
+						>
+							{{ translate('checkout.guest.emailChange.change') }}
+						</UiButton>
+					</template>
+				</UiInput>
 			</div>
 		</div>
 	</section>
@@ -138,6 +161,8 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 		@update:model-value="onRegisteredEmailForgotPasswordModalChange"
 		@return-to-login="restoreRegisteredEmailModal"
 	/>
+
+	<EmailChangeModal />
 </template>
 
 <style scoped lang="scss">
@@ -214,6 +239,31 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 
 			:deep(.checkout-input) {
 				width: 100%;
+
+				.ui-input-icon {
+					width: auto;
+					height: auto;
+				}
+			}
+
+			:deep(.checkout-email-change-button) {
+				--btn-soft: transparent;
+				--btn-border: transparent;
+				--btn-bg: transparent;
+
+				min-height: auto;
+				height: auto;
+				padding: 0;
+				border-radius: 0;
+				box-shadow: none;
+				color: var(--text-primary);
+				font-size: var(--type-size-100);
+				font-weight: var(--font-weight-semibold);
+				cursor: pointer;
+
+				.checkout-email-change-button-label {
+					padding: 0;
+				}
 			}
 		}
 	}

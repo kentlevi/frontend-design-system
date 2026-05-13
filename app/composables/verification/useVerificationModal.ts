@@ -6,11 +6,15 @@ import {
 import { authVerificationConfig } from '~/data/auth/verification'
 import { useVerificationStore } from '~/stores/verification.store'
 import { useCheckoutVerification } from './useCheckoutVerification'
+import { useNonMemberLoginVerification } from './useNonMemberLoginVerification'
+import { useRegisterVerification } from './useRegisterVerification'
 
 export function useVerificationModal() {
 	const { t: translate } = useI18n()
 	const verification_store = useVerificationStore()
 	const checkout_verification = useCheckoutVerification()
+	const non_member_login_verification = useNonMemberLoginVerification()
+	const register_verification = useRegisterVerification()
 	const { modal_state, verification_state } = storeToRefs(verification_store)
 	const verification_cooldown = useVerificationCooldown()
 	const test_id_prefix = 'verification-modal'
@@ -41,12 +45,28 @@ export function useVerificationModal() {
 			return checkout_verification.submitCheckoutGuestContactVerification()
 		}
 
+		if (modal_state.value.context === 'register') {
+			return register_verification.submitRegisterVerificationCode()
+		}
+
+		if (modal_state.value.context === 'non_member_login') {
+			return non_member_login_verification.submitNonMemberLoginVerificationCode()
+		}
+
 		return
 	}
 
 	async function resendVerification() {
 		if (modal_state.value.context === 'checkout_guest_contact') {
 			return checkout_verification.resendCheckoutGuestContactVerification()
+		}
+
+		if (modal_state.value.context === 'register') {
+			return register_verification.resendRegisterVerificationCode()
+		}
+
+		if (modal_state.value.context === 'non_member_login') {
+			return non_member_login_verification.resendNonMemberLoginVerificationCode()
 		}
 
 		return

@@ -8,6 +8,8 @@ export type LoginResponse = ApiResponse<LoginData>
 export interface LoginData {
 	user?: UserIdentity
 	& { profile: UserProfile | null };
+	code?: string;
+	email?: string;
 }
 
 export interface LoginPayload {
@@ -30,11 +32,12 @@ export interface CheckoutNonMemberLoginVerificationPayload {
 export type NonMemberLoginVerificationResponse = ApiResponse<NonMemberLoginVerification>
 
 export interface NonMemberLoginVerification {
-	email: string;
-	token: string;
-	expires_in: number;
+	email?: string;
+	token?: string;
+	expires_in?: number;
 	otp_sent?: boolean;
 	cooldown_remaining?: number;
+	code?: string;
 }
 
 export interface NonMemberVerificationCache {

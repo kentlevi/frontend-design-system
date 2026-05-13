@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AuthLoginCard from '@/components/auth/login/AuthLoginCard.vue'
+import LoginCard from '@/components/features/auth/login/LoginCard.vue'
 import { useAuthLoginPage } from '@/composables/auth/login/useAuthLoginPage'
 
 const { translate } = useAuthLoginPage()
@@ -21,6 +22,7 @@ const { translate } = useAuthLoginPage()
 
 			<div class="auth-login-shell auth-shell-enter">
 				<AuthLoginCard />
+                <!-- <LoginCard /> -->
 			</div>
 
 			<div
