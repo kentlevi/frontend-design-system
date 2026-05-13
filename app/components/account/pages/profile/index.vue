@@ -4,12 +4,6 @@ import ProfilePersonalSection from './ProfilePersonalSection.vue';
 import ProfilePasswordSection from './ProfilePasswordSection.vue';
 import ProfileSettingsSection from './ProfileSettingsSection.vue';
 
-withDefaults(defineProps<{
-	embedded?: boolean;
-}>(), {
-	embedded: false,
-});
-
 const {
 	translate,
 
@@ -21,16 +15,14 @@ const {
 
 <template>
 	<section class="account-page" data-testid="account-profile-page">
-		<AccountShellSection :embedded="embedded" active-tab="profile">
-			<h1 class="account-profile-title" data-testid="account-profile-title">{{ translate('account.profile.title') }}</h1>
-			<div class="account-content account-profile" data-testid="account-profile-content">
-				<ProfilePersonalSection :loading="is_fetching_fields" />
+		<h1 class="account-profile-title" data-testid="account-profile-title">{{ translate('account.profile.title') }}</h1>
+		<div class="account-content account-profile" data-testid="account-profile-content">
+			<ProfilePersonalSection :loading="is_fetching_fields" />
 
-				<ProfilePasswordSection :loading="is_fetching_fields" />
+			<ProfilePasswordSection :loading="is_fetching_fields" />
 
-				<ProfileSettingsSection :loading="is_fetching_fields" />
-			</div>
-		</AccountShellSection>
+			<ProfileSettingsSection :loading="is_fetching_fields" />
+		</div>
 	</section>
 </template>
 

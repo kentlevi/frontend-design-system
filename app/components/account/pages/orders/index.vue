@@ -4,12 +4,6 @@ import MuSearch from '~/components/core/search/MuSearch.vue';
 import OrdersSidebar from './OrdersSidebar.vue';
 import OrderDetailSection from './OrderDetailSection.vue';
 
-withDefaults(defineProps<{
-	embedded?: boolean;
-}>(), {
-	embedded: false,
-});
-
 const { t } = useI18n();
 const {
 	lifecycle,
@@ -32,111 +26,109 @@ const accent_class_map = {
 
 <template>
 	<section class="account-page" data-testid="account-orders-page">
-		<AccountShellSection :embedded="embedded" active-tab="orders">
-			<div class="account-content" data-testid="account-orders-content">
-				<div class="account-orders-topbar" data-testid="account-orders-topbar">
-					<h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
+		<div class="account-content" data-testid="account-orders-content">
+			<div class="account-orders-topbar" data-testid="account-orders-topbar">
+				<h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
 
-					<div class="account-orders-tools" data-testid="account-orders-tools">
-						<div class="account-orders-lifecycle" data-testid="account-orders-lifecycle">
-							<button
-								type="button"
-								class="account-orders-lifecycle-button"
-								:class="{ 'is-active': lifecycle === 'active' }"
-								data-testid="account-orders-lifecycle-active-button"
-								@click="set_lifecycle('active')"
-							>
-								{{ t('account.orders.active') }}
-							</button>
-							<button
-								type="button"
-								class="account-orders-lifecycle-button"
-								:class="{ 'is-active': lifecycle === 'inactive' }"
-								data-testid="account-orders-lifecycle-inactive-button"
-								@click="set_lifecycle('inactive')"
-							>
-								{{ t('account.orders.inactive') }}
-							</button>
-						</div>
+				<div class="account-orders-tools" data-testid="account-orders-tools">
+					<div class="account-orders-lifecycle" data-testid="account-orders-lifecycle">
+						<button
+							type="button"
+							class="account-orders-lifecycle-button"
+							:class="{ 'is-active': lifecycle === 'active' }"
+							data-testid="account-orders-lifecycle-active-button"
+							@click="set_lifecycle('active')"
+						>
+							{{ t('account.orders.active') }}
+						</button>
+						<button
+							type="button"
+							class="account-orders-lifecycle-button"
+							:class="{ 'is-active': lifecycle === 'inactive' }"
+							data-testid="account-orders-lifecycle-inactive-button"
+							@click="set_lifecycle('inactive')"
+						>
+							{{ t('account.orders.inactive') }}
+						</button>
+					</div>
 
-						<div class="account-orders-tool-buttons" data-testid="account-orders-tool-buttons">
-							<UiButton
-								variant="outline"
-								tone="neutral"
-								size="md"
-								height="40px"
-								icon="regular-calendar"
-								icon-position="right"
-								icon-size="24"
-								class="account-orders-tool-button account-orders-select-date-button"
-								data-testid="account-orders-select-date-button"
-							>
-								{{ t('account.orders.selectDate') }}
-							</UiButton>
+					<div class="account-orders-tool-buttons" data-testid="account-orders-tool-buttons">
+						<UiButton
+							variant="outline"
+							tone="neutral"
+							size="md"
+							height="40px"
+							icon="regular-calendar"
+							icon-position="right"
+							icon-size="24"
+							class="account-orders-tool-button account-orders-select-date-button"
+							data-testid="account-orders-select-date-button"
+						>
+							{{ t('account.orders.selectDate') }}
+						</UiButton>
 
-							<UiButton
-								variant="outline"
-								tone="neutral"
-								size="md"
-								height="40px"
-								icon="regular-slider-horizontal"
-								icon-position="left"
-								icon-size="24"
-								class="account-orders-tool-button"
-								data-testid="account-orders-filters-button"
-							>
-								{{ t('account.orders.filters') }}
-							</UiButton>
+						<UiButton
+							variant="outline"
+							tone="neutral"
+							size="md"
+							height="40px"
+							icon="regular-slider-horizontal"
+							icon-position="left"
+							icon-size="24"
+							class="account-orders-tool-button"
+							data-testid="account-orders-filters-button"
+						>
+							{{ t('account.orders.filters') }}
+						</UiButton>
 
-							<MuSearch
-								v-model="search_query"
-								size="md"
-								class="account-orders-search"
-								:placeholder="t('account.orders.searchPlaceholder')"
-								data-testid="account-orders-search-input"
-							>
-								<template #left>
-									<UiIcon
-										name="regular-search"
-										:size="24"
-										color="var(--text-primary)"
-										class="account-orders-search-icon"
-									/>
-								</template>
-								<template #right>
-									<UiIcon
-										name="regular-search"
-										:size="24"
-										color="var(--text-primary)"
-									/>
-								</template>
-							</MuSearch>
-						</div>
+						<MuSearch
+							v-model="search_query"
+							size="md"
+							class="account-orders-search"
+							:placeholder="t('account.orders.searchPlaceholder')"
+							data-testid="account-orders-search-input"
+						>
+							<template #left>
+								<UiIcon
+									name="regular-search"
+									:size="24"
+									color="var(--text-primary)"
+									class="account-orders-search-icon"
+								/>
+							</template>
+							<template #right>
+								<UiIcon
+									name="regular-search"
+									:size="24"
+									color="var(--text-primary)"
+								/>
+							</template>
+						</MuSearch>
 					</div>
 				</div>
-
-				<div v-if="empty_state_key" class="account-orders-empty" data-testid="account-orders-empty">
-					<h2 class="account-orders-empty-title">{{ t(`account.orders.empty.${empty_state_key}Title`) }}</h2>
-					<p class="account-orders-empty-description">{{ t(`account.orders.empty.${empty_state_key}Description`) }}</p>
-				</div>
-
-				<div v-else class="account-orders-layout" data-testid="account-orders-layout">
-					<OrdersSidebar
-						:order-groups="order_groups"
-						:active-order-id="active_order?.id"
-						:accent-class-map="accent_class_map"
-						@set-active="set_active_order"
-					/>
-
-					<OrderDetailSection
-						v-if="active_order"
-						:order="active_order"
-						:is-detail-open="is_detail_open"
-						@toggle-detail="toggle_detail_open"
-					/>
-				</div>
 			</div>
-		</AccountShellSection>
+
+			<div v-if="empty_state_key" class="account-orders-empty" data-testid="account-orders-empty">
+				<h2 class="account-orders-empty-title">{{ t(`account.orders.empty.${empty_state_key}Title`) }}</h2>
+				<p class="account-orders-empty-description">{{ t(`account.orders.empty.${empty_state_key}Description`) }}</p>
+			</div>
+
+			<div v-else class="account-orders-layout" data-testid="account-orders-layout">
+				<OrdersSidebar
+					:order-groups="order_groups"
+					:active-order-id="active_order?.id"
+					:accent-class-map="accent_class_map"
+					@set-active="set_active_order"
+				/>
+
+				<OrderDetailSection
+					v-if="active_order"
+					:order="active_order"
+					:is-detail-open="is_detail_open"
+					@toggle-detail="toggle_detail_open"
+				/>
+			</div>
+		</div>
 	</section>
 </template>
 

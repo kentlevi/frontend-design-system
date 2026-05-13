@@ -1,41 +1,24 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+
 definePageMeta({
 	layout: 'home',
 	footerVariant: 'compact',
 });
-
-const route = useRoute();
-
-const active_tab = computed<
-	| 'profile'
-	| 'address-book'
-	| 'orders'
-	| 'gallery'
-	| 'points'
-	| 'coupons'
-	| 'reviews'
-	| 'quote-requests'
->(() => {
-	const matched = String(route.path).match(/\/account\/([^/?#]+)/);
-	const slug = matched?.[1] ?? 'profile';
-
-	switch (slug) {
-		case 'address-book':
-		case 'orders':
-		case 'gallery':
-		case 'points':
-		case 'coupons':
-		case 'reviews':
-		case 'quote-requests':
-			return slug;
-		default:
-			return 'profile';
-	}
-});
 </script>
 
 <template>
-	<AccountShell :active-tab="active_tab">
+	<MuLinearWrapper class="account-shell" direction="column" data-testid="account-shell">
+		<FeaturesAccountTop />
+		<FeaturesAccountTabs />
 		<NuxtPage :keepalive="{ max: 8 }" />
-	</AccountShell>
+	</MuLinearWrapper>
 </template>
+
+<style scoped lang="scss">
+.account-shell {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 40px 0 104px;
+}
+</style>

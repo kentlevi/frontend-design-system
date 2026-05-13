@@ -1,38 +1,30 @@
 <script setup lang="ts">
 import { useAccountReviews } from '~/composables/account/reviews/useAccountReviews';
 
-withDefaults(defineProps<{
-	embedded?: boolean;
-}>(), {
-	embedded: false,
-});
-
 const { t } = useI18n();
 const { reviews } = useAccountReviews();
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-reviews-page">
-		<AccountShellSection :embedded="embedded" active-tab="reviews">
-			<div class="account-content" data-testid="account-reviews-content">
-				<h1 class="account-reviews-title" data-testid="account-reviews-title">{{ t('account.reviews.title') }}</h1>
-				<div class="account-reviews-list" data-testid="account-reviews-list">
-					<article
-						v-for="item in reviews"
-						:key="item.titleKey"
-						class="account-reviews-card"
-						:data-testid="`account-reviews-item-${item.titleKey}`"
-					>
-						<header class="account-reviews-card-header">
-							<h2 class="account-reviews-card-title">{{ t(`account.reviews.items.${item.titleKey}.title`) }}</h2>
-							<p class="account-reviews-card-date">{{ t('account.reviews.reviewedOn') }}: {{ item.date }}</p>
-						</header>
-						<p class="account-reviews-card-rating">{{ t('account.reviews.rating') }}: {{ item.rating }}/5</p>
-						<p class="account-reviews-card-body">{{ t(`account.reviews.items.${item.textKey}.text`) }}</p>
-					</article>
-				</div>
+		<div class="account-content" data-testid="account-reviews-content">
+			<h1 class="account-reviews-title" data-testid="account-reviews-title">{{ t('account.reviews.title') }}</h1>
+			<div class="account-reviews-list" data-testid="account-reviews-list">
+				<article
+					v-for="item in reviews"
+					:key="item.titleKey"
+					class="account-reviews-card"
+					:data-testid="`account-reviews-item-${item.titleKey}`"
+				>
+					<header class="account-reviews-card-header">
+						<h2 class="account-reviews-card-title">{{ t(`account.reviews.items.${item.titleKey}.title`) }}</h2>
+						<p class="account-reviews-card-date">{{ t('account.reviews.reviewedOn') }}: {{ item.date }}</p>
+					</header>
+					<p class="account-reviews-card-rating">{{ t('account.reviews.rating') }}: {{ item.rating }}/5</p>
+					<p class="account-reviews-card-body">{{ t(`account.reviews.items.${item.textKey}.text`) }}</p>
+				</article>
 			</div>
-		</AccountShellSection>
+		</div>
 	</section>
 </template>
 

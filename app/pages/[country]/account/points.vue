@@ -7,5 +7,5 @@ definePageMeta({
 </script>
 
 <template>
-	<AccountPointsPage embedded />
+	<AccountPointsPage />
 </template>
