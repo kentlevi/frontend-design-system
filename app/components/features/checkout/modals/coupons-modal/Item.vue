@@ -1,5 +1,5 @@
 <template>
-	<MuCard class="coupon-item" :variant="selected ? 'subtle' : 'default'">
+	<MuCard class="coupon-item" :variant="selected ? 'subtle' : 'default'" disabled>
 		<MuLinearWrapper justify="space-between">
 			<MuLinearWrapper direction="column" :gap="8">
 				<MuLinearWrapper direction="column">

@@ -144,6 +144,8 @@ const section_lookup: Record<string, GuideSection> = {
 	Radio: 'form',
 	MuRadio: 'form',
 	MuRadioGroup: 'form',
+	MuTabs: 'actions',
+	MuTab: 'actions',
 	Calendar: 'form',
 	FormField: 'form',
 	Badge: 'feedback',
@@ -298,6 +300,31 @@ const guide_usage_snippets: Record<string, string> = {
   <MuRadio value="pro">Pro</MuRadio>
   <MuRadio value="enterprise">Enterprise</MuRadio>
 </MuRadioGroup>`,
+	MuTabs: `<MuTabs v-model="activeTab">
+  <MuTab value="orders">
+    <UiIcon name="regular-package-open" :size="24" />
+    <span class="m-tab-label">Orders</span>
+  </MuTab>
+  <MuTab value="coupons">
+    <UiIcon name="regular-ticket" :size="24" />
+    <span class="m-tab-label">Coupons</span>
+  </MuTab>
+</MuTabs>`,
+	MuTab: `<MuTab
+  value="orders"
+  to="/kr/account/orders"
+>
+  <span class="m-tab-label">Orders</span>
+</MuTab>
+
+<MuTab
+  value="external"
+  href="https://musticker.com"
+  target="_blank"
+  rel="nofollow"
+>
+  <span class="m-tab-label">External</span>
+</MuTab>`,
 	Radio: `<UiRadio
   v-model="plan"
   name="plan"

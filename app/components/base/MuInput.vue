@@ -43,7 +43,7 @@
 		</div>
 
 		<!-- Error Message -->
-		<p v-if="hasError" class="mu-input-error">
+		<p v-if="hasError && $slots['error']" class="mu-input-error">
 			<slot name="error" />
 		</p>
 	</div>
