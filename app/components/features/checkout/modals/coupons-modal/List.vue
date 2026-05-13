@@ -14,8 +14,12 @@ const emit = defineEmits(['update:modelValue']);
 
 <template>
 	<MuLinearWrapper class="coupon-list" direction="column" :gap="16">
+		<div v-if="applicableCoupons.length === 0">
+			No applicable coupons
+		</div>
 		<Item
 			v-for="coupon in applicableCoupons"
+			v-else
 			:key="coupon.id"
 			:model-value="modelValue"
 			:coupon="coupon"
