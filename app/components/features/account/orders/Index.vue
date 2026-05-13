@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import { provideOrdersList } from '~/composables/orders/context/useOrdersListContext';
+import { useUserOrdersPage } from '~/composables/orders/useUserOrdersPage';
+
+
+withDefaults(defineProps<{
+	embedded?: boolean;
+}>(), {
+	embedded: false,
+});
+
+provideOrdersList()
+useUserOrdersPage()
+
 </script>
 
 <template>
