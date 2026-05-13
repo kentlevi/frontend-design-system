@@ -22,7 +22,6 @@ export function useCheckoutMember() {
 		checkoutPaymentMethods.find((method) => method.defaultSelected)?.key || 'credit-card'
 	);
 	const points_to_use = ref('');
-	const coupon_code = ref('');
 	const points_available = ref(13.93);
 
 	// Member specific payment pre-fills
@@ -55,7 +54,6 @@ export function useCheckoutMember() {
 		payment_brands: checkoutMemberPaymentBrands,
 		points_available,
 		points_to_use,
-		coupon_code,
 		useAllPoints,
 		clearPoints,
 	};

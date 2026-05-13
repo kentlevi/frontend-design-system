@@ -1,13 +1,29 @@
-<template>
-	<MuLinearWrapper class="coupon-list" direction="column" :gap="16">
-		<Item v-for="index in 5" :key="index"/>
-	</MuLinearWrapper>
-</template>
-
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import Item from './Item.vue';
+import type { ApplicableCoupon } from '~/types/coupon/coupon';
+
+
+defineProps<{
+	modelValue: string;
+	applicableCoupons: ApplicableCoupon[];
+}>();
+
+const emit = defineEmits(['update:modelValue']);
 </script>
+
+<template>
+	<MuLinearWrapper class="coupon-list" direction="column" :gap="16">
+		<Item
+			v-for="coupon in applicableCoupons"
+			:key="coupon.id"
+			:model-value="modelValue"
+			:coupon="coupon"
+			:selected="modelValue === coupon.code"
+			@update:model-value="emit('update:modelValue', $event)"
+		/>
+	</MuLinearWrapper>
+</template>
 
 <style lang="scss" scoped>
 </style>

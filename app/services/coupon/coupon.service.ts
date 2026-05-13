@@ -12,7 +12,7 @@ export function useGetApplicableCoupons() {
 	const { setApplicableCoupons, setLoading, setError } = applicable_coupons_store
 
 	async function getApplicableCoupons() {
-		setLoading(false)
+		setLoading(true)
 		setError(null)
 
 		try {

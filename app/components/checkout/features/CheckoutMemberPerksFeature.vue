@@ -10,18 +10,32 @@ import MuCard from '~/components/base/MuCard.vue';
 import MuInput from '~/components/base/MuInput.vue';
 import MuText from '~/components/base/MuText.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import CouponsModal from '~/components/features/checkout/modals/coupons-modal/Index.vue';
+import { useApplyCoupon } from '~/composables/coupon/useApplyCoupon';
 
 const {
 	t,
 	is_member,
 	points_to_use,
 	points_tooltip_open,
-	coupon_code,
 	useAllPoints,
 	clearPoints,
 	togglePointsTooltip,
 	is_coupons_modal_open,
 } = useCheckoutExperienceFeatureContext();
+
+const {
+	form,
+	has_coupon_error,
+	message,
+	validation_errors,
+	apply,
+	removeAppliedCoupon,
+
+	coupon,
+	applicable_coupons
+} = useApplyCoupon();
+
 
 const points_tooltip_ref = ref<HTMLElement | null>(null);
 
@@ -64,36 +78,45 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 					<MuText>
 						{{ t('checkout.member.coupon') }}
 					</MuText>
-					<MuText color="error-base">
-						Invalid coupon code.
+					<MuText v-if="has_coupon_error" color="error-base">
+						{{ validation_errors?.code?.[0] ?? message }}
 					</MuText>
 				</div>
-				<div class="checkout-member-perk-control">
+				<div v-if="!coupon" class="checkout-member-perk-control">
 					<MuInput
 						id="coupon"
-						v-model="coupon_code"
+						v-model="form.code"
 						name="coupon"
 						:placeholder="t('checkout.member.couponPlaceholder')"
-					>
+						:has-error="has_coupon_error"
+						@update:model-value="form.code = form.code.toUpperCase()">
 						<template #inner-right>
 							<MuText class="select_coupon" weight="medium" color="abyss-base" @click="is_coupons_modal_open = true">Select</MuText>
 						</template>
 					</MuInput>
-					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button">
+					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="apply">
 						{{ t('checkout.member.applyCoupon') }}
 					</UiButton>
 				</div>
-				<MuCard class="coupon" variant="subtle" padding="xsm">
+				<MuCard v-else class="coupon" variant="subtle" padding="xsm">
 					<MuLinearWrapper align="center">
 						<MuLinearWrapper align="center" :gap="4">
 							<UiIcon name="light-tags" :size="24" color="#D42941" />
-							<MuText><MuText variant="span" weight="bold">STICK20</MuText> (Get 20% OFF on all sti...</MuText>
+							<MuText><MuText variant="span" weight="bold">{{ coupon?.code }}</MuText> ({{ coupon?.name }})</MuText>
 						</MuLinearWrapper>
-						<UiButton variant="ghost" tone="neutral" size="sm">Change</UiButton>
+						<UiButton variant="ghost" tone="neutral" size="sm" @click="is_coupons_modal_open = true">Change</UiButton>
 					</MuLinearWrapper>
 				</MuCard>
 			</div>
 		</div>
+
+		<CouponsModal
+			v-model="is_coupons_modal_open"
+			v-model:code="form.code"
+			:apply="apply"
+			:remove-coupon="removeAppliedCoupon"
+			:applicable-coupons="applicable_coupons"
+		/>
 	</div>
 </template>
 
