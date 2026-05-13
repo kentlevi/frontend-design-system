@@ -6,6 +6,7 @@ import { useAddressHelper } from "~/utils/address"
 import { mapAddressToForm } from "~/factories/address"
 import type { CountryField } from "~/types/country_field"
 import { useUserAddressContext } from "./context/useUserAddressContext"
+import { useUsersStore } from "~/stores/users/users.store"
 
 export function useAddressBookFormModal () {
 	/**
@@ -44,6 +45,7 @@ export function useAddressBookFormModal () {
      * Stores
      */
 	const toast_store = useToastStore()
+	const users_store = useUsersStore()
 
 
 	/**
@@ -97,7 +99,7 @@ export function useAddressBookFormModal () {
 
 	async function createAddress() {
 		const type = form_type.value;
-		const payload = { ...active_form.value };
+		const payload = { ...active_form.value, email: users_store.state.email };
 		try {
 			const response = await createUserAddress(payload)
 
@@ -127,7 +129,7 @@ export function useAddressBookFormModal () {
 
 		const type = form_type.value
 		const editing_address = editing_address_snapshot.value
-		const payload = { ...active_form.value };
+		const payload = { ...active_form.value, email: users_store.state.email };
 
 		try {
 			const response = await updateAddress(editing_address?.id, payload)

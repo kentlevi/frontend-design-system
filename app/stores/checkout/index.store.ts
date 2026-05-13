@@ -6,8 +6,6 @@ import type { AddressFormState, AddressType } from "~/types/user-address"
  * This store is only for dedicated data needed for checkout process
  */
 export const useMainCheckOutStore = defineStore('main_checkout', () => {
-	const _hydrated = ref(false)
-
 	const guest_contact_state = reactive({
 		email: '',
 		verified_email: '',
@@ -111,8 +109,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	}
 
 	return {
-		_hydrated,
-
 		guest_contact_state,
 		selected_shipping_address_id,
 		selected_billing_address_id,
@@ -192,8 +188,6 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 					Object.assign(ctx.store.form_state.billing, parsed.form_state.billing)
 					Object.assign(ctx.store.form_state.drop, parsed.form_state.drop)
 				}
-
-				ctx.store._hydrated = true
 			})
 		}
 	}

@@ -4,6 +4,7 @@ import { useUserAddressDataCheckoutContext } from "./context/addressBookListChec
 import { mapAddressToForm } from "~/factories/address";
 import { useAddressFieldStore } from "~/stores/user-address";
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
+import { useUsersStore } from "~/stores/users/users.store";
 
 export function useAddressGeneral() {
 
@@ -11,6 +12,7 @@ export function useAddressGeneral() {
 	const main_checkout_store = useMainCheckOutStore()
 	const { drop_shipping_enabled } = storeToRefs(main_checkout_store)
 	const address_field_store = useAddressFieldStore()
+	const users_store = useUsersStore()
 
 	/** Contexts */
 	const {
@@ -84,11 +86,18 @@ export function useAddressGeneral() {
      * Build complete checkout payload
      */
 	function buildCompleteCheckoutPayload(order_id: number) {
+		const user_email = users_store.state.email
+
+		const withEmail = <T extends { email?: string }>(form: T): T => ({
+			...form,
+			email: form.email || user_email,
+		})
+
 		return {
 			order_id,
-			shipping_address: shipping_form.value,
-			billing_address: billing_form.value,
-			drop_address: drop_shipping_enabled.value ? drop_form.value : null
+			shipping_address: withEmail(shipping_form.value),
+			billing_address: withEmail(billing_form.value),
+			drop_address: drop_shipping_enabled.value ? withEmail(drop_form.value) : null,
 		}
 	}
 
