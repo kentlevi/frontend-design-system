@@ -46,7 +46,7 @@ export function useSavedShippingAddress() {
 		} else {
 			initShippingAddress()
 		}
-	})
+	}, { immediate: true })
 
 
 	/**
