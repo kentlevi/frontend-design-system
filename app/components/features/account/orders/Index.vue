@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import { provideOrderDetail } from '~/composables/orders/context/useOrderDetailContext';
-import { provideOrderDetailUI } from '~/composables/orders/context/useOrderDetailUIContext';
 import { provideOrdersList } from '~/composables/orders/context/useOrdersListContext';
 import { useUserOrdersPage } from '~/composables/orders/useUserOrdersPage';
 
@@ -14,7 +13,6 @@ withDefaults(defineProps<{
 
 provideOrdersList()
 provideOrderDetail()
-provideOrderDetailUI()
 useUserOrdersPage()
 
 </script>

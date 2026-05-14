@@ -6,14 +6,25 @@ export function useOrdersMain() {
 	/**
 	 * Context
 	 */
-	const { selected_id } = useOrderDetailContext()
-	const orders_store = useUserOrdersStore()
+	const { selected_id, loadOrderDetail } = useOrderDetailContext()
+	const store = useUserOrdersStore()
 
 
 	/**
 	 * Computed
 	 */
-	const selected_order = computed(() => selected_id.value ? orders_store.findById(selected_id.value) : null)
+	const selected_order = computed(() => selected_id.value ? store.findById(selected_id.value) : null)
+
+
+	/**
+	 * Auto-select
+	 */
+	watchEffect(() => {
+		if (selected_id.value !== null) return
+		const first = store.ongoing[0] ?? store.action_required[0] ?? store.completed[0]
+		if (!first) return
+		loadOrderDetail(first.id)
+	})
 
 
 	return {

@@ -6,9 +6,9 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 	const completed      = ref<UserOrder[]>([])
 
 	const order_refs: Record<UserOrderType, Ref<UserOrder[]>> = {
-		'ongoing':         ongoing,
+		ongoing,
 		action_required,
-		'completed':       completed,
+		completed
 	}
 
 	function setOrders(type: UserOrderType, value: UserOrder[]) {
