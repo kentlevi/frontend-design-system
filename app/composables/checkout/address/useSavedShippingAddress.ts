@@ -19,7 +19,7 @@ export function useSavedShippingAddress() {
 	/**
      * Contexts
      */
-	const { shipping_form } = useUserAddressFormStateCheckoutContext()
+	const { shipping_form, populateDynamicFields } = useUserAddressFormStateCheckoutContext()
 	const { openSelectAddressModal } = useAddressGeneralUIContext()
 
 
@@ -63,6 +63,8 @@ export function useSavedShippingAddress() {
 
 	onMounted(async() => {
 		await ensureDynamicFields()
+
+		populateDynamicFields('shipping')
 	})
 
 	return {
