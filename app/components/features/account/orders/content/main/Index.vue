@@ -29,8 +29,8 @@ const { translate, is_detail_open } = useOrdersMainUI();
 					</MuLinearWrapper>
 				</MuLinearWrapper>
 				<MuLinearWrapper v-if="is_detail_open" justify="space-between" :gap="40">
-					<Address />
-					<Address />
+					<Address type="shipping" />
+					<Address type="billing" />
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 			<Actions/>
