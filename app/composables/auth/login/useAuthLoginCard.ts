@@ -334,10 +334,6 @@ export function useAuthLoginCard() {
 				closeCheckoutModal()
 				return response
 			}
-
-			loadAddresses('shipping')
-			loadAddresses('billing')
-			loadAddresses('drop')
 			return await navigateTo(auth_redirect_url.value)
 		} finally {
 			auth_login_store.patchCardUi({
@@ -427,10 +423,6 @@ export function useAuthLoginCard() {
 					closeCheckoutModal()
 					return response
 				}
-
-				loadAddresses('shipping')
-				loadAddresses('billing')
-				loadAddresses('drop')
 
 				return await navigateTo(auth_redirect_url.value)
 			}
@@ -538,9 +530,6 @@ export function useAuthLoginCard() {
 				return response
 			}
 
-			loadAddresses('shipping')
-			loadAddresses('billing')
-			loadAddresses('drop')
 			return await navigateTo(auth_redirect_url.value)
 		} catch (error) {
 			console.error(error)

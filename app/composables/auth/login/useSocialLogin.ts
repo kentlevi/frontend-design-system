@@ -56,9 +56,6 @@ export const useSocialLogin = () => {
 				if (did_login) {
 					router.push(auth_redirect_url.value);
 					closeCheckoutModal();
-					loadAddresses('shipping')
-					loadAddresses('billing')
-					loadAddresses('drop')
 				}
 			}, 500);
 		} catch (error: unknown) {

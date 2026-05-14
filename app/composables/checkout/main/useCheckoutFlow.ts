@@ -11,6 +11,7 @@ import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~
 import { useCartStore } from "~/stores/core/cart/cart.store";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 import { useAppliedCouponStore } from "~/stores/coupon/applied_coupon.store";
+import { loadAddresses } from "~/services/user-address/user-address.service";
 
 export const useCheckoutFlow = () => {
 
@@ -129,6 +130,9 @@ export const useCheckoutFlow = () => {
 	watch(is_authenticated, async () => {
 		if (is_authenticated.value) {
 			await ensureDynamicFields();
+			await loadAddresses('shipping');
+			await loadAddresses('billing');
+			await loadAddresses('drop');
 		}
 	})
 
