@@ -12,6 +12,7 @@ import {
 import { useRedirectStore } from '~/stores/navigation/redirect.store';
 import { useAuthLoginStore } from '~/stores/auth/login.store';
 import { loadAddresses } from '~/services/user-address/user-address.service';
+import { ensureDynamicFields } from '~/services/address-dynamic-fields/dynamic-fields.service';
 
 export const useSocialLogin = () => {
 	const router = useRouter();
@@ -56,6 +57,12 @@ export const useSocialLogin = () => {
 				if (did_login) {
 					router.push(auth_redirect_url.value);
 					closeCheckoutModal();
+
+					await ensureDynamicFields();
+					loadAddresses('shipping')
+					loadAddresses('billing')
+					loadAddresses('drop')
+
 				}
 			}, 500);
 		} catch (error: unknown) {

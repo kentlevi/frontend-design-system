@@ -19,6 +19,7 @@ import {
 	isValidAuthEmail,
 	setGuestLoginToastPending,
 } from '~/helpers/auth/auth.helper'
+import { ensureDynamicFields } from '~/services/address-dynamic-fields/dynamic-fields.service'
 import {
 	fetchAndStoreUser,
 	loginMemberUser,
@@ -334,6 +335,11 @@ export function useAuthLoginCard() {
 				closeCheckoutModal()
 				return response
 			}
+			await ensureDynamicFields();
+			loadAddresses('shipping')
+			loadAddresses('billing')
+			loadAddresses('drop')
+
 			return await navigateTo(auth_redirect_url.value)
 		} finally {
 			auth_login_store.patchCardUi({
@@ -423,6 +429,11 @@ export function useAuthLoginCard() {
 					closeCheckoutModal()
 					return response
 				}
+
+				await ensureDynamicFields();
+				loadAddresses('shipping')
+				loadAddresses('billing')
+				loadAddresses('drop')
 
 				return await navigateTo(auth_redirect_url.value)
 			}
@@ -529,6 +540,11 @@ export function useAuthLoginCard() {
 				closeCheckoutModal()
 				return response
 			}
+
+			await ensureDynamicFields();
+			loadAddresses('shipping')
+			loadAddresses('billing')
+			loadAddresses('drop')
 
 			return await navigateTo(auth_redirect_url.value)
 		} catch (error) {
