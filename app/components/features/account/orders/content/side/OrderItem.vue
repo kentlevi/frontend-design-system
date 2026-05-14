@@ -4,14 +4,16 @@ import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';
 import type { UserOrder } from '~/types/order/user-orders';
 import { useOrderItem } from '~/composables/orders/useOrderItem';
+import { useOrderItemUI } from '~/composables/orders/useOrderItemUI';
 
 const props = defineProps<{ order: UserOrder }>()
 
 const { formatted_date } = useOrderItem(props)
+const { handleClick } = useOrderItemUI(props)
 </script>
 
 <template>
-	<MuCard class="order-item" variant="default" padding="md" radius="md" bordered="default">
+	<MuCard class="order-item" variant="default" padding="md" radius="md" bordered="default" @click="handleClick">
 		<MuLinearWrapper direction="column" gap="4">
 			<MuLinearWrapper class="order-item-header" align="center" :gap="8">
 				<div class="dot" />
