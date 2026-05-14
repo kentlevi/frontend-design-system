@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
 
 withDefaults(defineProps<{
@@ -18,15 +21,15 @@ const {
 
 <template>
 	<div class="account-profile-section" data-testid="account-profile-settings-section">
-		<div v-if="loading" class="account-profile-section-copy">
+		<MuLinearWrapper v-if="loading" class="account-profile-section-copy" direction="column" :gap="4">
 			<UiSkeleton width="92px" height="36px" border-radius="8px" />
 			<UiSkeleton width="100%" height="20px" border-radius="8px" />
 			<UiSkeleton width="84%" height="20px" border-radius="8px" />
-		</div>
-		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ translate('account.profile.settings') }}</h2>
-			<p class="account-profile-section-description">{{ translate('account.profile.settingsDesc') }}</p>
-		</div>
+		</MuLinearWrapper>
+		<MuLinearWrapper v-else class="account-profile-section-copy" direction="column" :gap="4">
+			<MuHeading class="account-profile-section-title">{{ translate('account.profile.settings') }}</MuHeading>
+			<MuText class="account-profile-section-description">{{ translate('account.profile.settingsDesc') }}</MuText>
+		</MuLinearWrapper>
 
 		<FeaturesAccountProfileContentSettingsSkeleton v-if="loading" />
 
@@ -40,12 +43,6 @@ const {
 
 <style scoped lang="scss">
 .account-profile-section {
-	.account-profile-section-copy {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
 	.account-profile-muted {
 		color: var(--text-secondary);
 		font-size: var(--type-size-100);

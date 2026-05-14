@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MuText from '~/components/base/MuText.vue';
+
 const { t } = useI18n();
 </script>
 
@@ -7,7 +9,7 @@ const { t } = useI18n();
 		<div class="account-quote-chat-bubble" data-testid="account-quote-requests-bubble">
 			{{ t('account.quoteRequests.sampleMessage') }}
 			<div class="account-quote-chat-request">
-				<span class="account-quote-chat-request-label">{{ t('account.quoteRequests.requestLabel') }}:</span>
+				<MuText variant="span" weight="bold" class="account-quote-chat-request-label">{{ t('account.quoteRequests.requestLabel') }}:</MuText>
 				{{ t('account.quoteRequests.sampleRequestDetails') }}
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AccountProfilePage from '~/components/account/pages/profile/index.vue';
+// import AccountProfilePage from '~/components/account/pages/profile/index.vue';
 definePageMeta({
 	layout: 'home',
 	footerVariant: 'compact',
@@ -7,5 +7,5 @@ definePageMeta({
 </script>
 
 <template>
-	<AccountProfilePage />
+	<FeaturesAccountProfile />
 </template>

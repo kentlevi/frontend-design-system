@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+
 defineProps<{
 	currentPassword: string
 	newPassword: string
@@ -28,7 +30,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-	<div class="account-profile-stack" data-testid="account-profile-password-form">
+	<MuLinearWrapper class="account-profile-stack" data-testid="account-profile-password-form" direction="column" :gap="16">
 		<UiFormField :label="t('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
 			<template #default="{ inputId, describedBy }">
 				<UiInput
@@ -127,7 +129,13 @@ const { t } = useI18n();
 			</template>
 		</UiFormField>
 
-		<div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
+		<MuLinearWrapper
+			class="account-profile-inline-actions"
+			data-testid="account-profile-password-actions"
+			align="center"
+			justify="flex-end"
+			:gap="16"
+		>
 			<UiButton
 				variant="filled"
 				tone="neutral"
@@ -149,22 +157,13 @@ const { t } = useI18n();
 			>
 				{{ t('account.profile.forgotPassword') }}
 			</UiButton>
-		</div>
-	</div>
+		</MuLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-profile-stack {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-
 	.account-profile-inline-actions {
-		display: flex;
-		gap: 16px;
-		align-items: center;
-		justify-content: flex-end;
-
 		.account-profile-forgot-password-link {
 			color: var(--text-primary);
 			font-size: var(--type-size-100);

@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+
 const { t } = useI18n();
 </script>
 
 <template>
-	<footer class="account-quote-chat-footer" data-testid="account-quote-requests-footer">
+	<MuLinearWrapper class="account-quote-chat-footer" data-testid="account-quote-requests-footer" :gap="10">
 		<UiInput
 			model-value=""
 			type="text"
@@ -14,14 +16,12 @@ const { t } = useI18n();
 		<UiButton variant="filled" tone="neutral" size="md" class="account-quote-chat-send" data-testid="account-quote-requests-send-button">
 			{{ t('account.quoteRequests.send') }}
 		</UiButton>
-	</footer>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-quote-chat-footer {
 	border-top: 1px solid var(--border-default);
 	padding: 12px;
-	display: flex;
-	gap: 10px;
 }
 </style>

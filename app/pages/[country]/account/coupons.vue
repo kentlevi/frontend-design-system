@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AccountCouponsPage from '~/components/account/pages/coupons/index.vue';
+// import AccountCouponsPage from '~/components/account/pages/coupons/index.vue';
 definePageMeta({
 	layout: 'home',
 	footerVariant: 'compact',
@@ -7,5 +7,5 @@ definePageMeta({
 </script>
 
 <template>
-	<AccountCouponsPage />
+	<FeaturesAccountCoupons />
 </template>

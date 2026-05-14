@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+
 type AddressBookUI = {
 	translate: (key: string) => string;
 	handleOpenAddModal: () => void;
@@ -11,9 +14,12 @@ const {
 </script>
 
 <template>
-	<section
+	<MuLinearWrapper
 		class="account-address-book-empty-state"
 		data-testid="account-address-book-empty-state"
+		direction="column"
+		align="center"
+		:gap="24"
 	>
 		<div class="account-address-book-empty-state-icon">
 			<img
@@ -22,11 +28,21 @@ const {
 				class="account-address-book-empty-state-icon-image"
 			>
 		</div>
-		<div class="account-address-book-empty-state-content">
-			<div class="account-address-book-empty-state-copy">
-				<h2 class="account-address-book-empty-state-title">
+		<MuLinearWrapper
+			class="account-address-book-empty-state-content"
+			direction="column"
+			align="center"
+			:gap="40"
+		>
+			<MuLinearWrapper
+				class="account-address-book-empty-state-copy"
+				direction="column"
+				align="center"
+				:gap="16"
+			>
+				<MuHeading variant="3" class="account-address-book-empty-state-title" weight="semi-bold">
 					{{ translate('account.addressBook.emptyTitle') }}
-				</h2>
+				</MuHeading>
 				<i18n-t
 					keypath="account.addressBook.emptyDescription"
 					tag="p"
@@ -36,7 +52,7 @@ const {
 						<strong>"{{ translate('account.addressBook.addAddressLabel') }}"</strong>
 					</template>
 				</i18n-t>
-			</div>
+			</MuLinearWrapper>
 			<UiButton
 				variant="filled"
 				tone="neutral"
@@ -50,16 +66,12 @@ const {
 			>
 				{{ translate('account.addressBook.addNew') }}
 			</UiButton>
-		</div>
-	</section>
+		</MuLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-address-book-empty-state {
-	display: flex;
-	gap: 24px;
-	flex-direction: column;
-	align-items: center;
 	text-align: center;
 
 	.account-address-book-empty-state-icon {
@@ -74,28 +86,14 @@ const {
 	}
 
 	.account-address-book-empty-state-content {
-		display: flex;
-		flex-direction: column;
-		gap: 40px;
-		align-items: center;
-
 		.account-address-book-empty-state-copy {
-			display: flex;
-			flex-direction: column;
-			gap: 16px;
-			align-items: center;
-
 			.account-address-book-empty-state-title {
 				font-size: var(--type-size-300);
 				line-height: var(--type-line-300);
-				font-weight: var(--font-weight-semibold);
-				color: var(--text-primary);
 			}
 
 			.account-address-book-empty-state-description {
 				max-width: 480px;
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
 				color: var(--text-secondary);
 				white-space: pre-line;
 

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 import type { AccountPointLogFilter } from '~/types/account/points';
 
@@ -17,8 +20,8 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 
 <template>
 	<section class="account-points-history-panel">
-		<div class="account-points-filters">
-			<span class="account-points-filter-label">{{ t('account.points.filter') }}</span>
+		<MuLinearWrapper class="account-points-filters" align="center" :gap="18">
+			<MuText variant="span" weight="semi-bold" color="text-primary" class="account-points-filter-label">{{ t('account.points.filter') }}</MuText>
 			<div class="account-points-filter-group">
 				<button
 					v-for="filter in filters"
@@ -31,7 +34,7 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 					{{ filter.label }}
 				</button>
 			</div>
-		</div>
+		</MuLinearWrapper>
 
 		<div class="account-points-logs" data-testid="account-points-logs">
 			<div class="account-points-logs-head">
@@ -39,18 +42,20 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 			</div>
 
 			<div class="account-points-log-list">
-				<article
+				<MuLinearWrapper
 					v-for="log in logs"
 					:key="log.id"
 					class="account-points-log-row"
 					:data-testid="`account-points-log-${log.id}`"
+					justify="space-between"
+					:gap="12"
 				>
 					<div>
-						<h3 class="account-points-log-title">{{ log.title }}</h3>
-						<p class="account-points-log-date">{{ log.date }}</p>
+						<MuHeading variant="3" class="account-points-log-title">{{ log.title }}</MuHeading>
+						<MuText color="text-secondary" class="account-points-log-date">{{ log.date }}</MuText>
 					</div>
 					<strong :class="{ plus: log.positive, minus: !log.positive }">{{ log.value }}</strong>
-				</article>
+				</MuLinearWrapper>
 			</div>
 		</div>
 	</section>
@@ -63,18 +68,6 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 	padding-top: 2px;
 }
 
-.account-points-filters {
-	display: inline-flex;
-	align-items: center;
-	gap: 18px;
-}
-
-.account-points-filter-label {
-	color: var(--text-primary);
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
-	font-weight: var(--font-weight-semibold);
-}
 
 .account-points-filter-group {
 	display: inline-flex;
@@ -142,9 +135,6 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 }
 
 .account-points-log-row {
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
 	padding: 20px 22px;
 	border-top: 1px solid var(--border-default);
 
@@ -162,9 +152,6 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 
 	.account-points-log-date {
 		margin: 0;
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
 	}
 
 	strong {
@@ -186,9 +173,9 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 
 @media (max-width: 760px) {
 	.account-points-filters {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 10px;
+		flex-direction: column !important;
+		align-items: flex-start !important;
+		gap: 10px !important;
 	}
 
 	.account-points-filter-group {
@@ -201,8 +188,8 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 	}
 
 	.account-points-log-row {
-		flex-direction: column;
-		align-items: flex-start;
+		flex-direction: column !important;
+		align-items: flex-start !important;
 
 		strong {
 			text-align: left;

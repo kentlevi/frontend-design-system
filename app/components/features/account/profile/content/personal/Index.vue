@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import EmailChangeModal from '~/components/features/account/profile/modals/EmailChangeModal.vue';
@@ -68,17 +71,17 @@ const {
 
 <template>
 	<div class="account-profile-section" data-testid="account-profile-personal-section">
-		<div v-if="loading" class="account-profile-section-copy">
+		<MuLinearWrapper v-if="loading" class="account-profile-section-copy" direction="column" :gap="4">
 			<UiSkeleton width="120px" height="36px" border-radius="8px" />
 			<UiSkeleton width="100%" height="20px" border-radius="8px" />
 			<UiSkeleton width="78%" height="20px" border-radius="8px" />
-		</div>
-		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
-			<p class="account-profile-section-description">
+		</MuLinearWrapper>
+		<MuLinearWrapper v-else class="account-profile-section-copy" direction="column" :gap="4">
+			<MuHeading class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</MuHeading>
+			<MuText class="account-profile-section-description">
 				{{ t('account.profile.personalDetailsDesc') }}
-			</p>
-		</div>
+			</MuText>
+		</MuLinearWrapper>
 
 		<FeaturesAccountProfileContentPersonalSkeleton v-if="loading" />
 
@@ -167,12 +170,6 @@ const {
 </template>
 
 <style scoped lang="scss">
-.account-profile-section-copy {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
 .account-profile-section {
 	.account-profile-file-input {
 		display: none;

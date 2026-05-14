@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+
 withDefaults(defineProps<{
 	loading?: boolean;
 }>(), {
@@ -7,18 +9,20 @@ withDefaults(defineProps<{
 </script>
 
 <template>
-	<div class="account-content account-profile" data-testid="account-profile-content">
+	<MuLinearWrapper
+		class="account-content account-profile"
+		data-testid="account-profile-content"
+		direction="column"
+		:gap="56"
+	>
 		<FeaturesAccountProfileContentPersonal :loading="loading" />
 		<FeaturesAccountProfileContentPassword :loading="loading" />
 		<FeaturesAccountProfileContentSettings :loading="loading" />
-	</div>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-content {
 	min-height: 100%;
-	display: flex;
-	flex-direction: column;
-	gap: 56px;
 }
 </style>

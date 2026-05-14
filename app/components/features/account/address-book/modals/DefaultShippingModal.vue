@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import { address_book_tag_badge_colors } from '~/composables/account/addressBook/addressBookPresentation';
 import { useAddressBookDefaultShippingModal } from '~/composables/account/addressBook/useAddressBookDefaultShippingModal';
 
@@ -31,46 +34,68 @@ const {
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-default-modal" data-testid="account-address-book-default-modal">
-			<div class="account-address-book-default-modal-body">
-				<p class="account-address-book-default-modal-description">
+			<MuLinearWrapper
+				class="account-address-book-default-modal-body"
+				direction="column"
+				:gap="24"
+			>
+				<MuText color="text-secondary" class="account-address-book-default-modal-description">
 					{{ default_selection_description }}
-				</p>
+				</MuText>
 
-				<div class="account-address-book-default-modal-list">
+				<MuLinearWrapper
+					class="account-address-book-default-modal-list"
+					direction="column"
+					:gap="16"
+				>
 					<label
 						v-for="address in replacement_addresses"
 						:key="address.id"
 						class="account-address-book-default-modal-card"
 						:data-selected="selected_address_id === address.id"
 					>
-						<div class="account-address-book-default-modal-card-head">
+						<MuLinearWrapper
+							class="account-address-book-default-modal-card-head"
+							align="center"
+							:gap="12"
+						>
 							<UiRadio
 								v-model="selected_address_id"
 								:value="address.id"
 								name="default-shipping-address"
 								class="account-address-book-default-modal-radio"
 							/>
-							<h4 class="account-address-book-default-modal-card-name">
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-address-book-default-modal-card-name">
 								{{ address.contact_name }}
-							</h4>
-						</div>
+							</MuHeading>
+						</MuLinearWrapper>
 
-						<div class="account-address-book-default-modal-card-body">
-							<div
+						<MuLinearWrapper
+							class="account-address-book-default-modal-card-body"
+							justify="space-between"
+							align="center"
+							:gap="24"
+						>
+							<MuLinearWrapper
 								v-if="shippingPhoneNumber(address) || buildAddressLines(address).trim() || address.company"
 								class="account-address-book-default-modal-card-copy"
+								direction="column"
 							>
-								<p v-if="shippingPhoneNumber(address)" class="account-address-book-default-modal-card-phone">
+								<MuText v-if="shippingPhoneNumber(address)" weight="semi-bold" color="text-primary" class="account-address-book-default-modal-card-phone">
 									{{ shippingPhoneNumber(address) }}
-								</p>
-								<p v-if="buildAddressLines(address).trim()" class="account-address-book-default-modal-card-address">
+								</MuText>
+								<MuText v-if="buildAddressLines(address).trim()" color="text-secondary" class="account-address-book-default-modal-card-address">
 									{{ buildAddressLines(address) }}
-								</p>
-								<p v-if="address.company" class="account-address-book-default-modal-card-company">
+								</MuText>
+								<MuText v-if="address.company" color="text-secondary" class="account-address-book-default-modal-card-company">
 									{{ address.company }}
-								</p>
-							</div>
-							<div class="account-address-book-default-modal-card-footer">
+								</MuText>
+							</MuLinearWrapper>
+							<MuLinearWrapper
+								class="account-address-book-default-modal-card-footer"
+								align="center"
+								:gap="16"
+							>
 								<UiBadge
 									v-if="address.label"
 									variant="tonal"
@@ -81,11 +106,11 @@ const {
 								>
 									{{ getAddressLabel(address.label) }}
 								</UiBadge>
-							</div>
-						</div>
+							</MuLinearWrapper>
+						</MuLinearWrapper>
 					</label>
-				</div>
-			</div>
+				</MuLinearWrapper>
+			</MuLinearWrapper>
 		</section>
 
 		<template #footer>
@@ -137,21 +162,7 @@ const {
 	width: 100%;
 
 	.account-address-book-default-modal-body {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-
-		.account-address-book-default-modal-description {
-			color: var(--text-secondary);
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-		}
-
 		.account-address-book-default-modal-list {
-			display: flex;
-			flex-direction: column;
-			gap: 16px;
-
 			.account-address-book-default-modal-card {
 				display: flex;
 				flex-direction: column;
@@ -171,56 +182,19 @@ const {
 				}
 
 				.account-address-book-default-modal-card-head {
-					display: flex;
-					align-items: center;
-					gap: 12px;
 					padding: 12px 20px;
 					border-bottom: 1px solid var(--gray-20);
 
 					.account-address-book-default-modal-card-name {
 						font-size: var(--type-size-200);
 						line-height: var(--type-line-200);
-						font-weight: var(--font-weight-semibold);
-						color: var(--text-primary);
 					}
 				}
 
 				.account-address-book-default-modal-card-body {
-					display: flex;
-					gap: 24px;
 					padding: 12px 20px;
-					justify-content: space-between;
-					align-items: center;
-
-					.account-address-book-default-modal-card-copy {
-						display: flex;
-						flex-direction: column;
-
-						.account-address-book-default-modal-card-phone,
-						.account-address-book-default-modal-card-address,
-						.account-address-book-default-modal-card-company {
-							font-size: var(--type-size-100);
-							line-height: var(--type-line-100);
-						}
-
-						.account-address-book-default-modal-card-phone {
-							color: var(--text-primary);
-							font-weight: var(--font-weight-semibold);
-						}
-
-						.account-address-book-default-modal-card-address {
-							color: var(--text-secondary);
-						}
-
-						.account-address-book-default-modal-card-company {
-							color: var(--text-secondary);
-						}
-					}
 
 					.account-address-book-default-modal-card-footer {
-						display: flex;
-						align-items: center;
-						gap: 16px;
 						flex-shrink: 0;
 					}
 				}
@@ -243,8 +217,8 @@ const {
 			.account-address-book-default-modal-list {
 				.account-address-book-default-modal-card {
 					.account-address-book-default-modal-card-body {
-						flex-direction: column;
-						align-items: stretch;
+						flex-direction: column !important;
+						align-items: stretch !important;
 
 						.account-address-book-default-modal-card-footer {
 							justify-content: flex-start;

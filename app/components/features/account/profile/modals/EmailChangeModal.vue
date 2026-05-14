@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineProps<{
 	modelValue: boolean
 	pendingEmail: string
@@ -61,9 +65,9 @@ function parseBoldText(text: string) {
 					>
 				</div>
 
-				<div class="account-profile-email-change-modal-text-wrap">
-					<h3 class="account-profile-email-change-modal-title">{{ t('account.profile.emailChange.title') }}</h3>
-					<p class="account-profile-email-change-modal-text">
+				<MuLinearWrapper class="account-profile-email-change-modal-text-wrap" direction="column" :gap="8">
+					<MuHeading variant="5" weight="semi-bold" color="text-primary" class="account-profile-email-change-modal-title">{{ t('account.profile.emailChange.title') }}</MuHeading>
+					<MuText color="text-secondary" class="account-profile-email-change-modal-text">
 						<template
 							v-for="(part, index) in parseBoldText(t('account.profile.emailChange.description'))"
 							:key="`${part.text}-${index}`"
@@ -71,8 +75,8 @@ function parseBoldText(text: string) {
 							<strong v-if="part.isBold" class="change-strong">{{ part.text }}</strong>
 							<template v-else>{{ part.text }}</template>
 						</template>
-					</p>
-				</div>
+					</MuText>
+				</MuLinearWrapper>
 			</div>
 
 			<div class="account-profile-email-change-modal-body">
@@ -164,22 +168,7 @@ function parseBoldText(text: string) {
 		}
 
 		.account-profile-email-change-modal-text-wrap {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-
-			.account-profile-email-change-modal-title {
-				color: var(--text-primary);
-				font-size: var(--type-size-400);
-				line-height: var(--type-line-400);
-				font-weight: var(--font-weight-semibold);
-			}
-
 			.account-profile-email-change-modal-text {
-				color: var(--text-secondary);
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-
 				.change-strong {
 					color: var(--text-primary);
 					font-weight: var(--font-weight-bold);

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
 
 type AddressBookUI = {
 	translate: (key: string) => string;
@@ -17,10 +19,15 @@ const {
 </script>
 
 <template>
-	<header class="account-address-book-header" data-testid="account-address-book-header">
-		<h1 class="account-address-book-title" data-testid="account-address-book-title">
+	<MuLinearWrapper
+		class="account-address-book-header"
+		data-testid="account-address-book-header"
+		justify="space-between"
+		align="center"
+	>
+		<MuHeading variant="4" weight="bold" data-testid="account-address-book-title">
 			{{ translate('account.addressBook.title') }}
-		</h1>
+		</MuHeading>
 		<UiSkeleton
 			v-if="is_loading"
 			width="164px"
@@ -40,27 +47,14 @@ const {
 		>
 			{{ translate('account.addressBook.addNew') }}
 		</UiButton>
-	</header>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
-.account-address-book-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	.account-address-book-title {
-		font-size: var(--type-size-450);
-		font-weight: var(--font-weight-bold);
-		line-height: var(--type-line-450);
-		color: var(--text-primary);
-	}
-}
-
 @media (max-width: 980px) {
 	.account-address-book-header {
-		align-items: flex-start;
-		flex-direction: column;
+		align-items: flex-start !important;
+		flex-direction: column !important;
 	}
 }
 </style>

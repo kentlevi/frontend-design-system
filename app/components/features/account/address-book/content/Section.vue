@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { AddressType } from '~/types/user-address';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import { useAddressBookSectionUI } from '~/composables/account/addressBook/useAddressBookSectionUI';
 
 type SectionProps = {
@@ -23,17 +26,17 @@ const { translate, items, loading } = useAddressBookSectionUI(props)
 				<UiSkeleton width="80%" height="20px" class="account-profile-section-description-skeleton" />
 			</template>
 			<template v-else>
-				<h2 class="account-profile-section-title">
+				<MuHeading class="account-profile-section-title">
 					{{ translate(`account.addressBook.${props.section}Title`) }}
-				</h2>
-				<p class="account-profile-section-description">
+				</MuHeading>
+				<MuText class="account-profile-section-description">
 					{{ translate(`account.addressBook.${props.section}Description`) }}
-				</p>
+				</MuText>
 			</template>
 		</div>
 
 		<div class="account-profile-section-main" data-testid="account-address-book-list">
-			<div class="account-address-book-card-grid">
+			<MuLinearWrapper class="account-address-book-card-grid" direction="column" :gap="16">
 				<template v-if="loading">
 					<FeaturesAccountAddressBookContentCard loading />
 					<FeaturesAccountAddressBookContentCard loading />
@@ -46,7 +49,7 @@ const { translate, items, loading } = useAddressBookSectionUI(props)
 						:index="index"
 					/>
 				</template>
-			</div>
+			</MuLinearWrapper>
 		</div>
 	</section>
 </template>
@@ -60,13 +63,6 @@ const { translate, items, loading } = useAddressBookSectionUI(props)
 
 		.account-profile-section-description-skeleton {
 			margin-top: 4px;
-		}
-	}
-
-	.account-profile-section-main {
-		.account-address-book-card-grid {
-			display: grid;
-			gap: 16px;
 		}
 	}
 }

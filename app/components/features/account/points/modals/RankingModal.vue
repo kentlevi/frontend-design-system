@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import MuCard from '~/components/base/MuCard.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import type { AccountPointRank } from '~/types/account/points';
 
 const { t } = useI18n();
@@ -62,19 +64,19 @@ function handleModelValueChange(value: boolean) {
 
 					<div class="account-points-ranking-card-body">
 						<div class="account-points-ranking-card-copy">
-							<h3 class="account-points-ranking-card-title">{{ rank.name }}</h3>
-							<p class="account-points-ranking-card-spend">{{ rank.spend_requirement }}</p>
+							<MuHeading variant="3" weight="bold" color="text-primary" class="account-points-ranking-card-title">{{ rank.name }}</MuHeading>
+							<MuText color="text-secondary" class="account-points-ranking-card-spend">{{ rank.spend_requirement }}</MuText>
 						</div>
 
 						<div class="account-points-ranking-card-section">
-							<h4 class="account-points-ranking-card-label">{{ t('account.points.ranking.perksLabel') }}</h4>
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-points-ranking-card-label">{{ t('account.points.ranking.perksLabel') }}</MuHeading>
 							<ul class="account-points-ranking-card-list">
 								<li v-for="perk in rank.perks" :key="perk">{{ perk }}</li>
 							</ul>
 						</div>
 
 						<div class="account-points-ranking-card-section">
-							<h4 class="account-points-ranking-card-label">{{ t('account.points.ranking.levelUpBonusLabel') }}</h4>
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-points-ranking-card-label">{{ t('account.points.ranking.levelUpBonusLabel') }}</MuHeading>
 							<ul class="account-points-ranking-card-list">
 								<li v-for="gift in rank.level_up_bonus_gifts" :key="gift">{{ gift }}</li>
 							</ul>
@@ -163,18 +165,8 @@ function handleModelValueChange(value: boolean) {
 	}
 
 	.account-points-ranking-card-title {
-		margin: 0;
 		font-size: 34px;
 		line-height: 1;
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
-
-	.account-points-ranking-card-spend {
-		margin: 0;
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
 	}
 
 	.account-points-ranking-card-section {
@@ -183,11 +175,8 @@ function handleModelValueChange(value: boolean) {
 	}
 
 	.account-points-ranking-card-label {
-		margin: 0;
 		font-size: var(--type-size-300);
 		line-height: var(--type-line-300);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
 	}
 
 	.account-points-ranking-card-list {

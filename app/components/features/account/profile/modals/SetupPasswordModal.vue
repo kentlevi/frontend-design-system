@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 const props = defineProps<{
 	modelValue: boolean;
 	password: string;
@@ -49,7 +53,12 @@ function closeModal() {
 				<UiIcon name="regular-times" :size="24" />
 			</button>
 
-			<div class="account-profile-setup-password-modal-header">
+			<MuLinearWrapper
+				class="account-profile-setup-password-modal-header"
+				direction="column"
+				align="flex-start"
+				:gap="24"
+			>
 				<UiLogo
 					name="musticker"
 					variant="mark"
@@ -58,10 +67,10 @@ function closeModal() {
 					class="account-profile-setup-password-modal-logo"
 				/>
 				<div class="account-profile-setup-password-modal-copy">
-					<h3 class="account-profile-setup-password-modal-title">{{ t('account.profile.setupPasswordTitle') }}</h3>
-					<p class="account-profile-setup-password-modal-description">{{ t('account.profile.passwordHint') }}</p>
+					<MuHeading variant="3" weight="semi-bold" color="text-primary" class="account-profile-setup-password-modal-title">{{ t('account.profile.setupPasswordTitle') }}</MuHeading>
+					<MuText color="text-secondary" class="account-profile-setup-password-modal-description">{{ t('account.profile.passwordHint') }}</MuText>
 				</div>
-			</div>
+			</MuLinearWrapper>
 
 			<div class="account-profile-setup-password-modal-form">
 				<div class="account-profile-setup-password-modal-fields">
@@ -185,29 +194,9 @@ function closeModal() {
 		cursor: pointer;
 	}
 
-	&-header {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 24px;
-	}
-
 	&-copy {
 		display: grid;
 		gap: 8px;
-	}
-
-	&-title {
-		font-size: var(--type-size-500);
-		line-height: var(--type-line-500);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
-	}
-
-	&-description {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
 	}
 
 	&-fields {

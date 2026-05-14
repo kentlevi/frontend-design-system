@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import MuCard from '~/components/base/MuCard.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import type { AddressMap, AddressType } from '~/types/user-address';
 import { address_book_tag_badge_colors } from '~/composables/account/addressBook/addressBookPresentation';
 import { useAddressBookCardUI } from '~/composables/account/addressBook/useAddressBookCardUI';
@@ -35,14 +38,25 @@ const {
 		class="account-address-book-card"
 		:data-testid="props.loading ? undefined : `account-address-book-item-${props.item?.type}-${props.index}`"
 	>
-		<header class="account-address-book-card-header">
+		<MuLinearWrapper
+			class="account-address-book-card-header"
+			justify="space-between"
+			align="center"
+			:gap="12"
+		>
 			<template v-if="props.loading">
 				<UiSkeleton width="120px" height="24px" />
 				<UiSkeleton width="40px" height="40px" border-radius="var(--radius-xl)" />
 			</template>
 			<template v-else>
-				<div class="account-address-book-card-title-row">
-					<h3 class="account-address-book-card-name">{{ props.item?.contact_name }}</h3>
+				<MuLinearWrapper
+					class="account-address-book-card-title-row"
+					align="center"
+					:gap="12"
+				>
+					<MuHeading variant="6" weight="semi-bold" class="account-address-book-card-name">
+						{{ props.item?.contact_name }}
+					</MuHeading>
 					<UiBadge
 						v-if="props.item?.is_default && props.item.type === 'shipping'"
 						variant="outline"
@@ -84,7 +98,7 @@ const {
 					>
 						{{ translate('account.addressBook.default') }}
 					</UiBadge>
-				</div>
+				</MuLinearWrapper>
 				<div
 					:ref="setMenuWrapRef"
 					class="account-address-book-menu-wrap"
@@ -130,14 +144,23 @@ const {
 					</transition>
 				</div>
 			</template>
-		</header>
-		<div class="account-address-book-card-body">
+		</MuLinearWrapper>
+		<MuLinearWrapper
+			class="account-address-book-card-body"
+			justify="space-between"
+			align="center"
+			:gap="24"
+		>
 			<template v-if="props.loading">
-				<div class="account-address-book-card-copy account-address-book-card-copy--skeleton">
+				<MuLinearWrapper
+					class="account-address-book-card-copy account-address-book-card-copy--skeleton"
+					direction="column"
+					:gap="4"
+				>
 					<UiSkeleton width="140px" height="20px" />
 					<UiSkeleton width="100%" height="20px" />
 					<UiSkeleton width="80px" height="20px" />
-				</div>
+				</MuLinearWrapper>
 				<UiSkeleton
 					width="64px"
 					height="32px"
@@ -146,18 +169,21 @@ const {
 				/>
 			</template>
 			<template v-else>
-				<div v-if="shipping_phone_number || address_line_text || props.item?.company" class="account-address-book-card-copy">
-					<p v-if="shipping_phone_number" class="account-address-book-card-phone">
+				<MuLinearWrapper
+					v-if="shipping_phone_number || address_line_text || props.item?.company"
+					class="account-address-book-card-copy"
+					direction="column"
+				>
+					<MuText v-if="shipping_phone_number" weight="semi-bold" color="text-primary">
 						{{ shipping_phone_number }}
-					</p>
-					<p v-if="address_line_text" class="account-address-book-card-address">
+					</MuText>
+					<MuText v-if="address_line_text" color="text-secondary">
 						{{ address_line_text }}
-					</p>
-
-					<span v-if="props.item?.company" class="account-address-book-card-company">
+					</MuText>
+					<MuText v-if="props.item?.company" variant="span" color="text-secondary">
 						{{ props.item.company }}
-					</span>
-				</div>
+					</MuText>
+				</MuLinearWrapper>
 				<UiBadge
 					v-if="props.item?.label"
 					variant="tonal"
@@ -169,29 +195,21 @@ const {
 					{{ getAddressLabel(props.item.label) }}
 				</UiBadge>
 			</template>
-		</div>
+		</MuLinearWrapper>
 	</MuCard>
 </template>
 
 <style scoped lang="scss">
 .account-address-book-card {
 	.account-address-book-card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
 		padding: 12px 24px;
 		border-bottom: 1px solid var(--border-subtle, var(--border-default));
 
 		.account-address-book-card-title-row {
-			display: flex;
-			align-items: center;
-			gap: 12px;
 			min-width: 0;
 
 			.account-address-book-card-name {
 				font-size: var(--type-size-200);
-				font-weight: var(--font-weight-semibold);
 				line-height: var(--type-line-200);
 			}
 
@@ -200,12 +218,6 @@ const {
 				align-items: center;
 				gap: 6px;
 				flex-shrink: 0;
-
-				.account-address-book-card-default-badge-copy {
-					font-size: var(--type-size-100);
-					line-height: var(--type-line-100);
-					font-weight: var(--font-weight-semibold);
-				}
 			}
 		}
 
@@ -260,35 +272,10 @@ const {
 
 	.account-address-book-card-body {
 		padding: 20px 24px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
 
 		.account-address-book-card-copy {
-			display: flex;
-			flex-direction: column;
-
 			&.account-address-book-card-copy--skeleton {
 				flex: 1;
-				gap: 4px;
-			}
-
-			.account-address-book-card-phone,
-			.account-address-book-card-address,
-			.account-address-book-card-company {
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-			}
-
-			.account-address-book-card-phone {
-				color: var(--text-primary);
-				font-weight: var(--font-weight-semibold);
-			}
-
-			.account-address-book-card-address,
-			.account-address-book-card-company {
-				color: var(--text-secondary);
 			}
 		}
 
@@ -323,14 +310,14 @@ const {
 	.account-address-book-card {
 		.account-address-book-card-header {
 			.account-address-book-card-title-row {
-				align-items: flex-start;
-				flex-direction: column;
+				align-items: flex-start !important;
+				flex-direction: column !important;
 			}
 		}
 
 		.account-address-book-card-body {
-			align-items: flex-start;
-			flex-direction: column;
+			align-items: flex-start !important;
+			flex-direction: column !important;
 		}
 	}
 }

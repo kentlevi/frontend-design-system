@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineProps<{
 	preferenceFormState: {
 		offers_emails: boolean | number
@@ -19,12 +23,18 @@ function onToggle(key: string, event: Event) {
 </script>
 
 <template>
-	<div class="account-profile-settings" data-testid="account-profile-settings">
-		<div class="account-profile-setting-row" data-testid="account-profile-setting-promotions">
-			<div class="account-profile-setting-copy">
-				<h3 class="account-profile-setting-title">{{ translate('account.profile.promotions') }}</h3>
-				<p class="account-profile-muted">{{ translate('account.profile.promotionsDesc') }}</p>
-			</div>
+	<MuLinearWrapper class="account-profile-settings" data-testid="account-profile-settings" direction="column" :gap="12">
+		<MuLinearWrapper
+			class="account-profile-setting-row"
+			data-testid="account-profile-setting-promotions"
+			justify="space-between"
+			align="center"
+			:gap="16"
+		>
+			<MuLinearWrapper class="account-profile-setting-copy" direction="column">
+				<MuHeading variant="3" class="account-profile-setting-title">{{ translate('account.profile.promotions') }}</MuHeading>
+				<MuText color="text-secondary" class="account-profile-muted">{{ translate('account.profile.promotionsDesc') }}</MuText>
+			</MuLinearWrapper>
 			<label class="account-profile-switch">
 				<input
 					:checked="Boolean(preferenceFormState.offers_emails)"
@@ -35,13 +45,19 @@ function onToggle(key: string, event: Event) {
 				>
 				<span class="account-profile-switch-track" />
 			</label>
-		</div>
+		</MuLinearWrapper>
 
-		<div class="account-profile-setting-row" data-testid="account-profile-setting-reviews">
-			<div class="account-profile-setting-copy">
-				<h3 class="account-profile-setting-title">{{ translate('account.profile.reviews') }}</h3>
-				<p class="account-profile-muted">{{ translate('account.profile.reviewsDesc') }}</p>
-			</div>
+		<MuLinearWrapper
+			class="account-profile-setting-row"
+			data-testid="account-profile-setting-reviews"
+			justify="space-between"
+			align="center"
+			:gap="16"
+		>
+			<MuLinearWrapper class="account-profile-setting-copy" direction="column">
+				<MuHeading variant="3" class="account-profile-setting-title">{{ translate('account.profile.reviews') }}</MuHeading>
+				<MuText color="text-secondary" class="account-profile-muted">{{ translate('account.profile.reviewsDesc') }}</MuText>
+			</MuLinearWrapper>
 			<label class="account-profile-switch">
 				<input
 					:checked="Boolean(preferenceFormState.reviews_emails)"
@@ -52,27 +68,13 @@ function onToggle(key: string, event: Event) {
 				>
 				<span class="account-profile-switch-track" />
 			</label>
-		</div>
-	</div>
+		</MuLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-profile-settings {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-
 	.account-profile-setting-row {
-		display: flex;
-		justify-content: space-between;
-		gap: 16px;
-		align-items: center;
-
-		.account-profile-setting-copy {
-			display: flex;
-			flex-direction: column;
-		}
-
 		.account-profile-setting-title {
 			margin: 0;
 			font-size: var(--type-size-100);
@@ -147,9 +149,4 @@ function onToggle(key: string, event: Event) {
 	}
 }
 
-.account-profile-muted {
-	color: var(--text-secondary);
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
-}
 </style>

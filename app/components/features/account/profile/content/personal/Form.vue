@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineProps<{
 	dynamicProfileFields: Array<{
 		id: string | number
@@ -82,14 +85,14 @@ const { t } = useI18n();
 						{{ t('account.profile.change') }}
 					</UiButton>
 				</div>
-				<p v-if="social" class="account-profile-email-helper-text">
+				<MuText v-if="social" color="text-secondary" class="account-profile-email-helper-text">
 					{{ t('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
-				</p>
+				</MuText>
 			</template>
 		</UiFormField>
 	</div>
 
-	<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
+	<MuLinearWrapper class="account-profile-actions-right" data-testid="account-profile-save-wrap" justify="flex-end">
 		<UiButton
 			variant="filled"
 			tone="neutral"
@@ -100,7 +103,7 @@ const { t } = useI18n();
 		>
 			{{ t('account.profile.saveChanges') }}
 		</UiButton>
-	</div>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
@@ -121,7 +124,6 @@ const { t } = useI18n();
 
 .account-profile-email-helper-text {
 	margin: 0;
-	color: var(--text-secondary);
 }
 
 .account-profile-social-text {
@@ -151,10 +153,5 @@ const { t } = useI18n();
 :deep(.ui-input[data-disabled="true"] .ui-input-field.account-profile-email-input-field--locked) {
 	padding-right: 92px;
 	color: var(--text-primary);
-}
-
-.account-profile-actions-right {
-	display: flex;
-	justify-content: flex-end;
 }
 </style>

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import MuCard from '~/components/base/MuCard.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import { address_book_tag_badge_colors } from '~/composables/account/addressBook/addressBookPresentation';
 import { useAddressBookConfirmDefaultChangeModal } from '~/composables/account/addressBook/useAddressBookConfirmDefaultChangeModal';
 
@@ -31,20 +34,28 @@ const {
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
 		<section class="account-address-book-confirm-default-modal" data-testid="account-address-book-confirm-default-modal">
-			<div class="account-address-book-confirm-default-modal-body">
-				<p class="account-address-book-confirm-default-modal-description">
+			<MuLinearWrapper
+				class="account-address-book-confirm-default-modal-body"
+				direction="column"
+				:gap="24"
+			>
+				<MuText color="text-secondary" class="account-address-book-confirm-default-modal-description">
 					{{ modal_description }}
-				</p>
+				</MuText>
 
 				<div
 					v-if="current_default_address && pending_default_address"
 					class="account-address-book-confirm-default-modal-compare"
 				>
 					<MuCard padding="none" class="account-address-book-confirm-default-modal-card">
-						<header class="account-address-book-confirm-default-modal-card-head">
-							<h4 class="account-address-book-confirm-default-modal-card-name">
+						<MuLinearWrapper
+							class="account-address-book-confirm-default-modal-card-head"
+							align="center"
+							:gap="12"
+						>
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-address-book-confirm-default-modal-card-name">
 								{{ current_default_address.contact_name }}
-							</h4>
+							</MuHeading>
 							<UiBadge
 								variant="outline"
 								tone="default"
@@ -53,24 +64,39 @@ const {
 							>
 								{{ translate('account.addressBook.default') }}
 							</UiBadge>
-						</header>
+						</MuLinearWrapper>
 
-						<div class="account-address-book-confirm-default-modal-card-body">
-							<div class="account-address-book-confirm-default-modal-card-address-row">
-								<div v-if="current_default_address_lines || current_default_address.company" class="account-address-book-confirm-default-modal-card-info">
-									<p
+						<MuLinearWrapper
+							class="account-address-book-confirm-default-modal-card-body"
+							direction="column"
+							:gap="10"
+						>
+							<MuLinearWrapper
+								class="account-address-book-confirm-default-modal-card-address-row"
+								justify="space-between"
+								align="flex-start"
+								:gap="24"
+							>
+								<MuLinearWrapper
+									v-if="current_default_address_lines || current_default_address.company"
+									class="account-address-book-confirm-default-modal-card-info"
+									direction="column"
+								>
+									<MuText
 										v-if="isShippingAddress(current_default_address)"
+										weight="semi-bold"
+										color="text-primary"
 										class="account-address-book-confirm-default-modal-card-phone"
 									>
 										{{ current_default_address.phone_number }}
-									</p>
-									<p v-if="current_default_address_lines" class="account-address-book-confirm-default-modal-card-address">
+									</MuText>
+									<MuText v-if="current_default_address_lines" color="text-secondary" class="account-address-book-confirm-default-modal-card-address">
 										{{ current_default_address_lines }}
-									</p>
-									<p v-if="current_default_address.company" class="account-address-book-confirm-default-modal-card-company">
+									</MuText>
+									<MuText v-if="current_default_address.company" color="text-secondary" class="account-address-book-confirm-default-modal-card-company">
 										{{ current_default_address.company }}
-									</p>
-								</div>
+									</MuText>
+								</MuLinearWrapper>
 								<UiBadge
 									v-if="current_default_address.label"
 									variant="tonal"
@@ -82,8 +108,8 @@ const {
 								>
 									{{ getLabelCopy(current_default_address.label) }}
 								</UiBadge>
-							</div>
-						</div>
+							</MuLinearWrapper>
+						</MuLinearWrapper>
 					</MuCard>
 
 					<div class="account-address-book-confirm-default-modal-arrow" aria-hidden="true">
@@ -94,28 +120,47 @@ const {
 						padding="none"
 						class="account-address-book-confirm-default-modal-card account-address-book-confirm-default-modal-card--next"
 					>
-						<header class="account-address-book-confirm-default-modal-card-head">
-							<h4 class="account-address-book-confirm-default-modal-card-name">
+						<MuLinearWrapper
+							class="account-address-book-confirm-default-modal-card-head"
+							align="center"
+							:gap="12"
+						>
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-address-book-confirm-default-modal-card-name">
 								{{ pending_default_address.contact_name }}
-							</h4>
-						</header>
+							</MuHeading>
+						</MuLinearWrapper>
 
-						<div class="account-address-book-confirm-default-modal-card-body">
-							<div class="account-address-book-confirm-default-modal-card-address-row">
-								<div v-if="pending_default_address_lines || pending_default_address.company" class="account-address-book-confirm-default-modal-card-info">
-									<p
+						<MuLinearWrapper
+							class="account-address-book-confirm-default-modal-card-body"
+							direction="column"
+							:gap="10"
+						>
+							<MuLinearWrapper
+								class="account-address-book-confirm-default-modal-card-address-row"
+								justify="space-between"
+								align="flex-start"
+								:gap="24"
+							>
+								<MuLinearWrapper
+									v-if="pending_default_address_lines || pending_default_address.company"
+									class="account-address-book-confirm-default-modal-card-info"
+									direction="column"
+								>
+									<MuText
 										v-if="isShippingAddress(pending_default_address)"
+										weight="semi-bold"
+										color="text-primary"
 										class="account-address-book-confirm-default-modal-card-phone"
 									>
 										{{ pending_default_address.phone_number }}
-									</p>
-									<p v-if="pending_default_address_lines" class="account-address-book-confirm-default-modal-card-address">
+									</MuText>
+									<MuText v-if="pending_default_address_lines" color="text-secondary" class="account-address-book-confirm-default-modal-card-address">
 										{{ pending_default_address_lines }}
-									</p>
-									<p v-if="pending_default_address.company" class="account-address-book-confirm-default-modal-card-company">
+									</MuText>
+									<MuText v-if="pending_default_address.company" color="text-secondary" class="account-address-book-confirm-default-modal-card-company">
 										{{ pending_default_address.company }}
-									</p>
-								</div>
+									</MuText>
+								</MuLinearWrapper>
 
 								<UiBadge
 									v-if="pending_default_address.label"
@@ -128,11 +173,11 @@ const {
 								>
 									{{ getLabelCopy(pending_default_address.label) }}
 								</UiBadge>
-							</div>
-						</div>
+							</MuLinearWrapper>
+						</MuLinearWrapper>
 					</MuCard>
 				</div>
-			</div>
+			</MuLinearWrapper>
 		</section>
 
 		<template #footer>
@@ -170,16 +215,6 @@ const {
 	width: 100%;
 
 	.account-address-book-confirm-default-modal-body {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-
-		.account-address-book-confirm-default-modal-description {
-			color: var(--text-secondary);
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-		}
-
 		.account-address-book-confirm-default-modal-compare {
 			display: grid;
 			grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
@@ -193,8 +228,6 @@ const {
 			}
 
 			.account-address-book-confirm-default-modal-card {
-				display: flex;
-				flex-direction: column;
 				overflow: hidden;
 
 				&.account-address-book-confirm-default-modal-card--next {
@@ -205,17 +238,12 @@ const {
 				}
 
 				.account-address-book-confirm-default-modal-card-head {
-					display: flex;
-					align-items: center;
-					gap: 12px;
 					padding: 12px 20px;
 					border-bottom: 1px solid var(--gray-20);
 
 					.account-address-book-confirm-default-modal-card-name {
 						font-size: var(--type-size-200);
 						line-height: var(--type-line-200);
-						font-weight: var(--font-weight-semibold);
-						color: var(--text-primary);
 					}
 
 					.account-address-book-confirm-default-modal-default-badge {
@@ -225,34 +253,10 @@ const {
 				}
 
 				.account-address-book-confirm-default-modal-card-body {
-					display: flex;
-					flex-direction: column;
-					gap: 10px;
 					padding: 12px 20px;
 
-					.account-address-book-confirm-default-modal-card-phone {
-						color: var(--text-primary);
-						font-size: var(--type-size-100);
-						font-weight: var(--font-weight-semibold);
-						line-height: var(--type-line-100);
-					}
-
-					.account-address-book-confirm-default-modal-card-address,
-					.account-address-book-confirm-default-modal-card-company {
-						color: var(--text-secondary);
-						font-size: var(--type-size-100);
-						line-height: var(--type-line-100);
-					}
-
 					.account-address-book-confirm-default-modal-card-address-row {
-						display: flex;
-						align-items: flex-start;
-						justify-content: space-between;
-						gap: 24px;
-
 						.account-address-book-confirm-default-modal-card-info {
-							display: flex;
-							flex-direction: column;
 							max-width: 176px;
 						}
 
@@ -291,8 +295,8 @@ const {
 				.account-address-book-confirm-default-modal-card {
 					.account-address-book-confirm-default-modal-card-body {
 						.account-address-book-confirm-default-modal-card-address-row {
-							flex-direction: column;
-							align-items: stretch;
+							flex-direction: column !important;
+							align-items: stretch !important;
 						}
 					}
 				}
