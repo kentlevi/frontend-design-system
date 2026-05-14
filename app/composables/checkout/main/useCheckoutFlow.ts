@@ -13,6 +13,8 @@ import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-f
 import { useAppliedCouponStore } from "~/stores/coupon/applied_coupon.store";
 import { loadAddresses } from "~/services/user-address/user-address.service";
 import { usePointsStore } from "~/stores/user-point/points.store";
+import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral";
+import { clearPaymentLock, saveCompletionSnapshot, writePaymentLock } from "~/utils/checkout/paymentLock";
 
 export const useCheckoutFlow = () => {
 
@@ -48,6 +50,8 @@ export const useCheckoutFlow = () => {
 		setFormErrors,
 		clearFormFieldErrors
 	} = useUserAddressFormStateCheckoutContext()
+
+	const { buildCompleteCheckoutPayload } = useAddressGeneral()
 
 
 
@@ -119,9 +123,26 @@ export const useCheckoutFlow = () => {
 		try {
 			const response = await checkoutRequest(params)
 
+			// Snapshot the completion payload using the form state as it
+			// stands right now, so completing the order after payment uses
+			// what was actually paid for — not whatever the user may edit
+			// (or revert via reload) between submit and payment success.
+			const order_id = response.data?.order?.id
+			if (typeof order_id === 'number') {
+				const snapshot = buildCompleteCheckoutPayload(order_id)
+				saveCompletionSnapshot({
+					shipping_address: snapshot.shipping_address,
+					billing_address: snapshot.billing_address,
+					drop_address: snapshot.drop_address,
+					selected_cart_ids: selected_real_ids.value,
+				})
+				writePaymentLock(order_id)
+			}
+
 			payment.execute(params.payment_method_code, "process", response.data)
 
 		} catch (error) {
+			clearPaymentLock()
 			console.error(error)
 
 			const normalized_error =
