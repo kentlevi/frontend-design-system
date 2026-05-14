@@ -15,6 +15,15 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 		order_refs[type].value = value
 	}
 
+	function findById(id: number): UserOrder | undefined {
+		return [...ongoing.value, ...action_required.value, ...completed.value].find(o => o.id === id)
+	}
+
+
+
+
+
+
 	type OrderAction = 'fetch'
 
 	const loader_map = ref<Record<string, boolean>>({})
@@ -39,7 +48,9 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 		ongoing,
 		action_required,
 		completed,
+
 		setOrders,
+		findById,
 		isLoading,
 		startLoading,
 		stopLoading,
