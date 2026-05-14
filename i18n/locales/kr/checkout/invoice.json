@@ -13,10 +13,10 @@
       "billingCompany": "회사명",
       "editBillingInfo": "청구 정보 수정",
       "totals": {
-        "subtotal": "소계:",
+        "subtotal": "소계",
         "shippingFee": "배송비: ({shippingLabel})",
-        "discounts": "할인:",
-        "total": "합계:"
+        "discounts": "할인 금액",
+        "total": "합계"
       },
       "footerAddress": "대한민국 서울특별시 성동구 123-45, 04776",
       "billingModal": {
@@ -25,7 +25,17 @@
         "cancel": "취소",
         "save": "저장"
       },
-      "billingToast": "청구 정보가 성공적으로 업데이트되었습니다!"
+      "billingToast": "청구 정보가 성공적으로 업데이트되었습니다!",
+      "contact": {
+        "tel": "전화: +65 3158 2800",
+        "email": "이메일: info{'@'}musticker.com",
+        "website": "웹사이트: www.musticker.com"
+      },
+      "table": {
+        "item": "상품",
+        "quantity": "수량",
+        "amount": "금액"
+      }
     }
   }
 }

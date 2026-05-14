@@ -53,7 +53,13 @@
       "emptyDescription": "현재 장바구니에서 담긴 상품이 없습니다. 컬렉션을 둘러보며 쇼핑을 시작하거나 아래 추천 상품에서 영감을 얻어보세요",
       "discoverMore": "마음에 드는 상품을 더 찾아보세요.",
       "prevProductsSr": "이전 상품",
-      "nextProductsSr": "다음 상품"
+      "nextProductsSr": "다음 상품",
+      "aria": {
+        "featuredProducts": "추천 상품",
+        "discoverMore": "더 많은 상품 보기",
+        "openQuantityOptions": "수량 옵션 열기",
+        "enterQuantity": "수량 입력"
+      }
     }
   }
 }

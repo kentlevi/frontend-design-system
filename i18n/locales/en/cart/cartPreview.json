@@ -34,7 +34,10 @@
         "saveItemChanges": "Save item changes",
         "cancelItemChanges": "Cancel item changes",
         "editItem": "Edit item",
-        "removeItem": "Remove item"
+        "removeItem": "Remove item",
+        "openSizeOptions": "Open size options",
+        "openQuantityOptions": "Open quantity options",
+        "enterQuantity": "Enter quantity"
       }
     }
   }

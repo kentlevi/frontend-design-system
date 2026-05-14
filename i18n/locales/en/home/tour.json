@@ -7,7 +7,8 @@
       "bodyHighlight": "you’ve earned {points} points to get started.",
       "bodySuffix": " This guided tour will introduce the key features and help you make the most of your account.",
       "skip": "Skip",
-      "getStarted": "Get Started"
+      "getStarted": "Get Started",
+      "closeAria": "Close welcome popover"
     },
     "tour": {
       "close": "Close guide tour",

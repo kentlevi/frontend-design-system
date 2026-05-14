@@ -25,7 +25,17 @@
         "cancel": "Cancel",
         "save": "Save"
       },
-      "billingToast": "Billing details updated successfully!"
+      "billingToast": "Billing details updated successfully!",
+      "contact": {
+        "tel": "Tel No: +65 3158 2800",
+        "email": "Email: info{'@'}musticker.com",
+        "website": "Website: www.musticker.com"
+      },
+      "table": {
+        "item": "Item",
+        "quantity": "Qty.",
+        "amount": "Amount"
+      }
     }
   }
 }

@@ -11,6 +11,10 @@
       "paymentSubnote": "원하는 결제 수단으로 안전하게 결제하세요.",
       "useShippingAsBilling": "배송지 주소를 결제 청구지와 동일하게 사용",
       "viewBillingAddresses": "청구지 주소 보기",
+      "emailTooltip": {
+        "title": "이메일 인증 및 업데이트",
+        "text": "계속 진행하려면 이메일 주소를 입력해 주세요. 계정 보유 여부를 확인하고 주문 업데이트를 보내는 데 사용됩니다."
+      },
       "orderSummary": "주문 요약",
       "noItemsSelected": "결제할 상품이 선택되지 않았습니다.",
       "verifyingTitle": "정보 확인 중",
@@ -73,7 +77,7 @@
           "alt": "빠른 배송",
           "name": "빠른 배송",
           "date": "2025년 12월 12일",
-          "price": "무료"
+          "price": "무료 배송"
         }
       },
       "paymentMethods": {
@@ -87,7 +91,7 @@
         },
         "bankTransfer": {
           "alt": "계좌이체",
-          "label": "계좌이체"
+          "label": "무통장 입금"
         },
         "tossPayment": {
           "alt": "토스 결제",
@@ -117,7 +121,7 @@
       "summary": {
         "itemMeta": "{size}mm / {qty}pcs.",
         "subtotal": "소계",
-        "shippingFee": "배송비:",
+        "shippingFee": "배송비",
         "discounts": "할인 금액",
         "total": "합계",
         "shippingFeeInfoAria": "배송비 정보 보기",

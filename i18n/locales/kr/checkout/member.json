@@ -13,10 +13,10 @@
       "billingCompany": "회사명:",
       "editBillingInfo": "청구 정보 수정",
       "totals": {
-        "subtotal": "소계:",
+        "subtotal": "소계",
         "shippingFee": "배송비: ({shippingLabel})",
-        "discounts": "할인:",
-        "total": "합계:"
+        "discounts": "할인 금액",
+        "total": "합계"
       },
       "footerAddress": "대한민국 서울특별시 성동구 123-45, 04776",
       "billingModal": {
@@ -40,6 +40,10 @@
       "shippingMethod": "배송 방법",
       "shippingNote": "안내 : 오늘 주문 확정 시 도착 예정일입니다.",
       "enableDropShipping": "위탁배송 이용하기",
+      "dropShippingTooltip": {
+        "title": "위탁배송 이용하기",
+        "text": "고객에게 직접 배송되도록 설정할 수 있습니다. 머스티커가 제작, 포장, 배송까지 대신 진행합니다."
+      },
       "viewDropShippingAddresses": "위탁배송지 목록 확인",
       "payment": "결제 수단",
       "paymentSubnote": "신용카드로 결제:",
@@ -85,6 +89,10 @@
       "points": "포인트",
       "pointsAvailable": "{value} 보유 포인트",
       "pointsPlaceholder": "0 포인트",
+      "pointsTooltip": {
+        "title": "포인트 사용 안내",
+        "text": "포인트를 사용해 결제 금액을 줄일 수 있습니다. 1포인트 = 1원입니다."
+      },
       "useAll": "전액 사용",
       "coupon": "쿠폰",
       "couponPlaceholder": "쿠폰 코드 입력",
@@ -94,7 +102,7 @@
       "fields": {
         "cardNumber": {
           "label": "카드 번호",
-          "placeholder": "카드 번호 입력"
+          "placeholder": "카드 번호를 입력하세요"
         },
         "expiration": {
           "label": "유효 기간",
@@ -124,7 +132,9 @@
         "total": "합계",
         "shippingFeeInfoAria": "배송비 정보 보기",
         "shippingFeeTooltipTitle": "배송비",
-        "shippingFeeTooltipText": "배송비는 선택한 배송 방법과 지역에 따라 계산됩니다."
+        "shippingFeeTooltipText": "배송비는 선택한 배송 방법과 지역에 따라 계산됩니다.",
+        "editAria": "주문 요약 수정",
+        "printAria": "주문 요약 인쇄"
       }
     }
   }

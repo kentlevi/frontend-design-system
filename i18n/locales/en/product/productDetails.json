@@ -3,12 +3,12 @@
     "selectedBanner": "{name} selected",
     "changeProduct": "Change product",
     "options": {
-      "selectSize": "Select your preferred size",
+      "selectSize": "Select your sheet size",
       "unitMm": "(Unit: mm)",
       "productPageUnitMm": "(Unit: mm)",
-      "customSize": "Custom Size",
-      "selectQuantity": "Select your preferred quantity",
-      "customQuantity": "Custom Quantity",
+      "customSize": "Custom Sheet Size",
+      "selectQuantity": "Ships fast once you confirm your design.",
+      "customQuantity": "- Free shipping over 50,000 won",
       "selectColor": "Select your preferred color",
       "selectFont": "Select your font",
       "colors": {
@@ -34,20 +34,20 @@
     },
     "sizes": {
       "small30": {
-        "label": "Small 30x30",
-        "featureLabel": "Small 30x30"
+        "label": "A6 105x148",
+        "featureLabel": "A6 105x148"
       },
       "medium75": {
-        "label": "Medium 75x75",
-        "featureLabel": "Medium 75x75"
+        "label": "A5 148x210",
+        "featureLabel": "A5 148x210"
       },
       "large100": {
-        "label": "Large 100x100",
-        "featureLabel": "Large 100x100"
+        "label": "A4 210x297",
+        "featureLabel": "A4 210x297"
       },
       "extraLarge125": {
-        "label": "Extra Large 125x125",
-        "featureLabel": "Extra Large 125x125"
+        "label": "72x170",
+        "featureLabel": "72x170"
       }
     },
     "featureCards": {
@@ -64,12 +64,12 @@
         "description": "Standout size for cars, coolers, or toolboxes."
       },
       "effortlessApplication": {
-        "title": "Painted Look Effect",
-        "description": "Apply your design with ease. Resulting in a crisp, professional finish that that looks like it’s painted directly onto the surface."
+        "title": "Vivid colors, flawless durability",
+        "description": "Brilliant, sharp colors brought to life with high-quality printing and thick materials. Built to resist fading in rain, sunlight, and high temperatures. Enjoy long-lasting quality from the moment you apply it."
       },
       "designedForPrecision": {
-        "title": "Clean Transfer Stickers",
-        "description": "Each design is carefully cut from your uploaded artwork, transferring flawlessly for a crisp and polished final result."
+        "title": "Precisely cut to match your design",
+        "description": "Upload your logo, illustration, or photo and turn it into a sticker that’s precisely shaped to match your design. Even complex patterns are faithfully reproduced using Musticker’s advanced cutting technology."
       }
     },
     "price": {
@@ -84,6 +84,9 @@
       },
       "nextStep": "Next Step",
       "perPiece": "per piece"
+    },
+    "vinyl": {
+      "illustrativeNote": "The surface colour is for illustrative purpose only and won't be produced. Self-adhesive vinyl letters are individually cut and come pre-spaced with application tape applied."
     }
   }
 }

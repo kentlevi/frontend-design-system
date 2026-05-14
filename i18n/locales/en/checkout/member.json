@@ -34,12 +34,16 @@
       "shippingDetails": "Shipping Details",
       "viewShippingAddresses": "View Shipping Address",
       "myShippingAddress": "My Shipping Address",
-      "discountsAndPerks" : "Discounts and Coupons",
+      "discountsAndPerks": "Discounts and Coupons",
       "defaultBadge": "Default",
       "shipToAnotherAddress": "Ship to Another Address",
       "shippingMethod": "Shipping Method",
       "shippingNote": "Note: This is the estimated delivery date if the order is confirmed today.",
       "enableDropShipping": "Enable Drop Shipping",
+      "dropShippingTooltip": {
+        "title": "Enable Drop Shipping",
+        "text": "Ship orders directly to your customer without handling the delivery. We will produce, pack, and ship the order on your behalf."
+      },
       "viewDropShippingAddresses": "View Drop Shipping Addresses",
       "payment": "Payment",
       "paymentSubnote": "Pay with your credit card:",
@@ -85,6 +89,10 @@
       "points": "Points",
       "pointsAvailable": "{value}pts. available",
       "pointsPlaceholder": "0 pts",
+      "pointsTooltip": {
+        "title": "How Points Work",
+        "text": "Use your points to reduce your total at checkout. 1 point = 1 won."
+      },
       "useAll": "Use All",
       "coupon": "Coupon",
       "couponPlaceholder": "Enter Code",
@@ -124,7 +132,9 @@
         "total": "Total:",
         "shippingFeeInfoAria": "Show shipping fee information",
         "shippingFeeTooltipTitle": "Shipping Fee",
-        "shippingFeeTooltipText": "The shipping fee is calculated based on your selected delivery method and location."
+        "shippingFeeTooltipText": "The shipping fee is calculated based on your selected delivery method and location.",
+        "editAria": "Edit order summary",
+        "printAria": "Print order summary"
       }
     }
   }
