@@ -33,7 +33,6 @@ export const useCartService = (caller : string) => {
 	const per_page = ref<number>(10)
 
 	const calculateCartItems = async () => {
-		console.warn('Calculating carts...')
 		if( user_store.is_authenticated ) {
 			const cart_numbers = await cart_api_service.requestCartNumbers()
 			if( !cart_numbers ) {
@@ -51,8 +50,6 @@ export const useCartService = (caller : string) => {
 
 	/** This will evaluate all items in user's cart */
 	const evaluateCart = async () => {
-		console.warn('Evaluating carts...')
-
 		if( !user_store.is_authenticated ) {
 			await cart_store.emptyCart(true) // empty the cart with only the unsave item will remain
 		}
@@ -546,5 +543,6 @@ export const useCartService = (caller : string) => {
 		emptyCart			: cart_store.emptyCart,
 		setItemQuantities 	: cart_store.setItemQuantities,
 		updateItemInCart 	: cart_store.updateItemInCart,
+		evaluateSelectedIds : cart_store.evaluateSelectedIds,
 	}
 }
