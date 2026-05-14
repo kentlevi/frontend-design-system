@@ -17,12 +17,19 @@ export interface OnboardingProfile {
 export interface UserState extends UserIdentity {
 	onboardingProfile: OnboardingProfile | null
 	profile: UserProfile | null
+	rank: UserRank | null
 	preference: PreferenceState
 }
 
 export interface RoleState {
 	code: string
 	name: string
+}
+
+export interface UserRank {
+	level: number
+	name: string | null
+	code: 'MUSCOUT' | 'MULEADER' | 'MUBOSS' | 'MUDYNAMO' | null
 }
 
 /**
@@ -35,7 +42,8 @@ export interface UserIdentity {
 	country_id: number
 	social: 'google' | 'facebook' | null,
 	has_password: boolean,
-	role: RoleState | null
+	role: RoleState | null,
+	rank: UserRank | null
 }
 
 /**
