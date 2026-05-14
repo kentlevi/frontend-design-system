@@ -39,7 +39,7 @@ export const useSystemOperations = () => {
 		await startup()
 
 		// 🔥 Watching authentication status
-		watch(() => cart_service.is_authenticated.value, async (n) => {
+		watch(() => cart_service.is_authenticated.value, async () => {
 			await startup()
 		})
 
