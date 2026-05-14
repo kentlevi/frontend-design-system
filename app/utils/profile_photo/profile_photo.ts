@@ -40,6 +40,33 @@ export function useProfilePhotoDisplay() {
 			.join("")
 	})
 
+	const user_rank = computed(() => user_store.state.rank ?? null)
+
+	const display_name_rank = computed(() => {
+		const name = user_store.state.rank?.name
+		const level = user_store.state.rank?.level
+		if (!name) return ""
+		if (!level) return name
+		return `${name} (Level ${level})`
+	})
+
+	const rank_src = computed(() => {
+		const rank = user_rank.value?.code
+
+		switch (rank) {
+			case 'MUSCOUT':
+				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+			case 'MULEADER':
+				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+			case 'MUBOSS':
+				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+			case 'MUDYNAMO':
+				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+			default:
+				return ''
+		}
+	})
+
 	/**
 	 * Display avatar url
 	 */
@@ -63,7 +90,10 @@ export function useProfilePhotoDisplay() {
 
 	return {
 		display_name,
+		display_name_rank,
+		rank_src,
 		user_initial,
-		display_avatar
+		display_avatar,
+		user_rank
 	}
 }
