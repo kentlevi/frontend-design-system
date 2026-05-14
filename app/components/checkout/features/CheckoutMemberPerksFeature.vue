@@ -71,9 +71,16 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 						v-model="points_to_use"
 						size="md"
 						:placeholder="t('checkout.member.pointsPlaceholder')"
+						:disabled="total_points === 0"
 						@keydown="handlePointsKeydown"
 						@paste="handlePointsPaste" />
-					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="points_to_use ? clearPoints() : useAllPoints()">
+					<UiButton
+						variant="outline"
+						tone="neutral"
+						size="md"
+						class="checkout-member-inline-button"
+						:disabled="total_points === 0"
+						@click="points_to_use ? clearPoints() : useAllPoints()">
 						{{ points_to_use ? 'Remove' : t('checkout.member.useAll') }}
 					</UiButton>
 				</div>
