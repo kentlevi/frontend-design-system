@@ -1,18 +1,18 @@
 <script setup lang="ts">
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
 	<section class="cart-preview-empty" data-testid="product-category-cart-empty">
 		<img
 			src="/illustrations/cart/empty-cart-basket.svg"
-			:alt="t('cart.cartPreview.emptyIconAlt')"
+			:alt="translate('cart.cartPreview.emptyIconAlt')"
 			width="112"
 			height="112"
 			class="cart-preview-empty-image"
 		>
-		<h4 class="cart-preview-empty-title">{{ t('cart.cartPreview.emptyTitle') }}</h4>
-		<p class="cart-preview-empty-description">{{ t('cart.cartPreview.emptyDescription') }}</p>
+		<h4 class="cart-preview-empty-title">{{ translate('cart.cartPreview.emptyTitle') }}</h4>
+		<p class="cart-preview-empty-description">{{ translate('cart.cartPreview.emptyDescription') }}</p>
 	</section>
 </template>
 

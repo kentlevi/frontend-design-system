@@ -24,7 +24,7 @@ const {
 	selectSizeByCode,
 } = useProductExperience();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 const product_hero_media_map: Record<string, { folder: string, file: string }> = {
@@ -54,7 +54,7 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 
 const displayed_product_title = computed(() => {
 	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle');
+	if (has_lettering_editor.value) return translate('product.hero.vinylLetteringTitle');
 
 	// Otherwise, use the formal product name from catalog/translation
 	return selected_product.value ? getProductPageName(selected_product.value) : '';
@@ -182,17 +182,17 @@ onBeforeUnmount(() => {
 				@click="selectSizeByCode(featured_size_cards.code)"
 			>
 				<h4 class="mini-feature-title">
-					{{ t(`product.sizes.${featured_size_cards.code}.featureLabel`, t(`product.sizes.${featured_size_cards.code}.label`)) }}
+					{{ translate(`product.sizes.${featured_size_cards.code}.featureLabel`, translate(`product.sizes.${featured_size_cards.code}.label`)) }}
 				</h4>
 				<img
 					v-if="featured_size_cards.image"
 					:src="featured_size_cards.image"
-					:alt="t(`product.sizes.${featured_size_cards.code}.label`)"
+					:alt="translate(`product.sizes.${featured_size_cards.code}.label`)"
 					loading="lazy"
 					class="mini-feature-image"
 				>
 				<p class="mini-feature-description">
-					{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
+					{{ translate(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 				</p>
 			</button>
 		</div>

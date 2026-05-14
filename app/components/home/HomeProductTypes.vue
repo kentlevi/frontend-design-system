@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useCountry } from '@/composables/app/country/useCountry';
 import { homeProductTypes } from '~/data/products/homeTypes';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 </script>
 
@@ -27,7 +27,7 @@ const { withCountry } = useCountry();
 					>
 				</div>
 				<p class="home-types-label">
-					{{ t(`home.productTypes.${item.key}`) }}
+					{{ translate(`home.productTypes.${item.key}`) }}
 				</p>
 			</NuxtLink>
 		</div>

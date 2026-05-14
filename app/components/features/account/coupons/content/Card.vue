@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 interface CouponItem {
 	code: string;
 	titleKey: string;
@@ -10,33 +14,32 @@ defineProps<{
 	item: CouponItem;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
-	<article
+	<MuLinearWrapper
 		class="account-coupons-card"
 		:data-testid="`account-coupons-item-${item.code}`"
+		justify="space-between"
+		:gap="14"
 	>
 		<div class="account-coupons-card-copy">
-			<h2 class="account-coupons-card-title">{{ t(`account.coupons.items.${item.titleKey}.title`) }}</h2>
-			<h3 class="account-coupons-code">{{ item.code }}</h3>
-			<p class="account-coupons-note">{{ t(`account.coupons.items.${item.titleKey}.note`) }}</p>
+			<MuHeading weight="semi-bold" class="account-coupons-card-title">{{ translate(`account.coupons.items.${item.titleKey}.title`) }}</MuHeading>
+			<MuHeading variant="3" class="account-coupons-code">{{ item.code }}</MuHeading>
+			<MuText color="text-secondary" class="account-coupons-note">{{ translate(`account.coupons.items.${item.titleKey}.note`) }}</MuText>
 		</div>
 		<div class="account-coupons-right">
-			<p class="account-coupons-expiry">{{ item.expiry }}</p>
-			<span class="account-coupons-tag">{{ t(`account.coupons.tags.${item.tag}`) }}</span>
+			<MuText weight="bold" color="text-primary" class="account-coupons-expiry">{{ item.expiry }}</MuText>
+			<MuText variant="span" weight="bold" color="text-primary" class="account-coupons-tag">{{ translate(`account.coupons.tags.${item.tag}`) }}</MuText>
 		</div>
-	</article>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-coupons-card {
 	padding: 16px 18px;
 	border-top: 1px solid var(--border-default);
-	display: flex;
-	justify-content: space-between;
-	gap: 14px;
 
 	&:first-child {
 		border-top: 0;
@@ -44,7 +47,7 @@ const { t } = useI18n();
 
 	.account-coupons-card-copy {
 		.account-coupons-card-title {
-			font-weight: var(--font-weight-semibold);;
+			font-weight: var(--font-weight-semibold);
 			font-size: var(--type-size-400);
 			line-height: var(--type-line-400);
 		}
@@ -57,9 +60,6 @@ const { t } = useI18n();
 
 		.account-coupons-note {
 			margin: 8px 0 0;
-			color: var(--text-secondary);
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
 		}
 	}
 
@@ -72,8 +72,6 @@ const { t } = useI18n();
 		.account-coupons-expiry {
 			font-size: var(--type-size-500);
 			line-height: var(--type-line-500);
-			font-weight: var(--font-weight-bold);
-			color: var(--text-primary);
 		}
 
 		.account-coupons-tag {
@@ -84,10 +82,6 @@ const { t } = useI18n();
 			display: inline-flex;
 			align-items: center;
 			background: color-mix(in srgb, var(--brand-primary) 16%, var(--contrast-light));
-			color: var(--text-primary);
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-			font-weight: var(--font-weight-bold);
 		}
 	}
 }

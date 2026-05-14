@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 const props = defineProps<{
 	modelValue: boolean;
 	password: string;
@@ -20,7 +24,7 @@ const emit = defineEmits<{
 	close: [];
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 function closeModal() {
 	emit('update:modelValue', false);
@@ -42,14 +46,19 @@ function closeModal() {
 			<button
 				type="button"
 				class="account-profile-setup-password-modal-close"
-				:aria-label="t('account.profile.closeSetupPasswordModal')"
+				:aria-label="translate('account.profile.closeSetupPasswordModal')"
 				data-testid="account-profile-setup-password-modal-close"
 				@click="closeModal"
 			>
 				<UiIcon name="regular-times" :size="24" />
 			</button>
 
-			<div class="account-profile-setup-password-modal-header">
+			<MuLinearWrapper
+				class="account-profile-setup-password-modal-header"
+				direction="column"
+				align="flex-start"
+				:gap="24"
+			>
 				<UiLogo
 					name="musticker"
 					variant="mark"
@@ -58,15 +67,15 @@ function closeModal() {
 					class="account-profile-setup-password-modal-logo"
 				/>
 				<div class="account-profile-setup-password-modal-copy">
-					<h3 class="account-profile-setup-password-modal-title">{{ t('account.profile.setupPasswordTitle') }}</h3>
-					<p class="account-profile-setup-password-modal-description">{{ t('account.profile.passwordHint') }}</p>
+					<MuHeading variant="3" weight="semi-bold" color="text-primary" class="account-profile-setup-password-modal-title">{{ translate('account.profile.setupPasswordTitle') }}</MuHeading>
+					<MuText color="text-secondary" class="account-profile-setup-password-modal-description">{{ translate('account.profile.passwordHint') }}</MuText>
 				</div>
-			</div>
+			</MuLinearWrapper>
 
 			<div class="account-profile-setup-password-modal-form">
 				<div class="account-profile-setup-password-modal-fields">
 					<UiFormField
-						:label="t('account.profile.passwordLabel')"
+						:label="translate('account.profile.passwordLabel')"
 						:error="props.passwordError"
 						:required="true"
 					>
@@ -77,7 +86,7 @@ function closeModal() {
 								:type="props.passwordVisible ? 'text' : 'password'"
 								:aria-describedby="describedBy || undefined"
 								:state="props.passwordError ? 'error' : 'default'"
-								:placeholder="t('account.profile.enterPassword')"
+								:placeholder="translate('account.profile.enterPassword')"
 								data-testid="account-profile-setup-password-input"
 								@update:model-value="emit('update:password', $event); emit('clear-errors')"
 							>
@@ -88,8 +97,8 @@ function closeModal() {
 										size="24"
 										:no-hover="true"
 										class="account-profile-password-toggle"
-										:aria-label="t('auth.reset.togglePassword')"
-										:sr-label="t('auth.reset.togglePassword')"
+										:aria-label="translate('auth.reset.togglePassword')"
+										:sr-label="translate('auth.reset.togglePassword')"
 										icon-only
 										:icon="props.passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
 										:icon-size="24"
@@ -101,7 +110,7 @@ function closeModal() {
 					</UiFormField>
 
 					<UiFormField
-						:label="t('account.profile.confirmPassword')"
+						:label="translate('account.profile.confirmPassword')"
 						:required="true"
 					>
 						<template #default="{ inputId, describedBy }">
@@ -111,7 +120,7 @@ function closeModal() {
 								:type="props.passwordConfirmationVisible ? 'text' : 'password'"
 								:aria-describedby="describedBy || undefined"
 								:state="props.passwordError ? 'error' : 'default'"
-								:placeholder="t('account.profile.confirmPasswordPlaceholder')"
+								:placeholder="translate('account.profile.confirmPasswordPlaceholder')"
 								data-testid="account-profile-setup-password-confirm-input"
 								@update:model-value="emit('update:passwordConfirmation', $event); emit('clear-errors')"
 							>
@@ -122,8 +131,8 @@ function closeModal() {
 										size="24"
 										:no-hover="true"
 										class="account-profile-password-toggle"
-										:aria-label="t('auth.reset.toggleConfirmPassword')"
-										:sr-label="t('auth.reset.toggleConfirmPassword')"
+										:aria-label="translate('auth.reset.toggleConfirmPassword')"
+										:sr-label="translate('auth.reset.toggleConfirmPassword')"
 										icon-only
 										:icon="props.passwordConfirmationVisible ? 'regular-eye' : 'regular-eye-slash'"
 										:icon-size="24"
@@ -144,7 +153,7 @@ function closeModal() {
 						data-testid="account-profile-setup-password-modal-confirm"
 						@click="emit('submit')"
 					>
-						{{ t('account.profile.confirmSetupPassword') }}
+						{{ translate('account.profile.confirmSetupPassword') }}
 					</UiButton>
 				</div>
 			</div>
@@ -185,29 +194,9 @@ function closeModal() {
 		cursor: pointer;
 	}
 
-	&-header {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 24px;
-	}
-
 	&-copy {
 		display: grid;
 		gap: 8px;
-	}
-
-	&-title {
-		font-size: var(--type-size-500);
-		line-height: var(--type-line-500);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
-	}
-
-	&-description {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
 	}
 
 	&-fields {

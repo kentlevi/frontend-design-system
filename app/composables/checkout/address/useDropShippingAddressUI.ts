@@ -82,6 +82,7 @@ export function useDropShippingAddressUI() {
 		drop_shipping_ship_to_another_address,
 		drop_shipping_tooltip_open,
 		drop_shipping_mode_swap_wrapper_ref,
+		drop_shipping_tooltip_ref,
 		has_drop_addresses,
 
 		getAddressTagClass,

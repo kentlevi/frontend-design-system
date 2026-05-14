@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineProps<{
 	dynamicProfileFields: Array<{
 		id: string | number
@@ -19,7 +22,7 @@ defineEmits<{
 	(e: 'change-email-click'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -29,7 +32,7 @@ const { t } = useI18n();
 				:error="fieldErrors[`fields.${field.field_key}`]"
 				:label="field.is_required
 					? field.field_label
-					: `${field.field_label} (${t('account.profile.optional')})`"
+					: `${field.field_label} (${translate('account.profile.optional')})`"
 				:required="Boolean(field.is_required)"
 			>
 				<template v-if="!field.is_required" #label>
@@ -37,7 +40,7 @@ const { t } = useI18n();
 						{{ field.field_label }}
 					</span>
 					<span class="account-profile-optional">
-						({{ t('account.profile.optional') }})
+						({{ translate('account.profile.optional') }})
 					</span>
 				</template>
 				<template #default="{ inputId, describedBy }">
@@ -55,7 +58,7 @@ const { t } = useI18n();
 
 		<UiFormField
 			class="account-profile-grid-full"
-			:label="t('account.profile.emailAddress')"
+			:label="translate('account.profile.emailAddress')"
 			:required="true"
 		>
 			<template #default="{ inputId, describedBy }">
@@ -79,17 +82,17 @@ const { t } = useI18n();
 						data-testid="account-profile-email-change-button"
 						@click="$emit('change-email-click')"
 					>
-						{{ t('account.profile.change') }}
+						{{ translate('account.profile.change') }}
 					</UiButton>
 				</div>
-				<p v-if="social" class="account-profile-email-helper-text">
-					{{ t('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
-				</p>
+				<MuText v-if="social" color="text-secondary" class="account-profile-email-helper-text">
+					{{ translate('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
+				</MuText>
 			</template>
 		</UiFormField>
 	</div>
 
-	<div class="account-profile-actions-right" data-testid="account-profile-save-wrap">
+	<MuLinearWrapper class="account-profile-actions-right" data-testid="account-profile-save-wrap" justify="flex-end">
 		<UiButton
 			variant="filled"
 			tone="neutral"
@@ -98,9 +101,9 @@ const { t } = useI18n();
 			data-testid="account-profile-save-button"
 			@click="$emit('submit')"
 		>
-			{{ t('account.profile.saveChanges') }}
+			{{ translate('account.profile.saveChanges') }}
 		</UiButton>
-	</div>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
@@ -121,7 +124,6 @@ const { t } = useI18n();
 
 .account-profile-email-helper-text {
 	margin: 0;
-	color: var(--text-secondary);
 }
 
 .account-profile-social-text {
@@ -151,10 +153,5 @@ const { t } = useI18n();
 :deep(.ui-input[data-disabled="true"] .ui-input-field.account-profile-email-input-field--locked) {
 	padding-right: 92px;
 	color: var(--text-primary);
-}
-
-.account-profile-actions-right {
-	display: flex;
-	justify-content: flex-end;
 }
 </style>

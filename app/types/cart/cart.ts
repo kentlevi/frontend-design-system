@@ -23,6 +23,10 @@ export interface CartItem {
 	file_path?: string | null
 }
 
+export interface CartItemCreationSpec {
+	item: { id: number }
+}
+
 export interface CartItemAPI {
 	product_config_mapping_id: number
 	color_id: number | null

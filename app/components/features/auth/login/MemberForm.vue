@@ -13,10 +13,10 @@ const {
 	togglePassword,
 
 	member_form,
-    email_error,
-    email_error_message,
-    password_error,
-    password_error_message
+	email_error,
+	email_error_message,
+	password_error,
+	password_error_message
 } = useLoginCard();
 
 const { handleModalValueChange } = useResetPassword();
@@ -34,17 +34,17 @@ const { handleModalValueChange } = useResetPassword();
 				</MuText>
 			</MuLinearWrapper>
 			<MuInput
+				id="email"
+				v-model="member_form.email"
 				:placeholder="translate('auth.login.enterEmail')"
 				type="email"
 				name="email"
-				id="email"
-                :has-error="email_error"
-				v-model="member_form.email"
+				:has-error="email_error"
 			/>
 		</MuLinearWrapper>
 
 		<MuLinearWrapper direction="column" gap="8px" width="100%">
-            <MuLinearWrapper justify="space-between">
+			<MuLinearWrapper justify="space-between">
 				<MuText weight="semi-bold">
 					{{ translate('auth.login.password') }}
 				</MuText>
@@ -53,12 +53,12 @@ const { handleModalValueChange } = useResetPassword();
 				</MuText>
 			</MuLinearWrapper>
 			<MuInput
+				id="password"
+				v-model="member_form.password"
 				:placeholder="translate('auth.login.enterPassword')"
 				:type="show_password ? 'text' : 'password'"
 				name="password"
-				id="password"
-                :has-error="password_error"
-				v-model="member_form.password"
+				:has-error="password_error"
 			>
 				<template #inner-right>
 					<UiButton

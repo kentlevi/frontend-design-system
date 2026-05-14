@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineProps<{
 	modelValue: boolean
 	pendingEmail: string
@@ -22,7 +26,7 @@ function handlePendingEmailChange(value: string) {
 	emit('input-change')
 }
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 function parseBoldText(text: string) {
 	return text.split(/(\[b\].*?\[\/b\])/g).filter(Boolean).map((part) => ({
@@ -45,7 +49,7 @@ function parseBoldText(text: string) {
 			<button
 				type="button"
 				class="account-profile-email-change-modal-close"
-				:aria-label="t('account.profile.emailChange.closeModal')"
+				:aria-label="translate('account.profile.emailChange.closeModal')"
 				data-testid="account-profile-email-change-modal-close"
 				@click="closeEmailChangeModal"
 			>
@@ -61,18 +65,18 @@ function parseBoldText(text: string) {
 					>
 				</div>
 
-				<div class="account-profile-email-change-modal-text-wrap">
-					<h3 class="account-profile-email-change-modal-title">{{ t('account.profile.emailChange.title') }}</h3>
-					<p class="account-profile-email-change-modal-text">
+				<MuLinearWrapper class="account-profile-email-change-modal-text-wrap" direction="column" :gap="8">
+					<MuHeading variant="5" weight="semi-bold" color="text-primary" class="account-profile-email-change-modal-title">{{ translate('account.profile.emailChange.title') }}</MuHeading>
+					<MuText color="text-secondary" class="account-profile-email-change-modal-text">
 						<template
-							v-for="(part, index) in parseBoldText(t('account.profile.emailChange.description'))"
+							v-for="(part, index) in parseBoldText(translate('account.profile.emailChange.description'))"
 							:key="`${part.text}-${index}`"
 						>
 							<strong v-if="part.isBold" class="change-strong">{{ part.text }}</strong>
 							<template v-else>{{ part.text }}</template>
 						</template>
-					</p>
-				</div>
+					</MuText>
+				</MuLinearWrapper>
 			</div>
 
 			<div class="account-profile-email-change-modal-body">
@@ -80,7 +84,7 @@ function parseBoldText(text: string) {
 					class="account-profile-email-change-field"
 					head-class="account-profile-email-change-field-head"
 					label-text-class="account-profile-email-change-field-label-text"
-					:label="t('account.profile.emailAddress')"
+					:label="translate('account.profile.emailAddress')"
 					:error="emailChangeError"
 					:required="true"
 				>
@@ -92,7 +96,7 @@ function parseBoldText(text: string) {
 								type="email"
 								:aria-describedby="describedBy || undefined"
 								:state="emailChangeError ? 'error' : 'default'"
-								:placeholder="t('account.profile.emailChange.placeholder')"
+								:placeholder="translate('account.profile.emailChange.placeholder')"
 								input-class="account-profile-email-change-input"
 								data-testid="account-profile-email-change-input"
 								@update:model-value="handlePendingEmailChange"
@@ -112,7 +116,7 @@ function parseBoldText(text: string) {
 					data-testid="account-profile-email-change-modal-confirm"
 					@click="confirmEmailChange"
 				>
-					{{ t('account.profile.emailChange.confirm') }}
+					{{ translate('account.profile.emailChange.confirm') }}
 				</UiButton>
 			</div>
 		</section>
@@ -164,22 +168,7 @@ function parseBoldText(text: string) {
 		}
 
 		.account-profile-email-change-modal-text-wrap {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-
-			.account-profile-email-change-modal-title {
-				color: var(--text-primary);
-				font-size: var(--type-size-400);
-				line-height: var(--type-line-400);
-				font-weight: var(--font-weight-semibold);
-			}
-
 			.account-profile-email-change-modal-text {
-				color: var(--text-secondary);
-				font-size: var(--type-size-100);
-				line-height: var(--type-line-100);
-
 				.change-strong {
 					color: var(--text-primary);
 					font-weight: var(--font-weight-bold);

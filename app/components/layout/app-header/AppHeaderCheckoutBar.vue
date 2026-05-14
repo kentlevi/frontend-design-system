@@ -3,7 +3,7 @@ import { useCountry } from '~/composables/app/country/useCountry';
 import { header_checkout_config } from '~/data/layout/header';
 
 const { withCountry } = useCountry();
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 
 </script>
@@ -18,7 +18,7 @@ const { t } = useI18n();
 				<span class="checkout-header-divider" aria-hidden="true" />
 				<p class="checkout-header-title">
 					<UiIcon name="regular-shield" :size="32" color="var(--text-primary)" />
-					{{ t(header_checkout_config.title_key) }}
+					{{ translate(header_checkout_config.title_key) }}
 				</p>
 			</div>
 

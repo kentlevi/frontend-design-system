@@ -32,7 +32,7 @@ export function useRegisterForm() {
 	const router = useRouter();
 	const route = useRoute();
 	const is_verification_modal_open = ref(false);
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const { withCountry } = useCountry();
 
 	const first_name = ref('');
@@ -246,7 +246,7 @@ export function useRegisterForm() {
 	function normalizeEmailErrorMessage(message: string) {
 		if (!message) return message;
 		if (/already been taken/i.test(message)) {
-			return t('auth.register.validation.emailTaken');
+			return translate('auth.register.validation.emailTaken');
 		}
 		return message;
 	}
@@ -254,7 +254,7 @@ export function useRegisterForm() {
 	function normalizePasswordErrorMessage(message: string) {
 		if (!message) return message;
 		if (/at least|uppercase|numbers?|symbols?|mixed case|letters?|format|invalid/i.test(message)) {
-			return t('auth.register.validation.passwordRequirement');
+			return translate('auth.register.validation.passwordRequirement');
 		}
 		return message;
 	}
@@ -262,10 +262,10 @@ export function useRegisterForm() {
 	function normalizeVerificationErrorMessage(message: string) {
 		if (!message) return '';
 		if (/expired/i.test(message)) {
-			return t('auth.verification.expiredCode');
+			return translate('auth.verification.expiredCode');
 		}
 		if (/incorrect|invalid/i.test(message)) {
-			return t('auth.verification.invalidCode');
+			return translate('auth.verification.invalidCode');
 		}
 		return message;
 	}
@@ -295,28 +295,28 @@ export function useRegisterForm() {
 
 	function validateInputs() {
 		if (!first_name.value.trim()) {
-			first_name_error.value = t('auth.register.validation.fieldBlank');
+			first_name_error.value = translate('auth.register.validation.fieldBlank');
 			return false;
 		}
 
 		if (!email.value.trim()) {
-			email_error.value = t('auth.register.validation.fieldBlank');
+			email_error.value = translate('auth.register.validation.fieldBlank');
 			return false;
 		} else if (!isValidAuthEmail(email.value.trim())) {
-			email_error.value = t('auth.register.validation.emailInvalid');
+			email_error.value = translate('auth.register.validation.emailInvalid');
 			return false;
 		}
 
 		if (!password.value.trim()) {
-			password_error.value = t('auth.register.validation.fieldBlank');
+			password_error.value = translate('auth.register.validation.fieldBlank');
 			return false;
 		} else if (!isValidRegisterPassword(password.value.trim())) {
-			password_error.value = t('auth.register.validation.passwordRequirement');
+			password_error.value = translate('auth.register.validation.passwordRequirement');
 			return false;
 		}
 
 		if (!agree_terms.value) {
-			terms_error.value = t('auth.register.validation.mustAgree');
+			terms_error.value = translate('auth.register.validation.mustAgree');
 			return false;
 		}
 
@@ -375,7 +375,7 @@ export function useRegisterForm() {
 				const code = getAuthResponseCode(response);
 				const message = getAuthResponseMessage(response);
 				if (code === 'max_resend_reached') {
-					resend_limit_reached.value = message || t('auth.verification.invalidCode');
+					resend_limit_reached.value = message || translate('auth.verification.invalidCode');
 					applyResendCooldownFromResponse(response);
 					verification_error.value = '';
 					is_verification_modal_open.value = true
@@ -460,7 +460,7 @@ export function useRegisterForm() {
 
 		try {
 			if(!verification_code.value){
-				return verification_error.value = t('auth.guestVerification.codeRequired')
+				return verification_error.value = translate('auth.guestVerification.codeRequired')
 			}
 
 			const { submitRegisterVerificationHandler } = useRegisterUser();
@@ -475,7 +475,7 @@ export function useRegisterForm() {
 				verification_error.value =
 					normalizeVerificationErrorMessage(first_data_error)
 					|| normalizeVerificationErrorMessage(getAuthResponseMessage(response))
-					|| t('auth.verification.invalidCode');
+					|| translate('auth.verification.invalidCode');
 				return response;
 			}
 
@@ -500,7 +500,7 @@ export function useRegisterForm() {
 		} catch (error: unknown) {
 			verification_error.value =
 				normalizeVerificationErrorMessage(getAuthErrorMessage(error))
-				|| t('auth.verification.invalidCode');
+				|| translate('auth.verification.invalidCode');
 		} finally {
 			is_verifying.value = false;
 		}
@@ -518,12 +518,12 @@ export function useRegisterForm() {
 				const message_code = getAuthResponseCode(response);
 				const response_message = getAuthResponseMessage(response);
 				if (message_code === 'max_resend_reached') {
-					resend_limit_reached.value = response_message || t('auth.verification.invalidCode');
+					resend_limit_reached.value = response_message || translate('auth.verification.invalidCode');
 					applyResendCooldownFromResponse(response);
 					verification_error.value = '';
 					return;
 				}
-				verification_error.value = response_message || t('auth.verification.invalidCode');
+				verification_error.value = response_message || translate('auth.verification.invalidCode');
 				return;
 			}
 
@@ -538,7 +538,7 @@ export function useRegisterForm() {
 			verification_otp_required.value = verification_data?.otp_required !== false;
 
 			if (!resolved_token) {
-				verification_error.value = getAuthResponseMessage(response) || t('auth.verification.invalidCode');
+				verification_error.value = getAuthResponseMessage(response) || translate('auth.verification.invalidCode');
 				return;
 			}
 
@@ -555,7 +555,7 @@ export function useRegisterForm() {
 			applyRegisterCooldownFromResponse(response);
 			applyResendCooldownFromResponse(response);
 		} catch (error: unknown) {
-			verification_error.value = getAuthErrorMessage(error) || t('auth.verification.invalidCode');
+			verification_error.value = getAuthErrorMessage(error) || translate('auth.verification.invalidCode');
 		}
 	}
 

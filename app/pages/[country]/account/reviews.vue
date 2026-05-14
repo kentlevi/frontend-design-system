@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AccountReviewsPage from '~/components/account/pages/reviews/index.vue';
+// import AccountReviewsPage from '~/components/account/pages/reviews/index.vue';
 definePageMeta({
 	layout: 'home',
 	footerVariant: 'compact',
@@ -7,5 +7,5 @@ definePageMeta({
 </script>
 
 <template>
-	<AccountReviewsPage />
+	<FeaturesAccountReviews />
 </template>

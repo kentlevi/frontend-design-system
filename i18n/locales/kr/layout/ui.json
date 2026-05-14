@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "modal": {
+      "close": "모달 닫기"
+    },
+    "toast": {
+      "close": "닫기"
+    },
+    "select": {
+      "searchPlaceholder": "검색..."
+    },
+    "preview": {
+      "loading": "미리보기 로딩 중"
+    },
+    "alignment": "정렬"
+  }
+}

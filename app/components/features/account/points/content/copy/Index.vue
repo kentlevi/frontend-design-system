@@ -1,24 +1,26 @@
 <script setup lang="ts">
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 </script>
 
 <template>
 	<div class="account-points-copy-column">
-		<h1 class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</h1>
+		<MuHeading weight="bold" class="account-points-title" data-testid="account-points-title">{{ translate('account.points.title') }}</MuHeading>
 
 		<div class="account-points-copy-cards">
 			<section class="account-points-copy-card">
 				<div class="account-points-copy-group">
-					<h2 class="account-points-section-title">
-						{{ t('account.points.pointsSystemTitle') }}
+					<MuHeading class="account-points-section-title" weight="semi-bold">
+						{{ translate('account.points.pointsSystemTitle') }}
 						<UiIcon name="regular-info-circle" :size="20" />
-					</h2>
-					<p class="account-points-description">
-						{{ t('account.points.pointsSystemDescription') }}
-					</p>
+					</MuHeading>
+					<MuText color="text-secondary" class="account-points-description">
+						{{ translate('account.points.pointsSystemDescription') }}
+					</MuText>
 				</div>
 				<div class="account-points-conversion-pill">
 					{{ summary.conversion_rate_label }}
@@ -27,23 +29,23 @@ const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 
 			<section class="account-points-copy-card">
 				<div class="account-points-copy-group">
-					<h2 class="account-points-section-title">
-						{{ t('account.points.questTitle') }}
-					</h2>
-					<p class="account-points-description">
-						{{ t('account.points.questDescription') }}
-					</p>
+					<MuHeading class="account-points-section-title" weight="semi-bold">
+						{{ translate('account.points.questTitle') }}
+					</MuHeading>
+					<MuText color="text-secondary" class="account-points-description">
+						{{ translate('account.points.questDescription') }}
+					</MuText>
 				</div>
 			</section>
 
 			<section class="account-points-copy-card">
 				<div class="account-points-copy-group">
-					<h2 class="account-points-section-title">
-						{{ t('account.points.historyTitle') }}
-					</h2>
-					<p class="account-points-description">
-						{{ t('account.points.historyDescription') }}
-					</p>
+					<MuHeading class="account-points-section-title" weight="semi-bold">
+						{{ translate('account.points.historyTitle') }}
+					</MuHeading>
+					<MuText color="text-secondary" class="account-points-description">
+						{{ translate('account.points.historyDescription') }}
+					</MuText>
 				</div>
 			</section>
 		</div>
@@ -51,12 +53,6 @@ const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 </template>
 
 <style scoped lang="scss">
-.account-points-title {
-	font-size: var(--type-size-450);
-	line-height: var(--type-line-450);
-	font-weight: var(--font-weight-bold);
-}
-
 .account-points-copy-column {
 	display: grid;
 	gap: 24px;
@@ -76,22 +72,20 @@ const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 	display: grid;
 }
 
+.account-points-title {
+	font-size: var(--type-size-450);
+	line-height: var(--type-line-450);
+	font-weight: var(--font-weight-bold);
+}
+
 .account-points-section-title {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	margin: 0;
 	font-size: var(--type-size-300);
 	line-height: var(--type-line-300);
 	font-weight: var(--font-weight-semibold);
 	color: var(--text-primary);
-}
-
-.account-points-description {
-	margin: 0;
-	color: var(--text-secondary);
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
 }
 
 .account-points-conversion-pill {

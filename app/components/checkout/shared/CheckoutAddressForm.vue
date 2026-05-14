@@ -21,32 +21,32 @@ const city = defineModel<string>('city', { default: '' });
 const postalCode = defineModel<string>('postalCode', { default: '' });
 const phone = defineModel<string>('phone', { default: '' });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
 	<div class="checkout-address-form">
 		<div class="checkout-member-field-grid">
-			<UiFormField :label="t('checkout.guest.fields.fullName.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
-				<UiInput v-model="fullName" :size="props.size" :placeholder="t('checkout.guest.fields.fullName.placeholder')" />
+			<UiFormField :label="translate('checkout.guest.fields.fullName.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
+				<UiInput v-model="fullName" :size="props.size" :placeholder="translate('checkout.guest.fields.fullName.placeholder')" />
 			</UiFormField>
-			<UiFormField :label="t('checkout.guest.fields.company.label')" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
-				<UiInput v-model="company" :size="props.size" :placeholder="t('checkout.guest.fields.company.placeholder')" />
+			<UiFormField :label="translate('checkout.guest.fields.company.label')" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
+				<UiInput v-model="company" :size="props.size" :placeholder="translate('checkout.guest.fields.company.placeholder')" />
 			</UiFormField>
 		</div>
-		<UiFormField :label="t('checkout.guest.fields.streetAddress.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
+		<UiFormField :label="translate('checkout.guest.fields.streetAddress.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
 			<div class="checkout-member-field-stack">
-				<UiInput v-model="address1" :size="props.size" :placeholder="t('checkout.guest.fields.streetAddress.line1Placeholder')" />
-				<UiInput v-model="address2" :size="props.size" :placeholder="t('checkout.guest.fields.streetAddress.line2Placeholder')" />
+				<UiInput v-model="address1" :size="props.size" :placeholder="translate('checkout.guest.fields.streetAddress.line1Placeholder')" />
+				<UiInput v-model="address2" :size="props.size" :placeholder="translate('checkout.guest.fields.streetAddress.line2Placeholder')" />
 			</div>
 		</UiFormField>
 
 		<div class="checkout-member-field-grid">
-			<UiFormField :label="t('checkout.guest.fields.city.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
-				<UiInput v-model="city" :size="props.size" :placeholder="t('checkout.guest.fields.city.placeholder')" />
+			<UiFormField :label="translate('checkout.guest.fields.city.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
+				<UiInput v-model="city" :size="props.size" :placeholder="translate('checkout.guest.fields.city.placeholder')" />
 			</UiFormField>
 			<UiFormField
-				:label="t('checkout.guest.fields.province.label')"
+				:label="translate('checkout.guest.fields.province.label')"
 				:required="true"
 				:show-required-mark="true"
 				head-class="checkout-form-field-head"
@@ -56,7 +56,7 @@ const { t } = useI18n();
 				<UiSelect
 					v-model="province"
 					:options="props.provinceOptions"
-					:placeholder="t('checkout.guest.fields.province.placeholder')"
+					:placeholder="translate('checkout.guest.fields.province.placeholder')"
 					class="checkout-member-select"
 					trigger-class="checkout-member-select-trigger"
 				/>
@@ -64,16 +64,16 @@ const { t } = useI18n();
 		</div>
 
 		<div class="checkout-member-field-grid">
-			<UiFormField :label="t('checkout.guest.fields.postalCode.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
-				<UiInput v-model="postalCode" :size="props.size" :placeholder="t('checkout.guest.fields.postalCode.placeholder')" />
+			<UiFormField :label="translate('checkout.guest.fields.postalCode.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
+				<UiInput v-model="postalCode" :size="props.size" :placeholder="translate('checkout.guest.fields.postalCode.placeholder')" />
 			</UiFormField>
-			<UiFormField v-if="!props.hidePhone" :label="t('checkout.guest.fields.phone.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
+			<UiFormField v-if="!props.hidePhone" :label="translate('checkout.guest.fields.phone.label')" :required="true" :show-required-mark="true" head-class="checkout-form-field-head" label-class="checkout-form-field-label" label-text-class="checkout-form-field-label-text">
 				<UiInput
 					v-model="phone"
 					:size="props.size"
 					class="checkout-member-phone-input"
 					input-class="checkout-member-phone-input-field"
-					:placeholder="t('checkout.guest.fields.phone.placeholder')"
+					:placeholder="translate('checkout.guest.fields.phone.placeholder')"
 				/>
 			</UiFormField>
 		</div>

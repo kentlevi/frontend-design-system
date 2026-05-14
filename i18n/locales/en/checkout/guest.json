@@ -11,6 +11,10 @@
       "paymentSubnote": "Pay with your credit card:",
       "useShippingAsBilling": "Use shipping address as billing address",
       "viewBillingAddresses": "View Billing Addresses",
+      "emailTooltip": {
+        "title": "Email for Verification & Updates",
+        "text": "Enter your email address to continue. We'll use it to check if you already have an account and to send updates about your order."
+      },
       "orderSummary": "Order Summary",
       "noItemsSelected": "No items selected for checkout.",
       "verifyingTitle": "Verifying Your Information...",

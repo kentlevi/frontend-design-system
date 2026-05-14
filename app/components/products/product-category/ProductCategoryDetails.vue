@@ -35,7 +35,7 @@ const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
 ];
 
 const route = useRoute();
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const PRODUCT_MEDIA_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 
 const {
@@ -61,16 +61,16 @@ function resolveProductMediaUrl(path: string) {
 const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> = {
 	stickers: [
 		{
-			title: t('product.story.navigation.stickers.row1.title'),
-			text: t('product.story.navigation.stickers.row1.text'),
+			title: translate('product.story.navigation.stickers.row1.title'),
+			text: translate('product.story.navigation.stickers.row1.text'),
 			media: {
 				type: 'image',
 				src: 'products/stickers/features/01-premium-quality.png',
 			},
 		},
 		{
-			title: t('product.story.navigation.stickers.row2.title'),
-			text: t('product.story.navigation.stickers.row2.text'),
+			title: translate('product.story.navigation.stickers.row2.title'),
+			text: translate('product.story.navigation.stickers.row2.text'),
 			reverse: true,
 			media: {
 				type: 'image',
@@ -78,8 +78,8 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 			},
 		},
 		{
-			title: t('product.story.navigation.stickers.row3.title'),
-			text: t('product.story.navigation.stickers.row3.text'),
+			title: translate('product.story.navigation.stickers.row3.title'),
+			text: translate('product.story.navigation.stickers.row3.text'),
 			media: {
 				type: 'image',
 				src: 'products/stickers/features/03-built-to-last.png',
@@ -88,16 +88,16 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 	],
 	'roll-stickers': [
 		{
-			title: t('product.story.navigation.rollStickers.row1.title'),
-			text: t('product.story.navigation.rollStickers.row1.text'),
+			title: translate('product.story.navigation.rollStickers.row1.title'),
+			text: translate('product.story.navigation.rollStickers.row1.text'),
 			media: {
 				type: 'image',
 				src: 'products/roll-stickers/features/01-efficient-ready-apply.png',
 			},
 		},
 		{
-			title: t('product.story.navigation.rollStickers.row2.title'),
-			text: t('product.story.navigation.rollStickers.row2.text'),
+			title: translate('product.story.navigation.rollStickers.row2.title'),
+			text: translate('product.story.navigation.rollStickers.row2.text'),
 			reverse: true,
 			media: {
 				type: 'image',
@@ -105,8 +105,8 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 			},
 		},
 		{
-			title: t('product.story.navigation.rollStickers.row3.title'),
-			text: t('product.story.navigation.rollStickers.row3.text'),
+			title: translate('product.story.navigation.rollStickers.row3.title'),
+			text: translate('product.story.navigation.rollStickers.row3.text'),
 			media: {
 				type: 'image',
 				src: 'products/roll-stickers/features/03-fast-clean-reliable.png',
@@ -115,16 +115,16 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 	],
 	'sheet-stickers': [
 		{
-			title: t('product.story.navigation.sheetStickers.row1.title'),
-			text: t('product.story.navigation.sheetStickers.row1.text'),
+			title: translate('product.story.navigation.sheetStickers.row1.title'),
+			text: translate('product.story.navigation.sheetStickers.row1.text'),
 			media: {
 				type: 'image',
 				src: 'products/sheet-stickers/features/01-more-stickers-creativity.png',
 			},
 		},
 		{
-			title: t('product.story.navigation.sheetStickers.row2.title'),
-			text: t('product.story.navigation.sheetStickers.row2.text'),
+			title: translate('product.story.navigation.sheetStickers.row2.title'),
+			text: translate('product.story.navigation.sheetStickers.row2.text'),
 			reverse: true,
 			media: {
 				type: 'image',
@@ -132,8 +132,8 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 			},
 		},
 		{
-			title: t('product.story.navigation.sheetStickers.row3.title'),
-			text: t('product.story.navigation.sheetStickers.row3.text'),
+			title: translate('product.story.navigation.sheetStickers.row3.title'),
+			text: translate('product.story.navigation.sheetStickers.row3.text'),
 			media: {
 				type: 'image',
 				src: 'products/sheet-stickers/features/03-organized-ready-peel.png',
@@ -142,16 +142,16 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 	],
 	'vinyl-lettering': [
 		{
-			title: t('product.story.navigation.vinylLettering.row1.title'),
-			text: t('product.story.navigation.vinylLettering.row1.text'),
+			title: translate('product.story.navigation.vinylLettering.row1.title'),
+			text: translate('product.story.navigation.vinylLettering.row1.text'),
 			media: {
 				type: 'image',
 				src: 'products/stickers/features/01-premium-quality.png',
 			},
 		},
 		{
-			title: t('product.story.navigation.vinylLettering.row2.title'),
-			text: t('product.story.navigation.vinylLettering.row2.text'),
+			title: translate('product.story.navigation.vinylLettering.row2.title'),
+			text: translate('product.story.navigation.vinylLettering.row2.text'),
 			reverse: true,
 			media: {
 				type: 'image',
@@ -159,8 +159,8 @@ const navigation_story_rows_by_category: Record<ProductCategoryKey, StoryRow[]> 
 			},
 		},
 		{
-			title: t('product.story.navigation.vinylLettering.row3.title'),
-			text: t('product.story.navigation.vinylLettering.row3.text'),
+			title: translate('product.story.navigation.vinylLettering.row3.title'),
+			text: translate('product.story.navigation.vinylLettering.row3.text'),
 			media: {
 				type: 'image',
 				src: 'products/stickers/features/03-built-to-last.png',
@@ -176,13 +176,13 @@ function getDefaultProductStoryMedia(index: 0 | 1 | 2): StoryMedia {
 function getSelectedProductName() {
 	if (!selected_id.value) return '';
 	const page_key = `product.pageNames.${selected_id.value}`;
-	const page_value = t(page_key);
-	return page_value === page_key ? t(`product.items.${selected_id.value}.name`) : page_value;
+	const page_value = translate(page_key);
+	return page_value === page_key ? translate(`product.items.${selected_id.value}.name`) : page_value;
 }
 
 function getSelectedProductBlurb() {
 	if (!selected_id.value) return '';
-	return t(`product.items.${selected_id.value}.blurb`);
+	return translate(`product.items.${selected_id.value}.blurb`);
 }
 
 function getProductStoryValue(row: 'row1' | 'row2' | 'row3', field: 'title' | 'text', fallback: string) {
@@ -190,12 +190,12 @@ function getProductStoryValue(row: 'row1' | 'row2' | 'row3', field: 'title' | 't
 
 	const product_id = String(selected_id.value);
 	const override_key = `product.story.productModeByProduct.${product_id}.${row}.${field}`;
-	const override_value = t(override_key);
+	const override_value = translate(override_key);
 	if (override_value !== override_key) return override_value;
 
 	if (product_id === 'custom-lettering') {
 		const vinyl_override_key = `product.story.productModeByProduct.vinyl-lettering.${row}.${field}`;
-		const vinyl_override_value = t(vinyl_override_key);
+		const vinyl_override_value = translate(vinyl_override_key);
 		if (vinyl_override_value !== vinyl_override_key) return vinyl_override_value;
 	}
 
@@ -213,19 +213,19 @@ const story_rows = computed<StoryRow[]>(() => {
 	const blurb = getSelectedProductBlurb();
 	return [
 		{
-			title: getProductStoryValue('row1', 'title', t('product.story.productMode.row1.title', { name })),
-			text: getProductStoryValue('row1', 'text', t('product.story.productMode.row1.text', { blurb })),
+			title: getProductStoryValue('row1', 'title', translate('product.story.productMode.row1.title', { name })),
+			text: getProductStoryValue('row1', 'text', translate('product.story.productMode.row1.text', { blurb })),
 			media: getDefaultProductStoryMedia(0),
 		},
 		{
-			title: getProductStoryValue('row2', 'title', t('product.story.productMode.row2.title', { name })),
-			text: getProductStoryValue('row2', 'text', t('product.story.productMode.row2.text', { blurb })),
+			title: getProductStoryValue('row2', 'title', translate('product.story.productMode.row2.title', { name })),
+			text: getProductStoryValue('row2', 'text', translate('product.story.productMode.row2.text', { blurb })),
 			reverse: true,
 			media: getDefaultProductStoryMedia(1),
 		},
 		{
-			title: getProductStoryValue('row3', 'title', t('product.story.productMode.row3.title', { name })),
-			text: getProductStoryValue('row3', 'text', t('product.story.productMode.row3.text', { blurb })),
+			title: getProductStoryValue('row3', 'title', translate('product.story.productMode.row3.title', { name })),
+			text: getProductStoryValue('row3', 'text', translate('product.story.productMode.row3.text', { blurb })),
 			media: getDefaultProductStoryMedia(2),
 		},
 	];
@@ -242,26 +242,26 @@ const guarantees_key_prefix = computed(() =>
 			<article class="guarantee-card" data-testid="product-category-guarantee-made-today">
 				<img
 					src="/icons/custom/guarantees/delivery-truck.svg"
-					:alt="t(`${guarantees_key_prefix}.madeToday.title`)"
+					:alt="translate(`${guarantees_key_prefix}.madeToday.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.madeToday.title`) }}</h4>
-				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.madeToday.text`) }}</p>
+				<h4 class="product-guarantee-title">{{ translate(`${guarantees_key_prefix}.madeToday.title`) }}</h4>
+				<p class="product-details-text">{{ translate(`${guarantees_key_prefix}.madeToday.text`) }}</p>
 			</article>
 			<article class="guarantee-card" data-testid="product-category-guarantee-proof-review">
 				<img
 					src="/icons/custom/guarantees/proof-review.svg"
-					:alt="t(`${guarantees_key_prefix}.proofReview.title`)"
+					:alt="translate(`${guarantees_key_prefix}.proofReview.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.proofReview.title`) }}</h4>
-				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.proofReview.text`) }}</p>
+				<h4 class="product-guarantee-title">{{ translate(`${guarantees_key_prefix}.proofReview.title`) }}</h4>
+				<p class="product-details-text">{{ translate(`${guarantees_key_prefix}.proofReview.text`) }}</p>
 			</article>
 			<article class="guarantee-card" data-testid="product-category-guarantee-durability">
 				<img
 					src="/icons/custom/guarantees/weather-durability.svg"
-					:alt="t(`${guarantees_key_prefix}.durability.title`)"
+					:alt="translate(`${guarantees_key_prefix}.durability.title`)"
 					loading="lazy" class="product-details-image" >
-				<h4 class="product-guarantee-title">{{ t(`${guarantees_key_prefix}.durability.title`) }}</h4>
-				<p class="product-details-text">{{ t(`${guarantees_key_prefix}.durability.text`) }}</p>
+				<h4 class="product-guarantee-title">{{ translate(`${guarantees_key_prefix}.durability.title`) }}</h4>
+				<p class="product-details-text">{{ translate(`${guarantees_key_prefix}.durability.text`) }}</p>
 			</article>
 		</div>
 	</section>

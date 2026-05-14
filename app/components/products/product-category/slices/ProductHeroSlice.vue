@@ -5,7 +5,7 @@ import VinylLetteringDesigner from '~/components/products/product-category/Vinyl
 import { useQuoteView } from '~/composables/quote/useQuoteView';
 
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const PRODUCT_HERO_BASE_URL = 'https://static.musticker.com/dev/store-front/products';
 
@@ -64,15 +64,15 @@ const displayed_product_title = computed(() => {
 		return ''
 
 	// If it's the specialized lettering editor, show the specific title
-	if (has_lettering_editor.value) return t('product.hero.vinylLetteringTitle'); // ⚠️ REQUIRES REVISION!!!
+	if (has_lettering_editor.value) return translate('product.hero.vinylLetteringTitle'); // ⚠️ REQUIRES REVISION!!!
 
 	// Otherwise, use the formal product name from catalog/translation
-	return t(`product.items.${product_url_slug.value}.name`);
+	return translate(`product.items.${product_url_slug.value}.name`);
 });
 
 
 const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : t(`product.items.${product_url_slug.value}.blurb`)
+	has_lettering_editor.value ? '' : translate(`product.items.${product_url_slug.value}.blurb`)
 );
 
 const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4'); // ⚠️ REVISION!!!
@@ -202,16 +202,16 @@ const hide_lettering_editor = computed(() => (
 				:disabled="has_lettering_editor"
 				@click="updateSizeByCard(featured_size_cards)"
 			>
-				<h4 class="mini-feature-title">{{ t(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
+				<h4 class="mini-feature-title">{{ translate(`product.sizes.${featured_size_cards.code}.label`) }}</h4>
 				<img
 					v-if="featured_size_cards.image"
 					:src="featured_size_cards.image"
-					:alt="t(`product.sizes.${featured_size_cards.code}.label`)"
+					:alt="translate(`product.sizes.${featured_size_cards.code}.label`)"
 					loading="lazy"
 					class="mini-feature-image"
 				>
 				<p class="mini-feature-description">
-					{{ t(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
+					{{ translate(`product.featureCards.${featured_size_cards.desc_key}.description`) }}
 				</p>
 			</button>
 		</div>

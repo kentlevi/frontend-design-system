@@ -3,8 +3,9 @@ import type { OrderCompleteData } from '~/types/order';
 import { formatPrice } from '~/utils/currency/formatPrice';
 import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
+import { useCountry } from '~/composables/app/country/useCountry';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const props = defineProps<{
 	title: string;
@@ -17,6 +18,8 @@ const props = defineProps<{
 
 const { formatImage } = useCartPreview('order-confirmation-page');
 
+const { withCountry } = useCountry();
+
 const formatSizeQty = (item : CartItem) : string => {
 	return `${Number(item.width)}x${Number(item.height)}mm / ${item.quantity}`
 }
@@ -27,7 +30,7 @@ const formatSizeQty = (item : CartItem) : string => {
 	<section class="checkout-confirmation-summary">
 		<header class="checkout-confirmation-summary-head">
 			<h2 class="checkout-confirmation-summary-title">{{ props.title }}</h2>
-			<NuxtLink to="#" class="checkout-confirmation-summary-order">
+			<NuxtLink :to="withCountry('/account/orders')" class="checkout-confirmation-summary-order">
 				Order #: {{ props.orderConfirmDetails?.order_number }}
 			</NuxtLink>
 		</header>
@@ -41,7 +44,7 @@ const formatSizeQty = (item : CartItem) : string => {
 				<div class="checkout-confirmation-item-thumb">
 					<img
 						:src="formatImage(item.cart_item)"
-						:alt="t(`product.items.${item.product_id}.name`)"
+						:alt="translate(`product.items.${item.product_id}.name`)"
 						class="checkout-confirmation-item-image"
 					>
 				</div>

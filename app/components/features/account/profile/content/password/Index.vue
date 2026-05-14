@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import ForgotPasswordModal from '~/components/features/account/profile/modals/ForgotPasswordModal.vue';
 import SetupPasswordModal from '~/components/features/account/profile/modals/SetupPasswordModal.vue';
 import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
@@ -6,7 +9,7 @@ import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 withDefaults(defineProps<{
 	loading?: boolean;
 }>(), {
@@ -58,15 +61,15 @@ const {
 
 <template>
 	<div class="account-profile-section" data-testid="account-profile-password-section">
-		<div v-if="loading" class="account-profile-section-copy">
+		<MuLinearWrapper v-if="loading" class="account-profile-section-copy" direction="column" :gap="4">
 			<UiSkeleton width="92px" height="36px" border-radius="8px" />
 			<UiSkeleton width="100%" height="20px" border-radius="8px" />
 			<UiSkeleton width="86%" height="20px" border-radius="8px" />
-		</div>
-		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
-			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
-		</div>
+		</MuLinearWrapper>
+		<MuLinearWrapper v-else class="account-profile-section-copy" direction="column" :gap="4">
+			<MuHeading class="account-profile-section-title">{{ translate('account.profile.password') }}</MuHeading>
+			<MuText class="account-profile-section-description">{{ translate('account.profile.passwordDesc') }}</MuText>
+		</MuLinearWrapper>
 
 		<FeaturesAccountProfileContentPasswordSkeleton v-if="loading" />
 
@@ -117,13 +120,3 @@ const {
 		@close="closeSetupPasswordModal"
 	/>
 </template>
-
-<style scoped lang="scss">
-.account-profile-section {
-	.account-profile-section-copy {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-}
-</style>

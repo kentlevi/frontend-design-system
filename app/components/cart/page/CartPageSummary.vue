@@ -2,7 +2,7 @@
 import { useCartPageSummary } from '~/composables/cart/page/useCartPageSummary';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const {
 	selected_total,
 	selected_ids,
@@ -15,11 +15,11 @@ const {
 	<aside class="cart-summary-column" data-testid="cart-page-summary">
 		<section class="cart-summary-card">
 			<header class="cart-summary-header">
-				<h2 class="cart-summary-title">{{ t('cart.cartPage.orderSummary') }}</h2>
+				<h2 class="cart-summary-title">{{ translate('cart.cartPage.orderSummary') }}</h2>
 			</header>
 			<div class="cart-summary-body">
 				<div class="cart-summary-line">
-					<span class="cart-summary-total-label">{{ t('cart.cartPage.total') }}</span>
+					<span class="cart-summary-total-label">{{ translate('cart.cartPage.total') }}</span>
 					<strong class="cart-summary-total-value">{{ formatPrice(selected_total) }}</strong>
 				</div>
 				<div class="cart-summary-actions">
@@ -32,15 +32,15 @@ const {
 						:disabled="selected_ids.length === 0"
 						@click="goToCheckout"
 					>
-						{{ t('cart.cartPage.proceedToCheckout') }} {{ selected_ids.length ? `(${selected_ids.length})` : '' }}
+						{{ translate('cart.cartPage.proceedToCheckout') }} {{ selected_ids.length ? `(${selected_ids.length})` : '' }}
 					</UiButton>
-					<p class="cart-summary-note">{{ t('cart.cartPage.note') }}</p>
+					<p class="cart-summary-note">{{ translate('cart.cartPage.note') }}</p>
 				</div>
 			</div>
 		</section>
 
 		<section class="cart-payment-section">
-			<p class="cart-payment-label">{{ t('cart.cartPage.securedPayments') }}</p>
+			<p class="cart-payment-label">{{ translate('cart.cartPage.securedPayments') }}</p>
 			<div class="cart-payment-grid">
 				<span
 					v-for="option in payment_options"

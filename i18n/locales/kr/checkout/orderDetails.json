@@ -19,10 +19,10 @@
             "quantity": "수량: {quantity}",
             "uploadArtwork": "아트워크 업로드",
             "summary": {
-                "subtotal": "소계:",
+                "subtotal": "소계",
                 "shippingFee": "배송비: ({method})",
-                "discounts": "할인:",
-                "total": "합계:"
+                "discounts": "할인 금액",
+                "total": "합계"
             },
             "shippingMethod": "빠른 배송",
             "paymentMethodValue": "신용카드"

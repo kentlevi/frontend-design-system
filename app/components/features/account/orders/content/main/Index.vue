@@ -9,7 +9,7 @@
 					</MuLinearWrapper>
 					<MuLinearWrapper class="more-details" align="center" :gap="8" @click="is_detail_open = !is_detail_open">
 						<UiIcon :name="is_detail_open ? 'regular-chevron-up' : 'regular-chevron-down'" :size="20" />
-						<MuText weight="semi-bold">{{ t(is_detail_open ? 'account.orders.lessDetails' : 'account.orders.moreDetails') }}</MuText>
+						<MuText weight="semi-bold">{{ translate(is_detail_open ? 'account.orders.lessDetails' : 'account.orders.moreDetails') }}</MuText>
 					</MuLinearWrapper>
 				</MuLinearWrapper>
 				<MuLinearWrapper v-if="is_detail_open" justify="space-between" :gap="40">
@@ -38,7 +38,7 @@ import Address from './Address.vue';
 import List from './List.vue';
 import Summary from './Summary.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const is_detail_open = ref(false);
 

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-const { t } = useI18n();
+import MuText from '~/components/base/MuText.vue';
+
+const { t: translate } = useI18n();
 </script>
 
 <template>
 	<div class="account-quote-chat-messages" data-testid="account-quote-requests-messages">
 		<div class="account-quote-chat-bubble" data-testid="account-quote-requests-bubble">
-			{{ t('account.quoteRequests.sampleMessage') }}
+			{{ translate('account.quoteRequests.sampleMessage') }}
 			<div class="account-quote-chat-request">
-				<span class="account-quote-chat-request-label">{{ t('account.quoteRequests.requestLabel') }}:</span>
-				{{ t('account.quoteRequests.sampleRequestDetails') }}
+				<MuText variant="span" weight="bold" class="account-quote-chat-request-label">{{ translate('account.quoteRequests.requestLabel') }}:</MuText>
+				{{ translate('account.quoteRequests.sampleRequestDetails') }}
 			</div>
 		</div>
 	</div>

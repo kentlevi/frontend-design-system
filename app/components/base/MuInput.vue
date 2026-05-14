@@ -20,6 +20,7 @@
 			<!-- Native Input -->
 			<input
 				:id="props.id"
+				ref="input_ref"
 				v-model="model"
 				:class="['mu-input-field', props.inputClass]"
 				:type="props.type"
@@ -32,7 +33,6 @@
 				@input="onChangeHandler"
 				@focus="handleFocus"
 				@blur="handleBlur"
-				ref="input_ref"
 			>
 
 			<!-- Right Icon/Suffix Slot -->

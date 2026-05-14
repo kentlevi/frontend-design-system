@@ -4,7 +4,7 @@ import MuSearch from '~/components/core/search/MuSearch.vue';
 import OrdersSidebar from './OrdersSidebar.vue';
 import OrderDetailSection from './OrderDetailSection.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const {
 	lifecycle,
 	search_query,
@@ -28,7 +28,7 @@ const accent_class_map = {
 	<section class="account-page" data-testid="account-orders-page">
 		<div class="account-content" data-testid="account-orders-content">
 			<div class="account-orders-topbar" data-testid="account-orders-topbar">
-				<h1 class="account-orders-title" data-testid="account-orders-title">{{ t('account.orders.title') }}</h1>
+				<h1 class="account-orders-title" data-testid="account-orders-title">{{ translate('account.orders.title') }}</h1>
 
 				<div class="account-orders-tools" data-testid="account-orders-tools">
 					<div class="account-orders-lifecycle" data-testid="account-orders-lifecycle">
@@ -39,7 +39,7 @@ const accent_class_map = {
 							data-testid="account-orders-lifecycle-active-button"
 							@click="set_lifecycle('active')"
 						>
-							{{ t('account.orders.active') }}
+							{{ translate('account.orders.active') }}
 						</button>
 						<button
 							type="button"
@@ -48,7 +48,7 @@ const accent_class_map = {
 							data-testid="account-orders-lifecycle-inactive-button"
 							@click="set_lifecycle('inactive')"
 						>
-							{{ t('account.orders.inactive') }}
+							{{ translate('account.orders.inactive') }}
 						</button>
 					</div>
 
@@ -64,7 +64,7 @@ const accent_class_map = {
 							class="account-orders-tool-button account-orders-select-date-button"
 							data-testid="account-orders-select-date-button"
 						>
-							{{ t('account.orders.selectDate') }}
+							{{ translate('account.orders.selectDate') }}
 						</UiButton>
 
 						<UiButton
@@ -78,14 +78,14 @@ const accent_class_map = {
 							class="account-orders-tool-button"
 							data-testid="account-orders-filters-button"
 						>
-							{{ t('account.orders.filters') }}
+							{{ translate('account.orders.filters') }}
 						</UiButton>
 
 						<MuSearch
 							v-model="search_query"
 							size="md"
 							class="account-orders-search"
-							:placeholder="t('account.orders.searchPlaceholder')"
+							:placeholder="translate('account.orders.searchPlaceholder')"
 							data-testid="account-orders-search-input"
 						>
 							<template #left>
@@ -109,8 +109,8 @@ const accent_class_map = {
 			</div>
 
 			<div v-if="empty_state_key" class="account-orders-empty" data-testid="account-orders-empty">
-				<h2 class="account-orders-empty-title">{{ t(`account.orders.empty.${empty_state_key}Title`) }}</h2>
-				<p class="account-orders-empty-description">{{ t(`account.orders.empty.${empty_state_key}Description`) }}</p>
+				<h2 class="account-orders-empty-title">{{ translate(`account.orders.empty.${empty_state_key}Title`) }}</h2>
+				<p class="account-orders-empty-description">{{ translate(`account.orders.empty.${empty_state_key}Description`) }}</p>
 			</div>
 
 			<div v-else class="account-orders-layout" data-testid="account-orders-layout">

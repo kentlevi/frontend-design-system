@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import EmailChangeModal from '~/components/features/account/profile/modals/EmailChangeModal.vue';
@@ -14,7 +17,7 @@ withDefaults(defineProps<{
 	loading: false,
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const { social } = useSocialAccount()
@@ -68,17 +71,17 @@ const {
 
 <template>
 	<div class="account-profile-section" data-testid="account-profile-personal-section">
-		<div v-if="loading" class="account-profile-section-copy">
+		<MuLinearWrapper v-if="loading" class="account-profile-section-copy" direction="column" :gap="4">
 			<UiSkeleton width="120px" height="36px" border-radius="8px" />
 			<UiSkeleton width="100%" height="20px" border-radius="8px" />
 			<UiSkeleton width="78%" height="20px" border-radius="8px" />
-		</div>
-		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
-			<p class="account-profile-section-description">
-				{{ t('account.profile.personalDetailsDesc') }}
-			</p>
-		</div>
+		</MuLinearWrapper>
+		<MuLinearWrapper v-else class="account-profile-section-copy" direction="column" :gap="4">
+			<MuHeading class="account-profile-section-title">{{ translate('account.profile.personalDetails') }}</MuHeading>
+			<MuText class="account-profile-section-description">
+				{{ translate('account.profile.personalDetailsDesc') }}
+			</MuText>
+		</MuLinearWrapper>
 
 		<FeaturesAccountProfileContentPersonalSkeleton v-if="loading" />
 
@@ -116,10 +119,10 @@ const {
 
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
-		:title="t('account.profile.photoDeleteConfirm')"
-		:description="t('account.profile.photoDeleteDescription')"
-		:cancel-label="t('account.profile.cancel')"
-		:confirm-label="t('account.profile.delete')"
+		:title="translate('account.profile.photoDeleteConfirm')"
+		:description="translate('account.profile.photoDeleteDescription')"
+		:cancel-label="translate('account.profile.cancel')"
+		:confirm-label="translate('account.profile.delete')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"
@@ -145,8 +148,8 @@ const {
 		:resend-limit-reached="limit_reached_error"
 		:resend-cooldown-remaining="remaining"
 		translation-base="account.profile.emailChangeVerification"
-		:submit-label="t('auth.verification.verify')"
-		:busy-label="t('auth.verification.verifying')"
+		:submit-label="translate('auth.verification.verify')"
+		:busy-label="translate('auth.verification.verifying')"
 		align="center"
 		:show-close-button="true"
 		test-id-prefix="account-profile-email-change-verification"
@@ -159,7 +162,7 @@ const {
 		<template #icon>
 			<img
 				src="/illustrations/icon-verification.svg"
-				:alt="t('account.profile.emailChangeVerification.iconAlt')"
+				:alt="translate('account.profile.emailChangeVerification.iconAlt')"
 				class="account-profile-email-change-verification-icon"
 			>
 		</template>
@@ -167,12 +170,6 @@ const {
 </template>
 
 <style scoped lang="scss">
-.account-profile-section-copy {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
 .account-profile-section {
 	.account-profile-file-input {
 		display: none;

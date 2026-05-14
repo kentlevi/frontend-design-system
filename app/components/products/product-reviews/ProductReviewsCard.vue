@@ -7,7 +7,7 @@ import {
 	resolveProductReviewMediaSrc,
 } from '~/helpers/products/productReviews.helper';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 const default_avatar_url = resolveFileUrl('products/reviews/client-avatar.png');
 
@@ -15,8 +15,8 @@ const props = defineProps<{
 	card: ReviewCard;
 }>();
 
-const title = computed(() => t(getProductReviewCopyKey(props.card.id, 'title')));
-const text = computed(() => t(getProductReviewCopyKey(props.card.id, 'text')));
+const title = computed(() => translate(getProductReviewCopyKey(props.card.id, 'title')));
+const text = computed(() => translate(getProductReviewCopyKey(props.card.id, 'text')));
 const media_src = computed(() =>
 	resolveProductReviewMediaSrc(props.card, resolveFileUrl)
 );

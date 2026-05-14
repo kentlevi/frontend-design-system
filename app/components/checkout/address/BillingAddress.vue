@@ -17,6 +17,7 @@ const {
 	billing_use_different_address,
 	use_shipping_as_billing,
 	billing_tooltip_open,
+	billing_tooltip_ref,
 	has_billing_addresses,
 
 	getAddressTagClass,
@@ -46,7 +47,7 @@ const {
 			<UiTooltip :open="billing_tooltip_open" v-bind="checkoutBillingTooltipProps">
 				<template #trigger>
 					<button type="button" class="ui-tooltip-icon-trigger" @click.stop.prevent="toggleBillingTooltip">
-						<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
+						<UiIcon :name="billing_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--gray-90)" decorative />
 					</button>
 				</template>
 
@@ -72,7 +73,7 @@ const {
 							{{ translate('checkout.member.billingAddress.myBillingAddress') }}
 						</UiRadio>
 						<UiButton type="button" variant="ghost" tone="neutral" size="sm" class="checkout-member-link" :no-hover="true" @click="openSelectAddressModal('billing')">
-							View Billing Addresses
+							{{ translate('checkout.member.viewBillingAddresses') }}
 						</UiButton>
 					</div>
 

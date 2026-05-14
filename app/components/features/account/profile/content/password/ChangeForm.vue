@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+
 defineProps<{
 	currentPassword: string
 	newPassword: string
@@ -24,12 +26,12 @@ const emit = defineEmits<{
 	(e: 'forgot-password'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
-	<div class="account-profile-stack" data-testid="account-profile-password-form">
-		<UiFormField :label="t('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
+	<MuLinearWrapper class="account-profile-stack" data-testid="account-profile-password-form" direction="column" :gap="16">
+		<UiFormField :label="translate('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
 			<template #default="{ inputId, describedBy }">
 				<UiInput
 					:id="inputId"
@@ -37,7 +39,7 @@ const { t } = useI18n();
 					:type="currentPasswordVisible ? 'text' : 'password'"
 					:aria-describedby="describedBy || undefined"
 					:state="currentPasswordError ? 'error' : 'default'"
-					:placeholder="t('account.profile.currentPasswordPlaceholder')"
+					:placeholder="translate('account.profile.currentPasswordPlaceholder')"
 					data-testid="account-profile-current-password"
 					@update:model-value="emit('update:currentPassword', $event); emit('update:currentPasswordError', '')"
 				>
@@ -48,8 +50,8 @@ const { t } = useI18n();
 							size="24"
 							:no-hover="true"
 							class="account-profile-password-toggle"
-							:aria-label="t('auth.reset.togglePassword')"
-							:sr-label="t('auth.reset.togglePassword')"
+							:aria-label="translate('auth.reset.togglePassword')"
+							:sr-label="translate('auth.reset.togglePassword')"
 							icon-only
 							:icon="currentPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
 							:icon-size="24"
@@ -61,10 +63,10 @@ const { t } = useI18n();
 		</UiFormField>
 
 		<UiFormField
-			:label="t('account.profile.newPassword')"
+			:label="translate('account.profile.newPassword')"
 			:error="pairPasswordError"
 			:required="true"
-			:hint="t('account.profile.passwordHint')"
+			:hint="translate('account.profile.passwordHint')"
 		>
 			<template #default="{ inputId, describedBy }">
 				<UiInput
@@ -73,7 +75,7 @@ const { t } = useI18n();
 					:type="newPasswordVisible ? 'text' : 'password'"
 					:aria-describedby="describedBy || undefined"
 					:state="pairPasswordError ? 'error' : 'default'"
-					:placeholder="t('account.profile.newPasswordPlaceholder')"
+					:placeholder="translate('account.profile.newPasswordPlaceholder')"
 					data-testid="account-profile-new-password"
 					@update:model-value="emit('update:newPassword', $event); emit('clear-pair-errors')"
 				>
@@ -84,8 +86,8 @@ const { t } = useI18n();
 							size="24"
 							:no-hover="true"
 							class="account-profile-password-toggle"
-							:aria-label="t('auth.reset.togglePassword')"
-							:sr-label="t('auth.reset.togglePassword')"
+							:aria-label="translate('auth.reset.togglePassword')"
+							:sr-label="translate('auth.reset.togglePassword')"
 							icon-only
 							:icon="newPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
 							:icon-size="24"
@@ -96,7 +98,7 @@ const { t } = useI18n();
 			</template>
 		</UiFormField>
 
-		<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
+		<UiFormField :label="translate('account.profile.confirmNewPassword')" :required="true">
 			<template #default="{ inputId, describedBy }">
 				<UiInput
 					:id="inputId"
@@ -104,7 +106,7 @@ const { t } = useI18n();
 					:type="newPasswordConfirmationVisible ? 'text' : 'password'"
 					:aria-describedby="describedBy || undefined"
 					:state="pairPasswordError ? 'error' : 'default'"
-					:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
+					:placeholder="translate('account.profile.confirmNewPasswordPlaceholder')"
 					data-testid="account-profile-confirm-password"
 					@update:model-value="emit('update:newPasswordConfirmation', $event); emit('clear-pair-errors')"
 				>
@@ -115,8 +117,8 @@ const { t } = useI18n();
 							size="24"
 							:no-hover="true"
 							class="account-profile-password-toggle"
-							:aria-label="t('auth.reset.toggleConfirmPassword')"
-							:sr-label="t('auth.reset.toggleConfirmPassword')"
+							:aria-label="translate('auth.reset.toggleConfirmPassword')"
+							:sr-label="translate('auth.reset.toggleConfirmPassword')"
 							icon-only
 							:icon="newPasswordConfirmationVisible ? 'regular-eye' : 'regular-eye-slash'"
 							:icon-size="24"
@@ -127,7 +129,13 @@ const { t } = useI18n();
 			</template>
 		</UiFormField>
 
-		<div class="account-profile-inline-actions" data-testid="account-profile-password-actions">
+		<MuLinearWrapper
+			class="account-profile-inline-actions"
+			data-testid="account-profile-password-actions"
+			align="center"
+			justify="flex-end"
+			:gap="16"
+		>
 			<UiButton
 				variant="filled"
 				tone="neutral"
@@ -136,7 +144,7 @@ const { t } = useI18n();
 				data-testid="account-profile-change-password-button"
 				@click="emit('change-password')"
 			>
-				{{ t('account.profile.changePassword') }}
+				{{ translate('account.profile.changePassword') }}
 			</UiButton>
 			<UiButton
 				variant="ghost"
@@ -147,24 +155,15 @@ const { t } = useI18n();
 				data-testid="account-profile-forgot-password"
 				@click="emit('forgot-password')"
 			>
-				{{ t('account.profile.forgotPassword') }}
+				{{ translate('account.profile.forgotPassword') }}
 			</UiButton>
-		</div>
-	</div>
+		</MuLinearWrapper>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-profile-stack {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-
 	.account-profile-inline-actions {
-		display: flex;
-		gap: 16px;
-		align-items: center;
-		justify-content: flex-end;
-
 		.account-profile-forgot-password-link {
 			color: var(--text-primary);
 			font-size: var(--type-size-100);

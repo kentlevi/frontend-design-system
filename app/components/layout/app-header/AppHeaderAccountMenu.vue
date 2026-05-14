@@ -5,7 +5,7 @@ import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHe
 import type { icons } from '~/data/ui/icons';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
@@ -74,7 +74,7 @@ const {
 				'is-open': accountOpen && isMockLoggedIn,
 				'is-open-guest': accountOpen && !isMockLoggedIn,
 			}"
-			:aria-label="t('layout.header.account')"
+			:aria-label="translate('layout.header.account')"
 			aria-haspopup="menu"
 			:aria-expanded="accountOpen"
 			data-testid="app-header-account-toggle-button"
@@ -113,7 +113,7 @@ const {
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
 				tabindex="-1"
-				:aria-label="t('layout.header.accountMenu')"
+				:aria-label="translate('layout.header.accountMenu')"
 				data-testid="app-header-account-dropdown-member"
 			>
 				<div class="home-account-summary" data-testid="app-header-account-summary">
@@ -136,7 +136,7 @@ const {
 					</div>
 					<img
 						:src="account_level_badge_src"
-						:alt="t('account.shell.level')"
+						:alt="translate('account.shell.level')"
 						class="home-account-summary-badge"
 					>
 				</div>
@@ -197,7 +197,7 @@ const {
 							color="var(--text-primary)"
 							class="home-account-link-icon"
 						/>
-						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
+						<span class="home-account-link-label">{{ translate('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
 				</div>
 			</div>
@@ -207,7 +207,7 @@ const {
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
 				tabindex="-1"
-				:aria-label="t('layout.header.accountMenu')"
+				:aria-label="translate('layout.header.accountMenu')"
 				data-testid="app-header-account-dropdown-member"
 			>
 				<div class="home-account-summary" data-testid="app-header-account-summary">
@@ -257,7 +257,7 @@ const {
 							color="var(--text-primary)"
 							class="home-account-link-icon"
 						/>
-						<span class="home-account-link-label">{{ t('layout.header.accountLinks.signOut') }}</span>
+						<span class="home-account-link-label">{{ translate('layout.header.accountLinks.signOut') }}</span>
 					</UiButton>
 				</div>
 			</div>
@@ -267,7 +267,7 @@ const {
 				class="home-account-dropdown home-account-dropdown--guest"
 				role="menu"
 				tabindex="-1"
-				:aria-label="t('layout.header.accountMenu')"
+				:aria-label="translate('layout.header.accountMenu')"
 				data-testid="app-header-account-dropdown-guest"
 			>
 				<NuxtLink
@@ -277,7 +277,7 @@ const {
 					data-testid="app-header-account-login"
 					@click="emit('close')"
 				>
-					{{ t('layout.header.login') }}
+					{{ translate('layout.header.login') }}
 				</NuxtLink>
 				<NuxtLink
 					:to="withCountry('/auth/register')"
@@ -286,7 +286,7 @@ const {
 					data-testid="app-header-account-register"
 					@click="emit('close')"
 				>
-					{{ t('layout.header.register') }}
+					{{ translate('layout.header.register') }}
 				</NuxtLink>
 			</div>
 		</Transition>

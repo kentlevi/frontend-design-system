@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAuthProfileSettingsStep } from '~/composables/auth/profile/useAuthProfileSettingsStep';
 
+const { t: translate } = useI18n();
+
 const {
 	promotions,
 	reviews,
@@ -28,13 +30,13 @@ const {
 					class="auth-profile-head-title"
 					data-testid="auth-profile-settings-title"
 				>
-					{{ $t('auth.profile.settings.title') }}
+					{{ translate('auth.profile.settings.title') }}
 				</h1>
 				<p
 					class="auth-profile-head-subtitle"
 					data-testid="auth-profile-settings-subtitle"
 				>
-					{{ $t('auth.profile.settings.subtitle') }}
+					{{ translate('auth.profile.settings.subtitle') }}
 				</p>
 			</header>
 
@@ -52,10 +54,10 @@ const {
 					>
 						<div class="auth-profile-setting-copy">
 							<p class="auth-profile-setting-title">
-								{{ $t('auth.profile.settings.promotions') }}
+								{{ translate('auth.profile.settings.promotions') }}
 							</p>
 							<p class="auth-profile-setting-text">
-								{{ $t('auth.profile.settings.promotionsDesc') }}
+								{{ translate('auth.profile.settings.promotionsDesc') }}
 							</p>
 						</div>
 						<label class="auth-profile-switch">
@@ -81,10 +83,10 @@ const {
 					>
 						<div class="auth-profile-setting-copy">
 							<p class="auth-profile-setting-title">
-								{{ $t('auth.profile.settings.reviews') }}
+								{{ translate('auth.profile.settings.reviews') }}
 							</p>
 							<p class="auth-profile-setting-text">
-								{{ $t('auth.profile.settings.reviewsDesc') }}
+								{{ translate('auth.profile.settings.reviewsDesc') }}
 							</p>
 						</div>
 						<label class="auth-profile-switch">
@@ -119,7 +121,7 @@ const {
 				data-testid="auth-profile-back-button"
 				@click="goBack"
 			>
-				{{ $t('auth.profile.settings.back') }}
+				{{ translate('auth.profile.settings.back') }}
 			</UiButton>
 			<UiButton
 				variant="filled"
@@ -130,7 +132,7 @@ const {
 				@click="completeSetup"
 			>
 				<UiIcon name="regular-clipboard-check" :size="24" />
-				{{ $t('auth.profile.settings.complete') }}
+				{{ translate('auth.profile.settings.complete') }}
 			</UiButton>
 		</div>
 	</div>

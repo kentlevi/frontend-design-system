@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "modal": {
+      "close": "Close modal"
+    },
+    "toast": {
+      "close": "Close"
+    },
+    "select": {
+      "searchPlaceholder": "Search..."
+    },
+    "preview": {
+      "loading": "Loading preview"
+    },
+    "alignment": "Alignment"
+  }
+}

@@ -34,7 +34,10 @@
         "saveItemChanges": "상품 변경 저장",
         "cancelItemChanges": "상품 변경 취소",
         "editItem": "상품 수정",
-        "removeItem": "상품 삭제"
+        "removeItem": "상품 삭제",
+        "openSizeOptions": "사이즈 옵션 열기",
+        "openQuantityOptions": "수량 옵션 열기",
+        "enterQuantity": "수량 입력"
       }
     }
   }

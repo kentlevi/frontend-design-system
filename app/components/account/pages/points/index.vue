@@ -3,7 +3,7 @@ import AccountPointsRankingModal from './AccountPointsRankingModal.vue';
 import { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 import type { AccountPointLogFilter } from '~/types/account/points';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const {
 	summary,
 	ranks,
@@ -30,17 +30,17 @@ function openRankingModal() {
 		<div class="account-content" data-testid="account-points-content">
 			<div class="account-points-grid">
 				<div class="account-points-copy-column">
-					<h1 class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</h1>
+					<h1 class="account-points-title" data-testid="account-points-title">{{ translate('account.points.title') }}</h1>
 
 					<div class="account-points-copy-cards">
 						<section class="account-points-copy-card">
 							<div class="account-points-copy-group">
 								<h2 class="account-points-section-title">
-									{{ t('account.points.pointsSystemTitle') }}
+									{{ translate('account.points.pointsSystemTitle') }}
 									<UiIcon name="regular-info-circle" :size="20" />
 								</h2>
 								<p class="account-points-description">
-									{{ t('account.points.pointsSystemDescription') }}
+									{{ translate('account.points.pointsSystemDescription') }}
 								</p>
 							</div>
 							<div class="account-points-conversion-pill">
@@ -51,10 +51,10 @@ function openRankingModal() {
 						<section class="account-points-copy-card">
 							<div class="account-points-copy-group">
 								<h2 class="account-points-section-title">
-									{{ t('account.points.questTitle') }}
+									{{ translate('account.points.questTitle') }}
 								</h2>
 								<p class="account-points-description">
-									{{ t('account.points.questDescription') }}
+									{{ translate('account.points.questDescription') }}
 								</p>
 							</div>
 						</section>
@@ -62,10 +62,10 @@ function openRankingModal() {
 						<section class="account-points-copy-card">
 							<div class="account-points-copy-group">
 								<h2 class="account-points-section-title">
-									{{ t('account.points.historyTitle') }}
+									{{ translate('account.points.historyTitle') }}
 								</h2>
 								<p class="account-points-description">
-									{{ t('account.points.historyDescription') }}
+									{{ translate('account.points.historyDescription') }}
 								</p>
 							</div>
 						</section>
@@ -82,27 +82,27 @@ function openRankingModal() {
 						<div class="account-points-tier-copy">
 							<img
 								:src="summary.badge_src"
-								:alt="t('account.points.tierName')"
+								:alt="translate('account.points.tierName')"
 								class="account-points-tier-icon"
 							>
 							<div>
-								<h2 class="account-points-tier">{{ t(`account.points.${summary.tier_name_key}`) }}</h2>
+								<h2 class="account-points-tier">{{ translate(`account.points.${summary.tier_name_key}`) }}</h2>
 								<p class="account-points-meta">
-									{{ t('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
+									{{ translate('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
 								</p>
 							</div>
 						</div>
 
 						<div class="account-points-balance-wrap">
 							<p class="account-points-balance" data-testid="account-points-balance">
-								{{ summary.balance }}<span>{{ t('account.points.pointsUnit') }}</span>
+								{{ summary.balance }}<span>{{ translate('account.points.pointsUnit') }}</span>
 							</p>
 							<UiBadge
 								variant="outline"
 								size="md"
 								badge-class="account-points-expiry-pill"
 							>
-								{{ t('account.points.expiry') }}: {{ summary.expiry_date }}
+								{{ translate('account.points.expiry') }}: {{ summary.expiry_date }}
 							</UiBadge>
 						</div>
 
@@ -114,9 +114,9 @@ function openRankingModal() {
 								/>
 							</div>
 							<p class="account-points-progress-copy">
-								{{ t('account.points.nextTierRequirementPrefix') }}
+								{{ translate('account.points.nextTierRequirementPrefix') }}
 								<strong>{{ summary.remaining_spend }} KRW</strong>
-								{{ t('account.points.nextTierRequirementSuffix') }}
+								{{ translate('account.points.nextTierRequirementSuffix') }}
 							</p>
 						</div>
 					</button>
@@ -124,7 +124,7 @@ function openRankingModal() {
 					<section class="account-points-challenges">
 						<div class="account-points-challenges-head">
 							<div class="account-points-challenges-title-wrap">
-								<h2 class="account-points-section-title">{{ t('account.points.challengesTitle') }}</h2>
+								<h2 class="account-points-section-title">{{ translate('account.points.challengesTitle') }}</h2>
 								<div class="account-points-challenge-count">
 									{{ completed_challenge_count }}/{{ visible_challenges.length + (12 - visible_challenges.length) }}
 								</div>
@@ -135,7 +135,7 @@ function openRankingModal() {
 								size="sm"
 								class="account-points-view-all"
 							>
-								{{ t('account.points.viewAll') }}
+								{{ translate('account.points.viewAll') }}
 							</UiButton>
 						</div>
 
@@ -159,7 +159,7 @@ function openRankingModal() {
 
 					<section class="account-points-history-panel">
 						<div class="account-points-filters">
-							<span class="account-points-filter-label">{{ t('account.points.filter') }}</span>
+							<span class="account-points-filter-label">{{ translate('account.points.filter') }}</span>
 							<div class="account-points-filter-group">
 								<button
 									v-for="filter in filters"
@@ -176,7 +176,7 @@ function openRankingModal() {
 
 						<div class="account-points-logs" data-testid="account-points-logs">
 							<div class="account-points-logs-head">
-								{{ t('account.points.logsTitle') }}
+								{{ translate('account.points.logsTitle') }}
 							</div>
 
 							<div class="account-points-log-list">

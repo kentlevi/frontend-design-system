@@ -1,3 +1,4 @@
+import type { ComponentPublicInstance } from 'vue'
 import { useCartService } from '~/services/cart/cart.service'
 
 type QtyOption = {
@@ -6,6 +7,7 @@ type QtyOption = {
 }
 
 export const useCartPageList = () => {
+	const { t: translate } = useI18n()
 	const cart_service = useCartService('cart-page-list')
 
 	const custom_qty_item_id = ref<string | null>(null)
@@ -22,7 +24,7 @@ export const useCartPageList = () => {
 	const sizeDimOnly = (label: string) => label.replace(/"$/, '').trim()
 
 	const getArtworkActionLabel = (has_artwork: boolean) =>
-		has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
+		has_artwork ? translate('cart.cartPage.changeArtwork') : translate('cart.cartPage.addArtwork')
 
 	const formatPrice = (value: number) => {
 		return new Intl.NumberFormat('en-US', {
@@ -31,20 +33,18 @@ export const useCartPageList = () => {
 		}).format(value)
 	}
 
-	const bindCustomQtyDropdownRef = (element: Element | { $el?: Element } | null) => {
-		custom_qty_dropdown_ref.value = element instanceof HTMLElement
-			? element
-			: element?.$el instanceof HTMLElement
-				? element.$el
-				: null
+	const bindCustomQtyDropdownRef = (element: Element | ComponentPublicInstance | null) => {
+		const resolved = element && '$el' in element
+			? (element.$el as Element | null)
+			: (element as Element | null)
+		custom_qty_dropdown_ref.value = resolved instanceof HTMLElement ? resolved : null
 	}
 
-	const bindCustomQtyInputRef = (element: Element | { $el?: Element } | null) => {
-		custom_qty_input_ref.value = element instanceof HTMLInputElement
-			? element
-			: element?.$el instanceof HTMLInputElement
-				? element.$el
-				: null
+	const bindCustomQtyInputRef = (element: Element | ComponentPublicInstance | null) => {
+		const resolved = element && '$el' in element
+			? (element.$el as Element | null)
+			: (element as Element | null)
+		custom_qty_input_ref.value = resolved instanceof HTMLInputElement ? resolved : null
 	}
 
 	const openDeleteModal = (ids: string[]) => {

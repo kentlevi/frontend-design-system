@@ -2,35 +2,35 @@ import { useRedirectStore } from '~/stores/navigation/redirect.store';
 
 export default defineNuxtRouteMiddleware((to, from) =>
 {
-    const redirect_store = useRedirectStore();
+	const redirect_store = useRedirectStore();
 
-    const nuxt_app = useNuxtApp();
+	const nuxt_app = useNuxtApp();
 
-    const supported_locales: string[] =
-        nuxt_app.$i18n.locales.value.map((locale: any) =>
-            locale.code
-        );
+	const supported_locales: string[] =
+		nuxt_app.$i18n.locales.value.map((locale: any) =>
+			locale.code
+		);
 
-    const path_segments = to.path.split('/').filter(Boolean);
+	const path_segments = to.path.split('/').filter(Boolean);
 
-    const first_segment = path_segments[0] ?? '';
+	const first_segment = path_segments[0] ?? '';
 
-    const normalized_path = supported_locales.includes(first_segment)
-        ? '/' + path_segments.slice(1).join('/')
-        : to.path;
+	const normalized_path = supported_locales.includes(first_segment)
+		? '/' + path_segments.slice(1).join('/')
+		: to.path;
 
-    const ignored_routes = [
-        '/auth',
-        '/logout'
-    ];
+	const ignored_routes = [
+		'/auth',
+		'/logout'
+	];
 
-    const should_ignore = ignored_routes.some((route) =>
-        normalized_path.startsWith(route)
-    );
+	const should_ignore = ignored_routes.some((route) =>
+		normalized_path.startsWith(route)
+	);
 
-    if (should_ignore) {
-        return;
-    }
+	if (should_ignore) {
+		return;
+	}
 
-    redirect_store.setAuthRedirectUrl(to.fullPath);
+	redirect_store.setAuthRedirectUrl(to.fullPath);
 });

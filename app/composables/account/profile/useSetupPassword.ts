@@ -9,7 +9,7 @@ export function useSetupPassword() {
 	const loading_overlay_store = useLoadingOverlayStore()
 	// const SETUP_PASSWORD_SUBMIT_DELAY_MS = 700
 
-	// const { t } = useI18n()
+	// const { t: translate } = useI18n()
 
 	const setup_password_error = ref('')
 	const setup_password_confirmation_error = ref('')

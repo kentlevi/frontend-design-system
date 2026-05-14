@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const props = defineProps<{
 	open: boolean;
 }>();
@@ -25,11 +25,11 @@ function closeModal() {
 	>
 		<section class="account-order-terms-modal">
 			<header class="account-order-terms-modal-header">
-				<h3 class="account-order-terms-modal-title">{{ t('account.orders.terms.title') }}</h3>
+				<h3 class="account-order-terms-modal-title">{{ translate('account.orders.terms.title') }}</h3>
 				<button
 					type="button"
 					class="account-order-terms-modal-close"
-					:aria-label="t('account.orders.terms.closeLabel')"
+					:aria-label="translate('account.orders.terms.closeLabel')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" :size="24" color="var(--text-primary)" decorative />
@@ -39,35 +39,35 @@ function closeModal() {
 			<div class="account-order-terms-modal-body">
 				<div class="account-order-terms-modal-content">
 					<p>
-						{{ t('account.orders.terms.paragraph1') }}
+						{{ translate('account.orders.terms.paragraph1') }}
 					</p>
 					<p>
-						{{ t('account.orders.terms.paragraph2') }}
+						{{ translate('account.orders.terms.paragraph2') }}
 					</p>
 					<p>
-						{{ t('account.orders.terms.paragraph3') }}
+						{{ translate('account.orders.terms.paragraph3') }}
 					</p>
 					<p>
-						{{ t('account.orders.terms.turnaroundNote') }}
+						{{ translate('account.orders.terms.turnaroundNote') }}
 					</p>
 
 					<section class="account-order-terms-modal-section">
-						<h4 class="account-order-terms-modal-section-title">{{ t('account.orders.terms.orderTermsNoteTitle') }}</h4>
+						<h4 class="account-order-terms-modal-section-title">{{ translate('account.orders.terms.orderTermsNoteTitle') }}</h4>
 						<ul class="account-order-terms-modal-list">
 							<li>
-								{{ t('account.orders.terms.bumperStickerPrintNote') }}
+								{{ translate('account.orders.terms.bumperStickerPrintNote') }}
 							</li>
 							<li>
-								{{ t('account.orders.terms.materialCurlNote') }}
+								{{ translate('account.orders.terms.materialCurlNote') }}
 							</li>
 						</ul>
 					</section>
 
 					<section class="account-order-terms-modal-section">
-						<h4 class="account-order-terms-modal-section-title">{{ t('account.orders.terms.cancellationTitle') }}</h4>
+						<h4 class="account-order-terms-modal-section-title">{{ translate('account.orders.terms.cancellationTitle') }}</h4>
 						<ul class="account-order-terms-modal-list">
 							<li>
-								{{ t('account.orders.terms.cancellationBody') }}
+								{{ translate('account.orders.terms.cancellationBody') }}
 							</li>
 						</ul>
 					</section>
@@ -83,7 +83,7 @@ function closeModal() {
 					class="account-order-terms-modal-button"
 					@click="closeModal"
 				>
-					{{ t('account.orders.terms.close') }}
+					{{ translate('account.orders.terms.close') }}
 				</UiButton>
 			</footer>
 		</section>

@@ -27,12 +27,12 @@ const {
 				</MuText>
 			</MuLinearWrapper>
 			<MuInput
+				id="non-member-email"
+				v-model="non_member_form.email"
 				:placeholder="translate('auth.login.enterEmail')"
 				type="email"
 				name="email"
-				id="non-member-email"
 				:has-error="email_error"
-				v-model="non_member_form.email"
 			/>
 		</MuLinearWrapper>
 
@@ -46,12 +46,12 @@ const {
 				</MuText>
 			</MuLinearWrapper>
 			<MuInput
+				id="non-member-order-number"
+				v-model="non_member_form.order_number"
 				:placeholder="translate('auth.login.enterOrderNumber')"
 				type="text"
 				name="order_number"
-				id="non-member-order-number"
 				:has-error="order_number_error"
-				v-model="non_member_form.order_number"
 			/>
 		</MuLinearWrapper>
 	</MuLinearWrapper>

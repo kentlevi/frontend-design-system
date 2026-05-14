@@ -10,8 +10,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="basic-input"
-					name="basic"
 					v-model="basic"
+					name="basic"
 					placeholder="Type something..."
 				/>
 				<MuText size="small">Value: <code>{{ basic || '(empty)' }}</code></MuText>
@@ -23,8 +23,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="email-input"
-					name="email"
 					v-model="email"
+					name="email"
 					type="email"
 					placeholder="example@mail.com"
 				>
@@ -38,8 +38,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="size-lg"
-					name="size-lg"
 					v-model="text_lg"
+					name="size-lg"
 					size="lg"
 					placeholder="Large size..."
 				>
@@ -47,8 +47,8 @@
 				</MuInput>
 				<MuInput
 					id="size-md"
-					name="size-md"
 					v-model="text_md"
+					name="size-md"
 					size="md"
 					placeholder="Medium size..."
 				>
@@ -56,8 +56,8 @@
 				</MuInput>
 				<MuInput
 					id="size-sm"
-					name="size-sm"
 					v-model="text_sm"
+					name="size-sm"
 					size="sm"
 					placeholder="Small size..."
 				>
@@ -71,8 +71,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="default-input"
-					name="default"
 					v-model="default_val"
+					name="default"
 					placeholder="Default state"
 					state="default"
 				>
@@ -80,8 +80,8 @@
 				</MuInput>
 				<MuInput
 					id="success-input"
-					name="success"
 					v-model="success_val"
+					name="success"
 					placeholder="Success state"
 					state="success"
 				>
@@ -89,11 +89,11 @@
 				</MuInput>
 				<MuInput
 					id="error-input"
-					name="error"
 					v-model="error_val"
+					name="error"
 					placeholder="Error state"
 					state="error"
-					:hasError="true"
+					:has-error="true"
 				>
 					<template #label>Error</template>
 					<template #error>This field is required</template>
@@ -106,8 +106,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="prefix-input"
-					name="prefix"
 					v-model="prefix_val"
+					name="prefix"
 					type="number"
 					placeholder="0.00"
 				>
@@ -116,8 +116,8 @@
 				</MuInput>
 				<MuInput
 					id="suffix-input"
-					name="suffix"
 					v-model="suffix_val"
+					name="suffix"
 					type="number"
 					placeholder="100"
 				>
@@ -132,8 +132,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="search-input"
-					name="search"
 					v-model="search_val"
+					name="search"
 					type="search"
 					placeholder="Search..."
 				>
@@ -147,8 +147,8 @@
 				</MuInput>
 				<MuInput
 					id="password-input"
-					name="password"
 					v-model="password_val"
+					name="password"
 					:type="show_password ? 'text' : 'password'"
 					placeholder="Enter password"
 				>
@@ -178,8 +178,8 @@
 			<div class="guide-demo-inputs">
 				<MuInput
 					id="disabled-input"
-					name="disabled"
 					v-model="disabled_val"
+					name="disabled"
 					placeholder="Disabled input"
 					disabled
 				>
@@ -187,8 +187,8 @@
 				</MuInput>
 				<MuInput
 					id="readonly-input"
-					name="readonly"
 					v-model="readonly_val"
+					name="readonly"
 					placeholder="Readonly input"
 					readonly
 				>

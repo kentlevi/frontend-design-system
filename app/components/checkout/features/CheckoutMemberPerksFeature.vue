@@ -2,39 +2,39 @@
 import { ref } from 'vue';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import {
-	checkoutMemberPointsTooltipContent,
-	checkoutMemberPointsTooltipProps,
-} from '~/data/checkout/tooltips';
+import { checkoutMemberPointsTooltipProps } from '~/data/checkout/tooltips';
 import MuCard from '~/components/base/MuCard.vue';
 import MuInput from '~/components/base/MuInput.vue';
 import MuText from '~/components/base/MuText.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import CouponsModal from '~/components/features/checkout/modals/coupons-modal/Index.vue';
-import { useApplyCoupon } from '~/composables/coupon/useApplyCoupon';
 
 const {
 	t,
 	is_member,
-	points_to_use,
 	points_tooltip_open,
-	useAllPoints,
-	clearPoints,
 	togglePointsTooltip,
 	is_coupons_modal_open,
-} = useCheckoutExperienceFeatureContext();
 
-const {
+	// points
+	points_to_use,
+	total_points,
+	handlePointsKeydown,
+	handlePointsPaste,
+	useAllPoints,
+	clearPoints,
+
+	// coupons
 	form,
 	has_coupon_error,
 	message,
 	validation_errors,
 	apply,
 	removeAppliedCoupon,
-
 	coupon,
-	applicable_coupons
-} = useApplyCoupon();
+	applicable_coupons,
+} = useCheckoutExperienceFeatureContext();
+
 
 
 const points_tooltip_ref = ref<HTMLElement | null>(null);
@@ -55,20 +55,32 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 						<UiTooltip :open="points_tooltip_open" v-bind="checkoutMemberPointsTooltipProps">
 							<template #trigger>
 								<button type="button" class="ui-tooltip-icon-trigger" @click="togglePointsTooltip">
-									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
+									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--gray-90)" decorative />
 								</button>
 							</template>
 							<div class="ui-tooltip-copy">
-								<strong class="ui-tooltip-title">{{ checkoutMemberPointsTooltipContent.title }}</strong>
-								<p class="ui-tooltip-text">{{ checkoutMemberPointsTooltipContent.text }}</p>
+								<strong class="ui-tooltip-title">{{ t('checkout.member.pointsTooltip.title') }}</strong>
+								<p class="ui-tooltip-text">{{ t('checkout.member.pointsTooltip.text') }}</p>
 							</div>
 						</UiTooltip>
 					</div>
-					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: 0 }) }}</span>
+					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: total_points }) }}</span>
 				</div>
 				<div class="checkout-member-perk-control">
-					<UiInput v-model="points_to_use" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
-					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="points_to_use ? clearPoints() : useAllPoints()">
+					<UiInput
+						v-model="points_to_use"
+						size="md"
+						:placeholder="t('checkout.member.pointsPlaceholder')"
+						:disabled="total_points === 0"
+						@keydown="handlePointsKeydown"
+						@paste="handlePointsPaste" />
+					<UiButton
+						variant="outline"
+						tone="neutral"
+						size="md"
+						class="checkout-member-inline-button"
+						:disabled="total_points === 0"
+						@click="points_to_use ? clearPoints() : useAllPoints()">
 						{{ points_to_use ? 'Remove' : t('checkout.member.useAll') }}
 					</UiButton>
 				</div>

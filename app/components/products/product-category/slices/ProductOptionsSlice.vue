@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useQuoteSection } from '~/composables/quote/useQuoteSection';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const color_skeleton_grid_ref = ref<HTMLElement | null>(null);
 const color_skeleton_columns = ref(8);
 let color_skeleton_resize_observer: ResizeObserver | null = null;
@@ -145,7 +145,7 @@ const has_pending_custom_selection = computed(() => {
 <template>
 	<aside class="product-options" data-testid="product-category-options">
 		<section v-if="has_color_selection" class="product-section">
-			<h3 class="option-title" data-testid="product-category-color-title">Select your preferred color</h3>
+			<h3 class="option-title" data-testid="product-category-color-title">{{ translate('product.options.selectColor') }}</h3>
 			<div
 				v-if="is_loading_features"
 				ref="color_skeleton_grid_ref"
@@ -182,8 +182,8 @@ const has_pending_custom_selection = computed(() => {
 		<template v-if="!has_lettering_editor">
 			<section class="product-section">
 				<div class="option-head">
-					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<h3 class="option-title">{{ translate('product.options.selectSize') }}</h3>
+					<small class="option-head-unit">{{ translate('product.options.unitMm') }}</small>
 				</div>
 
 				<div v-if="is_loading_features" class="option-grid option-grid-size">
@@ -210,7 +210,7 @@ const has_pending_custom_selection = computed(() => {
 						class="option-pill option-pill-wide"
 						@click="showCustomSize"
 					>
-						{{ t('product.options.customSize') }}
+						{{ translate('product.options.customSize') }}
 					</button>
 
 					<!-- Custom size input -->
@@ -226,7 +226,7 @@ const has_pending_custom_selection = computed(() => {
 							v-model="custom_size.width"
 							type="number"
 							class="custom-size-input"
-							placeholder="Width"
+							:placeholder="translate('cart.cartPreview.editModal.widthPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@input="updateCustomSize('size-width-field')"
 							@focus="onCustomSizeFocus"
@@ -238,7 +238,7 @@ const has_pending_custom_selection = computed(() => {
 							v-model="custom_size.height"
 							type="number"
 							class="custom-size-input"
-							placeholder="Height"
+							:placeholder="translate('cart.cartPreview.editModal.heightPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@input="updateCustomSize('size-height-field')"
 							@focus="onCustomSizeFocus"
@@ -249,7 +249,7 @@ const has_pending_custom_selection = computed(() => {
 			</section>
 
 			<section class="product-section">
-				<h3 class="option-title">{{ t('product.options.selectQuantity') }}</h3>
+				<h3 class="option-title">{{ translate('product.options.selectQuantity') }}</h3>
 				<div v-if="!is_pricing_ready" class="option-grid">
 					<UiSkeleton v-for="i in quantity_skeleton_count" :key="'qty-skeleton-'+i" height="var(--option-control-height)" border-radius="999px" />
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -272,7 +272,7 @@ const has_pending_custom_selection = computed(() => {
 						class="option-pill option-pill-wide"
 						@click="toggleCustomQuantityField"
 					>
-						{{ t('product.options.customQuantity') }}
+						{{ translate('product.options.customQuantity') }}
 					</button>
 					<div
 						v-else
@@ -285,7 +285,7 @@ const has_pending_custom_selection = computed(() => {
 							:value="custom_quantity?.nr"
 							type="number"
 							class="custom-qty-input"
-							placeholder="Enter quantity"
+							:placeholder="translate('cart.cartPage.aria.enterQuantity')"
 							@beforeinput="prevent_non_digit_input"
 							@input="updateCustomQuantity($event)"
 							@focus="onCustomQtyFocus"
@@ -300,8 +300,8 @@ const has_pending_custom_selection = computed(() => {
 		<template v-else>
 			<section class="product-section">
 				<div class="option-head">
-					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.unitMm') }}</small>
+					<h3 class="option-title">{{ translate('product.options.selectSize') }}</h3>
+					<small class="option-head-unit">{{ translate('product.options.unitMm') }}</small>
 				</div>
 				<div v-if="lettering_field_not_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -321,7 +321,7 @@ const has_pending_custom_selection = computed(() => {
 							inputmode="numeric"
 							pattern="[0-9]*"
 							class="custom-size-input"
-							placeholder="Width"
+							:placeholder="translate('cart.cartPreview.editModal.widthPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@focus="onVinylSizeFocus"
 							@blur="onVinylSizeBlur"
@@ -334,7 +334,7 @@ const has_pending_custom_selection = computed(() => {
 							inputmode="numeric"
 							pattern="[0-9]*"
 							class="custom-size-input"
-							placeholder="Height"
+							:placeholder="translate('cart.cartPreview.editModal.heightPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@focus="onVinylSizeFocus"
 							@blur="onVinylSizeBlur"
@@ -365,7 +365,7 @@ const has_pending_custom_selection = computed(() => {
 			</section>
 
 			<section class="product-section">
-				<h3 class="option-title">{{ t('product.options.selectQuantity') }}</h3>
+				<h3 class="option-title">{{ translate('product.options.selectQuantity') }}</h3>
 				<div v-if="!is_pricing_ready" class="option-grid vinyl-quantity-grid">
 					<UiSkeleton v-for="i in quantity_skeleton_count" :key="'qty-skeleton-'+i" height="var(--option-control-height)" border-radius="999px" />
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -388,7 +388,7 @@ const has_pending_custom_selection = computed(() => {
 						class="option-pill option-pill-wide"
 						@click="toggleCustomQuantityField"
 					>
-						{{ t('product.options.customQuantity') }}
+						{{ translate('product.options.customQuantity') }}
 					</button>
 					<div
 						v-else
@@ -402,7 +402,7 @@ const has_pending_custom_selection = computed(() => {
 							type="text"
 							inputmode="numeric"
 							pattern="[0-9]*"
-							placeholder="Enter Quantity"
+							:placeholder="translate('cart.cartPage.aria.enterQuantity')"
 							class="custom-size-input custom-quantity-input"
 							@beforeinput="prevent_non_digit_input"
 							@input="updateCustomQuantity($event)"
@@ -418,8 +418,8 @@ const has_pending_custom_selection = computed(() => {
 		<section class="price-summary">
 			<div class="price-summary-top">
 				<ul class="price-benefits">
-					<li>{{ t('product.price.benefitShipping') }}</li>
-					<li>{{ t('product.price.benefitShipsTomorrow') }}</li>
+					<li>{{ translate('product.price.benefitShipping') }}</li>
+					<li>{{ translate('product.price.benefitShipsTomorrow') }}</li>
 				</ul>
 
 				<div v-if="is_loading_features" class="price-summary-stack">
@@ -457,7 +457,7 @@ const has_pending_custom_selection = computed(() => {
 				:disabled="selection_navigation_in_flight || has_pending_custom_selection"
 				@click="nextStep"
 			>
-				{{ t('product.price.nextStep') }}
+				{{ translate('product.price.nextStep') }}
 			</UiButton>
 		</section>
 	</aside>

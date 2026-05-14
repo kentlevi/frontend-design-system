@@ -7,7 +7,8 @@
       "bodyHighlight": "가입 감사 선물로 {points}포인트를 드렸어요.",
       "bodySuffix": " 지금부터 주요 기능들을 하나씩 살펴보며 계정을 알차게 활용해 보세요.",
       "skip": "건너뛰기",
-      "getStarted": "시작하기"
+      "getStarted": "시작하기",
+      "closeAria": "환영 팝업 닫기"
     },
     "tour": {
       "close": "가이드 투어 닫기",

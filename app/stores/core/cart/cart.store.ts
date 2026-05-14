@@ -20,8 +20,6 @@ export const useCartStore = defineStore('cart', () => {
 
 	// Holder of the ID of carts owner
 
-	const cart_holder = computed(() => user_store.state?.id ?? null)
-
 	const selected_item = ref<CartItem | null>(null)
 
 	const selected_item_id = computed(() => selected_item.value && selected_item.value.id ? selected_item.value.id : null)
@@ -233,9 +231,16 @@ export const useCartStore = defineStore('cart', () => {
 		item_quantities.value[local_identity] = quantities;
 	}
 
+	const evaluateSelectedIds = () => {
+		const existing_items = new Set(items.value.map(e => e.local_identity))
+
+		selected_ids.value = selected_ids.value.filter((id) => {
+			return existing_items.has(id)
+		})
+	}
+
 	return {
 		// 🔥 States
-		cart_holder,
 		items,
 		loading,
 		number_of_items,
@@ -273,11 +278,12 @@ export const useCartStore = defineStore('cart', () => {
 		updateItemInCart,
 		setItemQuantities,
 		initQuantityMap,
+		evaluateSelectedIds,
 	}
 }, {
 	persist: {
 		key: 'mu_cart',
 		storage: persistedState.localStorage,
-		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids', 'cart_holder'],
+		pick: ['items', 'number_of_items', 'grand_total', 'selected_ids'],
 	}
 })

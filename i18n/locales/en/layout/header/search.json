@@ -40,11 +40,11 @@
                         "paper-roll": "Writable paper roll stickers for shipping, notes, and inventory.",
                         "sticker-sheet": "Multiple stickers on one sheet, perfect for sets and packs.",
                         "die-cut-sheet": "Custom-cut stickers arranged neatly on a single sheet.",
-                        "circle-sheet": "Round Sticker Sheets for easy storage and quick peeling.",
-                        "oval-sheet": "Elegant oval Sticker Sheets that bring a refined look to product labels.",
-                        "square-sheet": "Square Sticker Sheets that keep designs clean and organized.",
-                        "rectangle-sheet": "Sticker Sheets with extra space for names, product info, and barcodes.",
-                        "rounded-sheet": "Soft-corner Sticker Sheets for a smooth, modern presentation."
+                        "circle-sheet": "Circle sheet stickers for easy storage and quick peeling.",
+                        "oval-sheet": "Elegant oval sheet stickers that bring a refined look to product labels.",
+                        "square-sheet": "Square Sheet Stickers that keep designs clean and organized.",
+                        "rectangle-sheet": "Rectangular Sheet Stickers with extra space for names, product info, and barcodes.",
+                        "rounded-sheet": "Soft-corner Sheet Stickers for a smooth, modern presentation."
                     },
                     "recent": {
                         "title": "Recent Search",
@@ -59,7 +59,7 @@
                         "oval-sticker": "Oval Stickers",
                         "rounded-sticker": "Rounded Corner Stickers",
                         "kiss-cut-sticker": "Kiss Cut Stickers",
-                        "sticker-sheet": "Sticker Sheets",
+                        "sticker-sheet": "Sheet Stickers",
                         "clear-sticker": "Clear Stickers",
                         "hologram-sticker": "Hologram Stickers",
                         "transfer-sticker": "Transfer Stickers",
@@ -72,12 +72,12 @@
                         "rounded-roll": "Rounded Roll Stickers",
                         "oval-roll": "Oval Roll Stickers",
                         "paper-roll": "Paper Roll Stickers",
-                        "die-cut-sheet": "Die Cut Sticker Sheets",
-                        "circle-sheet": "Circle Sticker Sheets",
-                        "oval-sheet": "Oval Sticker Sheets",
-                        "square-sheet": "Square Sticker Sheets",
-                        "rectangle-sheet": "Rectangle Sticker Sheets",
-                        "rounded-sheet": "Rounded Corner Sticker Sheets"
+                        "die-cut-sheet": "Die Cut Sheet Stickers",
+                        "circle-sheet": "Circle Sheet Stickers",
+                        "oval-sheet": "Oval Sheet Stickers",
+                        "square-sheet": "Square Sheet Stickers",
+                        "rectangle-sheet": "Rectangle Sheet Stickers",
+                        "rounded-sheet": "Rounded Corner Sheet Stickers"
                     },
                     "footer": {
                         "navigate": "Navigate",

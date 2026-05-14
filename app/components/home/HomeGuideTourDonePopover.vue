@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { toRefs } from 'vue';
 
+const { t: translate } = useI18n();
+
 const component_props = withDefaults(
 	defineProps<{
 		visible?: boolean;
@@ -31,7 +33,7 @@ const emit = defineEmits<{
 				tone="neutral"
 				size="sm"
 				class="home-guide-done-popover-close"
-				:aria-label="$t('home.tour.close')"
+				:aria-label="translate('home.tour.close')"
 				data-testid="home-guide-done-popover-close"
 				@click="emit('close')"
 			>
@@ -39,10 +41,10 @@ const emit = defineEmits<{
 			</UiButton>
 
 			<h3 class="home-guide-done-popover-title">
-				{{ $t('home.tour.step4.title') }}
+				{{ translate('home.tour.step4.title') }}
 			</h3>
 			<p class="home-guide-done-popover-text">
-				{{ $t('home.tour.step4.body') }}
+				{{ translate('home.tour.step4.body') }}
 			</p>
 
 			<div class="home-guide-done-popover-actions">
@@ -54,7 +56,7 @@ const emit = defineEmits<{
 					data-testid="home-guide-done-popover-done"
 					@click="emit('close')"
 				>
-					{{ $t('home.tour.done') }}
+					{{ translate('home.tour.done') }}
 				</UiButton>
 			</div>
 		</aside>

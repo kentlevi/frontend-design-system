@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import type { AddressType } from '~/types/user-address';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 
 type AddressBookUI = {
 	sections: Ref<{ section: AddressType }[]>;
@@ -16,33 +17,25 @@ const {
 </script>
 
 <template>
-	<div
+	<MuLinearWrapper
 		v-if="has_addresses || is_loading"
 		class="account-address-book-sections"
 		data-testid="account-address-book-sections"
+		direction="column"
+		:gap="56"
 	>
-		<div class="account-address-book-primary-group">
+		<MuLinearWrapper
+			class="account-address-book-primary-group"
+			direction="column"
+			:gap="32"
+		>
 			<FeaturesAccountAddressBookContentSection
 				v-for="(section, index) in sections"
 				:key="index"
 				:section="section.section"
 			/>
-		</div>
-	</div>
+		</MuLinearWrapper>
+	</MuLinearWrapper>
 
 	<FeaturesAccountAddressBookContentEmptyState v-else />
 </template>
-
-<style scoped lang="scss">
-.account-address-book-sections {
-	display: flex;
-	flex-direction: column;
-	gap: 56px;
-
-	.account-address-book-primary-group {
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
-	}
-}
-</style>

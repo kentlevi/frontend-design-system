@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
 import { useAddressBookFormModalUI } from '~/composables/account/addressBook/useAddressBookFormModalUI';
 import { useAddressBookFormModal } from '~/composables/account/addressBook/useAddressBookFormModal';
@@ -56,13 +59,13 @@ const {
 		</template>
 
 		<section class="account-address-book-add-modal" data-testid="account-address-book-add-modal">
-			<div class="account-address-book-add-modal-body">
-				<div class="account-address-book-add-modal-section-group">
-					<div class="account-address-book-add-modal-section">
-						<div class="account-address-book-add-modal-group">
-							<h4 class="account-address-book-add-modal-label">
+			<MuLinearWrapper class="account-address-book-add-modal-body" direction="column" :gap="40">
+				<MuLinearWrapper class="account-address-book-add-modal-section-group" direction="column" :gap="24">
+					<MuLinearWrapper class="account-address-book-add-modal-section" direction="column" :gap="16">
+						<MuLinearWrapper class="account-address-book-add-modal-group" direction="column" :gap="8">
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-address-book-add-modal-label">
 								{{ translate('account.addressBook.addressType') }}
-							</h4>
+							</MuHeading>
 
 							<div class="account-address-book-add-modal-segment">
 								<UiButton
@@ -82,15 +85,15 @@ const {
 								</UiButton>
 							</div>
 
-							<p v-if="form_modal_mode === 'edit'" class="account-address-book-add-modal-note">
+							<MuText v-if="form_modal_mode === 'edit'" color="text-secondary" class="account-address-book-add-modal-note">
 								<UiIcon name="regular-info-circle" :size="20" color="var(--gray-90)" />
-								<span>{{ translate('account.addressBook.editAddressTypeNote') }}</span>
-							</p>
-						</div>
-					</div>
-				</div>
+								<MuText variant="span">{{ translate('account.addressBook.editAddressTypeNote') }}</MuText>
+							</MuText>
+						</MuLinearWrapper>
+					</MuLinearWrapper>
+				</MuLinearWrapper>
 
-				<div class="account-address-book-add-modal-bottom-group">
+				<MuLinearWrapper class="account-address-book-add-modal-bottom-group" direction="column" :gap="16">
 					<AddressFormFields
 						:form="active_form"
 						:errors="form_field_errors"
@@ -101,7 +104,7 @@ const {
 						@update:dynamic-field="updateDynamicFieldByType"
 					/>
 
-					<div class="account-address-book-add-modal-footer-row">
+					<MuLinearWrapper class="account-address-book-add-modal-footer-row" align="center" justify="flex-start" :gap="16">
 						<div
 							ref="default_address_tooltip_ref"
 							class="account-address-book-add-modal-switch-row"
@@ -113,9 +116,9 @@ const {
 									class="account-address-book-add-modal-switch-input"
 								>
 								<span class="account-address-book-add-modal-switch-track" />
-								<span class="account-address-book-add-modal-switch-copy">
+								<MuText variant="span" weight="semi-bold" color="text-primary" class="account-address-book-add-modal-switch-copy">
 									{{ default_toggle_copy }}
-								</span>
+								</MuText>
 							</label>
 
 							<UiTooltip :open="default_address_tooltip_open" v-bind="default_address_tooltip_props">
@@ -144,10 +147,10 @@ const {
 								</div>
 							</UiTooltip>
 						</div>
-					</div>
-				</div>
+					</MuLinearWrapper>
+				</MuLinearWrapper>
 
-			</div>
+			</MuLinearWrapper>
 		</section>
 
 		<template #footer>
@@ -187,50 +190,15 @@ const {
 	overflow: visible;
 	width: 100%;
 
-	.account-address-book-add-modal-body {
-		display: flex;
-		flex-direction: column;
-		gap: 40px;
-	}
-
-	.account-address-book-add-modal-section {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-address-book-add-modal-section-group {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-	}
-
-	.account-address-book-add-modal-bottom-group {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.account-address-book-add-modal-group {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
 	.account-address-book-add-modal-note {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
-		color: var(--text-secondary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
 	}
 
 	.account-address-book-add-modal-label {
 		font-size: var(--type-size-100);
 		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-semibold);
-		color: var(--text-primary);
 	}
 
 	.account-address-book-add-modal-segment {
@@ -283,13 +251,6 @@ const {
 		color: var(--gray-50);
 	}
 
-	.account-address-book-add-modal-footer-row {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		gap: 16px;
-	}
-
 	.account-address-book-add-modal-switch-row {
 		display: inline-flex;
 		align-items: center;
@@ -330,13 +291,6 @@ const {
 				transform: translateY(-50%);
 				transition: transform 0.2s ease;
 			}
-		}
-
-		.account-address-book-add-modal-switch-copy {
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-			font-weight: var(--font-weight-semibold);
-			color: var(--text-primary);
 		}
 
 		.account-address-book-add-modal-switch-input:checked + .account-address-book-add-modal-switch-track {
@@ -386,8 +340,8 @@ const {
 		}
 
 		.account-address-book-add-modal-footer-row {
-			flex-direction: column;
-			align-items: stretch;
+			flex-direction: column !important;
+			align-items: stretch !important;
 		}
 
 		:deep(.ui-modal-footer) {

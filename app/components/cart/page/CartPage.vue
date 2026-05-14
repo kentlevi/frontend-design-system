@@ -10,7 +10,7 @@ import CartDeleteItemModal from '~/components/cart/modals/CartDeleteItemModal.vu
 import { useCartPage } from '~/composables/cart/page/useCartPage';
 import { useCartPage as useCartPageHandler } from '~/composables/cart/useCartPage';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const {
 	openItemDetails,
 	saveItemArtworkDetails,
@@ -49,9 +49,9 @@ onMounted(() => {
 			<template v-else>
 				<template v-if="has_items">
 					<CartPageHeader
-						:title="t('cart.cartPage.title')"
+						:title="translate('cart.cartPage.title')"
 						continue-shopping-path="/stickers"
-						:continue-shopping-label="t('cart.cartPage.continueShopping')"
+						:continue-shopping-label="translate('cart.cartPage.continueShopping')"
 					/>
 
 					<section class="cart-page-layout">

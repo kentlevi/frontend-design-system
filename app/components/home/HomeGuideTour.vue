@@ -28,16 +28,16 @@ const emit = defineEmits<{
 	(event: 'next'): void;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
 const safe_step = computed(() =>
 	Math.min(Math.max(step.value, 1), HOME_GUIDE_TOUR_TOTAL_STEPS)
 );
 const panel_class = computed(() => `home-guide-tour-panel--step-${safe_step.value}`);
-const title = computed(() => t(`home.tour.step${safe_step.value}.title`));
-const body = computed(() => t(`home.tour.step${safe_step.value}.body`));
-const cta_label = computed(() => t('home.tour.next'));
+const title = computed(() => translate(`home.tour.step${safe_step.value}.title`));
+const body = computed(() => translate(`home.tour.step${safe_step.value}.body`));
+const cta_label = computed(() => translate('home.tour.next'));
 const has_header_image = computed(() => Boolean(HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safe_step.value]));
 const header_image_path = computed(() => HOME_GUIDE_TOUR_HEADER_IMAGE_BY_STEP[safe_step.value] || '');
 const step_image_urls = computed(() => (
@@ -89,7 +89,7 @@ onMounted(() => {
 					tone="neutral"
 					size="sm"
 					class="home-guide-tour-close"
-					:aria-label="t('home.tour.close')"
+					:aria-label="translate('home.tour.close')"
 					data-testid="home-guide-tour-close"
 					@click="emit('close')"
 				>
@@ -114,7 +114,7 @@ onMounted(() => {
 
 					<div class="home-guide-tour-actions">
 						<p class="home-guide-tour-step">
-							{{ t('home.tour.stepLabel', { current: safe_step, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
+							{{ translate('home.tour.stepLabel', { current: safe_step, total: HOME_GUIDE_TOUR_TOTAL_STEPS }) }}
 						</p>
 
 						<UiButton

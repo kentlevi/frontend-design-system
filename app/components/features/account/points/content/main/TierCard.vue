@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 
 const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
@@ -14,30 +17,30 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 		data-testid="account-points-hero"
 		@click="openRankingModal()"
 	>
-		<div class="account-points-tier-copy">
+		<MuLinearWrapper class="account-points-tier-copy" align="center" :gap="18">
 			<img
 				:src="summary.badge_src"
-				:alt="t('account.points.tierName')"
+				:alt="translate('account.points.tierName')"
 				class="account-points-tier-icon"
 			>
 			<div>
-				<h2 class="account-points-tier">{{ t(`account.points.${summary.tier_name_key}`) }}</h2>
-				<p class="account-points-meta">
-					{{ t('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
-				</p>
+				<MuHeading class="account-points-tier" weight="bold">{{ translate(`account.points.${summary.tier_name_key}`) }}</MuHeading>
+				<MuText color="text-primary" class="account-points-meta">
+					{{ translate('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
+				</MuText>
 			</div>
-		</div>
+		</MuLinearWrapper>
 
 		<div class="account-points-balance-wrap">
-			<p class="account-points-balance" data-testid="account-points-balance">
-				{{ summary.balance }}<span>{{ t('account.points.pointsUnit') }}</span>
-			</p>
+			<MuLinearWrapper class="account-points-balance" data-testid="account-points-balance" align="flex-end" :gap="13">
+				{{ summary.balance }}<MuText variant="span" size="xlarge">{{ translate('account.points.pointsUnit') }}</MuText>
+			</MuLinearWrapper>
 			<UiBadge
 				variant="outline"
 				size="md"
 				badge-class="account-points-expiry-pill"
 			>
-				{{ t('account.points.expiry') }}: {{ summary.expiry_date }}
+				{{ translate('account.points.expiry') }}: {{ summary.expiry_date }}
 			</UiBadge>
 		</div>
 
@@ -48,11 +51,11 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 					:style="{ width: `${summary.progress_percent}%` }"
 				/>
 			</div>
-			<p class="account-points-progress-copy">
-				{{ t('account.points.nextTierRequirementPrefix') }}
+			<MuText align="center" color="text-primary" class="account-points-progress-copy">
+				{{ translate('account.points.nextTierRequirementPrefix') }}
 				<strong>{{ summary.remaining_spend }} KRW</strong>
-				{{ t('account.points.nextTierRequirementSuffix') }}
-			</p>
+				{{ translate('account.points.nextTierRequirementSuffix') }}
+			</MuText>
 		</div>
 	</button>
 </template>
@@ -87,9 +90,6 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 }
 
 .account-points-tier-copy {
-	display: inline-flex;
-	align-items: center;
-	gap: 18px;
 	align-self: start;
 }
 
@@ -109,9 +109,6 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 
 .account-points-meta {
 	margin: 0;
-	color: var(--text-primary);
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
 }
 
 .account-points-balance-wrap {
@@ -125,14 +122,6 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 	line-height: var(--type-line-500);
 	font-weight: var(--font-weight-bold);
 	color: var(--text-primary);
-	display: flex;
-	align-items: flex-end;
-	gap: 13px;
-
-	span {
-		font-size: var(--type-size-300);
-		line-height: var(--type-line-300);
-	}
 }
 
 .account-points-expiry-pill {
@@ -166,10 +155,6 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 
 .account-points-progress-copy {
 	margin: 0;
-	text-align: center;
-	color: var(--text-primary);
-	font-size: var(--type-size-100);
-	line-height: var(--type-line-100);
 }
 
 @media (max-width: 760px) {
@@ -179,7 +164,7 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 	}
 
 	.account-points-tier-copy {
-		gap: 14px;
+		gap: 14px !important;
 	}
 
 	.account-points-tier-icon {

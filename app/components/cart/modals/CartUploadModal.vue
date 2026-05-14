@@ -3,7 +3,7 @@ import { nextTick } from 'vue';
 import { useArtworkSectionHandler } from '~/composables/product-page/useArtworkSectionHandler';
 import { useCartService } from '~/services/core/cart/cart.service';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { adding_item, addItem } = useCartService('upload-modal')
 
 const {
@@ -84,7 +84,7 @@ watch(() => is_modal_open.value, (n) => {
 		width="708px"
 		padding="24px"
 		gap="0"
-		:title="t('cart.uploadArtwork.title')"
+		:title="translate('cart.uploadArtwork.title')"
 		modal-class="upload-modal-shell"
 		@update:model-value="!$event ? closeModal() : undefined"
 	>
@@ -105,10 +105,10 @@ watch(() => is_modal_open.value, (n) => {
 					>
 						<p class="upload-dropzone-title">
 							<UiIcon name="regular-upload" :size="24" color="#2a2f3d" />
-							<span>{{ t('cart.uploadArtwork.dragDropTitle') }}</span>
+							<span>{{ translate('cart.uploadArtwork.dragDropTitle') }}</span>
 						</p>
 						<p class="upload-dropzone-meta">
-							{{ t('cart.uploadArtwork.acceptedTypes') }}
+							{{ translate('cart.uploadArtwork.acceptedTypes') }}
 						</p>
 					</div>
 					<UiButton
@@ -121,7 +121,7 @@ watch(() => is_modal_open.value, (n) => {
 						data-testid="product-category-upload-select-files-button"
 						@click="openFilePicker"
 					>
-						{{ t('cart.uploadArtwork.selectFiles') }}
+						{{ translate('cart.uploadArtwork.selectFiles') }}
 					</UiButton>
 				</template>
 				<template v-else>
@@ -153,7 +153,7 @@ watch(() => is_modal_open.value, (n) => {
 							data-testid="product-category-upload-replace-image-button"
 							@click="openFilePicker"
 						>
-							{{ t('cart.uploadArtwork.replaceImage') }}
+							{{ translate('cart.uploadArtwork.replaceImage') }}
 						</UiButton>
 						<UiButton
 							type="button"
@@ -163,7 +163,7 @@ watch(() => is_modal_open.value, (n) => {
 							icon-only
 							icon="regular-trash"
 							icon-size="24"
-							sr-label="Remove uploaded artwork"
+							:sr-label="translate('account.orders.upload.removeArtwork')"
 							width="40px"
 							height="40px"
 							class="upload-icon-btn"
@@ -175,20 +175,20 @@ watch(() => is_modal_open.value, (n) => {
 			</div>
 
 			<div class="upload-notes" data-testid="product-category-upload-notes">
-				<span class="upload-notes-label">{{ t('cart.uploadArtwork.modalSpecialInstructions') }}</span>
+				<span class="upload-notes-label">{{ translate('cart.uploadArtwork.modalSpecialInstructions') }}</span>
 				<UiTextarea
 					v-model="instruction"
 					class="upload-notes-textarea"
 					:rows="4"
 					resize="none"
 					field-class="upload-notes-textarea-field"
-					:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
+					:placeholder="translate('cart.uploadArtwork.specialInstructionsPlaceholder')"
 					data-testid="product-category-upload-special-instructions"
 				/>
 			</div>
 
 			<p class="upload-note" data-testid="product-category-upload-note">
-				{{ t('cart.uploadArtwork.note') }}
+				{{ translate('cart.uploadArtwork.note') }}
 			</p>
 
 			<input
@@ -211,7 +211,7 @@ watch(() => is_modal_open.value, (n) => {
 					data-testid="product-category-upload-skip-button"
 					@click="skipUpload()"
 				>
-					{{ t('cart.uploadArtwork.skipUploadLater') }}
+					{{ translate('cart.uploadArtwork.skipUploadLater') }}
 				</UiButton>
 				<UiButton
 					type="button"
@@ -231,8 +231,8 @@ watch(() => is_modal_open.value, (n) => {
 					/>
 					{{
 						uploading
-							? `${t('cart.uploadArtwork.addToCart')}...`
-							: t('cart.uploadArtwork.addToCart')
+							? `${translate('cart.uploadArtwork.addToCart')}...`
+							: translate('cart.uploadArtwork.addToCart')
 					}}
 				</UiButton>
 			</div>

@@ -15,15 +15,15 @@ export function useAuthVerificationModal(params: {
 	emitResend: () => void;
 	align: Ref<'start' | 'top' | 'center' | 'bottom'>;
 }) {
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const { codeInputs, inputRefs, setCode, getCode, handleInput, handleKeyDown, handlePaste } =
 		useVerificationCodeInput(params.otpLength.value);
 
 	const translation_key = computed(() => params.translationBase.value);
 	const computed_submit_label = computed(() =>
 		params.verifying.value
-			? params.busyLabel.value || t(`${translation_key.value}.verifying`)
-			: params.submitLabel.value || t(`${translation_key.value}.verify`)
+			? params.busyLabel.value || translate(`${translation_key.value}.verifying`)
+			: params.submitLabel.value || translate(`${translation_key.value}.verify`)
 	);
 
 	const is_resend_tap_locked = ref(false);

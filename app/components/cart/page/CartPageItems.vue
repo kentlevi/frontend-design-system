@@ -4,6 +4,8 @@ import { useCartPageItem } from '~/composables/cart/useCartPageItem';
 import type { CartItem } from '~/types/cart/cart';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
+const { t: translate } = useI18n();
+
 const {
 	qty_select_options,
 	preventNonDigitInput,
@@ -41,7 +43,7 @@ const emit = defineEmits<{
 	(e: 'updateArtwork', item: CartItem): void;
 }>();
 
-const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? useI18n().t('cart.cartPage.changeArtwork') : useI18n().t('cart.cartPage.addArtwork')
+const getArtworkActionLabel = (has_artwork: boolean) => has_artwork ? translate('cart.cartPage.changeArtwork') : translate('cart.cartPage.addArtwork')
 
 
 const openArtworkDetails = (item : CartItem) => {
@@ -59,7 +61,7 @@ const openArtworkDetails = (item : CartItem) => {
 				icon-class="cart-check-row-icon"
 				@update:model-value="selectAllItem"
 			>
-				{{ $t('cart.cartPage.selectAll', { count: selected_ids.length }) }}
+				{{ translate('cart.cartPage.selectAll', { count: selected_ids.length }) }}
 			</UiCheckbox>
 			<UiButton
 				class="cart-remove-btn"
@@ -71,14 +73,14 @@ const openArtworkDetails = (item : CartItem) => {
 				@click="deleteSelectedItems()"
 			>
 				<UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
-				{{ $t('cart.cartPage.remove') }}
+				{{ translate('cart.cartPage.remove') }}
 			</UiButton>
 		</div>
 
 		<div class="cart-list-head">
-			<span class="cart-list-head-label">{{ $t('cart.cartPage.headers.item') }}</span>
-			<span class="cart-list-head-label">{{ $t('cart.cartPage.headers.quantity') }}</span>
-			<span class="cart-list-head-label">{{ $t('cart.cartPage.headers.price') }}</span>
+			<span class="cart-list-head-label">{{ translate('cart.cartPage.headers.item') }}</span>
+			<span class="cart-list-head-label">{{ translate('cart.cartPage.headers.quantity') }}</span>
+			<span class="cart-list-head-label">{{ translate('cart.cartPage.headers.price') }}</span>
 			<span class="cart-list-head-spacer" />
 		</div>
 
@@ -119,7 +121,7 @@ const openArtworkDetails = (item : CartItem) => {
 						</button>
 						<div class="cart-item-copy">
 							<h3 class="cart-item-title">{{ row.product }}</h3>
-							<p class="cart-item-size">{{ $t('cart.cartPage.sizeLabel', { size: `${row.width}x${row.height}` }) }}</p>
+							<p class="cart-item-size">{{ translate('cart.cartPage.sizeLabel', { size: `${row.width}x${row.height}` }) }}</p>
 							<UiButton v-if="allowArtworkUpdate(row.url_slug)" class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row)">
 								{{ getArtworkActionLabel(Boolean(row.artwork_file)) }}
 							</UiButton>
@@ -127,7 +129,7 @@ const openArtworkDetails = (item : CartItem) => {
 					</div>
 					<div class="cart-item-links">
 						<UiButton v-if="allowVariantUpdate(row.url_slug)" class="cart-link-btn" variant="ghost" tone="default" size="24" @click="assignEditableItem(row)">
-							{{ $t('cart.cartPage.editSize') }}
+							{{ translate('cart.cartPage.editSize') }}
 						</UiButton>
 					</div>
 				</div>
@@ -158,7 +160,7 @@ const openArtworkDetails = (item : CartItem) => {
 							:value="custom_qty_draft"
 							type="text"
 							inputmode="numeric"
-							placeholder="Enter quantity"
+							:placeholder="translate('cart.cartPage.aria.enterQuantity')"
 							class="cart-qty-inline-input"
 							@beforeinput="preventNonDigitInput"
 							@input="setCustomQtyDraft(($event.target as HTMLInputElement).value)"
@@ -168,7 +170,7 @@ const openArtworkDetails = (item : CartItem) => {
 						<button
 							type="button"
 							class="cart-qty-select-arrow"
-							aria-label="Open quantity options"
+							:aria-label="translate('cart.cartPage.aria.openQuantityOptions')"
 							@click="toggleCustomQtyMenu"
 						>
 							<UiIcon
@@ -210,7 +212,7 @@ const openArtworkDetails = (item : CartItem) => {
 				icon-only
 				icon="regular-trash"
 				icon-size="24"
-				:sr-label="$t('cart.cartPage.removeItemSr')"
+				:sr-label="translate('cart.cartPage.removeItemSr')"
 				@click="deleteSelectedItems(row.local_identity)"
 			/>
 		</article>

@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { useCountry } from '~/composables/app/country/useCountry';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 
 async function onOrderNowClick() {
@@ -17,7 +17,7 @@ async function onOrderNowClick() {
 				<img
 					class="home-hero-art-image"
 					src="/illustrations/products/sticker-kids/kid-decorating-sheet.svg"
-					:alt="t('home.hero.title')"
+					:alt="translate('home.hero.title')"
 					loading="eager"
 					fetchpriority="high"
 					decoding="sync"
@@ -29,9 +29,9 @@ async function onOrderNowClick() {
 			<div class="home-hero-content">
 				<div class="home-hero-copy">
 					<h1 class="home-hero-title">
-						{{ t('home.hero.title') }}
+						{{ translate('home.hero.title') }}
 					</h1>
-					<p class="home-hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+					<p class="home-hero-subtitle">{{ translate('home.hero.subtitle') }}</p>
 				</div>
 				<UiButton
 					variant="filled"
@@ -41,7 +41,7 @@ async function onOrderNowClick() {
 					data-testid="home-hero-cta-button"
 					@click="onOrderNowClick"
 				>
-					{{ t('home.hero.cta') }}
+					{{ translate('home.hero.cta') }}
 				</UiButton>
 			</div>
 		</div>

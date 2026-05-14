@@ -7,7 +7,7 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 
 	const order_refs: Record<UserOrderType, Ref<UserOrder[]>> = {
 		'ongoing':         ongoing,
-		'action-required': action_required,
+		action_required,
 		'completed':       completed,
 	}
 

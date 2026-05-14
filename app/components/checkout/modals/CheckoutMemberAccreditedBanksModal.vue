@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const props = defineProps<{
 	modelValue: boolean;
@@ -47,11 +47,11 @@ function closeModal() {
 	>
 		<section class="checkout-member-accredited-banks-modal">
 			<header class="checkout-member-accredited-banks-modal-header">
-				<h3 class="checkout-member-accredited-banks-modal-title">{{ t('checkout.member.paymentMeta.accreditedBanksModalTitle') }}</h3>
+				<h3 class="checkout-member-accredited-banks-modal-title">{{ translate('checkout.member.paymentMeta.accreditedBanksModalTitle') }}</h3>
 				<button
 					type="button"
 					class="checkout-member-accredited-banks-modal-close"
-					:aria-label="t('checkout.member.paymentMeta.accreditedBanksModalCloseAria')"
+					:aria-label="translate('checkout.member.paymentMeta.accreditedBanksModalCloseAria')"
 					@click="closeModal"
 				>
 					<UiIcon name="regular-times" size="24" color="var(--text-primary)" decorative />
@@ -73,7 +73,7 @@ function closeModal() {
 
 			<footer class="checkout-member-accredited-banks-modal-footer">
 				<UiButton type="button" variant="ghost" tone="neutral" size="sm" :no-hover="true" @click="closeModal">
-					{{ t('checkout.member.paymentMeta.accreditedBanksModalClose') }}
+					{{ translate('checkout.member.paymentMeta.accreditedBanksModalClose') }}
 				</UiButton>
 			</footer>
 		</section>

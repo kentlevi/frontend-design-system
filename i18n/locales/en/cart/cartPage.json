@@ -53,7 +53,13 @@
       "emptyDescription": "Your cart is currently empty. Browse our collection to get started, or find inspiration in the recommended products below.",
       "discoverMore": "Discover more products you might like.",
       "prevProductsSr": "Previous products",
-      "nextProductsSr": "Next products"
+      "nextProductsSr": "Next products",
+      "aria": {
+        "featuredProducts": "Featured products",
+        "discoverMore": "Discover more products",
+        "openQuantityOptions": "Open quantity options",
+        "enterQuantity": "Enter quantity"
+      }
     }
   }
 }

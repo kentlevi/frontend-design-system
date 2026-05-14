@@ -10,7 +10,7 @@ definePageMeta({
 	hideFooter: true,
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 
 const route = useRoute();
@@ -48,22 +48,22 @@ const requestNewResetPasswordLink = async () => {
 			<div class="auth-otp-expired-content-group">
 				<div class="auth-otp-expired-heading-group">
 					<h1 class="auth-otp-expired-title">
-						{{ t('auth.otpExpired.title') }}
+						{{ translate('auth.otpExpired.title') }}
 					</h1>
 
 					<p class="auth-otp-expired-copy">
-						{{ t('auth.otpExpired.description') }}
+						{{ translate('auth.otpExpired.description') }}
 					</p>
 				</div>
 
 				<div class="auth-otp-expired-actions">
 					<UiButton class="auth-otp-expired-cta auth-otp-expired-cta--primary" @click="requestNewResetPasswordLink">
 						<UiIcon name="strong-paper-plane" :size="24" color="var(--white-base)" />
-						{{ t('auth.otpExpired.requestNew') }}
+						{{ translate('auth.otpExpired.requestNew') }}
 					</UiButton>
 
 					<NuxtLink :to="withCountry('/')" class="auth-otp-expired-cta auth-otp-expired-cta--secondary">
-						{{ t('auth.otpExpired.returnHome') }}
+						{{ translate('auth.otpExpired.returnHome') }}
 					</NuxtLink>
 				</div>
 			</div>

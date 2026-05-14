@@ -2,6 +2,8 @@
 import { toRefs } from 'vue';
 import { useHomeWelcomePopover } from '~/composables/home/welcomePopover/useHomeWelcomePopover';
 
+const { t: translate } = useI18n();
+
 const component_props = withDefaults(
 	defineProps<{
 		visible?: boolean;
@@ -37,7 +39,7 @@ const { greeting_name } = useHomeWelcomePopover();
 				tone="neutral"
 				size="sm"
 				class="home-welcome-popover-close"
-				aria-label="Close welcome popover"
+				:aria-label="translate('home.welcome.closeAria')"
 				data-testid="home-welcome-popover-close"
 				@click="emit('close')"
 			>
@@ -46,12 +48,12 @@ const { greeting_name } = useHomeWelcomePopover();
 
 			<div class="home-welcome-popover-content">
 				<h3 class="home-welcome-popover-title">
-					{{ $t('home.welcome.title', { name: greeting_name }) }}
+					{{ translate('home.welcome.title', { name: greeting_name }) }}
 				</h3>
 				<p class="home-welcome-popover-text">
-					<span>{{ $t('home.welcome.bodyPrefix') }}</span>
-					<strong>{{ $t('home.welcome.bodyHighlight', { points: reward_points }) }}</strong>
-					<span>{{ $t('home.welcome.bodySuffix') }}</span>
+					<span>{{ translate('home.welcome.bodyPrefix') }}</span>
+					<strong>{{ translate('home.welcome.bodyHighlight', { points: reward_points }) }}</strong>
+					<span>{{ translate('home.welcome.bodySuffix') }}</span>
 				</p>
 			</div>
 
@@ -66,7 +68,7 @@ const { greeting_name } = useHomeWelcomePopover();
 					:no-hover="true"
 					@click="emit('close')"
 				>
-					{{ $t('home.welcome.skip') }}
+					{{ translate('home.welcome.skip') }}
 				</UiButton>
 				<UiButton
 					variant="filled"
@@ -77,7 +79,7 @@ const { greeting_name } = useHomeWelcomePopover();
 					@click="emit('start')"
 				>
 					<UiIcon name="regular-arrow-right" :size="18" />
-					{{ $t('home.welcome.getStarted') }}
+					{{ translate('home.welcome.getStarted') }}
 				</UiButton>
 			</div>
 		</aside>

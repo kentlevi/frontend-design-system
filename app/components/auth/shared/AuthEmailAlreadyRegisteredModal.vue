@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const props = withDefaults(defineProps<{
 	modelValue: boolean;
@@ -49,7 +49,7 @@ function openForgotPassword() {
 			<button
 				type="button"
 				class="auth-email-registered-modal-close"
-				:aria-label="t('auth.register.emailAlreadyRegistered.closeModal')"
+				:aria-label="translate('auth.register.emailAlreadyRegistered.closeModal')"
 				data-testid="auth-email-registered-modal-close"
 				@click="closeModal"
 			>
@@ -65,11 +65,11 @@ function openForgotPassword() {
 					>
 				</div>
 				<div class="auth-email-registered-modal-text-wrap">
-					<h3 class="auth-email-registered-modal-title">{{ t('auth.register.emailAlreadyRegistered.title') }}</h3>
+					<h3 class="auth-email-registered-modal-title">{{ translate('auth.register.emailAlreadyRegistered.title') }}</h3>
 					<p class="auth-email-registered-modal-text">
-						{{ t('auth.register.emailAlreadyRegistered.description.prefix') }}
+						{{ translate('auth.register.emailAlreadyRegistered.description.prefix') }}
 						<strong class="change-strong">{{ email }}</strong>
-						{{ t('auth.register.emailAlreadyRegistered.description.suffix') }}
+						{{ translate('auth.register.emailAlreadyRegistered.description.suffix') }}
 					</p>
 				</div>
 			</div>
@@ -82,7 +82,7 @@ function openForgotPassword() {
 						label-class="auth-email-registered-field-label"
 						label-text-class="auth-email-registered-field-label-text"
 						error-class="auth-email-registered-field-error"
-						:label="t('auth.register.emailAlreadyRegistered.password')"
+						:label="translate('auth.register.emailAlreadyRegistered.password')"
 						:error="passwordError"
 					>
 						<UiInput
@@ -91,7 +91,7 @@ function openForgotPassword() {
 							size="md"
 							class="auth-email-registered-input"
 							:state="passwordError ? 'error' : 'default'"
-							:placeholder="t('auth.register.emailAlreadyRegistered.enterPassword')"
+							:placeholder="translate('auth.register.emailAlreadyRegistered.enterPassword')"
 							data-testid="auth-email-registered-password-input"
 							@update:model-value="emit('update:password', $event)"
 						>
@@ -101,8 +101,8 @@ function openForgotPassword() {
 									tone="neutral"
 									size="sm"
 									class="auth-email-registered-password-toggle"
-									:aria-label="t('auth.register.emailAlreadyRegistered.togglePassword')"
-									:sr-label="t('auth.register.emailAlreadyRegistered.togglePassword')"
+									:aria-label="translate('auth.register.emailAlreadyRegistered.togglePassword')"
+									:sr-label="translate('auth.register.emailAlreadyRegistered.togglePassword')"
 									icon-only
 									:no-hover="true"
 									:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
@@ -119,7 +119,7 @@ function openForgotPassword() {
 						data-testid="auth-email-registered-forgot-link"
 						@click="openForgotPassword"
 					>
-						{{ t('auth.register.emailAlreadyRegistered.forgotPassword') }}
+						{{ translate('auth.register.emailAlreadyRegistered.forgotPassword') }}
 					</button>
 				</div>
 
@@ -133,7 +133,7 @@ function openForgotPassword() {
 						data-testid="auth-email-registered-modal-continue"
 						@click="emit('continue')"
 					>
-						{{ t('auth.register.emailAlreadyRegistered.continue') }}
+						{{ translate('auth.register.emailAlreadyRegistered.continue') }}
 					</UiButton>
 				</div>
 			</div>

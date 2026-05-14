@@ -2,6 +2,8 @@
 import { useAuthProfileDetailsStep } from '~/composables/auth/profile/useAuthProfileDetailsStep';
 import PersonalDetails from './PersonalDetails.vue';
 
+const { t: translate } = useI18n();
+
 const {
 	can_continue_profile_details,
 	can_skip_profile_details,
@@ -26,13 +28,13 @@ const {
 			>
 				<h1 class="auth-profile-head-title">
 					{{
-						$t('auth.profile.details.title', {
+						translate('auth.profile.details.title', {
 							name: welcome_name || 'User',
 						})
 					}}
 				</h1>
 				<p class="auth-profile-head-subtitle">
-					{{ $t('auth.profile.details.subtitle') }}
+					{{ translate('auth.profile.details.subtitle') }}
 				</p>
 			</header>
 
@@ -52,7 +54,7 @@ const {
 				data-testid="auth-profile-skip-button"
 				@click="skipProfileDetails"
 			>
-				{{ $t('auth.profile.details.skip') }}
+				{{ translate('auth.profile.details.skip') }}
 			</UiButton>
 			<UiButton
 				variant="filled"
@@ -64,7 +66,7 @@ const {
 				@click="goNext"
 			>
 				<UiIcon name="regular-long-arrow-right" :size="24" />
-				{{ $t('auth.profile.details.continue') }}
+				{{ translate('auth.profile.details.continue') }}
 			</UiButton>
 		</div>
 	</div>

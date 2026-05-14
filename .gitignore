@@ -80,3 +80,6 @@ test-results
 .elasticbeanstalk
 package-lock.json
 
+# Claude rules (local, not for commit)
+CLAUDE.md
+

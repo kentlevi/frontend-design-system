@@ -2,7 +2,7 @@
 import { toRefs } from 'vue';
 import { useCountry } from '@/composables/app/country/useCountry';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 
 const component_props = defineProps<{
@@ -15,30 +15,30 @@ const { year, isProduct: is_product } = toRefs(component_props);
 <template>
 	<div class="home-footer-inner" :class="{ 'is-product': is_product }" data-testid="app-footer-main-container">
 		<div class="home-footer-left" data-testid="app-footer-main-left">
-			<h2 class="home-footer-brand">{{ t('layout.footer.brand') }}</h2>
+			<h2 class="home-footer-brand">{{ translate('layout.footer.brand') }}</h2>
 			<p class="home-footer-meta">
-				{{ t('layout.footer.meta1') }}
+				{{ translate('layout.footer.meta1') }}
 			</p>
 			<p class="home-footer-meta">
-				{{ t('layout.footer.meta2') }}
+				{{ translate('layout.footer.meta2') }}
 			</p>
 			<p class="home-footer-copy">
-				<span>{{ t('layout.footer.copyright') }} {{ year }}</span>
-				<span>{{ t('layout.footer.sales') }}</span>
-				<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
-				<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
+				<span>{{ translate('layout.footer.copyright') }} {{ year }}</span>
+				<span>{{ translate('layout.footer.sales') }}</span>
+				<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-policy-link" data-testid="app-footer-main-terms-link">{{ translate('layout.footer.terms') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-policy-link" data-testid="app-footer-main-privacy-link">{{ translate('layout.footer.privacy') }}</NuxtLink>
 			</p>
 		</div>
 
 		<div class="home-footer-right" data-testid="app-footer-main-right">
 			<p class="home-footer-phone">1899-5529</p>
 			<div class="home-footer-meta-row">
-				<p class="home-footer-hours">{{ t('layout.footer.hours') }}</p>
-				<p class="home-footer-note">{{ t('layout.footer.closed') }}</p>
+				<p class="home-footer-hours">{{ translate('layout.footer.hours') }}</p>
+				<p class="home-footer-note">{{ translate('layout.footer.closed') }}</p>
 			</div>
 			<div class="home-footer-links">
-				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ t('layout.footer.inquiry') }}</NuxtLink>
-				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ t('layout.footer.faq') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-inquiry-link">{{ translate('layout.footer.inquiry') }}</NuxtLink>
+				<NuxtLink :to="withCountry('/under-construction')" class="home-footer-action-link" data-testid="app-footer-main-faq-link">{{ translate('layout.footer.faq') }}</NuxtLink>
 			</div>
 		</div>
 	</div>

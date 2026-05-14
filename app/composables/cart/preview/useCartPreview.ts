@@ -17,7 +17,7 @@ export function useCartPreview(params: {
 	closePreview: () => void;
 }) {
 	const router = useRouter();
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const { withCountry } = useCountry();
 	const toast_service = useToastService();
 	const cart_service = useCartService();
@@ -61,7 +61,7 @@ export function useCartPreview(params: {
 
 	function showCartItemUpdatedToast() {
 		toast_service.showToast({
-			message: t('cart.cartPage.itemUpdated'),
+			message: translate('cart.cartPage.itemUpdated'),
 			tone: 'primary',
 			dismissible: true,
 			variant: 'default',
@@ -153,7 +153,7 @@ export function useCartPreview(params: {
 					value: item.sizeKey,
 				},
 				{
-					label: t('cart.cartPreview.editModal.customSize'),
+					label: translate('cart.cartPreview.editModal.customSize'),
 					value: 'custom',
 				},
 			];
@@ -165,7 +165,7 @@ export function useCartPreview(params: {
 				value: size.key,
 			})),
 			{
-				label: t('cart.cartPreview.editModal.customSize'),
+				label: translate('cart.cartPreview.editModal.customSize'),
 				value: 'custom',
 			},
 		];
@@ -179,7 +179,7 @@ export function useCartPreview(params: {
 					value: item.qty,
 				},
 				{
-					label: t('cart.cartPreview.editModal.customQuantity'),
+					label: translate('cart.cartPreview.editModal.customQuantity'),
 					value: -1,
 				},
 			];
@@ -191,7 +191,7 @@ export function useCartPreview(params: {
 				value: qty,
 			})),
 			{
-				label: t('cart.cartPreview.editModal.customQuantity'),
+				label: translate('cart.cartPreview.editModal.customQuantity'),
 				value: -1,
 			},
 		];

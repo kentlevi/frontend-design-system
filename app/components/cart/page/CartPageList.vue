@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCartPageList } from '~/composables/cart/page/useCartPageList';
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const {
 	rows,
@@ -42,7 +42,7 @@ const emit = defineEmits<{
 				icon-class="cart-check-row-icon"
 				@update:model-value="setAllSelected"
 			>
-				{{ $t('cart.cartPage.selectAll', { count: rows.length }) }}
+				{{ translate('cart.cartPage.selectAll', { count: rows.length }) }}
 			</UiCheckbox>
 			<UiButton
 				class="cart-remove-btn"
@@ -54,14 +54,14 @@ const emit = defineEmits<{
 				@click="openDeleteModal(selected_ids)"
 			>
 				<UiIcon name="regular-trash" :size="24" color="var(--text-primary)" />
-				{{ $t('cart.cartPage.remove') }}
+				{{ translate('cart.cartPage.remove') }}
 			</UiButton>
 		</div>
 
 		<div class="cart-list-head">
-			<span class="cart-list-head-label">{{ $t('cart.cartPage.headers.item') }}</span>
-			<span class="cart-list-head-label">{{ $t('cart.cartPage.headers.quantity') }}</span>
-			<span class="cart-list-head-label">{{ $t('cart.cartPage.headers.price') }}</span>
+			<span class="cart-list-head-label">{{ translate('cart.cartPage.headers.item') }}</span>
+			<span class="cart-list-head-label">{{ translate('cart.cartPage.headers.quantity') }}</span>
+			<span class="cart-list-head-label">{{ translate('cart.cartPage.headers.price') }}</span>
 			<span class="cart-list-head-spacer" />
 		</div>
 
@@ -91,7 +91,7 @@ const emit = defineEmits<{
 						>
 							<img
 								:src="row.artworkPreviewUrl || row.product.image"
-								:alt="t(`product.items.${row.product.id}.name`)"
+								:alt="translate(`product.items.${row.product.id}.name`)"
 								class="cart-item-thumb-image"
 							>
 							<span
@@ -103,8 +103,8 @@ const emit = defineEmits<{
 							</span>
 						</button>
 						<div class="cart-item-copy">
-							<h3 class="cart-item-title">{{ t(`product.items.${row.product.id}.name`) }}</h3>
-							<p class="cart-item-size">{{ $t('cart.cartPage.sizeLabel', { size: sizeDimOnly(row.sizeLabel) }) }}</p>
+							<h3 class="cart-item-title">{{ translate(`product.items.${row.product.id}.name`) }}</h3>
+							<p class="cart-item-size">{{ translate('cart.cartPage.sizeLabel', { size: sizeDimOnly(row.sizeLabel) }) }}</p>
 							<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="emit('openArtworkPicker', row.id)">
 								{{ getArtworkActionLabel(Boolean(row.artworkPreviewUrl)) }}
 							</UiButton>
@@ -112,7 +112,7 @@ const emit = defineEmits<{
 					</div>
 					<div class="cart-item-links">
 						<UiButton class="cart-link-btn" variant="ghost" tone="default" size="24" @click="openEditSize(row.id)">
-							{{ $t('cart.cartPage.editSize') }}
+							{{ translate('cart.cartPage.editSize') }}
 						</UiButton>
 					</div>
 				</div>
@@ -140,7 +140,7 @@ const emit = defineEmits<{
 							:value="custom_qty_draft"
 							type="text"
 							inputmode="numeric"
-							placeholder="Enter quantity"
+							:placeholder="translate('cart.cartPage.aria.enterQuantity')"
 							class="cart-qty-inline-input"
 							@beforeinput="preventNonDigitInput"
 							@input="setCustomQtyDraft(($event.target as HTMLInputElement).value)"
@@ -150,7 +150,7 @@ const emit = defineEmits<{
 						<button
 							type="button"
 							class="cart-qty-select-arrow"
-							aria-label="Open quantity options"
+							:aria-label="translate('cart.cartPage.aria.openQuantityOptions')"
 							@click="toggleCustomQtyMenu"
 						>
 							<UiIcon
@@ -192,7 +192,7 @@ const emit = defineEmits<{
 				icon-only
 				icon="regular-trash"
 				icon-size="24"
-				:sr-label="$t('cart.cartPage.removeItemSr')"
+				:sr-label="translate('cart.cartPage.removeItemSr')"
 				@click="openDeleteModal([row.id])"
 			/>
 		</article>

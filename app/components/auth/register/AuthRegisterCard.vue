@@ -18,7 +18,7 @@ import {
 import { loginMemberUser } from '~/services/auth/auth.service';
 
 const route = useRoute();
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 
 const props = withDefaults(defineProps<{
@@ -82,8 +82,8 @@ const registered_email_password = ref('');
 const registered_email_password_error = ref('');
 const registered_email_password_visible = ref(false);
 
-const email_taken_message = computed(() => t('auth.register.validation.emailTaken'));
-const registered_email_credentials_mismatch_message = computed(() => t('auth.login.validation.credentialsMismatch'));
+const email_taken_message = computed(() => translate('auth.register.validation.emailTaken'));
+const registered_email_credentials_mismatch_message = computed(() => translate('auth.login.validation.credentialsMismatch'));
 const is_email_taken_error = computed(() => email_error.value === email_taken_message.value);
 const visible_email_error = computed(() => (is_email_taken_error.value ? '' : email_error.value));
 
@@ -105,7 +105,7 @@ function closeEmailAlreadyRegisteredModal() {
 
 async function continueWithRegisteredEmail() {
 	if (!registered_email_password.value.trim()) {
-		registered_email_password_error.value = t('auth.register.validation.fieldBlank');
+		registered_email_password_error.value = translate('auth.register.validation.fieldBlank');
 		return;
 	}
 
@@ -182,7 +182,7 @@ watch(is_email_taken_error, (is_taken) => {
 	<div class="auth-register-card-shell">
 		<UiLoadingOverlay
 			:visible="is_submitting"
-			:label="t('auth.register.createAccount')"
+			:label="translate('auth.register.createAccount')"
 			test-id="auth-register-loading-overlay"
 			variant="modal"
 			position="absolute"
@@ -197,7 +197,7 @@ watch(is_email_taken_error, (is_taken) => {
 					size="sm"
 					:no-hover="true"
 					class="auth-register-card-close"
-					:aria-label="t('auth.register.closeModal')"
+					:aria-label="translate('auth.register.closeModal')"
 					@click="emit('close')"
 				>
 					<UiIcon
@@ -217,17 +217,17 @@ watch(is_email_taken_error, (is_taken) => {
 					class="auth-register-head-logo"
 				/>
 				<h1 class="auth-register-title">
-					{{ t('auth.register.title') }}
+					{{ translate('auth.register.title') }}
 				</h1>
 				<p class="auth-register-subtitle">
-					{{ t('auth.register.subtitle', { points: registerRewardPoints }) }}
+					{{ translate('auth.register.subtitle', { points: registerRewardPoints }) }}
 				</p>
 			</div>
 
 			<div class="auth-register-grid">
 				<UiFormField
 					class="auth-register-field"
-					:label="t('auth.register.firstName')"
+					:label="translate('auth.register.firstName')"
 					:error="first_name_error"
 					head-class="auth-register-field-head"
 					label-class="auth-register-field-label"
@@ -240,14 +240,14 @@ watch(is_email_taken_error, (is_taken) => {
 						size="md"
 						class="auth-register-input"
 						:state="first_name_error ? 'error' : 'default'"
-						:placeholder="t('auth.register.enterFirstName')"
+						:placeholder="translate('auth.register.enterFirstName')"
 						data-testid="auth-register-first-name-input"
 					/>
 				</UiFormField>
 
 				<UiFormField
 					class="auth-register-field"
-					:label="t('auth.register.lastNameOptionalLabel')"
+					:label="translate('auth.register.lastNameOptionalLabel')"
 					head-class="auth-register-field-head"
 					label-class="auth-register-field-label"
 					label-text-class="auth-register-field-label-text"
@@ -258,7 +258,7 @@ watch(is_email_taken_error, (is_taken) => {
 						type="text"
 						size="md"
 						class="auth-register-input"
-						:placeholder="t('auth.register.enterLastName')"
+						:placeholder="translate('auth.register.enterLastName')"
 						data-testid="auth-register-last-name-input"
 					/>
 				</UiFormField>
@@ -266,7 +266,7 @@ watch(is_email_taken_error, (is_taken) => {
 
 			<UiFormField
 				class="auth-register-field"
-				:label="t('auth.register.email')"
+				:label="translate('auth.register.email')"
 				:error="visible_email_error"
 				head-class="auth-register-field-head"
 				label-class="auth-register-field-label"
@@ -279,14 +279,14 @@ watch(is_email_taken_error, (is_taken) => {
 					size="md"
 					class="auth-register-input"
 					:state="visible_email_error ? 'error' : 'default'"
-					:placeholder="t('auth.register.enterEmail')"
+					:placeholder="translate('auth.register.enterEmail')"
 					data-testid="auth-register-email-input"
 				/>
 			</UiFormField>
 
 			<UiFormField
 				class="auth-register-field"
-				:label="t('auth.register.password')"
+				:label="translate('auth.register.password')"
 				:error="password_error"
 				head-class="auth-register-field-head"
 				label-class="auth-register-field-label"
@@ -300,7 +300,7 @@ watch(is_email_taken_error, (is_taken) => {
 						size="md"
 						class="auth-register-input"
 						:state="password_error ? 'error' : 'default'"
-						:placeholder="t('auth.register.enterPassword')"
+						:placeholder="translate('auth.register.enterPassword')"
 						data-testid="auth-register-password-input"
 					>
 						<template #icon-right>
@@ -309,9 +309,9 @@ watch(is_email_taken_error, (is_taken) => {
 								tone="neutral"
 								size="sm"
 								class="auth-register-password-toggle"
-								:aria-label="t('auth.login.togglePassword')"
+								:aria-label="translate('auth.login.togglePassword')"
 								data-testid="auth-register-password-toggle"
-								:sr-label="t('auth.login.togglePassword')"
+								:sr-label="translate('auth.login.togglePassword')"
 								icon-only
 								:icon="show_password ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
@@ -322,7 +322,7 @@ watch(is_email_taken_error, (is_taken) => {
 				</div>
 				<template #hint>
 					<p class="auth-register-hint">
-						{{ t('auth.register.passwordHint') }}
+						{{ translate('auth.register.passwordHint') }}
 					</p>
 				</template>
 			</UiFormField>
@@ -335,10 +335,10 @@ watch(is_email_taken_error, (is_taken) => {
 					data-testid="auth-register-agree-terms"
 				>
 					<span class="auth-register-check-text">
-						{{ t('auth.register.agreePrefix') }}
-						<NuxtLink :to="withCountry('/terms-of-use')" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ t('auth.register.terms') }}</NuxtLink>
-						{{ t('auth.register.and') }}
-						<NuxtLink :to="withCountry('/privacy-policy')" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ t('auth.register.privacy') }}</NuxtLink>
+						{{ translate('auth.register.agreePrefix') }}
+						<NuxtLink :to="withCountry('/terms-of-use')" class="auth-register-check-link" data-testid="auth-register-terms-link">{{ translate('auth.register.terms') }}</NuxtLink>
+						{{ translate('auth.register.and') }}
+						<NuxtLink :to="withCountry('/privacy-policy')" class="auth-register-check-link" data-testid="auth-register-privacy-link">{{ translate('auth.register.privacy') }}</NuxtLink>
 						.
 					</span>
 				</UiCheckbox>
@@ -372,7 +372,7 @@ watch(is_email_taken_error, (is_taken) => {
 								:aria-expanded="terms_error_popover_open"
 								aria-haspopup="dialog"
 								data-testid="auth-register-terms-error-button"
-								:sr-label="t('auth.register.termsErrorInfo')"
+								:sr-label="translate('auth.register.termsErrorInfo')"
 								icon-only
 								:icon="terms_error_icon_strong ? 'strong-info-circle' : 'regular-info-circle'"
 								:icon-size="24"
@@ -393,7 +393,7 @@ watch(is_email_taken_error, (is_taken) => {
 			</div>
 
 			<UiCheckbox v-model="opt_in_promos" class="auth-register-check" data-testid="auth-register-opt-in-promos">
-				<span class="auth-register-check-text">{{ t('auth.register.promoOptIn') }}</span>
+				<span class="auth-register-check-text">{{ translate('auth.register.promoOptIn') }}</span>
 			</UiCheckbox>
 
 			<UiButton
@@ -404,18 +404,18 @@ watch(is_email_taken_error, (is_taken) => {
 				data-testid="auth-register-submit"
 				@click="submitRegister"
 			>
-				{{ t('auth.register.createAccount') }}
+				{{ translate('auth.register.createAccount') }}
 			</UiButton>
 
 			<p class="auth-register-login">
-				{{ t('auth.register.alreadyMember') }}
+				{{ translate('auth.register.alreadyMember') }}
 				<NuxtLink
 					v-if="!props.loginAsAction"
 					:to="withCountry('/auth/login')"
 					class="auth-register-login-link"
 					data-testid="auth-register-login-link"
 				>
-					{{ t('auth.register.signInHere') }}
+					{{ translate('auth.register.signInHere') }}
 				</NuxtLink>
 				<button
 					v-else
@@ -424,7 +424,7 @@ watch(is_email_taken_error, (is_taken) => {
 					data-testid="auth-register-login-link"
 					@click="emit('open-login')"
 				>
-					{{ t('auth.register.signInHere') }}
+					{{ translate('auth.register.signInHere') }}
 				</button>
 			</p>
 		</div>

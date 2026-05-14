@@ -8,6 +8,8 @@ import AuthLoginSocialButtons from '@/components/auth/login/AuthLoginSocialButto
 import AuthLoginVerificationModal from '@/components/auth/login/AuthLoginVerificationModal.vue'
 import { useAuthLoginCard } from '@/composables/auth/login/useAuthLoginCard'
 
+const { t: translate } = useI18n();
+
 withDefaults(defineProps<{
 	googleLabelKey?: string;
 }>(), {
@@ -55,7 +57,7 @@ const {
 					size="sm"
 					:no-hover="true"
 					class="auth-login-card-close"
-					:aria-label="$t('auth.login.closeModal')"
+					:aria-label="translate('auth.login.closeModal')"
 					@click="handleClose"
 				>
 					<UiIcon name="regular-times" :size="24" color="#000000" />

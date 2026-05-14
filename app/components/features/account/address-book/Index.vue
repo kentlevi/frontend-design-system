@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import FormModal from '~/components/features/account/address-book/modals/FormModal.vue';
 import DeleteConfirmModal from '~/components/features/account/address-book/modals/DeleteConfirmModal.vue';
 import ConfirmDefaultChangeModal from '~/components/features/account/address-book/modals/ConfirmDefaultChangeModal.vue';
@@ -27,10 +28,15 @@ provide('addressBook:ui', {
 
 <template>
 	<section class="account-page" data-testid="account-address-book-page">
-		<div class="account-content" data-testid="account-address-book-content">
+		<MuLinearWrapper
+			class="account-content"
+			data-testid="account-address-book-content"
+			direction="column"
+			:gap="40"
+		>
 			<FeaturesAccountAddressBookHeader />
 			<FeaturesAccountAddressBookContent />
-		</div>
+		</MuLinearWrapper>
 
 		<FormModal />
 		<DeleteConfirmModal />
@@ -45,9 +51,6 @@ provide('addressBook:ui', {
 
 	.account-content {
 		padding-top: 40px;
-		display: flex;
-		flex-direction: column;
-		gap: 40px;
 	}
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<div class="callback_container">
 		<p>
-			{{ t('auth.callback.signingIn') }}
+			{{ translate('auth.callback.signingIn') }}
 		</p>
 	</div>
 </template>
@@ -10,7 +10,7 @@
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRedirectStore } from '~/stores/navigation/redirect.store';
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { auth_redirect_url } = storeToRefs(useRedirectStore());
 
 const route = useRoute();

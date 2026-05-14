@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineProps<{
 	modelValue: boolean
 	requestSent: boolean
@@ -9,7 +13,7 @@ const emit = defineEmits<{
 	(e: 'close'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 function handleUpdate(value: boolean) {
 	if (value) {
@@ -33,14 +37,19 @@ function handleUpdate(value: boolean) {
 			<button
 				type="button"
 				class="account-profile-forgot-password-modal-close"
-				:aria-label="t('account.profile.forgotPasswordModalClose')"
+				:aria-label="translate('account.profile.forgotPasswordModalClose')"
 				data-testid="account-profile-forgot-password-modal-close"
 				@click="emit('close')"
 			>
 				<UiIcon name="regular-times" :size="24" />
 			</button>
 
-			<div class="account-profile-forgot-password-modal-header">
+			<MuLinearWrapper
+				class="account-profile-forgot-password-modal-header"
+				direction="column"
+				align="flex-start"
+				:gap="24"
+			>
 				<UiLogo
 					name="musticker"
 					variant="mark"
@@ -48,16 +57,16 @@ function handleUpdate(value: boolean) {
 					:size="40"
 					class="account-profile-forgot-password-modal-logo"
 				/>
-				<div class="account-profile-forgot-password-modal-copy">
-					<h3 class="account-profile-forgot-password-modal-title">
-						{{ requestSent ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
-					</h3>
+				<MuLinearWrapper class="account-profile-forgot-password-modal-copy" direction="column" :gap="8">
+					<MuHeading variant="3" weight="semi-bold" color="text-primary" class="account-profile-forgot-password-modal-title">
+						{{ requestSent ? translate('account.profile.forgotPasswordCheckEmailTitle') : translate('account.profile.forgotPasswordRequestFailedTitle') }}
+					</MuHeading>
 
-					<p class="account-profile-forgot-password-modal-description">
-						{{ requestSent ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
-					</p>
-				</div>
-			</div>
+					<MuText color="text-secondary" class="account-profile-forgot-password-modal-description">
+						{{ requestSent ? translate('account.profile.forgotPasswordCheckEmailDescription') : translate('account.profile.forgotPasswordRequestFailed') }}
+					</MuText>
+				</MuLinearWrapper>
+			</MuLinearWrapper>
 
 			<div class="account-profile-forgot-password-modal-actions">
 				<UiButton
@@ -68,7 +77,7 @@ function handleUpdate(value: boolean) {
 					data-testid="account-profile-forgot-password-modal-confirm"
 					@click="emit('close')"
 				>
-					{{ t('account.profile.forgotPasswordReturnToDashboard') }}
+					{{ translate('account.profile.forgotPasswordReturnToDashboard') }}
 				</UiButton>
 			</div>
 		</section>
@@ -99,32 +108,6 @@ function handleUpdate(value: boolean) {
 		color: var(--text-primary);
 		cursor: pointer;
 		z-index: 1;
-	}
-
-	.account-profile-forgot-password-modal-header {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 24px;
-	}
-
-	.account-profile-forgot-password-modal-copy {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	.account-profile-forgot-password-modal-title {
-		font-size: var(--type-size-500);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--type-line-500);
-		color: var(--text-primary);
-	}
-
-	.account-profile-forgot-password-modal-description {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
 	}
 
 	.account-profile-forgot-password-modal-actions {

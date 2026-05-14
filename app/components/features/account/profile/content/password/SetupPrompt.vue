@@ -1,21 +1,29 @@
 <script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
+
 defineEmits<{
 	(e: 'open-setup'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
-	<div
+	<MuLinearWrapper
 		class="account-profile-password-setup"
 		data-testid="account-profile-password-setup"
+		direction="column"
+		align="flex-end"
+		justify="space-between"
+		:gap="16"
 	>
 		<div class="account-profile-password-setup-copy">
-			<h3 class="account-profile-password-setup-title">{{ t('account.profile.setPassword') }}</h3>
-			<p class="account-profile-password-setup-description">
-				{{ t('account.profile.socialPasswordDescription') }}
-			</p>
+			<MuHeading variant="3" class="account-profile-password-setup-title">{{ translate('account.profile.setPassword') }}</MuHeading>
+			<MuText color="text-secondary" class="account-profile-password-setup-description">
+				{{ translate('account.profile.socialPasswordDescription') }}
+			</MuText>
 		</div>
 		<UiButton
 			variant="filled"
@@ -24,19 +32,13 @@ const { t } = useI18n();
 			data-testid="account-profile-setup-password-button"
 			@click="$emit('open-setup')"
 		>
-			{{ t('account.profile.setUpPassword') }}
+			{{ translate('account.profile.setUpPassword') }}
 		</UiButton>
-	</div>
+	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
 .account-profile-password-setup {
-	display: flex;
-	align-items: flex-end;
-	flex-direction: column;
-	justify-content: space-between;
-	gap: 16px;
-
 	.account-profile-password-setup-copy {
 		width: 100%;
 		display: grid;
@@ -50,10 +52,5 @@ const { t } = useI18n();
 		color: var(--text-primary);
 	}
 
-	.account-profile-password-setup-description {
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
-	}
 }
 </style>

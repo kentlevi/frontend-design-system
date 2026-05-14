@@ -10,7 +10,7 @@ defineProps<{
 	item: CouponItem;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -19,13 +19,13 @@ const { t } = useI18n();
 		:data-testid="`account-coupons-item-${item.code}`"
 	>
 		<div class="account-coupons-card-copy">
-			<h2 class="account-coupons-card-title">{{ t(`account.coupons.items.${item.titleKey}.title`) }}</h2>
+			<h2 class="account-coupons-card-title">{{ translate(`account.coupons.items.${item.titleKey}.title`) }}</h2>
 			<h3 class="account-coupons-code">{{ item.code }}</h3>
-			<p class="account-coupons-note">{{ t(`account.coupons.items.${item.titleKey}.note`) }}</p>
+			<p class="account-coupons-note">{{ translate(`account.coupons.items.${item.titleKey}.note`) }}</p>
 		</div>
 		<div class="account-coupons-right">
 			<p class="account-coupons-expiry">{{ item.expiry }}</p>
-			<span class="account-coupons-tag">{{ t(`account.coupons.tags.${item.tag}`) }}</span>
+			<span class="account-coupons-tag">{{ translate(`account.coupons.tags.${item.tag}`) }}</span>
 		</div>
 	</article>
 </template>

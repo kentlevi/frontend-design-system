@@ -29,7 +29,7 @@
         "email": "이메일 주소",
         "emailDisabledHint": "이메일은 가입 완료 후 변경할 수 있으며, 이후에는 프로필 설정에서 언제든지 변경 가능합니다.",
         "skip": "건너뛰기 & 나중에 입력하기",
-        "continue": "계속"
+        "continue": "다음"
       },
       "settings": {
         "title": "계정 설정",

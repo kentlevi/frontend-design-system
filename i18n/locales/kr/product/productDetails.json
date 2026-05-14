@@ -34,20 +34,20 @@
     },
     "sizes": {
       "small30": {
-        "label": "소형 30x30",
-        "featureLabel": "소형 30x30"
+        "label": "소형  30X30",
+        "featureLabel": "소형  30X30"
       },
       "medium75": {
-        "label": "중형 75x75",
-        "featureLabel": "중형 75x75"
+        "label": "중형  75X75",
+        "featureLabel": "중형  75X75"
       },
       "large100": {
-        "label": "중형 100x100",
-        "featureLabel": "중형 100x100"
+        "label": "대형  100X100",
+        "featureLabel": "대형  100X100"
       },
       "extraLarge125": {
-        "label": "초대형 125x125",
-        "featureLabel": "초대형 125x125"
+        "label": "초대형  125X125",
+        "featureLabel": "초대형  125X125"
       }
     },
     "featureCards": {
@@ -64,19 +64,19 @@
         "description": "차·아이스박스·공구함에도\n딱 맞는 넉넉한 크기예요."
       },
       "effortlessApplication": {
-        "title": "직접 인쇄한 듯한 자연스러운 마감",
-        "description": "디자인을 원하는 곳에 손쉽게 부착해 보세요. 어떤 표면에서도 이질감 없이 자연스럽게 어우러지며, 깔끔하고 전문적인 마감을 완성합니다."
+        "title": "색감은 생생하게, 내구성은 완벽하게",
+        "description": "고품질 인쇄와 두꺼운 소재로 구현한 화려한고 선명한 색감.\n비, 햇빛, 고온에도 쉽게 흐려지지 않는 뛰어난 내구성.\n붙이는 순간부터 오래도록 변하지 않는 품질을 느껴보세요."
       },
       "designedForPrecision": {
-        "title": "깔끔한 풀컬러 레터링 스티커",
-        "description": "도안 그대로 정밀하게 재단되어 원하는 위치에 정확히 부착됩니다. 쉬운 전사 방식 덕분에 깔끔하고 높은 완성도의 결과물을 보장합니다."
+        "title": "디자인에 맞게 정확하게 컷팅",
+        "description": "로고, 일러스트, 사진을 업로드하면\n칼선에 맞춰 정밀하게 스티커로 제작됩니다.\n복잡한 패턴도 머스티커의 고유한 절단 기술로 완벽하게 표현됩니다."
       }
     },
     "price": {
       "subtotal": "소계",
       "discount": "할인",
       "total": "총액",
-      "benefitShipping": "5만원 이상 무료배송",
+      "benefitShipping": "직접 입력",
       "benefitShipsTomorrow": "디자인 승인 후 내일 출고",
       "benefitShipsTomorrowByProduct": {
         "die-cut-sticker": "디자인 승인 후 내일 출고",
@@ -84,6 +84,9 @@
       },
       "nextStep": "다음 단계",
       "perPiece": "(1매당 20원)"
+    },
+    "vinyl": {
+      "illustrativeNote": "화면에 보이는 배경색은 예시일 뿐입니다. 실제 글자들은 개별적으로 재단되어 있으며, 자체 접착식으로 간격이 미리 조정되어 있고 전사 테이프가 부착되어 있습니다."
     }
   }
 }

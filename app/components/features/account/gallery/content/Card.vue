@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import MuCard from '~/components/base/MuCard.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 
 interface GalleryItem {
 	name: string;
@@ -11,7 +13,7 @@ defineProps<{
 	item: GalleryItem;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -21,11 +23,11 @@ const { t } = useI18n();
 		:data-testid="`account-gallery-item-${item.name}`"
 	>
 		<div class="account-gallery-preview" />
-		<h3 class="account-gallery-name">{{ item.name }}</h3>
-		<p class="account-gallery-size">
-			{{ t('account.gallery.sizeLabel') }} {{ item.size }} {{ t('account.gallery.sizeUnit') }}
-		</p>
-		<span class="account-gallery-tag">{{ t(`account.gallery.tags.${item.tag}`) }}</span>
+		<MuHeading variant="3" class="account-gallery-name">{{ item.name }}</MuHeading>
+		<MuText color="text-secondary" class="account-gallery-size">
+			{{ translate('account.gallery.sizeLabel') }} {{ item.size }} {{ translate('account.gallery.sizeUnit') }}
+		</MuText>
+		<MuText variant="span" weight="bold" color="text-primary" class="account-gallery-tag">{{ translate(`account.gallery.tags.${item.tag}`) }}</MuText>
 	</MuCard>
 </template>
 
@@ -47,9 +49,6 @@ const { t } = useI18n();
 
 	.account-gallery-size {
 		margin: 6px 0 0;
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		color: var(--text-secondary);
 	}
 
 	.account-gallery-tag {
@@ -60,10 +59,6 @@ const { t } = useI18n();
 		display: inline-flex;
 		align-items: center;
 		background: color-mix(in srgb, var(--brand-primary) 16%, var(--contrast-light));
-		color: var(--text-primary);
-		font-size: var(--type-size-100);
-		line-height: var(--type-line-100);
-		font-weight: var(--font-weight-bold);
 	}
 }
 </style>

@@ -77,12 +77,12 @@ const {
 					</MuText>
 				</MuLinearWrapper>
 				<MuInput
+					id="checkout-email-change"
+					v-model="email_change_form.new_email"
 					:placeholder="translate('checkout.guest.emailChange.placeholder')"
 					type="email"
 					name="checkout-email-change"
-					id="checkout-email-change"
 					:has-error="email_error"
-					v-model="email_change_form.new_email"
 					@update:model-value="onEmailInput"
 				/>
 			</MuLinearWrapper>

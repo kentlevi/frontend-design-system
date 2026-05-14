@@ -21,7 +21,7 @@
 						data-testid="account-orders-select-date-button"
 						@click="date_picker_open = !date_picker_open"
 					>
-						<!-- {{ t('account.orders.selectDate') }} -->
+						<!-- {{ translate('account.orders.selectDate') }} -->
 						{{selected_range.start.toLocaleDateString()}} - {{selected_range.end.toLocaleDateString()}}
 						<UiIcon name="regular-times-circle"/>
 					</UiButton>
@@ -52,7 +52,7 @@
 						class="account-orders-tool-button"
 						data-testid="account-orders-filters-button" @click="filter_status = !filter_status"
 					>
-						{{ t('account.orders.filters') }}
+						{{ translate('account.orders.filters') }}
 					</UiButton>
 					<MuCard v-if="filter_status" class="filter-status" padding="none">
 						<div class="filter-status__header">
@@ -104,7 +104,7 @@
 					v-model="search_query"
 					size="md"
 					class="account-orders-search"
-					:placeholder="t('account.orders.searchPlaceholder')"
+					:placeholder="translate('account.orders.searchPlaceholder')"
 					data-testid="account-orders-search-input"
 				>
 					<template #left>
@@ -141,7 +141,7 @@ import MuSearch from '~/components/core/search/MuSearch.vue';
 import MuSegmented from '~/components/base/MuSegmented.vue';
 import MuText from '~/components/base/MuText.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const active = ref('active');
 

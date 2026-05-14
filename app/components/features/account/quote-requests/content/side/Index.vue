@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import MuCard from '~/components/base/MuCard.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuText from '~/components/base/MuText.vue';
 import { useAccountQuoteRequests } from '~/composables/account/quoteRequests/useAccountQuoteRequests';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { requests } = useAccountQuoteRequests();
 </script>
 
@@ -15,12 +17,12 @@ const { requests } = useAccountQuoteRequests();
 			:class="['account-quote-item', { active: index === 0 }]"
 			:data-testid="`account-quote-requests-item-${index}`"
 		>
-			<h3 class="account-quote-item-title">
-				{{ t('account.quoteRequests.orderLabel') }} #{{ item.id }}
-			</h3>
-			<p class="account-quote-item-meta">
-				{{ t('account.quoteRequests.quoteDate') }}: {{ item.date }}
-			</p>
+			<MuHeading variant="3" class="account-quote-item-title">
+				{{ translate('account.quoteRequests.orderLabel') }} #{{ item.id }}
+			</MuHeading>
+			<MuText color="text-secondary" class="account-quote-item-meta">
+				{{ translate('account.quoteRequests.quoteDate') }}: {{ item.date }}
+			</MuText>
 		</MuCard>
 	</aside>
 </template>
@@ -48,9 +50,6 @@ const { requests } = useAccountQuoteRequests();
 
 		.account-quote-item-meta {
 			margin: 8px 0 0;
-			font-size: var(--type-size-100);
-			line-height: var(--type-line-100);
-			color: var(--text-secondary);
 		}
 	}
 }

@@ -25,7 +25,7 @@ const props = defineProps<{
         | 'quote-requests';
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 const ACCOUNT_LOCAL_AVATAR_KEY = 'account_profile_avatar_data_url';
@@ -36,7 +36,7 @@ const localAvatarDataUrl = ref<string | null>(null);
 const account_stats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
-		label: t('account.shell.stats.order'),
+		label: translate('account.shell.stats.order'),
 		value: '0',
 		iconName: null,
 		iconSrc: '/icons/custom/checkout/icon-box.svg',
@@ -44,7 +44,7 @@ const account_stats = computed<AccountStat[]>(() => [
 	},
 	{
 		key: 'points',
-		label: t('account.shell.stats.points'),
+		label: translate('account.shell.stats.points'),
 		value: '0.00',
 		iconName: null,
 		iconSrc: '/icons/custom/account/points-icon.svg',
@@ -52,7 +52,7 @@ const account_stats = computed<AccountStat[]>(() => [
 	},
 	{
 		key: 'coupons',
-		label: t('account.shell.stats.coupons'),
+		label: translate('account.shell.stats.coupons'),
 		value: '0',
 		iconName: null,
 		iconSrc: '/icons/custom/account/coupon-icon.svg',
@@ -60,8 +60,8 @@ const account_stats = computed<AccountStat[]>(() => [
 	},
 	{
 		key: 'total-spent',
-		label: t('account.shell.stats.totalSpent'),
-		value: t('account.shell.defaultBalance'),
+		label: translate('account.shell.stats.totalSpent'),
+		value: translate('account.shell.defaultBalance'),
 		iconName: null,
 		iconSrc: '/icons/custom/account/total-spent-icon.svg',
 		iconAlt: 'Total spent',
@@ -95,14 +95,14 @@ onBeforeUnmount(() => {
 });
 
 const tabs = [
-	{ key: 'profile', label: t('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'regular-user' },
-	{ key: 'address-book', label: t('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'regular-home' },
-	{ key: 'orders', label: t('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'regular-boxes' },
-	// { key: 'gallery', label: t('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'regular-image' },
-	{ key: 'points', label: t('layout.header.accountLinks.points'), to: '/account/points', icon: 'regular-star' },
-	// { key: 'coupons', label: t('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'regular-ticket' },
-	// { key: 'reviews', label: t('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'regular-comments' },
-	// { key: 'quote-requests', label: t('layout.header.accountLinks.quoteRequest'), to: '/account/quote-requests', icon: 'regular-file-details' },
+	{ key: 'profile', label: translate('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'regular-user' },
+	{ key: 'address-book', label: translate('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'regular-home' },
+	{ key: 'orders', label: translate('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'regular-boxes' },
+	// { key: 'gallery', label: translate('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'regular-image' },
+	{ key: 'points', label: translate('layout.header.accountLinks.points'), to: '/account/points', icon: 'regular-star' },
+	// { key: 'coupons', label: translate('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'regular-ticket' },
+	// { key: 'reviews', label: translate('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'regular-comments' },
+	// { key: 'quote-requests', label: translate('layout.header.accountLinks.quoteRequest'), to: '/account/quote-requests', icon: 'regular-file-details' },
 ] as const;
 </script>
 
@@ -120,13 +120,13 @@ const tabs = [
 					<template v-else>{{ user_initial }}</template>
 					<img
 						:src="account_level_badge_src"
-						:alt="t('account.shell.level')"
+						:alt="translate('account.shell.level')"
 						class="account-shell-avatar-badge"
 					>
 				</div>
 				<div class="account-shell-user-copy">
 					<p class="account-shell-name">{{ display_name }}</p>
-					<p class="account-shell-level">{{ t('account.shell.level') }}</p>
+					<p class="account-shell-level">{{ translate('account.shell.level') }}</p>
 				</div>
 			</div>
 
