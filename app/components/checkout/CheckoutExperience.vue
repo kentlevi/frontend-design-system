@@ -14,9 +14,16 @@ import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue'
 import { useInitCheckoutAddress } from '~/composables/checkout/address/useInitCheckoutAddress';
 import { useMainCheckOutStore } from '~/stores/checkout/index.store';
 import CheckoutPaymentWindowOverlay from '~/components/checkout/shared/CheckoutPaymentWindowOverlay.vue';
+import { provideUserAddressFormStateCheckout } from '~/composables/checkout/address/context/addressFormCheckoutContext';
+import { provideUserAddressDataCheckout } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
+import { provideAddressGeneralUI } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
 
 /** Standalone address context (isolated from checkout_experience) */
-useInitCheckoutAddress()
+await useInitCheckoutAddress()
+
+provideUserAddressFormStateCheckout()
+provideUserAddressDataCheckout()
+provideAddressGeneralUI()
 
 const checkout_experience = useCheckoutExperience();
 
