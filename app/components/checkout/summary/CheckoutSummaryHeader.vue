@@ -6,6 +6,8 @@ const { withCountry } = useCountry();
 
 const {createOrderQuotation} = useQuotationFlow();
 
+const { t } = useI18n()
+
 function goToCart() {
 	void navigateTo(withCountry('/cart'));
 }

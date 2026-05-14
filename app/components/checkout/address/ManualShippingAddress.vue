@@ -3,7 +3,7 @@ import AddressFormFields from '~/components/shared/address/AddressFormFields.vue
 import { useManualShippingAddress } from '~/composables/checkout/address/useManualShippingAddress';
 
 const {
-	t: translate,
+	translate,
 	is_member,
 	shipping_form,
 	form_field_errors,

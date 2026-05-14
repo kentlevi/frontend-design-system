@@ -3,12 +3,12 @@ import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/chec
 import PaymentMethods from '../payment/PaymentMethods.vue';
 import BillingAddress from '../address/BillingAddress.vue';
 
-const { t } = useCheckoutExperienceFeatureContext();
+const { translate } = useCheckoutExperienceFeatureContext();
 </script>
 
 <template>
 	<section class="checkout-member-section">
-		<h2 class="checkout-member-section-title">{{ t('checkout.member.payment') }}</h2>
+		<h2 class="checkout-member-section-title">{{ translate('checkout.member.payment') }}</h2>
 		<PaymentMethods/>
 		<BillingAddress/>
 	</section>

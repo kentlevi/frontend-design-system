@@ -4,14 +4,10 @@ import { provideUserAddressFormStateCheckout } from "./context/addressFormChecko
 import { provideAddressGeneralUI } from "./context/addressGeneralUICheckoutContext"
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service"
 
-export function useInitCheckoutAddress() {
-	ensureDynamicFields()
+export async function useInitCheckoutAddress() {
+	await ensureDynamicFields()
 
 	loadAddresses('shipping')
 	loadAddresses('drop')
 	loadAddresses('billing')
-
-	provideUserAddressFormStateCheckout()
-	provideUserAddressDataCheckout()
-	provideAddressGeneralUI()
 }
