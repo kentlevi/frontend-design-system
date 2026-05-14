@@ -2,17 +2,63 @@
 import { useI18n } from 'vue-i18n';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
-const feature_highlight_video = resolveFileUrl('/home/feature/musticker-krdub-video-subs.mp4');
-const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-video-subs-thumbnail.png');
+const feature_highlight_video = resolveFileUrl('/home/feature/musticker-krdub-video-subs.v2.mp4');
+const feature_highlight_poster = resolveFileUrl('/home/feature/musticker-krdub-video-subs-thumbnail.v2.jpg');
 
 const feature_video = ref<HTMLVideoElement | null>(null);
 const is_feature_video_hovered = ref(false);
+const should_load_video = ref(false);
+
+let intersection_observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+	const video = feature_video.value;
+	if (!video) return;
+
+	if (typeof IntersectionObserver === 'undefined') {
+		should_load_video.value = true;
+		return;
+	}
+
+	intersection_observer = new IntersectionObserver((entries) => {
+		for (const entry of entries) {
+			if (entry.isIntersecting) {
+				should_load_video.value = true;
+				intersection_observer?.disconnect();
+				intersection_observer = null;
+				break;
+			}
+		}
+	}, { rootMargin: '200px 0px' });
+
+	intersection_observer.observe(video);
+});
+
+onUnmounted(() => {
+	intersection_observer?.disconnect();
+	intersection_observer = null;
+});
+
+watch(should_load_video, async (loaded) => {
+	if (!loaded) return;
+	await nextTick();
+	const video = feature_video.value;
+	if (!video) return;
+	video.load();
+	playFeatureVideoMuted();
+});
 
 async function playFeatureVideoWithSound() {
 	const video = feature_video.value;
 	if (!video) return;
+
+	if (!should_load_video.value) {
+		should_load_video.value = true;
+		await nextTick();
+		video.load();
+	}
 
 	is_feature_video_hovered.value = true;
 	video.muted = false;
@@ -52,27 +98,26 @@ function playFeatureVideoMuted() {
 					ref="feature_video"
 					:poster="feature_highlight_poster"
 					class="home-feature-media-image"
-					autoplay
 					muted
 					loop
 					playsinline
-					preload="metadata"
+					preload="none"
 					@pointerenter="playFeatureVideoWithSound"
 					@pointerleave="muteFeatureVideo"
 					@pause="playFeatureVideoMuted"
 				>
-					<source :src="feature_highlight_video" type="video/mp4">
+					<source v-if="should_load_video" :src="feature_highlight_video" type="video/mp4">
 				</video>
 			</div>
 
 			<div class="home-feature-copy">
 				<h2 class="home-feature-title">
-					{{ t('home.feature.titleLine1') }}<br >
-					{{ t('home.feature.titleLine2') }}
+					{{ translate('home.feature.titleLine1') }}<br >
+					{{ translate('home.feature.titleLine2') }}
 				</h2>
 
 				<p class="home-feature-text">
-					{{ t('home.feature.text') }}
+					{{ translate('home.feature.text') }}
 				</p>
 			</div>
 		</div>
