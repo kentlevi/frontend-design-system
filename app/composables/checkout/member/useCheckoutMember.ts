@@ -21,8 +21,6 @@ export function useCheckoutMember() {
 	const selected_payment_method = ref<CheckoutPaymentMethodKey>(
 		checkoutPaymentMethods.find((method) => method.defaultSelected)?.key || 'credit-card'
 	);
-	const points_to_use = ref('');
-	const points_available = ref(13.93);
 
 	// Member specific payment pre-fills
 	base.card_number.value = '4242 4242 4242 4242';
@@ -36,14 +34,6 @@ export function useCheckoutMember() {
 		checkoutPaymentMethods.filter((method) => method.enabled !== false)
 	);
 
-	function useAllPoints() {
-		points_to_use.value = points_available.value.toFixed(2);
-	}
-
-	function clearPoints() {
-		points_to_use.value = '';
-	}
-
 	return {
 		...base,
 		member_email,
@@ -52,9 +42,5 @@ export function useCheckoutMember() {
 		active_shipping_methods,
 		active_payment_methods,
 		payment_brands: checkoutMemberPaymentBrands,
-		points_available,
-		points_to_use,
-		useAllPoints,
-		clearPoints,
 	};
 }

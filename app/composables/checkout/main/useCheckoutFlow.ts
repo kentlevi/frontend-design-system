@@ -11,6 +11,7 @@ import type { BillingAddressForm, DropAddressForm, ShippingAddressForm } from "~
 import { useCartStore } from "~/stores/core/cart/cart.store";
 import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service";
 import { useAppliedCouponStore } from "~/stores/coupon/applied_coupon.store";
+import { usePointsStore } from "~/stores/user-point/points.store";
 
 export const useCheckoutFlow = () => {
 
@@ -33,6 +34,10 @@ export const useCheckoutFlow = () => {
 	const {
 		coupon
 	} = storeToRefs(useAppliedCouponStore())
+
+	const {
+		points_to_use
+	} = storeToRefs(usePointsStore())
 
 	const {
 		shipping_form,
@@ -94,7 +99,8 @@ export const useCheckoutFlow = () => {
 			phone_number:
 				shipping_form.value.phone_number,
 			selected_cart_ids: selected_real_ids.value,
-			coupon_id: coupon.value?.id ?? null
+			coupon_id: coupon.value?.id ?? null,
+			points: points_to_use.value ? Number(points_to_use.value) : null
 		}
 	}
 

@@ -12,17 +12,25 @@ import MuText from '~/components/base/MuText.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import CouponsModal from '~/components/features/checkout/modals/coupons-modal/Index.vue';
 import { useApplyCoupon } from '~/composables/coupon/useApplyCoupon';
+import { usePoints } from '~/composables/points/usePoints';
 
 const {
 	t,
 	is_member,
-	points_to_use,
 	points_tooltip_open,
-	useAllPoints,
-	clearPoints,
 	togglePointsTooltip,
 	is_coupons_modal_open,
 } = useCheckoutExperienceFeatureContext();
+
+const {
+	points_to_use,
+	total_points,
+
+	handlePointsKeydown,
+	handlePointsPaste,
+	useAllPoints,
+	clearPoints,
+} = usePoints()
 
 const {
 	form,
@@ -35,6 +43,7 @@ const {
 	coupon,
 	applicable_coupons
 } = useApplyCoupon();
+
 
 
 const points_tooltip_ref = ref<HTMLElement | null>(null);
@@ -64,10 +73,15 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 							</div>
 						</UiTooltip>
 					</div>
-					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: 0 }) }}</span>
+					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: total_points }) }}</span>
 				</div>
 				<div class="checkout-member-perk-control">
-					<UiInput v-model="points_to_use" size="md" :placeholder="t('checkout.member.pointsPlaceholder')" />
+					<UiInput
+						v-model="points_to_use"
+						size="md"
+						:placeholder="t('checkout.member.pointsPlaceholder')"
+						@keydown="handlePointsKeydown"
+						@paste="handlePointsPaste" />
 					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="points_to_use ? clearPoints() : useAllPoints()">
 						{{ points_to_use ? 'Remove' : t('checkout.member.useAll') }}
 					</UiButton>
