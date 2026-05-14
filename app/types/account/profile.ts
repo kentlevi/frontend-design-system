@@ -1,4 +1,13 @@
+import type { ApiResponse } from "../config/api"
 import type { CountryField } from "../country_field"
+
+/** Customer overview data */
+export interface OverviewData {
+	total_orders: number
+	total_points: number
+	total_coupons: number
+	total_spent: number
+}
 
 /** Field definition returned by backend */
 export interface ProfileFieldDefinition extends CountryField {
@@ -41,3 +50,5 @@ export interface AccountMockUser {
 	lastName: string
 	email: string
 }
+
+export type OverviewApiResponse = ApiResponse<OverviewData>

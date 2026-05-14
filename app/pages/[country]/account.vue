@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import { useGetOverview } from '~/services/profile/overview.service';
 
 definePageMeta({
 	layout: 'home',
 	footerVariant: 'compact',
 });
+
+const { getOverview } = useGetOverview()
+
+onMounted(() => {
+	getOverview()
+})
+
 </script>
 
 <template>
