@@ -4,6 +4,7 @@ import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgo
 import EmailChangeModal from '~/components/features/checkout/EmailChangeModal.vue';
 import { useCheckoutGuestContactFeature } from '~/composables/checkout/features/useCheckoutGuestContactFeature';
 import { checkoutGuestEmailTooltipProps } from '~/data/checkout/tooltips';
+import { useUsersStore } from '~/stores/users/users.store';
 
 const {
 	translate,
