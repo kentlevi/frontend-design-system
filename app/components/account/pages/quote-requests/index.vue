@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAccountQuoteRequests } from '~/composables/account/quoteRequests/useAccountQuoteRequests';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { requests, activeRequest } = useAccountQuoteRequests();
 </script>
 
@@ -9,13 +9,13 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 	<section class="account-page" data-testid="account-quote-requests-page">
 		<div class="account-content" data-testid="account-quote-requests-content">
 			<header class="account-quote-header" data-testid="account-quote-requests-header">
-				<h1 class="account-quote-title" data-testid="account-quote-requests-title">{{ t('account.quoteRequests.title') }}</h1>
+				<h1 class="account-quote-title" data-testid="account-quote-requests-title">{{ translate('account.quoteRequests.title') }}</h1>
 				<div class="account-quote-tools" data-testid="account-quote-requests-tools">
 					<UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-select-date-button">
-						{{ t('account.quoteRequests.selectDate') }}
+						{{ translate('account.quoteRequests.selectDate') }}
 					</UiButton>
 					<UiButton variant="outline" tone="neutral" size="md" data-testid="account-quote-requests-filters-button">
-						{{ t('account.quoteRequests.filters') }}
+						{{ translate('account.quoteRequests.filters') }}
 					</UiButton>
 				</div>
 			</header>
@@ -30,28 +30,28 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 						:data-testid="`account-quote-requests-item-${index}`"
 					>
 						<h3 class="account-quote-item-title">
-							{{ t('account.quoteRequests.orderLabel') }} #{{ item.id }}
+							{{ translate('account.quoteRequests.orderLabel') }} #{{ item.id }}
 						</h3>
 						<p class="account-quote-item-meta">
-							{{ t('account.quoteRequests.quoteDate') }}: {{ item.date }}
+							{{ translate('account.quoteRequests.quoteDate') }}: {{ item.date }}
 						</p>
 					</article>
 				</aside>
 				<section class="account-quote-chat" data-testid="account-quote-requests-chat">
 					<header class="account-quote-chat-header" data-testid="account-quote-requests-chat-header">
 						<h2 class="account-quote-chat-title">
-							{{ t('account.quoteRequests.orderLabel') }} #{{ activeRequest?.id }}
+							{{ translate('account.quoteRequests.orderLabel') }} #{{ activeRequest?.id }}
 						</h2>
 						<span class="account-quote-chat-status">
-							{{ t(`account.quoteRequests.status.${activeRequest?.statusKey || 'inReview'}`) }}
+							{{ translate(`account.quoteRequests.status.${activeRequest?.statusKey || 'inReview'}`) }}
 						</span>
 					</header>
 					<div class="account-quote-chat-messages" data-testid="account-quote-requests-messages">
 						<div class="account-quote-chat-bubble" data-testid="account-quote-requests-bubble">
-							{{ t('account.quoteRequests.sampleMessage') }}
+							{{ translate('account.quoteRequests.sampleMessage') }}
 							<div class="account-quote-chat-request">
-								<span class="account-quote-chat-request-label">{{ t('account.quoteRequests.requestLabel') }}:</span>
-								{{ t('account.quoteRequests.sampleRequestDetails') }}
+								<span class="account-quote-chat-request-label">{{ translate('account.quoteRequests.requestLabel') }}:</span>
+								{{ translate('account.quoteRequests.sampleRequestDetails') }}
 							</div>
 						</div>
 					</div>
@@ -60,11 +60,11 @@ const { requests, activeRequest } = useAccountQuoteRequests();
 							model-value=""
 							type="text"
 							class="account-quote-chat-input"
-							:placeholder="t('account.quoteRequests.messagePlaceholder')"
+							:placeholder="translate('account.quoteRequests.messagePlaceholder')"
 							data-testid="account-quote-requests-input"
 						/>
 						<UiButton variant="filled" tone="neutral" size="md" class="account-quote-chat-send" data-testid="account-quote-requests-send-button">
-							{{ t('account.quoteRequests.send') }}
+							{{ translate('account.quoteRequests.send') }}
 						</UiButton>
 					</footer>
 				</section>

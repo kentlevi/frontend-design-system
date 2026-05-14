@@ -13,7 +13,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits(['set-active']);
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -25,7 +25,7 @@ const { t } = useI18n();
 			:data-testid="`account-orders-group-${group.section}`"
 		>
 			<header class="account-orders-group-head">
-				<h2 class="account-orders-group-title">{{ t(`account.orders.sections.${group.section}`) }}</h2>
+				<h2 class="account-orders-group-title">{{ translate(`account.orders.sections.${group.section}`) }}</h2>
 				<span class="account-orders-group-count">{{ group.items.length }}</span>
 			</header>
 
@@ -41,11 +41,11 @@ const { t } = useI18n();
 					<div class="account-orders-list-card-head">
 						<span class="account-orders-list-card-dot" :class="accentClassMap[order.accentTone]" />
 						<h3 class="account-orders-list-card-title">
-							{{ t('account.orders.orderLabel', { orderNumber: order.id }) }}
+							{{ translate('account.orders.orderLabel', { orderNumber: order.id }) }}
 						</h3>
 					</div>
 					<p class="account-orders-list-card-meta">
-						{{ t('account.orders.meta', { count: order.itemCount, date: order.date }) }}
+						{{ translate('account.orders.meta', { count: order.itemCount, date: order.date }) }}
 					</p>
 				</article>
 			</div>

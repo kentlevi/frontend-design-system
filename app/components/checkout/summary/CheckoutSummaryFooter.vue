@@ -20,7 +20,7 @@ const props = defineProps<{
 	privacyPath: string;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const shipping_fee_tooltip_open = ref(false);
 const shipping_fee_tooltip_ref = ref<HTMLElement | null>(null);
@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
 	<div :class="footer_classes">
 		<div class="checkout-summary-lines">
 			<div class="checkout-summary-line">
-				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.subtotal`) }}</div>
+				<div class="checkout-summary-line-label">{{ translate(`${summary_key_base}.subtotal`) }}</div>
 				<div class="checkout-summary-line-value">
 					<span v-if="is_mounted">
 						{{ formatPrice(sub_total_cost) }}
@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
 			</div>
 			<div class="checkout-summary-line">
 				<div ref="shipping_fee_tooltip_ref" class="checkout-summary-line-label checkout-summary-line-label--with-tooltip">
-					<span>{{ t(`${summary_key_base}.shippingFee`) }}</span>
+					<span>{{ translate(`${summary_key_base}.shippingFee`) }}</span>
 					<UiTooltip
 						v-if="has_shipping_fee_tooltip"
 						:open="shipping_fee_tooltip_open"
@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
 								:class="{ 'is-active': shipping_fee_tooltip_open }"
 								:aria-expanded="shipping_fee_tooltip_open"
 								aria-haspopup="dialog"
-								:aria-label="t(`${summary_key_base}.shippingFeeInfoAria`)"
+								:aria-label="translate(`${summary_key_base}.shippingFeeInfoAria`)"
 								@click="toggleShippingFeeTooltip"
 							>
 								<UiIcon
@@ -141,11 +141,11 @@ onBeforeUnmount(() => {
 				<div class="checkout-summary-line-value">{{ formatPrice(shipping_cost) }}</div>
 			</div>
 			<div class="checkout-summary-line">
-				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.discounts`) }}</div>
+				<div class="checkout-summary-line-label">{{ translate(`${summary_key_base}.discounts`) }}</div>
 				<div class="checkout-summary-line-value is-discount">-{{ formatPrice(total_discount) }}</div>
 			</div>
 			<div class="checkout-summary-line is-total">
-				<div class="checkout-summary-line-label">{{ t(`${summary_key_base}.total`) }}</div>
+				<div class="checkout-summary-line-label">{{ translate(`${summary_key_base}.total`) }}</div>
 				<div class="checkout-summary-line-value">
 					<span v-if="is_mounted">
 						{{ formatPrice(total_cost) }}

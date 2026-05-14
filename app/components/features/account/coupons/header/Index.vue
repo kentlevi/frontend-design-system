@@ -2,7 +2,7 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const { t } = useI18n();
 		:gap="16"
 	>
 		<MuHeading variant="4" weight="bold" class="account-coupons-title" data-testid="account-coupons-title">
-			{{ t('account.coupons.title') }}
+			{{ translate('account.coupons.title') }}
 		</MuHeading>
 		<MuLinearWrapper
 			class="account-coupons-add-row"
@@ -26,11 +26,11 @@ const { t } = useI18n();
 				model-value=""
 				type="text"
 				class="account-coupons-code-input"
-				:placeholder="t('account.coupons.codePlaceholder')"
+				:placeholder="translate('account.coupons.codePlaceholder')"
 				data-testid="account-coupons-code-input"
 			/>
 			<UiButton variant="filled" tone="neutral" size="md" data-testid="account-coupons-add-button">
-				{{ t('account.coupons.addCoupon') }}
+				{{ translate('account.coupons.addCoupon') }}
 			</UiButton>
 		</MuLinearWrapper>
 	</MuLinearWrapper>

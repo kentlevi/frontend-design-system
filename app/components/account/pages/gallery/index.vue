@@ -2,7 +2,7 @@
 import { useAccountGallery } from '~/composables/account/gallery/useAccountGallery';
 import GalleryCard from './GalleryCard.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { items } = useAccountGallery();
 </script>
 
@@ -10,16 +10,16 @@ const { items } = useAccountGallery();
 	<section class="account-page" data-testid="account-gallery-page">
 		<div class="account-content" data-testid="account-gallery-content">
 			<header class="account-gallery-header" data-testid="account-gallery-header">
-				<h1 class="account-gallery-title" data-testid="account-gallery-title">{{ t('account.gallery.title') }}</h1>
+				<h1 class="account-gallery-title" data-testid="account-gallery-title">{{ translate('account.gallery.title') }}</h1>
 				<div class="account-gallery-actions" data-testid="account-gallery-actions">
 					<UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters-button">
-						{{ t('account.gallery.filters') }}
+						{{ translate('account.gallery.filters') }}
 					</UiButton>
 					<UiInput
 						model-value=""
 						class="account-gallery-search"
 						type="text"
-						:placeholder="t('account.gallery.searchPlaceholder')"
+						:placeholder="translate('account.gallery.searchPlaceholder')"
 						data-testid="account-gallery-search"
 					/>
 				</div>

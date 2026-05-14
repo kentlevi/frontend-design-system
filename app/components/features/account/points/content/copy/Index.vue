@@ -3,23 +3,23 @@ import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 </script>
 
 <template>
 	<div class="account-points-copy-column">
-		<MuHeading weight="bold" class="account-points-title" data-testid="account-points-title">{{ t('account.points.title') }}</MuHeading>
+		<MuHeading weight="bold" class="account-points-title" data-testid="account-points-title">{{ translate('account.points.title') }}</MuHeading>
 
 		<div class="account-points-copy-cards">
 			<section class="account-points-copy-card">
 				<div class="account-points-copy-group">
 					<MuHeading class="account-points-section-title" weight="semi-bold">
-						{{ t('account.points.pointsSystemTitle') }}
+						{{ translate('account.points.pointsSystemTitle') }}
 						<UiIcon name="regular-info-circle" :size="20" />
 					</MuHeading>
 					<MuText color="text-secondary" class="account-points-description">
-						{{ t('account.points.pointsSystemDescription') }}
+						{{ translate('account.points.pointsSystemDescription') }}
 					</MuText>
 				</div>
 				<div class="account-points-conversion-pill">
@@ -30,10 +30,10 @@ const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 			<section class="account-points-copy-card">
 				<div class="account-points-copy-group">
 					<MuHeading class="account-points-section-title" weight="semi-bold">
-						{{ t('account.points.questTitle') }}
+						{{ translate('account.points.questTitle') }}
 					</MuHeading>
 					<MuText color="text-secondary" class="account-points-description">
-						{{ t('account.points.questDescription') }}
+						{{ translate('account.points.questDescription') }}
 					</MuText>
 				</div>
 			</section>
@@ -41,10 +41,10 @@ const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 			<section class="account-points-copy-card">
 				<div class="account-points-copy-group">
 					<MuHeading class="account-points-section-title" weight="semi-bold">
-						{{ t('account.points.historyTitle') }}
+						{{ translate('account.points.historyTitle') }}
 					</MuHeading>
 					<MuText color="text-secondary" class="account-points-description">
-						{{ t('account.points.historyDescription') }}
+						{{ translate('account.points.historyDescription') }}
 					</MuText>
 				</div>
 			</section>

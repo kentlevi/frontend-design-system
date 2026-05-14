@@ -4,7 +4,7 @@ import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
 import { useAccountQuoteRequests } from '~/composables/account/quoteRequests/useAccountQuoteRequests';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { activeRequest } = useAccountQuoteRequests();
 </script>
 
@@ -17,10 +17,10 @@ const { activeRequest } = useAccountQuoteRequests();
 		:gap="12"
 	>
 		<MuHeading class="account-quote-chat-title">
-			{{ t('account.quoteRequests.orderLabel') }} #{{ activeRequest?.id }}
+			{{ translate('account.quoteRequests.orderLabel') }} #{{ activeRequest?.id }}
 		</MuHeading>
 		<MuText variant="span" weight="bold" color="text-primary" class="account-quote-chat-status">
-			{{ t(`account.quoteRequests.status.${activeRequest?.statusKey || 'inReview'}`) }}
+			{{ translate(`account.quoteRequests.status.${activeRequest?.statusKey || 'inReview'}`) }}
 		</MuText>
 	</MuLinearWrapper>
 </template>

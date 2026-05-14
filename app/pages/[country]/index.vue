@@ -40,7 +40,7 @@ definePageMeta({
 	layout: 'home',
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const {
@@ -394,8 +394,8 @@ watch(
 );
 
 useSeoMeta({
-	title: () => t('home.seo.title'),
-	description: () => t('home.seo.description'),
+	title: () => translate('home.seo.title'),
+	description: () => translate('home.seo.description'),
 });
 
 useHead({
@@ -429,7 +429,7 @@ useHead({
 		<UiToast
 			:visible="is_reset_success_toast_visible"
 			tone="primary"
-			:message="t('home.passwordUpdated')"
+			:message="translate('home.passwordUpdated')"
 			variant="outlined"
 			data-testid="home-reset-password-success-toast"
 			@close="dismissResetSuccessToast"

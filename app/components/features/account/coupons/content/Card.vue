@@ -14,7 +14,7 @@ defineProps<{
 	item: CouponItem;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -25,13 +25,13 @@ const { t } = useI18n();
 		:gap="14"
 	>
 		<div class="account-coupons-card-copy">
-			<MuHeading weight="semi-bold" class="account-coupons-card-title">{{ t(`account.coupons.items.${item.titleKey}.title`) }}</MuHeading>
+			<MuHeading weight="semi-bold" class="account-coupons-card-title">{{ translate(`account.coupons.items.${item.titleKey}.title`) }}</MuHeading>
 			<MuHeading variant="3" class="account-coupons-code">{{ item.code }}</MuHeading>
-			<MuText color="text-secondary" class="account-coupons-note">{{ t(`account.coupons.items.${item.titleKey}.note`) }}</MuText>
+			<MuText color="text-secondary" class="account-coupons-note">{{ translate(`account.coupons.items.${item.titleKey}.note`) }}</MuText>
 		</div>
 		<div class="account-coupons-right">
 			<MuText weight="bold" color="text-primary" class="account-coupons-expiry">{{ item.expiry }}</MuText>
-			<MuText variant="span" weight="bold" color="text-primary" class="account-coupons-tag">{{ t(`account.coupons.tags.${item.tag}`) }}</MuText>
+			<MuText variant="span" weight="bold" color="text-primary" class="account-coupons-tag">{{ translate(`account.coupons.tags.${item.tag}`) }}</MuText>
 		</div>
 	</MuLinearWrapper>
 </template>

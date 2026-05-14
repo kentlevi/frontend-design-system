@@ -6,10 +6,10 @@ definePageMeta({
 	layoutBackground: 'neutral',
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 useSeoMeta({
-	title: () => t('legal.privacy.title'),
+	title: () => translate('legal.privacy.title'),
 });
 </script>
 

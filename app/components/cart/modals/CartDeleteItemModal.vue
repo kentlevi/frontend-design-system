@@ -16,7 +16,7 @@ const {
 	confirmDeletion,
 } = useCartDeletion('delete-item-modal')
 
-const { t } = useI18n()
+const { t: translate } = useI18n()
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const { t } = useI18n()
 		:model-value="open_deletion_modal"
 		:title="deletionTitle"
 		:description="deletionDescription"
-		:cancel-label="t('cart.cartPage.cancel')"
+		:cancel-label="translate('cart.cartPage.cancel')"
 		:confirm-label="deletionConfirmLabel"
 		test-id="cart-item-delete-modal"
 		@cancel="cancelDeletion"

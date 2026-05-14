@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import AuthRegisterCard from '@/components/auth/register/AuthRegisterCard.vue';
 import RegisterCard from '~/components/features/auth/register/RegisterCard.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -15,14 +15,14 @@ const { t } = useI18n();
 				<img
 					class="auth-register-kid-falling"
 					src="/illustrations/products/sticker-kids/kid-falling-sticker.svg"
-					:alt="t('auth.register.title')"
+					:alt="translate('auth.register.title')"
 					loading="lazy"
 				>
 			</div>
 
 			<div class="auth-register-shell auth-shell-enter" data-testid="auth-register-shell">
 				<AuthRegisterCard />
-                <!-- <RegisterCard /> -->
+				<!-- <RegisterCard /> -->
 			</div>
 
 			<div
@@ -31,7 +31,7 @@ const { t } = useI18n();
 				<img
 					class="auth-register-kid-standing"
 					src="/illustrations/products/sticker-kids/kid-standing-sticker.svg"
-					:alt="t('auth.register.title')"
+					:alt="translate('auth.register.title')"
 					loading="lazy"
 				>
 			</div>

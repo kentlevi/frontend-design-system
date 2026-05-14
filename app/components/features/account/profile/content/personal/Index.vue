@@ -17,7 +17,7 @@ withDefaults(defineProps<{
 	loading: false,
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const { social } = useSocialAccount()
@@ -77,9 +77,9 @@ const {
 			<UiSkeleton width="78%" height="20px" border-radius="8px" />
 		</MuLinearWrapper>
 		<MuLinearWrapper v-else class="account-profile-section-copy" direction="column" :gap="4">
-			<MuHeading class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</MuHeading>
+			<MuHeading class="account-profile-section-title">{{ translate('account.profile.personalDetails') }}</MuHeading>
 			<MuText class="account-profile-section-description">
-				{{ t('account.profile.personalDetailsDesc') }}
+				{{ translate('account.profile.personalDetailsDesc') }}
 			</MuText>
 		</MuLinearWrapper>
 
@@ -119,10 +119,10 @@ const {
 
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
-		:title="t('account.profile.photoDeleteConfirm')"
-		:description="t('account.profile.photoDeleteDescription')"
-		:cancel-label="t('account.profile.cancel')"
-		:confirm-label="t('account.profile.delete')"
+		:title="translate('account.profile.photoDeleteConfirm')"
+		:description="translate('account.profile.photoDeleteDescription')"
+		:cancel-label="translate('account.profile.cancel')"
+		:confirm-label="translate('account.profile.delete')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"
@@ -148,8 +148,8 @@ const {
 		:resend-limit-reached="limit_reached_error"
 		:resend-cooldown-remaining="remaining"
 		translation-base="account.profile.emailChangeVerification"
-		:submit-label="t('auth.verification.verify')"
-		:busy-label="t('auth.verification.verifying')"
+		:submit-label="translate('auth.verification.verify')"
+		:busy-label="translate('auth.verification.verifying')"
 		align="center"
 		:show-close-button="true"
 		test-id-prefix="account-profile-email-change-verification"
@@ -162,7 +162,7 @@ const {
 		<template #icon>
 			<img
 				src="/illustrations/icon-verification.svg"
-				:alt="t('account.profile.emailChangeVerification.iconAlt')"
+				:alt="translate('account.profile.emailChangeVerification.iconAlt')"
 				class="account-profile-email-change-verification-icon"
 			>
 		</template>

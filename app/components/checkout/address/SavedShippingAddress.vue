@@ -14,7 +14,7 @@ const {
 	buildAddressLines,
 } = useAddressHelper()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const {
 	getAddressTagClass
@@ -45,7 +45,7 @@ const {
 						text-color="var(--gray-80)"
 					>
 						<UiIcon name="strong-ship" :size="18" />
-						<span class="checkout-member-address-badge-copy">{{ t('checkout.member.addressSelection.defaultShipping') }}</span>
+						<span class="checkout-member-address-badge-copy">{{ translate('checkout.member.addressSelection.defaultShipping') }}</span>
 					</UiBadge>
 				</div>
 			</div>

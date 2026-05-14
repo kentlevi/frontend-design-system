@@ -5,14 +5,14 @@ import type { AccountOrder, AccountOrderLifecycle, AccountOrderSection } from '~
 const section_order: AccountOrderSection[] = ['ongoing', 'actionRequired', 'completed'];
 
 export function useAccountOrders() {
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const lifecycle = ref<AccountOrderLifecycle>('active');
 	const search_query = ref('');
 	const is_detail_open = ref(true);
 	const active_order_id = ref(accountOrders[0]?.id ?? '');
 
 	function resolveOrderText(value: string) {
-		return value.startsWith('account.') ? t(value) : value;
+		return value.startsWith('account.') ? translate(value) : value;
 	}
 
 	const filtered_orders = computed(() => {

@@ -5,7 +5,7 @@ import { useSocialAccount } from '~/composables/account/profile/useSocialAccount
 import ProfileSetupPasswordModal from './ProfileSetupPasswordModal.vue';
 import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 withDefaults(defineProps<{
 	loading?: boolean;
 }>(), {
@@ -64,8 +64,8 @@ const {
 			<UiSkeleton width="86%" height="20px" border-radius="8px" />
 		</div>
 		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ t('account.profile.password') }}</h2>
-			<p class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</p>
+			<h2 class="account-profile-section-title">{{ translate('account.profile.password') }}</h2>
+			<p class="account-profile-section-description">{{ translate('account.profile.passwordDesc') }}</p>
 		</div>
 		<div
 			v-if="loading"
@@ -96,9 +96,9 @@ const {
 			data-testid="account-profile-password-setup"
 		>
 			<div class="account-profile-password-setup-copy">
-				<h3 class="account-profile-password-setup-title">{{ t('account.profile.setPassword') }}</h3>
+				<h3 class="account-profile-password-setup-title">{{ translate('account.profile.setPassword') }}</h3>
 				<p class="account-profile-password-setup-description">
-					{{ t('account.profile.socialPasswordDescription') }}
+					{{ translate('account.profile.socialPasswordDescription') }}
 				</p>
 			</div>
 			<UiButton
@@ -108,11 +108,11 @@ const {
 				data-testid="account-profile-setup-password-button"
 				@click="openSetupPasswordModal"
 			>
-				{{ t('account.profile.setUpPassword') }}
+				{{ translate('account.profile.setUpPassword') }}
 			</UiButton>
 		</div>
 		<div v-else class="account-profile-stack" data-testid="account-profile-password-form">
-			<UiFormField :label="t('account.profile.currentPassword')" :error="current_password_error" :required="true">
+			<UiFormField :label="translate('account.profile.currentPassword')" :error="current_password_error" :required="true">
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
@@ -120,7 +120,7 @@ const {
 						:type="current_password_visible ? 'text' : 'password'"
 						:aria-describedby="describedBy || undefined"
 						:state="current_password_error ? 'error' : 'default'"
-						:placeholder="t('account.profile.currentPasswordPlaceholder')"
+						:placeholder="translate('account.profile.currentPasswordPlaceholder')"
 						data-testid="account-profile-current-password"
 						@update:model-value="current_password_error = ''"
 					>
@@ -131,8 +131,8 @@ const {
 								size="24"
 								:no-hover="true"
 								class="account-profile-password-toggle"
-								:aria-label="t('auth.reset.togglePassword')"
-								:sr-label="t('auth.reset.togglePassword')"
+								:aria-label="translate('auth.reset.togglePassword')"
+								:sr-label="translate('auth.reset.togglePassword')"
 								icon-only
 								:icon="current_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
@@ -144,10 +144,10 @@ const {
 			</UiFormField>
 
 			<UiFormField
-				:label="t('account.profile.newPassword')"
+				:label="translate('account.profile.newPassword')"
 				:error="pair_password_error"
 				:required="true"
-				:hint="t('account.profile.passwordHint')"
+				:hint="translate('account.profile.passwordHint')"
 			>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
@@ -156,7 +156,7 @@ const {
 						:type="new_password_visible ? 'text' : 'password'"
 						:aria-describedby="describedBy || undefined"
 						:state="pair_password_error ? 'error' : 'default'"
-						:placeholder="t('account.profile.newPasswordPlaceholder')"
+						:placeholder="translate('account.profile.newPasswordPlaceholder')"
 						data-testid="account-profile-new-password"
 						@update:model-value="clearNewPasswordPairErrors()"
 					>
@@ -167,8 +167,8 @@ const {
 								size="24"
 								:no-hover="true"
 								class="account-profile-password-toggle"
-								:aria-label="t('auth.reset.togglePassword')"
-								:sr-label="t('auth.reset.togglePassword')"
+								:aria-label="translate('auth.reset.togglePassword')"
+								:sr-label="translate('auth.reset.togglePassword')"
 								icon-only
 								:icon="new_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
@@ -180,7 +180,7 @@ const {
 			</UiFormField>
 
 
-			<UiFormField :label="t('account.profile.confirmNewPassword')" :required="true">
+			<UiFormField :label="translate('account.profile.confirmNewPassword')" :required="true">
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
@@ -188,7 +188,7 @@ const {
 						:type="new_password_confirmation_visible ? 'text' : 'password'"
 						:aria-describedby="describedBy || undefined"
 						:state="pair_password_error ? 'error' : 'default'"
-						:placeholder="t('account.profile.confirmNewPasswordPlaceholder')"
+						:placeholder="translate('account.profile.confirmNewPasswordPlaceholder')"
 						data-testid="account-profile-confirm-password"
 						@update:model-value="clearNewPasswordPairErrors()"
 					>
@@ -199,8 +199,8 @@ const {
 								size="24"
 								:no-hover="true"
 								class="account-profile-password-toggle"
-								:aria-label="t('auth.reset.toggleConfirmPassword')"
-								:sr-label="t('auth.reset.toggleConfirmPassword')"
+								:aria-label="translate('auth.reset.toggleConfirmPassword')"
+								:sr-label="translate('auth.reset.toggleConfirmPassword')"
 								icon-only
 								:icon="new_password_confirmation_visible ? 'regular-eye' : 'regular-eye-slash'"
 								:icon-size="24"
@@ -220,7 +220,7 @@ const {
 					data-testid="account-profile-change-password-button"
 					@click="onChangePassword"
 				>
-					{{ t('account.profile.changePassword') }}
+					{{ translate('account.profile.changePassword') }}
 				</UiButton>
 				<UiButton
 					variant="ghost"
@@ -231,7 +231,7 @@ const {
 					data-testid="account-profile-forgot-password"
 					@click="sendForgotPasswordEmail"
 				>
-					{{ t('account.profile.forgotPassword') }}
+					{{ translate('account.profile.forgotPassword') }}
 				</UiButton>
 			</div>
 		</div>
@@ -250,7 +250,7 @@ const {
 			<button
 				type="button"
 				class="account-profile-forgot-password-modal-close"
-				:aria-label="t('account.profile.forgotPasswordModalClose')"
+				:aria-label="translate('account.profile.forgotPasswordModalClose')"
 				data-testid="account-profile-forgot-password-modal-close"
 				@click="closeForgotPasswordModal"
 			>
@@ -267,11 +267,11 @@ const {
 				/>
 				<div class="account-profile-forgot-password-modal-copy">
 					<h3 class="account-profile-forgot-password-modal-title">
-						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+						{{ forgot_password_request_send ? translate('account.profile.forgotPasswordCheckEmailTitle') : translate('account.profile.forgotPasswordRequestFailedTitle') }}
 					</h3>
 
 					<p class="account-profile-forgot-password-modal-description">
-						{{ forgot_password_request_send ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
+						{{ forgot_password_request_send ? translate('account.profile.forgotPasswordCheckEmailDescription') : translate('account.profile.forgotPasswordRequestFailed') }}
 					</p>
 				</div>
 			</div>
@@ -285,7 +285,7 @@ const {
 					data-testid="account-profile-forgot-password-modal-confirm"
 					@click="closeForgotPasswordModal"
 				>
-					{{ t('account.profile.forgotPasswordReturnToDashboard') }}
+					{{ translate('account.profile.forgotPasswordReturnToDashboard') }}
 				</UiButton>
 			</div>
 		</section>

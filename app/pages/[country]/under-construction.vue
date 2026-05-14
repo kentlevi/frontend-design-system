@@ -2,7 +2,7 @@
 import { definePageMeta } from '#imports';
 import StatusBackgroundWrapper from '~/components/common/StatusBackgroundWrapper.vue';
 import { useCountry } from '~/composables/app/country/useCountry';
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 definePageMeta({
 	layout: 'home',
@@ -42,16 +42,16 @@ function submitLaunchInterest() {
 			/>
 			<div class="under-construction-content-group">
 				<div class="under-construction-heading-group">
-					<h1 class="under-construction-title">{{ t('underConstruction.title') }}</h1>
+					<h1 class="under-construction-title">{{ translate('underConstruction.title') }}</h1>
 					<p class="under-construction-copy">
-						{{ t('underConstruction.description') }}
+						{{ translate('underConstruction.description') }}
 					</p>
 				</div>
 
 				<div class="under-construction-action-group">
 					<div class="under-construction-email-group">
 						<p class="under-construction-email-copy">
-							{{ t('underConstruction.emailPrompt') }}
+							{{ translate('underConstruction.emailPrompt') }}
 						</p>
 
 						<div class="under-construction-email-form">
@@ -60,7 +60,7 @@ function submitLaunchInterest() {
 								type="email"
 								size="md"
 								icon-left="mail"
-								:placeholder="t('underConstruction.emailPlaceholder')"
+								:placeholder="translate('underConstruction.emailPlaceholder')"
 								class="under-construction-email-input"
 							/>
 
@@ -72,13 +72,13 @@ function submitLaunchInterest() {
 								:disabled="!is_launch_email_valid"
 								@click="submitLaunchInterest"
 							>
-								{{ t('underConstruction.notifyMe') }}
+								{{ translate('underConstruction.notifyMe') }}
 							</UiButton>
 						</div>
 					</div>
 
 					<NuxtLink :to="withCountry('/')" class="under-construction-cta">
-						{{ t('underConstruction.returnHome') }}
+						{{ translate('underConstruction.returnHome') }}
 					</NuxtLink>
 				</div>
 			</div>

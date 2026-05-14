@@ -20,7 +20,7 @@ const props = defineProps<{
 	products?: Products;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 // Slicedown: Provide context to all children
 const {
@@ -33,7 +33,7 @@ const {
 	<section class="product-experience" data-testid="product-category-experience">
 		<UiLoadingOverlay
 			:visible="add_to_cart_loading && has_lettering_editor"
-			:label="t('cart.cartPreview.redirectingToCart')"
+			:label="translate('cart.cartPreview.redirectingToCart')"
 			test-id="product-category-page-loading-overlay"
 		/>
 

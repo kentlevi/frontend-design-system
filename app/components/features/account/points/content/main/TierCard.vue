@@ -4,7 +4,7 @@ import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 
 const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
@@ -20,27 +20,27 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 		<MuLinearWrapper class="account-points-tier-copy" align="center" :gap="18">
 			<img
 				:src="summary.badge_src"
-				:alt="t('account.points.tierName')"
+				:alt="translate('account.points.tierName')"
 				class="account-points-tier-icon"
 			>
 			<div>
-				<MuHeading class="account-points-tier" weight="bold">{{ t(`account.points.${summary.tier_name_key}`) }}</MuHeading>
+				<MuHeading class="account-points-tier" weight="bold">{{ translate(`account.points.${summary.tier_name_key}`) }}</MuHeading>
 				<MuText color="text-primary" class="account-points-meta">
-					{{ t('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
+					{{ translate('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
 				</MuText>
 			</div>
 		</MuLinearWrapper>
 
 		<div class="account-points-balance-wrap">
 			<MuLinearWrapper class="account-points-balance" data-testid="account-points-balance" align="flex-end" :gap="13">
-				{{ summary.balance }}<MuText variant="span" size="xlarge">{{ t('account.points.pointsUnit') }}</MuText>
+				{{ summary.balance }}<MuText variant="span" size="xlarge">{{ translate('account.points.pointsUnit') }}</MuText>
 			</MuLinearWrapper>
 			<UiBadge
 				variant="outline"
 				size="md"
 				badge-class="account-points-expiry-pill"
 			>
-				{{ t('account.points.expiry') }}: {{ summary.expiry_date }}
+				{{ translate('account.points.expiry') }}: {{ summary.expiry_date }}
 			</UiBadge>
 		</div>
 
@@ -52,9 +52,9 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 				/>
 			</div>
 			<MuText align="center" color="text-primary" class="account-points-progress-copy">
-				{{ t('account.points.nextTierRequirementPrefix') }}
+				{{ translate('account.points.nextTierRequirementPrefix') }}
 				<strong>{{ summary.remaining_spend }} KRW</strong>
-				{{ t('account.points.nextTierRequirementSuffix') }}
+				{{ translate('account.points.nextTierRequirementSuffix') }}
 			</MuText>
 		</div>
 	</button>

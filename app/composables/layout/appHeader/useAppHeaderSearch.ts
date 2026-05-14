@@ -48,7 +48,7 @@ function resolveTranslatedValue(
 	key: string,
 	fallback: string,
 ): string {
-	const translated_value = t(key);
+	const translated_value = translate(key);
 	return translated_value !== key ? translated_value : fallback;
 }
 
@@ -120,7 +120,7 @@ function dedupeSearchItems(items: SearchItem[]): SearchItem[] {
 export function useAppHeaderSearch(params: {
 	closeModal: () => void;
 }) {
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const router = useRouter();
 	const { withCountry } = useCountry();
 	const { resolveFileUrl } = useFileBaseUrl();
@@ -164,7 +164,7 @@ export function useAppHeaderSearch(params: {
 
 	function resolveSearchEmptySuggestedTerm() {
 		const translation_key = 'product.items.die-cut-sticker.name';
-		const translated_value = t(translation_key);
+		const translated_value = translate(translation_key);
 		return translated_value !== translation_key ? translated_value : 'Die Cut Sticker';
 	}
 

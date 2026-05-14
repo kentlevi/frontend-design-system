@@ -2,6 +2,8 @@
 import { storeToRefs } from 'pinia';
 import { useAuthOnboardingStore } from '~/stores/auth/onboarding.store';
 
+const { t: translate } = useI18n();
+
 const { step } = storeToRefs(useAuthOnboardingStore());
 </script>
 
@@ -10,7 +12,7 @@ const { step } = storeToRefs(useAuthOnboardingStore());
 		<div class="auth-profile-sidebar-main">
 			<div class="auth-profile-sidebar-content">
 				<div class="auth-profile-sidebar-head">
-					{{ $t('auth.profile.sidebar.title') }}
+					{{ translate('auth.profile.sidebar.title') }}
 				</div>
 
 				<div
@@ -37,10 +39,10 @@ const { step } = storeToRefs(useAuthOnboardingStore());
 						</span>
 						<div class="auth-profile-step-body">
 							<p class="auth-profile-step-title">
-								{{ $t('auth.profile.sidebar.profile.title') }}
+								{{ translate('auth.profile.sidebar.profile.title') }}
 							</p>
 							<p class="auth-profile-step-text">
-								{{ $t('auth.profile.sidebar.profile.text') }}
+								{{ translate('auth.profile.sidebar.profile.text') }}
 							</p>
 						</div>
 					</div>
@@ -55,10 +57,10 @@ const { step } = storeToRefs(useAuthOnboardingStore());
 						</span>
 						<div class="auth-profile-step-body">
 							<p class="auth-profile-step-title">
-								{{ $t('auth.profile.sidebar.settings.title') }}
+								{{ translate('auth.profile.sidebar.settings.title') }}
 							</p>
 							<p class="auth-profile-step-text">
-								{{ $t('auth.profile.sidebar.settings.text') }}
+								{{ translate('auth.profile.sidebar.settings.text') }}
 							</p>
 						</div>
 					</div>

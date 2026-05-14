@@ -29,7 +29,7 @@ function handlePendingEmailChange(value: string) {
 	emit('input-change')
 }
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 function parseBoldText(text: string) {
 	return text.split(/(\[b\].*?\[\/b\])/g).filter(Boolean).map((part) => ({
@@ -52,7 +52,7 @@ function parseBoldText(text: string) {
 			<button
 				type="button"
 				class="account-profile-email-change-modal-close"
-				:aria-label="t('account.profile.emailChange.closeModal')"
+				:aria-label="translate('account.profile.emailChange.closeModal')"
 				data-testid="account-profile-email-change-modal-close"
 				@click="closeEmailChangeModal"
 			>
@@ -69,10 +69,10 @@ function parseBoldText(text: string) {
 				</div>
 
 				<div class="account-profile-email-change-modal-text-wrap">
-					<h3 class="account-profile-email-change-modal-title">{{ t('account.profile.emailChange.title') }}</h3>
+					<h3 class="account-profile-email-change-modal-title">{{ translate('account.profile.emailChange.title') }}</h3>
 					<p class="account-profile-email-change-modal-text">
 						<template
-							v-for="(part, index) in parseBoldText(t('account.profile.emailChange.description'))"
+							v-for="(part, index) in parseBoldText(translate('account.profile.emailChange.description'))"
 							:key="`${part.text}-${index}`"
 						>
 							<strong v-if="part.isBold" class="change-strong">{{ part.text }}</strong>
@@ -87,7 +87,7 @@ function parseBoldText(text: string) {
 					class="account-profile-email-change-field"
 					head-class="account-profile-email-change-field-head"
 					label-text-class="account-profile-email-change-field-label-text"
-					:label="t('account.profile.emailAddress')"
+					:label="translate('account.profile.emailAddress')"
 					:error="emailChangeError"
 					:required="true"
 				>
@@ -99,7 +99,7 @@ function parseBoldText(text: string) {
 								type="email"
 								:aria-describedby="describedBy || undefined"
 								:state="emailChangeError ? 'error' : 'default'"
-								:placeholder="t('account.profile.emailChange.placeholder')"
+								:placeholder="translate('account.profile.emailChange.placeholder')"
 								input-class="account-profile-email-change-input"
 								data-testid="account-profile-email-change-input"
 								@update:model-value="handlePendingEmailChange"
@@ -119,7 +119,7 @@ function parseBoldText(text: string) {
 					data-testid="account-profile-email-change-modal-confirm"
 					@click="confirmEmailChange"
 				>
-					{{ t('account.profile.emailChange.confirm') }}
+					{{ translate('account.profile.emailChange.confirm') }}
 				</UiButton>
 			</div>
 		</section>

@@ -2,7 +2,7 @@
 import { useAccountCoupons } from '~/composables/account/coupons/useAccountCoupons';
 import CouponsCard from './CouponsCard.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { coupons } = useAccountCoupons();
 </script>
 
@@ -10,17 +10,17 @@ const { coupons } = useAccountCoupons();
 	<section class="account-page" data-testid="account-coupons-page">
 		<div class="account-content" data-testid="account-coupons-content">
 			<header class="account-coupons-header" data-testid="account-coupons-header">
-				<h1 class="account-coupons-title" data-testid="account-coupons-title">{{ t('account.coupons.title') }}</h1>
+				<h1 class="account-coupons-title" data-testid="account-coupons-title">{{ translate('account.coupons.title') }}</h1>
 				<div class="account-coupons-add-row" data-testid="account-coupons-add-row">
 					<UiInput
 						model-value=""
 						type="text"
 						class="account-coupons-code-input"
-						:placeholder="t('account.coupons.codePlaceholder')"
+						:placeholder="translate('account.coupons.codePlaceholder')"
 						data-testid="account-coupons-code-input"
 					/>
 					<UiButton variant="filled" tone="neutral" size="md" data-testid="account-coupons-add-button">
-						{{ t('account.coupons.addCoupon') }}
+						{{ translate('account.coupons.addCoupon') }}
 					</UiButton>
 				</div>
 			</header>

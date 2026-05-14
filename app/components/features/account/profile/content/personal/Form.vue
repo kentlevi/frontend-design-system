@@ -22,7 +22,7 @@ defineEmits<{
 	(e: 'change-email-click'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const { t } = useI18n();
 				:error="fieldErrors[`fields.${field.field_key}`]"
 				:label="field.is_required
 					? field.field_label
-					: `${field.field_label} (${t('account.profile.optional')})`"
+					: `${field.field_label} (${translate('account.profile.optional')})`"
 				:required="Boolean(field.is_required)"
 			>
 				<template v-if="!field.is_required" #label>
@@ -40,7 +40,7 @@ const { t } = useI18n();
 						{{ field.field_label }}
 					</span>
 					<span class="account-profile-optional">
-						({{ t('account.profile.optional') }})
+						({{ translate('account.profile.optional') }})
 					</span>
 				</template>
 				<template #default="{ inputId, describedBy }">
@@ -58,7 +58,7 @@ const { t } = useI18n();
 
 		<UiFormField
 			class="account-profile-grid-full"
-			:label="t('account.profile.emailAddress')"
+			:label="translate('account.profile.emailAddress')"
 			:required="true"
 		>
 			<template #default="{ inputId, describedBy }">
@@ -82,11 +82,11 @@ const { t } = useI18n();
 						data-testid="account-profile-email-change-button"
 						@click="$emit('change-email-click')"
 					>
-						{{ t('account.profile.change') }}
+						{{ translate('account.profile.change') }}
 					</UiButton>
 				</div>
 				<MuText v-if="social" color="text-secondary" class="account-profile-email-helper-text">
-					{{ t('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
+					{{ translate('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
 				</MuText>
 			</template>
 		</UiFormField>
@@ -101,7 +101,7 @@ const { t } = useI18n();
 			data-testid="account-profile-save-button"
 			@click="$emit('submit')"
 		>
-			{{ t('account.profile.saveChanges') }}
+			{{ translate('account.profile.saveChanges') }}
 		</UiButton>
 	</MuLinearWrapper>
 </template>

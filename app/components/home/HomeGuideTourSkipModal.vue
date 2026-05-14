@@ -2,7 +2,7 @@
 import { toRefs } from 'vue';
 import { splitHomeGuideTourSkipCopy } from '~/helpers/home/homeGuideTour.helper';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const component_props = withDefaults(
 	defineProps<{
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 }>();
 
 const skip_modal_body_parts = computed(() => {
-	return splitHomeGuideTourSkipCopy(t('home.tour.skipModal.body'));
+	return splitHomeGuideTourSkipCopy(translate('home.tour.skipModal.body'));
 });
 </script>
 
@@ -46,7 +46,7 @@ const skip_modal_body_parts = computed(() => {
 				</div>
 				<div class="home-guide-tour-skip-modal-text-wrap">
 					<h3 class="home-guide-tour-skip-modal-title">
-						{{ $t('home.tour.skipModal.title') }}
+						{{ translate('home.tour.skipModal.title') }}
 					</h3>
 					<p class="home-guide-tour-skip-modal-text">
 						<span>{{ skip_modal_body_parts.before }}</span>
@@ -71,7 +71,7 @@ const skip_modal_body_parts = computed(() => {
 					data-testid="home-guide-tour-skip-modal-continue"
 					@click="emit('continue-tour')"
 				>
-					{{ $t('home.tour.skipModal.continue') }}
+					{{ translate('home.tour.skipModal.continue') }}
 				</UiButton>
 				<UiButton
 					variant="filled"
@@ -81,7 +81,7 @@ const skip_modal_body_parts = computed(() => {
 					data-testid="home-guide-tour-skip-modal-skip"
 					@click="emit('skip-for-now')"
 				>
-					{{ $t('home.tour.skipModal.skipNow') }}
+					{{ translate('home.tour.skipModal.skipNow') }}
 				</UiButton>
 			</footer>
 		</section>

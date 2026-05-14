@@ -25,7 +25,7 @@ function readNestedString(source: unknown, path: string[]) {
 }
 
 export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const { $i18n } = useNuxtApp();
 	const { country } = useCountry();
 
@@ -33,7 +33,7 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 		if (sizeKey === 'custom') return '';
 
 		if (!options.labelCountry) {
-			return t(`product.sizes.${sizeKey}.label`);
+			return translate(`product.sizes.${sizeKey}.label`);
 		}
 
 		const localized_label =
@@ -46,7 +46,7 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 				])
 				: null;
 
-		return localized_label || t(`product.sizes.${sizeKey}.label`);
+		return localized_label || translate(`product.sizes.${sizeKey}.label`);
 	}
 
 	const cart_state = ref<StoredCartState[]>([]);
@@ -62,7 +62,7 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 			.map((entry) => {
 				const product = resolveStoredCartProduct(
 					entry,
-					(productId) => t(`product.items.${productId}.name`)
+					(productId) => translate(`product.items.${productId}.name`)
 				);
 				if (!product) return null;
 

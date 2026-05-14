@@ -9,7 +9,7 @@ definePageMeta({
 	footerVariant: 'compact',
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const route = useRoute();
 const { withCountry } = useCountry();
 const order_no = computed(() => String(route.params.orderNo || ''));
@@ -25,7 +25,7 @@ const {
 const primary_item = computed(() => selected_checkout_items.value[0] || null);
 const primary_item_product_name = computed(() => {
 	const product_id = primary_item.value?.product.id;
-	return product_id ? t(`product.items.${product_id}.name`) : '';
+	return product_id ? translate(`product.items.${product_id}.name`) : '';
 });
 </script>
 
@@ -34,16 +34,16 @@ const primary_item_product_name = computed(() => {
 		<div class="order-details-card" data-testid="order-details-card">
 			<header class="order-details-head">
 				<div class="order-details-crumbs">
-					<NuxtLink :to="withCountry('/under-construction')" class="order-details-crumb-link">{{ t('checkout.orderDetails.orders') }}</NuxtLink>
+					<NuxtLink :to="withCountry('/under-construction')" class="order-details-crumb-link">{{ translate('checkout.orderDetails.orders') }}</NuxtLink>
 					<UiIcon
 						name="regular-chevron-right" :size="24" color="var(--text-primary)"
 						class="order-details-crumb-icon" />
-					<span class="order-details-crumb-current">{{ t('checkout.orderDetails.title') }}</span>
+					<span class="order-details-crumb-current">{{ translate('checkout.orderDetails.title') }}</span>
 				</div>
 
 				<div class="order-details-title-row">
-					<h1 class="order-details-title">{{ t('checkout.orderDetails.orderNumber', { orderNumber: order_no }) }}</h1>
-					<span class="order-details-chip">{{ t('checkout.orderDetails.status') }}</span>
+					<h1 class="order-details-title">{{ translate('checkout.orderDetails.orderNumber', { orderNumber: order_no }) }}</h1>
+					<span class="order-details-chip">{{ translate('checkout.orderDetails.status') }}</span>
 				</div>
 			</header>
 
@@ -53,8 +53,8 @@ const primary_item_product_name = computed(() => {
 						<UiIcon name="regular-invoice-check" :size="24" color="var(--gold-70)" />
 					</div>
 					<div class="order-details-action-copy">
-						<h2 class="order-details-action-title">{{ t('checkout.orderDetails.viewInvoice') }}</h2>
-						<p class="order-details-action-text">{{ t('checkout.orderDetails.viewInvoiceText') }}</p>
+						<h2 class="order-details-action-title">{{ translate('checkout.orderDetails.viewInvoice') }}</h2>
+						<p class="order-details-action-text">{{ translate('checkout.orderDetails.viewInvoiceText') }}</p>
 					</div>
 				</div>
 				<div class="order-details-action-divider" aria-hidden="true" />
@@ -64,40 +64,40 @@ const primary_item_product_name = computed(() => {
 						<UiIcon name="regular-dollar-sign" :size="24" color="var(--gold-70)" />
 					</div>
 					<div class="order-details-action-copy">
-						<h2 class="order-details-action-title">{{ t('checkout.orderDetails.paymentProof') }}</h2>
-						<p class="order-details-action-text">{{ t('checkout.orderDetails.paymentProofText') }}</p>
+						<h2 class="order-details-action-title">{{ translate('checkout.orderDetails.paymentProof') }}</h2>
+						<p class="order-details-action-text">{{ translate('checkout.orderDetails.paymentProofText') }}</p>
 					</div>
 					<div class="order-details-payment-meta">
-						<span class="order-details-paid-chip">{{ t('checkout.orderDetails.paid') }}</span>
-						<span class="order-details-method">{{ t('checkout.orderDetails.paymentMethod', { method: t('checkout.orderDetails.paymentMethodValue') }) }}</span>
+						<span class="order-details-paid-chip">{{ translate('checkout.orderDetails.paid') }}</span>
+						<span class="order-details-method">{{ translate('checkout.orderDetails.paymentMethod', { method: translate('checkout.orderDetails.paymentMethodValue') }) }}</span>
 					</div>
 				</div>
 			</section>
 
 			<section class="order-details-summary">
 				<div class="order-details-summary-main">
-					<h2 class="order-details-summary-title">{{ t('checkout.orderDetails.orderSummary') }}</h2>
+					<h2 class="order-details-summary-title">{{ translate('checkout.orderDetails.orderSummary') }}</h2>
 
 					<div class="order-details-item">
 						<div class="order-details-item-thumb">
 							<img
 								:src="primary_item?.artworkPreviewUrl || primary_item?.product.image || '/icons/custom/checkout/icon-box.svg'"
-								:alt="primary_item_product_name || t('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
+								:alt="primary_item_product_name || translate('checkout.orderDetails.orderItemAlt')" class="order-details-item-image">
 						</div>
 						<div class="order-details-item-copy">
 							<div class="order-details-item-heading">
-								<span class="order-details-item-no">{{ t('checkout.orderDetails.itemNumber', { number: '001' }) }}</span>
+								<span class="order-details-item-no">{{ translate('checkout.orderDetails.itemNumber', { number: '001' }) }}</span>
 								<UiIcon name="regular-info-circle" :size="20" color="var(--text-secondary)" />
 								<span class="order-details-item-warning">
 									<UiIcon name="strong-exclamation-triangle" :size="16" color="var(--error-60)" />
-									{{ t('checkout.orderDetails.lackingArtwork') }}
+									{{ translate('checkout.orderDetails.lackingArtwork') }}
 								</span>
 							</div>
 							<div class="order-details-item-meta-group">
-								<p class="order-details-item-meta">{{ t('checkout.orderDetails.size', {
+								<p class="order-details-item-meta">{{ translate('checkout.orderDetails.size', {
 									size: primary_item ? sizeDimOnly(primary_item.sizeLabel) : '100x100mm',
 								}) }}</p>
-								<p class="order-details-item-meta">{{ t('checkout.orderDetails.quantity', {
+								<p class="order-details-item-meta">{{ translate('checkout.orderDetails.quantity', {
 									quantity: primary_item ? primary_item.qty.toLocaleString() : '10,000',
 								}) }}</p>
 							</div>
@@ -106,7 +106,7 @@ const primary_item_product_name = computed(() => {
 							<UiButton
 								type="button" variant="filled" tone="neutral" size="md" height="40px"
 								class="order-details-upload-btn">
-								{{ t('checkout.orderDetails.uploadArtwork') }}
+								{{ translate('checkout.orderDetails.uploadArtwork') }}
 							</UiButton>
 							<strong class="order-details-item-price">{{ formatPrice(primary_item?.total || order_total)
 							}}</strong>
@@ -116,19 +116,19 @@ const primary_item_product_name = computed(() => {
 
 				<div class="order-details-totals">
 					<div class="order-details-total-line">
-						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.subtotal') }}</span>
+						<span class="order-details-total-line-label">{{ translate('checkout.orderDetails.summary.subtotal') }}</span>
 						<strong class="order-details-total-value">{{ formatPrice(order_subtotal) }}</strong>
 					</div>
 					<div class="order-details-total-line">
-						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.shippingFee', { method: t('checkout.orderDetails.shippingMethod') }) }}</span>
+						<span class="order-details-total-line-label">{{ translate('checkout.orderDetails.summary.shippingFee', { method: translate('checkout.orderDetails.shippingMethod') }) }}</span>
 						<strong class="order-details-total-value">{{ formatPrice(order_shipping_fee) }}</strong>
 					</div>
 					<div class="order-details-total-line is-discount">
-						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.discounts') }}</span>
+						<span class="order-details-total-line-label">{{ translate('checkout.orderDetails.summary.discounts') }}</span>
 						<strong class="order-details-total-value">-{{ formatPrice(order_discount) }}</strong>
 					</div>
 					<div class="order-details-total-line is-final">
-						<span class="order-details-total-line-label">{{ t('checkout.orderDetails.summary.total') }}</span>
+						<span class="order-details-total-line-label">{{ translate('checkout.orderDetails.summary.total') }}</span>
 						<strong class="order-details-total-value">{{ formatPrice(order_total) }}</strong>
 					</div>
 				</div>

@@ -11,22 +11,22 @@ const emit = defineEmits<{
 	(e: 'open-register'): void;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 </script>
 
 <template>
 	<div class="auth-login-header" data-testid="auth-login-header">
-		<h1 class="auth-login-title">{{ t('auth.login.title') }}</h1>
+		<h1 class="auth-login-title">{{ translate('auth.login.title') }}</h1>
 		<p class="auth-login-subtitle">
-			{{ t('auth.login.subtitle') }}
+			{{ translate('auth.login.subtitle') }}
 			<NuxtLink
 				v-if="!props.registerAsAction"
 				:to="withCountry('/auth/register')"
 				class="auth-login-create-account-link"
 				data-testid="auth-login-create-account-link"
 			>
-				{{ t('auth.login.createAccount') }}
+				{{ translate('auth.login.createAccount') }}
 			</NuxtLink>
 			<button
 				v-else
@@ -35,7 +35,7 @@ const { withCountry } = useCountry();
 				data-testid="auth-login-create-account-link"
 				@click="emit('open-register')"
 			>
-				{{ t('auth.login.createAccount') }}
+				{{ translate('auth.login.createAccount') }}
 			</button>
 		</p>
 	</div>

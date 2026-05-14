@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import AuthVerificationModal from '@/components/auth/shared/AuthVerificationModal.vue';
 import { authVerificationConfig } from '@/data/auth/verification';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 withDefaults(
 	defineProps<{
@@ -40,8 +40,8 @@ const emit = defineEmits<{
 		:resend-limit-reached="resendLimitReached"
 		:verifying="verifying"
 		:translation-base="authVerificationConfig.i18n.register"
-		:submit-label="t('auth.verification.verifyEmailAddress')"
-		:busy-label="t('auth.verification.verifying')"
+		:submit-label="translate('auth.verification.verifyEmailAddress')"
+		:busy-label="translate('auth.verification.verifying')"
 		:otp-length="authVerificationConfig.otpLength"
 		:resend-cooldown-remaining="resendCooldownRemaining"
 		:show-close-button="true"

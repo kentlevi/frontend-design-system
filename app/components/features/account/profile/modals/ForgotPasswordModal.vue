@@ -13,7 +13,7 @@ const emit = defineEmits<{
 	(e: 'close'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 function handleUpdate(value: boolean) {
 	if (value) {
@@ -37,7 +37,7 @@ function handleUpdate(value: boolean) {
 			<button
 				type="button"
 				class="account-profile-forgot-password-modal-close"
-				:aria-label="t('account.profile.forgotPasswordModalClose')"
+				:aria-label="translate('account.profile.forgotPasswordModalClose')"
 				data-testid="account-profile-forgot-password-modal-close"
 				@click="emit('close')"
 			>
@@ -59,11 +59,11 @@ function handleUpdate(value: boolean) {
 				/>
 				<MuLinearWrapper class="account-profile-forgot-password-modal-copy" direction="column" :gap="8">
 					<MuHeading variant="3" weight="semi-bold" color="text-primary" class="account-profile-forgot-password-modal-title">
-						{{ requestSent ? t('account.profile.forgotPasswordCheckEmailTitle') : t('account.profile.forgotPasswordRequestFailedTitle') }}
+						{{ requestSent ? translate('account.profile.forgotPasswordCheckEmailTitle') : translate('account.profile.forgotPasswordRequestFailedTitle') }}
 					</MuHeading>
 
 					<MuText color="text-secondary" class="account-profile-forgot-password-modal-description">
-						{{ requestSent ? t('account.profile.forgotPasswordCheckEmailDescription') : t('account.profile.forgotPasswordRequestFailed') }}
+						{{ requestSent ? translate('account.profile.forgotPasswordCheckEmailDescription') : translate('account.profile.forgotPasswordRequestFailed') }}
 					</MuText>
 				</MuLinearWrapper>
 			</MuLinearWrapper>
@@ -77,7 +77,7 @@ function handleUpdate(value: boolean) {
 					data-testid="account-profile-forgot-password-modal-confirm"
 					@click="emit('close')"
 				>
-					{{ t('account.profile.forgotPasswordReturnToDashboard') }}
+					{{ translate('account.profile.forgotPasswordReturnToDashboard') }}
 				</UiButton>
 			</div>
 		</section>

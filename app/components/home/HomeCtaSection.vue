@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 const { resolveFileUrl } = useFileBaseUrl();
 const cta_background_image = resolveFileUrl('/home/cta/home-cta-bg.png');
@@ -22,8 +22,8 @@ async function onProductionInquiryClick() {
 		<div class="home-cta-panel" :style="{ backgroundImage: `url(${cta_background_image})` }">
 			<div class="home-cta-inner">
 				<h2 class="home-cta-title">
-					{{ t('home.cta.titleLine1') }}<br >
-					{{ t('home.cta.titleLine2') }}
+					{{ translate('home.cta.titleLine1') }}<br >
+					{{ translate('home.cta.titleLine2') }}
 				</h2>
 
 				<div class="home-cta-actions">
@@ -35,7 +35,7 @@ async function onProductionInquiryClick() {
 						data-testid="home-cta-primary-button"
 						@click="onOrderNowClick"
 					>
-						{{ t('home.cta.primary') }}
+						{{ translate('home.cta.primary') }}
 					</UiButton>
 					<UiButton
 						variant="outline"
@@ -45,7 +45,7 @@ async function onProductionInquiryClick() {
 						data-testid="home-cta-secondary-button"
 						@click="onProductionInquiryClick"
 					>
-						{{ t('home.cta.secondary') }}
+						{{ translate('home.cta.secondary') }}
 					</UiButton>
 				</div>
 			</div>

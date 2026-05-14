@@ -4,7 +4,7 @@ import { computed, toRef } from 'vue';
 import { useAuthVerificationModal } from '~/composables/auth/verification/useAuthVerificationModal';
 import { authVerificationConfig, type AuthVerificationI18nBase } from '~/data/auth/verification';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const props = withDefaults(
 	defineProps<{
@@ -157,8 +157,8 @@ const formatted_error_parts = computed(() => {
 				size="24"
 				:no-hover="true"
 				class="auth-verification-close"
-				:aria-label="t(`${translation_key}.closeModal`)"
-				:sr-label="t(`${translation_key}.closeModal`)"
+				:aria-label="translate(`${translation_key}.closeModal`)"
+				:sr-label="translate(`${translation_key}.closeModal`)"
 				icon-only
 				icon="regular-times"
 				:icon-size="24"
@@ -169,26 +169,26 @@ const formatted_error_parts = computed(() => {
 				<slot name="icon">
 					<img
 						src="/illustrations/icon-verification.svg"
-						:alt="t(`${translation_key}.iconAlt`)"
+						:alt="translate(`${translation_key}.iconAlt`)"
 						class="auth-verification-icon"
 					>
 				</slot>
 				<div class="auth-verification-copy">
 					<h3 class="auth-verification-title">
-						{{ t(`${translation_key}.title`) }}
+						{{ translate(`${translation_key}.title`) }}
 					</h3>
 					<p class="auth-verification-text">
-						{{ t(`${translation_key}.messagePrefix`) }}
+						{{ translate(`${translation_key}.messagePrefix`) }}
 						<template v-if="showEmailInMessage">
 							<strong class="auth-verification-email">{{ email }}</strong>
-						</template>{{ t(`${translation_key}.messageSuffix`) }}
+						</template>{{ translate(`${translation_key}.messageSuffix`) }}
 					</p>
 				</div>
 			</div>
 
 			<div class="auth-verification-code-group">
 				<label class="auth-verification-label" :for="`${testIdPrefix}-code-0`">
-					{{ t(`${translation_key}.enterCode`) }}
+					{{ translate(`${translation_key}.enterCode`) }}
 				</label>
 				<div class="auth-verification-grid">
 					<input
@@ -234,7 +234,7 @@ const formatted_error_parts = computed(() => {
 				</UiButton>
 
 				<p v-if="!resendLimitReached" class="auth-verification-resend">
-					{{ t(`${translation_key}.resendPrefix`) }}
+					{{ translate(`${translation_key}.resendPrefix`) }}
 					<UiButton
 						variant="ghost"
 						tone="neutral"
@@ -246,11 +246,11 @@ const formatted_error_parts = computed(() => {
 						:disabled="!can_resend"
 						@click="onResendClick"
 					>
-						{{ t(`${translation_key}.resendCta`) }}
-					</UiButton>{{ t(`${translation_key}.resendSuffix`) }}
+						{{ translate(`${translation_key}.resendCta`) }}
+					</UiButton>{{ translate(`${translation_key}.resendSuffix`) }}
 				</p>
 				<p v-else class="auth-verification-resend">
-					{{ t(`${translation_key}.resendLimitReachedPrefix`) }} <b>{{ t(`${translation_key}.resendLimitReachedMiddle`) }}</b>{{ t(`${translation_key}.resendLimitReachedSuffix`) }}
+					{{ translate(`${translation_key}.resendLimitReachedPrefix`) }} <b>{{ translate(`${translation_key}.resendLimitReachedMiddle`) }}</b>{{ translate(`${translation_key}.resendLimitReachedSuffix`) }}
 				</p>
 			</div>
 		</div>

@@ -13,7 +13,7 @@ defineProps<{
 	item: GalleryItem;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -25,9 +25,9 @@ const { t } = useI18n();
 		<div class="account-gallery-preview" />
 		<MuHeading variant="3" class="account-gallery-name">{{ item.name }}</MuHeading>
 		<MuText color="text-secondary" class="account-gallery-size">
-			{{ t('account.gallery.sizeLabel') }} {{ item.size }} {{ t('account.gallery.sizeUnit') }}
+			{{ translate('account.gallery.sizeLabel') }} {{ item.size }} {{ translate('account.gallery.sizeUnit') }}
 		</MuText>
-		<MuText variant="span" weight="bold" color="text-primary" class="account-gallery-tag">{{ t(`account.gallery.tags.${item.tag}`) }}</MuText>
+		<MuText variant="span" weight="bold" color="text-primary" class="account-gallery-tag">{{ translate(`account.gallery.tags.${item.tag}`) }}</MuText>
 	</MuCard>
 </template>
 

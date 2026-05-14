@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import MuHeading from '~/components/base/MuHeading.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
 	<MuHeading variant="4" weight="bold" class="account-reviews-title" data-testid="account-reviews-title">
-		{{ t('account.reviews.title') }}
+		{{ translate('account.reviews.title') }}
 	</MuHeading>
 </template>
 

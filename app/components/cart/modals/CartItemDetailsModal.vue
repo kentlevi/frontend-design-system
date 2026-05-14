@@ -35,12 +35,12 @@ const local_artwork_size_label = ref('');
 const local_artwork_preview_url = ref('');
 const local_special_instructions = ref('');
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const display_item_name = computed(() => {
 	if (local_artwork_name.value) return local_artwork_name.value;
 	const product_id = props.item?.url_slug;
-	return product_id ? t(`product.items.${product_id}.name`) : '';
+	return product_id ? translate(`product.items.${product_id}.name`) : '';
 });
 
 const display_item_image = computed(() => local_artwork_preview_url.value || `${config.public.file_url}${props.item?.product_thumbnail}`);
@@ -61,8 +61,8 @@ const file_meta_label = computed(() => {
 
 const artwork_action_label = computed(() => (
 	local_artwork_preview_url.value || local_artwork_name.value
-		? t('cart.uploadArtwork.replaceImage')
-		: t('cart.cartPage.itemDetails.uploadImage')
+		? translate('cart.uploadArtwork.replaceImage')
+		: translate('cart.cartPage.itemDetails.uploadImage')
 ));
 
 watch(
@@ -151,7 +151,7 @@ const submitChanges = async () => {
 		align="center"
 		width="760px"
 		modal-class="cart-item-details-modal-shell"
-		:title="t('cart.cartPage.itemDetails.title')"
+		:title="translate('cart.cartPage.itemDetails.title')"
 		@update:model-value="emit('update:modelValue', $event)"
 		@close="closeModal()"
 	>
@@ -179,7 +179,7 @@ const submitChanges = async () => {
 								{{ display_item_name }}
 							</p>
 							<p class="cart-item-details-file-meta">
-								{{ file_meta_label || t('cart.cartPage.itemDetails.noArtworkFile') }}
+								{{ file_meta_label || translate('cart.cartPage.itemDetails.noArtworkFile') }}
 							</p>
 						</div>
 					</div>
@@ -208,7 +208,7 @@ const submitChanges = async () => {
 							width="40px"
 							height="40px"
 							class="cart-item-details-delete-btn"
-							:sr-label="t('cart.cartPage.itemDetails.removeArtworkSr')"
+							:sr-label="translate('cart.cartPage.itemDetails.removeArtworkSr')"
 							:disabled="updating_artwork"
 							@click="removeArtwork"
 						/>
@@ -216,14 +216,14 @@ const submitChanges = async () => {
 				</div>
 
 				<div class="cart-item-details-field">
-					<label class="cart-item-details-label">{{ t('cart.uploadArtwork.specialInstructions') }}</label>
+					<label class="cart-item-details-label">{{ translate('cart.uploadArtwork.specialInstructions') }}</label>
 					<UiTextarea
 						:model-value="local_special_instructions"
 						:rows="4"
 						resize="none"
 						:disabled="updating_artwork"
 						field-class="cart-item-details-textarea-field"
-						:placeholder="t('cart.uploadArtwork.specialInstructionsPlaceholder')"
+						:placeholder="translate('cart.uploadArtwork.specialInstructionsPlaceholder')"
 						@update:model-value="local_special_instructions = $event"
 					/>
 				</div>
@@ -241,7 +241,7 @@ const submitChanges = async () => {
 					class="cart-item-details-cancel"
 					@click="closeModal"
 				>
-					{{ t('cart.cartPreview.editModal.cancel') }}
+					{{ translate('cart.cartPreview.editModal.cancel') }}
 				</UiButton>
 				<UiButton
 					type="button"
@@ -252,7 +252,7 @@ const submitChanges = async () => {
 					class="cart-item-details-submit"
 					@click="submitChanges"
 				>
-					{{ t('cart.cartPage.itemDetails.submit') }}
+					{{ translate('cart.cartPage.itemDetails.submit') }}
 				</UiButton>
 			</div>
 		</template>

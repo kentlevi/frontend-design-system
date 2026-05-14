@@ -36,12 +36,12 @@ const {
 					</MuText>
 				</MuLinearWrapper>
 				<MuInput
+					id="register-first-name"
+					v-model="register_form.first_name"
 					:placeholder="translate('auth.register.enterFirstName')"
 					type="text"
 					name="first_name"
-					id="register-first-name"
 					:has-error="first_name_error"
-					v-model="register_form.first_name"
 				/>
 			</MuLinearWrapper>
 
@@ -50,11 +50,11 @@ const {
 					{{ translate('auth.register.lastNameOptionalLabel') }}
 				</MuText>
 				<MuInput
+					id="register-last-name"
+					v-model="register_form.last_name"
 					:placeholder="translate('auth.register.enterLastName')"
 					type="text"
 					name="last_name"
-					id="register-last-name"
-					v-model="register_form.last_name"
 				/>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
@@ -69,12 +69,12 @@ const {
 				</MuText>
 			</MuLinearWrapper>
 			<MuInput
+				id="register-email"
+				v-model="register_form.email"
 				:placeholder="translate('auth.register.enterEmail')"
 				type="email"
 				name="email"
-				id="register-email"
 				:has-error="email_error"
-				v-model="register_form.email"
 			/>
 		</MuLinearWrapper>
 
@@ -88,12 +88,12 @@ const {
 				</MuText>
 			</MuLinearWrapper>
 			<MuInput
+				id="register-password"
+				v-model="register_form.password"
 				:placeholder="translate('auth.register.enterPassword')"
 				:type="show_password ? 'text' : 'password'"
 				name="password"
-				id="register-password"
 				:has-error="password_error"
-				v-model="register_form.password"
 			>
 				<template #inner-right>
 					<UiButton

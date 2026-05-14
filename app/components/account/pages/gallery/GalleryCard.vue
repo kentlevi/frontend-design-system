@@ -9,7 +9,7 @@ defineProps<{
 	item: GalleryItem;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -20,9 +20,9 @@ const { t } = useI18n();
 		<div class="account-gallery-preview" />
 		<h3 class="account-gallery-name">{{ item.name }}</h3>
 		<p class="account-gallery-size">
-			{{ t('account.gallery.sizeLabel') }} {{ item.size }} {{ t('account.gallery.sizeUnit') }}
+			{{ translate('account.gallery.sizeLabel') }} {{ item.size }} {{ translate('account.gallery.sizeUnit') }}
 		</p>
-		<span class="account-gallery-tag">{{ t(`account.gallery.tags.${item.tag}`) }}</span>
+		<span class="account-gallery-tag">{{ translate(`account.gallery.tags.${item.tag}`) }}</span>
 	</article>
 </template>
 

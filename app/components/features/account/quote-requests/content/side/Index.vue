@@ -4,7 +4,7 @@ import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
 import { useAccountQuoteRequests } from '~/composables/account/quoteRequests/useAccountQuoteRequests';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { requests } = useAccountQuoteRequests();
 </script>
 
@@ -18,10 +18,10 @@ const { requests } = useAccountQuoteRequests();
 			:data-testid="`account-quote-requests-item-${index}`"
 		>
 			<MuHeading variant="3" class="account-quote-item-title">
-				{{ t('account.quoteRequests.orderLabel') }} #{{ item.id }}
+				{{ translate('account.quoteRequests.orderLabel') }} #{{ item.id }}
 			</MuHeading>
 			<MuText color="text-secondary" class="account-quote-item-meta">
-				{{ t('account.quoteRequests.quoteDate') }}: {{ item.date }}
+				{{ translate('account.quoteRequests.quoteDate') }}: {{ item.date }}
 			</MuText>
 		</MuCard>
 	</aside>

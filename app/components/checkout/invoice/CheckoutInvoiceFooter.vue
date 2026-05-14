@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
 	<footer class="checkout-invoice-footer">
 		<div class="checkout-invoice-footer-copy">
 			<strong>Musticker</strong>
-			<span>{{ t('checkout.invoice.footerAddress') }}</span>
+			<span>{{ translate('checkout.invoice.footerAddress') }}</span>
 		</div>
 		<strong>www.musticker.com</strong>
 	</footer>

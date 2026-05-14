@@ -14,7 +14,7 @@ withDefaults(defineProps<{
 	loading: false,
 });
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { display_avatar, user_initial } = useProfilePhotoDisplay();
 
 const {
@@ -77,9 +77,9 @@ const {
 			<UiSkeleton width="78%" height="20px" border-radius="8px" />
 		</div>
 		<div v-else class="account-profile-section-copy">
-			<h2 class="account-profile-section-title">{{ t('account.profile.personalDetails') }}</h2>
+			<h2 class="account-profile-section-title">{{ translate('account.profile.personalDetails') }}</h2>
 			<p class="account-profile-section-description">
-				{{ t('account.profile.personalDetailsDesc') }}
+				{{ translate('account.profile.personalDetailsDesc') }}
 			</p>
 		</div>
 		<div v-if="loading" class="account-profile-section-main account-profile-personal-skeleton">
@@ -118,7 +118,7 @@ const {
 		<div v-else class="account-profile-section-main">
 			<div class="account-profile-photo-group">
 				<div class="account-profile-photo-head">
-					<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
+					<div class="account-profile-label">{{ translate('account.profile.profilePhoto') }}</div>
 					<p v-if="photo_inline_error" class="account-profile-photo-error">{{ photo_inline_error }}</p>
 				</div>
 				<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
@@ -126,14 +126,14 @@ const {
 						<img
 							v-if="display_avatar"
 							:src="display_avatar"
-							:alt="t('account.profile.profilePhoto')"
+							:alt="translate('account.profile.profilePhoto')"
 							class="account-profile-avatar-image"
 						>
 						<span v-else class="account-profile-avatar-text">{{ user_initial }}</span>
 					</div>
 					<div class="account-profile-photo-copy">
-						<p class="account-profile-muted">{{ t('account.profile.photoHint1') }}</p>
-						<p class="account-profile-muted">{{ t('account.profile.photoHint2') }}</p>
+						<p class="account-profile-muted">{{ translate('account.profile.photoHint1') }}</p>
+						<p class="account-profile-muted">{{ translate('account.profile.photoHint2') }}</p>
 						<div class="account-profile-photo-actions">
 							<input
 								ref="file_input"
@@ -151,7 +151,7 @@ const {
 								data-testid="account-profile-photo-upload-button"
 								@click="openFilePicker"
 							>
-								{{ display_avatar ? t('account.profile.uploadNewPhoto') : t('account.profile.uploadPhoto') }}
+								{{ display_avatar ? translate('account.profile.uploadNewPhoto') : translate('account.profile.uploadPhoto') }}
 							</UiButton>
 							<UiButton
 								v-if="display_avatar"
@@ -162,7 +162,7 @@ const {
 								data-testid="account-profile-photo-delete-button"
 								@click="openDeletePhotoModal"
 							>
-								{{ t('account.profile.delete') }}
+								{{ translate('account.profile.delete') }}
 							</UiButton>
 						</div>
 					</div>
@@ -175,7 +175,7 @@ const {
 						:error="field_errors[`fields.${field.field_key}`]"
 						:label="field.is_required
 							? field.field_label
-							: `${field.field_label} (${t('account.profile.optional')})`"
+							: `${field.field_label} (${translate('account.profile.optional')})`"
 						:required="Boolean(field.is_required)"
 					>
 						<template v-if="!field.is_required" #label>
@@ -183,7 +183,7 @@ const {
 								{{ field.field_label }}
 							</span>
 							<span class="account-profile-optional">
-								({{ t('account.profile.optional') }})
+								({{ translate('account.profile.optional') }})
 							</span>
 						</template>
 						<template #default="{ inputId, describedBy }">
@@ -201,7 +201,7 @@ const {
 
 				<UiFormField
 					class="account-profile-grid-full"
-					:label="t('account.profile.emailAddress')"
+					:label="translate('account.profile.emailAddress')"
 					:required="true"
 				>
 					<template #default="{ inputId, describedBy }">
@@ -225,11 +225,11 @@ const {
 								data-testid="account-profile-email-change-button"
 								@click="openEmailChangeModal"
 							>
-								{{ t('account.profile.change') }}
+								{{ translate('account.profile.change') }}
 							</UiButton>
 						</div>
 						<p v-if="social" class="account-profile-email-helper-text">
-							{{ t('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
+							{{ translate('account.profile.socialLoginLinked', { provider: capitalizeFirst(social) }) }}
 						</p>
 					</template>
 				</UiFormField>
@@ -244,7 +244,7 @@ const {
 					data-testid="account-profile-save-button"
 					@click="submitPersonalForm"
 				>
-					{{ t('account.profile.saveChanges') }}
+					{{ translate('account.profile.saveChanges') }}
 				</UiButton>
 			</div>
 		</div>
@@ -253,10 +253,10 @@ const {
 	<!-- Modals -->
 	<DeleteConfirmModal
 		:model-value="is_delete_photo_modal_open"
-		:title="t('account.profile.photoDeleteConfirm')"
-		:description="t('account.profile.photoDeleteDescription')"
-		:cancel-label="t('account.profile.cancel')"
-		:confirm-label="t('account.profile.delete')"
+		:title="translate('account.profile.photoDeleteConfirm')"
+		:description="translate('account.profile.photoDeleteDescription')"
+		:cancel-label="translate('account.profile.cancel')"
+		:confirm-label="translate('account.profile.delete')"
 		modal-class="account-profile-delete-photo-modal-shell"
 		test-id="account-profile-delete-photo-modal"
 		@cancel="closeDeletePhotoModal"
@@ -282,8 +282,8 @@ const {
 		:resend-limit-reached="limit_reached_error"
 		:resend-cooldown-remaining="remaining"
 		translation-base="account.profile.emailChangeVerification"
-		:submit-label="t('auth.verification.verify')"
-		:busy-label="t('auth.verification.verifying')"
+		:submit-label="translate('auth.verification.verify')"
+		:busy-label="translate('auth.verification.verifying')"
 		align="center"
 		:show-close-button="true"
 		test-id-prefix="account-profile-email-change-verification"
@@ -296,7 +296,7 @@ const {
 		<template #icon>
 			<img
 				src="/illustrations/icon-verification.svg"
-				:alt="t('account.profile.emailChangeVerification.iconAlt')"
+				:alt="translate('account.profile.emailChangeVerification.iconAlt')"
 				class="account-profile-email-change-verification-icon"
 			>
 		</template>

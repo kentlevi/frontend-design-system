@@ -22,7 +22,7 @@ const { translate } = useAuthLoginPage()
 
 			<div class="auth-login-shell auth-shell-enter">
 				<AuthLoginCard />
-                <!-- <LoginCard /> -->
+				<!-- <LoginCard /> -->
 			</div>
 
 			<div

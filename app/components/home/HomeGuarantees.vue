@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { resolveFileUrl } = useFileBaseUrl();
 
 const guarantee_items = [
@@ -34,14 +34,14 @@ const guarantee_items = [
 				:data-testid="`home-guarantee-${item.titleKey.replace('.title', '')}`"
 			>
 				<div class="home-guarantees-icon">
-					<img :src="item.image" :alt="t(`home.guarantees.${item.titleKey}`)" class="home-guarantees-icon-image">
+					<img :src="item.image" :alt="translate(`home.guarantees.${item.titleKey}`)" class="home-guarantees-icon-image">
 				</div>
 				<div class="home-guarantees-copy">
 					<h3 class="home-guarantees-title">
-						{{ t(`home.guarantees.${item.titleKey}`) }}
+						{{ translate(`home.guarantees.${item.titleKey}`) }}
 					</h3>
 					<p class="home-guarantees-text">
-						{{ t(`home.guarantees.${item.textKey}`) }}
+						{{ translate(`home.guarantees.${item.textKey}`) }}
 					</p>
 				</div>
 			</article>

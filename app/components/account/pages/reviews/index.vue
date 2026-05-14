@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useAccountReviews } from '~/composables/account/reviews/useAccountReviews';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { reviews } = useAccountReviews();
 </script>
 
 <template>
 	<section class="account-page" data-testid="account-reviews-page">
 		<div class="account-content" data-testid="account-reviews-content">
-			<h1 class="account-reviews-title" data-testid="account-reviews-title">{{ t('account.reviews.title') }}</h1>
+			<h1 class="account-reviews-title" data-testid="account-reviews-title">{{ translate('account.reviews.title') }}</h1>
 			<div class="account-reviews-list" data-testid="account-reviews-list">
 				<article
 					v-for="item in reviews"
@@ -17,11 +17,11 @@ const { reviews } = useAccountReviews();
 					:data-testid="`account-reviews-item-${item.titleKey}`"
 				>
 					<header class="account-reviews-card-header">
-						<h2 class="account-reviews-card-title">{{ t(`account.reviews.items.${item.titleKey}.title`) }}</h2>
-						<p class="account-reviews-card-date">{{ t('account.reviews.reviewedOn') }}: {{ item.date }}</p>
+						<h2 class="account-reviews-card-title">{{ translate(`account.reviews.items.${item.titleKey}.title`) }}</h2>
+						<p class="account-reviews-card-date">{{ translate('account.reviews.reviewedOn') }}: {{ item.date }}</p>
 					</header>
-					<p class="account-reviews-card-rating">{{ t('account.reviews.rating') }}: {{ item.rating }}/5</p>
-					<p class="account-reviews-card-body">{{ t(`account.reviews.items.${item.textKey}.text`) }}</p>
+					<p class="account-reviews-card-rating">{{ translate('account.reviews.rating') }}: {{ item.rating }}/5</p>
+					<p class="account-reviews-card-body">{{ translate(`account.reviews.items.${item.textKey}.text`) }}</p>
 				</article>
 			</div>
 		</div>

@@ -2,7 +2,7 @@
 import { useFeaturedItem } from '~/composables/shared/featured-item/useFeaturedItem';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
-const { t } = useI18n()
+const { t: translate } = useI18n()
 
 const {
 	number_of_items,
@@ -30,7 +30,7 @@ onMounted(() => {
 	>
 		<div class="cart-featured-head" data-testid="product-category-cart-featured-head">
 			<h4 class="cart-preview-section-title" data-testid="product-category-cart-featured-title">
-				{{ t('cart.cartPreview.featuredItems') }}
+				{{ translate('cart.cartPreview.featuredItems') }}
 			</h4>
 			<UiButton
 				type="button"
@@ -40,7 +40,7 @@ onMounted(() => {
 				icon-only
 				icon="strong-times"
 				icon-size="md"
-				:sr-label="t('cart.cartPreview.closeFeaturedItems')"
+				:sr-label="translate('cart.cartPreview.closeFeaturedItems')"
 				class="cart-featured-close"
 				data-testid="product-category-cart-featured-close-button"
 				@click="clear"
@@ -59,7 +59,7 @@ onMounted(() => {
 				<div class="cart-featured-content">
 					<h5 class="cart-featured-item-title">{{ item.product }}</h5>
 					<p class="cart-featured-price">
-						<span class="cart-preview-label">{{ t('cart.cartPreview.startsAt') }}</span>
+						<span class="cart-preview-label">{{ translate('cart.cartPreview.startsAt') }}</span>
 						<strong class="cart-preview-value">{{ formatPrice(item.price) }}</strong>
 					</p>
 					<UiButton
@@ -69,7 +69,7 @@ onMounted(() => {
 						class="cart-featured-customize-btn"
 						@click="redirectCustomization(item)"
 					>
-						{{ t('cart.cartPreview.customize') }}
+						{{ translate('cart.cartPreview.customize') }}
 					</UiButton>
 				</div>
 			</article>

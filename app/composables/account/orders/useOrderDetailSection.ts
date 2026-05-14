@@ -4,7 +4,7 @@ import { useCountry } from '~/composables/app/country/useCountry'
 import { useOrdersService } from '~/services/account/orders.service'
 
 export const useOrderDetailSection = (order: Ref<AccountOrder>) => {
-	const { t } = useI18n()
+	const { t: translate } = useI18n()
 	const { withCountry } = useCountry()
 	const orders_service = useOrdersService()
 	const upload_toast_visible = ref(false)
@@ -22,7 +22,7 @@ export const useOrderDetailSection = (order: Ref<AccountOrder>) => {
 		{
 			key: 'shippingFee',
 			value: order.value.totals.shippingFeeLabel,
-			params: { method: t('account.orders.shippingMethod') },
+			params: { method: translate('account.orders.shippingMethod') },
 		},
 		{ key: 'discounts', value: order.value.totals.discountsLabel, className: 'is-discount' },
 		{ key: 'total', value: order.value.totals.totalLabel, className: 'is-total' },
@@ -44,7 +44,7 @@ export const useOrderDetailSection = (order: Ref<AccountOrder>) => {
 	}
 
 	const handle_upload_submit = (payload: { itemNumber: string }) => {
-		upload_toast_message.value = t('account.orders.detail.itemUploadSuccess', { number: payload.itemNumber })
+		upload_toast_message.value = translate('account.orders.detail.itemUploadSuccess', { number: payload.itemNumber })
 		upload_toast_visible.value = true
 
 		if (upload_toast_timeout) {

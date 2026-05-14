@@ -7,7 +7,7 @@ import {
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute();
 const guest_login_mode = useCookie<string | number | null>('guest_login_mode', {
@@ -101,8 +101,8 @@ onBeforeUnmount(() => {
 			toast_kind === 'guest'
 				? ''
 				: toast_kind === 'checkout'
-					? t('checkout.member.loginSuccess')
-					: t('home.loginSuccess')
+					? translate('checkout.member.loginSuccess')
+					: translate('home.loginSuccess')
 		"
 		variant="outlined"
 		class="layout-login-toast"
@@ -110,11 +110,11 @@ onBeforeUnmount(() => {
 		@close="is_visible = false"
 	>
 		<template v-if="toast_kind === 'guest'">
-			{{ t('home.guestToastPrefix') }}
+			{{ translate('home.guestToastPrefix') }}
 			<NuxtLink :to="guest_register_path" class="layout-login-toast-link">
-				<strong class="layout-login-toast-link-text">{{ t('home.guestToastCta') }}</strong>
+				<strong class="layout-login-toast-link-text">{{ translate('home.guestToastCta') }}</strong>
 			</NuxtLink>
-			{{ t('home.guestToastSuffix') }}
+			{{ translate('home.guestToastSuffix') }}
 		</template>
 	</UiToast>
 </template>

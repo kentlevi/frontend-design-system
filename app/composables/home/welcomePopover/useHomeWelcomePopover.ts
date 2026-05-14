@@ -12,7 +12,7 @@ type MockUserCookie = {
 };
 
 export function useHomeWelcomePopover() {
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const { state } = storeToRefs(useUsersStore());
 	const mock_user = useCookie<MockUserCookie | null>('mock_user', {
 		default: () => null,
@@ -36,11 +36,11 @@ export function useHomeWelcomePopover() {
 			state.value.onboardingProfile?.firstName ||
 			mock_user.value?.firstName ||
 			email_local_part.value ||
-			t('home.welcome.defaultName'),
+			translate('home.welcome.defaultName'),
 			''
 		);
 
-		return normalized_name.firstName || t('home.welcome.defaultName');
+		return normalized_name.firstName || translate('home.welcome.defaultName');
 	});
 
 	return {

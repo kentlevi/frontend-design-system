@@ -5,7 +5,7 @@ import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
 import { useCountry } from '~/composables/app/country/useCountry';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const props = defineProps<{
 	title: string;
@@ -44,7 +44,7 @@ const formatSizeQty = (item : CartItem) : string => {
 				<div class="checkout-confirmation-item-thumb">
 					<img
 						:src="formatImage(item.cart_item)"
-						:alt="t(`product.items.${item.product_id}.name`)"
+						:alt="translate(`product.items.${item.product_id}.name`)"
 						class="checkout-confirmation-item-image"
 					>
 				</div>

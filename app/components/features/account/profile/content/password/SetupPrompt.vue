@@ -7,7 +7,7 @@ defineEmits<{
 	(e: 'open-setup'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -20,9 +20,9 @@ const { t } = useI18n();
 		:gap="16"
 	>
 		<div class="account-profile-password-setup-copy">
-			<MuHeading variant="3" class="account-profile-password-setup-title">{{ t('account.profile.setPassword') }}</MuHeading>
+			<MuHeading variant="3" class="account-profile-password-setup-title">{{ translate('account.profile.setPassword') }}</MuHeading>
 			<MuText color="text-secondary" class="account-profile-password-setup-description">
-				{{ t('account.profile.socialPasswordDescription') }}
+				{{ translate('account.profile.socialPasswordDescription') }}
 			</MuText>
 		</div>
 		<UiButton
@@ -32,7 +32,7 @@ const { t } = useI18n();
 			data-testid="account-profile-setup-password-button"
 			@click="$emit('open-setup')"
 		>
-			{{ t('account.profile.setUpPassword') }}
+			{{ translate('account.profile.setUpPassword') }}
 		</UiButton>
 	</MuLinearWrapper>
 </template>

@@ -45,13 +45,13 @@ type AccountStat = {
 	iconAlt: string;
 };
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { overview } = storeToRefs(useOverviewStore())
 
 const account_stats = computed<AccountStat[]>(() => [
 	{
 		key: 'orders',
-		label: t('account.shell.stats.order'),
+		label: translate('account.shell.stats.order'),
 		value: String(overview.value?.total_orders ?? 0),
 		iconName: null,
 		iconSrc: '/icons/custom/checkout/icon-box.svg',
@@ -59,7 +59,7 @@ const account_stats = computed<AccountStat[]>(() => [
 	},
 	{
 		key: 'points',
-		label: t('account.shell.stats.points'),
+		label: translate('account.shell.stats.points'),
 		value: String(overview.value?.total_points ?? 0),
 		iconName: null,
 		iconSrc: '/icons/custom/account/points-icon.svg',
@@ -67,7 +67,7 @@ const account_stats = computed<AccountStat[]>(() => [
 	},
 	{
 		key: 'coupons',
-		label: t('account.shell.stats.coupons'),
+		label: translate('account.shell.stats.coupons'),
 		value: String(overview.value?.total_coupons ?? 0),
 		iconName: null,
 		iconSrc: '/icons/custom/account/coupon-icon.svg',
@@ -75,8 +75,8 @@ const account_stats = computed<AccountStat[]>(() => [
 	},
 	{
 		key: 'total-spent',
-		label: t('account.shell.stats.totalSpent'),
-		value: overview.value ? formatPrice(overview.value.total_spent) : t('account.shell.defaultBalance'),
+		label: translate('account.shell.stats.totalSpent'),
+		value: overview.value ? formatPrice(overview.value.total_spent) : translate('account.shell.defaultBalance'),
 		iconName: null,
 		iconSrc: '/icons/custom/account/total-spent-icon.svg',
 		iconAlt: 'Total spent',

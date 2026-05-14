@@ -10,7 +10,7 @@ import lottie from 'lottie-web'
 
 export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 	const router = useRouter()
-	const { t } = useI18n()
+	const { t: translate } = useI18n()
 	const { withCountry } = useCountry()
 	const cart_service = useCartService()
 	const upload_service = useUploadService()
@@ -46,23 +46,23 @@ export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 	});
 
 	const deletion_title = computed(() => {
-		if (is_all_items.value) return t('cart.cartPage.removeAllTitle')
-		if (is_multiple_items.value) return t('cart.cartPage.deleteSelectedTitle', { count: cart_service.deletion_ids.value.length })
-		if (deletion_item.value) return t('cart.cartPage.deleteItemTitleWithName', { name: deletion_item.value.title })
-		return t('cart.cartPage.deleteItemTitle')
+		if (is_all_items.value) return translate('cart.cartPage.removeAllTitle')
+		if (is_multiple_items.value) return translate('cart.cartPage.deleteSelectedTitle', { count: cart_service.deletion_ids.value.length })
+		if (deletion_item.value) return translate('cart.cartPage.deleteItemTitleWithName', { name: deletion_item.value.title })
+		return translate('cart.cartPage.deleteItemTitle')
 	})
 
 	const deletion_description = computed(() => {
-		if (is_all_items.value) return t('cart.cartPage.removeAllDescription')
-		if (is_multiple_items.value) return t('cart.cartPage.deleteSelectedDescription', { count: cart_service.deletion_ids.value.length })
-		if (deletion_item.value) return t('cart.cartPage.deleteItemDescriptionWithName', { name: deletion_item.value.title })
-		return t('cart.cartPage.deleteItemDescription')
+		if (is_all_items.value) return translate('cart.cartPage.removeAllDescription')
+		if (is_multiple_items.value) return translate('cart.cartPage.deleteSelectedDescription', { count: cart_service.deletion_ids.value.length })
+		if (deletion_item.value) return translate('cart.cartPage.deleteItemDescriptionWithName', { name: deletion_item.value.title })
+		return translate('cart.cartPage.deleteItemDescription')
 	})
 
 	const deletion_confirm_label = computed(() => {
-		if (is_all_items.value) return t('cart.cartPage.removeAllConfirm')
-		if (is_multiple_items.value) return t('cart.cartPage.deleteSelectedConfirm', { count: cart_service.deletion_ids.value.length })
-		return t('cart.cartPage.removeConfirm')
+		if (is_all_items.value) return translate('cart.cartPage.removeAllConfirm')
+		if (is_multiple_items.value) return translate('cart.cartPage.deleteSelectedConfirm', { count: cart_service.deletion_ids.value.length })
+		return translate('cart.cartPage.removeConfirm')
 	})
 
 	const formatPrice = (value: number) => {

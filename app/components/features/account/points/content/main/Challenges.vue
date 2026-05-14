@@ -3,7 +3,7 @@ import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { visible_challenges, completed_challenge_count } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 </script>
 
@@ -16,7 +16,7 @@ const { visible_challenges, completed_challenge_count } = inject<ReturnType<type
 			:gap="20"
 		>
 			<MuLinearWrapper class="account-points-challenges-title-wrap" align="center" :gap="14">
-				<MuHeading class="account-points-section-title" weight="semi-bold">{{ t('account.points.challengesTitle') }}</MuHeading>
+				<MuHeading class="account-points-section-title" weight="semi-bold">{{ translate('account.points.challengesTitle') }}</MuHeading>
 				<div class="account-points-challenge-count">
 					{{ completed_challenge_count }}/{{ visible_challenges.length + (12 - visible_challenges.length) }}
 				</div>
@@ -27,7 +27,7 @@ const { visible_challenges, completed_challenge_count } = inject<ReturnType<type
 				size="sm"
 				class="account-points-view-all"
 			>
-				{{ t('account.points.viewAll') }}
+				{{ translate('account.points.viewAll') }}
 			</UiButton>
 		</MuLinearWrapper>
 

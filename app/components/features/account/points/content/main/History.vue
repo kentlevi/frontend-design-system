@@ -5,7 +5,7 @@ import MuText from '~/components/base/MuText.vue';
 import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 import type { AccountPointLogFilter } from '~/types/account/points';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const {
 	filters,
 	logs,
@@ -21,7 +21,7 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 <template>
 	<section class="account-points-history-panel">
 		<MuLinearWrapper class="account-points-filters" align="center" :gap="18">
-			<MuText variant="span" weight="semi-bold" color="text-primary" class="account-points-filter-label">{{ t('account.points.filter') }}</MuText>
+			<MuText variant="span" weight="semi-bold" color="text-primary" class="account-points-filter-label">{{ translate('account.points.filter') }}</MuText>
 			<div class="account-points-filter-group">
 				<button
 					v-for="filter in filters"
@@ -38,7 +38,7 @@ function handleFilterClick(filter_id: AccountPointLogFilter) {
 
 		<div class="account-points-logs" data-testid="account-points-logs">
 			<div class="account-points-logs-head">
-				{{ t('account.points.logsTitle') }}
+				{{ translate('account.points.logsTitle') }}
 			</div>
 
 			<div class="account-points-log-list">

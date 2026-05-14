@@ -10,7 +10,7 @@ const emit = defineEmits<{
 	close: [];
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const {
 	search_query,
 	search_loading,
@@ -58,7 +58,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 				class="home-search-modal"
 				role="dialog"
 				aria-modal="true"
-				:aria-label="t('layout.header.search.modal.title')"
+				:aria-label="translate('layout.header.search.modal.title')"
 				data-testid="app-header-search-dialog"
 				@keydown="handleSearchKeydown"
 			>
@@ -67,7 +67,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						<button
 							type="button"
 							class="home-search-head-action"
-							:aria-label="t('layout.header.search')"
+							:aria-label="translate('layout.header.search')"
 							data-testid="app-header-search-focus-button"
 							@click="focusSearchInput"
 						>
@@ -82,7 +82,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 							:ref="bindInputRef"
 							:value="search_query"
 							type="search"
-							:placeholder="t('layout.header.search.modal.placeholder')"
+							:placeholder="translate('layout.header.search.modal.placeholder')"
 							class="home-search-input"
 							autocomplete="off"
 							data-testid="app-header-search-input"
@@ -113,7 +113,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 
 					<div v-else-if="show_search_recent" class="home-search-recent" data-testid="app-header-search-recent">
 						<div class="home-search-recent-head" data-testid="app-header-search-recent-head">
-							<h4 class="home-search-heading">{{ t('layout.header.search.modal.recent.title') }}</h4>
+							<h4 class="home-search-heading">{{ translate('layout.header.search.modal.recent.title') }}</h4>
 							<UiButton
 								variant="ghost"
 								tone="default"
@@ -122,7 +122,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 								data-testid="app-header-search-recent-clear-button"
 								@click="clearRecentSearches"
 							>
-								{{ t('layout.header.search.modal.recent.clearAll') }}
+								{{ translate('layout.header.search.modal.recent.clearAll') }}
 							</UiButton>
 						</div>
 						<ul class="home-search-recent-list" data-testid="app-header-search-recent-list">
@@ -168,7 +168,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 								<button
 									type="button"
 									class="home-search-recent-remove"
-									:aria-label="t('layout.header.search.modal.recent.remove')"
+									:aria-label="translate('layout.header.search.modal.recent.remove')"
 									:data-testid="`app-header-search-recent-remove-${index}-button`"
 									@click="removeRecentSearch(entry.key)"
 								>
@@ -182,14 +182,14 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						<div class="home-search-empty-icon home-search-empty-icon--no-recent">
 							<img
 								src="/icons/custom/search/no-recent-searches.svg"
-								:alt="t('layout.header.search.modal.noRecent.title')"
+								:alt="translate('layout.header.search.modal.noRecent.title')"
 								width="48"
 								height="48" class="home-search-image" >
 						</div>
 						<div class="home-search-empty-copy">
-							<h4 class="home-search-heading">{{ t('layout.header.search.modal.noRecent.title') }}</h4>
+							<h4 class="home-search-heading">{{ translate('layout.header.search.modal.noRecent.title') }}</h4>
 							<p class="home-search-empty-text">
-								{{ t('layout.header.search.modal.noRecent.text') }}
+								{{ translate('layout.header.search.modal.noRecent.text') }}
 								<UiButton
 									variant="ghost"
 									tone="default"
@@ -198,9 +198,9 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									data-testid="app-header-search-suggest-empty-recent-button"
 									@click="applySuggestedSearch"
 								>
-									{{ t('layout.header.search.modal.suggestedTermLabel', { term: search_empty_suggested_term }) }}
+									{{ translate('layout.header.search.modal.suggestedTermLabel', { term: search_empty_suggested_term }) }}
 								</UiButton>
-								{{ t('layout.header.search.modal.noRecent.suffix') }}
+								{{ translate('layout.header.search.modal.noRecent.suffix') }}
 							</p>
 						</div>
 					</div>
@@ -209,14 +209,14 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 						<div class="home-search-empty-icon home-search-empty-icon--no-recent">
 							<img
 								src="/icons/custom/search/no-recent-searches.svg"
-								:alt="t('layout.header.search.modal.noResult.title')"
+								:alt="translate('layout.header.search.modal.noResult.title')"
 								width="48"
 								height="48" class="home-search-image" >
 						</div>
 						<div class="home-search-empty-copy">
-							<h4 class="home-search-heading">{{ t('layout.header.search.modal.noResult.title') }}</h4>
+							<h4 class="home-search-heading">{{ translate('layout.header.search.modal.noResult.title') }}</h4>
 							<p class="home-search-empty-text">
-								{{ t('layout.header.search.modal.noResult.text') }}
+								{{ translate('layout.header.search.modal.noResult.text') }}
 								<UiButton
 									variant="ghost"
 									tone="default"
@@ -225,9 +225,9 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									data-testid="app-header-search-suggest-empty-result-button"
 									@click="applySuggestedSearch"
 								>
-									{{ t('layout.header.search.modal.suggestedTermLabel', { term: search_empty_suggested_term }) }}
+									{{ translate('layout.header.search.modal.suggestedTermLabel', { term: search_empty_suggested_term }) }}
 								</UiButton>
-								{{ t('layout.header.search.modal.noResult.suffix') }}
+								{{ translate('layout.header.search.modal.noResult.suffix') }}
 							</p>
 						</div>
 					</div>
@@ -303,7 +303,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									color="var(--text-muted)"
 								/>
 							</span>
-							<span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.navigate') }}</span>
+							<span class="home-search-foot-label">{{ translate('layout.header.search.modal.footer.navigate') }}</span>
 						</div>
 						<div class="home-search-foot-hint" data-testid="app-header-search-footer-select">
 							<span class="home-search-key">
@@ -313,11 +313,11 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 									color="var(--text-muted)"
 								/>
 							</span>
-							<span class="home-search-foot-label">{{ t('layout.header.search.modal.footer.select') }}</span>
+							<span class="home-search-foot-label">{{ translate('layout.header.search.modal.footer.select') }}</span>
 						</div>
 					</div>
 					<div class="home-search-foot-hint" data-testid="app-header-search-footer-close-wrap">
-						<span class="home-search-key home-search-key-esc">{{ t('layout.header.search.modal.footer.escKeyLabel') }}</span>
+						<span class="home-search-key home-search-key-esc">{{ translate('layout.header.search.modal.footer.escKeyLabel') }}</span>
 						<UiButton
 							variant="ghost"
 							tone="default"
@@ -326,7 +326,7 @@ const { getHighlightParts, bindModalRef, bindInputRef } = useAppHeaderSearchModa
 							data-testid="app-header-search-close-button"
 							@click="emit('close')"
 						>
-							{{ t('layout.header.search.modal.footer.close') }}
+							{{ translate('layout.header.search.modal.footer.close') }}
 						</UiButton>
 					</div>
 				</footer>

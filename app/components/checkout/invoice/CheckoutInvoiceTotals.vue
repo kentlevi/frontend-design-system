@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 defineProps<{
 	subtotal: string;
@@ -16,19 +16,19 @@ defineProps<{
 	<section class="checkout-invoice-totals">
 		<div class="checkout-invoice-totals-grid">
 			<div class="checkout-invoice-total-line">
-				<span>{{ t('checkout.invoice.totals.subtotal') }}</span>
+				<span>{{ translate('checkout.invoice.totals.subtotal') }}</span>
 				<strong>{{ subtotal }}</strong>
 			</div>
 			<div class="checkout-invoice-total-line">
-				<span>{{ t('checkout.invoice.totals.shippingFee', { shippingLabel }) }}</span>
+				<span>{{ translate('checkout.invoice.totals.shippingFee', { shippingLabel }) }}</span>
 				<strong>{{ shippingFee }}</strong>
 			</div>
 			<div class="checkout-invoice-total-line is-discount">
-				<span>{{ t('checkout.invoice.totals.discounts') }}</span>
+				<span>{{ translate('checkout.invoice.totals.discounts') }}</span>
 				<strong>{{ discount }}</strong>
 			</div>
 			<div class="checkout-invoice-total-line is-final">
-				<span>{{ t('checkout.invoice.totals.total') }}</span>
+				<span>{{ translate('checkout.invoice.totals.total') }}</span>
 				<strong>{{ total }}</strong>
 			</div>
 		</div>

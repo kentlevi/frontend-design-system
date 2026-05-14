@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { selected_id } = useProductExperience();
 
 defineProps<{
@@ -25,7 +25,7 @@ const reviews_description_key = computed(() =>
 <template>
 	<div class="product-reviews-head" data-testid="product-reviews-head">
 		<div class="product-reviews-rating" data-testid="product-reviews-rating">
-			<span class="rating-badge" data-testid="product-reviews-rating-badge">{{ t('product.reviews.badge') }}</span>
+			<span class="rating-badge" data-testid="product-reviews-rating-badge">{{ translate('product.reviews.badge') }}</span>
 			<span class="rating-stars" data-testid="product-reviews-rating-stars">
 				<UiIcon
 					v-for="star in 5"
@@ -39,8 +39,8 @@ const reviews_description_key = computed(() =>
 			<span class="rating-score" data-testid="product-reviews-rating-score">5.0</span>
 		</div>
 
-		<h2 class="product-reviews-headline" data-testid="product-reviews-headline">{{ t(reviews_headline_key) }}</h2>
-		<p class="product-reviews-description" data-testid="product-reviews-description">{{ t(reviews_description_key) }}</p>
+		<h2 class="product-reviews-headline" data-testid="product-reviews-headline">{{ translate(reviews_headline_key) }}</h2>
+		<p class="product-reviews-description" data-testid="product-reviews-description">{{ translate(reviews_description_key) }}</p>
 
 		<div class="product-reviews-controls" data-testid="product-reviews-controls">
 			<UiButton
@@ -51,8 +51,8 @@ const reviews_description_key = computed(() =>
 				icon-only
 				icon="strong-long-arrow-left"
 				icon-size="md"
-				:aria-label="t('product.reviews.controls.previous')"
-				:sr-label="t('product.reviews.controls.previous')"
+				:aria-label="translate('product.reviews.controls.previous')"
+				:sr-label="translate('product.reviews.controls.previous')"
 				class="product-reviews-control-button"
 				:disabled="!canGoPrev"
 				data-testid="product-reviews-prev-button"
@@ -66,8 +66,8 @@ const reviews_description_key = computed(() =>
 				icon-only
 				icon="strong-long-arrow-right"
 				icon-size="md"
-				:aria-label="t('product.reviews.controls.next')"
-				:sr-label="t('product.reviews.controls.next')"
+				:aria-label="translate('product.reviews.controls.next')"
+				:sr-label="translate('product.reviews.controls.next')"
 				class="product-reviews-control-button"
 				:disabled="!canGoNext"
 				data-testid="product-reviews-next-button"

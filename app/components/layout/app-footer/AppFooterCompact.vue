@@ -2,7 +2,7 @@
 import { toRefs } from 'vue';
 import { useCountry } from '@/composables/app/country/useCountry';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 
 const component_props = defineProps<{
@@ -14,14 +14,14 @@ const { year } = toRefs(component_props);
 <template>
 	<div class="home-footer-compact" data-testid="app-footer-compact-container">
 		<div class="home-footer-compact-left" data-testid="app-footer-compact-left">
-			<span class="home-footer-compact-copy">{{ t('layout.footer.copyright') }} {{ year }}</span>
-			<span>{{ t('layout.footer.sales') }}</span>
-			<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ t('layout.footer.terms') }}</NuxtLink>
-			<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ t('layout.footer.privacy') }}</NuxtLink>
+			<span class="home-footer-compact-copy">{{ translate('layout.footer.copyright') }} {{ year }}</span>
+			<span>{{ translate('layout.footer.sales') }}</span>
+			<NuxtLink :to="withCountry('/terms-of-use')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-terms-link">{{ translate('layout.footer.terms') }}</NuxtLink>
+			<NuxtLink :to="withCountry('/privacy-policy')" class="home-footer-compact-policy-link" data-testid="app-footer-compact-privacy-link">{{ translate('layout.footer.privacy') }}</NuxtLink>
 		</div>
 		<div class="home-footer-compact-links" data-testid="app-footer-compact-links">
-			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-action-link" data-testid="app-footer-compact-inquiry-link">{{ t('layout.footer.inquiry') }}</NuxtLink>
-			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-action-link" data-testid="app-footer-compact-faq-link">{{ t('layout.footer.faq') }}</NuxtLink>
+			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-action-link" data-testid="app-footer-compact-inquiry-link">{{ translate('layout.footer.inquiry') }}</NuxtLink>
+			<NuxtLink :to="withCountry('/under-construction')" class="home-footer-compact-action-link" data-testid="app-footer-compact-faq-link">{{ translate('layout.footer.faq') }}</NuxtLink>
 		</div>
 	</div>
 </template>

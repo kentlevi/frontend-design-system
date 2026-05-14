@@ -13,7 +13,7 @@ const emit = defineEmits<{
 	select: [code: SupportedCountry];
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -28,7 +28,7 @@ const { t } = useI18n();
 				class="home-locale-modal"
 				role="dialog"
 				aria-modal="true"
-				:aria-label="t('layout.header.locale.title')"
+				:aria-label="translate('layout.header.locale.title')"
 				data-testid="app-header-locale-dialog"
 			>
 				<UiButton
@@ -39,13 +39,13 @@ const { t } = useI18n();
 					icon="regular-times"
 					icon-size="md"
 					class="home-locale-close"
-					:aria-label="t('layout.header.locale.close')"
+					:aria-label="translate('layout.header.locale.close')"
 					data-testid="app-header-locale-close-button"
 					@click="emit('close')"
 				/>
 
 				<h3 class="home-locale-title" data-testid="app-header-locale-title">
-					{{ t('layout.header.locale.title') }}
+					{{ translate('layout.header.locale.title') }}
 				</h3>
 
 				<div class="home-locale-list" data-testid="app-header-locale-list">

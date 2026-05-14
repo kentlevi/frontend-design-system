@@ -2,7 +2,7 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const { t } = useI18n();
 		:gap="16"
 	>
 		<MuHeading variant="4" weight="bold" class="account-gallery-title" data-testid="account-gallery-title">
-			{{ t('account.gallery.title') }}
+			{{ translate('account.gallery.title') }}
 		</MuHeading>
 		<MuLinearWrapper
 			class="account-gallery-actions"
@@ -23,13 +23,13 @@ const { t } = useI18n();
 			:gap="10"
 		>
 			<UiButton variant="outline" tone="neutral" size="md" data-testid="account-gallery-filters-button">
-				{{ t('account.gallery.filters') }}
+				{{ translate('account.gallery.filters') }}
 			</UiButton>
 			<UiInput
 				model-value=""
 				class="account-gallery-search"
 				type="text"
-				:placeholder="t('account.gallery.searchPlaceholder')"
+				:placeholder="translate('account.gallery.searchPlaceholder')"
 				data-testid="account-gallery-search"
 			/>
 		</MuLinearWrapper>

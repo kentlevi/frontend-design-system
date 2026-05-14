@@ -15,7 +15,7 @@ defineProps<{
 	item: ReviewItem
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -30,11 +30,11 @@ const { t } = useI18n();
 			align="center"
 			:gap="12"
 		>
-			<MuHeading class="account-reviews-card-title">{{ t(`account.reviews.items.${item.titleKey}.title`) }}</MuHeading>
-			<MuText color="text-secondary" class="account-reviews-card-date">{{ t('account.reviews.reviewedOn') }}: {{ item.date }}</MuText>
+			<MuHeading class="account-reviews-card-title">{{ translate(`account.reviews.items.${item.titleKey}.title`) }}</MuHeading>
+			<MuText color="text-secondary" class="account-reviews-card-date">{{ translate('account.reviews.reviewedOn') }}: {{ item.date }}</MuText>
 		</MuLinearWrapper>
-		<MuText weight="bold" color="brand-primary" class="account-reviews-card-rating">{{ t('account.reviews.rating') }}: {{ item.rating }}/5</MuText>
-		<MuText color="text-secondary" class="account-reviews-card-body">{{ t(`account.reviews.items.${item.textKey}.text`) }}</MuText>
+		<MuText weight="bold" color="brand-primary" class="account-reviews-card-rating">{{ translate('account.reviews.rating') }}: {{ item.rating }}/5</MuText>
+		<MuText color="text-secondary" class="account-reviews-card-body">{{ translate(`account.reviews.items.${item.textKey}.text`) }}</MuText>
 	</MuCard>
 </template>
 

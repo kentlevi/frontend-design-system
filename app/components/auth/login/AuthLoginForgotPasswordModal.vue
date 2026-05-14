@@ -17,7 +17,7 @@ const emit = defineEmits<{
 	(e: 'returnToLogin'): void;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const is_submitting = ref(false);
 const reset_email = ref('');
@@ -53,12 +53,12 @@ async function submitReset() {
 	is_sent.value = false;
 
 	if (!email_value) {
-		error_message.value = t('auth.login.validation.fieldBlank');
+		error_message.value = translate('auth.login.validation.fieldBlank');
 		return;
 	}
 
 	if (!is_valid_email(email_value)) {
-		error_message.value = t('auth.login.validation.emailInvalid');
+		error_message.value = translate('auth.login.validation.emailInvalid');
 		return;
 	}
 
@@ -71,7 +71,7 @@ async function submitReset() {
 		});
 
 		if (!response?.success) {
-			error_message.value = response?.message || t('auth.login.forgot.requestFailed');
+			error_message.value = response?.message || translate('auth.login.forgot.requestFailed');
 			return;
 		}
 
@@ -79,7 +79,7 @@ async function submitReset() {
 	} catch (err: unknown) {
 		const error_payload = err as { data?: { message?: string }; message?: string };
 		error_message.value =
-			error_payload?.data?.message || error_payload?.message || t('auth.login.forgot.requestFailed');
+			error_payload?.data?.message || error_payload?.message || translate('auth.login.forgot.requestFailed');
 	} finally {
 		is_submitting.value = false;
 	}
@@ -101,7 +101,7 @@ async function submitReset() {
 				:visible="is_submitting"
 				variant="modal"
 				position="absolute"
-				:label="t('auth.login.forgot.sending')"
+				:label="translate('auth.login.forgot.sending')"
 				test-id="auth-login-forgot-password-loading-overlay"
 			/>
 		</template>
@@ -112,7 +112,7 @@ async function submitReset() {
 			<button
 				type="button"
 				class="auth-forgot-close"
-				:aria-label="t('auth.login.forgot.closeModal')"
+				:aria-label="translate('auth.login.forgot.closeModal')"
 				data-testid="auth-login-forgot-password-close-button"
 				@click="closeModal"
 			>
@@ -127,17 +127,17 @@ async function submitReset() {
 					class="auth-forgot-logo"
 				/>
 				<h3 class="auth-forgot-title">
-					{{ is_sent ? t('auth.login.forgot.checkEmailTitle') : t('auth.login.forgot.title') }}
+					{{ is_sent ? translate('auth.login.forgot.checkEmailTitle') : translate('auth.login.forgot.title') }}
 				</h3>
 			</div>
 			<template v-if="!is_sent">
 				<p class="auth-forgot-description">
-					{{ t('auth.login.forgot.description') }}
+					{{ translate('auth.login.forgot.description') }}
 				</p>
 
 				<UiFormField
 					class="auth-forgot-field"
-					:label="t('auth.login.email')"
+					:label="translate('auth.login.email')"
 					:error="error_message"
 					:required="true"
 					head-class="auth-forgot-field-head"
@@ -155,7 +155,7 @@ async function submitReset() {
 							:state="error_message ? 'error' : 'default'"
 							:aria-invalid="error_message ? 'true' : 'false'"
 							:aria-describedby="describedBy || undefined"
-							:placeholder="t('auth.login.enterEmail')"
+							:placeholder="translate('auth.login.enterEmail')"
 							data-testid="auth-login-forgot-password-email-input"
 							@update:model-value="reset_email = $event"
 						/>
@@ -172,7 +172,7 @@ async function submitReset() {
 						:disabled="is_submitting"
 						@click="submitReset"
 					>
-						{{ is_submitting ? t('auth.login.forgot.sending') : t('auth.login.forgot.sendResetEmail') }}
+						{{ is_submitting ? translate('auth.login.forgot.sending') : translate('auth.login.forgot.sendResetEmail') }}
 					</UiButton>
 
 					<UiButton
@@ -185,14 +185,14 @@ async function submitReset() {
 						data-testid="auth-login-forgot-password-return-button"
 						@click="returnToLogin"
 					>
-						{{ t('auth.login.forgot.returnToLogin') }}
+						{{ translate('auth.login.forgot.returnToLogin') }}
 					</UiButton>
 				</div>
 			</template>
 
 			<template v-else>
 				<p class="auth-forgot-description">
-					{{ t('auth.login.forgot.checkEmailDescription') }}
+					{{ translate('auth.login.forgot.checkEmailDescription') }}
 				</p>
 
 				<div class="auth-forgot-actions auth-forgot-actions-success">
@@ -204,7 +204,7 @@ async function submitReset() {
 						data-testid="auth-login-forgot-password-return-button"
 						@click="returnToLogin"
 					>
-						{{ t('auth.login.forgot.returnToLogin') }}
+						{{ translate('auth.login.forgot.returnToLogin') }}
 					</UiButton>
 				</div>
 			</template>

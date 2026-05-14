@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LoginMemberType } from '~/types/auth/auth';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 defineProps<{
 	memberType: LoginMemberType;
@@ -27,7 +27,7 @@ const emit = defineEmits<{
 			"
 			@click="emit('update:member-type', 'member')"
 		>
-			{{ t('auth.login.member') }}
+			{{ translate('auth.login.member') }}
 		</UiButton>
 		<UiButton
 			variant="ghost"
@@ -44,7 +44,7 @@ const emit = defineEmits<{
 			"
 			@click="emit('update:member-type', 'non-member')"
 		>
-			{{ t('auth.login.nonMember') }}
+			{{ translate('auth.login.nonMember') }}
 		</UiButton>
 	</div>
 </template>

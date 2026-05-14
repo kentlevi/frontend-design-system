@@ -13,7 +13,7 @@ import {
 } from '~/data/checkout/options';
 
 export function useCheckoutExperience() {
-	const { t } = useI18n();
+	const { t: translate } = useI18n();
 	const { withCountry } = useCountry();
 	const user_store = useUsersStore();
 	const checkout_store = useMainCheckOutStore();
@@ -63,7 +63,7 @@ export function useCheckoutExperience() {
 
 	function itemMeta(sizeLabel: string, qty: number) {
 		const size = member_logic.sizeDimOnly(sizeLabel);
-		return t('checkout.guest.summary.itemMeta', {
+		return translate('checkout.guest.summary.itemMeta', {
 			size,
 			qty: qty.toLocaleString(),
 		});

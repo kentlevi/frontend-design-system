@@ -13,13 +13,13 @@ defineEmits<{
 	(e: 'delete-click'): void
 }>()
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
 	<MuLinearWrapper class="account-profile-photo-group" direction="column" :gap="8">
 		<MuLinearWrapper class="account-profile-photo-head" justify="space-between">
-			<div class="account-profile-label">{{ t('account.profile.profilePhoto') }}</div>
+			<div class="account-profile-label">{{ translate('account.profile.profilePhoto') }}</div>
 			<MuText v-if="photoInlineError" weight="semi-bold" color="error" class="account-profile-photo-error">{{ photoInlineError }}</MuText>
 		</MuLinearWrapper>
 		<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
@@ -27,14 +27,14 @@ const { t } = useI18n();
 				<img
 					v-if="displayAvatar"
 					:src="displayAvatar"
-					:alt="t('account.profile.profilePhoto')"
+					:alt="translate('account.profile.profilePhoto')"
 					class="account-profile-avatar-image"
 				>
 				<span v-else class="account-profile-avatar-text">{{ userInitial }}</span>
 			</div>
 			<MuLinearWrapper class="account-profile-photo-copy" direction="column">
-				<MuText color="text-secondary" class="account-profile-muted">{{ t('account.profile.photoHint1') }}</MuText>
-				<MuText color="text-secondary" class="account-profile-muted">{{ t('account.profile.photoHint2') }}</MuText>
+				<MuText color="text-secondary" class="account-profile-muted">{{ translate('account.profile.photoHint1') }}</MuText>
+				<MuText color="text-secondary" class="account-profile-muted">{{ translate('account.profile.photoHint2') }}</MuText>
 				<MuLinearWrapper class="account-profile-photo-actions" align="center" :gap="14">
 					<UiButton
 						variant="outline"
@@ -44,7 +44,7 @@ const { t } = useI18n();
 						data-testid="account-profile-photo-upload-button"
 						@click="$emit('upload-click')"
 					>
-						{{ displayAvatar ? t('account.profile.uploadNewPhoto') : t('account.profile.uploadPhoto') }}
+						{{ displayAvatar ? translate('account.profile.uploadNewPhoto') : translate('account.profile.uploadPhoto') }}
 					</UiButton>
 					<UiButton
 						v-if="displayAvatar"
@@ -55,7 +55,7 @@ const { t } = useI18n();
 						data-testid="account-profile-photo-delete-button"
 						@click="$emit('delete-click')"
 					>
-						{{ t('account.profile.delete') }}
+						{{ translate('account.profile.delete') }}
 					</UiButton>
 				</MuLinearWrapper>
 			</MuLinearWrapper>

@@ -10,13 +10,13 @@
 			<template v-else>{{ user_initial }}</template>
 			<img
 				:src="account_level_badge_src"
-				:alt="t('account.shell.level')"
+				:alt="translate('account.shell.level')"
 				class="account-shell-avatar-badge"
 			>
 		</div>
 		<MuLinearWrapper direction="column" :gap="4">
 			<MuHeading variant="5" weight="bold" color="text-primary">{{ display_name }}</MuHeading>
-			<MuText size="medium" color="text-secondary">{{ t('account.shell.level') }}</MuText>
+			<MuText size="medium" color="text-secondary">{{ translate('account.shell.level') }}</MuText>
 		</MuLinearWrapper>
 	</MuLinearWrapper>
 </template>
@@ -28,7 +28,7 @@ import MuText from '~/components/base/MuText.vue';
 import { useAccountAvatarSync } from '~/composables/features/account/top/useAccountAvatarSync';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
 
 useAccountAvatarSync();

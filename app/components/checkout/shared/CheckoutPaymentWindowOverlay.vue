@@ -5,7 +5,7 @@ defineProps<{
 	visible: boolean;
 }>();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -22,9 +22,9 @@ const { t } = useI18n();
 						src="/icons/custom/checkout/toss-payment.png"
 						alt="Toss Pay"
 						class="checkout-payment-window-logo"
-					/>
+					>
 					<p class="checkout-payment-window-message">
-						{{ t('checkout.paymentWindow.continueTransaction') }}
+						{{ translate('checkout.paymentWindow.continueTransaction') }}
 					</p>
 				</div>
 			</div>

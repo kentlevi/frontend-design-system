@@ -8,7 +8,7 @@ import CheckoutOrderConfirmationSummary from './CheckoutOrderConfirmationSummary
 import { useCheckoutConfirmationPage } from '~/composables/checkout/completion/useCheckoutConfirmationPage';
 import { formatShippingDateRange } from '~/utils/shipping/dateRange';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute()
 
@@ -39,18 +39,18 @@ watch(order_id, (new_id, old_id) => {
 	<section class="checkout-confirmation-page" data-testid="checkout-confirmation-page">
 		<div class="checkout-confirmation-card" data-testid="checkout-confirmation-card">
 			<CheckoutOrderConfirmationHeader
-				:title="t('checkout.confirmation.title')"
-				:home-label="t('checkout.confirmation.goHome')"
+				:title="translate('checkout.confirmation.title')"
+				:home-label="translate('checkout.confirmation.goHome')"
 				:home-path="withCountry('/')"
 			/>
 			<CheckoutOrderConfirmationNote
-				:prefix="t('checkout.confirmation.notePrefix')"
-				:middle="t('checkout.confirmation.noteMiddle')"
-				:suffix="t('checkout.confirmation.noteSuffix')"
+				:prefix="translate('checkout.confirmation.notePrefix')"
+				:middle="translate('checkout.confirmation.noteMiddle')"
+				:suffix="translate('checkout.confirmation.noteSuffix')"
 			/>
 			<CheckoutOrderConfirmationDelivery
-				:label="t('checkout.confirmation.expectedDelivery')"
-				:value="t('checkout.confirmation.expectedArrival',
+				:label="translate('checkout.confirmation.expectedDelivery')"
+				:value="translate('checkout.confirmation.expectedArrival',
 					{ date: formatShippingDateRange(
 						Number(order_confirm_details?.order_production_detail?.min_delivery_date),
 						Number(order_confirm_details?.order_production_detail?.max_delivery_date),
@@ -58,11 +58,11 @@ watch(order_id, (new_id, old_id) => {
 				)"
 			/>
 			<CheckoutOrderConfirmationSummary
-				:title="t('checkout.confirmation.orderSummary')"
-				:subtotal-label="t('checkout.confirmation.summary.subtotal')"
-				:shipping-fee-label="t('checkout.confirmation.summary.shippingFee')"
-				:discount-label="t('checkout.confirmation.summary.discounts')"
-				:total-label="t('checkout.confirmation.summary.total')"
+				:title="translate('checkout.confirmation.orderSummary')"
+				:subtotal-label="translate('checkout.confirmation.summary.subtotal')"
+				:shipping-fee-label="translate('checkout.confirmation.summary.shippingFee')"
+				:discount-label="translate('checkout.confirmation.summary.discounts')"
+				:total-label="translate('checkout.confirmation.summary.total')"
 				:order-confirm-details="order_confirm_details"
 			/>
 		</div>

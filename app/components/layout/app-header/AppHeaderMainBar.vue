@@ -5,7 +5,7 @@ import { useSystemOperations } from '~/composables/core/system/useSystemOperatio
 import { useAppHeaderContext } from '~/composables/layout/appHeader/useAppHeader';
 import { normalizeAppPath } from '~/utils/auth/redirect';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const { withCountry } = useCountry();
 const route = useRoute();
 const cart_badge_ready = ref(false)
@@ -62,7 +62,7 @@ onMounted(() => {
 		<nav
 			v-if="!simple"
 			class="home-header-nav"
-			:aria-label="t('layout.header.primaryNav')"
+			:aria-label="translate('layout.header.primaryNav')"
 			data-testid="app-header-nav"
 		>
 			<template
@@ -127,7 +127,7 @@ onMounted(() => {
 					icon="strong-search"
 					icon-size="md"
 					class="home-header-icon"
-					:aria-label="t('layout.header.search')"
+					:aria-label="translate('layout.header.search')"
 					data-testid="app-header-search-button"
 					@click="openSearchModal"
 					@mouseenter="prefetchHeaderOverlayModules"
@@ -142,7 +142,7 @@ onMounted(() => {
 						icon="strong-shop-cart"
 						icon-size="md"
 						class="home-header-icon home-header-cart"
-						:aria-label="t('layout.header.cart')"
+						:aria-label="translate('layout.header.cart')"
 						data-testid="app-header-cart-button"
 						@click="openCartPreview"
 						@mouseenter="prefetchHeaderOverlayModules"
@@ -176,7 +176,7 @@ onMounted(() => {
 				tone="neutral"
 				size="md"
 				class="home-header-icon"
-				:aria-label="t('layout.header.accountLinks.signOut')"
+				:aria-label="translate('layout.header.accountLinks.signOut')"
 				data-testid="app-header-direct-logout-button"
 				@click="logoutMock"
 			>

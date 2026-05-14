@@ -9,7 +9,7 @@ import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 withDefaults(defineProps<{
 	loading?: boolean;
 }>(), {
@@ -67,8 +67,8 @@ const {
 			<UiSkeleton width="86%" height="20px" border-radius="8px" />
 		</MuLinearWrapper>
 		<MuLinearWrapper v-else class="account-profile-section-copy" direction="column" :gap="4">
-			<MuHeading class="account-profile-section-title">{{ t('account.profile.password') }}</MuHeading>
-			<MuText class="account-profile-section-description">{{ t('account.profile.passwordDesc') }}</MuText>
+			<MuHeading class="account-profile-section-title">{{ translate('account.profile.password') }}</MuHeading>
+			<MuText class="account-profile-section-description">{{ translate('account.profile.passwordDesc') }}</MuText>
 		</MuLinearWrapper>
 
 		<FeaturesAccountProfileContentPasswordSkeleton v-if="loading" />
