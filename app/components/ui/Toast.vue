@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t: translate } = useI18n();
+
 defineOptions({
 	inheritAttrs: false,
 });
@@ -73,7 +75,7 @@ const iconByTone = {
 					:no-hover="true"
 					:style="tone === 'error' ? { '--btn-bg': 'var(--white-base)' } : undefined"
 					class="ui-toast-close"
-					aria-label="Close"
+					:aria-label="translate('ui.toast.close')"
 					data-testid="ui-toast-close-button"
 					@click="emit('close')"
 				>

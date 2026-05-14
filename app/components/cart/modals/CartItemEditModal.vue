@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useEditItemHandler } from '~/composables/cart/useEditItemHandler';
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 // 1. Define the structure
 interface Props {
@@ -47,12 +47,12 @@ const show_size = computed(() => props.showSize && active_item.value && allowVar
 // ⚠️ Static functionality & Data
 const modal_title = computed(() =>
 	!show_quantity.value
-		? t('cart.cartPreview.editModal.sizeOnlyTitle')
-		: t('cart.cartPreview.editModal.title')
+		? translate('cart.cartPreview.editModal.sizeOnlyTitle')
+		: translate('cart.cartPreview.editModal.title')
 );
 const active_item_product_name = computed(() => {
 	const product_id = active_item.value?.url_slug;
-	return product_id ? t(`product.items.${product_id}.name`) : '';
+	return product_id ? translate(`product.items.${product_id}.name`) : '';
 });
 
 const digits_only = (value: string | number | null | undefined) => String(value ?? '').replace(/[^0-9]/g, '');
@@ -245,7 +245,7 @@ watch(
 				<div class="cart-item-edit-modal-fields">
 					<div v-if="show_size" class="cart-item-edit-field">
 						<div class="cart-item-edit-field-head">
-							<label class="cart-item-edit-label">{{ t('cart.cartPreview.size') }}</label>
+							<label class="cart-item-edit-label">{{ translate('cart.cartPreview.size') }}</label>
 							<span class="cart-item-edit-unit">(Unit: mm)</span>
 						</div>
 						<UiSelect
@@ -290,7 +290,7 @@ watch(
 							<button
 								type="button"
 								class="cart-item-edit-select-arrow"
-								aria-label="Open size options"
+								:aria-label="translate('cart.cartPreview.aria.openSizeOptions')"
 								@click="toggleSizeMenu"
 							>
 								<UiIcon
@@ -322,7 +322,7 @@ watch(
 					</div>
 
 					<div v-if="show_quantity" class="cart-item-edit-field">
-						<label class="cart-item-edit-label">{{ t('cart.cartPreview.quantity') }}</label>
+						<label class="cart-item-edit-label">{{ translate('cart.cartPreview.quantity') }}</label>
 						<UiSelect
 							v-if="qty !== -1"
 							:model-value="qty"
@@ -345,7 +345,7 @@ watch(
 								type="text"
 								inputmode="numeric"
 								pattern="[0-9]*"
-								placeholder="Enter quantity"
+								:placeholder="translate('cart.cartPreview.aria.enterQuantity')"
 								class="cart-item-edit-inline-input cart-item-edit-inline-input--qty"
 								@beforeinput="preventNonDigitInput"
 								@input="onCustomQtyInput(($event.target as HTMLInputElement).value)"
@@ -353,7 +353,7 @@ watch(
 							<button
 								type="button"
 								class="cart-item-edit-select-arrow"
-								aria-label="Open quantity options"
+								:aria-label="translate('cart.cartPreview.aria.openQuantityOptions')"
 								@click="toggleQtyMenu"
 							>
 								<UiIcon
@@ -396,7 +396,7 @@ watch(
 					class="cart-item-edit-cancel"
 					@click="closeModal"
 				>
-					{{ t('cart.cartPreview.editModal.cancel') }}
+					{{ translate('cart.cartPreview.editModal.cancel') }}
 				</UiButton>
 				<UiButton
 					type="button"
@@ -406,7 +406,7 @@ watch(
 					:disabled="is_update_disabled || updating_item"
 					@click="saveChanges"
 				>
-					{{ t('cart.cartPreview.editModal.update') }}
+					{{ translate('cart.cartPreview.editModal.update') }}
 				</UiButton>
 			</div>
 		</template>

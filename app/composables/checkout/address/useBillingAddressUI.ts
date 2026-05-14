@@ -1,6 +1,7 @@
 import { useMainCheckOutStore } from "~/stores/checkout/index.store";
 import { useCheckoutExperienceFeatureContext } from "../checkoutExperienceFeatureContext";
 import { useCheckoutFeatureTransition } from "../features/useCheckoutFeatureTransition";
+import { useDismissibleTooltip } from "../features/useDismissibleTooltip";
 import { useHeightTransition } from "../shared/useHeightTransition";
 import { useUserAddressDataCheckoutContext } from "./context/addressBookListCheckoutContext";
 import { useAddressGeneralUIContext } from "./context/addressGeneralUICheckoutContext";
@@ -46,6 +47,9 @@ export function useBillingAddressUI() {
 
 	const billing_swap_wrapper_ref = ref<HTMLElement | null>(null);
 	const billing_mode_swap_wrapper_ref = ref<HTMLElement | null>(null);
+	const billing_tooltip_ref = ref<HTMLElement | null>(null);
+
+	useDismissibleTooltip(billing_tooltip_ref, billing_tooltip_open);
 
 	useHeightTransition(
 		billing_swap_wrapper_ref,
@@ -80,6 +84,7 @@ export function useBillingAddressUI() {
 		billing_use_different_address,
 		use_shipping_as_billing,
 		billing_tooltip_open,
+		billing_tooltip_ref,
 		is_billing_address_modal_open,
 		has_billing_addresses,
 		getAddressTagClass,

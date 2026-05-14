@@ -13,7 +13,7 @@ function goToCart() {
 
 <template>
 	<div class="checkout-summary-title">
-		<span>Order Summary</span>
+		<span>{{ t('checkout.member.orderSummary') }}</span>
 		<div class="checkout-summary-title-actions">
 			<UiButton
 				type="button"
@@ -22,7 +22,7 @@ function goToCart() {
 				size="sm"
 				:no-hover="true"
 				class="checkout-summary-title-action"
-				aria-label="Edit order summary"
+				:aria-label="t('checkout.member.summary.editAria')"
 				@click="goToCart"
 			>
 				<UiIcon name="regular-edit" size="24px" color="var(--text-primary)" decorative />
@@ -34,7 +34,7 @@ function goToCart() {
 				size="sm"
 				:no-hover="true"
 				class="checkout-summary-title-action"
-				aria-label="Print order summary"
+				:aria-label="t('checkout.member.summary.printAria')"
 				@click="createOrderQuotation"
 			>
 				<UiIcon name="regular-print" size="24px" color="var(--text-primary)" decorative />

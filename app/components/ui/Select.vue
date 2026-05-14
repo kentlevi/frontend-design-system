@@ -6,6 +6,8 @@ import {
 	useRootAttrs,
 } from '~/helpers/ui/uiControlAttrs.helper';
 
+const { t: translate } = useI18n();
+
 type SelectValue = string | number;
 
 type SelectOption = {
@@ -263,7 +265,7 @@ onBeforeUnmount(() => {
 						v-model="query"
 						type="text"
 						:class="['ui-select-search-input', props.searchInputClass]"
-						placeholder="Search..."
+						:placeholder="translate('ui.select.searchPlaceholder')"
 						:data-testid="test_id ? `${test_id}-search` : undefined"
 					>
 				</div>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, type CSSProperties } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { resolveLetteringPaintSpec } from '~/utils/products/letteringPaint'
+
+const { t: translate } = useI18n()
 
 const props = withDefaults(defineProps<{
 	text: string;
@@ -531,12 +534,12 @@ defineExpose({
 				:visible="show_preview_overlay || isLoadingFeatures || selectionNavigationInFlight || letteringNavigationFlight"
 				position="absolute"
 				background="rgba(58, 58, 58, 0.72)"
-				label="Loading preview"
+				:label="translate('ui.preview.loading')"
 				test-id="vinyl-lettering-preview-loading-overlay"
 			/>
 
 			<div v-show="lineCount > 1" class="lettering_alignment">
-				<span>Alignment</span>
+				<span>{{ translate('ui.alignment') }}</span>
 				<a class="lettering_left" href="javascript:;" @click="textAlign = 'left'">L</a>
 				<a class="lettering_center" href="javascript:;" @click="textAlign = 'center'">C</a>
 				<a class="lettering_right" href="javascript:;" @click="textAlign = 'right'">R</a>
@@ -582,7 +585,7 @@ defineExpose({
 			</label>
 
 			<div class="lettering_footer">
-				<p>The surface colour is for illustrative purpose only and won't be produced. Self-adhesive vinyl letters are individually cut and come pre-spaced with application tape applied.</p>
+				<p>{{ translate('product.vinyl.illustrativeNote') }}</p>
 			</div>
 		</div>
 

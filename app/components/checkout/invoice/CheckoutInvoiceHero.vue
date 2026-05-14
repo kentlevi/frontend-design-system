@@ -25,9 +25,9 @@ const {
 				class="checkout-invoice-logo"
 			>
 			<div class="checkout-invoice-brand-copy">
-				<div>Tel No: +65 3158 2800</div>
-				<div>Email: info@musticker.com</div>
-				<div>Website: www.musticker.com</div>
+				<div>{{ t('checkout.invoice.contact.tel') }}</div>
+				<div>{{ t('checkout.invoice.contact.email') }}</div>
+				<div>{{ t('checkout.invoice.contact.website') }}</div>
 			</div>
 		</div>
 

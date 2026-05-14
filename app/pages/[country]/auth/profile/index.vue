@@ -5,6 +5,8 @@ import AuthProfileSidebar from '@/components/auth/profile/AuthProfileSidebar.vue
 import AuthVerificationModal from '@/components/auth/shared/AuthVerificationModal.vue';
 import { useAuthProfilePage } from '~/composables/auth/profile/useAuthProfilePage';
 
+const { t: translate } = useI18n();
+
 definePageMeta({
 	layout: 'home',
 	layoutBackground: 'neutral',
@@ -47,8 +49,8 @@ const {
 			:error="verification_error"
 			:resend-limit-reached="resend_limit_reached"
 			:verifying="is_verifying_email"
-			submit-label="Verify"
-			busy-label="Verifying..."
+			:submit-label="translate('auth.verification.verify')"
+			:busy-label="translate('auth.verification.verifying')"
 			align="center"
 			width="504px"
 			:show-close-button="true"

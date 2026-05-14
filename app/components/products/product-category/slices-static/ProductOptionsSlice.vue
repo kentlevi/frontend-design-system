@@ -63,7 +63,7 @@ const {
 	letteringHeightUpdate,
 } = useProductExperience();
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 const attribute_store = useAttributesStore();
 const last_known_color_count_by_slug = ref<Record<string, number>>({});
 const last_known_quantity_count_by_slug = ref<Record<string, number>>({});
@@ -173,11 +173,11 @@ const ships_tomorrow_benefit = computed(() => {
 	const product_specific_key = selected_id.value
 		? `product.price.benefitShipsTomorrowByProduct.${selected_id.value}`
 		: '';
-	const product_specific_copy = product_specific_key ? t(product_specific_key) : '';
+	const product_specific_copy = product_specific_key ? translate(product_specific_key) : '';
 
 	return product_specific_copy && product_specific_copy !== product_specific_key
 		? product_specific_copy
-		: t('product.price.benefitShipsTomorrow');
+		: translate('product.price.benefitShipsTomorrow');
 });
 
 const has_pending_custom_selection = computed(() => {
@@ -209,7 +209,7 @@ const nextStep = async () => {
 <template>
 	<aside class="product-options" data-testid="product-category-options">
 		<section v-if="has_color_selection" class="product-section">
-			<h3 class="option-title" data-testid="product-category-color-title">{{ t('product.options.selectColor') }}</h3>
+			<h3 class="option-title" data-testid="product-category-color-title">{{ translate('product.options.selectColor') }}</h3>
 			<div
 				v-if="is_loading_features"
 				ref="color_skeleton_grid_ref"
@@ -246,8 +246,8 @@ const nextStep = async () => {
 		<template v-if="!has_lettering_editor">
 			<section class="product-section">
 				<div class="option-head">
-					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
+					<h3 class="option-title">{{ translate('product.options.selectSize') }}</h3>
+					<small class="option-head-unit">{{ translate('product.options.productPageUnitMm') }}</small>
 				</div>
 
 				<div v-if="is_loading_features" class="option-grid option-grid-size">
@@ -274,7 +274,7 @@ const nextStep = async () => {
 						class="option-pill option-pill-wide"
 						@click="showCustomSize"
 					>
-						{{ t('product.options.customSize') }}
+						{{ translate('product.options.customSize') }}
 					</button>
 
 					<!-- Custom size input -->
@@ -289,7 +289,7 @@ const nextStep = async () => {
 							:value="custom_size?.width"
 							type="number"
 							class="custom-size-input"
-							placeholder="Width"
+							:placeholder="translate('cart.cartPreview.editModal.widthPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@input="inputUpdateCustomSize($event, 'width')"
 							@focus="onCustomSizeFocus"
@@ -300,7 +300,7 @@ const nextStep = async () => {
 							:value="custom_size?.height"
 							type="number"
 							class="custom-size-input"
-							placeholder="Height"
+							:placeholder="translate('cart.cartPreview.editModal.heightPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@input="inputUpdateCustomSize($event, 'height')"
 							@focus="onCustomSizeFocus"
@@ -311,7 +311,7 @@ const nextStep = async () => {
 			</section>
 
 			<section class="product-section">
-				<h3 class="option-title">{{ t('product.options.selectQuantity') }}</h3>
+				<h3 class="option-title">{{ translate('product.options.selectQuantity') }}</h3>
 				<div v-if="is_loading_features" class="option-grid">
 					<UiSkeleton v-for="i in quantity_skeleton_count" :key="'qty-skeleton-'+i" height="var(--option-control-height)" border-radius="999px" />
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -334,7 +334,7 @@ const nextStep = async () => {
 						class="option-pill option-pill-wide"
 						@click="showCustomQty"
 					>
-						{{ t('product.options.customQuantity') }}
+						{{ translate('product.options.customQuantity') }}
 					</button>
 					<div
 						v-else
@@ -347,7 +347,7 @@ const nextStep = async () => {
 							:value="custom_quantity?.nr"
 							type="number"
 							class="custom-qty-input"
-							placeholder="Enter quantity"
+							:placeholder="translate('cart.cartPage.aria.enterQuantity')"
 							@beforeinput="prevent_non_digit_input"
 							@input="inputUpdateCustomQuantity"
 							@focus="onCustomQtyFocus"
@@ -362,8 +362,8 @@ const nextStep = async () => {
 		<template v-else>
 			<section class="product-section">
 				<div class="option-head">
-					<h3 class="option-title">{{ t('product.options.selectSize') }}</h3>
-					<small class="option-head-unit">{{ t('product.options.productPageUnitMm') }}</small>
+					<h3 class="option-title">{{ translate('product.options.selectSize') }}</h3>
+					<small class="option-head-unit">{{ translate('product.options.productPageUnitMm') }}</small>
 				</div>
 				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -383,7 +383,7 @@ const nextStep = async () => {
 							inputmode="numeric"
 							pattern="[0-9]*"
 							class="custom-size-input"
-							placeholder="Width"
+							:placeholder="translate('cart.cartPreview.editModal.widthPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@input="letteringWidthUpdate"
 							@focus="onVinylSizeFocus"
@@ -396,7 +396,7 @@ const nextStep = async () => {
 							inputmode="numeric"
 							pattern="[0-9]*"
 							class="custom-size-input"
-							placeholder="Height"
+							:placeholder="translate('cart.cartPreview.editModal.heightPlaceholder')"
 							@beforeinput="prevent_non_digit_input"
 							@input="letteringHeightUpdate"
 							@focus="onVinylSizeFocus"
@@ -407,7 +407,7 @@ const nextStep = async () => {
 			</section>
 
 			<section v-if="has_font_selection" class="product-section">
-				<h3 class="option-title">{{ t('product.options.selectFont') }}</h3>
+				<h3 class="option-title">{{ translate('product.options.selectFont') }}</h3>
 				<div v-if="is_loading_features || lettering_navigation_flight || !selected_font || !vinyl_preview_ready" class="option-grid">
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
 				</div>
@@ -427,7 +427,7 @@ const nextStep = async () => {
 			</section>
 
 			<section class="product-section">
-				<h3 class="option-title">{{ t('product.options.selectQuantity') }}</h3>
+				<h3 class="option-title">{{ translate('product.options.selectQuantity') }}</h3>
 				<div v-if="is_loading_features" class="option-grid vinyl-quantity-grid">
 					<UiSkeleton v-for="i in quantity_skeleton_count" :key="'qty-skeleton-'+i" height="var(--option-control-height)" border-radius="999px" />
 					<UiSkeleton height="var(--option-control-height)" border-radius="999px" width="100%" class="grid-column-full" />
@@ -450,7 +450,7 @@ const nextStep = async () => {
 						class="option-pill option-pill-wide"
 						@click="showCustomQty"
 					>
-						{{ t('product.options.customQuantity') }}
+						{{ translate('product.options.customQuantity') }}
 					</button>
 					<div
 						v-else
@@ -464,7 +464,7 @@ const nextStep = async () => {
 							type="text"
 							inputmode="numeric"
 							pattern="[0-9]*"
-							placeholder="Enter Quantity"
+							:placeholder="translate('cart.cartPage.aria.enterQuantity')"
 							class="custom-size-input custom-quantity-input"
 							@beforeinput="prevent_non_digit_input"
 							@input="inputUpdateCustomQuantity($event)"
@@ -480,7 +480,7 @@ const nextStep = async () => {
 		<section class="price-summary">
 			<div class="price-summary-top">
 				<ul class="price-benefits">
-					<li>{{ t('product.price.benefitShipping') }}</li>
+					<li>{{ translate('product.price.benefitShipping') }}</li>
 					<li>{{ ships_tomorrow_benefit }}</li>
 				</ul>
 
@@ -504,7 +504,7 @@ const nextStep = async () => {
 						<strong class="price-summary-value">{{ pricing_ready ? formatPrice(total) : '--' }}</strong>
 					</p>
 					<p class="price-summary-unit">
-						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} {{ t('product.price.perPiece') }})
+						({{ pricing_ready ? formatPrice(unit_price * (1 - discount_rate)) : '--' }} {{ translate('product.price.perPiece') }})
 					</p>
 				</div>
 			</div>
@@ -519,7 +519,7 @@ const nextStep = async () => {
 				:disabled="selection_navigation_in_flight || has_pending_custom_selection"
 				@click="nextStep"
 			>
-				{{ t('product.price.nextStep') }}
+				{{ translate('product.price.nextStep') }}
 			</UiButton>
 		</section>
 	</aside>

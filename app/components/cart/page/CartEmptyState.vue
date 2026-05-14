@@ -2,6 +2,8 @@
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
 import { useCartEmptyState } from '~/composables/cart/page/useCartEmptyState';
 
+const { t: translate } = useI18n();
+
 const { resolveFileUrl } = useFileBaseUrl();
 const {
 	featured_products,
@@ -19,13 +21,13 @@ const {
 		<div class="cart-empty-state-content">
 			<div class="cart-empty-state-top">
 				<div class="cart-empty-state-hero">
-					<h2 class="cart-empty-state-title">{{ $t('cart.cartPage.emptyTitle') }}</h2>
+					<h2 class="cart-empty-state-title">{{ translate('cart.cartPage.emptyTitle') }}</h2>
 					<p class="cart-empty-state-description">
-						{{ $t('cart.cartPage.emptyDescription') }}
+						{{ translate('cart.cartPage.emptyDescription') }}
 					</p>
 				</div>
 
-				<section class="cart-empty-state-featured" aria-label="Featured products">
+				<section class="cart-empty-state-featured" :aria-label="translate('cart.cartPage.aria.featuredProducts')">
 					<NuxtLink
 						v-for="item in featured_products"
 						:key="item.id"
@@ -42,10 +44,10 @@ const {
 			</div>
 		</div>
 
-		<section class="cart-empty-state-discover" aria-label="Discover more products">
+		<section class="cart-empty-state-discover" :aria-label="translate('cart.cartPage.aria.discoverMore')">
 			<div class="cart-empty-state-content">
 				<div class="cart-empty-state-discover-head">
-					<h3 class="cart-empty-state-discover-title">{{ $t('cart.cartPage.discoverMore') }}</h3>
+					<h3 class="cart-empty-state-discover-title">{{ translate('cart.cartPage.discoverMore') }}</h3>
 					<div class="cart-empty-state-controls">
 						<UiButton
 							variant="outline"
@@ -55,8 +57,8 @@ const {
 							icon="regular-angle-left"
 							icon-size="24"
 							:disabled="!can_go_prev"
-							:sr-label="$t('cart.cartPage.prevProductsSr')"
-							aria-label="Previous products"
+							:sr-label="translate('cart.cartPage.prevProductsSr')"
+							:aria-label="translate('cart.cartPage.prevProductsSr')"
 							class="cart-empty-state-arrow"
 							@click="prevPage"
 						/>
@@ -68,8 +70,8 @@ const {
 							icon="regular-angle-right"
 							icon-size="24"
 							:disabled="!can_go_next"
-							:sr-label="$t('cart.cartPage.nextProductsSr')"
-							aria-label="Next products"
+							:sr-label="translate('cart.cartPage.nextProductsSr')"
+							:aria-label="translate('cart.cartPage.nextProductsSr')"
 							class="cart-empty-state-arrow"
 							@click="nextPage"
 						/>

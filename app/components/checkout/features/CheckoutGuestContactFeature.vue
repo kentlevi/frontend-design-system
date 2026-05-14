@@ -3,11 +3,7 @@ import AuthEmailAlreadyRegisteredModal from '~/components/auth/shared/AuthEmailA
 import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import EmailChangeModal from '~/components/features/checkout/EmailChangeModal.vue';
 import { useCheckoutGuestContactFeature } from '~/composables/checkout/features/useCheckoutGuestContactFeature';
-import {
-	checkoutGuestEmailTooltipContent,
-	checkoutGuestEmailTooltipProps,
-} from '~/data/checkout/tooltips';
-import { useUsersStore } from '~/stores/users/users.store';
+import { checkoutGuestEmailTooltipProps } from '~/data/checkout/tooltips';
 
 const {
 	translate,
@@ -56,7 +52,7 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 						class="checkout-contact-label-wrap"
 					>
 						<span class="checkout-label">
-							Email
+							{{ translate('checkout.guest.fields.email.label') }}
 							<span
 								class="checkout-label-required"
 								aria-hidden="true"
@@ -79,7 +75,7 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 												? 'strong-question-circle'
 												: 'regular-question-circle'
 										"
-										size="24"
+										size="20"
 										color="var(--gray-90)"
 										decorative
 									/>
@@ -87,10 +83,10 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 							</template>
 							<div class="ui-tooltip-copy">
 								<strong class="ui-tooltip-title">{{
-									checkoutGuestEmailTooltipContent.title
+									translate('checkout.guest.emailTooltip.title')
 								}}</strong>
 								<p class="ui-tooltip-text">
-									{{ checkoutGuestEmailTooltipContent.text }}
+									{{ translate('checkout.guest.emailTooltip.text') }}
 								</p>
 							</div>
 						</UiTooltip>

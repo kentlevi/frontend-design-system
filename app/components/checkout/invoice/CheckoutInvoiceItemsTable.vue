@@ -5,6 +5,8 @@ import { formatPrice } from '~/utils/currency/formatPrice';
 defineProps<{
 	items: CartItem[];
 }>();
+
+const { t: translate } = useI18n();
 </script>
 
 <template>
@@ -12,9 +14,9 @@ defineProps<{
 		<div class="checkout-invoice-items-table">
 
 			<div class="checkout-invoice-items-head">
-				<span>Item</span>
-				<span>Qty.</span>
-				<span>Amount</span>
+				<span>{{ translate('checkout.invoice.table.item') }}</span>
+				<span>{{ translate('checkout.invoice.table.quantity') }}</span>
+				<span>{{ translate('checkout.invoice.table.amount') }}</span>
 			</div>
 
 			<ClientOnly>

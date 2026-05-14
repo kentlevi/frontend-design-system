@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import AddressFormFields from '~/components/shared/address/AddressFormFields.vue';
-import {
-	checkoutDropShippingTooltipContent,
-	checkoutDropShippingTooltipProps,
-} from '~/data/checkout/tooltips';
+import { checkoutDropShippingTooltipProps } from '~/data/checkout/tooltips';
 import { useDropShippingAddressUI } from '~/composables/checkout/address/useDropShippingAddressUI';
 import { useDropShippingAddress } from '~/composables/checkout/address/useDropShippingAddress';
 import CheckoutTransition from '../shared/CheckoutTransition.vue';
@@ -15,6 +12,7 @@ const {
 	drop_shipping_ship_to_another_address,
 	drop_shipping_tooltip_open,
 	drop_shipping_mode_swap_wrapper_ref,
+	drop_shipping_tooltip_ref,
 	has_drop_addresses,
 
 	getAddressTagClass,
@@ -44,8 +42,8 @@ const {
 					</button>
 				</template>
 				<div class="ui-tooltip-copy">
-					<strong class="ui-tooltip-title">{{ checkoutDropShippingTooltipContent.title }}</strong>
-					<p class="ui-tooltip-text">{{ checkoutDropShippingTooltipContent.text }}</p>
+					<strong class="ui-tooltip-title">{{ translate('checkout.member.dropShippingTooltip.title') }}</strong>
+					<p class="ui-tooltip-text">{{ translate('checkout.member.dropShippingTooltip.text') }}</p>
 				</div>
 			</UiTooltip>
 		</div>
@@ -77,7 +75,7 @@ const {
 								:no-hover="true"
 								@click="openSelectAddressModal('drop')"
 							>
-								View Drop Shipping Addresses
+								{{ translate('checkout.member.viewDropShippingAddresses') }}
 							</UiButton>
 						</div>
 					</div>

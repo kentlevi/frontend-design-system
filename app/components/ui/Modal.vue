@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
+const { t: translate } = useI18n();
+
 defineOptions({
 	inheritAttrs: false,
 });
@@ -137,7 +139,7 @@ onBeforeUnmount(() => {
 								tone="neutral"
 								size="24"
 								class="ui-modal-close"
-								aria-label="Close modal"
+								:aria-label="translate('ui.modal.close')"
 								@click="closeModal"
 							>
 								<UiIcon

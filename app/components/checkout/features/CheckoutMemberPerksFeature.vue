@@ -2,10 +2,7 @@
 import { ref } from 'vue';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import {
-	checkoutMemberPointsTooltipContent,
-	checkoutMemberPointsTooltipProps,
-} from '~/data/checkout/tooltips';
+import { checkoutMemberPointsTooltipProps } from '~/data/checkout/tooltips';
 import MuCard from '~/components/base/MuCard.vue';
 import MuInput from '~/components/base/MuInput.vue';
 import MuText from '~/components/base/MuText.vue';
@@ -58,12 +55,12 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 						<UiTooltip :open="points_tooltip_open" v-bind="checkoutMemberPointsTooltipProps">
 							<template #trigger>
 								<button type="button" class="ui-tooltip-icon-trigger" @click="togglePointsTooltip">
-									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="24" color="var(--gray-90)" decorative />
+									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--gray-90)" decorative />
 								</button>
 							</template>
 							<div class="ui-tooltip-copy">
-								<strong class="ui-tooltip-title">{{ checkoutMemberPointsTooltipContent.title }}</strong>
-								<p class="ui-tooltip-text">{{ checkoutMemberPointsTooltipContent.text }}</p>
+								<strong class="ui-tooltip-title">{{ t('checkout.member.pointsTooltip.title') }}</strong>
+								<p class="ui-tooltip-text">{{ t('checkout.member.pointsTooltip.text') }}</p>
 							</div>
 						</UiTooltip>
 					</div>

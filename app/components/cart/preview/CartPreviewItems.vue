@@ -4,6 +4,8 @@ import { useCartPreview } from '~/composables/cart/useCartPreview';
 import type { CartItem } from '~/types/cart/cart';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
+const { t: translate } = useI18n();
+
 
 /** 🔥 This composable were using real data from API and functionality */
 const { loading, items, deleteCartItem, formatImage, editItem } = useCartPreview('cart-preview-items');
@@ -104,7 +106,7 @@ const openEditingModal = (item : CartItem) => {
 								icon-only
 								icon="regular-edit"
 								:icon-size="24"
-								sr-label="Edit item"
+								:sr-label="translate('cart.cartPreview.aria.editItem')"
 								data-testid="product-category-cart-item-edit-button"
 								@click="openEditingModal(item)"
 							/>
@@ -116,7 +118,7 @@ const openEditingModal = (item : CartItem) => {
 								icon-only
 								icon="regular-trash"
 								:icon-size="24"
-								sr-label="Remove item"
+								:sr-label="translate('cart.cartPreview.aria.removeItem')"
 								data-testid="product-category-cart-item-delete-button"
 								@click="deleteCartItem(item.local_identity)"
 							/>
