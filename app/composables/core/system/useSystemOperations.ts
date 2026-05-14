@@ -15,7 +15,6 @@ export const useSystemOperations = () => {
 		if( processing_operations.value )
 			return
 
-		console.log('Hey')
 		try {
 			processing_operations.value = true
 			if( cart_service.is_authenticated.value ) {
@@ -24,6 +23,8 @@ export const useSystemOperations = () => {
 				await cart_service.calculateCartItems() // calculate all saved items
 			} else {
 				await cart_service.emptyCart(true)
+				await cart_service.calculateCartItems()
+				await cart_service.evaluateSelectedIds()
 			}
 		} catch(error) {
 			console.error(error)
@@ -38,7 +39,7 @@ export const useSystemOperations = () => {
 		await startup()
 
 		// 🔥 Watching authentication status
-		watch(() => cart_service.is_authenticated.value, async () => {
+		watch(() => cart_service.is_authenticated.value, async (n) => {
 			await startup()
 		})
 
