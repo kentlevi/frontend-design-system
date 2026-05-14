@@ -15,7 +15,7 @@ export function useManualShippingAddress() {
 	/**
      * Contexts
      */
-	const { t, is_member } = useCheckoutExperienceFeatureContext();
+	const { is_member } = useCheckoutExperienceFeatureContext();
 	const {
 		form_field_errors,
 		shipping_form,
@@ -27,6 +27,9 @@ export function useManualShippingAddress() {
 	} = useUserAddressFormStateCheckoutContext();
 
 
+	const { t: translate } = useI18n()
+
+
 	onMounted(async () => {
 		await ensureDynamicFields()
 
@@ -35,7 +38,7 @@ export function useManualShippingAddress() {
 
 
 	return {
-		t,
+		translate,
 		is_member,
 		form_field_errors,
 		shipping_form,

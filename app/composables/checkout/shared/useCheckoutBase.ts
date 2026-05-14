@@ -103,7 +103,7 @@ export function useCheckoutBase(options: UseCheckoutBaseOptions = {}) {
 	});
 
 	return {
-		t,
+		translate,
 		country,
 		selected_checkout_items,
 		order_total,

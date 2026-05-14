@@ -22,7 +22,7 @@ const checkout_experience = useCheckoutExperience();
 
 const {
 	is_member,
-	t,
+	translate,
 	withCountry,
 	completing_checkout,
 	complete_loader_ref,
@@ -55,7 +55,7 @@ function setCompleteLoaderRef(
 		test-id="checkout-member-page"
 		loading-test-id="checkout-member-complete-loading-overlay"
 		:loading="completing_checkout"
-		:loading-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
+		:loading-label="translate(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
 	>
 		<template #loader>
 			<div :ref="setCompleteLoaderRef" />
@@ -71,14 +71,14 @@ function setCompleteLoaderRef(
 			<CheckoutSummaryCard
 				:tone="is_member ? 'member' : 'guest'"
 				:items="selected_checkout_items"
-				:shipping-fee-tooltip-title="t(is_member ? 'checkout.member.summary.shippingFeeTooltipTitle' : 'checkout.guest.summary.shippingFeeTooltipTitle')"
-				:shipping-fee-tooltip-text="t(is_member ? 'checkout.member.summary.shippingFeeTooltipText' : 'checkout.guest.summary.shippingFeeTooltipText')"
-				:complete-label="t(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
-				:agreement-prefix="t(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
-				:agreement-terms="t(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"
-				:agreement-and="t(is_member ? 'checkout.member.agreement.and' : 'checkout.guest.agreement.and')"
-				:agreement-privacy="t(is_member ? 'checkout.member.agreement.privacy' : 'checkout.guest.agreement.privacy')"
-				:agreement-suffix="t(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
+				:shipping-fee-tooltip-title="translate(is_member ? 'checkout.member.summary.shippingFeeTooltipTitle' : 'checkout.guest.summary.shippingFeeTooltipTitle')"
+				:shipping-fee-tooltip-text="translate(is_member ? 'checkout.member.summary.shippingFeeTooltipText' : 'checkout.guest.summary.shippingFeeTooltipText')"
+				:complete-label="translate(is_member ? 'checkout.member.completeCheckout' : 'checkout.guest.completeCheckout')"
+				:agreement-prefix="translate(is_member ? 'checkout.member.agreement.prefix' : 'checkout.guest.agreement.prefix')"
+				:agreement-terms="translate(is_member ? 'checkout.member.agreement.terms' : 'checkout.guest.agreement.terms')"
+				:agreement-and="translate(is_member ? 'checkout.member.agreement.and' : 'checkout.guest.agreement.and')"
+				:agreement-privacy="translate(is_member ? 'checkout.member.agreement.privacy' : 'checkout.guest.agreement.privacy')"
+				:agreement-suffix="translate(is_member ? 'checkout.member.agreement.suffix' : 'checkout.guest.agreement.suffix')"
 				:terms-path="withCountry('/terms-of-use')"
 				:privacy-path="withCountry('/privacy-policy')"
 			>
@@ -92,9 +92,9 @@ function setCompleteLoaderRef(
 	<!-- Modals -->
 	<CheckoutLoginModal v-model="is_login_modal_open" />
 	<CheckoutAddressSelectModal
-		:title="t('checkout.member.addressSelection.shippingTitle')"
-		:copy="t('checkout.member.addressSelection.shippingDescription')"
-		:confirm-label="t('checkout.member.addressSelection.selectAddress')"
+		:title="translate('checkout.member.addressSelection.shippingTitle')"
+		:copy="translate('checkout.member.addressSelection.shippingDescription')"
+		:confirm-label="translate('checkout.member.addressSelection.selectAddress')"
 	/>
 	<CheckoutMemberAccreditedBanksModal v-model="is_accredited_banks_modal_open" />
 
