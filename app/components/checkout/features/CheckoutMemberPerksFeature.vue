@@ -11,8 +11,6 @@ import MuInput from '~/components/base/MuInput.vue';
 import MuText from '~/components/base/MuText.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import CouponsModal from '~/components/features/checkout/modals/coupons-modal/Index.vue';
-import { useApplyCoupon } from '~/composables/coupon/useApplyCoupon';
-import { usePoints } from '~/composables/points/usePoints';
 
 const {
 	t,
@@ -20,29 +18,25 @@ const {
 	points_tooltip_open,
 	togglePointsTooltip,
 	is_coupons_modal_open,
-} = useCheckoutExperienceFeatureContext();
 
-const {
+	// points
 	points_to_use,
 	total_points,
-
 	handlePointsKeydown,
 	handlePointsPaste,
 	useAllPoints,
 	clearPoints,
-} = usePoints()
 
-const {
+	// coupons
 	form,
 	has_coupon_error,
 	message,
 	validation_errors,
 	apply,
 	removeAppliedCoupon,
-
 	coupon,
-	applicable_coupons
-} = useApplyCoupon();
+	applicable_coupons,
+} = useCheckoutExperienceFeatureContext();
 
 
 

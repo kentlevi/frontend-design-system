@@ -6,6 +6,8 @@ import type {
 	CheckoutShippingMethodKey,
 } from '~/types/checkout/options';
 import { useUsersStore } from '~/stores/users/users.store';
+import { useApplyCoupon } from '~/composables/coupon/useApplyCoupon';
+import { usePoints } from '~/composables/points/usePoints';
 
 export function useCheckoutMember() {
 	const base = useCheckoutBase();
@@ -34,6 +36,9 @@ export function useCheckoutMember() {
 		checkoutPaymentMethods.filter((method) => method.enabled !== false)
 	);
 
+	const points = usePoints();
+	const apply_coupon = useApplyCoupon();
+
 	return {
 		...base,
 		member_email,
@@ -42,5 +47,7 @@ export function useCheckoutMember() {
 		active_shipping_methods,
 		active_payment_methods,
 		payment_brands: checkoutMemberPaymentBrands,
+		...points,
+		...apply_coupon,
 	};
 }
