@@ -43,8 +43,10 @@ export function usePoints() {
 		const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
 		const is_digit = /^\d$/.test(e.key);
 		if (!is_digit && !allowed.includes(e.key)) { e.preventDefault(); return; }
-		if (is_digit && getProjected(e.target as HTMLInputElement, e.key) > total_points.value)
+		if (is_digit && getProjected(e.target as HTMLInputElement, e.key) > total_points.value) {
 			e.preventDefault();
+			points_to_use.value = String(total_points.value);
+		}
 	}
 
 	function handlePointsPaste(e: ClipboardEvent) {
@@ -57,7 +59,11 @@ export function usePoints() {
 	}
 
 	watch(points_to_use, (val) => {
-		points_store.setPointsToUse(val)
+		const numeric_val = parseInt(val, 10) || 0
+		if (numeric_val > total_points.value) {
+			points_to_use.value = String(total_points.value)
+		}
+		points_store.setPointsToUse(points_to_use.value)
 	})
 
 	onBeforeMount(() => {
