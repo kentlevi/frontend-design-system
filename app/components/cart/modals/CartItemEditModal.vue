@@ -320,7 +320,6 @@ watch(
 							</Transition>
 						</div>
 					</div>
-
 					<div v-if="show_quantity" class="cart-item-edit-field">
 						<label class="cart-item-edit-label">{{ translate('cart.cartPreview.quantity') }}</label>
 						<UiSelect
@@ -375,7 +374,7 @@ watch(
 											@mousedown.prevent="onQtyOptionSelect(Number(option.value))"
 										>
 											<div class="ui-select-option-copy">
-												<p class="ui-select-option-label">{{ option.label }}</p>
+												<p class="ui-select-option-label">{{ formatLabel(option.label) }}</p>
 											</div>
 										</button>
 									</div>

@@ -239,7 +239,7 @@ onBeforeUnmount(() => {
 				class="ui-select-value"
 				:style="selected_option.style"
 			>
-				{{ selected_option.label }}
+				{{ formatLabel(selected_option.label) }}
 			</span>
 			<span v-else class="ui-select-placeholder">{{ props.placeholder }}</span>
 
@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
 						@mousedown.prevent="selectOption(option)"
 					>
 						<div class="ui-select-option-copy">
-							<p class="ui-select-option-label" :style="option.style">{{ option.label }}</p>
+							<p class="ui-select-option-label" :style="option.style">{{ formatLabel(option.label) }}</p>
 							<p v-if="option.description" class="ui-select-option-description">
 								{{ option.description }}
 							</p>

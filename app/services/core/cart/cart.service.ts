@@ -5,6 +5,7 @@ import { useUsersStore } from "~/stores/users/users.store"
 import type { CartItem } from "~/types/cart/cart"
 import { useCartApiService } from "./api.service"
 import { useQuoteApiService } from "../quote/api.service"
+import { base64ToFile } from "~/utils/file/file"
 
 export const useCartService = (caller : string) => {
 
@@ -286,6 +287,8 @@ export const useCartService = (caller : string) => {
 
 	/** Save multiple unsave items */
 	const sendUnsaveToServer = async () => {
+		await sendUnsaveArtwork()
+
 		const unsave_i = cart_store.items.filter( e => !e.id )
 
 		if( !unsave_i.length )
@@ -307,6 +310,7 @@ export const useCartService = (caller : string) => {
 			}
 		})
 
+		console.log(cart_payload)
 		/** Forward the prepared data to actual API request  */
 		const result = await cart_api_service.sendToServer(cart_payload)
 
@@ -316,6 +320,31 @@ export const useCartService = (caller : string) => {
 				const i = result[index];
 				if( i )
 					cart_store.updateItemInCart(i.local_identity, { id : i.id } )
+			}
+		}
+	}
+
+	const sendUnsaveArtwork = async () => {
+		// 1. Use for...of to correctly await inside the loop
+		for (const e of cart_store.items) {
+			// 2. Only process items that have a preview but no saved file
+			if (!e.artwork_file && e.artwork_preview && e.artwork_file_name) {
+				const a_file = base64ToFile(e.artwork_preview, e.artwork_file_name)
+				if (a_file) {
+					// 3. This will now properly wait for S3 to respond
+					const uploading_request = await cart_api_service.sendToS3(a_file)
+					console.log(uploading_request.ok.value)
+					// 4. Check if upload was successful
+					if (uploading_request.ok.value) {
+						const uploaded_file = uploading_request.filename.value
+						console.log(e.local_identity, uploaded_file)
+						// 5. Update Pinia store
+						cart_store.updateItemInCart(e.local_identity, {
+							artwork_file: uploaded_file,
+							file_path: 'artworks/',
+						})
+					}
+				}
 			}
 		}
 	}
@@ -375,32 +404,42 @@ export const useCartService = (caller : string) => {
 			if( !local_identity )
 				throw new Error("❌ Item local identity is required!")
 
-			if( !cart_store.item_picking_artwork || !cart_store.item_picking_artwork.id ) {
+			if( !cart_store.item_picking_artwork || !cart_store.item_picking_artwork.local_identity ) {
 				console.warn('❌ Item for artwork is not set.')
 				return
 			}
 
 			updating_artwork.value = true
 
-			// ⚠️ Uploading file
-			const uploading_request = await cart_api_service.sendToS3(file)
+			if( is_authenticated.value ) {
+				// ⚠️ Uploading file
+				const uploading_request = await cart_api_service.sendToS3(file)
 
-			// ❌ File uploading failed
-			if( !uploading_request.ok.value )
-				throw new Error(uploading_request.message.value);
+				// ❌ File uploading failed
+				if( !uploading_request.ok.value )
+					throw new Error(uploading_request.message.value);
 
-			response.value.uploaded_file = uploading_request.filename.value
+				response.value.uploaded_file = uploading_request.filename.value
 
-			// ✅ Update the item locally
-			cart_store.updateItemInCart(local_identity, {
-				artwork_file : uploading_request.filename.value,
-				artwork_file_name: file_name,
-				instruction: instruction,
-				file_path: 'artworks/',
-			})
+				// ✅ Update the item locally
+				cart_store.updateItemInCart(local_identity, {
+					artwork_file : uploading_request.filename.value,
+					artwork_file_name: file_name,
+					instruction: instruction,
+					file_path: 'artworks/',
+				})
 
-			// ✅ Update the item in our server
-			cart_api_service.requestArtworkUpdate(cart_store.item_picking_artwork.id, file_name, uploading_request.filename.value, instruction)
+				// ✅ Update the item in our server — if only the cart already saved in our database and the use is already registered in our system
+				if( cart_store.item_picking_artwork.id )
+					cart_api_service.requestArtworkUpdate(cart_store.item_picking_artwork.id, file_name, uploading_request.filename.value, instruction)
+			} else {
+				// ✅ Update the item locally
+				cart_store.updateItemInCart(local_identity, {
+					artwork_file_name: file_name,
+					artwork_preview : upload_service.artwork_preview.value,
+					instruction: instruction,
+				})
+			}
 
 			response.value.success = true
 		}
@@ -544,5 +583,6 @@ export const useCartService = (caller : string) => {
 		setItemQuantities 	: cart_store.setItemQuantities,
 		updateItemInCart 	: cart_store.updateItemInCart,
 		evaluateSelectedIds : cart_store.evaluateSelectedIds,
+		initQuantityMap		: cart_store.initQuantityMap,
 	}
 }

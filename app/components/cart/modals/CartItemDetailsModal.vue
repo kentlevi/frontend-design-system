@@ -72,15 +72,21 @@ watch(
 
 		if( selected_file.value ) {
 			local_artwork_name.value = selected_file.value?.name ?? '';
-			local_artwork_size_label.value = selected_file.value?.size ? formatProductFileSize(selected_file.value?.size) : '';
+			local_artwork_size_label.value = selected_file.value?.size ? formatProductFileSize(selected_file.value?.size) : ''
 			local_artwork_preview_url.value = selected_file_preview.value;
 			local_special_instructions.value = item.instruction || '';
 		} else if( item.artwork_file && item.artwork_file_name ) {
 			local_artwork_name.value = item.artwork_file_name
 			local_artwork_size_label.value = '';
-			local_artwork_preview_url.value = `${config.public.s3_file_url}artworks/${item?.artwork_file}`;
+			local_artwork_preview_url.value = `${config.public.s3_file_url}artworks/${item?.artwork_file}`
 			local_special_instructions.value = item.instruction || '';
-		} else {
+		} else if( item.artwork_preview && item.artwork_file_name ) {
+			local_artwork_name.value = item.artwork_file_name
+			local_artwork_size_label.value = '';
+			local_artwork_preview_url.value = item.artwork_preview
+			local_special_instructions.value = item.instruction || '';
+		}
+		else {
 			removeArtwork()
 		}
 	},

@@ -47,7 +47,7 @@ onMounted(() => {
 			<CartPageSkeleton v-if="refreshing_item" />
 
 			<template v-else>
-				<template v-if="has_items">
+				<template v-if="has_items && !refreshing_item">
 					<CartPageHeader
 						:title="translate('cart.cartPage.title')"
 						continue-shopping-path="/stickers"

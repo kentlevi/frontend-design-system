@@ -178,7 +178,7 @@ export const useCartStore = defineStore('cart', () => {
 	const updateItemInCart = (local_identity: string, updates: Partial<CartItem>) => {
 		// Find the index of the item
 		const index = items.value.findIndex(item => item.local_identity === local_identity);
-
+		console.log(index)
 		if (index !== -1) {
 			const current_item = items.value[index];
 
@@ -190,7 +190,7 @@ export const useCartStore = defineStore('cart', () => {
 			// 1. Loop through the update keys
 			for (const key in updates) {
 				// 2. Validation: Check if the key exists in the current CartItem
-				if (!(key in current_item)) {
+				if (!(key in current_item) && key != 'file_path') {
 					console.warn(`Property "${key}" does not exist on CartItem. Exit.`);
 					return
 				}
@@ -202,6 +202,8 @@ export const useCartStore = defineStore('cart', () => {
 				...items.value[index],
 				...updates
 			} as CartItem
+
+			console.log(items.value[index])
 		}
 	}
 
