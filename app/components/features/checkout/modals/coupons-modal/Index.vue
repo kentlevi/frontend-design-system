@@ -65,6 +65,7 @@ const handleSave = () => {
 					<UiButton variant="ghost" tone="neutral" @click="emit('update:modelValue', false)">Cancel</UiButton>
 					<UiButton
 						tone="neutral"
+						:disabled="!selected_code"
 						@click="handleSave"
 					>
 						Save
