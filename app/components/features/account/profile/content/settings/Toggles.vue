@@ -2,24 +2,16 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
+import { useProfileSettingsToggles } from '~/composables/account/profile/useProfileSettingsToggles';
+import { useProfileSettingsTogglesUI } from '~/composables/account/profile/useProfileSettingsTogglesUI';
 
-defineProps<{
-	preferenceFormState: {
-		offers_emails: boolean | number
-		reviews_emails: boolean | number
-	}
-}>()
+const {
+	preference_form_state,
 
-const emit = defineEmits<{
-	(e: 'update-field', key: string, value: boolean): void
-}>()
+	onToggle,
+} = useProfileSettingsToggles()
 
-const { t: translate } = useI18n();
-
-function onToggle(key: string, event: Event) {
-	const checked = (event.target as HTMLInputElement).checked
-	emit('update-field', key, checked)
-}
+const { translate } = useProfileSettingsTogglesUI()
 </script>
 
 <template>
@@ -37,7 +29,7 @@ function onToggle(key: string, event: Event) {
 			</MuLinearWrapper>
 			<label class="account-profile-switch">
 				<input
-					:checked="Boolean(preferenceFormState.offers_emails)"
+					:checked="Boolean(preference_form_state.offers_emails)"
 					type="checkbox"
 					class="account-profile-switch-input"
 					data-testid="account-profile-toggle-promotions"
@@ -60,7 +52,7 @@ function onToggle(key: string, event: Event) {
 			</MuLinearWrapper>
 			<label class="account-profile-switch">
 				<input
-					:checked="Boolean(preferenceFormState.reviews_emails)"
+					:checked="Boolean(preference_form_state.reviews_emails)"
 					type="checkbox"
 					class="account-profile-switch-input"
 					data-testid="account-profile-toggle-reviews"
