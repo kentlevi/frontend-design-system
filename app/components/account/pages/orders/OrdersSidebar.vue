@@ -109,8 +109,8 @@ const { t: translate } = useI18n();
 					box-shadow 0.15s ease;
 
 				&.is-active {
-					border-color: var(--gold-base);
-					background: var(--gold-10);
+					border-color: var(--brand-primary);
+					background: var(--brand-primary-bg);
 				}
 
 				.account-orders-list-card-head {

@@ -10,10 +10,18 @@ const props = defineProps<{ order: UserOrder }>()
 
 const { formatted_date } = useOrderItem(props)
 const { handleClick } = useOrderItemUI(props)
+
+const is_true = ref(true);
 </script>
 
 <template>
-	<MuCard class="order-item" variant="default" padding="md" radius="md" bordered="default" @click="handleClick">
+	<MuCard
+		class="order-item"
+		:variant="is_true ? 'primary' : 'default'"
+		padding="md"
+		radius="md"
+		bordered="strong"
+	>
 		<MuLinearWrapper direction="column" gap="4">
 			<MuLinearWrapper class="order-item-header" align="center" :gap="8">
 				<div class="dot" />
@@ -27,6 +35,9 @@ const { handleClick } = useOrderItemUI(props)
 </template>
 
 <style lang="scss" scoped>
+.order-item{
+	cursor: pointer;
+}
 .dot {
 	position: relative;
 	width: 8px;
