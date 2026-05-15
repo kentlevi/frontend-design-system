@@ -181,15 +181,17 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 			Object.assign(ctx.store.form_state.billing, addressFormDefaults('billing'))
 			Object.assign(ctx.store.form_state.drop, addressFormDefaults('drop'))
 
-			nextTick(() => {
-				// Restore booleans
+			// Defer restore until Nuxt has finished hydrating. nextTick is a microtask
+			// and fires between async component / Suspense resolutions, restoring
+			// values before Vue compares server HTML — onNuxtReady waits for the
+			// full app mount.
+			onNuxtReady(() => {
 				ctx.store.drop_shipping_enabled = parsed.drop_shipping_enabled ?? false
 				ctx.store.use_shipping_as_billing = parsed.use_shipping_as_billing ?? true
 				ctx.store.shipping_ship_to_another_address = parsed.shipping_ship_to_another_address ?? false
 				ctx.store.drop_shipping_ship_to_another_address = parsed.drop_shipping_ship_to_another_address ?? false
 				ctx.store.billing_use_different_address = parsed.billing_use_different_address ?? false
 
-				// Restore form_state from persisted values
 				if (parsed.form_state) {
 					Object.assign(ctx.store.form_state.shipping, parsed.form_state.shipping)
 					Object.assign(ctx.store.form_state.billing, parsed.form_state.billing)

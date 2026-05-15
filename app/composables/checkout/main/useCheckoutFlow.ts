@@ -129,12 +129,18 @@ export const useCheckoutFlow = () => {
 			// (or revert via reload) between submit and payment success.
 			const order_id = response.data?.order?.id
 			if (typeof order_id === 'number') {
-				const snapshot = buildCompleteCheckoutPayload(order_id)
+				const snapshot = buildCompleteCheckoutPayload(
+					order_id,
+					coupon.value?.id ?? null,
+					points_to_use.value ? Number(points_to_use.value) : null,
+				)
 				saveCompletionSnapshot({
 					shipping_address: snapshot.shipping_address,
 					billing_address: snapshot.billing_address,
 					drop_address: snapshot.drop_address,
 					selected_cart_ids: selected_real_ids.value,
+					coupon_id: snapshot.coupon_id,
+					points: snapshot.points,
 				})
 				writePaymentLock(order_id)
 			}

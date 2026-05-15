@@ -1,5 +1,6 @@
 import { useAddressFormActions } from "~/composables/shared/address/useAddressFormActions"
 import { addressFormDefaults, mapFormToAddress } from "~/factories/address"
+import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-fields.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 import { useAddressFieldStore } from "~/stores/user-address"
 import type { AddressFormState, AddressType } from "~/types/user-address"
@@ -30,6 +31,13 @@ export function useCheckoutInvoiceBilling() {
 	const billing_form = computed(() => form_state.billing)
 	const billing_modal_open = ref(false)
 	const billing_address = ref(mapFormToAddress(billing_form.value, address_field_store.dynamic_address_fields))
+
+
+	onNuxtReady(async () => {
+		await ensureDynamicFields()
+		Object.assign(form_state.billing, structuredClone(toRaw(main_checkout_store.billing_form)))
+		billing_address.value = mapFormToAddress(billing_form.value, address_field_store.dynamic_address_fields)
+	})
 
 
 	/**

@@ -85,7 +85,11 @@ export function useAddressGeneral() {
 	/**
      * Build complete checkout payload
      */
-	function buildCompleteCheckoutPayload(order_id: number) {
+	function buildCompleteCheckoutPayload(
+		order_id: number,
+		coupon_id?: number | null,
+		points?: number | null,
+	) {
 		const user_email = users_store.state.email
 
 		const withEmail = <T extends { email?: string }>(form: T): T => ({
@@ -98,6 +102,8 @@ export function useAddressGeneral() {
 			shipping_address: withEmail(shipping_form.value),
 			billing_address: withEmail(billing_form.value),
 			drop_address: drop_shipping_enabled.value ? withEmail(drop_form.value) : null,
+			coupon_id: coupon_id ?? null,
+			points: points ?? null,
 		}
 	}
 
