@@ -6,14 +6,29 @@ export function useOrdersMain() {
 	/**
 	 * Context
 	 */
-	const { selected_id, loadOrderDetail } = useOrderDetailContext()
-	const store = useUserOrdersStore()
+	const {
+		selected_id,
+		loadOrderDetail,
+		items_loading,
+		payment_loading,
+		addresses_loading,
+	} = useOrderDetailContext()
+
+
+	/**
+     * Store
+     */
+	const user_orders_store = useUserOrdersStore()
 
 
 	/**
 	 * Computed
 	 */
-	const selected_order = computed(() => selected_id.value ? store.findById(selected_id.value) : null)
+	const selected_order = computed(() => selected_id.value ? user_orders_store.findById(selected_id.value) : null)
+
+	const is_loading = computed(() =>
+		items_loading.value || payment_loading.value || addresses_loading.value
+	)
 
 
 	/**
@@ -21,7 +36,7 @@ export function useOrdersMain() {
 	 */
 	watchEffect(() => {
 		if (selected_id.value !== null) return
-		const first = store.ongoing[0] ?? store.action_required[0] ?? store.completed[0]
+		const first = user_orders_store.ongoing[0] ?? user_orders_store.action_required[0] ?? user_orders_store.completed[0]
 		if (!first) return
 		loadOrderDetail(first.id)
 	})
@@ -29,5 +44,6 @@ export function useOrdersMain() {
 
 	return {
 		selected_order,
+		is_loading,
 	}
 }

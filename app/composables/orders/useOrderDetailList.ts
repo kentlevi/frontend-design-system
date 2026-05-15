@@ -6,7 +6,7 @@ export function useOrderDetailList() {
 	/**
 	 * Context
 	 */
-	const { order_items, items_loading } = useOrderDetailContext()
+	const { order_items } = useOrderDetailContext()
 
 
 	/**
@@ -19,6 +19,5 @@ export function useOrderDetailList() {
 
 	return {
 		items,
-		items_loading,
 	}
 }

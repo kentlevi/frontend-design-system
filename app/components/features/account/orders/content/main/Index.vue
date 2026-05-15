@@ -10,42 +10,48 @@ import Summary from './Summary.vue';
 import { useOrdersMain } from '~/composables/orders/useOrdersMain';
 import { useOrdersMainUI } from '~/composables/orders/useOrdersMainUI';
 
-const { selected_order } = useOrdersMain();
+const { selected_order, is_loading } = useOrdersMain();
 const { translate, is_detail_open } = useOrdersMainUI();
 </script>
 
 <template>
 	<MuLinearWrapper class="orders-main" direction="column" :gap="16" width="100%">
-		<MuCard class="orders-card">
-			<MuLinearWrapper class="orders-card-wrapper" direction="column">
-				<MuLinearWrapper class="orders-card-header" justify="space-between">
-					<MuLinearWrapper align="center" :gap="16">
-						<MuHeading variant="5" weight="bold">Order #: {{ selected_order?.order_number }}</MuHeading>
-						<UiBadge>{{ selected_order?.order_status?.name }}</UiBadge>
+		<MuText v-if="is_loading" class="orders-card-loading" color="abyss-40" align="center">Loading order details...</MuText>
+		<template v-else>
+			<MuCard class="orders-card">
+				<MuLinearWrapper class="orders-card-wrapper" direction="column">
+					<MuLinearWrapper class="orders-card-header" justify="space-between">
+						<MuLinearWrapper align="center" :gap="16">
+							<MuHeading variant="5" weight="bold">Order #: {{ selected_order?.order_number }}</MuHeading>
+							<UiBadge>{{ selected_order?.order_status?.name }}</UiBadge>
+						</MuLinearWrapper>
+						<MuLinearWrapper class="more-details" align="center" :gap="8" @click="is_detail_open = !is_detail_open">
+							<UiIcon :name="is_detail_open ? 'regular-chevron-up' : 'regular-chevron-down'" :size="20" />
+							<MuText weight="semi-bold">{{ translate(is_detail_open ? 'account.orders.lessDetails' : 'account.orders.moreDetails') }}</MuText>
+						</MuLinearWrapper>
 					</MuLinearWrapper>
-					<MuLinearWrapper class="more-details" align="center" :gap="8" @click="is_detail_open = !is_detail_open">
-						<UiIcon :name="is_detail_open ? 'regular-chevron-up' : 'regular-chevron-down'" :size="20" />
-						<MuText weight="semi-bold">{{ translate(is_detail_open ? 'account.orders.lessDetails' : 'account.orders.moreDetails') }}</MuText>
+					<MuLinearWrapper v-if="is_detail_open" justify="space-between" :gap="40">
+						<Address type="shipping" />
+						<Address type="billing" />
 					</MuLinearWrapper>
 				</MuLinearWrapper>
-				<MuLinearWrapper v-if="is_detail_open" justify="space-between" :gap="40">
-					<Address type="shipping" />
-					<Address type="billing" />
-				</MuLinearWrapper>
+				<Actions/>
+				<List/>
+				<Summary/>
+			</MuCard>
+			<MuLinearWrapper :gap="12" justify="flex-end">
+				<UiButton variant="outline" tone="neutral">On-Hold Order</UiButton>
+				<UiButton variant="outline" tone="neutral">Cancel Order</UiButton>
 			</MuLinearWrapper>
-			<Actions/>
-			<List/>
-			<Summary/>
-		</MuCard>
-		<MuLinearWrapper :gap="12" justify="flex-end">
-			<UiButton variant="outline" tone="neutral">On-Hold Order</UiButton>
-			<UiButton variant="outline" tone="neutral">Cancel Order</UiButton>
-		</MuLinearWrapper>
+		</template>
 	</MuLinearWrapper>
 </template>
 
 <style lang="scss" scoped>
 .more-details {
 	cursor: pointer;
+}
+.orders-card-loading {
+	padding: 32px 16px;
 }
 </style>

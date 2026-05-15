@@ -4,14 +4,13 @@ import MuText from '~/components/base/MuText.vue';
 import Item from './Item.vue';
 import { useOrderDetailList } from '~/composables/orders/useOrderDetailList';
 
-const { items, items_loading } = useOrderDetailList();
+const { items } = useOrderDetailList();
 </script>
 
 <template>
 	<MuLinearWrapper class="list" direction="column" :gap="16">
 		<MuText weight="bold">Order Summary:</MuText>
-		<MuText v-if="items_loading && !items.length" color="abyss-40">Loading items...</MuText>
-		<MuText v-else-if="!items.length" color="abyss-40">No items to display.</MuText>
+		<MuText v-if="!items.length" color="abyss-40">No items to display.</MuText>
 		<Item
 			v-for="(item, index) in items"
 			:key="item.order_item_id"
