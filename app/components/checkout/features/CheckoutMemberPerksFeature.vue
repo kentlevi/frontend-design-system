@@ -64,7 +64,7 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 							</div>
 						</UiTooltip>
 					</div>
-					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: total_points }) }}</span>
+					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: total_points.toLocaleString() }) }}</span>
 				</div>
 				<div class="checkout-member-perk-control">
 					<UiInput
