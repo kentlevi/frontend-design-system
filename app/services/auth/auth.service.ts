@@ -22,6 +22,7 @@ import { useUsersStore } from '~/stores/users/users.store'
 
 export const fetchAndStoreUser = async () => {
 	const user_store = useUsersStore()
+	user_store.clearUser()
 	user_store.auth_state_loading = true
 
 	try {
@@ -111,6 +112,7 @@ export const requestNonMemberLoginVerification = async (
 
 		if (response.success && response.data?.code === 'login_success') {
 			storeAuthCookie(true, false)
+			await new Promise((resolve) => setTimeout(resolve, 200))
 			await fetchAndStoreUser()
 		}
 

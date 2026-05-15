@@ -435,12 +435,10 @@ export function useCheckoutGuestContactFeature() {
 				},
 			})
 
-			if (response.message === "User logged in successfully.") {
-				fetchAndStoreUser()
-				return response
+			if (response.data?.code !== 'login_success') {
+				openVerificationModal()
 			}
 
-			openVerificationModal()
 			return response
 		} catch (error) {
 			toast_store.showToastWithTimer({

@@ -77,7 +77,7 @@ export const useCheckoutVerification = () => {
 				return response
 			}
 
-			fetchAndStoreUser()
+			await fetchAndStoreUser()
 
 			verification_store.patchVerificationState({
 				code: '',

@@ -21,7 +21,11 @@ import type { ApiResponse } from "~/types/config/api"
 export async function getCurrentAuthenticatedUser(): Promise<MeUserResponse> {
 	const { $api } = useNuxtApp()
 
-	return await $api.get('user/me')
+	return await $api.get('user/me', {
+		params: {
+			t: Date.now(),
+		},
+	})
 }
 
 /**
