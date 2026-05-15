@@ -25,7 +25,7 @@ defineProps<{
 			</div>
 			<div class="checkout-invoice-total-line is-discount">
 				<span>{{ translate('checkout.invoice.totals.discounts') }}</span>
-				<strong>{{ discount }}</strong>
+				<strong>-{{ discount }}</strong>
 			</div>
 			<div class="checkout-invoice-total-line is-final">
 				<span>{{ translate('checkout.invoice.totals.total') }}</span>

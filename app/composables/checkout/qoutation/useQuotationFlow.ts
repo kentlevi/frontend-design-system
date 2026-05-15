@@ -11,6 +11,7 @@ export const useQuotationFlow = () => {
 	const service_handler = useQuotationService()
 	const {
 		total_cost,
+		total_discount,
 		sub_total_cost,
 		shipping_cost,
 		selected_items,
@@ -27,7 +28,7 @@ export const useQuotationFlow = () => {
 			const params = {
 				subtotal_cost: sub_total_cost.value,
 				shipping_cost: shipping_cost.value,
-				discount: 0,
+				discount: total_discount.value,
 				total_cost: total_cost.value,
 				cart_item_ids: selected_items.value.map(item => item.id).filter((id): id is number => id !== null)
 			}
