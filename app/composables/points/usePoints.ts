@@ -83,6 +83,17 @@ export function usePoints() {
 		points_store.setPointsToUse(points_to_use.value)
 	})
 
+	watch(max_points_allowed, (max) => {
+		const numeric_val = parseInt(points_to_use.value, 10) || 0
+		if (numeric_val > max) {
+			points_store.setPointsToUse(String(max))
+		}
+	})
+
+	onBeforeMount(() => {
+		points_store.clearPointsToUse()
+	})
+
 	onMounted(() => {
 		getTotalPoints()
 	})
