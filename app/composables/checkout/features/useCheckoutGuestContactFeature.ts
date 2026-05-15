@@ -54,7 +54,8 @@ export function useCheckoutGuestContactFeature() {
 	const verification_store = useVerificationStore()
 	const user_store = useUsersStore()
 	const email_change_store = useEmailChangeStore()
-	const { verification_state } = storeToRefs(verification_store)
+	const { verification_state, modal_state: verification_modal_state } =
+		storeToRefs(verification_store)
 	const { state, is_authenticated, role_code } = storeToRefs(user_store)
 	const email = ref(checkout_email.value)
 	const email_tooltip_ref = ref<HTMLElement | null>(null)
@@ -468,6 +469,22 @@ export function useCheckoutGuestContactFeature() {
 		closeEmailAlreadyRegisteredModal()
 		resetVerificationState()
 	})
+
+	watch(
+		() => verification_modal_state.value.is_open,
+		(is_open, was_open) => {
+			if (!was_open || is_open) return
+			if (verification_modal_state.value.context !== 'checkout_guest_contact') return
+			if (!is_authenticated_non_member.value) return
+			if (is_email_already_registered_modal_open.value) return
+
+			const account_email = getCurrentAccountEmail()
+			if (!account_email) return
+			if (normalizeEmail(email.value) === normalizeEmail(account_email)) return
+
+			setGuestEmail(account_email)
+		}
+	)
 
 	watch(
 		[is_authenticated_non_member, () => state.value.email, checkout_email],
