@@ -12,11 +12,11 @@ const { orders, label, has_orders } = useOrderList(props)
 
 <template>
 	<MuLinearWrapper v-if="has_orders" class="order-list" direction="column" :gap="8">
-		<MuText size="large" weight="semi-bold">{{ label }}</MuText>
+		<MuText size="large" weight="semi-bold">{{ label }} {{ orders.length }}</MuText>
 		<OrderItem v-for="order in orders" :key="order.id" :order="order" />
 	</MuLinearWrapper>
 </template>
 
 <style scoped lang="scss">
-.order-list {}
+// .order-list {}
 </style>

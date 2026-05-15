@@ -23,6 +23,13 @@ export function useOrdersList() {
 		user_orders_store.isLoading('fetch', 'completed') ||
 		user_orders_store.isLoading('fetch', 'cancelled')
 	)
+	const has_any_orders  = computed(() =>
+		ongoing.value.length > 0 ||
+		action_required.value.length > 0 ||
+		to_receive.value.length > 0 ||
+		completed.value.length > 0 ||
+		cancelled.value.length > 0
+	)
 
 
 	return {
@@ -32,5 +39,6 @@ export function useOrdersList() {
 		completed,
 		cancelled,
 		is_loading,
+		has_any_orders,
 	}
 }
