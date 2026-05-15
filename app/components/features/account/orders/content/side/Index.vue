@@ -7,7 +7,9 @@ import OrderList from './OrderList.vue';
 	<MuLinearWrapper class="orders-side" direction="column" :gap="16">
 		<OrderList status="ongoing" />
 		<OrderList status="action_required" />
+		<OrderList status="to_receive" />
 		<OrderList status="completed" />
+		<OrderList status="cancelled" />
 	</MuLinearWrapper>
 </template>
 
