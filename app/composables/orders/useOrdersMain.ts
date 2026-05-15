@@ -36,7 +36,11 @@ export function useOrdersMain() {
 	 */
 	watchEffect(() => {
 		if (selected_id.value !== null) return
-		const first = user_orders_store.ongoing[0] ?? user_orders_store.action_required[0] ?? user_orders_store.completed[0]
+		const first = user_orders_store.ongoing[0]
+			?? user_orders_store.action_required[0]
+			?? user_orders_store.to_receive[0]
+			?? user_orders_store.completed[0]
+			?? user_orders_store.cancelled[0]
 		if (!first) return
 		loadOrderDetail(first.id)
 	})

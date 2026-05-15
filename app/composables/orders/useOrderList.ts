@@ -8,7 +8,9 @@ type Props = {
 const STATUS_LABELS: Record<UserOrderType, string> = {
 	ongoing:         'On-Going',
 	action_required: 'Action Required',
+	to_receive:      'To Receive',
 	completed:       'Completed',
+	cancelled:       'Cancelled',
 }
 
 export function useOrderList(props: Props) {

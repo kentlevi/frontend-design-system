@@ -1,14 +1,18 @@
 import type { UserOrder, UserOrderType } from '~/types/order/user-orders'
 
 export const useUserOrdersStore = defineStore('user-orders', () => {
-	const ongoing        = ref<UserOrder[]>([])
+	const ongoing         = ref<UserOrder[]>([])
 	const action_required = ref<UserOrder[]>([])
-	const completed      = ref<UserOrder[]>([])
+	const to_receive      = ref<UserOrder[]>([])
+	const completed       = ref<UserOrder[]>([])
+	const cancelled       = ref<UserOrder[]>([])
 
 	const order_refs: Record<UserOrderType, Ref<UserOrder[]>> = {
 		ongoing,
 		action_required,
-		completed
+		to_receive,
+		completed,
+		cancelled,
 	}
 
 	function setOrders(type: UserOrderType, value: UserOrder[]) {
@@ -16,10 +20,14 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 	}
 
 	function findById(id: number): UserOrder | undefined {
-		return [...ongoing.value, ...action_required.value, ...completed.value].find(o => o.id === id)
+		return [
+			...ongoing.value,
+			...action_required.value,
+			...to_receive.value,
+			...completed.value,
+			...cancelled.value,
+		].find(o => o.id === id)
 	}
-
-
 
 
 
@@ -47,7 +55,9 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 	return {
 		ongoing,
 		action_required,
+		to_receive,
 		completed,
+		cancelled,
 
 		setOrders,
 		findById,
