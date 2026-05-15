@@ -1,47 +1,42 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import { useProfilePasswordChangeForm } from '~/composables/account/profile/useProfilePasswordChangeForm';
+import { useProfilePasswordChangeFormUI } from '~/composables/account/profile/useProfilePasswordChangeFormUI';
 
-defineProps<{
-	currentPassword: string
-	newPassword: string
-	newPasswordConfirmation: string
-	currentPasswordVisible: boolean
-	newPasswordVisible: boolean
-	newPasswordConfirmationVisible: boolean
-	currentPasswordError: string
-	pairPasswordError: string
-	isChangePasswordEnabled: boolean
-}>()
+const {
+	current_password,
+	new_password,
+	new_password_confirmation,
+	current_password_error,
+	pair_password_error,
+	current_password_visible,
+	new_password_visible,
+	new_password_confirmation_visible,
+	is_change_password_enabled,
 
-const emit = defineEmits<{
-	(e: 'update:currentPassword', value: string): void
-	(e: 'update:newPassword', value: string): void
-	(e: 'update:newPasswordConfirmation', value: string): void
-	(e: 'update:currentPasswordVisible', value: boolean): void
-	(e: 'update:newPasswordVisible', value: boolean): void
-	(e: 'update:newPasswordConfirmationVisible', value: boolean): void
-	(e: 'update:currentPasswordError', value: string): void
-	(e: 'clear-pair-errors'): void
-	(e: 'change-password'): void
-	(e: 'forgot-password'): void
-}>()
+	onCurrentPasswordInput,
+	onNewPasswordInput,
+	onNewPasswordConfirmationInput,
+	onChangePassword,
+	sendForgotPasswordEmail,
+} = useProfilePasswordChangeForm()
 
-const { t: translate } = useI18n();
+const { translate } = useProfilePasswordChangeFormUI()
 </script>
 
 <template>
 	<MuLinearWrapper class="account-profile-stack" data-testid="account-profile-password-form" direction="column" :gap="16">
-		<UiFormField :label="translate('account.profile.currentPassword')" :error="currentPasswordError" :required="true">
+		<UiFormField :label="translate('account.profile.currentPassword')" :error="current_password_error" :required="true">
 			<template #default="{ inputId, describedBy }">
 				<UiInput
 					:id="inputId"
-					:model-value="currentPassword"
-					:type="currentPasswordVisible ? 'text' : 'password'"
+					:model-value="current_password"
+					:type="current_password_visible ? 'text' : 'password'"
 					:aria-describedby="describedBy || undefined"
-					:state="currentPasswordError ? 'error' : 'default'"
+					:state="current_password_error ? 'error' : 'default'"
 					:placeholder="translate('account.profile.currentPasswordPlaceholder')"
 					data-testid="account-profile-current-password"
-					@update:model-value="emit('update:currentPassword', $event); emit('update:currentPasswordError', '')"
+					@update:model-value="onCurrentPasswordInput"
 				>
 					<template #icon-right>
 						<UiButton
@@ -53,9 +48,9 @@ const { t: translate } = useI18n();
 							:aria-label="translate('auth.reset.togglePassword')"
 							:sr-label="translate('auth.reset.togglePassword')"
 							icon-only
-							:icon="currentPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+							:icon="current_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 							:icon-size="24"
-							@click="emit('update:currentPasswordVisible', !currentPasswordVisible)"
+							@click="current_password_visible = !current_password_visible"
 						/>
 					</template>
 				</UiInput>
@@ -64,20 +59,20 @@ const { t: translate } = useI18n();
 
 		<UiFormField
 			:label="translate('account.profile.newPassword')"
-			:error="pairPasswordError"
+			:error="pair_password_error"
 			:required="true"
 			:hint="translate('account.profile.passwordHint')"
 		>
 			<template #default="{ inputId, describedBy }">
 				<UiInput
 					:id="inputId"
-					:model-value="newPassword"
-					:type="newPasswordVisible ? 'text' : 'password'"
+					:model-value="new_password"
+					:type="new_password_visible ? 'text' : 'password'"
 					:aria-describedby="describedBy || undefined"
-					:state="pairPasswordError ? 'error' : 'default'"
+					:state="pair_password_error ? 'error' : 'default'"
 					:placeholder="translate('account.profile.newPasswordPlaceholder')"
 					data-testid="account-profile-new-password"
-					@update:model-value="emit('update:newPassword', $event); emit('clear-pair-errors')"
+					@update:model-value="onNewPasswordInput"
 				>
 					<template #icon-right>
 						<UiButton
@@ -89,9 +84,9 @@ const { t: translate } = useI18n();
 							:aria-label="translate('auth.reset.togglePassword')"
 							:sr-label="translate('auth.reset.togglePassword')"
 							icon-only
-							:icon="newPasswordVisible ? 'regular-eye' : 'regular-eye-slash'"
+							:icon="new_password_visible ? 'regular-eye' : 'regular-eye-slash'"
 							:icon-size="24"
-							@click="emit('update:newPasswordVisible', !newPasswordVisible)"
+							@click="new_password_visible = !new_password_visible"
 						/>
 					</template>
 				</UiInput>
@@ -102,13 +97,13 @@ const { t: translate } = useI18n();
 			<template #default="{ inputId, describedBy }">
 				<UiInput
 					:id="inputId"
-					:model-value="newPasswordConfirmation"
-					:type="newPasswordConfirmationVisible ? 'text' : 'password'"
+					:model-value="new_password_confirmation"
+					:type="new_password_confirmation_visible ? 'text' : 'password'"
 					:aria-describedby="describedBy || undefined"
-					:state="pairPasswordError ? 'error' : 'default'"
+					:state="pair_password_error ? 'error' : 'default'"
 					:placeholder="translate('account.profile.confirmNewPasswordPlaceholder')"
 					data-testid="account-profile-confirm-password"
-					@update:model-value="emit('update:newPasswordConfirmation', $event); emit('clear-pair-errors')"
+					@update:model-value="onNewPasswordConfirmationInput"
 				>
 					<template #icon-right>
 						<UiButton
@@ -120,9 +115,9 @@ const { t: translate } = useI18n();
 							:aria-label="translate('auth.reset.toggleConfirmPassword')"
 							:sr-label="translate('auth.reset.toggleConfirmPassword')"
 							icon-only
-							:icon="newPasswordConfirmationVisible ? 'regular-eye' : 'regular-eye-slash'"
+							:icon="new_password_confirmation_visible ? 'regular-eye' : 'regular-eye-slash'"
 							:icon-size="24"
-							@click="emit('update:newPasswordConfirmationVisible', !newPasswordConfirmationVisible)"
+							@click="new_password_confirmation_visible = !new_password_confirmation_visible"
 						/>
 					</template>
 				</UiInput>
@@ -140,9 +135,9 @@ const { t: translate } = useI18n();
 				variant="filled"
 				tone="neutral"
 				size="md"
-				:disabled="!isChangePasswordEnabled"
+				:disabled="!is_change_password_enabled"
 				data-testid="account-profile-change-password-button"
-				@click="emit('change-password')"
+				@click="onChangePassword"
 			>
 				{{ translate('account.profile.changePassword') }}
 			</UiButton>
@@ -153,7 +148,7 @@ const { t: translate } = useI18n();
 				class="account-profile-forgot-password-link"
 				label-class="account-profile-forgot-password-link-label"
 				data-testid="account-profile-forgot-password"
-				@click="emit('forgot-password')"
+				@click="sendForgotPasswordEmail"
 			>
 				{{ translate('account.profile.forgotPassword') }}
 			</UiButton>

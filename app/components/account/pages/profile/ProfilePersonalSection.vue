@@ -2,8 +2,8 @@
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import ProfileEmailChangeModal from './ProfileEmailChangeModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
-import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
-import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
+import { useChangeEmailForm } from '~/composables/account/profile/context/useChangeEmailForm';
+import { useProfilePhoto } from '~/composables/account/profile/context/useProfilePhoto';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import { useProfilePersonal } from '~/composables/account/profile/useProfilePersonal';
