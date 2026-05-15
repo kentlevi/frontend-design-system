@@ -36,9 +36,8 @@ export const useEditItemHandler = (caller : string) => {
 		file: File,
 		instruction: string |'',
 	) => {
-
 		if( !cart_service.item_picking_artwork.value ) {
-			console.warn('Item for artwork was not set.')
+			console.warn('Item for artwork was not sets.')
 			return
 		}
 

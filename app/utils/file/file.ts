@@ -39,3 +39,25 @@ export function formatProductFileSize(bytes: number) {
 
 	return `${value >= 10 || index === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[index]}`;
 }
+
+export const base64ToFile = (base64String: string, filename: string): File | null => {
+	// 1. Split the base64 string to get the content type and the raw data
+	const [header, data] = base64String.split(',')
+	if(!header || !data)
+		return null
+
+	const mime = header.match(/:(.*?);/)?.[1] || 'image/png'
+
+	// 2. Decode the base64 string into a byte string
+	const byteString = atob(data)
+	let n = byteString.length
+	const u8arr = new Uint8Array(n)
+
+	// 3. Convert the byte string to a typed array
+	while (n--) {
+		u8arr[n] = byteString.charCodeAt(n)
+	}
+
+	// 4. Return the new File object
+	return new File([u8arr], filename, { type: mime })
+}

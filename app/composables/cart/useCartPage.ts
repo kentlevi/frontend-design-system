@@ -62,6 +62,11 @@ export const useCartPage = () => {
 	const refreshing_item = ref<boolean>(false)
 
 	const refreshItems = async() => {
+		if( !cart_service.is_authenticated.value ) {
+			cart_service.initQuantityMap()
+			return
+		}
+
 
 		if( refreshing_item.value )
 			return
