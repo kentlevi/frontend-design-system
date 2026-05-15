@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+import { useOrderDetailActions } from '~/composables/orders/useOrderDetailActions';
+
+const { payment_status_label, payment_method_label } = useOrderDetailActions();
+</script>
+
 <template>
 	<MuLinearWrapper class="order-actions" direction="column">
 		<MuLinearWrapper class="order-actions-items">
@@ -22,8 +30,8 @@
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" :gap="4" align="flex-end" >
-				<UiBadge>Unpaid</UiBadge>
-				<MuText color="abyss-40">Method: Bank Transfer</MuText>
+				<UiBadge v-if="payment_status_label">{{ payment_status_label }}</UiBadge>
+				<MuText v-if="payment_method_label" color="abyss-40">Method: {{ payment_method_label }}</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
 		<MuLinearWrapper class="order-actions-items">
@@ -40,13 +48,6 @@
 		</MuLinearWrapper>
 	</MuLinearWrapper>
 </template>
-
-<script setup lang="ts">
-import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
-import MuText from '~/components/base/MuText.vue';
-
-
-</script>
 
 <style lang="scss" scoped>
 .order-actions {
