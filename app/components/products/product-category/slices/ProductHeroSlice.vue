@@ -75,9 +75,8 @@ const displayed_product_blurb = computed(() =>
 	has_lettering_editor.value ? '' : translate(`product.items.${product_url_slug.value}.blurb`)
 );
 
-const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4'); // ⚠️ REVISION!!!
-const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png'); // ⚠️ REVISION!!!
-
+const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
+const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 
 const hero_media_asset = computed(() => {
 	return product_url_slug.value ? product_hero_media_map[product_url_slug.value] ?? null : null;
@@ -91,10 +90,6 @@ const demo_hero_poster_url = computed(() =>
 	hero_media_asset.value
 		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}-thumbnail.png`
 		: fallback_hero_poster_url
-);
-
-const should_play_preview_video = computed(() =>
-	Boolean(product_url_slug.value) && !has_lettering_editor.value && !product_navigation_in_flight.value
 );
 
 
@@ -123,7 +118,15 @@ const hide_lettering_editor = computed(() => (
 
 <template>
 	<div class="product-preview" data-testid="product-category-preview">
-		<div v-if="displayed_product_title" class="product-preview-header">
+		<div
+			v-if="product_navigation_in_flight || !displayed_product_title"
+			class="product-preview-header product-preview-header--skeleton"
+			data-testid="product-category-preview-header-skeleton"
+		>
+			<UiSkeleton width="420px" height="38px" border-radius="10px" />
+			<UiSkeleton width="320px" height="18px" border-radius="8px" />
+		</div>
+		<div v-else class="product-preview-header">
 			<h1 class="product-preview-title" data-testid="product-category-preview-title">
 				{{ displayed_product_title }}
 			</h1>
@@ -138,25 +141,36 @@ const hide_lettering_editor = computed(() => (
 			:class="{ 'is-loading': product_navigation_in_flight }"
 			data-testid="product-category-preview-media"
 		>
-			<img
-				v-if="!should_play_preview_video"
-				:src="demo_hero_poster_url"
-				:alt="`${displayed_product_title || 'Product'} preview poster`"
-				class="product-preview-media-image"
-			>
-			<video
-				v-else
-				:key="product_url_slug ?? 'preview-video'"
-				:poster="demo_hero_poster_url"
-				class="product-preview-media-image"
-				autoplay
-				muted
-				loop
-				playsinline
-				preload="metadata"
-			>
-				<source :src="demo_hero_video_url" type="video/mp4">
-			</video>
+			<UiSkeleton
+				v-if="!product_url_slug || product_navigation_in_flight"
+				height="100%"
+				width="100%"
+				border-radius="24px"
+				data-testid="product-category-preview-skeleton"
+			/>
+			<template v-else>
+				<img
+					:key="`${product_url_slug ?? 'preview'}-poster`"
+					:src="demo_hero_poster_url"
+					:alt="`${displayed_product_title || 'Product'} preview poster`"
+					class="product-preview-media-image product-preview-media-poster"
+					fetchpriority="high"
+					decoding="async"
+					data-testid="product-category-preview-poster"
+				>
+				<video
+					:key="product_url_slug ?? 'preview-video'"
+					:poster="demo_hero_poster_url"
+					class="product-preview-media-image product-preview-media-video"
+					autoplay
+					muted
+					loop
+					playsinline
+					preload="metadata"
+				>
+					<source :src="demo_hero_video_url" type="video/mp4">
+				</video>
+			</template>
 		</div>
 
 		<div
@@ -189,7 +203,19 @@ const hide_lettering_editor = computed(() => (
 			/>
 		</div>
 
-		<div class="product-preview-features" data-testid="product-category-preview-features">
+		<div
+			v-if="is_loading_features || product_navigation_in_flight || !size_feature_cards?.length"
+			class="product-preview-features product-preview-features--skeleton"
+			data-testid="product-category-preview-features-skeleton"
+		>
+			<div v-for="i in 4" :key="`feature-skeleton-${i}`" class="mini-feature mini-feature--skeleton">
+				<UiSkeleton width="80px" height="16px" border-radius="6px" />
+				<UiSkeleton width="72px" height="72px" border-radius="14px" />
+				<UiSkeleton width="160px" height="14px" border-radius="6px" />
+				<UiSkeleton width="120px" height="14px" border-radius="6px" />
+			</div>
+		</div>
+		<div v-else class="product-preview-features" data-testid="product-category-preview-features">
 			<button
 				v-for="(featured_size_cards, fsc_key) in size_feature_cards"
 				:key="'sizes-cards-'+fsc_key+'-'+featured_size_cards.code"
@@ -228,6 +254,21 @@ const hide_lettering_editor = computed(() => (
 	gap: 16px;
 	padding: 0;
 
+	.product-preview-header--skeleton {
+		display: grid;
+		gap: 10px;
+	}
+
+	.product-preview-features--skeleton {
+		.mini-feature--skeleton {
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			padding: 20px 11.5px;
+		}
+	}
+
 	.product-preview-title {
 		color: var(--text-primary);
 		font-size: var(--type-size-600);
@@ -252,6 +293,17 @@ const hide_lettering_editor = computed(() => (
 			height: 100%;
 			object-fit: cover;
 			width: 100%;
+		}
+
+		.product-preview-media-poster {
+			inset: 0;
+			position: absolute;
+		}
+
+		.product-preview-media-video {
+			inset: 0;
+			position: absolute;
+			z-index: 1;
 		}
 	}
 

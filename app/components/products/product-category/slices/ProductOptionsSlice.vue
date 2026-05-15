@@ -620,7 +620,8 @@ const has_pending_custom_selection = computed(() => {
 			grid-column: 1/-1;
 		}
 
-		.grid-column-full {
+		.grid-column-full,
+		:deep(.grid-column-full) {
 			grid-column: 1/-1;
 		}
 
