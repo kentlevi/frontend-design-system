@@ -66,10 +66,6 @@ export function usePoints() {
 		points_store.setPointsToUse(points_to_use.value)
 	})
 
-	onBeforeMount(() => {
-		points_store.clearPointsToUse()
-	})
-
 	onMounted(() => {
 		getTotalPoints()
 	})
