@@ -39,6 +39,8 @@ export type completeCheckoutPayload = {
 	billing_address: AddressFormMap[AddressType]
 	drop_address: AddressFormMap[AddressType] | null
 	selected_cart_ids: number[] | null
+	coupon_id: number | null
+	points: number | null
 }
 
 export type CheckoutApiResponse = ApiResponse<CheckoutResponseData>
