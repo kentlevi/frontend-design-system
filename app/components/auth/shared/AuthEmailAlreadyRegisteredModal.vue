@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useSocialLogin } from '~/composables/auth/login/useSocialLogin';
 
 const { t: translate } = useI18n();
 
@@ -9,9 +10,11 @@ const props = withDefaults(defineProps<{
 	password: string;
 	passwordError?: string;
 	passwordVisible?: boolean;
+	socialProvider?: string;
 }>(), {
 	passwordError: '',
 	passwordVisible: false,
+	socialProvider: '',
 });
 
 const emit = defineEmits<{
@@ -32,6 +35,25 @@ function togglePasswordVisibility() {
 
 function openForgotPassword() {
 	emit('forgotPassword');
+}
+
+const { handleSocial } = useSocialLogin();
+
+const social_provider = computed(() => {
+	const provider = props.socialProvider.trim().toLowerCase();
+	return provider === 'google' || provider === 'facebook' ? provider : '';
+});
+
+const has_social_provider = computed(() => social_provider.value !== '');
+const social_login_label = computed(() =>
+	social_provider.value === 'google'
+		? translate('auth.login.signInGoogle')
+		: translate('auth.login.signInFacebook')
+);
+
+function continueWithSocialProvider() {
+	if (!social_provider.value) return;
+	void handleSocial(social_provider.value);
 }
 </script>
 
@@ -64,79 +86,101 @@ function openForgotPassword() {
 						class="auth-email-registered-modal-icon"
 					>
 				</div>
-				<div class="auth-email-registered-modal-text-wrap">
-					<h3 class="auth-email-registered-modal-title">{{ translate('auth.register.emailAlreadyRegistered.title') }}</h3>
-					<p class="auth-email-registered-modal-text">
-						{{ translate('auth.register.emailAlreadyRegistered.description.prefix') }}
-						<strong class="change-strong">{{ email }}</strong>
-						{{ translate('auth.register.emailAlreadyRegistered.description.suffix') }}
-					</p>
-				</div>
+				<template v-if="!has_social_provider">
+					<div class="auth-email-registered-modal-text-wrap">
+						<h3 class="auth-email-registered-modal-title">{{ translate('auth.register.emailAlreadyRegistered.title') }}</h3>
+						<p class="auth-email-registered-modal-text">
+							{{ translate('auth.register.emailAlreadyRegistered.description.prefix') }}
+							<strong class="change-strong">{{ email }}</strong>
+							{{ translate('auth.register.emailAlreadyRegistered.description.suffix') }}
+						</p>
+					</div>
+				</template>
+
+				<template v-else>
+					<div class="auth-email-registered-modal-text-wrap">
+						<h3 class="auth-email-registered-modal-title">{{ translate('auth.register.emailAlreadyRegistered.title') }}</h3>
+						<p class="auth-email-registered-modal-text">
+							{{ translate('auth.register.emailAlreadyRegistered.description.prefixSocial') }}
+							<strong class="change-strong">{{ email }}</strong>
+							{{ translate('auth.register.emailAlreadyRegistered.description.suffixSocial') }}
+						</p>
+					</div>
+				</template>
 			</div>
 
-			<div class="auth-email-registered-modal-form">
-				<div class="auth-email-registered-modal-body">
-					<UiFormField
-						class="auth-email-registered-field"
-						head-class="auth-email-registered-field-head"
-						label-class="auth-email-registered-field-label"
-						label-text-class="auth-email-registered-field-label-text"
-						error-class="auth-email-registered-field-error"
-						:label="translate('auth.register.emailAlreadyRegistered.password')"
-						:error="passwordError"
-					>
-						<UiInput
-							:model-value="password"
-							:type="passwordVisible ? 'text' : 'password'"
-							size="md"
-							class="auth-email-registered-input"
-							:state="passwordError ? 'error' : 'default'"
-							:placeholder="translate('auth.register.emailAlreadyRegistered.enterPassword')"
-							data-testid="auth-email-registered-password-input"
-							@update:model-value="emit('update:password', $event)"
+			<template v-if="has_social_provider">
+				<UiButton variant="outline" tone="neutral" @click="continueWithSocialProvider">
+					<UiSocialIcon :name="social_provider" :size="24" variant="colored" />
+					{{ social_login_label }}
+				</UiButton>
+			</template>
+
+			<template v-else>
+				<div class="auth-email-registered-modal-form">
+					<div class="auth-email-registered-modal-body">
+						<UiFormField
+							class="auth-email-registered-field"
+							head-class="auth-email-registered-field-head"
+							label-class="auth-email-registered-field-label"
+							label-text-class="auth-email-registered-field-label-text"
+							error-class="auth-email-registered-field-error"
+							:label="translate('auth.register.emailAlreadyRegistered.password')"
+							:error="passwordError"
 						>
-							<template #icon-right>
-								<UiButton
-									variant="ghost"
-									tone="neutral"
-									size="sm"
-									class="auth-email-registered-password-toggle"
-									:aria-label="translate('auth.register.emailAlreadyRegistered.togglePassword')"
-									:sr-label="translate('auth.register.emailAlreadyRegistered.togglePassword')"
-									icon-only
-									:no-hover="true"
-									:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
-									:icon-size="24"
-									@click="togglePasswordVisibility"
-								/>
-							</template>
-						</UiInput>
-					</UiFormField>
+							<UiInput
+								:model-value="password"
+								:type="passwordVisible ? 'text' : 'password'"
+								size="md"
+								class="auth-email-registered-input"
+								:state="passwordError ? 'error' : 'default'"
+								:placeholder="translate('auth.register.emailAlreadyRegistered.enterPassword')"
+								data-testid="auth-email-registered-password-input"
+								@update:model-value="emit('update:password', $event)"
+							>
+								<template #icon-right>
+									<UiButton
+										variant="ghost"
+										tone="neutral"
+										size="sm"
+										class="auth-email-registered-password-toggle"
+										:aria-label="translate('auth.register.emailAlreadyRegistered.togglePassword')"
+										:sr-label="translate('auth.register.emailAlreadyRegistered.togglePassword')"
+										icon-only
+										:no-hover="true"
+										:icon="passwordVisible ? 'regular-eye' : 'regular-eye-slash'"
+										:icon-size="24"
+										@click="togglePasswordVisibility"
+									/>
+								</template>
+							</UiInput>
+						</UiFormField>
 
-					<button
-						type="button"
-						class="auth-email-registered-forgot-link"
-						data-testid="auth-email-registered-forgot-link"
-						@click="openForgotPassword"
-					>
-						{{ translate('auth.register.emailAlreadyRegistered.forgotPassword') }}
-					</button>
-				</div>
+						<button
+							type="button"
+							class="auth-email-registered-forgot-link"
+							data-testid="auth-email-registered-forgot-link"
+							@click="openForgotPassword"
+						>
+							{{ translate('auth.register.emailAlreadyRegistered.forgotPassword') }}
+						</button>
+					</div>
 
-				<div class="auth-email-registered-modal-actions">
-					<UiButton
-						type="button"
-						variant="filled"
-						tone="neutral"
-						size="md"
-						class="auth-email-registered-modal-continue"
-						data-testid="auth-email-registered-modal-continue"
-						@click="emit('continue')"
-					>
-						{{ translate('auth.register.emailAlreadyRegistered.continue') }}
-					</UiButton>
+					<div class="auth-email-registered-modal-actions">
+						<UiButton
+							type="button"
+							variant="filled"
+							tone="neutral"
+							size="md"
+							class="auth-email-registered-modal-continue"
+							data-testid="auth-email-registered-modal-continue"
+							@click="emit('continue')"
+						>
+							{{ translate('auth.register.emailAlreadyRegistered.continue') }}
+						</UiButton>
+					</div>
 				</div>
-			</div>
+			</template>
 		</section>
 	</UiModal>
 </template>

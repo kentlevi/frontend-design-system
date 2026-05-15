@@ -38,6 +38,7 @@ export interface NonMemberLoginVerification {
 	otp_sent?: boolean;
 	cooldown_remaining?: number;
 	code?: string;
+	provider?: string;
 }
 
 export interface NonMemberVerificationCache {

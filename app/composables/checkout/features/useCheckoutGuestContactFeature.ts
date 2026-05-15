@@ -12,7 +12,6 @@ import {
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext'
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip'
 import {
-	fetchAndStoreUser,
 	loginMemberUser,
 	requestNonMemberLoginVerification,
 } from '~/services/auth/auth.service'
@@ -72,6 +71,7 @@ export function useCheckoutGuestContactFeature() {
 	const registered_email_password = ref('')
 	const registered_email_password_error = ref('')
 	const registered_email_password_visible = ref(false)
+	const registered_email_social_provider = ref('')
 	const CHECKOUT_GUEST_VERIFICATION_LOADING_KEY =
 		'checkout_guest_contact_verification'
 	const registered_email_blank_message = translate(
@@ -106,6 +106,7 @@ export function useCheckoutGuestContactFeature() {
 		registered_email_password.value = ''
 		registered_email_password_error.value = ''
 		registered_email_password_visible.value = false
+		registered_email_social_provider.value = ''
 	}
 
 	function closeEmailAlreadyRegisteredModal() {
@@ -123,7 +124,7 @@ export function useCheckoutGuestContactFeature() {
 		closeEmailAlreadyRegisteredModal()
 	}
 
-	function openEmailAlreadyRegisteredModal(_social_provider: string) {
+	function openEmailAlreadyRegisteredModal(social_provider: string) {
 		verification_store.patchModalState({
 			is_open: false,
 		})
@@ -137,6 +138,7 @@ export function useCheckoutGuestContactFeature() {
 		is_registered_email_forgot_password_modal_open.value = false
 		should_restore_registered_email_modal.value = false
 		resetRegisteredEmailState()
+		registered_email_social_provider.value = social_provider
 		is_email_already_registered_modal_open.value = true
 	}
 
@@ -545,6 +547,7 @@ export function useCheckoutGuestContactFeature() {
 		registered_email_password,
 		registered_email_password_error,
 		registered_email_password_visible,
+		registered_email_social_provider,
 		is_registered_email_forgot_password_modal_open,
 		setEmailAlreadyRegisteredModalOpen,
 		onRegisteredEmailPasswordInput,

@@ -27,7 +27,9 @@
         "title": "Email is already registered.",
         "description": {
           "prefix": "The email address ",
-          "suffix": " is already registered. Please enter your password to continue."
+          "suffix": " is already registered. Please enter your password to continue.",
+          "prefixSocial": "The email address ",
+          "suffixSocial": " is already registered in our system through social media login. Please continue logging in with your Google account."
         },
         "password": "Password",
         "enterPassword": "Enter Password",

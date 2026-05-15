@@ -21,6 +21,7 @@ const {
 	registered_email_password,
 	registered_email_password_error,
 	registered_email_password_visible,
+	registered_email_social_provider,
 	is_registered_email_forgot_password_modal_open,
 	setEmailAlreadyRegisteredModalOpen,
 	onRegisteredEmailPasswordInput,
@@ -145,6 +146,7 @@ const { is_authenticated, role_code } = storeToRefs(users_store)
 		:password="registered_email_password"
 		:password-error="registered_email_password_error"
 		:password-visible="registered_email_password_visible"
+		:social-provider="registered_email_social_provider"
 		@update:model-value="setEmailAlreadyRegisteredModalOpen"
 		@update:password="onRegisteredEmailPasswordInput"
 		@update:password-visible="setRegisteredEmailPasswordVisible"
