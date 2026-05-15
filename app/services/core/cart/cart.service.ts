@@ -6,6 +6,7 @@ import type { CartItem } from "~/types/cart/cart"
 import { useCartApiService } from "./api.service"
 import { useQuoteApiService } from "../quote/api.service"
 import { base64ToFile } from "~/utils/file/file"
+import { storeToRefs } from "pinia"
 
 export const useCartService = (caller : string) => {
 
@@ -100,7 +101,7 @@ export const useCartService = (caller : string) => {
 		cart_store.items = [...unique_drafts, ...cart_items] as CartItem[]
 
 		// Default check select all after population
-		cart_store.selected_ids = cart_store.items.map((item) => item.local_identity);
+		cart_store.selected_ids = cart_store.items.map((item : CartItem) => item.local_identity);
 
 		cart_store.initQuantityMap()
 	}
@@ -289,12 +290,12 @@ export const useCartService = (caller : string) => {
 	const sendUnsaveToServer = async () => {
 		await sendUnsaveArtwork()
 
-		const unsave_i = cart_store.items.filter( e => !e.id )
+		const unsave_i = cart_store.items.filter( (e: CartItem) => !e.id )
 
 		if( !unsave_i.length )
 			return
 
-		const cart_payload = unsave_i.map(item => {
+		const cart_payload = unsave_i.map((item: CartItem) => {
 			return {
 				product_config_mapping_id: item.product_config_mapping_id,
 				color_id: item.color_id,
@@ -333,11 +334,9 @@ export const useCartService = (caller : string) => {
 				if (a_file) {
 					// 3. This will now properly wait for S3 to respond
 					const uploading_request = await cart_api_service.sendToS3(a_file)
-					console.log(uploading_request.ok.value)
 					// 4. Check if upload was successful
 					if (uploading_request.ok.value) {
 						const uploaded_file = uploading_request.filename.value
-						console.log(e.local_identity, uploaded_file)
 						// 5. Update Pinia store
 						cart_store.updateItemInCart(e.local_identity, {
 							artwork_file: uploaded_file,
@@ -469,7 +468,7 @@ export const useCartService = (caller : string) => {
 
 			updating_item.value = true
 
-			const current_item = cart_store.items.find(e => e.local_identity == local_identity)
+			const current_item = cart_store.items.find((e: CartItem) => e.local_identity == local_identity)
 
 			if(!current_item) {
 				console.warn('Invalid local identity.')

@@ -178,7 +178,7 @@ export const useCartStore = defineStore('cart', () => {
 	const updateItemInCart = (local_identity: string, updates: Partial<CartItem>) => {
 		// Find the index of the item
 		const index = items.value.findIndex(item => item.local_identity === local_identity);
-		console.log(index)
+
 		if (index !== -1) {
 			const current_item = items.value[index];
 
