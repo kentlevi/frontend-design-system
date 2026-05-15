@@ -4,6 +4,17 @@ import { sendOrderConfirmationEmail, sendArtworkReminder } from "~/services/orde
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
 import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral"
 import { useCartStore } from "~/stores/core/cart/cart.store"
+import {
+	PAYMENT_LOCK_KEY,
+	clearPaymentLock,
+	readCompletionSnapshot,
+	readPaymentLock,
+} from "~/utils/checkout/paymentLock"
+
+// Stable name so we can reacquire the tab via window.open after a checkout
+// reload (browsers reuse a window with the same target name within the
+// same browsing context group).
+const PAYMENT_TAB_NAME = 'mu_payment_tab'
 
 export const useTossPayment = () => {
 
@@ -37,7 +48,6 @@ export const useTossPayment = () => {
 
 				// ONLY if user manually closed
 				if (!is_manual_close) {
-					console.log('Popup manually closed')
 					checkout_store.setCheckoutReady(false)
 					checkout_store.setPaymentWindowOpen(false)
 				}
@@ -57,8 +67,10 @@ export const useTossPayment = () => {
 	}
 
 	// =========================
-	// POPUP HANDLING
+	// NEW TAB HANDLING
 	// =========================
+	// Open the payment URL in a new tab using a stable name so a later
+	// reload of the checkout page can reacquire and close it.
 	const openPaymentPopup = (url: string | null) => {
 
 		checkout_store.setPaymentWindowOpen(true)
@@ -67,23 +79,7 @@ export const useTossPayment = () => {
 			throw new Error('No URL provided')
 		}
 
-		const width = 800
-		const height = 1000
-
-		const dual_screen_left = window.screenLeft ?? window.screenX
-		const dual_screen_top = window.screenTop ?? window.screenY
-
-		const screen_width = window.innerWidth ?? document.documentElement.clientWidth
-		const screen_height = window.innerHeight ?? document.documentElement.clientHeight
-
-		const left = dual_screen_left + (screen_width - width) / 2
-		const top = dual_screen_top + (screen_height - height) / 2
-
-		popup = window.open(
-			'',
-			'_blank',
-			`width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
-		)
+		popup = window.open(url, PAYMENT_TAB_NAME)
 
 		if (!popup) {
 			throw new Error('Popup blocked')
@@ -91,9 +87,7 @@ export const useTossPayment = () => {
 
 		checkout_store.setCheckoutReady(true)
 
-		popup.location.href = url
-
-		// start watching popup
+		// start watching tab
 		startPopupWatcher()
 	}
 
@@ -105,8 +99,27 @@ export const useTossPayment = () => {
 
 		checkout_store.setCheckoutReady(false)
 		checkout_store.setPaymentWindowOpen(false)
+		clearPaymentLock()
 		popup?.close()
 		popup = null
+	}
+
+	// Treat a fresh mount-with-lock as "user reloaded mid-payment" → cancel:
+	// try to reacquire the still-open payment tab by its name and close it,
+	// then clear the lock so the form is editable again. If the named tab
+	// is gone, modern popup blockers prevent window.open from spawning a
+	// spurious blank tab without a user gesture (returns null), so this is
+	// safe to call unconditionally.
+	const cancelInFlightPayment = () => {
+		try {
+			const orphan = window.open('', PAYMENT_TAB_NAME)
+			orphan?.close()
+		} catch {
+			/* cross-origin or blocker — best-effort */
+		}
+		checkout_store.setCheckoutReady(false)
+		checkout_store.setPaymentWindowOpen(false)
+		clearPaymentLock()
 	}
 
 	// =========================
@@ -114,7 +127,21 @@ export const useTossPayment = () => {
 	// =========================
 	const listenPaymentResult = () => {
 
-		const handler = async (event: MessageEvent) => {
+		// Reload during payment = cancel. Close the orphan tab and clear
+		// state so the user can edit / resubmit.
+		if (readPaymentLock()) {
+			cancelInFlightPayment()
+		}
+
+		const storage_handler = (event: StorageEvent) => {
+			if (event.key !== PAYMENT_LOCK_KEY) return
+			if (event.newValue === null) {
+				checkout_store.setCheckoutReady(false)
+				checkout_store.setPaymentWindowOpen(false)
+			}
+		}
+
+		const message_handler = async (event: MessageEvent) => {
 
 			const data = event.data
 
@@ -124,11 +151,17 @@ export const useTossPayment = () => {
 			) {
 				const order_id = data?.data?.id
 				try {
+					// Prefer the snapshot taken at submit time; falling
+					// back to current form state preserves behavior if the
+					// snapshot is missing for any reason.
+					const snapshot = readCompletionSnapshot()
+					const payload = snapshot
+						? { order_id, ...snapshot }
+						: {
+							...buildCompleteCheckoutPayload(order_id),
+							selected_cart_ids: selected_real_ids.value,
+						}
 					closePaymentPopup()
-					const payload = {
-						...buildCompleteCheckoutPayload(order_id),
-						selected_cart_ids : selected_real_ids.value
-					}
 					await completeCheckoutRequest(payload)
 					checkout_store.cleanCheckoutStates()
 					completeCheckout(true, order_id)
@@ -149,9 +182,13 @@ export const useTossPayment = () => {
 			}
 		}
 
-		window.addEventListener('message', handler)
+		window.addEventListener('message', message_handler)
+		window.addEventListener('storage', storage_handler)
 
-		return () => window.removeEventListener('message', handler)
+		return () => {
+			window.removeEventListener('message', message_handler)
+			window.removeEventListener('storage', storage_handler)
+		}
 	}
 
 	return {

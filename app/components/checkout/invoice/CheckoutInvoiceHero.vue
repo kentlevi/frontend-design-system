@@ -25,9 +25,9 @@ const {
 				class="checkout-invoice-logo"
 			>
 			<div class="checkout-invoice-brand-copy">
-				<div>{{ t('checkout.invoice.contact.tel') }}</div>
-				<div>{{ t('checkout.invoice.contact.email') }}</div>
-				<div>{{ t('checkout.invoice.contact.website') }}</div>
+				<div>{{ translate('checkout.invoice.contact.tel') }}</div>
+				<div>{{ translate('checkout.invoice.contact.email') }}</div>
+				<div>{{ translate('checkout.invoice.contact.website') }}</div>
 			</div>
 		</div>
 

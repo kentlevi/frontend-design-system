@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+import { useAccountAvatarSync } from '~/composables/features/account/top/useAccountAvatarSync';
+import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
+
+const { t: translate } = useI18n();
+const {
+	display_avatar,
+	display_name,
+	user_initial,
+	display_name_rank,
+	rank_src
+} = useProfilePhotoDisplay();
+
+useAccountAvatarSync();
+
+</script>
+
 <template>
 	<MuLinearWrapper align="center" :gap="12" data-testid="account-shell-user">
 		<div class="account-shell-avatar">
@@ -9,32 +29,18 @@
 			>
 			<template v-else>{{ user_initial }}</template>
 			<img
-				:src="account_level_badge_src"
+				v-if="rank_src"
+				:src="rank_src"
 				:alt="translate('account.shell.level')"
 				class="account-shell-avatar-badge"
 			>
 		</div>
 		<MuLinearWrapper direction="column" :gap="4">
 			<MuHeading variant="5" weight="bold" color="text-primary">{{ display_name }}</MuHeading>
-			<MuText size="medium" color="text-secondary">{{ translate('account.shell.level') }}</MuText>
+			<MuText size="medium" color="text-secondary">{{ display_name_rank }}</MuText>
 		</MuLinearWrapper>
 	</MuLinearWrapper>
 </template>
-
-<script setup lang="ts">
-import MuHeading from '~/components/base/MuHeading.vue';
-import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
-import MuText from '~/components/base/MuText.vue';
-import { useAccountAvatarSync } from '~/composables/features/account/top/useAccountAvatarSync';
-import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
-
-const { t: translate } = useI18n();
-const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
-
-useAccountAvatarSync();
-
-const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
-</script>
 
 <style scoped lang="scss">
 .account-shell-avatar {

@@ -24,6 +24,7 @@ const {
 		data-testid="account-address-book-header"
 		justify="space-between"
 		align="center"
+		:mobile="{ direction: 'column', align: 'flex-start', gap: 16 }"
 	>
 		<MuHeading variant="4" weight="bold" data-testid="account-address-book-title">
 			{{ translate('account.addressBook.title') }}
@@ -50,11 +51,3 @@ const {
 	</MuLinearWrapper>
 </template>
 
-<style scoped lang="scss">
-@media (max-width: 980px) {
-	.account-address-book-header {
-		align-items: flex-start !important;
-		flex-direction: column !important;
-	}
-}
-</style>

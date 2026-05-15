@@ -150,6 +150,7 @@ const {
 			justify="space-between"
 			align="center"
 			:gap="24"
+			:mobile="{ direction: 'column', align: 'flex-start' }"
 		>
 			<template v-if="props.loading">
 				<MuLinearWrapper
@@ -306,19 +307,4 @@ const {
 	}
 }
 
-@media (max-width: 640px) {
-	.account-address-book-card {
-		.account-address-book-card-header {
-			.account-address-book-card-title-row {
-				align-items: flex-start !important;
-				flex-direction: column !important;
-			}
-		}
-
-		.account-address-book-card-body {
-			align-items: flex-start !important;
-			flex-direction: column !important;
-		}
-	}
-}
 </style>

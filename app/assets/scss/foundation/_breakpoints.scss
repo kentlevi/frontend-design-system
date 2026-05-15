@@ -1,0 +1,36 @@
+// Responsive breakpoints (desktop-first / max-width based)
+//
+// Design tiers:
+//   - Desktop (base, canvas 1920px)  -> no media query
+//   - Tablet                         -> @media (max-width: 1024px)
+//   - Mobile                         -> @media (max-width: 600px)
+//
+// Usage:
+//   @use 'foundation/breakpoints' as bp;
+//
+//   .my-element {
+//     padding: 32px;
+//
+//     @include bp.tablet {
+//       padding: 24px;
+//     }
+//
+//     @include bp.mobile {
+//       padding: 16px;
+//     }
+//   }
+
+$bp-tablet: 1024px;
+$bp-mobile: 600px;
+
+@mixin tablet {
+	@media only screen and (max-width: $bp-tablet) {
+		@content;
+	}
+}
+
+@mixin mobile {
+	@media only screen and (max-width: $bp-mobile) {
+		@content;
+	}
+}
