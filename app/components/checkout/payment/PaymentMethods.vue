@@ -33,6 +33,8 @@ const {
 	selected_payment_method
 } = storeToRefs(useMainCheckOutStore())
 
+const is_loading = ref(true)
+
 useHeightTransition(
 	payment_meta_swap_wrapper_ref,
 	selected_payment_method,
@@ -46,13 +48,35 @@ useHeightTransition(
 );
 
 onMounted(async()=>{
-	await getAvailablePaymentMethod()
+	try {
+		await getAvailablePaymentMethod()
+	} finally {
+		is_loading.value = false
+	}
 })
 </script>
 
 <template>
 	<div class="checkout-member-payment-group">
-		<div class="checkout-member-card-grid checkout-member-card-grid--payments">
+		<template v-if="is_loading">
+			<div class="checkout-member-card-grid checkout-member-card-grid--payments" aria-busy="true" aria-live="polite">
+				<div
+					v-for="i in 3"
+					:key="i"
+					class="checkout-member-choice-card checkout-member-choice-card--payment checkout-member-choice-card--skeleton"
+				>
+					<UiSkeleton :width="38" :height="38" :border-radius="10" />
+					<UiSkeleton :height="14" :width="80" />
+				</div>
+			</div>
+			<div class="checkout-member-payment-meta">
+				<UiSkeleton :height="14" :width="64" />
+				<div class="brands-loading">
+					<UiSkeleton v-for="i in 4" :key="i" :height="24" :width="48" />
+				</div>
+			</div>
+		</template>
+		<div v-else class="checkout-member-card-grid checkout-member-card-grid--payments">
 			<button
 				v-for="method in available_payment_methods"
 				:key="method.id"
@@ -154,6 +178,10 @@ onMounted(async()=>{
 			min-height: 62px;
 		}
 
+		&.checkout-member-choice-card--skeleton {
+			cursor: default;
+		}
+
 		.checkout-member-choice-icon {
 			width: 38px;
 			height: 38px;
@@ -193,6 +221,13 @@ onMounted(async()=>{
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
+
+	.brands-loading {
+		display: flex;
+		align-items: center;
+		gap:10px;
+		flex-wrap: nowrap;
+	}
 
 	.checkout-member-payment-brands {
 		display: flex;

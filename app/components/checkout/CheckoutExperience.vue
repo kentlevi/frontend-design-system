@@ -70,7 +70,71 @@ function setCompleteLoaderRef(
 
 		<template #main>
 			<CheckoutGuestContactFeature />
-			<CheckoutAddressFeature />
+			<ClientOnly>
+				<CheckoutAddressFeature />
+				<template #fallback>
+					<div class="checkout-address-loader" aria-busy="true" aria-live="polite">
+						<!-- "My shipping address" radio + "View" link -->
+						<div class="checkout-address-loader-row">
+							<div class="checkout-address-loader-inline">
+								<UiSkeleton :width="20" :height="20" circle />
+								<UiSkeleton :height="16" :width="100" />
+							</div>
+							<UiSkeleton :height="14" :width="90" />
+						</div>
+
+						<!-- Saved address card -->
+						<div class="checkout-address-loader-card">
+							<div class="checkout-address-loader-card-head">
+								<UiSkeleton :height="18" :width="120" />
+								<UiSkeleton :height="22" :width="78" :border-radius="999" />
+							</div>
+							<div class="checkout-address-loader-card-line">
+								<UiSkeleton :width="16" :height="16" />
+								<UiSkeleton :height="14" :width="160" />
+							</div>
+							<div class="checkout-address-loader-card-line">
+								<UiSkeleton :width="16" :height="16" />
+								<UiSkeleton :height="14" :width="260" />
+								<UiSkeleton class="checkout-address-loader-card-tag" :height="22" :width="48" :border-radius="999" />
+							</div>
+							<div class="checkout-address-loader-card-line">
+								<UiSkeleton :width="16" :height="16" />
+								<UiSkeleton :height="14" :width="80" />
+							</div>
+						</div>
+
+						<!-- "Ship to another address" radio -->
+						<div class="checkout-address-loader-inline">
+							<UiSkeleton :width="20" :height="20" circle />
+							<UiSkeleton :height="16" :width="140" />
+						</div>
+
+						<!-- Shipping method heading + note -->
+						<div class="checkout-address-loader-row">
+							<UiSkeleton :height="16" :width="80" />
+							<UiSkeleton :height="14" :width="240" />
+						</div>
+
+						<!-- Shipping method card -->
+						<div class="checkout-address-loader-shipping-card">
+							<UiSkeleton :width="36" :height="36" :border-radius="10" />
+							<div class="checkout-address-loader-shipping-copy">
+								<UiSkeleton :height="14" :width="120" />
+								<UiSkeleton :height="12" :width="140" />
+							</div>
+							<UiSkeleton :height="14" :width="60" />
+						</div>
+
+						<!-- Drop shipping checkbox -->
+						<div class="checkout-address-loader-inline">
+							<UiSkeleton :width="18" :height="18" :border-radius="4" />
+							<UiSkeleton :height="14" :width="120" />
+							<UiSkeleton :width="14" :height="14" circle />
+						</div>
+					</div>
+				</template>
+			</ClientOnly>
 			<CheckoutPaymentFeature />
 		</template>
 
@@ -130,6 +194,69 @@ function setCompleteLoaderRef(
 	.checkout-member-summary {
 		position: sticky;
 		top: 100px;
+	}
+}
+
+.checkout-address-loader,
+.checkout-payment-loader {
+	display: grid;
+	gap: 14px;
+}
+
+.checkout-address-loader {
+	.checkout-address-loader-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.checkout-address-loader-inline {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.checkout-address-loader-card {
+		display: grid;
+		gap: 12px;
+		padding: 18px 20px;
+		border: 1px solid var(--gray-40);
+		border-radius: 12px;
+		background: var(--contrast-light);
+	}
+
+	.checkout-address-loader-card-head {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.checkout-address-loader-card-line {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.checkout-address-loader-card-tag {
+		margin-left: auto;
+	}
+
+	.checkout-address-loader-shipping-card {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 14px 16px;
+		border: 1px solid var(--gray-40);
+		border-radius: 12px;
+		background: var(--contrast-light);
+		min-height: 62px;
+	}
+
+	.checkout-address-loader-shipping-copy {
+		flex: 1;
+		display: grid;
+		gap: 6px;
 	}
 }
 

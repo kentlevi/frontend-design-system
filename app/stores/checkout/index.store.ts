@@ -46,7 +46,10 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
 
-	const checkout_ready = ref<boolean>(false)
+	// True while a payment is being processed (popup open / awaiting result).
+	// The submit button reads this together with data-loading flags to decide
+	// whether to disable itself.
+	const is_processing = ref<boolean>(false)
 	const payment_window_open = ref<boolean>(false)
 
 	const patchGuestContactState = (
@@ -75,8 +78,8 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_payment_method.value = data
 	}
 
-	const setCheckoutReady = (value: boolean) => {
-		checkout_ready.value = value
+	const setProcessing = (value: boolean) => {
+		is_processing.value = value
 	}
 
 	const setPaymentWindowOpen = (value: boolean) => {
@@ -120,7 +123,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		selected_drop_address_id,
 		selected_shipping_method_id,
 		selected_payment_method,
-		checkout_ready,
+		is_processing,
 		payment_window_open,
 		form_state,
 		form_type,
@@ -142,7 +145,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		setDropAddressId,
 		setShippingMethodId,
 		setPaymentMethod,
-		setCheckoutReady,
+		setProcessing,
 		setPaymentWindowOpen,
 		cleanCheckoutStates,
 

@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n';
 import { useCheckoutFlow } from '~/composables/checkout/main/useCheckoutFlow';
 import { useCheckoutSummaryFlow } from '~/composables/checkout/summary/useCheckoutSummaryFlow';
 import { useTossPayment } from '~/composables/payments/toss-pay/useTossPayment';
+import { useProductionShippingStore } from '~/stores/production-shipping/production-shipping.store';
+import { useMainCheckOutStore } from '~/stores/checkout/index.store';
 import { formatPrice } from '~/utils/currency/formatPrice';
 
 const props = defineProps<{
@@ -33,7 +35,7 @@ const summary_key_base = computed(() => `checkout.${props.tone}.summary`);
 const is_mounted = ref<boolean>(false)
 
 const {
-	checkout_ready,
+	is_processing,
 	submitCheckout,
 } = useCheckoutFlow();
 
@@ -43,6 +45,18 @@ const {
 	sub_total_cost,
 	shipping_cost,
 } = useCheckoutSummaryFlow();
+
+const { is_loaded: shipping_loaded } = storeToRefs(useProductionShippingStore());
+const { selected_payment_method } = storeToRefs(useMainCheckOutStore());
+
+// Submit is disabled while the page is still pulling required data
+// (shipping + payment method) and while a payment is in flight.
+const is_submit_disabled = computed(() =>
+	!is_mounted.value
+	|| is_processing.value
+	|| !shipping_loaded.value
+	|| !selected_payment_method.value
+);
 
 const { listenPaymentResult } = useTossPayment();
 let cleanup_payment_result_listener: (() => void) | null = null;
@@ -92,9 +106,7 @@ onBeforeUnmount(() => {
 					<span v-if="is_mounted">
 						{{ formatPrice(sub_total_cost) }}
 					</span>
-					<span v-else>
-						{{ formatPrice(0) }}
-					</span>
+					<UiSkeleton v-else :height="14" :width="64" />
 				</div>
 			</div>
 			<div class="checkout-summary-line">
@@ -138,21 +150,29 @@ onBeforeUnmount(() => {
 						</div>
 					</UiTooltip>
 				</div>
-				<div class="checkout-summary-line-value">{{ formatPrice(shipping_cost) }}</div>
+				<div class="checkout-summary-line-value">
+					<span v-if="is_mounted && shipping_loaded">
+						{{ formatPrice(shipping_cost) }}
+					</span>
+					<UiSkeleton v-else :height="14" :width="64" />
+				</div>
 			</div>
 			<div class="checkout-summary-line">
 				<div class="checkout-summary-line-label">{{ translate(`${summary_key_base}.discounts`) }}</div>
-				<div class="checkout-summary-line-value is-discount">-{{ formatPrice(total_discount) }}</div>
+				<div class="checkout-summary-line-value is-discount">
+					<span v-if="is_mounted">
+						-{{ formatPrice(total_discount) }}
+					</span>
+					<UiSkeleton v-else :height="14" :width="64" />
+				</div>
 			</div>
 			<div class="checkout-summary-line is-total">
 				<div class="checkout-summary-line-label">{{ translate(`${summary_key_base}.total`) }}</div>
 				<div class="checkout-summary-line-value">
-					<span v-if="is_mounted">
+					<span v-if="is_mounted && shipping_loaded">
 						{{ formatPrice(total_cost) }}
 					</span>
-					<span v-else>
-						{{ formatPrice(0) }}
-					</span>
+					<UiSkeleton v-else :height="22" :width="110" />
 				</div>
 			</div>
 		</div>
@@ -162,7 +182,7 @@ onBeforeUnmount(() => {
 			tone="neutral"
 			size="lg"
 			class="checkout-summary-submit"
-			:disabled="checkout_ready"
+			:disabled="is_submit_disabled"
 			@click="submitCheckout"
 		>
 			{{ props.completeLabel }}

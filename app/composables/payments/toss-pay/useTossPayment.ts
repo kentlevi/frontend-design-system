@@ -11,9 +11,6 @@ import {
 	readPaymentLock,
 } from "~/utils/checkout/paymentLock"
 
-// Stable name so we can reacquire the tab via window.open after a checkout
-// reload (browsers reuse a window with the same target name within the
-// same browsing context group).
 const PAYMENT_TAB_NAME = 'mu_payment_tab'
 
 export const useTossPayment = () => {
@@ -48,7 +45,7 @@ export const useTossPayment = () => {
 
 				// ONLY if user manually closed
 				if (!is_manual_close) {
-					checkout_store.setCheckoutReady(false)
+					checkout_store.setProcessing(false)
 					checkout_store.setPaymentWindowOpen(false)
 				}
 
@@ -69,8 +66,6 @@ export const useTossPayment = () => {
 	// =========================
 	// NEW TAB HANDLING
 	// =========================
-	// Open the payment URL in a new tab using a stable name so a later
-	// reload of the checkout page can reacquire and close it.
 	const openPaymentPopup = (url: string | null) => {
 
 		checkout_store.setPaymentWindowOpen(true)
@@ -85,7 +80,7 @@ export const useTossPayment = () => {
 			throw new Error('Popup blocked')
 		}
 
-		checkout_store.setCheckoutReady(true)
+		checkout_store.setProcessing(true)
 
 		// start watching tab
 		startPopupWatcher()
@@ -97,19 +92,14 @@ export const useTossPayment = () => {
 
 		stopPopupWatcher()
 
-		checkout_store.setCheckoutReady(false)
+		checkout_store.setProcessing(false)
 		checkout_store.setPaymentWindowOpen(false)
 		clearPaymentLock()
 		popup?.close()
 		popup = null
 	}
 
-	// Treat a fresh mount-with-lock as "user reloaded mid-payment" → cancel:
-	// try to reacquire the still-open payment tab by its name and close it,
-	// then clear the lock so the form is editable again. If the named tab
-	// is gone, modern popup blockers prevent window.open from spawning a
-	// spurious blank tab without a user gesture (returns null), so this is
-	// safe to call unconditionally.
+	//check for payment tabs open
 	const cancelInFlightPayment = () => {
 		try {
 			const orphan = window.open('', PAYMENT_TAB_NAME)
@@ -117,7 +107,7 @@ export const useTossPayment = () => {
 		} catch {
 			/* cross-origin or blocker — best-effort */
 		}
-		checkout_store.setCheckoutReady(false)
+		checkout_store.setProcessing(false)
 		checkout_store.setPaymentWindowOpen(false)
 		clearPaymentLock()
 	}
@@ -136,7 +126,7 @@ export const useTossPayment = () => {
 		const storage_handler = (event: StorageEvent) => {
 			if (event.key !== PAYMENT_LOCK_KEY) return
 			if (event.newValue === null) {
-				checkout_store.setCheckoutReady(false)
+				checkout_store.setProcessing(false)
 				checkout_store.setPaymentWindowOpen(false)
 			}
 		}

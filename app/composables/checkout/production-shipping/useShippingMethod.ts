@@ -23,7 +23,7 @@ export function useShippingMethod() {
 	const { is_authenticated } = storeToRefs(useUsersStore())
 	const { shipping_form } = useUserAddressFormStateCheckoutContext()
 	const { selected_ids } = storeToRefs(cart_store)
-	const { available_shipping_methods, is_loading } = storeToRefs(production_shipping_store)
+	const { available_shipping_methods, is_loading, is_loaded } = storeToRefs(production_shipping_store)
 
 	const active_shipping_methods = computed<ShippingMethodItem[]>(() =>
 		mapShippingMethodDataToUi(available_shipping_methods.value)
@@ -199,6 +199,7 @@ export function useShippingMethod() {
 	return {
 		translate,
 		is_loading,
+		is_loaded,
 
 		production_shipping_id,
 		shipping_method_id,

@@ -5,6 +5,7 @@ import ShippingMethodSkeletonLoader from '~/components/checkout/shipping/Skeleto
 const {
 	translate,
 	is_loading,
+	is_loaded,
 	active_shipping_methods,
 	selected_shipping_key,
 	selectShippingMethod,
@@ -23,7 +24,7 @@ const {
 		</div>
 
 		<ShippingMethodSkeletonLoader
-			v-if="is_loading || active_shipping_methods.length === 0"
+			v-if="is_loading || !is_loaded"
 		/>
 		<template v-else>
 			<div

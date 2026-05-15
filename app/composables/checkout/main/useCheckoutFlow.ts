@@ -25,7 +25,7 @@ export const useCheckoutFlow = () => {
 	const checkout_store = useMainCheckOutStore()
 	const {
 		guest_contact_state,
-		checkout_ready,
+		is_processing,
 		selected_shipping_method_id,
 		selected_payment_method,
 		drop_shipping_enabled,
@@ -170,7 +170,7 @@ export const useCheckoutFlow = () => {
 	})
 
 	return {
-		checkout_ready,
+		is_processing,
 		submitCheckout
 	}
 }
