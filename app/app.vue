@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import LoginSuccessToast from '~/components/layout/LoginSuccessToast.vue';
+import MuTooltip from '~/components/base/MuTooltip.vue';
 import {
 	COUNTRY_TO_HTML_LANG,
 	DEFAULT_COUNTRY,
@@ -86,6 +87,8 @@ useHead(() => ({
 			:loader-height="current_overlay.loaderHeight"
 			:animation-path="current_overlay.animationPath"
 		/>
+
+		<MuTooltip />
 	</NuxtLayout>
 	<LoginSuccessToast />
 </template>

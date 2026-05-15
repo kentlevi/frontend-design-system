@@ -40,7 +40,7 @@ const handleSave = () => {
 	<UiModal
 		:model-value="props.modelValue"
 		title="Coupons"
-		align="top"
+		align="center"
 		width="708px"
 		padding="0"
 		gap="0"

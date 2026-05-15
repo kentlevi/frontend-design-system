@@ -37,7 +37,7 @@ defineEmits(['update:modelValue']);
 				</MuLinearWrapper>
 				<MuText color="abyss-40">{{ coupon.description }}</MuText>
 			</MuLinearWrapper>
-			<MuLinearWrapper direction="column" justify="space-between" align="center">
+			<MuLinearWrapper direction="column" justify="space-between" align="flex-end">
 				<MuText v-if="coupon.valid_until" color="abyss-40" weight="semi-bold">
 					Expiration: {{ coupon.valid_until }}
 				</MuText>

@@ -54,7 +54,7 @@
 
 			<div v-if="active_usage_snippet" class="guide-usage">
 				<MuHeading variant="6" weight="bold">How to use</MuHeading>
-				<pre class="guide-code"><code>{{ active_usage_snippet }}</code></pre>
+				<pre class="guide-code guide-usage__playground-snippet"><code>{{ active_usage_snippet }}</code></pre>
 			</div>
 
 			<component
@@ -151,6 +151,7 @@ const section_lookup: Record<string, GuideSection> = {
 	Badge: 'feedback',
 	Toast: 'feedback',
 	Tooltip: 'feedback',
+	MuTooltip: 'feedback',
 	Skeleton: 'feedback',
 	LoadingOverlay: 'feedback',
 	Icon: 'layout',
@@ -366,6 +367,24 @@ const guide_usage_snippets: Record<string, string> = {
   </template>
   <UiText size="small">Tooltip content</UiText>
 </UiTooltip>`,
+	MuTooltip: `<!-- mount once at app/layout root -->
+<MuTooltip />
+
+<!-- anywhere else -->
+<script setup lang="ts">
+const { showTooltip, hideTooltip } = useMuTooltip()
+<\/script>
+
+<template>
+  <button
+    @mouseenter="showTooltip($event, 'Helpful hint', 'top')"
+    @mouseleave="hideTooltip"
+    @focus="showTooltip($event, 'Helpful hint', 'top')"
+    @blur="hideTooltip"
+  >
+    Hover me
+  </button>
+<\/template>`,
 };
 const active_usage_snippet = computed(() => {
 	const name = active_guide_name.value;
@@ -395,9 +414,117 @@ const grouped_guides = computed<GuideGroup[]>(() => {
 		.filter((group): group is GuideGroup => group !== null);
 });
 
+const playground_snippet_selector = '[class$="__playground-snippet"]';
+const playground_copy_button_class = 'guide-playground-copy-btn';
+const bound_snippets = new WeakSet<HTMLElement>();
+let playground_observer: MutationObserver | null = null;
+
+function getPlaygroundSnippetText(snippet: HTMLElement): string {
+	const clone = snippet.cloneNode(true) as HTMLElement;
+	const copied_button = clone.querySelector(`.${playground_copy_button_class}`);
+	copied_button?.remove();
+	return clone.textContent?.trim() ?? '';
+}
+
+async function copyToClipboard(value: string): Promise<boolean> {
+	if (!import.meta.client) return false;
+
+	try {
+		await navigator.clipboard.writeText(value);
+		return true;
+	} catch (_error) {
+		void _error;
+	}
+
+	try {
+		const textarea = document.createElement('textarea');
+		textarea.value = value;
+		textarea.setAttribute('readonly', '');
+		textarea.style.position = 'fixed';
+		textarea.style.opacity = '0';
+		document.body.appendChild(textarea);
+		textarea.select();
+		const copied = document.execCommand('copy');
+		document.body.removeChild(textarea);
+		return copied;
+	} catch {
+		return false;
+	}
+}
+
+function bindPlaygroundCopyButton(snippet: HTMLElement) {
+	if (bound_snippets.has(snippet)) return;
+	bound_snippets.add(snippet);
+
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.className = playground_copy_button_class;
+	button.textContent = 'Copy';
+
+	button.addEventListener('click', async (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const code = getPlaygroundSnippetText(snippet);
+		const copied = await copyToClipboard(code);
+		button.textContent = copied ? 'Copied' : 'Failed';
+		button.classList.toggle('is-copied', copied);
+
+		window.setTimeout(() => {
+			button.textContent = 'Copy';
+			button.classList.remove('is-copied');
+		}, 1400);
+	});
+
+	snippet.appendChild(button);
+}
+
+function attachPlaygroundCopyButtons() {
+	if (!import.meta.client) return;
+
+	const guide_content = document.querySelector('.guide-content');
+	if (!guide_content) return;
+
+	guide_content
+		.querySelectorAll<HTMLElement>(playground_snippet_selector)
+		.forEach(bindPlaygroundCopyButton);
+}
+
+onMounted(() => {
+	if (!import.meta.client) return;
+
+	nextTick(() => {
+		attachPlaygroundCopyButtons();
+
+		const guide_content = document.querySelector('.guide-content');
+		if (!guide_content) return;
+
+		playground_observer = new MutationObserver(() => {
+			attachPlaygroundCopyButtons();
+		});
+
+		playground_observer.observe(guide_content, {
+			childList: true,
+			subtree: true,
+		});
+	});
+});
+
+onBeforeUnmount(() => {
+	if (playground_observer) {
+		playground_observer.disconnect();
+		playground_observer = null;
+	}
+});
+
 function selectGuide(item: GuideItem) {
 	active_component.value = item.component;
 	active_guide_name.value = item.name;
+
+	if (!import.meta.client) return;
+	nextTick(() => {
+		attachPlaygroundCopyButtons();
+	});
 }
 </script>
 
@@ -562,6 +689,46 @@ function selectGuide(item: GuideItem) {
 	font-size: 12px;
 	line-height: 1.45;
 	overflow-x: auto;
+}
+
+:deep([class$='__playground-snippet']) {
+	position: relative;
+}
+
+:deep(.guide-usage__playground-snippet) {
+	padding: 40px 14px 14px;
+}
+
+:deep(.guide-playground-copy-btn) {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.28);
+	background: rgba(255, 255, 255, 0.08);
+	color: #f8fafc;
+	font-size: 11px;
+	font-weight: 600;
+	font-family: var(--font-base);
+	line-height: 1;
+	cursor: pointer;
+	transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.18);
+		border-color: rgba(255, 255, 255, 0.42);
+	}
+
+	&.is-copied {
+		background: #15803d;
+		border-color: #15803d;
+		color: #ffffff;
+	}
 }
 
 :deep(.guide-section) {

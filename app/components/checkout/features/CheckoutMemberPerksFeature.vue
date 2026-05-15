@@ -2,12 +2,14 @@
 import { ref } from 'vue';
 import { useDismissibleTooltip } from '~/composables/checkout/features/useDismissibleTooltip';
 import { useCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
+import { useMuTooltip } from '~/composables/ui/useMuTooltip';
 import { checkoutMemberPointsTooltipProps } from '~/data/checkout/tooltips';
 import MuCard from '~/components/base/MuCard.vue';
 import MuInput from '~/components/base/MuInput.vue';
 import MuText from '~/components/base/MuText.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import CouponsModal from '~/components/features/checkout/modals/coupons-modal/Index.vue';
+import MuTooltip from '~/components/base/MuTooltip.vue';
 
 const {
 	t,
@@ -40,6 +42,18 @@ const {
 const points_tooltip_ref = ref<HTMLElement | null>(null);
 
 useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
+
+const { showTooltip, hideTooltip } = useMuTooltip();
+
+function showCouponTooltip(event: MouseEvent | FocusEvent) {
+	if (!coupon.value) return;
+	showTooltip(
+		event as MouseEvent,
+		`${coupon.value.code} (${coupon.value.name})`,
+		'top',
+		{ iconLeft: { name: 'strong-tags', color: 'blood-base', size: 16 } },
+	);
+}
 </script>
 
 <template>
@@ -98,10 +112,12 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 					<MuInput
 						id="coupon"
 						v-model="form.code"
+						class="coupon_input"
 						name="coupon"
 						:placeholder="t('checkout.member.couponPlaceholder')"
 						:has-error="has_coupon_error"
-						@update:model-value="form.code = form.code.toUpperCase()">
+						@update:model-value="form.code = form.code.toUpperCase()"
+					>
 						<template #inner-right>
 							<MuText class="select_coupon" weight="medium" color="abyss-base" @click="is_coupons_modal_open = true">Select</MuText>
 						</template>
@@ -111,10 +127,19 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 					</UiButton>
 				</div>
 				<MuCard v-else class="coupon" variant="subtle" padding="xsm">
-					<MuLinearWrapper align="center">
-						<MuLinearWrapper align="center" :gap="4">
-							<UiIcon name="light-tags" :size="24" color="#D42941" />
-							<MuText><MuText variant="span" weight="bold">{{ coupon?.code }}</MuText> ({{ coupon?.name }})</MuText>
+					<MuLinearWrapper
+						align="center"
+						tabindex="0"
+						@mouseenter="showCouponTooltip"
+						@mouseleave="hideTooltip"
+					>
+						<MuLinearWrapper
+							class="coupon-info"
+							align="center"
+							:gap="4"
+						>
+							<UiIcon name="strong-tags" :size="24" color="#D42941" />
+							<MuText class="coupon-text"><MuText variant="span" weight="bold">{{ coupon?.code }}</MuText> ({{ coupon?.name }})</MuText>
 						</MuLinearWrapper>
 						<UiButton variant="ghost" tone="neutral" size="sm" @click="is_coupons_modal_open = true">Change</UiButton>
 					</MuLinearWrapper>
@@ -129,6 +154,8 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 			:remove-coupon="removeAppliedCoupon"
 			:applicable-coupons="applicable_coupons"
 		/>
+
+		<MuTooltip />
 	</div>
 </template>
 
@@ -199,6 +226,20 @@ useDismissibleTooltip(points_tooltip_ref, points_tooltip_open);
 			}
 		}
 	}
+}
+
+.coupon_input {
+	&:hover{
+		:deep(.mu-input) {
+			background: var(--gray-20);
+		}
+	}
+}
+
+.coupon-text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .select_coupon{

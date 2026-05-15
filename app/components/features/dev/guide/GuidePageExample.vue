@@ -20,7 +20,7 @@
 			</UiFormField>
 			<UiFormField label="Notes" hint="Optional details for the support team.">
 				<template #default="{ inputId }">
-					<MuTextarea :id="inputId" v-model="notes" :rows="4" />
+					<UiTextarea :id="inputId" v-model="notes" :rows="4" />
 				</template>
 			</UiFormField>
 			<div class="guide-demo-row">
@@ -53,7 +53,7 @@ const skeleton_code = `<UiFormField label="Preferred channel" required>
 
 <UiFormField label="Notes">
   <template #default="{ inputId }">
-    <MuTextarea :id="inputId" v-model="notes" :rows="4" />
+    <UiTextarea :id="inputId" v-model="notes" :rows="4" />
   </template>
 </UiFormField>
 

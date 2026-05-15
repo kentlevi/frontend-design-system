@@ -50,10 +50,6 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({
-	inheritAttrs: false,
-})
-
 type Size = 'lg' | 'md' | 'sm'
 type State = 'default' | 'error' | 'success'
 

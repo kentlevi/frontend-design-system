@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-const variants = ['filled', 'tonal', 'outline'] as const;
+const variants = ['filled', 'tonal', 'outline', 'subtle', 'ghost'] as const;
 </script>
 
 <style lang="scss" scoped>
