@@ -19,6 +19,7 @@ import {
 	socialRedirect,
 } from '~/services/auth/api.service'
 import { useUsersStore } from '~/stores/users/users.store'
+import { useMainCheckOutStore } from '~/stores/checkout/index.store'
 
 export const fetchAndStoreUser = async () => {
 	const user_store = useUsersStore()
@@ -53,6 +54,8 @@ export const fetchAndStoreUser = async () => {
 
 export const logoutUser = async () => {
 	const user_store = useUsersStore()
+	const checkout_store = useMainCheckOutStore()
+	const verification_modal = useVerificationStore()
 
 	try {
 		const response = await logout()
@@ -64,7 +67,9 @@ export const logoutUser = async () => {
 		user_store.clearUser()
 		user_store.auth_state_loading = false
 		user_store.auth_state_ready = true
-
+		checkout_store.cleanCheckoutStates()
+		verification_modal.clearVerificationState()
+		
 		await navigateTo('/')
 
 		return true

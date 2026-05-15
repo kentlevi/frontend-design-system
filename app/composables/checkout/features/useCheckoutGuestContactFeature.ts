@@ -31,6 +31,8 @@ import {
 } from '~/stores/verification.store'
 import { useToastStore } from '~/stores/toast'
 import { useUsersStore } from '~/stores/users/users.store'
+import { loadAddresses } from '~/services/user-address/user-address.service'
+import { ensureDynamicFields } from '~/services/address-dynamic-fields/dynamic-fields.service'
 
 function resolveCooldownUntil(response: unknown): number | null {
 	const cooldown_seconds = getCooldownSecondsFromResponse(response)
@@ -198,6 +200,11 @@ export function useCheckoutGuestContactFeature() {
 				new CustomEvent(LOGIN_SUCCESS_TOAST_TRIGGER_EVENT)
 			)
 		}
+
+		loadAddresses('shipping')
+		loadAddresses('billing')
+		loadAddresses('drop')
+		await ensureDynamicFields()
 
 		is_registered_email_forgot_password_modal_open.value = false
 		closeEmailAlreadyRegisteredModal()

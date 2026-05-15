@@ -32,10 +32,15 @@ export const useVerificationStore = defineStore('verification', () => {
 		Object.assign(verification_state, payload)
 	}
 
+	function clearVerificationState() {
+		Object.assign(verification_state, createVerificationState())
+	}
+
 	return {
 		modal_state,
 		verification_state,
 		patchModalState,
 		patchVerificationState,
+		clearVerificationState
 	}
 })
