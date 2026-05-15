@@ -1,36 +1,36 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';
+import { useProfilePersonalPhoto } from '~/composables/account/profile/useProfilePersonalPhoto';
+import { useProfilePersonalPhotoUI } from '~/composables/account/profile/useProfilePersonalPhotoUI';
 
-defineProps<{
-	displayAvatar: string | null | undefined
-	userInitial: string
-	photoInlineError: string
-}>()
+const {
+	display_avatar,
+	user_initial,
+	photo_inline_error,
 
-defineEmits<{
-	(e: 'upload-click'): void
-	(e: 'delete-click'): void
-}>()
+	openFilePicker,
+	openDeletePhotoModal,
+} = useProfilePersonalPhoto()
 
-const { t: translate } = useI18n();
+const { translate } = useProfilePersonalPhotoUI()
 </script>
 
 <template>
 	<MuLinearWrapper class="account-profile-photo-group" direction="column" :gap="8">
 		<MuLinearWrapper class="account-profile-photo-head" justify="space-between">
 			<div class="account-profile-label">{{ translate('account.profile.profilePhoto') }}</div>
-			<MuText v-if="photoInlineError" weight="semi-bold" color="error" class="account-profile-photo-error">{{ photoInlineError }}</MuText>
+			<MuText v-if="photo_inline_error" weight="semi-bold" color="error" class="account-profile-photo-error">{{ photo_inline_error }}</MuText>
 		</MuLinearWrapper>
 		<div class="account-profile-photo-row" data-testid="account-profile-photo-row">
-			<div :class="['account-profile-avatar', { 'account-profile-avatar--error': photoInlineError }]">
+			<div :class="['account-profile-avatar', { 'account-profile-avatar--error': photo_inline_error }]">
 				<img
-					v-if="displayAvatar"
-					:src="displayAvatar"
+					v-if="display_avatar"
+					:src="display_avatar"
 					:alt="translate('account.profile.profilePhoto')"
 					class="account-profile-avatar-image"
 				>
-				<span v-else class="account-profile-avatar-text">{{ userInitial }}</span>
+				<span v-else class="account-profile-avatar-text">{{ user_initial }}</span>
 			</div>
 			<MuLinearWrapper class="account-profile-photo-copy" direction="column">
 				<MuText color="text-secondary" class="account-profile-muted">{{ translate('account.profile.photoHint1') }}</MuText>
@@ -42,18 +42,18 @@ const { t: translate } = useI18n();
 						size="md"
 						class="account-profile-outline-button"
 						data-testid="account-profile-photo-upload-button"
-						@click="$emit('upload-click')"
+						@click="openFilePicker"
 					>
-						{{ displayAvatar ? translate('account.profile.uploadNewPhoto') : translate('account.profile.uploadPhoto') }}
+						{{ display_avatar ? translate('account.profile.uploadNewPhoto') : translate('account.profile.uploadPhoto') }}
 					</UiButton>
 					<UiButton
-						v-if="displayAvatar"
+						v-if="display_avatar"
 						variant="ghost"
 						tone="danger"
 						size="md"
 						class="account-profile-delete-button"
 						data-testid="account-profile-photo-delete-button"
-						@click="$emit('delete-click')"
+						@click="openDeletePhotoModal"
 					>
 						{{ translate('account.profile.delete') }}
 					</UiButton>

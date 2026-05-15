@@ -4,59 +4,38 @@ import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
 import ForgotPasswordModal from '~/components/features/account/profile/modals/ForgotPasswordModal.vue';
 import SetupPasswordModal from '~/components/features/account/profile/modals/SetupPasswordModal.vue';
-import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
-import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
-import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
-import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
+import { useProfilePasswordIndex } from '~/composables/account/profile/useProfilePasswordIndex';
+import { useProfilePasswordIndexUI } from '~/composables/account/profile/useProfilePasswordIndexUI';
 
-const { t: translate } = useI18n();
 withDefaults(defineProps<{
 	loading?: boolean;
 }>(), {
 	loading: false,
 });
-const { social } = useSocialAccount();
 
 const {
-	current_password,
-	new_password,
-	new_password_confirmation,
-	current_password_error,
-	pair_password_error,
+	social,
+	has_password,
 
-	is_change_password_enabled,
-
-	current_password_visible,
-	new_password_visible,
-	new_password_confirmation_visible,
-
-	clearNewPasswordPairErrors,
-	onChangePassword,
-} = usePasswordForm()
-
-const {
-	setup_password_error,
-	is_setup_password_enabled,
 	setup_password,
 	setup_password_confirmation,
+	setup_password_error,
 	setup_password_visible,
 	setup_password_confirmation_visible,
 	is_setup_password_modal_open,
-	has_password,
+	is_setup_password_enabled,
 
-	clearSetupPasswordPairErrors,
-	onSetupPassword,
-	openSetupPasswordModal,
-	closeSetupPasswordModal,
-} = useSetupPassword()
-
-const {
 	is_forgot_password_modal_open,
 	forgot_password_request_send,
 
-	sendForgotPasswordEmail,
-	closeForgotPasswordModal
-} = useForgotPasswordForm()
+	clearSetupPasswordPairErrors,
+	onSetupPassword,
+	closeSetupPasswordModal,
+
+	closeForgotPasswordModal,
+} = useProfilePasswordIndex()
+
+const { translate } = useProfilePasswordIndexUI()
 </script>
 
 <template>
@@ -73,26 +52,9 @@ const {
 
 		<FeaturesAccountProfileContentPasswordSkeleton v-if="loading" />
 
-		<FeaturesAccountProfileContentPasswordSetupPrompt
-			v-else-if="social && !has_password"
-			@open-setup="openSetupPasswordModal"
-		/>
+		<FeaturesAccountProfileContentPasswordSetupPrompt v-else-if="social && !has_password" />
 
-		<FeaturesAccountProfileContentPasswordChangeForm
-			v-else
-			v-model:current-password="current_password"
-			v-model:new-password="new_password"
-			v-model:new-password-confirmation="new_password_confirmation"
-			v-model:current-password-visible="current_password_visible"
-			v-model:new-password-visible="new_password_visible"
-			v-model:new-password-confirmation-visible="new_password_confirmation_visible"
-			v-model:current-password-error="current_password_error"
-			:pair-password-error="pair_password_error"
-			:is-change-password-enabled="is_change_password_enabled"
-			@clear-pair-errors="clearNewPasswordPairErrors"
-			@change-password="onChangePassword"
-			@forgot-password="sendForgotPasswordEmail"
-		/>
+		<FeaturesAccountProfileContentPasswordChangeForm v-else />
 	</div>
 
 	<ForgotPasswordModal

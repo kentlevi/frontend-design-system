@@ -2,7 +2,8 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import { usePreferenceForm } from '~/composables/account/profile/usePreferenceForm';
+import { useProfileSettingsIndex } from '~/composables/account/profile/useProfileSettingsIndex';
+import { useProfileSettingsIndexUI } from '~/composables/account/profile/useProfileSettingsIndexUI';
 
 withDefaults(defineProps<{
 	loading?: boolean;
@@ -10,13 +11,9 @@ withDefaults(defineProps<{
 	loading: false,
 });
 
-const {
-	translate,
+useProfileSettingsIndex()
 
-	preference_form_state,
-
-	updatePreferenceField
-} = usePreferenceForm();
+const { translate } = useProfileSettingsIndexUI()
 </script>
 
 <template>
@@ -33,11 +30,7 @@ const {
 
 		<FeaturesAccountProfileContentSettingsSkeleton v-if="loading" />
 
-		<FeaturesAccountProfileContentSettingsToggles
-			v-else
-			:preference-form-state="preference_form_state"
-			@update-field="(key, value) => updatePreferenceField(key, value)"
-		/>
+		<FeaturesAccountProfileContentSettingsToggles v-else />
 	</div>
 </template>
 
