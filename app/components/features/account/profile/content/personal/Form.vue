@@ -1,53 +1,45 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';
+import { useProfilePersonalForm } from '~/composables/account/profile/useProfilePersonalForm';
+import { useProfilePersonalFormUI } from '~/composables/account/profile/useProfilePersonalFormUI';
 
-defineProps<{
-	dynamicProfileFields: Array<{
-		id: string | number
-		field_key: string
-		field_label: string
-		is_required: boolean | number
-	}>
-	formState: { fields: Record<string, string> }
-	fieldErrors: Record<string, string>
-	email: string
-	social: string | null
-	hasChanges: boolean
-	isUpdating: boolean
-}>()
+const {
+	email,
+	social,
 
-defineEmits<{
-	(e: 'submit'): void
-	(e: 'change-email-click'): void
-}>()
+	form_state,
+	field_errors,
+	dynamic_profile_fields,
+	has_changes,
+	is_updating,
 
-const { t: translate } = useI18n();
+	submitPersonalForm,
+	openEmailChangeModal,
+} = useProfilePersonalForm()
+
+const { translate } = useProfilePersonalFormUI()
 </script>
 
 <template>
 	<div class="account-profile-grid" data-testid="account-profile-form">
-		<div v-for="field in dynamicProfileFields" :key="field.id">
+		<div v-for="field in dynamic_profile_fields" :key="field.id">
 			<UiFormField
-				:error="fieldErrors[`fields.${field.field_key}`]"
-				:label="field.is_required
-					? field.field_label
-					: `${field.field_label} (${translate('account.profile.optional')})`"
+				:error="field_errors[`fields.${field.field_key}`]"
+				:label="field.field_label"
 				:required="Boolean(field.is_required)"
 			>
-				<template v-if="!field.is_required" #label>
-					<span class="ui-form-field-label-text">
-						{{ field.field_label }}
-					</span>
-					<span class="account-profile-optional">
+				<template #label>
+					<span class="ui-form-field-label-text">{{ field.field_label }}</span>
+					<span v-if="!field.is_required" class="account-profile-optional">
 						({{ translate('account.profile.optional') }})
 					</span>
 				</template>
 				<template #default="{ inputId, describedBy }">
 					<UiInput
 						:id="inputId"
-						v-model="formState.fields[field.field_key]"
-						:state="fieldErrors[`fields.${field.field_key}`] ? 'error' : 'default'"
+						v-model="form_state.fields[field.field_key]"
+						:state="field_errors[`fields.${field.field_key}`] ? 'error' : 'default'"
 						type="text"
 						:aria-describedby="describedBy || undefined"
 						:data-testid="`account-profile-${field.field_key}`"
@@ -80,7 +72,7 @@ const { t: translate } = useI18n();
 						:no-hover="true"
 						class="account-profile-email-change-button"
 						data-testid="account-profile-email-change-button"
-						@click="$emit('change-email-click')"
+						@click="openEmailChangeModal"
 					>
 						{{ translate('account.profile.change') }}
 					</UiButton>
@@ -97,9 +89,9 @@ const { t: translate } = useI18n();
 			variant="filled"
 			tone="neutral"
 			size="md"
-			:disabled="!hasChanges || isUpdating"
+			:disabled="!has_changes || is_updating"
 			data-testid="account-profile-save-button"
-			@click="$emit('submit')"
+			@click="submitPersonalForm"
 		>
 			{{ translate('account.profile.saveChanges') }}
 		</UiButton>

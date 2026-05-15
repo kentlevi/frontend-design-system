@@ -5,11 +5,8 @@ import MuText from '~/components/base/MuText.vue';
 import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
 import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
 import EmailChangeModal from '~/components/features/account/profile/modals/EmailChangeModal.vue';
-import { useChangeEmailForm } from '~/composables/account/profile/useChangeEmailForm';
-import { useProfilePhoto } from '~/composables/account/profile/useProfilePhoto';
-import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
-import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
-import { useProfilePersonal } from '~/composables/account/profile/useProfilePersonal';
+import { useProfilePersonalIndex } from '~/composables/account/profile/useProfilePersonalIndex';
+import { useProfilePersonalIndexUI } from '~/composables/account/profile/useProfilePersonalIndexUI';
 
 withDefaults(defineProps<{
 	loading?: boolean;
@@ -17,36 +14,9 @@ withDefaults(defineProps<{
 	loading: false,
 });
 
-const { t: translate } = useI18n();
-const { display_avatar, user_initial } = useProfilePhotoDisplay();
-
-const { social } = useSocialAccount()
-
 const {
 	file_input,
 	is_delete_photo_modal_open,
-	error: photo_inline_error,
-
-	openFilePicker,
-	onFilePicked,
-	openDeletePhotoModal,
-	closeDeletePhotoModal,
-	deletePhoto,
-} = useProfilePhoto()
-
-const {
-	form_state,
-	field_errors,
-	dynamic_profile_fields,
-	has_changes,
-
-	submitPersonalForm,
-
-	is_updating,
-} = useProfilePersonal()
-
-const {
-	email,
 
 	pending_email,
 	is_email_change_modal,
@@ -59,14 +29,19 @@ const {
 
 	remaining,
 
-	openEmailChangeModal,
+	onFilePicked,
+	closeDeletePhotoModal,
+	deletePhoto,
+
 	closeEmailChangeModal,
 	confirmEmailChange,
 
 	verifyOtp,
 	resendOtp,
 	closeOtpModal,
-} = useChangeEmailForm()
+} = useProfilePersonalIndex()
+
+const { translate } = useProfilePersonalIndexUI()
 </script>
 
 <template>
@@ -86,25 +61,9 @@ const {
 		<FeaturesAccountProfileContentPersonalSkeleton v-if="loading" />
 
 		<div v-else class="account-profile-section-main">
-			<FeaturesAccountProfileContentPersonalPhoto
-				:display-avatar="display_avatar"
-				:user-initial="user_initial"
-				:photo-inline-error="photo_inline_error"
-				@upload-click="openFilePicker"
-				@delete-click="openDeletePhotoModal"
-			/>
+			<FeaturesAccountProfileContentPersonalPhoto />
 
-			<FeaturesAccountProfileContentPersonalForm
-				:dynamic-profile-fields="dynamic_profile_fields"
-				:form-state="form_state"
-				:field-errors="field_errors"
-				:email="email"
-				:social="social"
-				:has-changes="has_changes"
-				:is-updating="is_updating"
-				@submit="submitPersonalForm"
-				@change-email-click="openEmailChangeModal"
-			/>
+			<FeaturesAccountProfileContentPersonalForm />
 		</div>
 
 		<input

@@ -2,12 +2,12 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
+import { useProfilePasswordSetupPrompt } from '~/composables/account/profile/useProfilePasswordSetupPrompt';
+import { useProfilePasswordSetupPromptUI } from '~/composables/account/profile/useProfilePasswordSetupPromptUI';
 
-defineEmits<{
-	(e: 'open-setup'): void
-}>()
+const { openSetupPasswordModal } = useProfilePasswordSetupPrompt()
 
-const { t: translate } = useI18n();
+const { translate } = useProfilePasswordSetupPromptUI()
 </script>
 
 <template>
@@ -30,7 +30,7 @@ const { t: translate } = useI18n();
 			tone="neutral"
 			size="md"
 			data-testid="account-profile-setup-password-button"
-			@click="$emit('open-setup')"
+			@click="openSetupPasswordModal"
 		>
 			{{ translate('account.profile.setUpPassword') }}
 		</UiButton>

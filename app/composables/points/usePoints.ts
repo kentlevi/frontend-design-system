@@ -1,6 +1,9 @@
 import { fetchTotalPoints } from "~/services/user-point/api.service";
 import { useOverviewStore } from "~/stores/users/overview.store";
 import { usePointsStore } from "~/stores/user-point/points.store";
+import { useCartStore } from "~/stores/core/cart/cart.store";
+import { useProductionShippingStore } from "~/stores/production-shipping/production-shipping.store";
+import { useCouponDiscount } from "~/composables/coupon/useCouponDiscount";
 
 export function usePoints() {
 	const overview_store = useOverviewStore()
@@ -9,7 +12,21 @@ export function usePoints() {
 	const points_store = usePointsStore()
 	const { points_to_use } = storeToRefs(points_store)
 
+	const cart_store = useCartStore()
+	const { selected_total_cost } = storeToRefs(cart_store)
+
+	const shipping_store = useProductionShippingStore()
+	const { selected_shipping } = storeToRefs(shipping_store)
+
+	const { discount: coupon_discount } = useCouponDiscount()
+
 	const total_points = ref(0)
+
+	const max_points_allowed = computed(() => {
+		const shipping = selected_shipping.value?.shipping_price ?? 0
+		const cost_before_points = Math.max(0, selected_total_cost.value + shipping - coupon_discount.value)
+		return Math.min(total_points.value, cost_before_points)
+	})
 
 	async function getTotalPoints() {
 		try{
@@ -26,7 +43,7 @@ export function usePoints() {
 	}
 
 	function useAllPoints() {
-		points_store.setPointsToUse(String(total_points.value))
+		points_store.setPointsToUse(String(max_points_allowed.value))
 	}
 
 	function clearPoints() {
@@ -43,9 +60,9 @@ export function usePoints() {
 		const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
 		const is_digit = /^\d$/.test(e.key);
 		if (!is_digit && !allowed.includes(e.key)) { e.preventDefault(); return; }
-		if (is_digit && getProjected(e.target as HTMLInputElement, e.key) > total_points.value) {
+		if (is_digit && getProjected(e.target as HTMLInputElement, e.key) > max_points_allowed.value) {
 			e.preventDefault();
-			points_to_use.value = String(total_points.value);
+			points_to_use.value = String(max_points_allowed.value);
 		}
 	}
 
@@ -54,16 +71,27 @@ export function usePoints() {
 		const input = e.target as HTMLInputElement;
 		const digits = e.clipboardData?.getData('text').replace(/\D/g, '') ?? '';
 		if (!digits) return;
-		input.value = String(Math.min(getProjected(input, digits), total_points.value));
+		input.value = String(Math.min(getProjected(input, digits), max_points_allowed.value));
 		input.dispatchEvent(new Event('input', { bubbles: true }));
 	}
 
 	watch(points_to_use, (val) => {
 		const numeric_val = parseInt(val, 10) || 0
-		if (numeric_val > total_points.value) {
-			points_to_use.value = String(total_points.value)
+		if (numeric_val > max_points_allowed.value) {
+			points_to_use.value = String(max_points_allowed.value)
 		}
 		points_store.setPointsToUse(points_to_use.value)
+	})
+
+	watch(max_points_allowed, (max) => {
+		const numeric_val = parseInt(points_to_use.value, 10) || 0
+		if (numeric_val > max) {
+			points_store.setPointsToUse(String(max))
+		}
+	})
+
+	onBeforeMount(() => {
+		points_store.clearPointsToUse()
 	})
 
 	onMounted(() => {
@@ -73,6 +101,7 @@ export function usePoints() {
 	return {
 		points_to_use,
 		total_points,
+		max_points_allowed,
 
 		handlePointsKeydown,
 		handlePointsPaste,

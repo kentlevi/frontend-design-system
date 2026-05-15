@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useForgotPasswordForm } from '~/composables/account/profile/useForgotPasswordForm';
+import { useForgotPasswordForm } from '~/composables/account/profile/context/useForgotPasswordForm';
 import { usePasswordForm } from '~/composables/account/profile/usePasswordForm';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import ProfileSetupPasswordModal from './ProfileSetupPasswordModal.vue';
-import { useSetupPassword } from '~/composables/account/profile/useSetupPassword';
+import { useSetupPassword } from '~/composables/account/profile/context/useSetupPassword';
 
 const { t: translate } = useI18n();
 withDefaults(defineProps<{
