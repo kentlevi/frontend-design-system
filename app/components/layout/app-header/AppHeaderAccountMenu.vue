@@ -8,8 +8,8 @@ import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 const { t: translate } = useI18n();
 const { withCountry } = useCountry();
-const { display_avatar, display_name, user_initial } = useProfilePhotoDisplay();
-const account_level_badge_src = '/icons/custom/account/points/badges/badge-bumper-boss.svg';
+const { display_avatar, display_name, user_initial, rank_src } = useProfilePhotoDisplay();
+
 type IconName = keyof typeof icons;
 
 type AccountLink = {
@@ -138,7 +138,7 @@ const { is_authenticated, role_code } = storeToRefs(useUsersStore())
 						</p>
 					</div>
 					<img
-						:src="account_level_badge_src"
+						:src="rank_src"
 						:alt="translate('account.shell.level')"
 						class="home-account-summary-badge"
 					>
