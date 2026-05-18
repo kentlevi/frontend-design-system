@@ -8,18 +8,18 @@ import { useOrderItemUI } from '~/composables/orders/useOrderItemUI';
 
 const props = defineProps<{ order: UserOrder }>()
 
-const { formatted_date } = useOrderItem(props)
+const { formatted_date, is_selected } = useOrderItem(props)
 const { handleClick } = useOrderItemUI(props)
-
-const is_true = ref(true);
 </script>
 
 <template>
 	<MuCard
 		class="order-item"
-		:variant="is_true ? 'primary' : 'default'"
+		:variant="is_selected ? 'primary' : 'default'"
 		padding="md"
 		radius="md"
+		bordered="strong"
+		@click="handleClick"
 	>
 		<MuLinearWrapper direction="column" gap="4">
 			<MuLinearWrapper class="order-item-header" align="center" :gap="8">

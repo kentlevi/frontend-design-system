@@ -6,11 +6,11 @@ type Props = {
 }
 
 const STATUS_LABELS: Record<UserOrderType, string> = {
-	ongoing:         'On-Going',
+	ongoing: 'On-Going',
 	action_required: 'Action Required',
-	to_receive:      'To Receive',
-	completed:       'Completed',
-	cancelled:       'Cancelled',
+	to_receive: 'To Receive',
+	completed: 'Completed',
+	cancelled: 'Cancelled',
 }
 
 export function useOrderList(props: Props) {
@@ -24,8 +24,8 @@ export function useOrderList(props: Props) {
 	/**
 	 * Computed
 	 */
-	const orders     = computed(() => context[props.status].value)
-	const label      = computed(() => STATUS_LABELS[props.status])
+	const orders = computed(() => context[props.status].value)
+	const label = computed(() => STATUS_LABELS[props.status])
 	const has_orders = computed(() => orders.value.length > 0)
 
 
