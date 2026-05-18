@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { useUsersStore } from '~/stores/users/users.store';
+
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import { useGetOverview } from '~/services/profile/overview.service';
+
+const users_store = useUsersStore()
+const { role_code } = storeToRefs(users_store)
 
 definePageMeta({
 	layout: 'home',
@@ -17,8 +23,8 @@ onMounted(() => {
 
 <template>
 	<MuLinearWrapper class="account-shell" direction="column" data-testid="account-shell">
-		<FeaturesAccountTop />
-		<FeaturesAccountTabs />
+		<FeaturesAccountTop v-if="role_code == 'MEMBER'" />
+		<FeaturesAccountTabs v-if="role_code == 'MEMBER'"/>
 		<NuxtPage :keepalive="{ max: 8 }" />
 	</MuLinearWrapper>
 </template>
