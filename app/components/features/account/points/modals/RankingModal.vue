@@ -28,56 +28,56 @@ function handleModelValueChange(value: boolean) {
 		width="1440px"
 		padding="0"
 		gap="0"
-		modal-class="account-points-ranking-modal-shell"
+		modal-class="points-ranking-shell"
 		@update:model-value="handleModelValueChange"
 	>
-		<section class="account-points-ranking-modal" data-testid="account-points-ranking-modal">
-			<div class="account-points-ranking-modal-grid">
+		<section class="ranking" data-testid="account-points-ranking-modal">
+			<div class="grid">
 				<MuCard
 					v-for="rank in props.ranks"
 					:key="rank.id"
 					padding="none"
 					radius="lg"
-					class="account-points-ranking-card"
+					class="card"
 					:data-theme="rank.theme"
 					:data-current="rank.is_current ? 'true' : 'false'"
 				>
-					<div class="account-points-ranking-card-hero">
+					<div class="hero">
 						<img
 							:src="rank.background_src"
 							:alt="''"
-							class="account-points-ranking-card-hero-bg"
+							class="hero-bg"
 							aria-hidden="true"
 						>
-						<div class="account-points-ranking-card-pill">
+						<div class="pill">
 							{{ rank.rank_label }}
 						</div>
 
-						<div class="account-points-ranking-card-badge-wrap">
+						<div class="badge-wrap">
 							<img
 								:src="rank.badge_src"
 								:alt="rank.name"
-								class="account-points-ranking-card-badge"
+								class="badge"
 							>
 						</div>
 					</div>
 
-					<div class="account-points-ranking-card-body">
-						<div class="account-points-ranking-card-copy">
-							<MuHeading variant="3" weight="bold" color="text-primary" class="account-points-ranking-card-title">{{ rank.name }}</MuHeading>
-							<MuText color="text-secondary" class="account-points-ranking-card-spend">{{ rank.spend_requirement }}</MuText>
+					<div class="body">
+						<div class="copy">
+							<MuHeading variant="3" weight="bold" color="text-primary" class="title">{{ rank.name }}</MuHeading>
+							<MuText color="text-secondary" class="spend">{{ rank.spend_requirement }}</MuText>
 						</div>
 
-						<div class="account-points-ranking-card-section">
-							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-points-ranking-card-label">{{ translate('account.points.ranking.perksLabel') }}</MuHeading>
-							<ul class="account-points-ranking-card-list">
+						<div class="section">
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="label">{{ translate('account.points.ranking.perksLabel') }}</MuHeading>
+							<ul class="list">
 								<li v-for="perk in rank.perks" :key="perk">{{ perk }}</li>
 							</ul>
 						</div>
 
-						<div class="account-points-ranking-card-section">
-							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="account-points-ranking-card-label">{{ translate('account.points.ranking.levelUpBonusLabel') }}</MuHeading>
-							<ul class="account-points-ranking-card-list">
+						<div class="section">
+							<MuHeading variant="6" weight="semi-bold" color="text-primary" class="label">{{ translate('account.points.ranking.levelUpBonusLabel') }}</MuHeading>
+							<ul class="list">
 								<li v-for="gift in rank.level_up_bonus_gifts" :key="gift">{{ gift }}</li>
 							</ul>
 						</div>
@@ -88,20 +88,20 @@ function handleModelValueChange(value: boolean) {
 	</UiModal>
 </template>
 
-<style lang="scss">
-.account-points-ranking-modal-shell {
+<style scoped lang="scss">
+:global(.points-ranking-shell) {
 	width: min(1440px, calc(100vw - 32px)) !important;
 	max-width: min(1440px, calc(100vw - 32px));
 }
 
-.account-points-ranking-modal {
-	.account-points-ranking-modal-grid {
+.ranking {
+	.grid {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 24px;
 	}
 
-	.account-points-ranking-card {
+	.card {
 		overflow: hidden;
 
 		&[data-current='true'] {
@@ -109,7 +109,7 @@ function handleModelValueChange(value: boolean) {
 		}
 	}
 
-	.account-points-ranking-card-hero {
+	.hero {
 		position: relative;
 		padding: 20px 20px 0;
 		height: 164px;
@@ -119,7 +119,7 @@ function handleModelValueChange(value: boolean) {
 		overflow: visible;
 	}
 
-	.account-points-ranking-card-hero-bg {
+	.hero-bg {
 		position: absolute;
 		inset: 0;
 		width: 100%;
@@ -128,7 +128,7 @@ function handleModelValueChange(value: boolean) {
 		object-position: top;
 	}
 
-	.account-points-ranking-card-pill {
+	.pill {
 		position: relative;
 		z-index: 1;
 		width: fit-content;
@@ -141,45 +141,45 @@ function handleModelValueChange(value: boolean) {
 		font-weight: var(--font-weight-bold);
 	}
 
-	.account-points-ranking-card-badge-wrap {
+	.badge-wrap {
 		position: relative;
 		place-items: center;
 	}
 
-	.account-points-ranking-card-badge {
+	.badge {
 		width: 128px;
 		height: 128px;
 		object-fit: contain;
 	}
 
-	.account-points-ranking-card-body {
+	.body {
 		display: grid;
 		gap: 24px;
 		padding: 46px 30px 30px;
 	}
 
-	.account-points-ranking-card-copy {
+	.copy {
 		display: grid;
 		gap: 8px;
 		text-align: center;
 	}
 
-	.account-points-ranking-card-title {
+	.title {
 		font-size: 34px;
 		line-height: 1;
 	}
 
-	.account-points-ranking-card-section {
+	.section {
 		display: grid;
 		gap: 12px;
 	}
 
-	.account-points-ranking-card-label {
+	.label {
 		font-size: var(--type-size-300);
 		line-height: var(--type-line-300);
 	}
 
-	.account-points-ranking-card-list {
+	.list {
 		display: grid;
 		gap: 12px;
 		margin: 0;
@@ -190,7 +190,7 @@ function handleModelValueChange(value: boolean) {
 	}
 
 	@media (max-width: 1280px) {
-		.account-points-ranking-modal-grid {
+		.grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
@@ -198,12 +198,12 @@ function handleModelValueChange(value: boolean) {
 	@media (max-width: 760px) {
 		padding: 16px;
 
-		.account-points-ranking-modal-grid {
+		.grid {
 			grid-template-columns: 1fr;
 			gap: 16px;
 		}
 
-		.account-points-ranking-card-body {
+		.body {
 			padding-inline: 20px;
 		}
 	}

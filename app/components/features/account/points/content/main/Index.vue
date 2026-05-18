@@ -2,7 +2,7 @@
 </script>
 
 <template>
-	<div class="account-points-main-column">
+	<div class="main">
 		<FeaturesAccountPointsContentMainTierCard />
 		<FeaturesAccountPointsContentMainChallenges />
 		<FeaturesAccountPointsContentMainHistory />
@@ -10,7 +10,7 @@
 </template>
 
 <style scoped lang="scss">
-.account-points-main-column {
+.main {
 	display: grid;
 	gap: 56px;
 	width: 100%;
@@ -18,7 +18,7 @@
 }
 
 @media (max-width: 1180px) {
-	.account-points-main-column {
+	.main {
 		max-width: none;
 		justify-self: stretch;
 	}

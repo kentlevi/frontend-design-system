@@ -13,45 +13,45 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 <template>
 	<button
 		type="button"
-		class="account-points-tier-card"
+		class="tier-card"
 		data-testid="account-points-hero"
 		@click="openRankingModal()"
 	>
-		<MuLinearWrapper class="account-points-tier-copy" align="center" :gap="18">
+		<MuLinearWrapper class="head" align="center" :gap="18">
 			<img
 				:src="summary.badge_src"
 				:alt="translate('account.points.tierName')"
-				class="account-points-tier-icon"
+				class="icon"
 			>
 			<div>
-				<MuHeading class="account-points-tier" weight="bold">{{ translate(`account.points.${summary.tier_name_key}`) }}</MuHeading>
-				<MuText color="text-primary" class="account-points-meta">
+				<MuHeading class="tier" weight="bold">{{ translate(`account.points.${summary.tier_name_key}`) }}</MuHeading>
+				<MuText color="text-primary" class="meta">
 					{{ translate('account.points.lastTierUpgrade') }}: {{ summary.last_tier_upgrade_date }}
 				</MuText>
 			</div>
 		</MuLinearWrapper>
 
-		<div class="account-points-balance-wrap">
-			<MuLinearWrapper class="account-points-balance" data-testid="account-points-balance" align="flex-end" :gap="13">
+		<div class="balance-wrap">
+			<MuLinearWrapper class="balance" data-testid="account-points-balance" align="flex-end" :gap="13">
 				{{ summary.balance }}<MuText variant="span" size="xlarge">{{ translate('account.points.pointsUnit') }}</MuText>
 			</MuLinearWrapper>
 			<UiBadge
 				variant="outline"
 				size="md"
-				badge-class="account-points-expiry-pill"
+				badge-class="expiry-pill"
 			>
 				{{ translate('account.points.expiry') }}: {{ summary.expiry_date }}
 			</UiBadge>
 		</div>
 
-		<div class="account-points-progress">
-			<div class="account-points-progress-track">
+		<div class="progress">
+			<div class="progress-track">
 				<div
-					class="account-points-progress-fill"
+					class="progress-fill"
 					:style="{ width: `${summary.progress_percent}%` }"
 				/>
 			</div>
-			<MuText align="center" color="text-primary" class="account-points-progress-copy">
+			<MuText align="center" color="text-primary" class="progress-text">
 				{{ translate('account.points.nextTierRequirementPrefix') }}
 				<strong>{{ summary.remaining_spend }} KRW</strong>
 				{{ translate('account.points.nextTierRequirementSuffix') }}
@@ -61,7 +61,7 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 </template>
 
 <style scoped lang="scss">
-.account-points-tier-card {
+.tier-card {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
 	gap: 30px 0;
@@ -87,101 +87,101 @@ const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 		outline: 2px solid #ff41cb;
 		outline-offset: 4px;
 	}
-}
 
-.account-points-tier-copy {
-	align-self: start;
-}
+	.head {
+		align-self: start;
+	}
 
-.account-points-tier-icon {
-	width: 82px;
-	height: 82px;
-	flex-shrink: 0;
-	filter: drop-shadow(0 12px 22px rgba(255, 85, 215, 0.18));
-}
+	.icon {
+		width: 82px;
+		height: 82px;
+		flex-shrink: 0;
+		filter: drop-shadow(0 12px 22px rgba(255, 85, 215, 0.18));
+	}
 
-.account-points-tier {
-	font-size: var(--type-size-300);
-	line-height: var(--type-line-300);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
+	.tier {
+		font-size: var(--type-size-300);
+		line-height: var(--type-line-300);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
 
-.account-points-meta {
-	margin: 0;
-}
+	.meta {
+		margin: 0;
+	}
 
-.account-points-balance-wrap {
-	display: grid;
-	justify-items: end;
-}
+	.balance-wrap {
+		display: grid;
+		justify-items: end;
+	}
 
-.account-points-balance {
-	margin: 0;
-	font-size: var(--type-size-500);
-	line-height: var(--type-line-500);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
+	.balance {
+		margin: 0;
+		font-size: var(--type-size-500);
+		line-height: var(--type-line-500);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
 
-.account-points-expiry-pill {
-	border: 1px solid #FFA4E8;
-	background: var(--contrast-light);
-	color: var(--text-secondary);
-}
+	.expiry-pill {
+		border: 1px solid #FFA4E8;
+		background: var(--contrast-light);
+		color: var(--text-secondary);
+	}
 
-.account-points-progress {
-	grid-column: 1 / -1;
-	display: grid;
-	gap: 14px;
-	margin-top: 4px;
-}
+	.progress {
+		grid-column: 1 / -1;
+		display: grid;
+		gap: 14px;
+		margin-top: 4px;
+	}
 
-.account-points-progress-track {
-	width: 100%;
-	height: 11px;
-	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.9);
-	overflow: hidden;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-}
+	.progress-track {
+		width: 100%;
+		height: 11px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.9);
+		overflow: hidden;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+	}
 
-.account-points-progress-fill {
-	height: 100%;
-	border-radius: inherit;
-	background: linear-gradient(90deg, #ff34d2 0%, #ff68ee 100%);
-	box-shadow: 0 0 14px rgba(255, 78, 217, 0.28);
-}
+	.progress-fill {
+		height: 100%;
+		border-radius: inherit;
+		background: linear-gradient(90deg, #ff34d2 0%, #ff68ee 100%);
+		box-shadow: 0 0 14px rgba(255, 78, 217, 0.28);
+	}
 
-.account-points-progress-copy {
-	margin: 0;
+	.progress-text {
+		margin: 0;
+	}
 }
 
 @media (max-width: 760px) {
-	.account-points-tier-card {
+	.tier-card {
 		grid-template-columns: 1fr;
 		padding: 24px 20px 22px;
-	}
 
-	.account-points-tier-copy {
-		gap: 14px !important;
-	}
+		.head {
+			gap: 14px !important;
+		}
 
-	.account-points-tier-icon {
-		width: 72px;
-		height: 72px;
-	}
+		.icon {
+			width: 72px;
+			height: 72px;
+		}
 
-	.account-points-tier {
-		font-size: 30px;
-	}
+		.tier {
+			font-size: 30px;
+		}
 
-	.account-points-balance-wrap {
-		justify-items: start;
-	}
+		.balance-wrap {
+			justify-items: start;
+		}
 
-	.account-points-balance {
-		font-size: 42px;
+		.balance {
+			font-size: 42px;
+		}
 	}
 }
 </style>
