@@ -3,6 +3,7 @@ import { toRef } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import { useAppHeaderAccountMenu } from '~/composables/layout/appHeader/useAppHeaderAccountMenu';
 import type { icons } from '~/data/ui/icons';
+import { useUsersStore } from '~/stores/users/users.store';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 
 const { t: translate } = useI18n();
@@ -53,6 +54,8 @@ const {
 	setWrapRef: props.setWrapRef,
 	closeMenu: () => emit('close'),
 });
+
+const { is_authenticated, role_code } = storeToRefs(useUsersStore())
 </script>
 
 <template>
@@ -71,8 +74,8 @@ const {
 			size="sm"
 			class="home-header-icon home-header-account"
 			:class="{
-				'is-open': accountOpen && isMockLoggedIn,
-				'is-open-guest': accountOpen && !isMockLoggedIn,
+				'is-open': accountOpen && is_authenticated && role_code === 'MEMBER',
+				'is-open-guest': accountOpen && is_authenticated && role_code === 'NON_MEMBER',
 			}"
 			:aria-label="translate('layout.header.account')"
 			aria-haspopup="menu"
@@ -80,7 +83,7 @@ const {
 			data-testid="app-header-account-toggle-button"
 			@click.stop="emit('toggle')"
 		>
-			<span v-if="isMockLoggedIn && !isGuestLoggedIn" class="home-header-avatar">
+			<span v-if="is_authenticated && role_code === 'MEMBER'" class="home-header-avatar">
 				<img
 					v-if="display_avatar"
 					:src="display_avatar"
@@ -89,7 +92,7 @@ const {
 				>
 				<template v-else>{{ user_initial }}</template>
 			</span>
-			<span v-else-if="isGuestLoggedIn" class="home-header-avatar home-header-avatar--guest">
+			<span v-else-if="is_authenticated && role_code === 'NON_MEMBER'" class="home-header-avatar home-header-avatar--guest">
 				<UiIcon name="strong-user" :size="16" color="var(--text-primary)" />
 			</span>
 			<UiIcon
@@ -99,7 +102,7 @@ const {
 				color="var(--text-primary)"
 			/>
 			<UiIcon
-				v-if="isMockLoggedIn || isGuestLoggedIn"
+				v-if="is_authenticated && role_code === 'NON_MEMBER'"
 				name="strong-caret-down"
 				:size="16"
 				color="var(--text-primary)"
@@ -108,7 +111,7 @@ const {
 
 		<Transition :name="accountTransitionName">
 			<div
-				v-if="accountOpen && isMockLoggedIn && !isGuestLoggedIn"
+				v-if="accountOpen && is_authenticated && role_code === 'MEMBER'"
 				:ref="setAccountDropdownRef"
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
@@ -202,7 +205,7 @@ const {
 				</div>
 			</div>
 			<div
-				v-else-if="accountOpen && isGuestLoggedIn"
+				v-else-if="accountOpen && is_authenticated && role_code === 'NON_MEMBER'"
 				:ref="setAccountDropdownRef"
 				class="home-account-dropdown home-account-dropdown--member"
 				role="menu"
