@@ -4,8 +4,6 @@ import { fetchOrderAddresses, fetchOrderItems, fetchOrderPayment } from './api.s
 export async function loadItems(order_id: number) {
 	const store = useOrderDetailStore()
 
-	if (store.isLoading('fetch_items')) return
-
 	store.startLoading('fetch_items')
 
 	try {
@@ -22,8 +20,6 @@ export async function loadItems(order_id: number) {
 export async function loadPayment(order_id: number) {
 	const store = useOrderDetailStore()
 
-	if (store.isLoading('fetch_payment')) return
-
 	store.startLoading('fetch_payment')
 
 	try {
@@ -39,8 +35,6 @@ export async function loadPayment(order_id: number) {
 
 export async function loadAddresses(order_id: number) {
 	const store = useOrderDetailStore()
-
-	if (store.isLoading('fetch_addresses')) return
 
 	store.startLoading('fetch_addresses')
 

@@ -5,6 +5,12 @@ import { useUserOrdersStore } from '~/stores/orders/user-orders.store'
 export function useOrdersMain() {
 
 	/**
+	 * Route
+	 */
+	const route = useRoute()
+
+
+	/**
 	 * Context
 	 */
 	const {
@@ -13,6 +19,7 @@ export function useOrdersMain() {
 		items_loading,
 		payment_loading,
 		addresses_loading,
+		has_selected,
 	} = useOrderDetailContext()
 
 	const { is_loading: is_orders_fetching } = useOrdersListContext()
@@ -38,6 +45,8 @@ export function useOrdersMain() {
 	 * Auto-select
 	 */
 	watchEffect(() => {
+		if (has_selected.value) return
+		if (!route.path.includes('/account/orders')) return
 		if (selected_id.value !== null) return
 		if (is_orders_fetching.value) return
 

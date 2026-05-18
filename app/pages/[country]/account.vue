@@ -25,7 +25,7 @@ onMounted(() => {
 	<MuLinearWrapper class="account-shell" direction="column" data-testid="account-shell">
 		<FeaturesAccountTop v-if="role_code == 'MEMBER'" />
 		<FeaturesAccountTabs v-if="role_code == 'MEMBER'"/>
-		<NuxtPage :keepalive="{ max: 8 }" />
+		<NuxtPage :page-key="(route) => `${route.params.country ?? ''}::${route.name?.toString() ?? route.path}`" />
 	</MuLinearWrapper>
 </template>
 
