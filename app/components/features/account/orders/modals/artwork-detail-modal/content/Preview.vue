@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuLink from '~/components/base/MuLink.vue';
@@ -25,11 +26,20 @@ const artwork_alt = 'Sample Artwork';
 		class="artwork-detail-preview"
 	>
 		<MuLinearWrapper
+			direction="column"
 			align="center"
 			justify="center"
 			class="artwork-detail-preview__media"
 			:class="{ 'is-dark': is_dark_background }"
 		>
+			<MuCard variant="primary" padding="xsm">
+				<MuLinearWrapper :gap="4">
+					<UiIcon name="regular-check-circle"/>
+					<MuText weight="semi-bold">
+						Proof #1 Sticker Size: 25x30mm
+					</MuText>
+				</MuLinearWrapper>
+			</Mucard>
 			<MuThumbnail
 				:size="200"
 				shape="square"
@@ -55,10 +65,10 @@ const artwork_alt = 'Sample Artwork';
 				</MuText>
 			</MuLinearWrapper>
 			<MuLinearWrapper justify="center" :gap="16">
-				<UiButton variant="outline" tone="neutral" @click="open_request_changes_modal">
+				<UiButton variant="outline" tone="neutral" icon="regular-file-details" :icon-size="24" @click="open_request_changes_modal">
 					<MuText>Request Changes</MuText>
 				</UiButton>
-				<UiButton tone="neutral">
+				<UiButton tone="neutral" icon="regular-check-circle" :icon-size="24">
 					<MuText>Approve</MuText>
 				</UiButton>
 			</MuLinearWrapper>

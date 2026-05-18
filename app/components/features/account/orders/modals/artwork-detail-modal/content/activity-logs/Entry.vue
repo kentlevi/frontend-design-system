@@ -34,19 +34,24 @@ import UiBadge from '~/components/ui/Badge.vue';
 			</MuLinearWrapper>
 
 			<MuLinearWrapper direction="column" :gap="12">
-				<MuLinearWrapper :gap="12" align="center">
-					<MuThumbnail
-						:size="56"
-						shape="square"
-						src="https://static.musticker.com/dev/store-front/illustrations/products/stickers/die-cut.svg"
-						alt="Artwork Thumbnail"
-					/>
-					<MuLinearWrapper direction="column" :gap="4">
-						<MuLink weight="bold" color="text-primary">Proof #1</MuLink>
-						<MuText weight="bold">yellow-bear.png</MuText>
-						<MuText color="text-secondary">Die Cut Stickers</MuText>
-						<MuText color="text-secondary">30×30mm | 1,000개</MuText>
+				<MuLinearWrapper justify="space-between" align="center">
+					<MuLinearWrapper :gap="12">
+						<MuThumbnail
+							:size="56"
+							shape="square"
+							src="https://static.musticker.com/dev/store-front/illustrations/products/stickers/die-cut.svg"
+							alt="Artwork Thumbnail"
+						/>
+						<MuLinearWrapper direction="column" :gap="4">
+							<MuLink weight="bold" color="text-primary">Proof #1</MuLink>
+							<MuText weight="bold">yellow-bear.png</MuText>
+							<MuText color="text-secondary">Die Cut Stickers</MuText>
+							<MuText color="text-secondary">30×30mm | 1,000개</MuText>
+						</MuLinearWrapper>
 					</MuLinearWrapper>
+					<UiButton tone="neutral" icon="regular-check" :icon-size="24">
+						<MuText>Approve Proof #1</MuText>
+					</UiButton>
 				</MuLinearWrapper>
 				<MuCard variant="primary">
 					<MuText weight="bold">
