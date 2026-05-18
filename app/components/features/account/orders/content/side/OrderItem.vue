@@ -18,7 +18,6 @@ const { handleClick } = useOrderItemUI(props)
 		:variant="is_selected ? 'primary' : 'default'"
 		padding="md"
 		radius="md"
-		bordered="strong"
 		@click="handleClick"
 	>
 		<MuLinearWrapper direction="column" gap="4">

@@ -10,13 +10,15 @@ export function useOrderItemUI(props: Props) {
 	/**
 	 * Context
 	 */
-	const { loadOrderDetail } = useOrderDetailContext()
+	const { selected_id, loadOrderDetail } = useOrderDetailContext()
 
 
 	/**
 	 * Functions
 	 */
 	function handleClick() {
+		if (selected_id.value === props.order.id) return
+
 		loadOrderDetail(props.order.id)
 	}
 

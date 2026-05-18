@@ -1,4 +1,5 @@
 import { useOrderDetailContext } from '~/composables/orders/context/useOrderDetailContext'
+import { useOrdersListContext } from '~/composables/orders/context/useOrdersListContext'
 import { useUserOrdersStore } from '~/stores/orders/user-orders.store'
 
 export function useOrdersMain() {
@@ -14,10 +15,12 @@ export function useOrdersMain() {
 		addresses_loading,
 	} = useOrderDetailContext()
 
+	const { is_loading: is_orders_fetching } = useOrdersListContext()
+
 
 	/**
-     * Store
-     */
+	 * Store
+	 */
 	const user_orders_store = useUserOrdersStore()
 
 
@@ -36,6 +39,8 @@ export function useOrdersMain() {
 	 */
 	watchEffect(() => {
 		if (selected_id.value !== null) return
+		if (is_orders_fetching.value) return
+
 		const first = user_orders_store.ongoing[0]
 			?? user_orders_store.action_required[0]
 			?? user_orders_store.to_receive[0]
