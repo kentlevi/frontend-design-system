@@ -1,9 +1,32 @@
+<script setup lang="ts">
+import MuCard from '~/components/base/MuCard.vue';
+import MuCalendar from '~/components/base/MuCalendar.vue';
+import MuCheckbox from '~/components/base/MuCheckbox.vue';
+import MuHeading from '~/components/base/MuHeading.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuSearch from '~/components/core/search/MuSearch.vue';
+import MuSegmented from '~/components/base/MuSegmented.vue';
+import MuText from '~/components/base/MuText.vue';
+import { useOrdersHeader } from '~/composables/orders/useOrdersHeader';
+import { useOrdersHeaderUI } from '~/composables/orders/useOrdersHeaderUI';
+
+const { active_mode } = useOrdersHeader();
+const {
+	translate,
+	active_options,
+	date_picker_open,
+	selected_range,
+	filter_status,
+	search_query,
+} = useOrdersHeaderUI();
+</script>
+
 <template>
 	<MuLinearWrapper class="header" justify="space-between" align="center">
 		<MuHeading weight="bold">My Orders</MuHeading>
 
 		<MuLinearWrapper justify="space-between" width="69.2%">
-			<MuSegmented v-model="active" :options="active_options" size="sm">
+			<MuSegmented v-model="active_mode" :options="active_options" size="sm">
 				<template #option="{ option }">
 					<MuText weight="bold">{{ option.label }}</MuText>
 				</template>
@@ -131,36 +154,6 @@
 	</MuLinearWrapper>
 </template>
 
-<script setup lang="ts">
-import MuCard from '~/components/base/MuCard.vue';
-import MuCalendar from '~/components/base/MuCalendar.vue';
-import MuCheckbox from '~/components/base/MuCheckbox.vue';
-import MuHeading from '~/components/base/MuHeading.vue';
-import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
-import MuSearch from '~/components/core/search/MuSearch.vue';
-import MuSegmented from '~/components/base/MuSegmented.vue';
-import MuText from '~/components/base/MuText.vue';
-
-const { t: translate } = useI18n();
-
-const active = ref('active');
-
-const active_options = [
-	{ label: 'Active', value: 'active' },
-	{ label: 'Inactive', value: 'inactive' },
-];
-
-const date_picker_open = ref(false);
-
-const selected_range = ref({
-	start: new Date(),
-	end: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 4),
-});
-
-const filter_status = ref(false);
-const search_query = ref('');
-</script>
-
 <style lang="scss" scoped>
 .date_handler{
 	position: relative;
@@ -199,5 +192,4 @@ const search_query = ref('');
 		}
 	}
 }
-
 </style>

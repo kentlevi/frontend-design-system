@@ -1,13 +1,8 @@
 import { useCheckoutCompletion } from "~/composables/checkout/completion/useCheckoutCompletion"
-import { completeCheckoutRequest } from "~/services/checkout/checkout.service"
-import { sendOrderConfirmationEmail, sendArtworkReminder } from "~/services/orders/api.service"
 import { useMainCheckOutStore } from "~/stores/checkout/index.store"
-import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral"
-import { useCartStore } from "~/stores/core/cart/cart.store"
 import {
 	PAYMENT_LOCK_KEY,
 	clearPaymentLock,
-	readCompletionSnapshot,
 	readPaymentLock,
 } from "~/utils/checkout/paymentLock"
 
@@ -19,12 +14,6 @@ export const useTossPayment = () => {
 		completeCheckout
 	} = useCheckoutCompletion({redirectPath: 'checkout/confirmation'})
 	const checkout_store = useMainCheckOutStore()
-	const {
-		selected_real_ids
-	} = storeToRefs(useCartStore())
-
-	/** Contexts */
-	const { buildCompleteCheckoutPayload } = useAddressGeneral()
 
 	let popup: Window | null = null
 	let popupChecker: number | null = null
@@ -141,26 +130,9 @@ export const useTossPayment = () => {
 			) {
 				const order_id = data?.data?.id
 				try {
-					// Prefer the snapshot taken at submit time; falling
-					// back to current form state preserves behavior if the
-					// snapshot is missing for any reason.
-					const snapshot = readCompletionSnapshot()
-					const payload = snapshot
-						? { order_id, ...snapshot }
-						: {
-							...buildCompleteCheckoutPayload(order_id),
-							selected_cart_ids: selected_real_ids.value,
-						}
 					closePaymentPopup()
-					await completeCheckoutRequest(payload)
 					checkout_store.cleanCheckoutStates()
 					completeCheckout(true, order_id)
-					sendOrderConfirmationEmail(order_id).catch(err => {
-						console.error('Order confirmation email failed:', err)
-					})
-					sendArtworkReminder(order_id).catch(err => {
-						console.error('Order artwork reminder email failed:', err)
-					})
 				} catch (error) {
 					console.error('Checkout completion failed:', error)
 				}

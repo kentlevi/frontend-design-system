@@ -13,15 +13,15 @@ import { ensureDynamicFields } from "~/services/address-dynamic-fields/dynamic-f
 import { useAppliedCouponStore } from "~/stores/coupon/applied_coupon.store";
 import { loadAddresses } from "~/services/user-address/user-address.service";
 import { usePointsStore } from "~/stores/user-point/points.store";
-import { useAddressGeneral } from "~/composables/checkout/address/useAddressGeneral";
-import { clearPaymentLock, saveCompletionSnapshot, writePaymentLock } from "~/utils/checkout/paymentLock";
+import { clearPaymentLock, writePaymentLock } from "~/utils/checkout/paymentLock";
 
 export const useCheckoutFlow = () => {
 
 	const { mapApiFieldErrors } = useAddressHelper()
 
 	const payment = usePaymentStrategy()
-	const { state } = storeToRefs(useUsersStore())
+	const users_store = useUsersStore()
+	const { state } = storeToRefs(users_store)
 	const checkout_store = useMainCheckOutStore()
 	const {
 		guest_contact_state,
@@ -50,8 +50,6 @@ export const useCheckoutFlow = () => {
 		setFormErrors,
 		clearFormFieldErrors
 	} = useUserAddressFormStateCheckoutContext()
-
-	const { buildCompleteCheckoutPayload } = useAddressGeneral()
 
 
 
@@ -90,9 +88,17 @@ export const useCheckoutFlow = () => {
 
 	const buildCheckoutPayload = (): InitialCheckoutPayload => {
 
+		const user_email = users_store.state.email
+
+		const withEmail = <T extends { email?: string }>(form: T): T => ({
+			...form,
+			email: form.email || user_email,
+		})
+
 		return {
 			shipping_method_id: selected_shipping_method_id.value,
 			payment_method_code: selected_payment_method.value?.code as PaymentCode,
+
 			email: state.value.id !== 0
 				? state.value.email
 				: guest_contact_state.value.email,
@@ -103,9 +109,15 @@ export const useCheckoutFlow = () => {
 					: guest_contact_state.value.email),
 			phone_number:
 				shipping_form.value.phone_number,
+
 			selected_cart_ids: selected_real_ids.value,
 			coupon_id: coupon.value?.id ?? null,
-			points: points_to_use.value ? Number(points_to_use.value) : null
+			points: points_to_use.value ? Number(points_to_use.value) : null,
+
+
+			shipping_address: withEmail(shipping_form.value),
+			billing_address: withEmail(billing_form.value),
+			drop_address: drop_shipping_enabled.value ? withEmail(drop_form.value) : null,
 		}
 	}
 
@@ -123,25 +135,8 @@ export const useCheckoutFlow = () => {
 		try {
 			const response = await checkoutRequest(params)
 
-			// Snapshot the completion payload using the form state as it
-			// stands right now, so completing the order after payment uses
-			// what was actually paid for — not whatever the user may edit
-			// (or revert via reload) between submit and payment success.
 			const order_id = response.data?.order?.id
 			if (typeof order_id === 'number') {
-				const snapshot = buildCompleteCheckoutPayload(
-					order_id,
-					coupon.value?.id ?? null,
-					points_to_use.value ? Number(points_to_use.value) : null,
-				)
-				saveCompletionSnapshot({
-					shipping_address: snapshot.shipping_address,
-					billing_address: snapshot.billing_address,
-					drop_address: snapshot.drop_address,
-					selected_cart_ids: selected_real_ids.value,
-					coupon_id: snapshot.coupon_id,
-					points: snapshot.points,
-				})
 				writePaymentLock(order_id)
 			}
 

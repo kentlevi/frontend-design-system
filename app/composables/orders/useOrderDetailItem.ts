@@ -45,6 +45,8 @@ export function useOrderDetailItem(props: Props) {
 		}
 	})
 
+	const product = computed(() => cart_item.value.product)
+
 	const formatted_size = computed(() => {
 		const { width, height } = cart_item.value
 		if (!width || !height) return null
@@ -64,6 +66,7 @@ export function useOrderDetailItem(props: Props) {
 		cart_item,
 		item_number,
 		image_src,
+		product,
 		formatted_size,
 		quantity,
 		formatted_cost,

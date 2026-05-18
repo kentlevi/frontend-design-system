@@ -144,6 +144,7 @@ const section_lookup: Record<string, GuideSection> = {
 	Radio: 'form',
 	MuRadio: 'form',
 	MuRadioGroup: 'form',
+	MuSwitch: 'form',
 	MuTabs: 'actions',
 	MuTab: 'actions',
 	Calendar: 'form',
@@ -301,6 +302,15 @@ const guide_usage_snippets: Record<string, string> = {
   <MuRadio value="pro">Pro</MuRadio>
   <MuRadio value="enterprise">Enterprise</MuRadio>
 </MuRadioGroup>`,
+	MuSwitch: `<MuSwitch v-model="is_dark_background">
+  <MuText size="small">Dark Background</MuText>
+</MuSwitch>
+
+<!-- label-inside variant -->
+<MuSwitch v-model="is_dark_background" variant="label-inside">
+  <template #inactive-text>OFF</template>
+  <template #active-text>ON</template>
+</MuSwitch>`,
 	MuTabs: `<MuTabs v-model="activeTab">
   <MuTab value="orders">
     <UiIcon name="regular-package-open" :size="24" />
