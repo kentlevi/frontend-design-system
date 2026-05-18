@@ -14,10 +14,16 @@ const { active_mode } = useOrdersHeader();
 const {
 	translate,
 	active_options,
+	status_options,
 	date_picker_open,
 	selected_range,
 	filter_status,
 	search_query,
+	isStatusPending,
+	toggleStatus,
+	toggleFilter,
+	applyFilter,
+	cancelFilter,
 } = useOrdersHeaderUI();
 </script>
 
@@ -73,7 +79,8 @@ const {
 						icon-position="left"
 						icon-size="24"
 						class="account-orders-tool-button"
-						data-testid="account-orders-filters-button" @click="filter_status = !filter_status"
+						data-testid="account-orders-filters-button"
+						@click="toggleFilter"
 					>
 						{{ translate('account.orders.filters') }}
 					</UiButton>
@@ -83,39 +90,22 @@ const {
 						</div>
 						<div class="filter-status__body">
 							<ul>
-								<li>
-									<MuCheckbox>
-										<MuText>On-going (2)</MuText>
-									</MuCheckbox>
-								</li>
-								<li>
-									<MuCheckbox>
-										<MuText>Action Required (2)</MuText>
-									</MuCheckbox>
-								</li>
-								<li>
-									<MuCheckbox>
-										<MuText>To Receive (0)</MuText>
-									</MuCheckbox>
-								</li>
-								<li>
-									<MuCheckbox>
-										<MuText>Completed (1)</MuText>
-									</MuCheckbox>
-								</li>
-								<li>
-									<MuCheckbox>
-										<MuText>Cancelled (0)</MuText>
+								<li v-for="option in status_options" :key="option.type">
+									<MuCheckbox
+										:model-value="isStatusPending(option.type)"
+										@update:model-value="toggleStatus(option.type)"
+									>
+										<MuText>{{ option.label }} ({{ option.count }})</MuText>
 									</MuCheckbox>
 								</li>
 							</ul>
 						</div>
 						<div class="filter-status__footer">
 							<MuLinearWrapper justify="flex-end" :gap="12" padding="16px">
-								<UiButton variant="ghost" tone="neutral" @click="filter_status = false">
+								<UiButton variant="ghost" tone="neutral" @click="cancelFilter">
 									Cancel
 								</UiButton>
-								<UiButton tone="neutral" @click="filter_status = false">
+								<UiButton tone="neutral" @click="applyFilter">
 									Apply
 								</UiButton>
 							</MuLinearWrapper>

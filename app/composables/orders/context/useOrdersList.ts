@@ -1,5 +1,6 @@
 import { useUserOrdersStore } from "~/stores/orders/user-orders.store"
 import type { UserOrder, UserOrderType } from '~/types/order/user-orders'
+import { ORDER_STATUSES } from '~/constants/order-detail/status'
 
 const DAYS_THRESHOLD = 30
 const MS_PER_DAY = 24 * 60 * 60 * 1000
@@ -18,6 +19,7 @@ export function useOrdersList() {
 	 * State
 	 */
 	const active_mode = ref<OrdersActiveMode>('active')
+	const selected_statuses = ref<Set<UserOrderType>>(new Set(ORDER_STATUSES))
 
 
 	/**
@@ -41,6 +43,10 @@ export function useOrdersList() {
 		return is_archivable
 			? orders.filter(isOlderThanThreshold)
 			: []
+	}
+
+	function setSelectedStatuses(statuses: Set<UserOrderType>) {
+		selected_statuses.value = new Set(statuses)
 	}
 
 
@@ -70,6 +76,7 @@ export function useOrdersList() {
 
 	return {
 		active_mode,
+		selected_statuses,
 
 		ongoing,
 		action_required,
@@ -78,5 +85,7 @@ export function useOrdersList() {
 		cancelled,
 		is_loading,
 		has_any_orders,
+
+		setSelectedStatuses,
 	}
 }
