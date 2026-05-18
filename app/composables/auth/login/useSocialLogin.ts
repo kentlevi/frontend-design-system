@@ -13,11 +13,13 @@ import { useRedirectStore } from '~/stores/navigation/redirect.store';
 import { useAuthLoginStore } from '~/stores/auth/login.store';
 import { loadAddresses } from '~/services/user-address/user-address.service';
 import { ensureDynamicFields } from '~/services/address-dynamic-fields/dynamic-fields.service';
+import { useUsersStore } from '~/stores/users/users.store';
 
 export const useSocialLogin = () => {
 	const router = useRouter();
 	const route = useRoute();
 	const auth_login_store = useAuthLoginStore()
+	const users_store = useUsersStore()
 	const { auth_redirect_url } = storeToRefs(useRedirectStore());
 
 	const {
@@ -48,12 +50,14 @@ export const useSocialLogin = () => {
 				return;
 			}
 
+			const previous_user_id = users_store.state.id;
+
 			const poll_timer = setInterval(async () => {
 				if (!popup_window.closed) return;
 
 				clearInterval(poll_timer);
 
-				const did_login = await syncSocialLoginUserState();
+				const did_login = await syncSocialLoginUserState(previous_user_id);
 				if (did_login) {
 					router.push(auth_redirect_url.value);
 					closeCheckoutModal();
@@ -82,11 +86,18 @@ export const useSocialLogin = () => {
 		})
 	}
 
-	async function syncSocialLoginUserState() {
+	async function syncSocialLoginUserState(previous_user_id: number) {
 		try {
 			const response = await fetchAndStoreUser();
 
 			if (!response) {
+				return false;
+			}
+
+			const new_user_id = users_store.state.id;
+			const user_identity_changed = new_user_id !== 0 && new_user_id !== previous_user_id;
+
+			if (!user_identity_changed) {
 				return false;
 			}
 
