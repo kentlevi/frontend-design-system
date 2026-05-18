@@ -14,6 +14,7 @@ const props = defineProps<{
 const {
 	item_number,
 	image_src,
+	product,
 	formatted_size,
 	quantity,
 	formatted_cost,
@@ -21,14 +22,25 @@ const {
 	needs_artwork,
 } = useOrderDetailItem(props)
 
-const { handleUploadArtwork } = useOrderDetailItemUI()
+const { handleUploadArtwork, handleReplaceArtwork, handleViewArtwork } = useOrderDetailItemUI()
+
+function onImageClick() {
+	handleViewArtwork()
+}
 </script>
 
 <template>
 	<MuCard class="item" variant="transparent" padding="none" bordered="none">
 		<MuLinearWrapper justify="space-between">
 			<MuLinearWrapper :gap="24">
-				<div class="item-img-wrapper">
+				<div
+					class="item-img-wrapper is-clickable"
+					role="button"
+					tabindex="0"
+					@click="onImageClick"
+					@keydown.enter.prevent="onImageClick"
+					@keydown.space.prevent="onImageClick"
+				>
 					<img :src="image_src">
 				</div>
 				<MuLinearWrapper direction="column" :gap="8">
@@ -40,13 +52,14 @@ const { handleUploadArtwork } = useOrderDetailItemUI()
 						<UiBadge v-if="needs_artwork"><UiIcon name="regular-exclamation-triangle"/>{{ status_label }}</UiBadge>
 					</MuLinearWrapper>
 					<MuLinearWrapper class="item-description" direction="column">
-						<MuText v-if="formatted_size" color="abyss-40">Size: {{ formatted_size }}</MuText>
-						<MuText v-if="quantity" color="abyss-40">Quantity: {{ quantity }}</MuText>
+						<MuText v-if="product" color="abyss-40">{{ product }}</MuText>
+						<MuText v-if="formatted_size && quantity" color="abyss-40">{{ formatted_size }} | {{ quantity }}</MuText>
 					</MuLinearWrapper>
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" justify="space-between" align="flex-end">
 				<UiButton v-if="needs_artwork" tone="neutral" @click="handleUploadArtwork">Upload Artwork</UiButton>
+				<UiButton v-if="needs_artwork" tone="neutral" @click="handleReplaceArtwork">Replace Artwork</UiButton>
 				<MuText size="large" weight="bold">{{ formatted_cost }}</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
@@ -60,6 +73,25 @@ const { handleUploadArtwork } = useOrderDetailItemUI()
 	border-radius: 8px;
 	background: var(--gray-20);
 	position: relative;
+
+	&.is-clickable{
+		cursor: pointer;
+		transition: box-shadow 120ms ease, transform 120ms ease;
+
+		&:hover{
+			box-shadow: 0 0 0 2px var(--brand-primary);
+		}
+
+		&:focus-visible{
+			outline: none;
+			box-shadow: 0 0 0 2px var(--brand-primary);
+		}
+
+		&:active{
+			transform: scale(0.98);
+		}
+	}
+
 	img{
 		position: absolute;
 		width: 100%;

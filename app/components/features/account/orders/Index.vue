@@ -23,6 +23,10 @@ useUserOrdersPage()
 			<FeaturesAccountOrdersHeader />
 			<FeaturesAccountOrdersContent />
 			<FeaturesAccountOrdersModalsUploadArworkModal />
+			<FeaturesAccountOrdersModalsReplaceArtwork />
+			<FeaturesAccountOrdersModalsRequestChanges />
+			<FeaturesAccountOrdersModalsArtworkDetailModal />
+			<FeaturesAccountOrdersModalsFinalProofTerms />
 		</MuLinearWrapper>
 		<MuLinearWrapper v-else class="account-page-no-content" data-testid="account-page-no-content" direction="column" :gap="24">
 			<FeaturesAccountOrdersNoContent />

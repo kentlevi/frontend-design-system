@@ -20,7 +20,6 @@ const is_true = ref(true);
 		:variant="is_true ? 'primary' : 'default'"
 		padding="md"
 		radius="md"
-		bordered="strong"
 	>
 		<MuLinearWrapper direction="column" gap="4">
 			<MuLinearWrapper class="order-item-header" align="center" :gap="8">
