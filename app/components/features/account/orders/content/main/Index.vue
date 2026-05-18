@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import MuCard from '~/components/base/MuCard.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
@@ -9,9 +10,13 @@ import List from './List.vue';
 import Summary from './Summary.vue';
 import { useOrdersMain } from '~/composables/orders/useOrdersMain';
 import { useOrdersMainUI } from '~/composables/orders/useOrdersMainUI';
+import { useUsersStore } from '~/stores/users/users.store';
 
 const { selected_order, is_loading } = useOrdersMain();
 const { translate, is_detail_open } = useOrdersMainUI();
+
+const users_store = useUsersStore();
+const { role_code } = storeToRefs(users_store);
 </script>
 
 <template>
@@ -20,6 +25,18 @@ const { translate, is_detail_open } = useOrdersMainUI();
 		<template v-else>
 			<MuCard class="orders-card">
 				<MuLinearWrapper class="orders-card-wrapper" direction="column">
+					<MuLinearWrapper
+						v-if="role_code != 'MEMBER'"
+						class="orders-card-breadcrumb"
+						align="center"
+						:gap="6"
+					>
+						<NuxtLink to="/account/orders" class="orders-card-breadcrumb__home">
+							Orders
+						</NuxtLink>
+						<UiIcon name="regular-chevron-right" :size="12" color="var(--text-secondary)" />
+						<MuText weight="semi-bold">Order Details</MuText>
+					</MuLinearWrapper>
 					<MuLinearWrapper class="orders-card-header" justify="space-between">
 						<MuLinearWrapper align="center" :gap="16">
 							<MuHeading variant="5" weight="bold">Order #: {{ selected_order?.order_number }}</MuHeading>
@@ -53,5 +70,18 @@ const { translate, is_detail_open } = useOrdersMainUI();
 }
 .orders-card-loading {
 	padding: 32px 16px;
+}
+.orders-card-breadcrumb {
+	margin-bottom: 8px;
+
+	&__home {
+		color: var(--gold-70);
+		font-weight: var(--font-weight-semibold);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 </style>
