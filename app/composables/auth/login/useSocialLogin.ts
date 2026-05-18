@@ -14,12 +14,15 @@ import { useAuthLoginStore } from '~/stores/auth/login.store';
 import { loadAddresses } from '~/services/user-address/user-address.service';
 import { ensureDynamicFields } from '~/services/address-dynamic-fields/dynamic-fields.service';
 import { useUsersStore } from '~/stores/users/users.store';
+import { useTransferCart } from '~/composables/cart/useTransferCart';
 
 export const useSocialLogin = () => {
 	const router = useRouter();
 	const route = useRoute();
 	const auth_login_store = useAuthLoginStore()
 	const users_store = useUsersStore()
+	const { captureCurrentUserAsPrevious, clearPreviousUserId, runTransferCart } =
+		useTransferCart()
 	const { auth_redirect_url } = storeToRefs(useRedirectStore());
 
 	const {
@@ -52,6 +55,8 @@ export const useSocialLogin = () => {
 
 			const previous_user_id = users_store.state.id;
 
+			captureCurrentUserAsPrevious();
+
 			const poll_timer = setInterval(async () => {
 				if (!popup_window.closed) return;
 
@@ -59,6 +64,8 @@ export const useSocialLogin = () => {
 
 				const did_login = await syncSocialLoginUserState(previous_user_id);
 				if (did_login) {
+					await runTransferCart();
+
 					router.push(auth_redirect_url.value);
 					closeCheckoutModal();
 
@@ -67,9 +74,12 @@ export const useSocialLogin = () => {
 					loadAddresses('billing')
 					loadAddresses('drop')
 
+				} else {
+					clearPreviousUserId();
 				}
 			}, 500);
 		} catch (error: unknown) {
+			clearPreviousUserId();
 			console.error(error);
 		}
 	}

@@ -10,6 +10,7 @@ import {
 	getAuthResponseMessage,
 } from '~/helpers/auth/auth.helper'
 import { useVerificationCooldown } from '../auth/verification/useVerificationCooldown'
+import { useTransferCart } from '~/composables/cart/useTransferCart'
 
 export const useCheckoutVerification = () => {
 	const { t: translate } = useI18n()
@@ -17,6 +18,8 @@ export const useCheckoutVerification = () => {
 	const verification_cooldown = useVerificationCooldown()
 	const { verification_state } = storeToRefs(verification_store)
 	const { getFirstVerificationDataError, normalizeVerificationErrorMessage, resolveCooldownUntil } = useVerificationHelper()
+	const { captureCurrentUserAsPrevious, clearPreviousUserId, runTransferCart } =
+		useTransferCart()
 
 	const resend_cooldown_remaining = verification_cooldown.remaining
 
@@ -46,6 +49,8 @@ export const useCheckoutVerification = () => {
 				error: '',
 			})
 
+			captureCurrentUserAsPrevious()
+
 			const response = await submitNonMemberLoginVerification(
 				{
 					email: email_value || null,
@@ -59,6 +64,7 @@ export const useCheckoutVerification = () => {
 			)
 
 			if (!response.success) {
+				clearPreviousUserId()
 				const first_data_error = getFirstVerificationDataError(
 					response.data as Record<string, unknown> | null | undefined
 				)
@@ -78,6 +84,7 @@ export const useCheckoutVerification = () => {
 			}
 
 			await fetchAndStoreUser()
+			await runTransferCart()
 
 			verification_store.patchVerificationState({
 				code: '',
@@ -92,6 +99,7 @@ export const useCheckoutVerification = () => {
 			})
 			return response
 		} catch (error) {
+			clearPreviousUserId()
 			verification_store.patchVerificationState({
 				error:
                     getAuthErrorMessage(error) ||

@@ -32,6 +32,7 @@ import { useToastStore } from '~/stores/toast'
 import { useUsersStore } from '~/stores/users/users.store'
 import { loadAddresses } from '~/services/user-address/user-address.service'
 import { ensureDynamicFields } from '~/services/address-dynamic-fields/dynamic-fields.service'
+import { useTransferCart } from '~/composables/cart/useTransferCart'
 
 function resolveCooldownUntil(response: unknown): number | null {
 	const cooldown_seconds = getCooldownSecondsFromResponse(response)
@@ -55,6 +56,8 @@ export function useCheckoutGuestContactFeature() {
 	const verification_store = useVerificationStore()
 	const user_store = useUsersStore()
 	const email_change_store = useEmailChangeStore()
+	const { captureCurrentUserAsPrevious, clearPreviousUserId, runTransferCart } =
+		useTransferCart()
 	const { verification_state, modal_state: verification_modal_state } =
 		storeToRefs(verification_store)
 	const { state, is_authenticated, role_code } = storeToRefs(user_store)
@@ -190,6 +193,8 @@ export function useCheckoutGuestContactFeature() {
 			return
 		}
 
+		captureCurrentUserAsPrevious()
+
 		const response = await loginMemberUser({
 			email: email.value.trim(),
 			password: registered_email_password.value,
@@ -197,10 +202,13 @@ export function useCheckoutGuestContactFeature() {
 		})
 
 		if (!response.success) {
+			clearPreviousUserId()
 			registered_email_password_error.value =
 				registered_email_credentials_mismatch_message
 			return response
 		}
+
+		await runTransferCart()
 
 		if (import.meta.client) {
 			window.localStorage.setItem(
@@ -403,6 +411,8 @@ export function useCheckoutGuestContactFeature() {
 				}
 			)
 
+			captureCurrentUserAsPrevious()
+
 			const response = await requestNonMemberLoginVerification(
 				{
 					email: email_value,
@@ -415,6 +425,7 @@ export function useCheckoutGuestContactFeature() {
 			)
 
 			if (!response.success) {
+				clearPreviousUserId()
 				const response_code = getAuthResponseCode(response)
 				const social_provider = getAuthResponseSocialProvider(response)
 				const response_message =
@@ -459,7 +470,10 @@ export function useCheckoutGuestContactFeature() {
 				},
 			})
 
-			if (response.data?.code !== 'login_success') {
+			if (response.data?.code === 'login_success') {
+				await runTransferCart()
+			} else {
+				clearPreviousUserId()
 				openVerificationModal()
 			}
 
