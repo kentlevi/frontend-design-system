@@ -57,11 +57,11 @@ export function useProfilePhotoDisplay() {
 			case 'MUSCOUT':
 				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
 			case 'MULEADER':
-				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+				return '/icons/custom/account/points/badges/badge-label-leader.svg'
 			case 'MUBOSS':
-				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+				return '/icons/custom/account/points/badges/badge-decal-dynamo.svg'
 			case 'MUDYNAMO':
-				return '/icons/custom/account/points/badges/badge-sticker-scout.svg'
+				return '/icons/custom/account/points/badges/badge-bumper-boss.svg'
 			default:
 				return ''
 		}
