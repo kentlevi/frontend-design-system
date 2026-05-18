@@ -25,6 +25,7 @@ useUserOrdersPage()
 			<FeaturesAccountOrdersModalsUploadArworkModal />
 			<FeaturesAccountOrdersModalsReplaceArtwork />
 			<FeaturesAccountOrdersModalsRequestChanges />
+			<FeaturesAccountOrdersModalsApproveFinalProof />
 			<FeaturesAccountOrdersModalsArtworkDetailModal />
 			<FeaturesAccountOrdersModalsFinalProofTerms />
 		</MuLinearWrapper>

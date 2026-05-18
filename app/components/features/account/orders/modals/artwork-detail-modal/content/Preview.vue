@@ -8,10 +8,12 @@ import MuThumbnail from '~/components/core/MuThumbnail.vue';
 import { useArtworkDetailModal } from '~/composables/features/account/orders/useArtworkDetailModal';
 import { useReplaceArtworkModal } from '~/composables/features/account/orders/useReplaceArtworkModal';
 import { useRequestChangesModal } from '~/composables/features/account/orders/useRequestChangesModal';
+import { useApproveFinalProofModal } from '~/composables/features/account/orders/useApproveFinalProofModal';
 
 const { is_dark_background } = useArtworkDetailModal();
 const { open_modal: open_replace_artwork_modal } = useReplaceArtworkModal();
 const { open_modal: open_request_changes_modal } = useRequestChangesModal();
+const { open_modal: open_approve_final_proof_modal } = useApproveFinalProofModal();
 
 const artwork_src = 'https://static.musticker.com/dev/store-front/illustrations/products/stickers/die-cut.svg';
 const artwork_alt = 'Sample Artwork';
@@ -68,7 +70,7 @@ const artwork_alt = 'Sample Artwork';
 				<UiButton variant="outline" tone="neutral" icon="regular-file-details" :icon-size="24" @click="open_request_changes_modal">
 					<MuText>Request Changes</MuText>
 				</UiButton>
-				<UiButton tone="neutral" icon="regular-check-circle" :icon-size="24">
+				<UiButton tone="neutral" icon="regular-check-circle" :icon-size="24" @click="open_approve_final_proof_modal">
 					<MuText>Approve</MuText>
 				</UiButton>
 			</MuLinearWrapper>
