@@ -26,18 +26,26 @@ export function getAuthResponseMessageCode(payload: unknown): string {
 		: '';
 }
 
-export function getAuthResponseCode(payload: unknown): string {
+function getAuthResponseDataField(payload: unknown, key: string): string {
 	if (!payload || typeof payload !== 'object') return '';
-	const response = payload as { data?: { code?: unknown } };
-	const code = response.data?.code;
-	return typeof code === 'string' ? code.trim() : '';
+	const data = (payload as { data?: unknown }).data;
+
+	const source = Array.isArray(data)
+		? data.find((entry) => entry && typeof entry === 'object')
+		: data;
+
+	if (!source || typeof source !== 'object') return '';
+
+	const value = (source as Record<string, unknown>)[key];
+	return typeof value === 'string' ? value.trim() : '';
+}
+
+export function getAuthResponseCode(payload: unknown): string {
+	return getAuthResponseDataField(payload, 'code');
 }
 
 export function getAuthResponseSocialProvider(payload: unknown): string {
-	if (!payload || typeof payload !== 'object') return '';
-	const response = payload as { data?: { provider?: unknown } };
-	const provider = response.data?.provider;
-	return typeof provider === 'string' ? provider.trim() : '';
+	return getAuthResponseDataField(payload, 'provider');
 }
 
 export function getAuthErrorMessage(payload: unknown): string {

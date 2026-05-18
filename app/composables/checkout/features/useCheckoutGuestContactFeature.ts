@@ -121,6 +121,16 @@ export function useCheckoutGuestContactFeature() {
 			return
 		}
 
+		if (is_authenticated_non_member.value) {
+			const account_email = getCurrentAccountEmail()
+			if (
+				account_email &&
+				normalizeEmail(email.value) !== normalizeEmail(account_email)
+			) {
+				setGuestEmail(account_email)
+			}
+		}
+
 		closeEmailAlreadyRegisteredModal()
 	}
 
@@ -281,8 +291,13 @@ export function useCheckoutGuestContactFeature() {
 	}
 
 	async function confirmEmailChange(new_email: string) {
-		syncCheckoutEmail(new_email)
-		await requestGuestEmailVerification()
+		is_guest_email_editing.value = true
+		try {
+			syncCheckoutEmail(new_email)
+			await requestGuestEmailVerification()
+		} finally {
+			is_guest_email_editing.value = false
+		}
 	}
 
 	async function finishGuestEmailEdit() {
@@ -419,7 +434,7 @@ export function useCheckoutGuestContactFeature() {
 					return response
 				}
 
-				if (response_code === 'already_registered') {
+				if (response_code === 'email_already_registered') {
 					openEmailAlreadyRegisteredModal(social_provider)
 					return response
 				}
