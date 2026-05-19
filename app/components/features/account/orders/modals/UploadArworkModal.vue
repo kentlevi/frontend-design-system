@@ -9,7 +9,13 @@ const {
 	product,
 	formatted_size,
 	formatted_quantity,
+	special_instructions,
+	is_uploading,
+	error,
+	can_submit,
 	close_modal,
+	onFilePicked,
+	submitUpload,
 } = useUploadArtworkModalContext()
 </script>
 
@@ -43,23 +49,27 @@ const {
 				<MuFileInput
 					placeholder="Upload your artwork here"
 					:accepted-formats="['.jpg', '.jpeg', '.png', '.pdf']"
+					@change="onFilePicked"
 				/>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" :gap="4">
-				<MuText weight="semi-bold">Special Instructionss</MuText>
+				<MuText weight="semi-bold">Special Instructions</MuText>
 				<UiTextarea
+					v-model="special_instructions"
 					placeholder="Enter special instruction here...."
+					:disabled="is_uploading"
 				/>
 			</MuLinearWrapper>
+			<MuText v-if="error" color="blood-base">{{ error }}</MuText>
 		</MuLinearWrapper>
 
 		<template #footer>
 			<MuLinearWrapper justify="flex-end" align="center" :gap="12">
-				<UiButton variant="ghost" tone="neutral" @click="close_modal">
+				<UiButton variant="ghost" tone="neutral" :disabled="is_uploading" @click="close_modal">
 					<MuText>Cancel</MuText>
 				</UiButton>
-				<UiButton tone="neutral" @click="close_modal">
-					<MuText>Submit</MuText>
+				<UiButton tone="neutral" :disabled="!can_submit" @click="submitUpload">
+					<MuText>{{ is_uploading ? 'Uploading...' : 'Submit' }}</MuText>
 				</UiButton>
 			</MuLinearWrapper>
 		</template>

@@ -5,6 +5,7 @@ import { useArtworkDetailModal } from '~/composables/features/account/orders/use
 
 type Props = {
 	item: OrderDetailItem
+	index: number
 }
 
 export function useOrderDetailItemUI(props: Props) {
@@ -21,7 +22,7 @@ export function useOrderDetailItemUI(props: Props) {
 	 * Functions
 	 */
 	function handleUploadArtwork() {
-		open_modal(props.item)
+		open_modal(props.item, props.index)
 	}
 
 	function handleReplaceArtwork() {

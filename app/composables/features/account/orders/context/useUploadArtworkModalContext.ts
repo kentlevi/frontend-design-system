@@ -1,11 +1,11 @@
-import { useUploadArtworkModal } from './useUploadArtworkModal'
+import { useUploadArtworkModal, type UploadArtworkModalConfig } from './useUploadArtworkModal'
 
 type composable_context = ReturnType<typeof useUploadArtworkModal>
 
 const key = Symbol('upload-artwork-modal')
 
-export const provideUploadArtworkModal = () => {
-	const flow = useUploadArtworkModal()
+export const provideUploadArtworkModal = (config: UploadArtworkModalConfig) => {
+	const flow = useUploadArtworkModal(config)
 
 	provide(key, flow)
 

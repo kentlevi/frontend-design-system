@@ -127,5 +127,6 @@ export function useOrderDetail() {
 		has_selected,
 
 		loadOrderDetail,
+		fetchItems,
 	}
 }

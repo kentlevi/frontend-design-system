@@ -15,8 +15,8 @@ withDefaults(defineProps<{
 });
 
 const { is_loading, has_any_orders } = provideOrdersList()
-provideOrderDetail()
-provideUploadArtworkModal()
+const { selected_id, fetchItems } = provideOrderDetail()
+provideUploadArtworkModal({ selected_id, fetchItems })
 useUserOrdersPage()
 
 const users_store = useUsersStore()
