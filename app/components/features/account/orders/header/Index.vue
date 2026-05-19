@@ -16,7 +16,12 @@ const {
 	active_options,
 	status_options,
 	date_picker_open,
-	selected_range,
+	pending_date_range,
+	active_quick_filter,
+	date_button_label,
+	pending_date_label,
+	has_date_filter,
+	quick_filters,
 	filter_status,
 	search_query,
 	isStatusPending,
@@ -24,89 +29,14 @@ const {
 	toggleFilter,
 	applyFilter,
 	cancelFilter,
+	selectQuickFilter,
+	toggleDatePicker,
+	applyDatePicker,
+	cancelDatePicker,
+	clearDateFilter,
 	submitSearch,
 	clearSearch,
 } = useOrdersHeaderUI();
-
-type QuickFilter = {
-	key: 'today' | 'this-week' | 'this-month' | 'last-7-days' | 'last-30-days';
-	label: string;
-	resolve: () => { start: Date; end: Date };
-};
-
-const quick_filters: QuickFilter[] = [
-	{
-		key: 'today',
-		label: 'Today',
-		resolve: () => {
-			const today = new Date();
-			return { start: today, end: today };
-		},
-	},
-	{
-		key: 'this-week',
-		label: 'This Week',
-		resolve: () => {
-			const today = new Date();
-			const start = new Date(today);
-			start.setDate(today.getDate() - today.getDay());
-			const end = new Date(start);
-			end.setDate(start.getDate() + 6);
-			return { start, end };
-		},
-	},
-	{
-		key: 'this-month',
-		label: 'This Month',
-		resolve: () => {
-			const today = new Date();
-			const start = new Date(today.getFullYear(), today.getMonth(), 1);
-			const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-			return { start, end };
-		},
-	},
-	{
-		key: 'last-7-days',
-		label: 'Last 7 days',
-		resolve: () => {
-			const end = new Date();
-			const start = new Date(end);
-			start.setDate(end.getDate() - 6);
-			return { start, end };
-		},
-	},
-	{
-		key: 'last-30-days',
-		label: 'Last 30 days',
-		resolve: () => {
-			const end = new Date();
-			const start = new Date(end);
-			start.setDate(end.getDate() - 29);
-			return { start, end };
-		},
-	},
-];
-
-const active_filter = ref<QuickFilter['key'] | null>(null);
-let setting_from_filter = false;
-
-function selectFilter(filter: QuickFilter) {
-	setting_from_filter = true;
-	active_filter.value = filter.key;
-	selected_range.value = filter.resolve();
-	nextTick(() => {
-		setting_from_filter = false;
-	});
-}
-
-watch(
-	selected_range,
-	() => {
-		if (setting_from_filter) return;
-		active_filter.value = null;
-	},
-	{ deep: true },
-);
 </script>
 
 <template>
@@ -130,15 +60,19 @@ watch(
 						icon-position="right" icon-size="24"
 						class="account-orders-tool-button account-orders-select-date-button"
 						data-testid="account-orders-select-date-button"
-						@click="date_picker_open = !date_picker_open"
+						@click="toggleDatePicker"
 					>
-						<!-- {{ translate('account.orders.selectDate') }} -->
-						{{selected_range.start.toLocaleDateString()}} - {{selected_range.end.toLocaleDateString()}}
-						<UiIcon name="regular-times-circle"/>
+						{{ date_button_label }}
+						<UiIcon
+							v-if="has_date_filter"
+							name="regular-times-circle"
+							clickable
+							@click.stop="clearDateFilter"
+						/>
 					</UiButton>
 					<MuCard v-if="date_picker_open" class="date_calendar" width="100%" padding="none">
 						<div class="date_calendar__body">
-							<MuCalendar v-model="selected_range" mode="range" :columns="2" class="date_calendar__calendar"/>
+							<MuCalendar v-model="pending_date_range" mode="range" :columns="2" class="date_calendar__calendar"/>
 							<div class="date_calendar__filters">
 								<MuText class="date_calendar__filters-title" weight="bold">Filters:</MuText>
 								<ul class="date_calendar__filters-list">
@@ -146,8 +80,8 @@ watch(
 										<button
 											type="button"
 											class="date_calendar__filter"
-											:data-active="active_filter === filter.key ? 'true' : 'false'"
-											@click="selectFilter(filter)"
+											:data-active="active_quick_filter === filter.key ? 'true' : 'false'"
+											@click="selectQuickFilter(filter)"
 										>
 											{{ filter.label }}
 										</button>
@@ -158,15 +92,13 @@ watch(
 						<MuLinearWrapper class="date_calendar__actions" justify="space-between" align="center">
 							<MuLinearWrapper :gap="8" align="center">
 								<MuText class="date_calendar__actions-label">Select Dates:</MuText>
-								<MuText class="date_calendar__actions-value">
-									{{ selected_range.start.toLocaleDateString() }} - {{ selected_range.end.toLocaleDateString() }}
-								</MuText>
+								<MuText class="date_calendar__actions-value">{{ pending_date_label }}</MuText>
 							</MuLinearWrapper>
 							<MuLinearWrapper :gap="16">
-								<UiButton variant="ghost" tone="neutral" @click="date_picker_open = false">
+								<UiButton variant="ghost" tone="neutral" @click="cancelDatePicker">
 									Cancel
 								</UiButton>
-								<UiButton tone="neutral" @click="date_picker_open = false">
+								<UiButton tone="neutral" @click="applyDatePicker">
 									Apply
 								</UiButton>
 							</MuLinearWrapper>

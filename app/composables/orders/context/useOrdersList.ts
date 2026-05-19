@@ -6,6 +6,23 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000
 
 export type OrdersActiveMode = 'active' | 'inactive'
 
+export type DateRange = {
+	start: Date | null
+	end: Date | null
+}
+
+function startOfDay(d: Date): Date {
+	const r = new Date(d)
+	r.setHours(0, 0, 0, 0)
+	return r
+}
+
+function endOfDay(d: Date): Date {
+	const r = new Date(d)
+	r.setHours(23, 59, 59, 999)
+	return r
+}
+
 export function useOrdersList() {
 
 	/**
@@ -19,6 +36,7 @@ export function useOrdersList() {
 	 */
 	const active_mode = ref<OrdersActiveMode>('active')
 	const selected_statuses = ref<Set<UserOrderType>>(new Set())
+	const selected_date_range = ref<DateRange>({ start: null, end: null })
 	const search_query = ref('')
 	const committed_search = ref('')
 
@@ -52,12 +70,34 @@ export function useOrdersList() {
 		return order.order_number === query
 	}
 
+	function matchesDateRange(order: UserOrder) {
+		const { start, end } = selected_date_range.value
+		if (!start && !end) return true
+
+		const created = new Date(order.created_at)
+		if (Number.isNaN(created.getTime())) return false
+
+		if (start && created < startOfDay(start)) return false
+		if (end && created > endOfDay(end)) return false
+		return true
+	}
+
 	function applyFilters(orders: UserOrder[], type: UserOrderType) {
-		return filterByMode(orders, type).filter(matchesSearch)
+		return filterByMode(orders, type)
+			.filter(matchesSearch)
+			.filter(matchesDateRange)
 	}
 
 	function setSelectedStatuses(statuses: Set<UserOrderType>) {
 		selected_statuses.value = new Set(statuses)
+	}
+
+	function setSelectedDateRange(range: DateRange) {
+		selected_date_range.value = { ...range }
+	}
+
+	function clearSelectedDateRange() {
+		selected_date_range.value = { start: null, end: null }
 	}
 
 	function submitSearch() {
@@ -97,6 +137,7 @@ export function useOrdersList() {
 	return {
 		active_mode,
 		selected_statuses,
+		selected_date_range,
 		search_query,
 		committed_search,
 
@@ -109,6 +150,8 @@ export function useOrdersList() {
 		has_any_orders,
 
 		setSelectedStatuses,
+		setSelectedDateRange,
+		clearSelectedDateRange,
 		submitSearch,
 		clearSearch,
 	}
