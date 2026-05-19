@@ -4,7 +4,7 @@ import Item from './Item.vue';
 
 <template>
 	<div class="list">
-		<Item v-for="index in 5" :key="index" />
+		<Item v-for="index in 6" :key="index" />
 	</div>
 </template>
 
