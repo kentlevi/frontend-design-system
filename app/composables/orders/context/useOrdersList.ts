@@ -20,6 +20,8 @@ export function useOrdersList() {
 	 */
 	const active_mode = ref<OrdersActiveMode>('active')
 	const selected_statuses = ref<Set<UserOrderType>>(new Set(ORDER_STATUSES))
+	const search_query = ref('')
+	const committed_search = ref('')
 
 
 	/**
@@ -45,19 +47,38 @@ export function useOrdersList() {
 			: []
 	}
 
+	function matchesSearch(order: UserOrder) {
+		const query = committed_search.value.trim()
+		if (!query) return true
+		return order.order_number === query
+	}
+
+	function applyFilters(orders: UserOrder[], type: UserOrderType) {
+		return filterByMode(orders, type).filter(matchesSearch)
+	}
+
 	function setSelectedStatuses(statuses: Set<UserOrderType>) {
 		selected_statuses.value = new Set(statuses)
+	}
+
+	function submitSearch() {
+		committed_search.value = search_query.value.trim()
+	}
+
+	function clearSearch() {
+		search_query.value = ''
+		committed_search.value = ''
 	}
 
 
 	/**
 	 * Computed
 	 */
-	const ongoing         = computed(() => filterByMode(user_orders_store.ongoing, 'ongoing'))
-	const action_required = computed(() => filterByMode(user_orders_store.action_required, 'action_required'))
-	const to_receive      = computed(() => filterByMode(user_orders_store.to_receive, 'to_receive'))
-	const completed       = computed(() => filterByMode(user_orders_store.completed, 'completed'))
-	const cancelled       = computed(() => filterByMode(user_orders_store.cancelled, 'cancelled'))
+	const ongoing         = computed(() => applyFilters(user_orders_store.ongoing, 'ongoing'))
+	const action_required = computed(() => applyFilters(user_orders_store.action_required, 'action_required'))
+	const to_receive      = computed(() => applyFilters(user_orders_store.to_receive, 'to_receive'))
+	const completed       = computed(() => applyFilters(user_orders_store.completed, 'completed'))
+	const cancelled       = computed(() => applyFilters(user_orders_store.cancelled, 'cancelled'))
 	const is_loading      = computed(() =>
 		user_orders_store.isLoading('fetch', 'ongoing') ||
 		user_orders_store.isLoading('fetch', 'action_required') ||
@@ -77,6 +98,8 @@ export function useOrdersList() {
 	return {
 		active_mode,
 		selected_statuses,
+		search_query,
+		committed_search,
 
 		ongoing,
 		action_required,
@@ -87,5 +110,7 @@ export function useOrdersList() {
 		has_any_orders,
 
 		setSelectedStatuses,
+		submitSearch,
+		clearSearch,
 	}
 }

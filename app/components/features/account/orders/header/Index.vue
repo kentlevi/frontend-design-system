@@ -24,6 +24,8 @@ const {
 	toggleFilter,
 	applyFilter,
 	cancelFilter,
+	submitSearch,
+	clearSearch,
 } = useOrdersHeaderUI();
 </script>
 
@@ -119,6 +121,7 @@ const {
 					class="account-orders-search"
 					:placeholder="translate('account.orders.searchPlaceholder')"
 					data-testid="account-orders-search-input"
+					@enter="submitSearch"
 				>
 					<template #left>
 						<UiIcon
@@ -130,10 +133,12 @@ const {
 					</template>
 					<template #right>
 						<UiIcon
+							v-if="search_query"
 							name="regular-times"
 							:size="24"
 							color="var(--text-primary)"
 							clickable
+							@click="clearSearch"
 						/>
 					</template>
 

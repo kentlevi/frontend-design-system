@@ -1,5 +1,8 @@
 import type { UserOrderType } from '~/types/order/user-orders'
 import { useOrdersListContext } from '~/composables/orders/context/useOrdersListContext'
+import { useOrderDetailContext } from '~/composables/orders/context/useOrderDetailContext'
+import { useCountry } from '~/composables/app/country/useCountry'
+import { useUserOrdersStore } from '~/stores/orders/user-orders.store'
 import { ORDER_STATUSES, ORDER_STATUS_LABELS } from '~/constants/order-detail/status'
 
 const active_options = [
@@ -30,8 +33,22 @@ export function useOrdersHeaderUI() {
 		completed,
 		cancelled,
 		selected_statuses,
+		search_query,
+		committed_search,
 		setSelectedStatuses,
+		submitSearch: commitSearch,
+		clearSearch: resetSearchState,
 	} = useOrdersListContext()
+
+	const { has_selected, loadOrderDetail } = useOrderDetailContext()
+
+	const { withCountry } = useCountry()
+
+
+	/**
+	 * Store
+	 */
+	const user_orders_store = useUserOrdersStore()
 
 
 	/**
@@ -45,7 +62,6 @@ export function useOrdersHeaderUI() {
 	})
 
 	const filter_status = ref(false)
-	const search_query = ref('')
 
 	const pending_statuses = ref<Set<UserOrderType>>(new Set(selected_statuses.value))
 
@@ -104,6 +120,38 @@ export function useOrdersHeaderUI() {
 		else openFilter()
 	}
 
+	function submitSearch() {
+		commitSearch()
+
+		const query = committed_search.value
+		if (!query) return
+
+		const match = user_orders_store.findByOrderNumber(query)
+		if (match) loadOrderDetail(match.id)
+	}
+
+	function clearSearch() {
+		resetSearchState()
+
+		const first = user_orders_store.findFirst()
+		if (first) {
+			loadOrderDetail(first.id)
+		} else {
+			has_selected.value = false
+			navigateTo(withCountry('/account/orders'))
+		}
+	}
+
+
+	/**
+	 * Watch input → auto-clear when emptied after a committed search
+	 */
+	watch(search_query, (val) => {
+		if (val === '' && committed_search.value !== '') {
+			clearSearch()
+		}
+	})
+
 
 	return {
 		date_picker_open,
@@ -119,5 +167,7 @@ export function useOrdersHeaderUI() {
 		toggleFilter,
 		applyFilter,
 		cancelFilter,
+		submitSearch,
+		clearSearch,
 	}
 }

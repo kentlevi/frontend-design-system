@@ -29,6 +29,24 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 		].find(o => o.id === id)
 	}
 
+	function findByOrderNumber(order_number: string): UserOrder | undefined {
+		return [
+			...ongoing.value,
+			...action_required.value,
+			...to_receive.value,
+			...completed.value,
+			...cancelled.value,
+		].find(o => o.order_number === order_number)
+	}
+
+	function findFirst(): UserOrder | undefined {
+		return ongoing.value[0]
+			?? action_required.value[0]
+			?? to_receive.value[0]
+			?? completed.value[0]
+			?? cancelled.value[0]
+	}
+
 
 
 
@@ -61,6 +79,8 @@ export const useUserOrdersStore = defineStore('user-orders', () => {
 
 		setOrders,
 		findById,
+		findByOrderNumber,
+		findFirst,
 		isLoading,
 		startLoading,
 		stopLoading,
