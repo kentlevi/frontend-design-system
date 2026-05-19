@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import MuFileInput from '~/components/base/MuFileInput.vue';
+import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
+import MuText from '~/components/base/MuText.vue';
+import { useUploadArtworkModalContext } from '~/composables/features/account/orders/context/useUploadArtworkModalContext'
+
+const {
+	is_open,
+	product,
+	formatted_size,
+	formatted_quantity,
+	close_modal,
+} = useUploadArtworkModalContext()
+</script>
+
 <template>
 	<UiModal
 		:model-value="is_open"
@@ -10,17 +25,17 @@
 			<MuLinearWrapper class="item-details" direction="column" :gap="4">
 				<MuText weight="semi-bold">Item Details:</MuText>
 				<MuLinearWrapper direction="column">
-					<MuLinearWrapper justify="space-between" width="100%">
+					<MuLinearWrapper v-if="product" justify="space-between" width="100%">
 						<MuText color="abyss-40">Product:</MuText>
-						<MuText color="abyss-40" weight="semi-bold">Die Cut Sticker</MuText>
+						<MuText color="abyss-40" weight="semi-bold">{{ product }}</MuText>
 					</MuLinearWrapper>
-					<MuLinearWrapper justify="space-between" width="100%">
+					<MuLinearWrapper v-if="formatted_size" justify="space-between" width="100%">
 						<MuText color="abyss-40">Size:</MuText>
-						<MuText color="abyss-40" weight="semi-bold">25x25mm</MuText>
+						<MuText color="abyss-40" weight="semi-bold">{{ formatted_size }}</MuText>
 					</MuLinearWrapper>
-					<MuLinearWrapper justify="space-between" width="100%">
+					<MuLinearWrapper v-if="formatted_quantity" justify="space-between" width="100%">
 						<MuText color="abyss-40">Quantity:</MuText>
-						<MuText color="abyss-40" weight="semi-bold">1000 pcs</MuText>
+						<MuText color="abyss-40" weight="semi-bold">{{ formatted_quantity }}</MuText>
 					</MuLinearWrapper>
 				</MuLinearWrapper>
 			</MuLinearWrapper>
@@ -50,15 +65,6 @@
 		</template>
 	</UiModal>
 </template>
-
-<script setup lang="ts">
-import MuFileInput from '~/components/base/MuFileInput.vue';
-import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
-import MuText from '~/components/base/MuText.vue';
-import { useUploadArtworkModal } from '~/composables/features/account/orders/useUploadArtworkModal'
-
-const { is_open, close_modal } = useUploadArtworkModal()
-</script>
 
 <style lang="scss" scoped>
 .item-details{

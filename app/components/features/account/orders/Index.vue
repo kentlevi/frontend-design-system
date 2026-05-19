@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import { provideOrderDetail } from '~/composables/orders/context/useOrderDetailContext';
 import { provideOrdersList } from '~/composables/orders/context/useOrdersListContext';
+import { provideUploadArtworkModal } from '~/composables/features/account/orders/context/useUploadArtworkModalContext';
 import { useUserOrdersPage } from '~/composables/orders/useUserOrdersPage';
 import { useUsersStore } from '~/stores/users/users.store';
 
@@ -15,6 +16,7 @@ withDefaults(defineProps<{
 
 const { is_loading, has_any_orders } = provideOrdersList()
 provideOrderDetail()
+provideUploadArtworkModal()
 useUserOrdersPage()
 
 const users_store = useUsersStore()

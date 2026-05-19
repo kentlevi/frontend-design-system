@@ -22,11 +22,7 @@ const {
 	needs_artwork,
 } = useOrderDetailItem(props)
 
-const { handleUploadArtwork, handleReplaceArtwork, handleViewArtwork } = useOrderDetailItemUI()
-
-function onImageClick() {
-	handleViewArtwork()
-}
+const { handleUploadArtwork, handleReplaceArtwork, handleViewArtwork } = useOrderDetailItemUI(props)
 </script>
 
 <template>
@@ -37,9 +33,9 @@ function onImageClick() {
 					class="item-img-wrapper is-clickable"
 					role="button"
 					tabindex="0"
-					@click="onImageClick"
-					@keydown.enter.prevent="onImageClick"
-					@keydown.space.prevent="onImageClick"
+					@click="handleViewArtwork"
+					@keydown.enter.prevent="handleViewArtwork"
+					@keydown.space.prevent="handleViewArtwork"
 				>
 					<img :src="image_src">
 				</div>
@@ -59,7 +55,7 @@ function onImageClick() {
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" justify="space-between" align="flex-end">
 				<UiButton v-if="needs_artwork" tone="neutral" @click="handleUploadArtwork">Upload Artwork</UiButton>
-				<UiButton v-if="needs_artwork" tone="neutral" @click="handleReplaceArtwork">Replace Artwork</UiButton>
+				<UiButton v-else tone="neutral" @click="handleReplaceArtwork">Replace Artwork</UiButton>
 				<MuText size="large" weight="bold">{{ formatted_cost }}</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>

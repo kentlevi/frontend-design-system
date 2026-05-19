@@ -1,13 +1,18 @@
-import { useUploadArtworkModal } from '~/composables/features/account/orders/useUploadArtworkModal'
+import type { OrderDetailItem } from '~/types/order/order-detail'
+import { useUploadArtworkModalContext } from '~/composables/features/account/orders/context/useUploadArtworkModalContext'
 import { useReplaceArtworkModal } from '~/composables/features/account/orders/useReplaceArtworkModal'
 import { useArtworkDetailModal } from '~/composables/features/account/orders/useArtworkDetailModal'
 
-export function useOrderDetailItemUI() {
+type Props = {
+	item: OrderDetailItem
+}
+
+export function useOrderDetailItemUI(props: Props) {
 
 	/**
 	 * State
 	 */
-	const { open_modal } = useUploadArtworkModal()
+	const { open_modal } = useUploadArtworkModalContext()
 	const { open_modal: open_replace_artwork_modal } = useReplaceArtworkModal()
 	const { open_modal: open_artwork_detail_modal } = useArtworkDetailModal()
 
@@ -16,7 +21,7 @@ export function useOrderDetailItemUI() {
 	 * Functions
 	 */
 	function handleUploadArtwork() {
-		open_modal()
+		open_modal(props.item)
 	}
 
 	function handleReplaceArtwork() {
