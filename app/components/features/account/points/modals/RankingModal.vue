@@ -2,13 +2,11 @@
 import MuCard from '~/components/base/MuCard.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import type { AccountPointRank } from '~/types/account/points';
 
 const { t: translate } = useI18n();
 
 const props = defineProps<{
 	modelValue: boolean;
-	ranks: AccountPointRank[];
 }>();
 
 const emit = defineEmits<{
@@ -18,6 +16,70 @@ const emit = defineEmits<{
 function handleModelValueChange(value: boolean) {
 	emit('update:modelValue', value);
 }
+
+const ranks = [
+	{
+		id: 'rank-1',
+		rank_label: translate('account.points.ranks.rank1.label'),
+		name: translate('account.points.ranks.rank1.name'),
+		badge_src: '/icons/custom/account/points/ranking-system/mu-scout-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-scout-bg.svg',
+		spend_requirement: translate('account.points.data.newlyRegisteredAccount'),
+		perks: [translate('account.points.data.earn05PointOnEveryPurchase')],
+		level_up_bonus_gifts: [translate('account.points.data.earn4PointsJustByRegisteringYourAccount')],
+		is_current: false,
+		theme: 'scout',
+	},
+	{
+		id: 'rank-2',
+		rank_label: translate('account.points.ranks.rank2.label'),
+		name: translate('account.points.ranks.rank2.name'),
+		badge_src: '/icons/custom/account/points/ranking-system/mu-leader-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-leader-bg.svg',
+		spend_requirement: translate('account.points.data.rank2SpendRequirement'),
+		perks: [translate('account.points.data.earn1PointOnEveryPurchase')],
+		level_up_bonus_gifts: [
+			translate('account.points.data.earn8PointsAsRewardForReachingThisTier'),
+			translate('account.points.data.discount7212KrwNextOrderOneTime'),
+		],
+		is_current: false,
+		theme: 'leader',
+	},
+	{
+		id: 'rank-3',
+		rank_label: translate('account.points.ranks.rank3.label'),
+		name: translate('account.points.ranks.rank3.name'),
+		badge_src: '/icons/custom/account/points/ranking-system/mu-boss-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-boss-bg.svg',
+		spend_requirement: translate('account.points.data.rank3SpendRequirement'),
+		perks: [translate('account.points.data.earn15PointOnEveryPurchase')],
+		level_up_bonus_gifts: [
+			translate('account.points.data.earn12PointsAsRewardForReachingThisTier'),
+			translate('account.points.data.discount10NextOrderOneTime'),
+			translate('account.points.data.freeExpressShippingOneTime'),
+		],
+		is_current: true,
+		theme: 'boss',
+	},
+	{
+		id: 'rank-4',
+		rank_label: translate('account.points.ranks.rank4.label'),
+		name: translate('account.points.ranks.rank4.name'),
+		badge_src: '/icons/custom/account/points/ranking-system/mu-dynamo-badge.svg',
+		background_src: '/icons/custom/account/points/ranking-system/mu-dynamo-bg.svg',
+		spend_requirement: translate('account.points.data.rank4SpendRequirement'),
+		perks: [translate('account.points.data.earn2PointOnEveryPurchase')],
+		level_up_bonus_gifts: [
+			translate('account.points.data.earn16PointsAsRewardForReachingThisTier'),
+			translate('account.points.data.discount15NextOrderOneTime'),
+			translate('account.points.data.freeExpressShippingUnlimited'),
+			translate('account.points.data.freeArtworkRevisions'),
+			translate('account.points.data.doublePointsOneMonth'),
+		],
+		is_current: false,
+		theme: 'dynamo',
+	},
+];
 </script>
 
 <template>
@@ -34,7 +96,7 @@ function handleModelValueChange(value: boolean) {
 		<section class="ranking" data-testid="account-points-ranking-modal">
 			<div class="grid">
 				<MuCard
-					v-for="rank in props.ranks"
+					v-for="rank in ranks"
 					:key="rank.id"
 					padding="none"
 					radius="lg"

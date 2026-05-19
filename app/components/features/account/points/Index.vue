@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import RankingModal from '~/components/features/account/points/modals/RankingModal.vue';
-import { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
-const points = useAccountPoints();
-const { ranks } = points;
 const is_ranking_modal_open = ref(false);
 
 function openRankingModal() {
 	is_ranking_modal_open.value = true;
 }
 
-provide('points:state', points)
 provide('points:openRankingModal', openRankingModal)
 </script>
 
@@ -20,10 +16,7 @@ provide('points:openRankingModal', openRankingModal)
 			<FeaturesAccountPointsContent />
 		</div>
 
-		<RankingModal
-			v-model="is_ranking_modal_open"
-			:ranks="ranks"
-		/>
+		<RankingModal v-model="is_ranking_modal_open" />
 	</section>
 </template>
 

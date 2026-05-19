@@ -2,18 +2,72 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
-import type { AccountPointLogFilter } from '~/types/account/points';
+
+type LogFilter = 'all' | 'earned' | 'deducted';
 
 const { t: translate } = useI18n();
-const {
-	filters,
-	logs,
-	active_filter,
-	setActiveFilter,
-} = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 
-function handleFilterClick(filter_id: AccountPointLogFilter) {
+const filters: Array<{ id: LogFilter; label: string }> = [
+	{ id: 'all', label: translate('account.points.filters.all') },
+	{ id: 'earned', label: translate('account.points.filters.earned') },
+	{ id: 'deducted', label: translate('account.points.filters.deducted') },
+];
+
+const all_logs = [
+	{
+		id: 'earned-order-12405077220',
+		title: `${translate('account.points.logs.pointsEarned')} (Order # 12405077220)`,
+		date: '11/05/2024',
+		value: '+0.36 P',
+		positive: true,
+		filter: 'earned' as LogFilter,
+	},
+	{
+		id: 'used-order-12405077220',
+		title: `${translate('account.points.logs.pointsUsed')} (Order # 12405077220)`,
+		date: '11/05/2024',
+		value: '-25.00 P',
+		positive: false,
+		filter: 'deducted' as LogFilter,
+	},
+	{
+		id: 'quest-sticker-explorer',
+		title: `${translate('account.points.logs.stickerQuest')} (${translate('account.points.challenges.stickerExplorer.name')})`,
+		date: '10/22/2024',
+		value: '+5.00 P',
+		positive: true,
+		filter: 'earned' as LogFilter,
+	},
+	{
+		id: 'quest-first-order-victory',
+		title: `${translate('account.points.logs.stickerQuest')} (${translate('account.points.challenges.firstOrderVictory.name')})`,
+		date: '10/15/2024',
+		value: '+5.00 P',
+		positive: true,
+		filter: 'earned' as LogFilter,
+	},
+	{
+		id: 'rank-level-up',
+		title: `${translate('account.points.logs.rankLevelUp')} (${translate('account.points.tierName')})`,
+		date: '10/05/2024',
+		value: translate('account.points.data.freeExpressShippingOneTime'),
+		positive: true,
+		filter: 'earned' as LogFilter,
+	},
+];
+
+const active_filter = ref<LogFilter>('all');
+
+const logs = computed(() => {
+	if (active_filter.value === 'all') return all_logs;
+	return all_logs.filter((log) => log.filter === active_filter.value);
+});
+
+function setActiveFilter(filter_id: LogFilter) {
+	active_filter.value = filter_id;
+}
+
+function handleFilterClick(filter_id: LogFilter) {
 	setActiveFilter(filter_id);
 }
 </script>

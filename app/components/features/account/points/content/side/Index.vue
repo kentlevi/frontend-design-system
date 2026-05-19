@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
 const { t: translate } = useI18n();
-const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
+
+const conversion_rate_label = translate('account.points.data.conversionRateLabel');
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 					</MuText>
 				</div>
 				<div class="pill">
-					{{ summary.conversion_rate_label }}
+					{{ conversion_rate_label }}
 				</div>
 			</section>
 

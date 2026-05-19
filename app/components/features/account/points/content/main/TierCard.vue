@@ -2,10 +2,18 @@
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 
 const { t: translate } = useI18n();
-const { summary } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
+
+const summary = {
+	tier_name_key: 'tierName',
+	badge_src: '/icons/custom/account/points/badges/badge-bumper-boss.svg',
+	last_tier_upgrade_date: '01/11/2025',
+	balance: '13.90',
+	expiry_date: '03/31/2025',
+	progress_percent: 28,
+	remaining_spend: '5,828,670.20',
+};
 
 const openRankingModal = inject<() => void>('points:openRankingModal', () => {})
 </script>

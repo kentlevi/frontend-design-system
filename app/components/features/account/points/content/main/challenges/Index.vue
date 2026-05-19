@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
-import type { useAccountPoints } from '~/composables/account/points/useAccountPoints';
+import List from './List.vue';
 
 const { t: translate } = useI18n();
-const { visible_challenges, completed_challenge_count } = inject<ReturnType<typeof useAccountPoints>>('points:state')!
 </script>
 
 <template>
@@ -18,7 +17,7 @@ const { visible_challenges, completed_challenge_count } = inject<ReturnType<type
 			<MuLinearWrapper class="title-wrap" align="center" :gap="14">
 				<MuHeading class="section-title" weight="semi-bold">{{ translate('account.points.challengesTitle') }}</MuHeading>
 				<div class="count">
-					{{ completed_challenge_count }}/{{ visible_challenges.length + (12 - visible_challenges.length) }}
+					3/12
 				</div>
 			</MuLinearWrapper>
 			<UiButton
@@ -31,22 +30,7 @@ const { visible_challenges, completed_challenge_count } = inject<ReturnType<type
 			</UiButton>
 		</MuLinearWrapper>
 
-		<div class="list">
-			<article
-				v-for="challenge in visible_challenges"
-				:key="challenge.id"
-				class="card"
-				:data-state="challenge.state"
-			>
-				<div class="frame">
-					<img
-						:src="challenge.icon_src"
-						:alt="challenge.name"
-						class="image"
-					>
-				</div>
-			</article>
-		</div>
+		<List />
 	</section>
 </template>
 
@@ -82,43 +66,6 @@ const { visible_challenges, completed_challenge_count } = inject<ReturnType<type
 		padding-inline: 16px;
 		min-height: 38px;
 	}
-
-	.list {
-		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: 32px;
-	}
-
-	.card {
-		display: grid;
-		place-items: center;
-		min-height: 126px;
-		flex: 0 0 auto;
-	}
-
-	.frame {
-		width: 88px;
-		height: 116px;
-		display: grid;
-		place-items: center;
-	}
-
-	.image {
-		width: 100%;
-		height: 100%;
-		object-fit: contain;
-		object-position: center bottom;
-		display: block;
-	}
-}
-
-@media (max-width: 1180px) {
-	.challenges .list {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		justify-content: initial;
-	}
 }
 
 @media (max-width: 760px) {
@@ -126,11 +73,6 @@ const { visible_challenges, completed_challenge_count } = inject<ReturnType<type
 		.head {
 			flex-direction: column !important;
 			align-items: flex-start !important;
-		}
-
-		.list {
-			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 }
