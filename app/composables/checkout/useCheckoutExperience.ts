@@ -29,6 +29,8 @@ export function useCheckoutExperience() {
 
 	const is_member = computed(() => user_store.state.id !== 0);
 
+	const can_use_rewards = computed(() => user_store.state.role?.code === 'MEMBER')
+
 	const email = computed({
 		get: () =>
 			is_member.value
@@ -75,6 +77,7 @@ export function useCheckoutExperience() {
 
 		// Unified / Overridden state
 		is_member,
+		can_use_rewards,
 		email,
 		t,
 		withCountry,

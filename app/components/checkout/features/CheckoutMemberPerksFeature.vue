@@ -13,7 +13,7 @@ import MuTooltip from '~/components/base/MuTooltip.vue';
 
 const {
 	t,
-	is_member,
+	can_use_rewards,
 	points_tooltip_open,
 	togglePointsTooltip,
 	is_coupons_modal_open,
@@ -57,7 +57,7 @@ function showCouponTooltip(event: MouseEvent | FocusEvent) {
 </script>
 
 <template>
-	<div v-if="is_member" class="checkout-member-perks">
+	<div v-if="can_use_rewards" class="checkout-member-perks">
 		<div class="checkout-member-perks-head">
 			{{ t('checkout.member.discountsAndPerks') }}
 		</div>
