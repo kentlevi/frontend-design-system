@@ -54,96 +54,110 @@ function showCouponTooltip(event: MouseEvent | FocusEvent) {
 		{ iconLeft: { name: 'strong-tags', color: 'blood-base', size: 16 } },
 	);
 }
+
+const coupon_points = ref(true)
 </script>
 
 <template>
 	<div v-if="can_use_rewards" class="checkout-member-perks">
 		<div class="checkout-member-perks-head">
-			{{ t('checkout.member.discountsAndPerks') }}
+			<MuLinearWrapper justify="space-between" width="100%">
+				{{ t('checkout.member.discountsAndPerks') }}
+
+				<UiIcon
+					:name="coupon_points ? 'light-angle-up' : 'light-angle-down'"
+					clickable
+					@click="coupon_points = !coupon_points"
+				/>
+			</MuLinearWrapper>
 		</div>
-		<div class="checkout-member-perks-body">
-			<div class="checkout-member-perk-field">
-				<div class="checkout-member-perk-label-row">
-					<div ref="points_tooltip_ref" class="checkout-member-perk-label-group">
-						<span class="checkout-member-perk-label-primary">{{ t('checkout.member.points') }}</span>
-						<UiTooltip :open="points_tooltip_open" v-bind="checkoutMemberPointsTooltipProps">
-							<template #trigger>
-								<button type="button" class="ui-tooltip-icon-trigger" @click="togglePointsTooltip">
-									<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--gray-90)" decorative />
-								</button>
-							</template>
-							<div class="ui-tooltip-copy">
-								<strong class="ui-tooltip-title">{{ t('checkout.member.pointsTooltip.title') }}</strong>
-								<p class="ui-tooltip-text">{{ t('checkout.member.pointsTooltip.text') }}</p>
+		<div class="checkout-member-perks-collapse" :data-open="coupon_points ? 'true' : 'false'">
+			<div class="checkout-member-perks-collapse-inner">
+				<div class="checkout-member-perks-body">
+					<div class="checkout-member-perk-field">
+						<div class="checkout-member-perk-label-row">
+							<div ref="points_tooltip_ref" class="checkout-member-perk-label-group">
+								<span class="checkout-member-perk-label-primary">{{ t('checkout.member.points') }}</span>
+								<UiTooltip :open="points_tooltip_open" v-bind="checkoutMemberPointsTooltipProps">
+									<template #trigger>
+										<button type="button" class="ui-tooltip-icon-trigger" @click="togglePointsTooltip">
+											<UiIcon :name="points_tooltip_open ? 'strong-question-circle' : 'regular-question-circle'" size="20" color="var(--gray-90)" decorative />
+										</button>
+									</template>
+									<div class="ui-tooltip-copy">
+										<strong class="ui-tooltip-title">{{ t('checkout.member.pointsTooltip.title') }}</strong>
+										<p class="ui-tooltip-text">{{ t('checkout.member.pointsTooltip.text') }}</p>
+									</div>
+								</UiTooltip>
 							</div>
-						</UiTooltip>
+							<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: total_points.toLocaleString() }) }}</span>
+						</div>
+						<div class="checkout-member-perk-control">
+							<UiInput
+								v-model="points_to_use"
+								size="md"
+								:placeholder="t('checkout.member.pointsPlaceholder')"
+								:disabled="total_points === 0"
+								@keydown="handlePointsKeydown"
+								@paste="handlePointsPaste" />
+							<UiButton
+								variant="outline"
+								tone="neutral"
+								size="md"
+								class="checkout-member-inline-button"
+								:disabled="total_points === 0"
+								@click="points_to_use ? clearPoints() : useAllPoints()">
+								{{ points_to_use ? 'Remove' : t('checkout.member.useAll') }}
+							</UiButton>
+						</div>
 					</div>
-					<span class="checkout-member-perk-label-secondary">{{ t('checkout.member.pointsAvailable', { value: total_points.toLocaleString() }) }}</span>
+					<div class="checkout-member-perk-field">
+						<div class="checkout-member-perk-label-row">
+							<MuText>
+								{{ t('checkout.member.coupon') }}
+							</MuText>
+							<MuText v-if="has_coupon_error" color="error-base">
+								{{ validation_errors?.code?.[0] ?? message }}
+							</MuText>
+						</div>
+						<div v-if="!coupon" class="checkout-member-perk-control">
+							<MuInput
+								id="coupon"
+								v-model="form.code"
+								class="coupon_input"
+								name="coupon"
+								:placeholder="t('checkout.member.couponPlaceholder')"
+								:has-error="has_coupon_error"
+								@update:model-value="form.code = form.code.toUpperCase()"
+							>
+								<template #inner-right>
+									<MuText class="select_coupon" weight="medium" color="abyss-base" @click="is_coupons_modal_open = true">Select</MuText>
+								</template>
+							</MuInput>
+							<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="apply">
+								{{ t('checkout.member.applyCoupon') }}
+							</UiButton>
+						</div>
+						<MuCard v-else class="coupon" variant="subtle" padding="xsm">
+							<MuLinearWrapper
+								align="center"
+								tabindex="0"
+								@mouseenter="showCouponTooltip"
+								@mouseleave="hideTooltip"
+							>
+								<MuLinearWrapper
+									class="coupon-info"
+									align="center"
+									:gap="4"
+								>
+									<UiIcon name="strong-tags" :size="24" color="#D42941" />
+									<MuText class="coupon-text"><MuText variant="span" weight="bold">{{ coupon?.code }}</MuText> ({{ coupon?.name }})</MuText>
+								</MuLinearWrapper>
+								<UiButton variant="ghost" tone="neutral" size="sm" @click="is_coupons_modal_open = true">Change</UiButton>
+							</MuLinearWrapper>
+						</MuCard>
+					</div>
 				</div>
-				<div class="checkout-member-perk-control">
-					<UiInput
-						v-model="points_to_use"
-						size="md"
-						:placeholder="t('checkout.member.pointsPlaceholder')"
-						:disabled="total_points === 0"
-						@keydown="handlePointsKeydown"
-						@paste="handlePointsPaste" />
-					<UiButton
-						variant="outline"
-						tone="neutral"
-						size="md"
-						class="checkout-member-inline-button"
-						:disabled="total_points === 0"
-						@click="points_to_use ? clearPoints() : useAllPoints()">
-						{{ points_to_use ? 'Remove' : t('checkout.member.useAll') }}
-					</UiButton>
-				</div>
-			</div>
-			<div class="checkout-member-perk-field">
-				<div class="checkout-member-perk-label-row">
-					<MuText>
-						{{ t('checkout.member.coupon') }}
-					</MuText>
-					<MuText v-if="has_coupon_error" color="error-base">
-						{{ validation_errors?.code?.[0] ?? message }}
-					</MuText>
-				</div>
-				<div v-if="!coupon" class="checkout-member-perk-control">
-					<MuInput
-						id="coupon"
-						v-model="form.code"
-						class="coupon_input"
-						name="coupon"
-						:placeholder="t('checkout.member.couponPlaceholder')"
-						:has-error="has_coupon_error"
-						@update:model-value="form.code = form.code.toUpperCase()"
-					>
-						<template #inner-right>
-							<MuText class="select_coupon" weight="medium" color="abyss-base" @click="is_coupons_modal_open = true">Select</MuText>
-						</template>
-					</MuInput>
-					<UiButton variant="outline" tone="neutral" size="md" class="checkout-member-inline-button" @click="apply">
-						{{ t('checkout.member.applyCoupon') }}
-					</UiButton>
-				</div>
-				<MuCard v-else class="coupon" variant="subtle" padding="xsm">
-					<MuLinearWrapper
-						align="center"
-						tabindex="0"
-						@mouseenter="showCouponTooltip"
-						@mouseleave="hideTooltip"
-					>
-						<MuLinearWrapper
-							class="coupon-info"
-							align="center"
-							:gap="4"
-						>
-							<UiIcon name="strong-tags" :size="24" color="#D42941" />
-							<MuText class="coupon-text"><MuText variant="span" weight="bold">{{ coupon?.code }}</MuText> ({{ coupon?.name }})</MuText>
-						</MuLinearWrapper>
-						<UiButton variant="ghost" tone="neutral" size="sm" @click="is_coupons_modal_open = true">Change</UiButton>
-					</MuLinearWrapper>
-				</MuCard>
 			</div>
 		</div>
 
@@ -223,6 +237,44 @@ function showCouponTooltip(event: MouseEvent | FocusEvent) {
 					padding-inline: 18px;
 					border-radius: 16px;
 				}
+			}
+		}
+	}
+
+	.checkout-member-perks-collapse {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1);
+
+		&[data-open="true"] {
+			grid-template-rows: 1fr;
+		}
+
+		.checkout-member-perks-collapse-inner {
+			min-height: 0;
+			overflow: hidden;
+		}
+
+		.checkout-member-perks-body {
+			opacity: 0;
+			transform: translateY(-4px);
+			transition:
+				opacity 180ms ease,
+				transform 220ms ease;
+		}
+
+		&[data-open="true"] .checkout-member-perks-body {
+			opacity: 1;
+			transform: translateY(0);
+			transition:
+				opacity 260ms ease 80ms,
+				transform 280ms ease 60ms;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			&,
+			&[data-open="true"] .checkout-member-perks-body {
+				transition: none;
 			}
 		}
 	}

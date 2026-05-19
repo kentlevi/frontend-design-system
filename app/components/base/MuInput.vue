@@ -91,10 +91,8 @@ const input_ref = ref<HTMLInputElement | null>(null)
 const is_focused = ref(false)
 
 const model = computed({
-	get: () => props.modelValue ?? '',
-	set: (val: string | number | null) => {
-		emit('update:modelValue', val)
-	},
+	get: () => props.modelValue ?? false,
+	set: (value: string | number | null) => emit('update:modelValue', value),
 })
 
 const state = computed<State>(() => {
