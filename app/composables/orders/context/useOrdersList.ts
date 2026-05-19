@@ -1,6 +1,5 @@
 import { useUserOrdersStore } from "~/stores/orders/user-orders.store"
 import type { UserOrder, UserOrderType } from '~/types/order/user-orders'
-import { ORDER_STATUSES } from '~/constants/order-detail/status'
 
 const DAYS_THRESHOLD = 30
 const MS_PER_DAY = 24 * 60 * 60 * 1000
@@ -19,7 +18,7 @@ export function useOrdersList() {
 	 * State
 	 */
 	const active_mode = ref<OrdersActiveMode>('active')
-	const selected_statuses = ref<Set<UserOrderType>>(new Set(ORDER_STATUSES))
+	const selected_statuses = ref<Set<UserOrderType>>(new Set())
 	const search_query = ref('')
 	const committed_search = ref('')
 

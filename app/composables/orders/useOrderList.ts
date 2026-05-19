@@ -19,7 +19,10 @@ export function useOrderList(props: Props) {
 	 */
 	const orders = computed(() => context[props.status].value)
 	const label = computed(() => ORDER_STATUS_LABELS[props.status])
-	const is_status_visible = computed(() => context.selected_statuses.value.has(props.status))
+	const is_status_visible = computed(() =>
+		context.selected_statuses.value.size === 0
+		|| context.selected_statuses.value.has(props.status),
+	)
 	const has_orders = computed(() => orders.value.length > 0 && is_status_visible.value)
 
 
