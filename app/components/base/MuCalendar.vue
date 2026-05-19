@@ -52,6 +52,7 @@ import type {
 	CalendarValue,
 	CalendarWeekday,
 } from '~/types/base/calendar';
+import MuText from './MuText.vue';
 
 const props = withDefaults(defineProps<CalendarProps>(), {
 	markerDates: () => [],

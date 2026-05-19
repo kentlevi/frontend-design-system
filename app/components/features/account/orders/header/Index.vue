@@ -27,13 +27,93 @@ const {
 	submitSearch,
 	clearSearch,
 } = useOrdersHeaderUI();
+
+type QuickFilter = {
+	key: 'today' | 'this-week' | 'this-month' | 'last-7-days' | 'last-30-days';
+	label: string;
+	resolve: () => { start: Date; end: Date };
+};
+
+const quick_filters: QuickFilter[] = [
+	{
+		key: 'today',
+		label: 'Today',
+		resolve: () => {
+			const today = new Date();
+			return { start: today, end: today };
+		},
+	},
+	{
+		key: 'this-week',
+		label: 'This Week',
+		resolve: () => {
+			const today = new Date();
+			const start = new Date(today);
+			start.setDate(today.getDate() - today.getDay());
+			const end = new Date(start);
+			end.setDate(start.getDate() + 6);
+			return { start, end };
+		},
+	},
+	{
+		key: 'this-month',
+		label: 'This Month',
+		resolve: () => {
+			const today = new Date();
+			const start = new Date(today.getFullYear(), today.getMonth(), 1);
+			const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+			return { start, end };
+		},
+	},
+	{
+		key: 'last-7-days',
+		label: 'Last 7 days',
+		resolve: () => {
+			const end = new Date();
+			const start = new Date(end);
+			start.setDate(end.getDate() - 6);
+			return { start, end };
+		},
+	},
+	{
+		key: 'last-30-days',
+		label: 'Last 30 days',
+		resolve: () => {
+			const end = new Date();
+			const start = new Date(end);
+			start.setDate(end.getDate() - 29);
+			return { start, end };
+		},
+	},
+];
+
+const active_filter = ref<QuickFilter['key'] | null>(null);
+let setting_from_filter = false;
+
+function selectFilter(filter: QuickFilter) {
+	setting_from_filter = true;
+	active_filter.value = filter.key;
+	selected_range.value = filter.resolve();
+	nextTick(() => {
+		setting_from_filter = false;
+	});
+}
+
+watch(
+	selected_range,
+	() => {
+		if (setting_from_filter) return;
+		active_filter.value = null;
+	},
+	{ deep: true },
+);
 </script>
 
 <template>
 	<MuLinearWrapper class="header" justify="space-between" align="center">
 		<MuHeading weight="bold">My Orders</MuHeading>
 
-		<MuLinearWrapper justify="space-between" width="69.2%">
+		<MuLinearWrapper justify="space-between" width="69.2%" :gap="12">
 			<MuSegmented v-model="active_mode" :options="active_options" size="sm">
 				<template #option="{ option }">
 					<MuText weight="bold">{{ option.label }}</MuText>
@@ -56,10 +136,33 @@ const {
 						{{selected_range.start.toLocaleDateString()}} - {{selected_range.end.toLocaleDateString()}}
 						<UiIcon name="regular-times-circle"/>
 					</UiButton>
-					<MuCard v-if="date_picker_open" class="date_calendar" width="100%">
-						<MuLinearWrapper direction="column">
-							<MuCalendar v-model="selected_range" mode="range" columns="2"/>
-							<MuLinearWrapper justify="flex-end" :gap="16">
+					<MuCard v-if="date_picker_open" class="date_calendar" width="100%" padding="none">
+						<div class="date_calendar__body">
+							<MuCalendar v-model="selected_range" mode="range" :columns="2" class="date_calendar__calendar"/>
+							<div class="date_calendar__filters">
+								<MuText class="date_calendar__filters-title" weight="bold">Filters:</MuText>
+								<ul class="date_calendar__filters-list">
+									<li v-for="filter in quick_filters" :key="filter.key">
+										<button
+											type="button"
+											class="date_calendar__filter"
+											:data-active="active_filter === filter.key ? 'true' : 'false'"
+											@click="selectFilter(filter)"
+										>
+											{{ filter.label }}
+										</button>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<MuLinearWrapper class="date_calendar__actions" justify="space-between" align="center">
+							<MuLinearWrapper :gap="8" align="center">
+								<MuText class="date_calendar__actions-label">Select Dates:</MuText>
+								<MuText class="date_calendar__actions-value">
+									{{ selected_range.start.toLocaleDateString() }} - {{ selected_range.end.toLocaleDateString() }}
+								</MuText>
+							</MuLinearWrapper>
+							<MuLinearWrapper :gap="16">
 								<UiButton variant="ghost" tone="neutral" @click="date_picker_open = false">
 									Cancel
 								</UiButton>
@@ -155,9 +258,57 @@ const {
 	.date_calendar{
 		position: absolute;
 		top: 100%;
-		width: 616px;
+		width: 760px;
 		z-index: 1;
 		margin-top: 5px;
+
+		&__body{
+			display: flex;
+			gap: 24px;
+			padding: 20px 20px 16px;
+		}
+
+		&__calendar{ flex: 1; min-width: 0; }
+
+		&__filters{
+			width: 148px;
+			display: grid;
+			gap: 12px;
+		}
+
+		&__filters-list{
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			gap: 2px;
+		}
+
+		&__filter{
+			width: 100%;
+			padding: 8px 14px;
+			text-align: left;
+			background: transparent;
+			border: 0;
+			border-radius: 8px;
+			cursor: pointer;
+			color: var(--text-primary);
+			font: inherit;
+
+			&:hover{ background: var(--gray-30); }
+			&[data-active="true"]{
+				background: var(--gray-50);
+				font-weight: 500;
+			}
+		}
+
+		&__actions{
+			padding: 14px 20px;
+			border-top: 1px solid var(--gray-50);
+		}
+
+		&__actions-label{ color: var(--text-secondary); }
+		&__actions-value{ color: var(--text-primary); font-weight: 500; }
 	}
 }
 .order-filters{
