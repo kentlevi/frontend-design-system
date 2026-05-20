@@ -45,7 +45,7 @@ const { handleUploadArtwork, handleReplaceArtwork, handleViewArtwork } = useOrde
 							<MuText size="large" weight="bold">{{ item_number }}</MuText>
 							<UiIcon name="regular-info-circle"/>
 						</MuLinearWrapper>
-						<UiBadge v-if="needs_artwork"><UiIcon name="regular-exclamation-triangle"/>{{ status_label }}</UiBadge>
+						<UiBadge v-if="status_label"><UiIcon name="regular-exclamation-triangle"/>{{ status_label }}</UiBadge>
 					</MuLinearWrapper>
 					<MuLinearWrapper class="item-description" direction="column">
 						<MuText v-if="product" color="abyss-40">{{ product }}</MuText>

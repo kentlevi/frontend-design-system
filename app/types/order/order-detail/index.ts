@@ -55,3 +55,10 @@ export interface OrderPaymentData {
 export type OrderItemsResponse = ApiResponse<OrderItemsData>
 export type OrderPaymentResponse = ApiResponse<OrderPaymentData>
 export type OrderAddressesResponse = ApiResponse<OrderAddressItem[]>
+
+export type UpdateOrderItemArtworkPayload = {
+	item_id: number
+	file_name: string
+	uploaded_file: string
+	instruction: string
+}

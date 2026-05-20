@@ -1,6 +1,7 @@
+import type { ApiResponse } from "~/types/config/api"
 import type { CreateQuotationPayload, OrderQuotationDetailsResponse } from "~/types/checkout/quotation"
 import type { OrderCompleteDataResponse } from "~/types/order"
-import type { OrderAddressesResponse, OrderItemsResponse, OrderPaymentResponse } from "~/types/order/order-detail"
+import type { OrderAddressesResponse, OrderItemsResponse, OrderPaymentResponse, UpdateOrderItemArtworkPayload } from "~/types/order/order-detail"
 import type { UserOrderType, UserOrdersResponse } from "~/types/order/user-orders"
 
 export const fetchOrderCompletionDetails = async (order_id : number) : Promise<OrderCompleteDataResponse> => {
@@ -53,4 +54,10 @@ export async function fetchOrderAddresses(order_id: number): Promise<OrderAddres
 	const { $api } = useNuxtApp()
 
 	return $api.get(`order-address/${order_id}/addresses`)
+}
+
+export async function updateOrderItemArtwork(payload: UpdateOrderItemArtworkPayload): Promise<ApiResponse<unknown>> {
+	const { $api } = useNuxtApp()
+
+	return $api.post('orders/artwork/update', payload)
 }

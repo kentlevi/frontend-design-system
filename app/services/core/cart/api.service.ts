@@ -107,8 +107,7 @@ export const useCartApiService = (caller: string) => {
 		item_id: number,
 		file_name: string,
 		uploaded_file: string,
-		instruction: string,
-		source: string = 'cart-artwork-update',
+		instruction: string
 	) => {
 		const { success, message } = await $api.post(
 			'cart/artwork/update',
@@ -116,8 +115,7 @@ export const useCartApiService = (caller: string) => {
 				item_id: item_id,
 				file_name: file_name,
 				uploaded_file: uploaded_file,
-				instruction: instruction,
-				source: source,
+				instruction: instruction
 			}
 		)
 
