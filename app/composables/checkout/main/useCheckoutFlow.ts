@@ -30,6 +30,7 @@ export const useCheckoutFlow = () => {
 		selected_payment_method,
 		drop_shipping_enabled,
 		use_shipping_as_billing,
+		checkout_started_at,
 	} = storeToRefs(checkout_store)
 	const {
 		selected_real_ids,
@@ -113,6 +114,7 @@ export const useCheckoutFlow = () => {
 			selected_cart_ids: selected_real_ids.value,
 			coupon_id: coupon.value?.id ?? null,
 			points: points_to_use.value ? Number(points_to_use.value) : null,
+			checkout_started_at: checkout_started_at.value,
 
 
 			shipping_address: withEmail(shipping_form.value),

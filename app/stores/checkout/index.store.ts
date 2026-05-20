@@ -45,6 +45,7 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 
 	const selected_shipping_method_id = ref<number | null>(null)
 	const selected_payment_method = ref<AvailablePaymentMethods | null>(null)
+	const checkout_started_at = ref<number | null>(null)
 
 	// True while a payment is being processed (popup open / awaiting result).
 	// The submit button reads this together with data-loading flags to decide
@@ -86,11 +87,16 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		payment_window_open.value = value
 	}
 
+	const setCheckoutStartedAt = () => {
+		checkout_started_at.value = Math.floor(Date.now() / 1000)
+	}
+
 	/**
 	 * Clean up states that are set during checkout process after a successful complete checkout request
 	 */
 	const cleanCheckoutStates = () => {
 		selected_payment_method.value = null
+		checkout_started_at.value = null
 		setShippingAddressId(null)
 		setBillingAddressId(null)
 		setDropAddressId(null)
@@ -138,8 +144,11 @@ export const useMainCheckOutStore = defineStore('main_checkout', () => {
 		drop_shipping_ship_to_another_address,
 		billing_use_different_address,
 
+		checkout_started_at,
+
 		// expose setters
 		patchGuestContactState,
+		setCheckoutStartedAt,
 		setShippingAddressId,
 		setBillingAddressId,
 		setDropAddressId,

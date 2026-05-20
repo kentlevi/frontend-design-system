@@ -31,6 +31,7 @@ export type InitialCheckoutPayload = {
 	selected_cart_ids?:number[] | null
 	coupon_id?: number | null
 	points?: number | null
+	checkout_started_at?: number | null
 	shipping_address: AddressFormMap[AddressType]
 	billing_address: AddressFormMap[AddressType]
 	drop_address: AddressFormMap[AddressType] | null
