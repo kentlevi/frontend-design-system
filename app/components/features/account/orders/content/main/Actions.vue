@@ -14,8 +14,8 @@ const { payment_status_label, payment_method_label } = useOrderDetailActions();
 					<UiIcon name="regular-file-dollar" color="var(--gold-70)"/>
 				</div>
 				<MuLinearWrapper direction="column">
-					<MuText weight="bold" size="large">View Invoice</MuText>
-					<MuText color="abyss-40">Access and review detailed invoice information.</MuText>
+					<MuText weight="bold" size="large">{{ $t('account.orders.viewInvoice') }}</MuText>
+					<MuText color="abyss-40">{{ $t('account.orders.viewInvoiceText') }}</MuText>
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
@@ -25,13 +25,13 @@ const { payment_status_label, payment_method_label } = useOrderDetailActions();
 					<UiIcon name="regular-dollar-sign" color="var(--gold-70)"/>
 				</div>
 				<MuLinearWrapper direction="column">
-					<MuText weight="bold" size="large">Payment Proof</MuText>
-					<MuText color="abyss-40">Production will commence after payment completion.</MuText>
+					<MuText weight="bold" size="large">{{ $t('account.orders.paymentProof') }}</MuText>
+					<MuText color="abyss-40">{{ $t('account.orders.paymentProofText') }}</MuText>
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" :gap="4" align="flex-end" >
 				<UiBadge v-if="payment_status_label">{{ payment_status_label }}</UiBadge>
-				<MuText v-if="payment_method_label" color="abyss-40">Method: {{ payment_method_label }}</MuText>
+				<MuText v-if="payment_method_label" color="abyss-40">{{ $t('account.orders.paymentMethod', { method: payment_method_label }) }}</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>
 		<MuLinearWrapper class="order-actions-items">
@@ -41,8 +41,8 @@ const { payment_status_label, payment_method_label } = useOrderDetailActions();
 					<UiIcon name="regular-message" color="var(--gold-70)"/>
 				</div>
 				<MuLinearWrapper direction="column">
-					<MuText weight="bold" size="large">Send a Message</MuText>
-					<MuText color="abyss-40">Need an update or want to make changes?</MuText>
+					<MuText weight="bold" size="large">{{ $t('account.orders.sendMessage') }}</MuText>
+					<MuText color="abyss-40">{{ $t('account.orders.sendMessageText') }}</MuText>
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 		</MuLinearWrapper>

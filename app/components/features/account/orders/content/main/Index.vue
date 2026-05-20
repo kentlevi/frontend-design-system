@@ -11,12 +11,16 @@ import Summary from './Summary.vue';
 import { useOrdersMain } from '~/composables/orders/useOrdersMain';
 import { useOrdersMainUI } from '~/composables/orders/useOrdersMainUI';
 import { useUsersStore } from '~/stores/users/users.store';
+import { useCancelOrderModal } from '~/composables/features/account/orders/useCancelOrderModal';
+import CancelOrderModal from '../../modals/cancel-order/Index.vue';
 
 const { selected_order, is_loading } = useOrdersMain();
 const { translate, is_detail_open } = useOrdersMainUI();
 
 const users_store = useUsersStore();
 const { role_code } = storeToRefs(users_store);
+
+const { open_modal: open_cancel_order_modal } = useCancelOrderModal();
 </script>
 
 <template>
@@ -58,8 +62,10 @@ const { role_code } = storeToRefs(users_store);
 			</MuCard>
 			<MuLinearWrapper :gap="12" justify="flex-end">
 				<UiButton variant="outline" tone="neutral">On-Hold Order</UiButton>
-				<UiButton variant="outline" tone="neutral">Cancel Order</UiButton>
+				<UiButton variant="outline" tone="neutral" @click="open_cancel_order_modal">Cancel Order</UiButton>
 			</MuLinearWrapper>
+
+			<CancelOrderModal/>
 		</template>
 	</MuLinearWrapper>
 </template>

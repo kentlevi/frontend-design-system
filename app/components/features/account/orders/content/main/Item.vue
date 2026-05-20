@@ -54,8 +54,8 @@ const { handleUploadArtwork, handleReplaceArtwork, handleViewArtwork } = useOrde
 				</MuLinearWrapper>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" justify="space-between" align="flex-end">
-				<UiButton v-if="needs_artwork" tone="neutral" @click="handleUploadArtwork">Upload Artwork</UiButton>
-				<UiButton v-else tone="neutral" @click="handleReplaceArtwork">Replace Artwork</UiButton>
+				<UiButton v-if="needs_artwork" tone="neutral" @click="handleUploadArtwork">{{ $t('account.orders.uploadArtwork') }}</UiButton>
+				<UiButton v-else tone="neutral" @click="handleReplaceArtwork">{{ $t('account.orders.replaceArtwork') }}</UiButton>
 				<MuText size="large" weight="bold">{{ formatted_cost }}</MuText>
 			</MuLinearWrapper>
 		</MuLinearWrapper>

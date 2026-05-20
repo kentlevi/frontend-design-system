@@ -26,11 +26,11 @@ const tabs = [
 	{ key: 'profile', label: translate('layout.header.accountLinks.profile'), to: '/account/profile', icon: 'regular-user' },
 	{ key: 'address-book', label: translate('layout.header.accountLinks.addressBook'), to: '/account/address-book', icon: 'regular-home' },
 	{ key: 'orders', label: translate('layout.header.accountLinks.orders'), to: '/account/orders', icon: 'regular-boxes' },
-	{ key: 'gallery', label: translate('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'regular-image' },
+	// { key: 'gallery', label: translate('layout.header.accountLinks.gallery'), to: '/account/gallery', icon: 'regular-image' },
 	{ key: 'points', label: translate('layout.header.accountLinks.points'), to: '/account/points', icon: 'regular-star' },
-	{ key: 'coupons', label: translate('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'regular-ticket' },
-	{ key: 'reviews', label: translate('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'regular-comments' },
-	{ key: 'quote-requests', label: translate('layout.header.accountLinks.quoteRequest'), to: '/account/quote-requests', icon: 'regular-file-details' },
+	// { key: 'coupons', label: translate('layout.header.accountLinks.coupons'), to: '/account/coupons', icon: 'regular-ticket' },
+	// { key: 'reviews', label: translate('layout.header.accountLinks.reviews'), to: '/account/reviews', icon: 'regular-comments' },
+	// { key: 'quote-requests', label: translate('layout.header.accountLinks.quoteRequest'), to: '/account/quote-requests', icon: 'regular-file-details' },
 ] as const;
 
 const active_tab = computed(() => {

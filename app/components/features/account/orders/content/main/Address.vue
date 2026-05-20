@@ -14,7 +14,7 @@ const { address, formatted_address, getPhoneNumber } = useAddress(props)
 		<MuText weight="semi-bold" color="shades-black">{{ type === 'shipping' ? 'Shipping address' : 'Billing address' }}</MuText>
 		<template v-if="address">
 			<MuLinearWrapper align="center" justify="space-between">
-				<MuText color="abyss-40">Receiver:</MuText>
+				<MuText color="abyss-40">{{ $t('account.orders.receiver') }}</MuText>
 				<MuText weight="semi-bold" color="abyss-40">{{ address.contact_name }}</MuText>
 			</MuLinearWrapper>
 			<MuLinearWrapper v-if="getPhoneNumber(address)" align="center" justify="space-between">

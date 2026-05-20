@@ -41,7 +41,7 @@ const {
 
 <template>
 	<MuLinearWrapper class="header" justify="space-between" align="center">
-		<MuHeading weight="bold">My Orders</MuHeading>
+		<MuHeading weight="bold">{{ translate('account.orders.title') }}</MuHeading>
 
 		<MuLinearWrapper justify="space-between" width="69.2%" :gap="12">
 			<MuSegmented v-model="active_mode" :options="active_options" size="sm">
@@ -120,10 +120,11 @@ const {
 						@click="toggleFilter"
 					>
 						{{ translate('account.orders.filters') }}
+						<div class="filter-count">1</div>
 					</UiButton>
 					<MuCard v-if="filter_status" class="filter-status" padding="none">
 						<div class="filter-status__header">
-							<MuText size="large" weight="semi-bold">Order Status</MuText>
+							<MuText size="large" weight="semi-bold">{{ translate('account.orders.filterOptions.orderStatus') }}</MuText>
 						</div>
 						<div class="filter-status__body">
 							<ul>
@@ -242,6 +243,19 @@ const {
 		&__actions-label{ color: var(--text-secondary); }
 		&__actions-value{ color: var(--text-primary); font-weight: 500; }
 	}
+}
+
+.filter-count{
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--error-60);
+	color: var(--white-base);
+	top: -5px;
+	right: -5px;
+	line-height: 20px;
+	box-shadow: 0 0 0 4px var(--white-base);
 }
 .order-filters{
 	position: relative;

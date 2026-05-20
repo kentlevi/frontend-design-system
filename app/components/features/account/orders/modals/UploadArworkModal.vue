@@ -23,24 +23,24 @@ const {
 	<UiModal
 		:model-value="is_open"
 		width="640px"
-		title="Upload Artwork"
+		:title="$t('account.orders.uploadArtwork')"
 		modal-class="upload-artwork-modal"
 		@update:model-value="!$event && close_modal()"
 	>
 		<MuLinearWrapper class="upload-artwork-modal-body" direction="column" :gap="16">
 			<MuLinearWrapper class="item-details" direction="column" :gap="4">
-				<MuText weight="semi-bold">Item Details:</MuText>
+				<MuText weight="semi-bold">{{ $t('account.orders.upload.itemDetails') }}</MuText>
 				<MuLinearWrapper direction="column">
 					<MuLinearWrapper v-if="product" justify="space-between" width="100%">
-						<MuText color="abyss-40">Product:</MuText>
+						<MuText color="abyss-40">{{ $t('account.orders.upload.product') }}</MuText>
 						<MuText color="abyss-40" weight="semi-bold">{{ product }}</MuText>
 					</MuLinearWrapper>
 					<MuLinearWrapper v-if="formatted_size" justify="space-between" width="100%">
-						<MuText color="abyss-40">Size:</MuText>
+						<MuText color="abyss-40">{{ $t('account.orders.upload.size') }}</MuText>
 						<MuText color="abyss-40" weight="semi-bold">{{ formatted_size }}</MuText>
 					</MuLinearWrapper>
 					<MuLinearWrapper v-if="formatted_quantity" justify="space-between" width="100%">
-						<MuText color="abyss-40">Quantity:</MuText>
+						<MuText color="abyss-40">{{ $t('account.orders.upload.quantity') }}</MuText>
 						<MuText color="abyss-40" weight="semi-bold">{{ formatted_quantity }}</MuText>
 					</MuLinearWrapper>
 				</MuLinearWrapper>
@@ -53,10 +53,10 @@ const {
 				/>
 			</MuLinearWrapper>
 			<MuLinearWrapper direction="column" :gap="4">
-				<MuText weight="semi-bold">Special Instructions</MuText>
+				<MuText weight="semi-bold">{{ $t('account.orders.upload.specialInstructions') }}</MuText>
 				<UiTextarea
 					v-model="special_instructions"
-					placeholder="Enter special instruction here...."
+					:placeholder="$t('account.orders.upload.specialInstructionsPlaceholder')"
 					:disabled="is_uploading"
 				/>
 			</MuLinearWrapper>
@@ -66,10 +66,10 @@ const {
 		<template #footer>
 			<MuLinearWrapper justify="flex-end" align="center" :gap="12">
 				<UiButton variant="ghost" tone="neutral" :disabled="is_uploading" @click="close_modal">
-					<MuText>Cancel</MuText>
+					<MuText>{{ $t('account.orders.upload.cancel') }}</MuText>
 				</UiButton>
 				<UiButton tone="neutral" :disabled="!can_submit" @click="submitUpload">
-					<MuText>{{ is_uploading ? 'Uploading...' : 'Submit' }}</MuText>
+					<MuText>{{ is_uploading ? 'Uploading...' : $t('account.orders.upload.submit') }}</MuText>
 				</UiButton>
 			</MuLinearWrapper>
 		</template>

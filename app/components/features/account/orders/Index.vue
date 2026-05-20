@@ -29,6 +29,8 @@ const { role_code } = storeToRefs(users_store)
 		<MuLinearWrapper v-if="is_loading || has_any_orders" :class="['account-page-content',{ 'member' : role_code == 'MEMBER' }]" data-testid="account-page-content" direction="column" :gap="24">
 			<FeaturesAccountOrdersHeader v-if="role_code == 'MEMBER'"/>
 			<FeaturesAccountOrdersContent />
+
+
 			<FeaturesAccountOrdersModalsUploadArworkModal />
 			<FeaturesAccountOrdersModalsReplaceArtwork />
 			<FeaturesAccountOrdersModalsRequestChanges />
