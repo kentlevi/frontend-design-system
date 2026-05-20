@@ -9,6 +9,7 @@ export interface AvailableShippingMethod {
 	shipping_method_name: string
 	shipping_price: number
 	description: string
+	default_courier_id: number
 	min_delivery_date: string
 	max_delivery_date: string
 	min_delivery_date_string: string
