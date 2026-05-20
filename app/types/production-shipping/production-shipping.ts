@@ -9,8 +9,10 @@ export interface AvailableShippingMethod {
 	shipping_method_name: string
 	shipping_price: number
 	description: string
-	min_delivery_date: number
-	max_delivery_date: number
+	min_delivery_date: string
+	max_delivery_date: string
+	min_delivery_date_string: string
+	max_delivery_date_string: string
 	timezone: string
 	min_shipping_days: number
 	max_shipping_days: number

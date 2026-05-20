@@ -10,42 +10,42 @@ const lang_map = {
 	ph: 'en-PH'
 }
 
-function getDateParts(timestamp: number): DateParts {
-	const user_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+function getDateParts(date_string: string): DateParts | null {
+	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date_string)
+
+	if (!match) {
+		return null
+	}
+
+	const year = Number(match[1])
+	const month_index = Number(match[2]) - 1
+	const day = Number(match[3])
 	const { locale } = useI18n()
+
 	const formatter = new Intl.DateTimeFormat(lang_map[locale.value], {
 		month: 'long',
-		day: 'numeric',
-		year: 'numeric',
-		timeZone: user_timezone,
+		timeZone: 'UTC',
 	})
 
-	const formatted_parts = formatter.formatToParts(new Date(timestamp * 1000))
-
-	const parts_map = formatted_parts.reduce<Record<string, string>>((carry, part) => {
-		if (part.type !== 'literal') {
-			carry[part.type] = part.value
-		}
-		return carry
-	}, {})
+	const month_label = formatter.format(new Date(Date.UTC(year, month_index, day)))
 
 	return {
-		day: Number(parts_map.day),
-		month_label: parts_map.month ?? '',
-		year: Number(parts_map.year),
+		day,
+		month_label,
+		year,
 	}
 }
 
 export function formatShippingDateRange(
-	min_delivery_date_timestamp: number,
-	max_delivery_date_timestamp: number
+	min_delivery_date_string: string,
+	max_delivery_date_string: string
 ): string {
-	if (!Number.isFinite(min_delivery_date_timestamp) || !Number.isFinite(max_delivery_date_timestamp)) {
+	const min_delivery_date = getDateParts(min_delivery_date_string)
+	const max_delivery_date = getDateParts(max_delivery_date_string)
+
+	if (!min_delivery_date || !max_delivery_date) {
 		return ''
 	}
-
-	const min_delivery_date = getDateParts(min_delivery_date_timestamp)
-	const max_delivery_date = getDateParts(max_delivery_date_timestamp)
 
 	if (
 		min_delivery_date.year === max_delivery_date.year

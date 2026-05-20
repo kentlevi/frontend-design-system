@@ -68,8 +68,8 @@ export function useShippingMethod() {
 	): ShippingMethodItem[] => {
 		return shipping_methods.map((item) => {
 			const formatted_date_range = formatShippingDateRange(
-				item.min_delivery_date,
-				item.max_delivery_date,
+				item.min_delivery_date_string,
+				item.max_delivery_date_string,
 			)
 
 			return {
