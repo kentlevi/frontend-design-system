@@ -8,4 +8,5 @@ export interface ApiResponse<T = unknown> {
 export interface ApiOptions {
 	params?: Record<string, unknown >
 	headers?: Record<string, string>
+	signal?: AbortSignal
 }
