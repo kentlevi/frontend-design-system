@@ -25,5 +25,6 @@ export async function uploadArtwork(
 		file.name,
 		file_name,
 		instruction,
+		'storefront-order-detail',
 	)
 }
