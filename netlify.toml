@@ -1,5 +1,16 @@
 [build]
-command = "npm run build"
+# Deploy gate: run the fast quality checks before building.
+# - lint                       (eslint)
+# - guide:validate-used-in     (path refs across the 3 repos exist)
+# - quality:guide-docs         (stable guides have owner/reviewDueAt/qaChecklist/changelog)
+# - quality:onboarding-docs    (onboarding markers match GUIDE_ONBOARDING_VERSION)
+# - build                      (nuxt build — also produces the deploy output)
+#
+# Lighthouse (perf:ci / npm run perf:lhci) is intentionally NOT in this chain.
+# Lhci needs Chromium, takes minutes per build, and would put deploy success on
+# the line for soft perf regressions. Run it manually or via a scheduled job:
+#     npm run perf:ci
+command = "npm run lint && npm run guide:validate-used-in && npm run quality:guide-docs && npm run quality:onboarding-docs && npm run build"
 
 [build.environment]
 NODE_VERSION = "22"
