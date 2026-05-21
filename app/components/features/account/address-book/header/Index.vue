@@ -50,4 +50,3 @@ const {
 		</UiButton>
 	</MuLinearWrapper>
 </template>
-

@@ -1,13 +1,13 @@
 import { useRedirectStore } from '~/stores/navigation/redirect.store';
 
-export default defineNuxtRouteMiddleware((to, from) =>
+export default defineNuxtRouteMiddleware((to, _from) =>
 {
 	const redirect_store = useRedirectStore();
 
 	const nuxt_app = useNuxtApp();
 
 	const supported_locales: string[] =
-		nuxt_app.$i18n.locales.value.map((locale: any) =>
+		nuxt_app.$i18n.locales.value.map((locale: { code: string }) =>
 			locale.code
 		);
 

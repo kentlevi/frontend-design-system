@@ -61,7 +61,7 @@ const format = (value?: number | string) => {
 	return typeof value === 'number' ? `${value}px` : value;
 };
 
-function emit_tier(
+function emitTier(
 	tier: 'base' | 'tablet' | 'mobile',
 	override: ResponsiveOverride,
 	style: Record<string, string>
@@ -93,7 +93,7 @@ const custom_styles = computed(() => {
 	if (props.width !== 'auto') style.width = props.width;
 
 	// Base tier: only emit CSS vars for explicit (non-default) values; defaults handled by fallback in scoped CSS.
-	emit_tier('base', {
+	emitTier('base', {
 		direction: props.direction !== 'row' ? props.direction : undefined,
 		gap: props.gap,
 		justify: props.justify !== 'flex-start' ? props.justify : undefined,
@@ -104,8 +104,8 @@ const custom_styles = computed(() => {
 		paddingY: props.paddingY,
 	}, style);
 
-	if (props.tablet) emit_tier('tablet', props.tablet, style);
-	if (props.mobile) emit_tier('mobile', props.mobile, style);
+	if (props.tablet) emitTier('tablet', props.tablet, style);
+	if (props.mobile) emitTier('mobile', props.mobile, style);
 
 	return style;
 });

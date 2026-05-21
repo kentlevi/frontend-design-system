@@ -1,7 +1,6 @@
 import type {
 	CheckoutFieldKey,
 	CheckoutPaymentMethodKey,
-	CheckoutProvinceKey,
 	CheckoutShippingMethodKey,
 } from '~/types/checkout/options';
 

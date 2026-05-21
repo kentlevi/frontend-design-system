@@ -1,9 +1,7 @@
-import { resolvePostLoginRedirect } from '~/utils/auth/redirect';
 import {
 	HOME_LOGIN_SUCCESS_TOAST_PENDING_KEY,
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
-import { useCountry } from '~/composables/app/country/useCountry';
 import { useRouter } from 'vue-router';
 import {
 	fetchAndStoreUser,
@@ -18,7 +16,6 @@ import { useTransferCart } from '~/composables/cart/useTransferCart';
 
 export const useSocialLogin = () => {
 	const router = useRouter();
-	const route = useRoute();
 	const auth_login_store = useAuthLoginStore()
 	const users_store = useUsersStore()
 	const { captureCurrentUserAsPrevious, clearPreviousUserId, runTransferCart } =

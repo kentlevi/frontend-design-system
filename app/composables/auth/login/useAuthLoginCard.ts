@@ -30,7 +30,6 @@ import { loadAddresses } from '~/services/user-address/user-address.service'
 import { useAuthLoginStore } from '~/stores/auth/login.store'
 import { useLoadingOverlayStore } from '~/stores/loading_overlay'
 import { useRedirectStore } from '~/stores/navigation/redirect.store'
-import { resolvePostLoginRedirect } from '~/utils/auth/redirect'
 
 export function useAuthLoginCard() {
 	const { auth_redirect_url } = storeToRefs(useRedirectStore())
@@ -99,19 +98,6 @@ export function useAuthLoginCard() {
 		() => guest_verification.value.resend_limit_reached
 	)
 	const member_email = computed(() => member_form.value.email)
-
-	const post_login_redirect = computed(() =>
-		resolvePostLoginRedirect(getRedirectCandidate(), withCountry)
-	)
-
-	function getRedirectCandidate() {
-		const query_redirect = Array.isArray(route.query.redirect)
-			? route.query.redirect[0]
-			: route.query.redirect
-		if (query_redirect) return query_redirect
-		if (!import.meta.client) return null
-		return window.history.state?.back ?? null
-	}
 
 	function clearGuestResendCooldownTimer() {
 		guest_resend_cooldown.clear()
