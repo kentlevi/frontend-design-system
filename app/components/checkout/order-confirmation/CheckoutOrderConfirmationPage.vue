@@ -52,8 +52,8 @@ watch(order_id, (new_id, old_id) => {
 				:label="translate('checkout.confirmation.expectedDelivery')"
 				:value="translate('checkout.confirmation.expectedArrival',
 					{ date: formatShippingDateRange(
-						Number(order_confirm_details?.order_production_detail?.min_delivery_date),
-						Number(order_confirm_details?.order_production_detail?.max_delivery_date),
+						order_confirm_details?.order_production_detail?.min_delivery_date_string as string,
+						order_confirm_details?.order_production_detail?.max_delivery_date_string as string
 					) }
 				)"
 			/>

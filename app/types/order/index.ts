@@ -44,8 +44,8 @@ export interface ItemStatus {
 
 export interface OrderProductionDetail {
 	id: number
-	min_delivery_date: string
-	max_delivery_date: string
+	min_delivery_date_string: string
+	max_delivery_date_string: string
 }
 
 export interface OrderItem {
