@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
-import FormModal from '~/components/features/account/address-book/modals/FormModal.vue';
-import DeleteConfirmModal from '~/components/features/account/address-book/modals/DeleteConfirmModal.vue';
-import ConfirmDefaultChangeModal from '~/components/features/account/address-book/modals/ConfirmDefaultChangeModal.vue';
-import DefaultShippingModal from '~/components/features/account/address-book/modals/DefaultShippingModal.vue';
 import { useIndexUI } from '~/composables/account/addressBook/useIndexUI';
 import { provideUserAddress } from '~/composables/account/addressBook/context/useUserAddressContext';
+
+const FormModal = defineAsyncComponent(
+	() => import('~/components/features/account/address-book/modals/FormModal.vue')
+);
+const DeleteConfirmModal = defineAsyncComponent(
+	() => import('~/components/features/account/address-book/modals/DeleteConfirmModal.vue')
+);
+const ConfirmDefaultChangeModal = defineAsyncComponent(
+	() => import('~/components/features/account/address-book/modals/ConfirmDefaultChangeModal.vue')
+);
+const DefaultShippingModal = defineAsyncComponent(
+	() => import('~/components/features/account/address-book/modals/DefaultShippingModal.vue')
+);
 
 provideUserAddress()
 

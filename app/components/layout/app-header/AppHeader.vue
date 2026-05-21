@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import AppHeaderMainBar from '~/components/layout/app-header/AppHeaderMainBar.vue';
-import AppHeaderSearchModal from '~/components/layout/app-header/AppHeaderSearchModal.vue';
 import { provideAppHeader } from '~/composables/layout/appHeader/useAppHeader';
+
+const AppHeaderSearchModal = defineAsyncComponent(
+	() => import('~/components/layout/app-header/AppHeaderSearchModal.vue')
+);
 
 const {
 	AppHeaderLocaleModal,

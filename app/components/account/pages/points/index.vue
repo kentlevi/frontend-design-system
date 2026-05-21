@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import AccountPointsRankingModal from './AccountPointsRankingModal.vue';
+import { defineAsyncComponent } from 'vue';
 import { useAccountPoints } from '~/composables/account/points/useAccountPoints';
 import type { AccountPointLogFilter } from '~/types/account/points';
+
+const AccountPointsRankingModal = defineAsyncComponent(
+	() => import('./AccountPointsRankingModal.vue')
+);
 
 const { t: translate } = useI18n();
 const {

@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import AuthEmailAlreadyRegisteredModal from '~/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
-import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
-import EmailChangeModal from '~/components/features/checkout/EmailChangeModal.vue';
+import { defineAsyncComponent } from 'vue';
 import { useCheckoutGuestContactFeature } from '~/composables/checkout/features/useCheckoutGuestContactFeature';
 import { checkoutGuestEmailTooltipProps } from '~/data/checkout/tooltips';
 import { useUsersStore } from '~/stores/users/users.store';
+
+const AuthEmailAlreadyRegisteredModal = defineAsyncComponent(
+	() => import('~/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue')
+);
+const AuthLoginForgotPasswordModal = defineAsyncComponent(
+	() => import('~/components/auth/login/AuthLoginForgotPasswordModal.vue')
+);
+const EmailChangeModal = defineAsyncComponent(
+	() => import('~/components/features/checkout/EmailChangeModal.vue')
+);
 
 const {
 	translate,

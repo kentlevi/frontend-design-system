@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue';
+import { defineAsyncComponent, type ComponentPublicInstance } from 'vue';
 import { useCheckoutExperience } from '~/composables/checkout/useCheckoutExperience';
 import CheckoutGuestContactFeature from '~/components/checkout/features/CheckoutGuestContactFeature.vue';
 import CheckoutMemberPerksFeature from '~/components/checkout/features/CheckoutMemberPerksFeature.vue';
 import CheckoutPaymentFeature from '~/components/checkout/features/CheckoutPaymentFeature.vue';
 import CheckoutAddressFeature from '~/components/checkout/features/CheckoutAddressFeature.vue';
-import CheckoutLoginModal from '~/components/checkout/modals/CheckoutLoginModal.vue';
-import CheckoutMemberAccreditedBanksModal from '~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue';
 import CheckoutPageBase from '~/components/checkout/shared/CheckoutPageBase.vue';
 import CheckoutSummaryCard from '~/components/checkout/summary/CheckoutSummaryCard.vue';
 import { provideCheckoutExperienceFeatureContext } from '~/composables/checkout/checkoutExperienceFeatureContext';
-import CheckoutAddressSelectModal from './modals/CheckoutAddressSelectModal.vue';
 import { useInitCheckoutAddress } from '~/composables/checkout/address/useInitCheckoutAddress';
 import { useMainCheckOutStore } from '~/stores/checkout/index.store';
 import CheckoutPaymentWindowOverlay from '~/components/checkout/shared/CheckoutPaymentWindowOverlay.vue';
 import { provideUserAddressFormStateCheckout } from '~/composables/checkout/address/context/addressFormCheckoutContext';
 import { provideUserAddressDataCheckout } from '~/composables/checkout/address/context/addressBookListCheckoutContext';
 import { provideAddressGeneralUI } from '~/composables/checkout/address/context/addressGeneralUICheckoutContext';
+
+const CheckoutLoginModal = defineAsyncComponent(
+	() => import('~/components/checkout/modals/CheckoutLoginModal.vue')
+);
+const CheckoutMemberAccreditedBanksModal = defineAsyncComponent(
+	() => import('~/components/checkout/modals/CheckoutMemberAccreditedBanksModal.vue')
+);
+const CheckoutAddressSelectModal = defineAsyncComponent(
+	() => import('./modals/CheckoutAddressSelectModal.vue')
+);
 
 /** Standalone address context (isolated from checkout_experience) */
 await useInitCheckoutAddress()

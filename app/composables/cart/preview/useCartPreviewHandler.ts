@@ -6,7 +6,7 @@ import { homeProductTypePathById } from '~/data/products/homeTypes'
 import { useUploadService } from '~/services/product/upload.service'
 import type { CartRow } from '~/types/cart/cart'
 import type { ProductItem } from '~/types/products/catalog'
-import lottie from 'lottie-web'
+import type { AnimationItem } from 'lottie-web'
 
 export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 	const router = useRouter()
@@ -22,7 +22,7 @@ export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 	const saving_inline_edit = ref(false)
 	const redirect_loader_ref = ref<HTMLElement | null>(null)
 	const CART_REDIRECT_DELAY_MS = 1000
-	let redirect_loader_animation: ReturnType<typeof lottie.loadAnimation> | null = null
+	let redirect_loader_animation: AnimationItem | null = null
 
 	const featured_items = ref<ProductItem[]>(featuredProducts.map(p => ({
 		id: p.id,
@@ -106,6 +106,7 @@ export const useCartPreviewHandler = (_caller: string = 'unknown') => {
 			const response = await fetch('/animations/musticker-loader.json')
 			if (!response.ok) return
 			const animation_data = await response.json()
+			const { default: lottie } = await import('lottie-web')
 			redirect_loader_animation = lottie.loadAnimation({
 				container: redirect_loader_ref.value,
 				renderer: 'svg',

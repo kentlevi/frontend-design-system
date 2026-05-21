@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CheckoutInvoiceBillingModal from '~/components/checkout/modals/CheckoutInvoiceBillingModal.vue';
+import { defineAsyncComponent } from 'vue';
 import { useCountry } from '~/composables/app/country/useCountry';
 import CheckoutInvoiceFooter from './CheckoutInvoiceFooter.vue';
 import CheckoutInvoiceHero from './CheckoutInvoiceHero.vue';
@@ -9,6 +9,10 @@ import CheckoutInvoiceTotals from './CheckoutInvoiceTotals.vue';
 import { formatPrice } from '~/utils/currency/formatPrice';
 import { useQuotationContext } from '~/composables/checkout/qoutation/useQuotationContext';
 import { provideCheckoutInvoiceBilling } from '~/composables/checkout/invoice/billing-address/context/useCheckoutInvoiceBillingContext';
+
+const CheckoutInvoiceBillingModal = defineAsyncComponent(
+	() => import('~/components/checkout/modals/CheckoutInvoiceBillingModal.vue')
+);
 
 provideCheckoutInvoiceBilling()
 

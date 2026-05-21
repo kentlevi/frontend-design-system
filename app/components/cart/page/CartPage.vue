@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import CartItemDetailsModal from '~/components/cart/modals/CartItemDetailsModal.vue';
-import CartItemEditModal from '~/components/cart/modals/CartItemEditModal.vue';
+import { defineAsyncComponent } from 'vue';
 import CartEmptyState from './CartEmptyState.vue';
 import CartPageHeader from './CartPageHeader.vue';
 import CartPageItems from './CartPageItems.vue';
 import CartPageSummary from './CartPageSummary.vue';
 import CartPageSkeleton from './CartPageSkeleton.vue';
-import CartDeleteItemModal from '~/components/cart/modals/CartDeleteItemModal.vue';
 import { useCartPage } from '~/composables/cart/page/useCartPage';
 import { useCartPage as useCartPageHandler } from '~/composables/cart/useCartPage';
+
+const CartItemDetailsModal = defineAsyncComponent(
+	() => import('~/components/cart/modals/CartItemDetailsModal.vue')
+);
+const CartItemEditModal = defineAsyncComponent(
+	() => import('~/components/cart/modals/CartItemEditModal.vue')
+);
+const CartDeleteItemModal = defineAsyncComponent(
+	() => import('~/components/cart/modals/CartDeleteItemModal.vue')
+);
 
 const { t: translate } = useI18n();
 const {

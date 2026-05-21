@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import ForgotPasswordModal from '~/components/features/account/profile/modals/ForgotPasswordModal.vue';
-import SetupPasswordModal from '~/components/features/account/profile/modals/SetupPasswordModal.vue';
 import { useProfilePasswordIndex } from '~/composables/account/profile/useProfilePasswordIndex';
 import { useProfilePasswordIndexUI } from '~/composables/account/profile/useProfilePasswordIndexUI';
+
+const ForgotPasswordModal = defineAsyncComponent(
+	() => import('~/components/features/account/profile/modals/ForgotPasswordModal.vue')
+);
+const SetupPasswordModal = defineAsyncComponent(
+	() => import('~/components/features/account/profile/modals/SetupPasswordModal.vue')
+);
 
 withDefaults(defineProps<{
 	loading?: boolean;

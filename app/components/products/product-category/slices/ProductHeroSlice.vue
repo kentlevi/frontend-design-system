@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, watch } from 'vue';
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useFileBaseUrl } from '~/composables/core/fileBaseUrl/useFileBaseUrl';
-import VinylLetteringDesigner from '~/components/products/product-category/VinylLetteringDesigner.vue';
 import { useQuoteView } from '~/composables/quote/useQuoteView';
+
+const VinylLetteringDesigner = defineAsyncComponent(
+	() => import('~/components/products/product-category/VinylLetteringDesigner.vue')
+);
 
 
 const { t: translate } = useI18n();
@@ -28,6 +31,18 @@ const {
 	updateSizeByCard,
 	setVinylDesignerRef,
 } = useQuoteView()
+
+// LCP stability: derive the slug from the route as soon as possible so the
+// hero `<img>` renders in the initial SSR/hydration paint, instead of waiting
+// for the async quote fetch to populate `product_url_slug`. Both server and
+// client know `route.params.product` from second 0. Falls back to the quote
+// service's slug once it arrives (and during transitions between products).
+const route = useRoute()
+const effective_slug = computed<string | undefined>(() => {
+	if (product_url_slug.value) return product_url_slug.value
+	const param = route.params.product
+	return typeof param === 'string' ? param : undefined
+})
 
 
 
@@ -60,26 +75,26 @@ const product_hero_media_map: Record<string, { folder: string, file: string }> =
 
 const displayed_product_title = computed(() => {
 
-	if(!product_url_slug.value)
+	if(!effective_slug.value)
 		return ''
 
 	// If it's the specialized lettering editor, show the specific title
 	if (has_lettering_editor.value) return translate('product.hero.vinylLetteringTitle'); // ⚠️ REQUIRES REVISION!!!
 
 	// Otherwise, use the formal product name from catalog/translation
-	return translate(`product.items.${product_url_slug.value}.name`);
+	return translate(`product.items.${effective_slug.value}.name`);
 });
 
 
 const displayed_product_blurb = computed(() =>
-	has_lettering_editor.value ? '' : translate(`product.items.${product_url_slug.value}.blurb`)
+	has_lettering_editor.value ? '' : translate(`product.items.${effective_slug.value}.blurb`)
 );
 
 const fallback_hero_video_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-video.mp4');
 const fallback_hero_poster_url = resolveFileUrl('products/die-cut-sticker/hero/01-donut-sticker-in-hand-poster.png');
 
 const hero_media_asset = computed(() => {
-	return product_url_slug.value ? product_hero_media_map[product_url_slug.value] ?? null : null;
+	return effective_slug.value ? product_hero_media_map[effective_slug.value] ?? null : null;
 });
 const demo_hero_video_url = computed(() =>
 	hero_media_asset.value
@@ -88,7 +103,7 @@ const demo_hero_video_url = computed(() =>
 );
 const demo_hero_poster_url = computed(() =>
 	hero_media_asset.value
-		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}-thumbnail.png`
+		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}-thumbnail.webp`
 		: fallback_hero_poster_url
 );
 
@@ -105,6 +120,26 @@ onBeforeUnmount(() => {
 	setVinylDesignerRef(null);
 });
 
+
+const hero_video_ref = ref<HTMLVideoElement | null>(null);
+const should_load_hero_video = ref(false);
+
+function onHeroPosterLoad() {
+	should_load_hero_video.value = true;
+}
+
+watch(effective_slug, () => {
+	should_load_hero_video.value = false;
+});
+
+watch(should_load_hero_video, async (loaded) => {
+	if (!loaded) return;
+	await nextTick();
+	const video = hero_video_ref.value;
+	if (!video) return;
+	video.load();
+	void video.play().catch(() => {});
+});
 
 const hide_lettering_editor = computed(() => (
 	is_loading_features.value
@@ -142,7 +177,7 @@ const hide_lettering_editor = computed(() => (
 			data-testid="product-category-preview-media"
 		>
 			<UiSkeleton
-				v-if="!product_url_slug || product_navigation_in_flight"
+				v-if="!effective_slug || product_navigation_in_flight"
 				height="100%"
 				width="100%"
 				border-radius="24px"
@@ -150,25 +185,26 @@ const hide_lettering_editor = computed(() => (
 			/>
 			<template v-else>
 				<img
-					:key="`${product_url_slug ?? 'preview'}-poster`"
+					:key="`${effective_slug ?? 'preview'}-poster`"
 					:src="demo_hero_poster_url"
 					:alt="`${displayed_product_title || 'Product'} preview poster`"
 					class="product-preview-media-image product-preview-media-poster"
 					fetchpriority="high"
 					decoding="async"
 					data-testid="product-category-preview-poster"
+					@load="onHeroPosterLoad"
 				>
 				<video
-					:key="product_url_slug ?? 'preview-video'"
+					ref="hero_video_ref"
+					:key="effective_slug ?? 'preview-video'"
 					:poster="demo_hero_poster_url"
 					class="product-preview-media-image product-preview-media-video"
-					autoplay
 					muted
 					loop
 					playsinline
-					preload="metadata"
+					preload="none"
 				>
-					<source :src="demo_hero_video_url" type="video/mp4">
+					<source v-if="should_load_hero_video" :src="demo_hero_video_url" type="video/mp4">
 				</video>
 			</template>
 		</div>

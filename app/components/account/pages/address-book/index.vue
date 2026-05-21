@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import AddressBookSection from './AddressBookSection.vue';
-import AddressBookFormModal from './AddressBookFormModal.vue';
-import AddressBookDeleteConfirmModal from './AddressBookDeleteConfirmModal.vue';
-import AddressBookConfirmDefaultChangeModal from './AddressBookConfirmDefaultChangeModal.vue';
-import AddressBookDefaultShippingModal from './AddressBookDefaultShippingModal.vue';
 import { useIndexUI } from '~/composables/account/addressBook/useIndexUI';
 import { provideUserAddress } from '~/composables/account/addressBook/context/useUserAddressContext';
+
+const AddressBookFormModal = defineAsyncComponent(
+	() => import('./AddressBookFormModal.vue')
+);
+const AddressBookDeleteConfirmModal = defineAsyncComponent(
+	() => import('./AddressBookDeleteConfirmModal.vue')
+);
+const AddressBookConfirmDefaultChangeModal = defineAsyncComponent(
+	() => import('./AddressBookConfirmDefaultChangeModal.vue')
+);
+const AddressBookDefaultShippingModal = defineAsyncComponent(
+	() => import('./AddressBookDefaultShippingModal.vue')
+);
 
 const {
 	translate,

@@ -77,7 +77,7 @@ const demo_hero_video_url = computed(() =>
 );
 const demo_hero_poster_url = computed(() =>
 	hero_media_asset.value
-		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}-thumbnail.png`
+		? `${PRODUCT_HERO_BASE_URL}/${hero_media_asset.value.folder}/hero/${hero_media_asset.value.file}-thumbnail.webp`
 		: fallback_hero_poster_url
 );
 

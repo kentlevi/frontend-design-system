@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import AuthLoginForgotPasswordModal from '@/components/auth/login/AuthLoginForgotPasswordModal.vue'
+import { defineAsyncComponent } from 'vue'
 import AuthLoginHeader from '@/components/auth/login/AuthLoginHeader.vue'
 import AuthLoginMemberForm from '@/components/auth/login/AuthLoginMemberForm.vue'
 import AuthLoginModeSwitch from '@/components/auth/login/AuthLoginModeSwitch.vue'
 import AuthLoginNonMemberForm from '@/components/auth/login/AuthLoginNonMemberForm.vue'
 import AuthLoginSocialButtons from '@/components/auth/login/AuthLoginSocialButtons.vue'
-import AuthLoginVerificationModal from '@/components/auth/login/AuthLoginVerificationModal.vue'
 import { useAuthLoginCard } from '@/composables/auth/login/useAuthLoginCard'
+
+const AuthLoginForgotPasswordModal = defineAsyncComponent(
+	() => import('@/components/auth/login/AuthLoginForgotPasswordModal.vue')
+)
+const AuthLoginVerificationModal = defineAsyncComponent(
+	() => import('@/components/auth/login/AuthLoginVerificationModal.vue')
+)
 
 const { t: translate } = useI18n();
 

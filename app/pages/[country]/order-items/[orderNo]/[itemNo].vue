@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import { accountOrders } from '~/data/account/orders';
-import OrderUploadArtworkModal from '~/components/account/pages/orders/OrderUploadArtworkModal.vue';
-import OrderTermsModal from '~/components/account/pages/orders/OrderTermsModal.vue';
 import type { AccountOrderLineItem } from '~/types/account/orders';
 import { useCountry } from '~/composables/app/country/useCountry';
+
+const OrderUploadArtworkModal = defineAsyncComponent(
+	() => import('~/components/account/pages/orders/OrderUploadArtworkModal.vue')
+);
+const OrderTermsModal = defineAsyncComponent(
+	() => import('~/components/account/pages/orders/OrderTermsModal.vue')
+);
 
 definePageMeta({
 	layout: 'home',

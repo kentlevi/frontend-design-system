@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import AuthProfileDetailsStep from '@/components/auth/profile/AuthProfileDetailsStep.vue';
 import AuthProfileSettingsStep from '@/components/auth/profile/AuthProfileSettingsStep.vue';
 import AuthProfileSidebar from '@/components/auth/profile/AuthProfileSidebar.vue';
-import AuthVerificationModal from '@/components/auth/shared/AuthVerificationModal.vue';
 import { useAuthProfilePage } from '~/composables/auth/profile/useAuthProfilePage';
+
+const AuthVerificationModal = defineAsyncComponent(
+	() => import('@/components/auth/shared/AuthVerificationModal.vue')
+);
 
 const { t: translate } = useI18n();
 

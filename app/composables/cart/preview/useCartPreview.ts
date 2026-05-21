@@ -1,5 +1,5 @@
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
-import lottie from 'lottie-web';
+import type { AnimationItem } from 'lottie-web';
 import { CHECKOUT_SELECTION_STORAGE_KEY } from '~/data/cart/page';
 import { homeProductTypePathById } from '~/data/products/homeTypes';
 import { featuredProducts } from '~/data/products/featured';
@@ -53,7 +53,7 @@ export function useCartPreview(params: {
 	const redirect_loader_ref = ref<HTMLElement | null>(null);
 	const CART_REDIRECT_DELAY_MS = 1000;
 	const CART_EDIT_SAVE_DELAY_MS = 900;
-	let redirect_loader_animation: ReturnType<typeof lottie.loadAnimation> | null = null;
+	let redirect_loader_animation: AnimationItem | null = null;
 
 	const editing_item = computed(() =>
 		cart_items.value.find((item) => item.id === editing_item_id.value) ?? null
@@ -211,6 +211,7 @@ export function useCartPreview(params: {
 		if (!response.ok) return;
 
 		const animation_data = await response.json();
+		const { default: lottie } = await import('lottie-web');
 		redirect_loader_animation = lottie.loadAnimation({
 			container: redirect_loader_ref.value,
 			renderer: 'svg',

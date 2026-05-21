@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import RankingModal from '~/components/features/account/points/modals/RankingModal.vue';
+import { defineAsyncComponent } from 'vue';
+
+const RankingModal = defineAsyncComponent(
+	() => import('~/components/features/account/points/modals/RankingModal.vue')
+);
 
 const is_ranking_modal_open = ref(false);
 

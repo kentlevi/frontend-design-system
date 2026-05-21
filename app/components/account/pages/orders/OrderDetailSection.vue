@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { defineAsyncComponent, toRef } from 'vue';
 import type { AccountOrder } from '~/types/account/orders';
 import { useOrderDetailSection } from '~/composables/account/orders/useOrderDetailSection';
-import OrderUploadArtworkModal from './OrderUploadArtworkModal.vue';
+
+const OrderUploadArtworkModal = defineAsyncComponent(
+	() => import('./OrderUploadArtworkModal.vue')
+);
 
 const props = defineProps<{
 	order: AccountOrder;

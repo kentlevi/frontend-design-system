@@ -1,5 +1,5 @@
 import { nextTick, onBeforeUnmount, ref } from 'vue';
-import lottie from 'lottie-web';
+import type { AnimationItem } from 'lottie-web';
 
 type UseCheckoutCompletionOptions = {
 	redirectPath: string;
@@ -10,7 +10,7 @@ export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 	const router = useRouter();
 	const completing_checkout = ref(false);
 	const complete_loader_ref = ref<HTMLElement | null>(null);
-	let complete_loader_animation: ReturnType<typeof lottie.loadAnimation> | null = null;
+	let complete_loader_animation: AnimationItem | null = null;
 
 	function destroyCompleteAnimation() {
 		if (!complete_loader_animation) return;
@@ -24,6 +24,7 @@ export function useCheckoutCompletion(options: UseCheckoutCompletionOptions) {
 		const response = await fetch('/animations/musticker-loader.json');
 		if (!response.ok) return;
 		const animation_data = await response.json();
+		const { default: lottie } = await import('lottie-web');
 		complete_loader_animation = lottie.loadAnimation({
 			container: complete_loader_ref.value,
 			renderer: 'svg',

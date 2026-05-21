@@ -1,11 +1,17 @@
 <script lang="ts" setup>
+import { defineAsyncComponent } from 'vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuText from '~/components/base/MuText.vue';
 import RegisterHeader from './RegisterHeader.vue';
 import RegisterForm from './RegisterForm.vue';
-import AlreadyRegisteredModal from '~/components/features/auth/AlreadyRegisteredModal.vue';
-import VerificationModal from '~/components/verification/VerificationModal.vue';
 import { useRegisterCard } from '~/composables/features/account/orders/auth/register/useRegisterCard';
+
+const AlreadyRegisteredModal = defineAsyncComponent(
+	() => import('~/components/features/auth/AlreadyRegisteredModal.vue')
+);
+const VerificationModal = defineAsyncComponent(
+	() => import('~/components/verification/VerificationModal.vue')
+);
 
 const { translate, submitRegister } = useRegisterCard();
 </script>

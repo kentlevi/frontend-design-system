@@ -1,12 +1,18 @@
 <script lang="ts" setup>
+import { defineAsyncComponent } from 'vue';
 import { useLoginCard } from '~/composables/features/account/orders/auth/login/useLoginCard';
 import ModeSwitcher from './ModeSwitcher.vue';
 import MemberForm from './MemberForm.vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import SocialLogin from './SocialLogin.vue';
 import NonMemberForm from './NonMemberForm.vue';
-import AlreadyRegisteredModal from '~/components/features/auth/AlreadyRegisteredModal.vue';
-import VerificationModal from '~/components/verification/VerificationModal.vue';
+
+const AlreadyRegisteredModal = defineAsyncComponent(
+	() => import('~/components/features/auth/AlreadyRegisteredModal.vue')
+);
+const VerificationModal = defineAsyncComponent(
+	() => import('~/components/verification/VerificationModal.vue')
+);
 
 const { translate, member_type, submitLogin } = useLoginCard();
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import lottie from 'lottie-web';
 import { computed, nextTick, useSlots } from 'vue';
 import type { CSSProperties } from 'vue';
+import type { AnimationItem } from 'lottie-web';
 
 const BODY_LOCK_COUNT_KEY = 'uiLoadingOverlayLockCount';
 const BODY_LOCK_OVERFLOW_KEY = 'uiLoadingOverlayPreviousOverflow';
@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<{
 
 const slots = useSlots();
 const defaultLoaderRef = ref<HTMLElement | null>(null);
-let loaderAnimation: ReturnType<typeof lottie.loadAnimation> | null = null;
+let loaderAnimation: AnimationItem | null = null;
 
 const has_custom_loader = computed(() => Boolean(slots.default));
 const is_page_overlay = computed(() => props.position === 'fixed' && props.variant !== 'modal');
@@ -115,6 +115,7 @@ async function mountLoaderAnimation() {
 	const response = await fetch(props.animationPath);
 	if (!response.ok) return;
 	const animationData = await response.json();
+	const { default: lottie } = await import('lottie-web');
 	loaderAnimation = lottie.loadAnimation({
 		container: defaultLoaderRef.value,
 		renderer: 'svg',
@@ -125,7 +126,7 @@ async function mountLoaderAnimation() {
 			preserveAspectRatio: 'xMidYMid meet',
 		},
 	});
-	loaderAnimation.addEventListener('DOMLoaded', normalizeLoaderSvg);
+	loaderAnimation?.addEventListener('DOMLoaded', normalizeLoaderSvg);
 }
 
 watch(

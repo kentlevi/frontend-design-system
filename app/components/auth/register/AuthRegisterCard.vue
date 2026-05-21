@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import UiTooltip from '@/components/ui/Tooltip.vue';
-import AuthEmailAlreadyRegisteredModal from '@/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue';
-import AuthLoginForgotPasswordModal from '@/components/auth/login/AuthLoginForgotPasswordModal.vue';
 import { useRegisterForm } from '~/composables/auth/register/useRegisterForm';
 import { useAuthRegisterCard } from '~/composables/auth/register/useAuthRegisterCard';
 import { useCountry } from '~/composables/app/country/useCountry';
@@ -16,6 +14,13 @@ import {
 	LOGIN_SUCCESS_TOAST_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 import { loginMemberUser } from '~/services/auth/auth.service';
+
+const AuthEmailAlreadyRegisteredModal = defineAsyncComponent(
+	() => import('@/components/auth/shared/AuthEmailAlreadyRegisteredModal.vue')
+);
+const AuthLoginForgotPasswordModal = defineAsyncComponent(
+	() => import('@/components/auth/login/AuthLoginForgotPasswordModal.vue')
+);
 
 const route = useRoute();
 const { t: translate } = useI18n();

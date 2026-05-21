@@ -1,12 +1,20 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import MuLinearWrapper from '~/components/base/MuLinearWrapper.vue';
 import MuHeading from '~/components/base/MuHeading.vue';
 import MuText from '~/components/base/MuText.vue';
-import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
-import EmailChangeModal from '~/components/features/account/profile/modals/EmailChangeModal.vue';
 import { useProfilePersonalIndex } from '~/composables/account/profile/useProfilePersonalIndex';
 import { useProfilePersonalIndexUI } from '~/composables/account/profile/useProfilePersonalIndexUI';
+
+const AuthVerificationModal = defineAsyncComponent(
+	() => import('~/components/auth/shared/AuthVerificationModal.vue')
+);
+const DeleteConfirmModal = defineAsyncComponent(
+	() => import('~/components/ui/DeleteConfirmModal.vue')
+);
+const EmailChangeModal = defineAsyncComponent(
+	() => import('~/components/features/account/profile/modals/EmailChangeModal.vue')
+);
 
 withDefaults(defineProps<{
 	loading?: boolean;

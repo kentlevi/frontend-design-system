@@ -20,17 +20,17 @@ const DEFAULT_PRODUCT_STORY_MEDIA: [StoryMedia, StoryMedia, StoryMedia] = [
 	{
 		type: 'video',
 		src: 'products/die-cut-sticker/features/01-skater-sticker-on-car-video.mp4',
-		poster: 'products/die-cut-sticker/features/01-skater-sticker-on-car-placeholder.png',
+		poster: 'products/die-cut-sticker/features/01-skater-sticker-on-car-placeholder.webp',
 	},
 	{
 		type: 'video',
 		src: 'products/die-cut-sticker/features/02-product-story-video.mp4',
-		poster: 'products/die-cut-sticker/features/02-product-story-placeholder.png',
+		poster: 'products/die-cut-sticker/features/02-product-story-placeholder.webp',
 	},
 	{
 		type: 'video',
 		src: 'products/die-cut-sticker/features/03-product-story-video.mp4',
-		poster: 'products/die-cut-sticker/features/03-product-story-placeholder.png'
+		poster: 'products/die-cut-sticker/features/03-product-story-placeholder.webp'
 	},
 ];
 

@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import AuthVerificationModal from '~/components/auth/shared/AuthVerificationModal.vue';
-import ProfileEmailChangeModal from './ProfileEmailChangeModal.vue';
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
+import { defineAsyncComponent } from 'vue';
 import { useChangeEmailForm } from '~/composables/account/profile/context/useChangeEmailForm';
 import { useProfilePhoto } from '~/composables/account/profile/context/useProfilePhoto';
 import { useProfilePhotoDisplay } from '~/utils/profile_photo/profile_photo';
 import { useSocialAccount } from '~/composables/account/profile/useSocialAccount';
 import { useProfilePersonal } from '~/composables/account/profile/useProfilePersonal';
+
+const AuthVerificationModal = defineAsyncComponent(
+	() => import('~/components/auth/shared/AuthVerificationModal.vue')
+);
+const ProfileEmailChangeModal = defineAsyncComponent(
+	() => import('./ProfileEmailChangeModal.vue')
+);
+const DeleteConfirmModal = defineAsyncComponent(
+	() => import('~/components/ui/DeleteConfirmModal.vue')
+);
 
 withDefaults(defineProps<{
 	loading?: boolean;

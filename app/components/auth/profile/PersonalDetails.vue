@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import { useAuthProfilePersonalDetails } from '~/composables/auth/profile/useAuthProfilePersonalDetails';
-import DeleteConfirmModal from '~/components/ui/DeleteConfirmModal.vue';
+
+const DeleteConfirmModal = defineAsyncComponent(
+	() => import('~/components/ui/DeleteConfirmModal.vue')
+);
 
 const { t: translate } = useI18n();
 

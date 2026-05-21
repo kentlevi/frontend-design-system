@@ -4,10 +4,7 @@ import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
 import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
 import HomeGuideTour from '~/components/home/HomeGuideTour.vue';
 import HomeGuideTourDonePopover from '~/components/home/HomeGuideTourDonePopover.vue';
-import HomeGuideTourSkipModal from '~/components/home/HomeGuideTourSkipModal.vue';
 import HomeWelcomePopover from '~/components/home/HomeWelcomePopover.vue';
-import AuthLoginForgotPasswordModal from '~/components/auth/login/AuthLoginForgotPasswordModal.vue';
-import AuthResetPasswordModal from '~/components/auth/login/AuthResetPasswordModal.vue';
 import {
 	defineAsyncComponent,
 	nextTick,
@@ -22,6 +19,16 @@ import {
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 import { useResetPassword } from '~/composables/auth/useResetPassword';
+
+const HomeGuideTourSkipModal = defineAsyncComponent(
+	() => import('~/components/home/HomeGuideTourSkipModal.vue')
+);
+const AuthLoginForgotPasswordModal = defineAsyncComponent(
+	() => import('~/components/auth/login/AuthLoginForgotPasswordModal.vue')
+);
+const AuthResetPasswordModal = defineAsyncComponent(
+	() => import('~/components/auth/login/AuthResetPasswordModal.vue')
+);
 
 const HomeFeatureHighlight = defineAsyncComponent(
 	() => import('~/components/home/HomeFeatureHighlight.vue')
