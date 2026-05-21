@@ -62,3 +62,38 @@ export type UpdateOrderItemArtworkPayload = {
 	uploaded_file: string
 	instruction: string
 }
+
+export interface ArtworkActivityEntryUser {
+	id: number | null
+	name: string | null
+	avatar_file_name: string | null
+	avatar_file_path: string | null
+}
+
+export interface ArtworkActivityEntryItemStatus {
+	id: number
+	code: string
+	name: string
+}
+
+export interface ArtworkActivityEntry {
+	id: number
+	created_at: string | null
+	instruction: string | null
+	file_name: string | null
+	uploaded_file: string | null
+	file_path: string | null
+	item_status: ArtworkActivityEntryItemStatus | null
+	user: ArtworkActivityEntryUser
+}
+
+export interface ArtworkActivityData {
+	cart_item_id: number | null
+	product: string | null
+	width: number | null
+	height: number | null
+	quantity: number | null
+	entries: ArtworkActivityEntry[]
+}
+
+export type ArtworkActivityResponse = ApiResponse<ArtworkActivityData | null>

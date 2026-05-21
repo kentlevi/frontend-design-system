@@ -1,5 +1,5 @@
 import { uploadFileToPresignedUrl } from '~/utils/file/presignedUrl'
-import { updateOrderItemArtwork } from './api.service'
+import { fetchArtworkActivity, updateOrderItemArtwork } from './api.service'
 
 /**
  * Upload an artwork file for an order item.
@@ -27,4 +27,16 @@ export async function uploadArtwork(
 	})
 
 	return Boolean(response?.success)
+}
+
+/**
+ * Fetch the activity payload (item context + artwork submissions) for the
+ * order-detail "Activity Logs" panel.
+ */
+export async function loadArtworkActivity(cart_item_id: number) {
+	try {
+		return await fetchArtworkActivity(cart_item_id)
+	} catch (error) {
+		console.error('Failed to fetch artwork activity', error)
+	}
 }
