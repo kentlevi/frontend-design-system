@@ -86,7 +86,7 @@ export const guides: GuideItem[] = [
         reviewDueAt: '2026-06-30',
         tags: ['layout', 'cards', 'media'],
         usedIn: [
-            { label: 'Product List', path: 'frontend/app/pages/[country]/stickers/index.vue' },
+            { label: 'Product List', path: 'frontend/app/pages/[country]/[category]/index.vue' },
         ],
         related: ['/guide/carousel', '/guide/spacing'],
     },
@@ -201,7 +201,7 @@ export const guides: GuideItem[] = [
         tags: ['motion', 'transitions', 'reduced-motion'],
         usedIn: [
             { label: 'Animation Guide Page', path: 'frontend-documentation/app/pages/guide/animation.vue' },
-            { label: 'Cart Drawer', path: 'frontend/app/components/cart/CartPreview.vue' },
+            { label: 'Cart Drawer', path: 'frontend/app/components/cart/preview/CartPreview.vue' },
         ],
         related: ['/guide/carousel', '/guide/modals', '/guide/header-patterns'],
     },
@@ -242,7 +242,7 @@ export const guides: GuideItem[] = [
         status: 'draft',
         tags: ['cart', 'drawer', 'checkout'],
         usedIn: [
-            { label: 'Cart Preview', path: 'frontend/app/components/cart/CartPreview.vue' },
+            { label: 'Cart Preview', path: 'frontend/app/components/cart/preview/CartPreview.vue' },
         ],
         related: ['/guide/carousel', '/guide/product-configurator', '/guide/animation'],
     },
@@ -272,7 +272,7 @@ export const guides: GuideItem[] = [
         reviewDueAt: '2026-06-30',
         tags: ['product', 'configurator', 'pricing'],
         usedIn: [
-            { label: 'Stickers Page', path: 'frontend/app/pages/[country]/stickers/index.vue' },
+            { label: 'Product Configurator', path: 'frontend/app/pages/[country]/[category]/[product].vue' },
         ],
         related: ['/guide/cart-patterns', '/guide/testing'],
     },
@@ -465,5 +465,22 @@ export const guides: GuideItem[] = [
         reviewDueAt: '2026-06-30',
         tags: ['governance', 'onboarding', 'enforcement', 'linting', 'review-policy'],
         related: ['/guide/onboarding', '/guide/testing'],
+    },
+    {
+        title: 'Tooling',
+        description:
+            'Out-of-band scripts: content workbook sync, image and video optimization, font subsetting.',
+        path: '/guide/tooling',
+        category: 'core',
+        status: 'stable',
+        owner: { name: 'Design System Guild', team: 'Frontend Platform' },
+        reviewDueAt: '2026-06-30',
+        tags: ['tooling', 'content', 'performance', 'media', 'fonts'],
+        usedIn: [
+            { label: 'Workbook sync', path: 'frontend-documentation/tools/workbook/README.md' },
+            { label: 'Media optimization', path: 'frontend-documentation/tools/media/optimize-media.ps1' },
+            { label: 'Font subsetting', path: 'frontend-documentation/tools/media/font-subset.ps1' },
+        ],
+        related: ['/guide/i18n', '/guide/web-vitals', '/guide/standards'],
     },
 ];
