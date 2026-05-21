@@ -7,6 +7,15 @@ export default defineNuxtPlugin(() => {
 	const authToken = useCookie<string | null>('auth_token')
 	const token = useCookie<string | null>('token')
 
+	// Hoisted out of onRequest: re-instantiating useCookie() inside the per-request
+	// hook creates a fresh ref that doesn't see the value set by a prior fresh ref
+	// in the same SSR pass, so each API call would re-generate a UUID and emit
+	// another Set-Cookie. One ref, one assignment per session.
+	const device_uuid = useCookie<string | null>('device_uuid', { maxAge: 10 * 365 * 24 * 60 * 60 })
+	if (!device_uuid.value) {
+		device_uuid.value = crypto.randomUUID()
+	}
+
 	const { country } = useCountry()
 
 
@@ -17,12 +26,7 @@ export default defineNuxtPlugin(() => {
 			// 1. Force the type to be a plain object so we can use the spread operator/assignment
 			const headers = options.headers
 
-			const device_uuid = useCookie('device_uuid', { maxAge: 10 * 365 * 24 * 60 * 60 })
-			if (!device_uuid.value) {
-				device_uuid.value = crypto.randomUUID()
-			}
-
-			headers.set('x-device-uuid', device_uuid.value)
+			headers.set('x-device-uuid', device_uuid.value ?? '')
 			headers.set('request-from', 'client-panel')
 
 			if (import.meta.server) {

@@ -7,6 +7,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
 		sameSite: 'lax',
 		path: '/',
 	})
+
+	// Guarded setter — avoids emitting a fresh Set-Cookie header (and Nuxt
+	// cookie-override warnings) when the value isn't actually changing.
+	const setPreferredLocale = (next: string) => {
+		if (preferredLocale.value !== next) preferredLocale.value = next
+	}
 	const preferredLocaleResolved =
 		resolveSupportedCountry(preferredLocale.value || '') || null
 	const currentLocaleRaw =
@@ -35,7 +41,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	}
 
 	if (resolvedFirstSegment && secondSegment === 'guide') {
-		preferredLocale.value = resolvedFirstSegment
+		setPreferredLocale(resolvedFirstSegment)
 		if (currentLocale !== resolvedFirstSegment && typeof $i18n?.setLocale === 'function') {
 			await $i18n.setLocale(resolvedFirstSegment)
 		}
@@ -78,10 +84,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	}
 
 	if (currentLocale !== resolvedFirstSegment && typeof $i18n?.setLocale === 'function') {
-		preferredLocale.value = resolvedFirstSegment
+		setPreferredLocale(resolvedFirstSegment)
 		await $i18n.setLocale(resolvedFirstSegment)
 		return
 	}
 
-	preferredLocale.value = resolvedFirstSegment
+	setPreferredLocale(resolvedFirstSegment)
 })

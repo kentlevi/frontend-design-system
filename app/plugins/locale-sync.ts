@@ -17,7 +17,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 			: nuxtApp.$i18n?.locale?.value) || DEFAULT_COUNTRY;
 	const currentLocale = resolveSupportedCountry(String(currentLocaleRaw)) || DEFAULT_COUNTRY;
 
-	preferredLocale.value = nextLocale;
+	// Only write the cookie when the value actually changes — avoids
+	// emitting redundant Set-Cookie headers (and Nuxt cookie-override warnings)
+	// on every request.
+	if (preferredLocale.value !== nextLocale) {
+		preferredLocale.value = nextLocale;
+	}
 
 	if (currentLocale !== nextLocale && typeof nuxtApp.$i18n?.setLocale === 'function') {
 		await nuxtApp.$i18n.setLocale(nextLocale);
