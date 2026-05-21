@@ -1,7 +1,7 @@
 import type { ApiResponse } from "~/types/config/api"
 import type { CreateQuotationPayload, OrderQuotationDetailsResponse } from "~/types/checkout/quotation"
 import type { OrderCompleteDataResponse } from "~/types/order"
-import type { OrderAddressesResponse, OrderItemsResponse, OrderPaymentResponse, UpdateOrderItemArtworkPayload } from "~/types/order/order-detail"
+import type { ArtworkActivityResponse, OrderAddressesResponse, OrderItemsResponse, OrderPaymentResponse, UpdateOrderItemArtworkPayload } from "~/types/order/order-detail"
 import type { UserOrderType, UserOrdersResponse } from "~/types/order/user-orders"
 
 export const fetchOrderCompletionDetails = async (order_id : number) : Promise<OrderCompleteDataResponse> => {
@@ -60,4 +60,10 @@ export async function updateOrderItemArtwork(payload: UpdateOrderItemArtworkPayl
 	const { $api } = useNuxtApp()
 
 	return $api.post('orders/artwork/update', payload)
+}
+
+export async function fetchArtworkActivity(cart_item_id: number): Promise<ArtworkActivityResponse> {
+	const { $api } = useNuxtApp()
+
+	return $api.get(`orders/artwork/activity/${cart_item_id}`)
 }
