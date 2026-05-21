@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue';
 import { useProductExperience } from '~/composables/products/categoryExperience/useProductCategoryExperience';
 import ProductPickerSlice from '~/components/products/product-category/slices/ProductPickerSlice.vue';
-import ProductHeroSlice from '~/components/products/product-category/slices/ProductHeroSlice.vue';
-import ProductOptionsSlice from '~/components/products/product-category/slices/ProductOptionsSlice.vue';
 import { useNavigation } from '~/composables/navigation/useNavigation';
+
+// Lazy: only mounted/visible after the user picks a product (v-show gate). The
+// picker is the LCP candidate on category landings — keeping these eager would
+// hydrate hidden DOM on every visit.
+const ProductHeroSlice = defineAsyncComponent(
+	() => import('~/components/products/product-category/slices/ProductHeroSlice.vue')
+);
+const ProductOptionsSlice = defineAsyncComponent(
+	() => import('~/components/products/product-category/slices/ProductOptionsSlice.vue')
+);
 
 const {
 	has_picked_product,

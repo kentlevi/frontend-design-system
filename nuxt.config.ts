@@ -104,9 +104,11 @@ export default defineNuxtConfig({
 		'/*/order-items/**': { headers: { 'cache-control': 'private, no-store' } },
 		'/*/auth/**': { headers: { 'cache-control': 'private, no-store' } },
 
-		// Long-cache for public folder assets (icons + images served verbatim).
+		// Long-cache for public folder assets (icons + images + illustrations + fonts served verbatim).
 		'/icons/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
 		'/images/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+		'/illustrations/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+		'/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
 	},
 
 	modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', '@nuxtjs/i18n', '@pinia-plugin-persistedstate/nuxt'],

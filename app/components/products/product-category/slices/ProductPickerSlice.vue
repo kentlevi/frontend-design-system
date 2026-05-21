@@ -33,7 +33,7 @@ const handleProductSelect = (event: MouseEvent, id: number, slug: string) => {
 	<div class="product-picker-layer">
 		<nav class="product-picker" data-testid="product-category-picker">
 			<NuxtLink
-				v-for="product in products"
+				v-for="(product, index) in products"
 				:key="product.id"
 				:to="getProductPath(product.url_slug, category_slug)"
 				class="product-picker-item"
@@ -47,6 +47,11 @@ const handleProductSelect = (event: MouseEvent, id: number, slug: string) => {
 						:src="`${$config.public.file_url}${product.default_featured_image_url}`"
 						:alt="product.name"
 						class="product-picker-image"
+						width="156"
+						height="120"
+						decoding="async"
+						:loading="index < 4 ? 'eager' : 'lazy'"
+						:fetchpriority="index === 0 ? 'high' : 'auto'"
 					>
 				</div>
 				<div class="product-picker-meta">

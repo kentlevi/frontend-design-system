@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import HomeHeroSection from '~/components/home/HomeHeroSection.vue';
-import HomeProductTypes from '~/components/home/HomeProductTypes.vue';
-import HomeGuideTour from '~/components/home/HomeGuideTour.vue';
-import HomeGuideTourDonePopover from '~/components/home/HomeGuideTourDonePopover.vue';
-import HomeWelcomePopover from '~/components/home/HomeWelcomePopover.vue';
 import {
 	defineAsyncComponent,
 	nextTick,
@@ -19,6 +15,19 @@ import {
 	HOME_WELCOME_POPOVER_TRIGGER_EVENT,
 } from '~/data/home/onboarding';
 import { useResetPassword } from '~/composables/auth/useResetPassword';
+
+const HomeProductTypes = defineAsyncComponent(
+	() => import('~/components/home/HomeProductTypes.vue')
+);
+const HomeWelcomePopover = defineAsyncComponent(
+	() => import('~/components/home/HomeWelcomePopover.vue')
+);
+const HomeGuideTour = defineAsyncComponent(
+	() => import('~/components/home/HomeGuideTour.vue')
+);
+const HomeGuideTourDonePopover = defineAsyncComponent(
+	() => import('~/components/home/HomeGuideTourDonePopover.vue')
+);
 
 const HomeGuideTourSkipModal = defineAsyncComponent(
 	() => import('~/components/home/HomeGuideTourSkipModal.vue')
@@ -405,14 +414,28 @@ useSeoMeta({
 	description: () => translate('home.seo.description'),
 });
 
+// Preload the Korean Pretendard subset on KR routes so the hero <h1> renders
+// in Pretendard immediately instead of waiting for unicode-range discovery.
+// Latin subset is preloaded globally in nuxt.config (small, used everywhere).
+const is_korean_route = computed(() => route.params.country === 'kr');
+
 useHead({
-	link: [
+	link: () => [
 		{
 			rel: 'preload',
 			as: 'image',
 			href: '/illustrations/products/sticker-kids/kid-decorating-sheet.svg',
 			fetchpriority: 'high',
 		},
+		...(is_korean_route.value
+			? [{
+				rel: 'preload',
+				as: 'font',
+				type: 'font/woff2',
+				href: '/fonts/PretendardVariable.kr.woff2',
+				crossorigin: 'anonymous',
+			} as const]
+			: []),
 	],
 });
 </script>
